@@ -1,0 +1,170 @@
+{
+  "id": "R148",
+  "number": "R148",
+  "operators": [
+    "REBC",
+    "FTCC",
+    "FT"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Eastmallow Praya Road",
+    "en": "Eastmallow Praya Road"
+  },
+  "destination": {
+    "zh": "Dove Park / 東錦葵海傍路",
+    "en": "Dove Park / 東錦葵海傍路"
+  },
+  "via": {
+    "zh": "Sunshine University, North Island, Northern Interchange, Central, Southern",
+    "en": "Sunshine University, North Island, Northern Interchange, Central, Southern"
+  },
+  "interval": {
+    "zh": "Depend on actual situation",
+    "en": "Depend on actual situation"
+  },
+  "journeyTime": {
+    "zh": "21 mins",
+    "en": "21 mins"
+  },
+  "fare": "$18.1",
+  "length": {
+    "zh": "17.6 km",
+    "en": "17.6 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（東錦葵海傍路 → 白鴿公園）",
+        "en": "Direction 1 (Eastmallow Praya Road → Dove Park)"
+      },
+      "serviceTime": {
+        "zh": "Marathon Special Service",
+        "en": "Marathon Special Service"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨 - 陽葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心總站",
+            "en": "Norton Town Centre Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Bird Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "亞特路",
+            "en": "Arctan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環消防局",
+            "en": "Central Fire Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環花園二期",
+            "en": "Southern Two"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿公園",
+            "en": "Dove Park"
+          },
+          "zone": 1
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_R148"
+}

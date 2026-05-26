@@ -1,0 +1,18 @@
+---
+description: Multi-direction bus route data and UI conventions
+globs: src/data/routes.ts,src/types/route.ts
+alwaysApply: false
+---
+
+# Multi-direction routes
+
+When a route has more than one travel direction (e.g. southbound / northbound):
+
+- Set `number` to the in-game route number only (`25`, not `25N`).
+- Add one `stops[]` entry per direction with `directionKey` (`N`, `S`, `E`, `W`), bilingual `direction`, and ordered `list`.
+- UI toggles appear automatically when `stops.length > 1` (card + detail); Chinese locales show 北行/南行, others show N/S. Sort order: N before S, W before E.
+- Per-direction `serviceTime` on each `stops[]` entry (departure point only); never combine both terminuses at route level.
+- Endpoints on card/detail come from the active direction’s first/last stop; detail shows endpoints once only.
+- Single-direction or circular routes: one `stops` entry only (see route 21A).
+
+Follow the worked example: route `25` in `src/data/routes.ts`.

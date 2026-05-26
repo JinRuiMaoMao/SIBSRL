@@ -1,0 +1,87 @@
+{
+  "id": "370B",
+  "number": "370B",
+  "operators": ["REBC", "HZ"],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [1, 7],
+  "origin": { "zh": "仙贝广场", "en": "Senpai Shopping Centre" },
+  "destination": { "zh": "长岛码头", "en": "Long Island Ferry Pier" },
+  "via": {
+    "zh": "镰塔花园、第七区转车站、中西转车站、货柜码头、艾迪城、白鸽工业区",
+    "en": "Kamaya Garden, Zone 7 Interchange, Central - Western Interchange, Containers Terminal, Addi City, Dove Industry Zone"
+  },
+  "interval": { "zh": "7 – 20 分钟", "en": "7 – 20 minutes" },
+  "journeyTime": {
+    "zh": "往长岛约 41 分钟 / 往仙贝约 48 分钟",
+    "en": "To Long Island: 41 mins / To Senpai: 48 mins"
+  },
+  "fare": "$18.2",
+  "levelRequired": 93,
+  "length": { "zh": "19.2 km", "en": "19.2 km" },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（仙贝广场 → 长岛码头）",
+        "en": "Northbound (Senpai Shopping Centre → Long Island Ferry Pier)"
+      },
+      "serviceTime": { "zh": "周一至五 07:00 – 09:00", "en": "Mon – Fri: 07:00 – 09:00" },
+      "list": [
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Centre" }, "zone": 7 },
+        { "name": { "zh": "仙贝图书馆", "en": "Senpai Library" } },
+        { "name": { "zh": "仙贝酒店", "en": "Senpai Hotel" } },
+        { "name": { "zh": "黑白中心", "en": "Grayscale Center" } },
+        { "name": { "zh": "国际塔", "en": "International Tower" } },
+        { "name": { "zh": "镰塔运动场", "en": "Kamaya Sports Field" }, "zone": 7 },
+        { "name": { "zh": "镰塔花园", "en": "Kamaya Garden" } },
+        { "name": { "zh": "第七区转车站 (西行)", "en": "Zone 7 Interchange (westbound)" }, "zone": 7 },
+        { "name": { "zh": "中西转车站", "en": "Central - Western Interchange" }, "zone": 1 },
+        { "name": { "zh": "货柜码头", "en": "Containers Terminal" }, "zone": 1 },
+        { "name": { "zh": "海苔湾", "en": "Seaweed Bay" } },
+        { "name": { "zh": "货柜码头员工宿舍", "en": "Containers Island Employee House" } },
+        { "name": { "zh": "三塔", "en": "Triple Tower" } },
+        { "name": { "zh": "艾迪城", "en": "Addi City" }, "zone": 1 },
+        { "name": { "zh": "白鸽消防局", "en": "Dove Fire Station" } },
+        { "name": { "zh": "路博斯总部大楼", "en": "Roblox HQ" } },
+        { "name": { "zh": "长岛中心", "en": "Long Island Center" }, "zone": 1 },
+        { "name": { "zh": "文化广场", "en": "Culture Square" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（长岛码头 → 仙贝广场）",
+        "en": "Southbound (Long Island Ferry Pier → Senpai Shopping Centre)"
+      },
+      "serviceTime": { "zh": "周一至五 17:00 – 19:00", "en": "Mon – Fri: 17:00 – 19:00" },
+      "list": [
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" }, "zone": 1 },
+        { "name": { "zh": "文化广场", "en": "Culture Square" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "虹尾角街市", "en": "Iris Point Market" } },
+        { "name": { "zh": "时间里", "en": "Timelapse Lane" }, "zone": 1 },
+        { "name": { "zh": "艾迪路", "en": "Addi Road" } },
+        { "name": { "zh": "路博斯总部大楼", "en": "Roblox HQ" } },
+        { "name": { "zh": "白鸽消防局", "en": "Dove Fire Station" } },
+        { "name": { "zh": "艾迪城", "en": "Addi City" } },
+        { "name": { "zh": "三塔", "en": "Triple Tower" }, "zone": 1 },
+        { "name": { "zh": "货柜码头员工宿舍", "en": "Containers Island Employee House" } },
+        { "name": { "zh": "海苔湾", "en": "Seaweed Bay" } },
+        { "name": { "zh": "货柜码头", "en": "Containers Terminal" } },
+        { "name": { "zh": "中西转车站", "en": "Central - Western Interchange" }, "zone": 1 },
+        { "name": { "zh": "第七区转车站 (东行)", "en": "Zone 7 Interchange (eastbound)" }, "zone": 7 },
+        { "name": { "zh": "镰塔花园", "en": "Kamaya Garden" }, "zone": 7 },
+        { "name": { "zh": "镰塔运动场", "en": "Kamaya Sports Field" } },
+        { "name": { "zh": "国际塔", "en": "International Tower" }, "zone": 7 },
+        { "name": { "zh": "仙贝纪念碑", "en": "The Stone of Memory" } },
+        { "name": { "zh": "红石楼", "en": "Redstone House" } },
+        { "name": { "zh": "仙贝酒店", "en": "Senpai Hotel" } },
+        { "name": { "zh": "仙贝图书馆", "en": "Senpai Library" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Centre" }, "zone": 7 }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_370B"
+}

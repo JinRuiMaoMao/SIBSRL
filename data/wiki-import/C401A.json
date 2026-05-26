@@ -1,0 +1,254 @@
+{
+  "id": "C401A",
+  "number": "C401A",
+  "operators": [
+    "CSB"
+  ],
+  "category": "night",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "CSB Depot",
+    "en": "CSB Depot"
+  },
+  "destination": {
+    "zh": "Norton Town Center / 際巴車廠",
+    "en": "Norton Town Center / 際巴車廠"
+  },
+  "via": {
+    "zh": "[[Senpai Shopping Center",
+    "en": "[[Senpai Shopping Center"
+  },
+  "interval": {
+    "zh": "Fixed departure",
+    "en": "Fixed departure"
+  },
+  "journeyTime": {
+    "zh": "To Norton: 20 - 22 mins / To CSB Depot: 19 - 21 mins",
+    "en": "To Norton: 20 - 22 mins / To CSB Depot: 19 - 21 mins"
+  },
+  "length": {
+    "zh": "16.9 km",
+    "en": "16.9 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（際巴車廠 → 北頓市中心）",
+        "en": "Northbound (CSB Depot → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "01:45, 02:30",
+        "en": "01:45, 02:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣海旁路",
+            "en": "YiYan Praya Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "中環南",
+            "en": "Southern Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環花園二期",
+            "en": "Central Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Road Passage"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "The One",
+            "en": "The One"
+          }
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站",
+            "en": "Moon Island Bypass"
+          }
+        },
+        {
+          "name": {
+            "zh": "明月角",
+            "en": "West Moon Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Hill Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → 際巴車廠）",
+        "en": "Southbound (Norton Town Center → CSB Depot)"
+      },
+      "serviceTime": {
+        "zh": "03:45, 04:15}}",
+        "en": "03:45, 04:15}}"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Hill Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "明月角",
+            "en": "West Moon Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站",
+            "en": "Moon Island Bypass"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The One",
+            "en": "The One"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鑽石交易塔",
+            "en": "YiYan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_C401A"
+}

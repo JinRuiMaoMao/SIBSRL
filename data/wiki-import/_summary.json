@@ -1,0 +1,119 @@
+{
+  "results": [
+    {
+      "id": "U47",
+      "number": "U47",
+      "operators": [
+        "FT",
+        "FTCC",
+        "CSB"
+      ],
+      "category": "express",
+      "pattern": "bidirectional",
+      "zones": [
+        4,
+        7
+      ],
+      "origin": {
+        "zh": "Hotel Symbol",
+        "en": "Hotel Symbol"
+      },
+      "destination": {
+        "zh": "North Sunshine University / 旭濤薈",
+        "en": "North Sunshine University / 旭濤薈"
+      },
+      "via": {
+        "zh": "Sunshine University Southern Campus, [[Sunshine University",
+        "en": "Sunshine University Southern Campus, [[Sunshine University"
+      },
+      "interval": {
+        "zh": "15 - 60 min",
+        "en": "15 - 60 min"
+      },
+      "journeyTime": {
+        "zh": "6-10 min",
+        "en": "6-10 min"
+      },
+      "levelRequired": 25,
+      "length": {
+        "zh": "13.05 km",
+        "en": "13.05 km"
+      },
+      "stops": [
+        {
+          "directionKey": "N",
+          "direction": {
+            "zh": "北行（旭濤薈 → 陽光大學北）",
+            "en": "Northbound (Hotel Symbol → North Sunshine University)"
+          },
+          "serviceTime": {
+            "zh": "08:15 – 19:30",
+            "en": "08:15 – 19:30"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "旭濤薈",
+                "en": "Hotel Symbol"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "陽光大學中",
+                "en": "Central- Sunshine University"
+              }
+            },
+            {
+              "name": {
+                "zh": "甄博士樓",
+                "en": "X.Y.Zhen College"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學北",
+                "en": "North Sunshine University"
+              }
+            }
+          ]
+        },
+        {
+          "directionKey": "S",
+          "direction": {
+            "zh": "南行（陽光大學北 → 旭濤薈）",
+            "en": "Southbound (North Sunshine University → Hotel Symbol)"
+          },
+          "serviceTime": {
+            "zh": "08:45 – 20:50",
+            "en": "08:45 – 20:50"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "陽光大學北",
+                "en": "North Sunshine University"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "陽光大學南環校園",
+                "en": "Sunshine University Southern Campus"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "旭濤薈",
+                "en": "Hotel Symbol"
+              }
+            }
+          ]
+        }
+      ],
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_U47"
+    }
+  ],
+  "errors": []
+}

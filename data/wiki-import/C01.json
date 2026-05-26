@@ -1,0 +1,277 @@
+{
+  "id": "C01",
+  "number": "C01",
+  "operators": [
+    "CSB"
+  ],
+  "category": "night",
+  "pattern": "bidirectional",
+  "zones": [
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "CSB Depot",
+    "en": "CSB Depot"
+  },
+  "destination": {
+    "zh": "Senpai Shopping Center / 際巴車廠",
+    "en": "Senpai Shopping Center / 際巴車廠"
+  },
+  "via": {
+    "zh": "Leafy Bay, Haisey, Rainbow, East Door, Haisey",
+    "en": "Leafy Bay, Haisey, Rainbow, East Door, Haisey"
+  },
+  "interval": {
+    "zh": "30 - 60 mins",
+    "en": "30 - 60 mins"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（際巴車廠 → 仙貝廣場）",
+        "en": "Northbound (CSB Depot → Senpai Shopping Center)"
+      },
+      "serviceTime": {
+        "zh": "04:00 – 06:00 / 00:30 – 02:00",
+        "en": "04:00 – 06:00 / 00:30 – 02:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西迴旋處",
+            "en": "Haisey Roundabout"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "海西邨",
+            "en": "Haisey Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（仙貝廣場 → C01}} * [https://roblox.fandom.com/zh/wiki/際巴C01線 Roblox大典：際巴C01線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Crew Bus Routes Category:Overnight Bus Routes Category:Inter-zone routes）",
+        "en": "Southbound (Senpai Shopping Center → C401A}}, these routes are the first to be operated exclusively for staff of a bus company. * This route is one of two intra-zone service numbers to not follow the route numbering conventions aside from scheduled Private Hire trips (since it is a Zone 7/8 route). The other is Forever Transit's open day shuttle route, F469. * When the route was initially introduced, CSB's LED displays showed \"Crew Bus\" without the number, which was shown on a separate window card. The route number for each employee service was later added to the LED displays although \"Crew Bus\" is still shown. However, FT and REBC buses still have external LED data for this route. CSB's Scania K360IB also shares this trait, since its LED display was programmed like those at FT and REBC. ==Link== * {{Ref-SI)"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "黑白中心",
+            "en": "Grayscale Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆中心",
+            "en": "Redbean Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西迴旋處",
+            "en": "Haisey Roundabout"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西邨",
+            "en": "Haisey Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "C01}} * [https://roblox.fandom.com/zh/wiki/際巴C01線 Roblox大典：際巴C01線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Crew Bus Routes Category:Overnight Bus Routes Category:Inter-zone routes",
+            "en": "C401A}}, these routes are the first to be operated exclusively for staff of a bus company. * This route is one of two intra-zone service numbers to not follow the route numbering conventions aside from scheduled Private Hire trips (since it is a Zone 7/8 route). The other is Forever Transit's open day shuttle route, F469. * When the route was initially introduced, CSB's LED displays showed \"Crew Bus\" without the number, which was shown on a separate window card. The route number for each employee service was later added to the LED displays although \"Crew Bus\" is still shown. However, FT and REBC buses still have external LED data for this route. CSB's Scania K360IB also shares this trait, since its LED display was programmed like those at FT and REBC. ==Link== * {{Ref-SI"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_C01"
+}

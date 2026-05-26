@@ -1,0 +1,47 @@
+{
+  "id": "170R",
+  "number": "170R",
+  "operators": [
+    "HZ",
+    "CSB",
+    "REBC"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    1,
+    4,
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Sunshine Stadium",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "Rainbow Estate Complex / 陽光體育館",
+    "en": "Rainbow Estate Complex / 陽光體育館"
+  },
+  "via": {
+    "zh": "Zone 7 Interchange, Kamaya, International Tower, Senpai, East Door, Haisey",
+    "en": "Zone 7 Interchange, Kamaya, International Tower, Senpai, East Door, Haisey"
+  },
+  "interval": {
+    "zh": "Refer to the information in the \"Timetable\" section",
+    "en": "Refer to the information in the \"Timetable\" section"
+  },
+  "journeyTime": {
+    "zh": "23 minutes",
+    "en": "23 minutes"
+  },
+  "fare": "$27.3",
+  "length": {
+    "zh": "20.6 km",
+    "en": "20.6 km"
+  },
+  "serviceTime": {
+    "zh": "Refer to the information in the \"Timetable\" section / <! –  – 24 hours –  – >",
+    "en": "Refer to the information in the \"Timetable\" section / <! –  – 24 hours –  – >"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_170R"
+}

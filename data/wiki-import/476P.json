@@ -1,0 +1,44 @@
+{
+  "id": "476P",
+  "number": "476P",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Rainbow Estate Complex",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "Eastmallow Praya Road / 彩虹中心",
+    "en": "Eastmallow Praya Road / 彩虹中心"
+  },
+  "via": {
+    "zh": "[[Leafy University (Leafy University Street)",
+    "en": "[[Leafy University (Leafy University Street)"
+  },
+  "interval": {
+    "zh": "10 min",
+    "en": "10 min"
+  },
+  "journeyTime": {
+    "zh": "37 mins",
+    "en": "37 mins"
+  },
+  "fare": "$12.1",
+  "length": {
+    "zh": "14.3 km",
+    "en": "14.3 km"
+  },
+  "serviceTime": {
+    "zh": "Mon – Fri (School Days): 17:05 – 18:30",
+    "en": "Mon – Fri (School Days): 17:05 – 18:30"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476P"
+}

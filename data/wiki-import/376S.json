@@ -1,0 +1,331 @@
+{
+  "id": "376S",
+  "number": "376S",
+  "operators": [
+    "FT",
+    "REBC"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    7
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "Ambling Peak / 長島碼頭",
+    "en": "Ambling Peak / 長島碼頭"
+  },
+  "via": {
+    "zh": "Long Island East, Dove Island, Hospital Island, Central - Western Interchange, YiYan (←), Leafy Bay Cemetery",
+    "en": "Long Island East, Dove Island, Hospital Island, Central - Western Interchange, YiYan (←), Leafy Bay Cemetery"
+  },
+  "journeyTime": {
+    "zh": "To Ambling Peak: 32 mins / To Long Island: 35 mins",
+    "en": "To Ambling Peak: 32 mins / To Long Island: 35 mins"
+  },
+  "fare": "$24.1",
+  "levelRequired": 70,
+  "length": {
+    "zh": "20.3 km",
+    "en": "20.3 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（長島碼頭 → 安靈台）",
+        "en": "Northbound (Long Island Ferry Pier → Ambling Peak Columbarium)"
+      },
+      "serviceTime": {
+        "zh": "08:00 – 15:20",
+        "en": "08:00 – 15:20"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Long Island Pier Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "百彩新城",
+            "en": "Long Island East Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島海濱長廊",
+            "en": "Long Island Waterfront Promenade"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光殯儀館",
+            "en": "Sunshine Funeral"
+          }
+        },
+        {
+          "name": {
+            "zh": "藝術大廈",
+            "en": "Art Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島東醫院",
+            "en": "Long Island Pier Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩色匯",
+            "en": "Cross Island Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間里",
+            "en": "Dove Praya Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得里",
+            "en": "Wright Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Dove Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Aisan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Cross Island Road"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "中西轉車站",
+            "en": "Central-Western Highway"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "葉角灣墳場",
+            "en": "YiYan Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "安靈台",
+            "en": "Ambling Peak Columbarium"
+          },
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（安靈台 → 長島碼頭）",
+        "en": "Southbound (Ambling Peak Columbarium → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "09:00 – 18:30",
+        "en": "09:00 – 18:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "安靈台",
+            "en": "Ambling Peak Columbarium"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角灣墳場",
+            "en": "Leafy Bay Cemetery"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣",
+            "en": "Leafy Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣海旁路",
+            "en": "YiYan Praya Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "中西轉車站",
+            "en": "Central-Western Highway"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Cross Island Road"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Aisan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Dove Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "艾迪路",
+            "en": "Dove Praya Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Dove Praya Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "虹尾角站",
+            "en": "Iris Point Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "智家坊",
+            "en": "I Home"
+          }
+        },
+        {
+          "name": {
+            "zh": "宜和劇場",
+            "en": "Jardine Theater"
+          }
+        },
+        {
+          "name": {
+            "zh": "藝術大廈",
+            "en": "Art Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光體育館",
+            "en": "Sunshine Stadium"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島海濱長廊",
+            "en": "Long Island Waterfront Promenade"
+          }
+        },
+        {
+          "name": {
+            "zh": "百彩新城",
+            "en": "N Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際碼頭",
+            "en": "Regional Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Long Island Pier Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_376S"
+}

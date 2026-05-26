@@ -1,0 +1,310 @@
+{
+  "id": "370",
+  "number": "370",
+  "operators": [
+    "REBC",
+    "HZ",
+    "CSB"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    7
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "Senpai Shopping Centre / 長島碼頭",
+    "en": "Senpai Shopping Centre / 長島碼頭"
+  },
+  "via": {
+    "zh": "Long Island East, Dove Island, Hospital Island, Container's Island, Central - Western Interchange, Zone 7 Interchange, Kamaya Garden, International Tower",
+    "en": "Long Island East, Dove Island, Hospital Island, Container's Island, Central - Western Interchange, Zone 7 Interchange, Kamaya Garden, International Tower"
+  },
+  "interval": {
+    "zh": "10 - 60 minutes",
+    "en": "10 - 60 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Senpai: 25 mins / To Long Island: 24 mins",
+    "en": "To Senpai: 25 mins / To Long Island: 24 mins"
+  },
+  "fare": "$18.2",
+  "length": {
+    "zh": "22.7 km",
+    "en": "22.7 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（長島碼頭 → 仙貝廣場）",
+        "en": "Northbound (Long Island Ferry Pier → Senpai Shopping Centre)"
+      },
+      "serviceTime": {
+        "zh": "06:10 – 00:00",
+        "en": "06:10 – 00:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際碼頭",
+            "en": "Regional Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間里",
+            "en": "Timelapse Lane"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "中西轉車站",
+            "en": "Central - Western Interchange"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (東行)",
+            "en": "Section fare begins here / Near Thousand Leaf Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（仙貝廣場 → 長島碼頭）",
+        "en": "Southbound (Senpai Shopping Centre → *@ Remarks: Buses may be diverted using the carriageway tunnels at the lower deck of the Central - Western Bridge during special arrangements, e.g. under strong wind or traffic accident has occurred on the bridge. Due to the road design, the Central - Western Interchange bus stop will be cancelled when buses have to use the lower deck tunnel of the Bridge.)"
+      },
+      "serviceTime": {
+        "zh": "06:30 – 00:30",
+        "en": "06:30 – 00:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "中西轉車站",
+            "en": "Section fare begins here"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Centre"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際碼頭",
+            "en": "Regional Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "*@ Remarks: Buses may be diverted using the carriageway tunnels at the lower deck of the Central - Western Bridge during special arrangements, e.g. under strong wind or traffic accident has occurred on the bridge. Due to the road design, the Central - Western Interchange bus stop will be cancelled when buses have to use the lower deck tunnel of the Bridge."
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_370"
+}

@@ -1,0 +1,372 @@
+{
+  "id": "N146",
+  "number": "N146",
+  "operators": [
+    "FTCC",
+    "REBC",
+    "FT"
+  ],
+  "category": "night",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "destination": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "via": {
+    "zh": "Hospital Island, Addi City, Dove Hill, Wright, Northern, Central",
+    "en": "Hospital Island, Addi City, Dove Hill, Wright, Northern, Central"
+  },
+  "interval": {
+    "zh": "20 - 30 minutes",
+    "en": "20 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Eastmallow: 29 minutes / To Container's Island: 28 minutes",
+    "en": "To Eastmallow: 29 minutes / To Container's Island: 28 minutes"
+  },
+  "fare": "$15.1",
+  "levelRequired": 74,
+  "length": {
+    "zh": "16.4 km",
+    "en": "16.4 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（貨櫃碼頭島 → 東錦葵海傍路）",
+        "en": "Northbound (Container's Island → Eastmallow Praya Road)"
+      },
+      "serviceTime": {
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "貨櫃碼頭島",
+            "en": "Container's Island"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "白鴿消防局",
+            "en": "Dove Fire Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Timelapse Mall"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Red Wall Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Bird Bridge"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（東錦葵海傍路 → 貨櫃碼頭島）",
+        "en": "Southbound (Eastmallow Praya Road → Container's Island)"
+      },
+      "serviceTime": {
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨 - 陽葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "亞特路",
+            "en": "Arctan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Bird Bridge"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環中心",
+            "en": "Northern Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Timelapse Mall"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "銀行大廈",
+            "en": "Bank Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿消防局",
+            "en": "Dove Fire Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "伊迪城",
+            "en": "Eddie City"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭島",
+            "en": "Container's Island"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N146"
+}

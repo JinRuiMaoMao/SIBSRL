@@ -1,0 +1,21 @@
+{
+  "id": "475A",
+  "number": "475A",
+  "operators": [
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    1
+  ],
+  "origin": {
+    "zh": "",
+    "en": ""
+  },
+  "destination": {
+    "zh": "",
+    "en": ""
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_475A"
+}

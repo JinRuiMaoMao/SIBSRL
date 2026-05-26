@@ -1,0 +1,39 @@
+{
+  "id": "76S",
+  "number": "76S",
+  "operators": [
+    "CSB"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    7
+  ],
+  "origin": {
+    "zh": "Senpai Shopping Center",
+    "en": "Senpai Shopping Center"
+  },
+  "destination": {
+    "zh": "Ambling Peak / 仙貝廣場",
+    "en": "Ambling Peak / 仙貝廣場"
+  },
+  "interval": {
+    "zh": "Depends on ridership",
+    "en": "Depends on ridership"
+  },
+  "journeyTime": {
+    "zh": "To Ambling Peak: 3-5 min  /  To Senpai: 6-8 min",
+    "en": "To Ambling Peak: 3-5 min  /  To Senpai: 6-8 min"
+  },
+  "fare": "$8.1",
+  "levelRequired": 40,
+  "length": {
+    "zh": "2.2 km",
+    "en": "2.2 km"
+  },
+  "serviceTime": {
+    "zh": "08:00 – 19:30, major events only}} / 08:00 – 19:30, major events only",
+    "en": "08:00 – 19:30, major events only}} / 08:00 – 19:30, major events only"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_76S"
+}

@@ -1,0 +1,439 @@
+{
+  "id": "N472",
+  "number": "N472",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "night",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Rainbow Estate Complex",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "Norton Town Center / 彩虹中心",
+    "en": "Norton Town Center / 彩虹中心"
+  },
+  "via": {
+    "zh": "East Door, Senpai, Kamaya, Zone 7 Interchange, Southern, Central",
+    "en": "East Door, Senpai, Kamaya, Zone 7 Interchange, Southern, Central"
+  },
+  "interval": {
+    "zh": "10 - 30 minutes",
+    "en": "10 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "48 minutes",
+    "en": "48 minutes"
+  },
+  "fare": "$16.1",
+  "levelRequired": 60,
+  "length": {
+    "zh": "往北顿市中心 18.3 km / 往彩虹中心 19.1 km",
+    "en": "To Norton Town Center 18.3 km / To Rainbow Estate Complex 19.1 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（彩虹中心 → 北頓市中心）",
+        "en": "Northbound (Rainbow Estate Complex → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "00:00 – 05:30",
+        "en": "00:00 – 05:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Port Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Axis Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "黑白中心",
+            "en": "Grayscale Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際塔",
+            "en": "Axis Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Circuit"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Axis Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (西行)",
+            "en": "Axis Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "陽光鐵路站",
+            "en": "Sunshine Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中日街",
+            "en": "Beta Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Alpha Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Verzion Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "薄荷大廈",
+            "en": "Brown Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓碼頭",
+            "en": "Norton Ferry Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Hill Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → 彩虹中心總站）",
+        "en": "Southbound (Norton Town Center → Rainbow Estate Complex)"
+      },
+      "serviceTime": {
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Hill Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "綠寶石中心",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "North Island Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Middle Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Verzion Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Alpha Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "The One",
+            "en": "The One"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環中心",
+            "en": "Sunshine Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光鐵路站",
+            "en": "Sunshine Road Passage"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (東行)",
+            "en": "Section fare begins here / Near Thousand Leaf Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Circuit"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際塔",
+            "en": "Axis Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝紀念碑花園",
+            "en": "The Stone of Memory"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Axis Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Port Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心總站",
+            "en": "Rainbow Estate Complex"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N472"
+}

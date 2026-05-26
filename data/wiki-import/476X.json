@@ -1,0 +1,44 @@
+{
+  "id": "476X",
+  "number": "476X",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "inter",
+  "pattern": "oneway",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Eastmallow Praya Road",
+    "en": "Eastmallow Praya Road"
+  },
+  "destination": {
+    "zh": "Rainbow Estate Complex / 東錦葵海傍路",
+    "en": "Rainbow Estate Complex / 東錦葵海傍路"
+  },
+  "via": {
+    "zh": "Central, Leafy Bay Estate, Normal Gap",
+    "en": "Central, Leafy Bay Estate, Normal Gap"
+  },
+  "interval": {
+    "zh": "5 - 7 min",
+    "en": "5 - 7 min"
+  },
+  "journeyTime": {
+    "zh": "33 mins",
+    "en": "33 mins"
+  },
+  "fare": "$12.1",
+  "length": {
+    "zh": "13.9 km",
+    "en": "13.9 km"
+  },
+  "serviceTime": {
+    "zh": "Mon – Fri: 17:30 – 19:00",
+    "en": "Mon – Fri: 17:30 – 19:00"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476X"
+}

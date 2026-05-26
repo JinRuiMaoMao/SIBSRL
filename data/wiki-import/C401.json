@@ -1,0 +1,214 @@
+{
+  "id": "C401",
+  "number": "C401",
+  "operators": [
+    "CSB"
+  ],
+  "category": "night",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "CSB Depot",
+    "en": "CSB Depot"
+  },
+  "destination": {
+    "zh": "Norton Town Center / 際巴車廠",
+    "en": "Norton Town Center / 際巴車廠"
+  },
+  "via": {
+    "zh": "Southern, Eastmallow, Sunshine University, North Island Estate",
+    "en": "Southern, Eastmallow, Sunshine University, North Island Estate"
+  },
+  "interval": {
+    "zh": "Fixed departure",
+    "en": "Fixed departure"
+  },
+  "journeyTime": {
+    "zh": "To Norton: 13 - 14 mins / To CSB Depot: 13 mins",
+    "en": "To Norton: 13 - 14 mins / To CSB Depot: 13 mins"
+  },
+  "length": {
+    "zh": "13.6 km",
+    "en": "13.6 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（際巴車廠 → 北頓市中心）",
+        "en": "Northbound (CSB Depot → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "01:45, 02:30",
+        "en": "01:45, 02:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣海旁路",
+            "en": "Praya YiYan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Bus Terminus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨陽葵樓",
+            "en": "Eastmallow Estate - Sunny House"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → C401}} *[https://roblox.fandom.com/zh/wiki/%E9%9A%9B%E5%B7%B4C401%E7%B7%9A Roblox大典：際巴C401線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 4 Bus Routes Category:Inter-zone routes Category:Crew Bus Routes Category:Overnight Bus Routes）",
+        "en": "Southbound (Norton Town Center → C401A}}, 140/140P (if counting FT and FTCC as the same company) F701, F702, S1 and S2. *Forever Transit and REBC buses have external LED display data for this route, while the external LED displays on CSB buses will show \"Crew Bus\" and the route number. The route number was not initially displayed on CSB vehicles. However, CSB's Scania K360IB has LED display data that shows the route number and destination (as it was programmed like FT and REBC's vehicles). **The initial \"Crew Bus\" exposure (with no number) can only be accessed in Free Drive. ==Link== *{{Ref-SI)"
+      },
+      "serviceTime": {
+        "zh": "03:45, 04:15}}",
+        "en": "03:45, 04:15}}"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵海旁路",
+            "en": "Eastmallow Praya Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Bus Terminus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "鑽石交易塔",
+            "en": "Diamond Trading Tower"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "C401}} *[https://roblox.fandom.com/zh/wiki/%E9%9A%9B%E5%B7%B4C401%E7%B7%9A Roblox大典：際巴C401線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 4 Bus Routes Category:Inter-zone routes Category:Crew Bus Routes Category:Overnight Bus Routes",
+            "en": "C401A}}, 140/140P (if counting FT and FTCC as the same company) F701, F702, S1 and S2. *Forever Transit and REBC buses have external LED display data for this route, while the external LED displays on CSB buses will show \"Crew Bus\" and the route number. The route number was not initially displayed on CSB vehicles. However, CSB's Scania K360IB has LED display data that shows the route number and destination (as it was programmed like FT and REBC's vehicles). **The initial \"Crew Bus\" exposure (with no number) can only be accessed in Free Drive. ==Link== *{{Ref-SI"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_C401"
+}

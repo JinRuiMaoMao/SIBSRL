@@ -1,0 +1,117 @@
+{
+  "id": "475P",
+  "number": "475P",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    4,
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Haisey Estate",
+    "en": "Haisey Estate"
+  },
+  "destination": {
+    "zh": "Sun Central Street / 海西邨",
+    "en": "Sun Central Street / 海西邨"
+  },
+  "via": {
+    "zh": "East Door, Zone 7 Interchange, Southern",
+    "en": "East Door, Zone 7 Interchange, Southern"
+  },
+  "interval": {
+    "zh": "5 - 8 minutes",
+    "en": "5 - 8 minutes"
+  },
+  "journeyTime": {
+    "zh": "28 minutes",
+    "en": "28 minutes"
+  },
+  "fare": "$14.8",
+  "length": {
+    "zh": "11.4 km",
+    "en": "11.4 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（海西邨 → 中環(中日街)）",
+        "en": "Direction 1 (Haisey Estate → Beta Road)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri: 07:10 – 09:00",
+        "en": "Mon – Fri: 07:10 – 09:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "海西邨",
+            "en": "Haisey Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Forth Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Port Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "Tuna Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "East Door Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (西行)",
+            "en": "Axis Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環(中日街)",
+            "en": "Beta Road"
+          },
+          "zone": 4
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_475P"
+}

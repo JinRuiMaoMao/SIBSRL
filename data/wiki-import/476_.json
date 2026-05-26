@@ -1,0 +1,45 @@
+{
+  "id": "476#",
+  "number": "476#",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "special",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Rainbow Estate Complex",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "Eastmallow Praya Road / 彩虹中心",
+    "en": "Eastmallow Praya Road / 彩虹中心"
+  },
+  "via": {
+    "zh": "East Door, Normal Gap, Ambling Peak (Special departures only), Leafy Bay Estate, Leafy University, Sunshine Station, Southern, Central",
+    "en": "East Door, Normal Gap, Ambling Peak (Special departures only), Leafy Bay Estate, Leafy University, Sunshine Station, Southern, Central"
+  },
+  "interval": {
+    "zh": "3 - 15 min (include special departures) /  4 - 15 min (main line only)",
+    "en": "3 - 15 min (include special departures) /  4 - 15 min (main line only)"
+  },
+  "journeyTime": {
+    "zh": "Main Line (To Eastmallow): 23 - 36 min / Main Line (To Rainbow): 22 - 38 min / 476*: 34 - 35 min / 476#: 32 - 38 min / 476#*: 39 min / 476%: 31 - 36 min",
+    "en": "Main Line (To Eastmallow): 23 - 36 min / Main Line (To Rainbow): 22 - 38 min / 476*: 34 - 35 min / 476#: 32 - 38 min / 476#*: 39 min / 476%: 31 - 36 min"
+  },
+  "fare": "$12.1",
+  "levelRequired": 56,
+  "length": {
+    "zh": "往东锦葵海傍路 15.6 km / 往彩虹中心 16.8 km",
+    "en": "To Eastmallow Praya Road 15.6 km / To Rainbow Estate Complex 16.8 km"
+  },
+  "serviceTime": {
+    "zh": "05:30 – 00:10 / 05:55 – 23:55",
+    "en": "05:30 – 00:10 / 05:55 – 23:55"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476%23"
+}

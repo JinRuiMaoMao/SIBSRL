@@ -1,0 +1,46 @@
+{
+  "id": "171R",
+  "number": "171R",
+  "operators": [
+    "FT",
+    "CSB",
+    "FTCC"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    1,
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Sunshine Stadium",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "Praya YiYan Road / 陽光體育館",
+    "en": "Praya YiYan Road / 陽光體育館"
+  },
+  "via": {
+    "zh": "Northern Interchange, Central, Zone 7 Interchange, Alexander, Normal Gap, Leafy Bay Estate, YiYan",
+    "en": "Northern Interchange, Central, Zone 7 Interchange, Alexander, Normal Gap, Leafy Bay Estate, YiYan"
+  },
+  "interval": {
+    "zh": "Refer to the information in the \"Timetable\" section",
+    "en": "Refer to the information in the \"Timetable\" section"
+  },
+  "journeyTime": {
+    "zh": "25 minutes",
+    "en": "25 minutes"
+  },
+  "fare": "$27.3",
+  "length": {
+    "zh": "21.1 km",
+    "en": "21.1 km"
+  },
+  "serviceTime": {
+    "zh": "Refer to the information in the \"Timetable\" section / <! –  – 24 hours –  – >",
+    "en": "Refer to the information in the \"Timetable\" section / <! –  – 24 hours –  – >"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_171R"
+}

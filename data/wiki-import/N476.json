@@ -1,0 +1,44 @@
+{
+  "id": "N476",
+  "number": "N476",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "night",
+  "pattern": "oneway",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Norton Town Center",
+    "en": "Norton Town Center"
+  },
+  "destination": {
+    "zh": "Rainbow Estate Complex / 北頓市中心",
+    "en": "Rainbow Estate Complex / 北頓市中心"
+  },
+  "via": {
+    "zh": "North Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Leafy Bay Estate, Normal Gap, East Door",
+    "en": "North Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Leafy Bay Estate, Normal Gap, East Door"
+  },
+  "interval": {
+    "zh": "15 - 30 min",
+    "en": "15 - 30 min"
+  },
+  "journeyTime": {
+    "zh": "55 mins",
+    "en": "55 mins"
+  },
+  "fare": "$16.1",
+  "length": {
+    "zh": "20.2 km",
+    "en": "20.2 km"
+  },
+  "serviceTime": {
+    "zh": "00:00 – 02:30",
+    "en": "00:00 – 02:30"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N476"
+}

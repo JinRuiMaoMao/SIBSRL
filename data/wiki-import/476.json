@@ -1,0 +1,475 @@
+{
+  "id": "476",
+  "number": "476",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "东锦葵海傍路",
+    "en": "Eastmallow Praya Road"
+  },
+  "via": {
+    "zh": "East Door, Normal Gap, Ambling Peak (Special departures only), Leafy Bay Estate, Leafy University, Sunshine Station, Southern, Central",
+    "en": "East Door, Normal Gap, Ambling Peak (Special departures only), Leafy Bay Estate, Leafy University, Sunshine Station, Southern, Central"
+  },
+  "interval": {
+    "zh": "3 - 15 min (include special departures) /  4 - 15 min (main line only)",
+    "en": "3 - 15 min (include special departures) /  4 - 15 min (main line only)"
+  },
+  "journeyTime": {
+    "zh": "Main Line (To Eastmallow): 23 - 36 min / Main Line (To Rainbow): 22 - 38 min / 476*: 34 - 35 min / 476#: 32 - 38 min / 476#*: 39 min / 476%: 31 - 36 min",
+    "en": "Main Line (To Eastmallow): 23 - 36 min / Main Line (To Rainbow): 22 - 38 min / 476*: 34 - 35 min / 476#: 32 - 38 min / 476#*: 39 min / 476%: 31 - 36 min"
+  },
+  "fare": "$12.1",
+  "levelRequired": 56,
+  "length": {
+    "zh": "往东锦葵海傍路 15.6 km / 往彩虹中心 16.8 km",
+    "en": "To Eastmallow Praya Road 15.6 km / To Rainbow Estate Complex 16.8 km"
+  },
+  "serviceTime": {
+    "zh": "05:30 – 00:10 / 05:55 – 23:55",
+    "en": "05:30 – 00:10 / 05:55 – 23:55"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476",
+  "stops": [
+    {
+      "directionKey": "E",
+      "direction": {
+        "zh": "东行（彩虹中心 → 东锦葵海傍路）",
+        "en": "Eastbound (Rainbow Estate Complex → Eastmallow Praya Road)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 00:10",
+        "en": "05:30 – 00:10"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Port Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "东门公园",
+            "en": "East Door Park"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫商场",
+            "en": "Mo Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "罗力素花园二期",
+            "en": "Laws Garden 2"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣径",
+            "en": "Leafy Walking Trail"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝山",
+            "en": "Senpai Hill"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "亚历山大教堂",
+            "en": "Alexander Church"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝多层停车场",
+            "en": "Senpai Multi-Storey Carpark"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "亚历山大花园",
+            "en": "Alexander Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣警察局",
+            "en": "Leafy Police Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶角大学",
+            "en": "Leafy University"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "第七区转车站 (西行)",
+            "en": "Zone 7 Interchange (Westbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光鐵路站",
+            "en": "Sunshine Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中日街",
+            "en": "Beta Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Alpha Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Verzion Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "薄荷大廈",
+            "en": "Brown Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵邨－阳葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "阳光大学",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          },
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "directionKey": "W",
+      "direction": {
+        "zh": "西行（东锦葵海傍路 → 彩虹中心）",
+        "en": "Westbound (Eastmallow Praya Road → Rainbow Estate Complex)"
+      },
+      "serviceTime": {
+        "zh": "05:55 – 23:55",
+        "en": "05:55 – 23:55"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "东锦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "阳光大学",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵邨－阳葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "薄荷大廈",
+            "en": "Brown Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Verzion Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Alpha Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中日街",
+            "en": "Beta Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光鐵路站",
+            "en": "Sunshine Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七区转车站 (西行)",
+            "en": "Zone 7 Interchange (Westbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "叶角大学",
+            "en": "Leafy University"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣警察局",
+            "en": "Leafy Police Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "亚历山大花园",
+            "en": "Alexander Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝多层停车场",
+            "en": "Senpai Multi-Storey Carpark"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "亚历山大教堂",
+            "en": "Alexander Church"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝山",
+            "en": "Senpai Hill"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣径",
+            "en": "Leafy Walking Trail"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "罗力素花园二期",
+            "en": "Laws Garden 2"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫商场",
+            "en": "Mo Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "东门公园",
+            "en": "East Door Park"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Port Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        }
+      ]
+    }
+  ]
+}

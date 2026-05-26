@@ -1,0 +1,331 @@
+{
+  "id": "475",
+  "number": "475",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Senpai Shopping Centre",
+    "en": "Senpai Shopping Centre"
+  },
+  "destination": {
+    "zh": "Norton Town Center / 仙貝廣場",
+    "en": "Norton Town Center / 仙貝廣場"
+  },
+  "via": {
+    "zh": "East Door, Rainbow Estate, Zone 7 Interchange, Eastmallow, Sunshine University and North Island Estate",
+    "en": "East Door, Rainbow Estate, Zone 7 Interchange, Eastmallow, Sunshine University and North Island Estate"
+  },
+  "interval": {
+    "zh": "3 - 20 minutes",
+    "en": "3 - 20 minutes"
+  },
+  "journeyTime": {
+    "zh": "38 minutes",
+    "en": "38 minutes"
+  },
+  "fare": "$12.1",
+  "levelRequired": 15,
+  "length": {
+    "zh": "22 km",
+    "en": "22 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（仙貝 → 北頓市中心）",
+        "en": "Northbound (Senpai → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "Weekdays: 0530 – 0720#, 0830 – 0000 / Weekends: 0540 – 2300 / 0608 – 0038",
+        "en": "Weekdays: 0530 – 0720#, 0830 – 0000 / Weekends: 0540 – 2300 / 0608 – 0038"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西迴旋處",
+            "en": "Haisey Roundabout"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨 - 陽葵屋",
+            "en": "Section fare begins here"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → 仙貝廣場）",
+        "en": "Southbound (Norton Town Center → 475}}  Category:CSB Bus Routes Category:HZSI Bus Routes Category:Inter-zone routes Category:Zone 4 Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Daytime Bus Routes)"
+      },
+      "serviceTime": {
+        "zh": "0608 – 0038",
+        "en": "0608 – 0038"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "綠寶石中心",
+            "en": "Emerald Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "LMK Eastmallow is located here.<ref>Players can get food here</ref><ref>They can also change Route [https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_46 46] and [https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_47 47] there.</ref>"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (東行)",
+            "en": "Special Departure starts service here / Section fare begins here / Near Thousand Leaf Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "海西迴旋處",
+            "en": "Section fare begins here"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "475}}  Category:CSB Bus Routes Category:HZSI Bus Routes Category:Inter-zone routes Category:Zone 4 Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Daytime Bus Routes"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_475"
+}

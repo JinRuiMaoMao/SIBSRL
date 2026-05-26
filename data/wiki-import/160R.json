@@ -1,0 +1,47 @@
+{
+  "id": "160R",
+  "number": "160R",
+  "operators": [
+    "HZ",
+    "FTCC",
+    "FT"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    1,
+    4,
+    6,
+    7
+  ],
+  "origin": {
+    "zh": "Sunshine Stadium",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "Zone 7 Interchange / 陽光體育館",
+    "en": "Zone 7 Interchange / 陽光體育館"
+  },
+  "via": {
+    "zh": "Western Harbour Tunnel Interchange, Norton, North Island Estate, Sunshine University, Eastmallow",
+    "en": "Western Harbour Tunnel Interchange, Norton, North Island Estate, Sunshine University, Eastmallow"
+  },
+  "interval": {
+    "zh": "Refer to the information in the \"Timetable\" section",
+    "en": "Refer to the information in the \"Timetable\" section"
+  },
+  "journeyTime": {
+    "zh": "16 minutes",
+    "en": "16 minutes"
+  },
+  "fare": "$27.3",
+  "length": {
+    "zh": "15.8 km",
+    "en": "15.8 km"
+  },
+  "serviceTime": {
+    "zh": "Refer to the information in the \"Timetable\" section / <! –  – 24 hours –  – >",
+    "en": "Refer to the information in the \"Timetable\" section / <! –  – 24 hours –  – >"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_160R"
+}
