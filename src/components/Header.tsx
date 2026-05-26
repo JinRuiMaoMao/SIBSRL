@@ -8,7 +8,6 @@ const LINK_LABEL_KEYS: Record<string, MessageKey> = {
   'https://www.roblox.com/games/1588965415': 'linkOfficialGame',
   'https://sites.google.com/view/sunshine-islands/home': 'linkCommunitySite',
   'https://sunshine-islands-roblox.fandom.com/wiki/Roblox_Sunshine_Islands': 'linkWiki',
-  'https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_numbering': 'linkRouteNumbering',
 }
 
 const TAB_KEYS: Record<AppTab, MessageKey> = {

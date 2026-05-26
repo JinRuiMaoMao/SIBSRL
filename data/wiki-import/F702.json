@@ -1,318 +1,90 @@
 {
   "id": "F702",
   "number": "F702",
-  "operators": [
-    "FT",
-    "FTCC"
-  ],
+  "operators": ["FT", "FTCC"],
   "category": "inner",
   "pattern": "bidirectional",
-  "zones": [
-    1,
-    4,
-    7,
-    8
-  ],
-  "origin": {
-    "zh": "FT Shallow Valley Depot",
-    "en": "FT Shallow Valley Depot"
-  },
-  "destination": {
-    "zh": "Haisey Estate / 永巴四露谷車廠",
-    "en": "Haisey Estate / 永巴四露谷車廠"
-  },
+  "zones": [1, 4, 7, 8],
+  "origin": { "zh": "海西邨", "en": "Haisey Estate" },
+  "destination": { "zh": "浅水湾车厂", "en": "FT Shallow Valley Depot" },
   "via": {
-    "zh": "Central, Zone 7 Interchange, Senpai, East Door, Rainbow",
-    "en": "Central, Zone 7 Interchange, Senpai, East Door, Rainbow"
+    "zh": "彩虹、东门、仙贝、第七区转车站、中环",
+    "en": "Rainbow, East Door, Senpai, Zone 7 Interchange, Central"
   },
-  "interval": {
-    "zh": "Fixed departure",
-    "en": "Fixed departure"
-  },
+  "interval": { "zh": "固定班次", "en": "Fixed departures" },
   "journeyTime": {
-    "zh": "Towards Haisey: 21 mins / Towards Shallow Valley Depot: 23 mins",
-    "en": "Towards Haisey: 21 mins / Towards Shallow Valley Depot: 23 mins"
+    "zh": "往海西邨约 21 分钟 / 往浅水湾车厂约 23 分钟",
+    "en": "To Haisey Estate: 21 mins / To Shallow Valley Depot: 23 mins"
   },
-  "length": {
-    "zh": "19.5 km",
-    "en": "19.5 km"
+  "length": { "zh": "19.5 km", "en": "19.5 km" },
+  "notes": {
+    "zh": "永巴员工接驳线；仅固定时刻开出，非固定间隔。",
+    "en": "FT crew shuttle; departs only at listed times, not on a headway."
   },
   "stops": [
     {
       "directionKey": "N",
       "direction": {
-        "zh": "北行（海西邨 → 永巴四露谷車廠）",
+        "zh": "北行（海西邨 → 浅水湾车厂）",
         "en": "Northbound (Haisey Estate → FT Shallow Valley Depot)"
       },
       "serviceTime": {
-        "zh": "04:00, 04:45, 05:30}}FT Crew Bus Route F702 is operated by FT, travelling between FT Shallow Valley Depot and Haisey Estate, via Central, Zone 7 Interchange, Senpai, East Door and Rainbow. This route serves employees of Forever Transit who live in Central and Northern Part of Zone 7 that start/end their shifts outside of regular bus route hours, allowing them to commute to/from work.",
-        "en": "04:00, 04:45, 05:30}}FT Crew Bus Route F702 is operated by FT, travelling between FT Shallow Valley Depot and Haisey Estate, via Central, Zone 7 Interchange, Senpai, East Door and Rainbow. This route serves employees of Forever Transit who live in Central and Northern Part of Zone 7 that start/end their shifts outside of regular bus route hours, allowing them to commute to/from work."
+        "zh": "由海西邨开出：04:00、04:45、05:30",
+        "en": "From Haisey Estate: 04:00, 04:45, 05:30"
       },
       "list": [
-        {
-          "name": {
-            "zh": "海西邨",
-            "en": "Haisey Estate"
-          },
-          "zone": 8
-        },
-        {
-          "name": {
-            "zh": "彩虹中心",
-            "en": "Rainbow Estate Complex"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "彩虹邨",
-            "en": "Rainbow Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "紅豆商場",
-            "en": "Redbean Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門邨",
-            "en": "East Door Estate"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "東門下邨",
-            "en": "Lower East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門花園",
-            "en": "East Door Garden"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門總站",
-            "en": "East Door Bus Terminus"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝",
-            "en": "Senpai"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "仙貝廣場",
-            "en": "Senpai Shopping Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝圖書館",
-            "en": "Senpai Library"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝酒店",
-            "en": "Senpai Hotel"
-          }
-        },
-        {
-          "name": {
-            "zh": "黑白中心",
-            "en": "Grayscale Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "鎌塔運動場",
-            "en": "Kamaya Sports Field"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "鎌塔花園",
-            "en": "Kamaya Garden"
-          }
-        },
-        {
-          "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "第七區轉車站 (西行)"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "中環南路",
-            "en": "Southern Central Road"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "雀鳥橋",
-            "en": "Bird Bridge"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "永巴四露谷車廠",
-            "en": "FT Shallow Valley Depot"
-          },
-          "zone": 1
-        }
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" }, "zone": 8 },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" }, "zone": 7 },
+        { "name": { "zh": "彩虹邨", "en": "Rainbow Estate" } },
+        { "name": { "zh": "红豆商场", "en": "Redbean Center" } },
+        { "name": { "zh": "东门邨", "en": "East Door Estate" }, "zone": 7 },
+        { "name": { "zh": "东门下邨", "en": "Lower East Door Estate" } },
+        { "name": { "zh": "东门花园", "en": "East Door Garden" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "仙贝", "en": "Senpai" }, "zone": 7 },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "仙贝图书馆", "en": "Senpai Library" } },
+        { "name": { "zh": "仙贝酒店", "en": "Senpai Hotel" } },
+        { "name": { "zh": "黑白中心", "en": "Grayscale Center" } },
+        { "name": { "zh": "镰塔运动场", "en": "Kamaya Sports Field" }, "zone": 7 },
+        { "name": { "zh": "镰塔花园", "en": "Kamaya Garden" } },
+        { "name": { "zh": "第七区转车站 (西行)", "en": "Zone 7 Interchange (westbound)" }, "zone": 7 },
+        { "name": { "zh": "中环南路", "en": "Southern Central Road" }, "zone": 4 },
+        { "name": { "zh": "雀鸟桥", "en": "Bird Bridge" }, "zone": 4 },
+        { "name": { "zh": "浅水湾车厂", "en": "FT Shallow Valley Depot" }, "zone": 1 }
       ]
     },
     {
       "directionKey": "S",
       "direction": {
-        "zh": "南行（永巴四露谷車廠 → F702}} *[https://roblox.fandom.com/zh/wiki/%E6%B0%B8%E5%B7%B4F702%E7%B7%9A Roblox大典：永巴F702線（只有中文版）]  Category:Zone 8 Bus Routes Category:Zone 7 Bus Routes Category:Zone 4 Bus Routes Category:Zone 1 Bus Routes Category:Inter-zone routes Category:Crew Bus Routes Category:Overnight Bus Routes Category:FT Bus Routes）",
-        "en": "Southbound (FT Shallow Valley Depot → C401A}}, 140/140P (if counting FT and FTCC as the same company) F701, S1 and S2. ==Link== *{{Ref-SI)"
+        "zh": "南行（浅水湾车厂 → 海西邨）",
+        "en": "Southbound (FT Shallow Valley Depot → Haisey Estate)"
       },
       "serviceTime": {
-        "zh": "01:00, 01:45, 02:30, 04:30, 05:00",
-        "en": "01:00, 01:45, 02:30, 04:30, 05:00"
+        "zh": "由浅水湾车厂开出：01:00、01:45、02:30、04:30、05:00",
+        "en": "From Shallow Valley Depot: 01:00, 01:45, 02:30, 04:30, 05:00"
       },
       "list": [
-        {
-          "name": {
-            "zh": "永巴四露谷車廠",
-            "en": "FT Shallow Valley Depot"
-          },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "雀鳥橋",
-            "en": "Bird Bridge"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "中環南總站",
-            "en": "Southern Central Bus Terminus"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Axis Road"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "鎌塔花園",
-            "en": "Kamaya Garden"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "鎌塔運動場",
-            "en": "Kamaya Sports Field"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝紀念碑花園",
-            "en": "The Stone of Memory"
-          }
-        },
-        {
-          "name": {
-            "zh": "紅石樓",
-            "en": "Redstone House"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝酒店",
-            "en": "Senpai Hotel"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝圖書館",
-            "en": "Senpai Library"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝廣場",
-            "en": "Senpai Shopping Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝",
-            "en": "Senpai BRT Station"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門總站",
-            "en": "East Door Bus Terminus"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "東門花園",
-            "en": "East Door Garden"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門下邨",
-            "en": "Lower East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門邨",
-            "en": "East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "紅豆商場",
-            "en": "Redbean Center"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "彩虹邨",
-            "en": "Rainbow Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "彩虹中心總站",
-            "en": "Rainbow Estate Complex"
-          }
-        },
-        {
-          "name": {
-            "zh": "F702}} *[https://roblox.fandom.com/zh/wiki/%E6%B0%B8%E5%B7%B4F702%E7%B7%9A Roblox大典：永巴F702線（只有中文版）]  Category:Zone 8 Bus Routes Category:Zone 7 Bus Routes Category:Zone 4 Bus Routes Category:Zone 1 Bus Routes Category:Inter-zone routes Category:Crew Bus Routes Category:Overnight Bus Routes Category:FT Bus Routes",
-            "en": "C401A}}, 140/140P (if counting FT and FTCC as the same company) F701, S1 and S2. ==Link== *{{Ref-SI"
-          },
-          "zone": 8
-        }
+        { "name": { "zh": "浅水湾车厂", "en": "FT Shallow Valley Depot" }, "zone": 1 },
+        { "name": { "zh": "雀鸟桥", "en": "Bird Bridge" }, "zone": 4 },
+        { "name": { "zh": "中环南总站", "en": "Southern Central Bus Terminus" }, "zone": 4 },
+        { "name": { "zh": "第七区转车站 (东行)", "en": "Zone 7 Interchange (eastbound)" }, "zone": 7 },
+        { "name": { "zh": "镰塔花园", "en": "Kamaya Garden" }, "zone": 7 },
+        { "name": { "zh": "镰塔运动场", "en": "Kamaya Sports Field" } },
+        { "name": { "zh": "仙贝纪念碑花园", "en": "The Stone of Memory" } },
+        { "name": { "zh": "红石楼", "en": "Redstone House" } },
+        { "name": { "zh": "仙贝酒店", "en": "Senpai Hotel" } },
+        { "name": { "zh": "仙贝图书馆", "en": "Senpai Library" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "仙贝", "en": "Senpai BRT Station" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" }, "zone": 7 },
+        { "name": { "zh": "东门花园", "en": "East Door Garden" } },
+        { "name": { "zh": "东门下邨", "en": "Lower East Door Estate" } },
+        { "name": { "zh": "东门邨", "en": "East Door Estate" } },
+        { "name": { "zh": "红豆商场", "en": "Redbean Center" }, "zone": 7 },
+        { "name": { "zh": "彩虹邨", "en": "Rainbow Estate" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" }, "zone": 8 }
       ]
     }
   ],

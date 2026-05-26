@@ -1,11 +1,11 @@
 import { getOptionalText, getPrimaryText } from '../i18n/displayText'
-import { extractKmDisplay } from './routeDisplay'
-import { buildDirectionLengthKmMap } from './routeLength'
+import { pickKmForDirection, resolveLengthKmForDataIndex, splitLengthSegments } from './routeLength'
+import { resolveServiceTimeForDataIndex } from './routeSchedule'
 import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import { isChineseLocale } from '../i18n/types'
 import type { BilingualText, BusRoute } from '../types/route'
-import { formatRouteEndpoints } from './routeDisplay'
+import { formatRouteEndpoints, formatStopsEndpoints } from './routeDisplay'
 
 /** Toggle order: north before south, west before east. */
 const DIRECTION_SORT_ORDER: Record<string, number> = {
@@ -67,6 +67,10 @@ export function getDirectionKey(route: BusRoute, dataIndex: number): string | nu
   return group.directionKey ?? inferDirectionKey(group.direction)
 }
 
+const ZH_DIRECTION_HEAD =
+  /^(北行|南行|东行|西行|环线|循环|循环方向|方向\d+)/
+
+/** 方向切换按钮：仅显示「北行/南行」等，不显示起终点全文 */
 export function getDirectionShortLabel(
   route: BusRoute,
   sortedIndex: number,
@@ -81,15 +85,34 @@ export function getDirectionShortLabel(
   }
   const group = route.stops?.[dataIndex]
   if (!group) return String(sortedIndex + 1)
+
   if (isChineseLocale(locale)) {
-    const match = group.direction.zh.match(/^([^（(]+)/)
-    return match?.[1]?.trim() ?? group.direction.zh
+    const head = group.direction.zh.match(ZH_DIRECTION_HEAD)?.[1]
+    if (head) {
+      if (head === '环线' || head.startsWith('循环')) return t('serviceTypeLoop')
+      if (head.startsWith('方向')) return head
+      return head
+    }
+    if (/→|↔/.test(group.direction.zh)) {
+      return key && DIRECTION_MESSAGE_KEYS[key]
+        ? t(DIRECTION_MESSAGE_KEYS[key])
+        : String(sortedIndex + 1)
+    }
+    const short = group.direction.zh.match(/^([^（(→↔]+)/)?.[1]?.trim()
+    if (short && short.length <= 8) return short
+    return String(sortedIndex + 1)
   }
+
   const en = group.direction.en
-  if (/southbound/i.test(en)) return 'S'
-  if (/northbound/i.test(en)) return 'N'
-  if (/eastbound/i.test(en)) return 'E'
-  if (/westbound/i.test(en)) return 'W'
+  if (/southbound/i.test(en)) return t('directionSouth')
+  if (/northbound/i.test(en)) return t('directionNorth')
+  if (/eastbound/i.test(en)) return t('directionEast')
+  if (/westbound/i.test(en)) return t('directionWest')
+  if (/→|↔/.test(en)) {
+    return key && DIRECTION_MESSAGE_KEYS[key]
+      ? t(DIRECTION_MESSAGE_KEYS[key])
+      : String(sortedIndex + 1)
+  }
   return key ?? String(sortedIndex + 1)
 }
 
@@ -101,9 +124,7 @@ export function formatDirectionEndpoints(
   const dataIndex = getDirectionDataIndex(route, sortedIndex)
   const group = route.stops?.[dataIndex]
   if (!group?.list.length) return formatRouteEndpoints(route, locale)
-  const first = getPrimaryText(group.list[0].name, locale)
-  const last = getPrimaryText(group.list[group.list.length - 1].name, locale)
-  return `${first} → ${last}`
+  return formatStopsEndpoints(route, group, locale)
 }
 
 export function getDirectionEndpointNames(
@@ -120,24 +141,26 @@ export function getDirectionEndpointNames(
   }
 }
 
-/** Service hours for the active direction only (from `stops[].serviceTime`). */
+/** Service hours for the active direction only (from `stops[].serviceTime` or route-level split). */
 export function getDirectionServiceTime(
   route: BusRoute,
   sortedIndex: number,
   locale: Locale,
 ): string | null {
-  if (routeHasDirectionVariants(route)) {
-    const dataIndex = getDirectionDataIndex(route, sortedIndex)
-    const group = route.stops?.[dataIndex]
-    if (group?.serviceTime) return getPrimaryText(group.serviceTime, locale)
-    return null
-  }
-  if (!route.serviceTime) return null
-  return getPrimaryText(route.serviceTime, locale)
+  const dataIndex = routeHasDirectionVariants(route)
+    ? getDirectionDataIndex(route, sortedIndex)
+    : 0
+  return resolveServiceTimeForDataIndex(route, dataIndex, locale)
+}
+
+export function getSortedDirectionCount(route: BusRoute): number {
+  const sorted = getSortedDirectionDataIndices(route)
+  if (sorted.length > 0) return sorted.length
+  return route.stops?.length ? 1 : 0
 }
 
 export function clampDirectionIndex(route: BusRoute, sortedIndex: number): number {
-  const count = getRouteDirectionCount(route)
+  const count = getSortedDirectionCount(route)
   if (count <= 1) return 0
   return Math.max(0, Math.min(sortedIndex, count - 1))
 }
@@ -149,10 +172,13 @@ export function getDirectionLengthKm(
   locale: Locale,
 ): string | null {
   const dataIndex = getDirectionDataIndex(route, sortedIndex)
-  const map = buildDirectionLengthKmMap(route, locale)
-  if (map.has(dataIndex)) return map.get(dataIndex)!
-
   const routeLength = getOptionalText(route.length, locale)
-  if (!routeLength) return null
-  return extractKmDisplay(routeLength)
+  if (routeLength && routeHasDirectionVariants(route)) {
+    const segments = splitLengthSegments(routeLength)
+    if (segments.length > 1) {
+      const km = pickKmForDirection(routeLength, route, dataIndex, locale)
+      if (km) return km
+    }
+  }
+  return resolveLengthKmForDataIndex(route, dataIndex, locale)
 }

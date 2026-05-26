@@ -2,6 +2,7 @@ import type { BusRoute } from '../types/route'
 import { applyRouteServiceTypes } from './routeServiceTypes'
 import { enrichRouteDirectionLengths } from '../utils/routeLength'
 import { normalizeRouteData } from '../utils/normalizeRouteData'
+import { enrichDirectionServiceTimes } from '../utils/routeSchedule'
 import { routesSibsTypes } from './routesSibsTypes'
 import { routesStubs } from './routesStubs'
 import { compareRouteNumber } from '../utils/routeSort'
@@ -1446,13 +1447,14 @@ const routesData: BusRoute[] = [
     fare: '$6.3',
     levelRequired: 72,
     length: { zh: '8.5 km', en: '8.5 km' },
+    serviceTime: { zh: '周一至五 07:20 – 07:50', en: 'Mon–Fri 07:20 – 07:50' },
     stops: [
       {
         direction: {
           zh: '单程（海西邨 → 东厂）',
           en: 'One-way (Haisey Estate → East Factory)',
         },
-        serviceTime: { zh: '平日 07:20 – 07:50', en: 'Mon–Fri 07:20 – 07:50' },
+        serviceTime: { zh: '周一至五 07:20 – 07:50', en: 'Mon–Fri 07:20 – 07:50' },
         list: [
           { name: { zh: '海西邨总站', en: 'Haisey Estate Bus Terminus' }, zone: 8 },
           { name: { zh: '海西角', en: 'Haisey Point' }, zone: 8 },
@@ -1597,6 +1599,10 @@ const routesData: BusRoute[] = [
     fare: '$6.3',
     levelRequired: 87,
     length: { zh: '9.5 km', en: '9.5 km' },
+    serviceTime: {
+      zh: '周一至五 07:30 – 18:30（每小时半点）/ 周末 07:30 – 18:30',
+      en: 'Mon–Fri 07:30 – 18:30 (at :30) / Weekends 07:30 – 18:30',
+    },
     stops: [
       {
         direction: {
@@ -1604,7 +1610,7 @@ const routesData: BusRoute[] = [
           en: 'One-way (Senpai Shopping Center → Praya YiYan Road via Ambling Peak)',
         },
         serviceTime: {
-          zh: '平日 07:30 – 18:30（每小时半点）/ 周末 07:30 – 18:30',
+          zh: '周一至五 07:30 – 18:30（每小时半点）/ 周末 07:30 – 18:30',
           en: 'Mon–Fri 07:30 – 18:30 (at :30) / Weekends 07:30 – 18:30',
         },
         list: [
@@ -1962,39 +1968,13 @@ const mergedRoutes = [
 ]
   .map(applyRouteServiceTypes)
   .map(normalizeRouteData)
+  .map(enrichDirectionServiceTimes)
   .map(enrichRouteDirectionLengths)
 
 /** 数字线路升序；以字母开头的线路（如 N171）排在后面 */
 export const routes = [...mergedRoutes].sort((a, b) =>
   compareRouteNumber(a.number, b.number),
 )
-
-export const ROUTE_NUMBERING = [
-  {
-    title: { zh: '区内线（两位数）', en: 'Inner-zone routes (2 digits)' },
-    desc: {
-      zh: '首位数字代表服务区域，第二位为路线编号。例如 4x 为第 4 区、7x 为第 7 区。',
-      en: 'First digit = zone served; second digit = route ID. e.g. 4x = Zone 4, 7x = Zone 7.',
-    },
-    examples: ['21A', '42', '46', '70', '71'],
-  },
-  {
-    title: { zh: '跨区线（三位数 ABx）', en: 'Inter-zone routes (3 digits ABx)' },
-    desc: {
-      zh: 'A 为出发区域，B 为终点区域。例如 171 表示由第 1 区前往第 7 区。',
-      en: 'A = origin zone, B = destination zone. e.g. 171 runs between Zone 1 and Zone 7.',
-    },
-    examples: ['171', '475', '371'],
-  },
-  {
-    title: { zh: '后缀含义', en: 'Suffix meanings' },
-    desc: {
-      zh: 'X = 特快；N = 通宵；R = 特别/赛事；P = 繁忙时间特快。',
-      en: 'X = express; N = overnight; R = special/event; P = peak express.',
-    },
-    examples: ['246X', 'N171', 'R148', '141P'],
-  },
-]
 
 export const EXTERNAL_LINKS = [
   {
@@ -2008,9 +1988,5 @@ export const EXTERNAL_LINKS = [
   {
     label: { zh: 'Fandom Wiki', en: 'Fandom Wiki' },
     url: 'https://sunshine-islands-roblox.fandom.com/wiki/Roblox_Sunshine_Islands',
-  },
-  {
-    label: { zh: '线路编号说明', en: 'Route numbering guide' },
-    url: 'https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_numbering',
   },
 ]

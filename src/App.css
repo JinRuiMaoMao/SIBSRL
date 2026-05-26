@@ -732,7 +732,7 @@
   background: rgba(60, 180, 120, 0.12);
 }
 
-/* Route detail — fullscreen sheet (narrow viewports) */
+/* Route detail — slide-up sheet (narrow viewports) */
 .route-detail-backdrop {
   position: fixed;
   inset: 0;
@@ -743,7 +743,7 @@
   background: rgba(8, 12, 22, 0.62);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.45s ease;
   cursor: pointer;
 }
 
@@ -752,20 +752,28 @@
   pointer-events: auto;
 }
 
+@keyframes route-sheet-slide-in {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .route-detail-sheet {
   position: fixed;
   inset: 0;
   z-index: 260;
   display: flex;
   flex-direction: column;
-  transform: translateY(100%);
-  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
-  pointer-events: none;
-}
-
-.route-detail-sheet.is-open {
-  transform: translateY(0);
+  overflow: hidden;
+  background: var(--bg-deep);
+  transform: translate3d(0, 100%, 0);
   pointer-events: auto;
+  visibility: visible;
+  will-change: transform, opacity;
 }
 
 .route-detail-sheet .route-detail {
@@ -782,6 +790,18 @@
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 }
 
+@keyframes route-detail-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(1rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Route detail — side panel (wide layout) */
 .route-detail {
   background: var(--bg-surface);
@@ -792,6 +812,25 @@
   top: 5.5rem;
   max-height: calc(100vh - 7rem);
   overflow-y: auto;
+}
+
+.route-detail.route-detail--enter {
+  animation: route-detail-panel-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-detail-backdrop,
+  .route-detail-sheet {
+    transition-duration: 0.01ms !important;
+  }
+
+  .route-detail-sheet.is-open {
+    animation: none;
+  }
+
+  .route-detail.route-detail--enter {
+    animation: none;
+  }
 }
 
 .route-detail.placeholder {
@@ -904,34 +943,6 @@
   color: var(--text);
 }
 
-.detail-route-line {
-  margin: 0.25rem 0;
-}
-
-.detail-route-line strong {
-  display: block;
-  font-size: 1rem;
-}
-
-.detail-route-bilingual {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-}
-
-.detail-route-bilingual strong {
-  font-size: 1rem;
-}
-
-.detail-route-bilingual .detail-arrow {
-  flex-shrink: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--accent);
-  line-height: 1;
-}
-
 .route-endpoints-wrap {
   display: flex;
   flex-direction: column;
@@ -955,6 +966,8 @@
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text);
+  line-height: 1.45;
+  white-space: normal;
 }
 
 .detail-route-summary-wrap .route-line-badge {
@@ -966,6 +979,26 @@
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 0.1rem;
+}
+
+.detail-via-stops {
+  margin: 0.75rem 0 0;
+}
+
+.detail-via-stops h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detail-via-stops-list {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text);
 }
 
 .detail-via {
@@ -1067,60 +1100,6 @@
   background: var(--accent-soft);
 }
 
-/* Numbering guide */
-.numbering-guide {
-  border-top: 1px solid var(--border);
-  padding-top: 2rem;
-}
-
-.numbering-guide h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.25rem;
-}
-
-.guide-intro {
-  color: var(--text-muted);
-  margin: 0 0 1.25rem;
-  max-width: 60ch;
-}
-
-.guide-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.guide-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-}
-
-.guide-card h3 {
-  margin: 0 0 0.25rem;
-  font-size: 1rem;
-  color: var(--accent);
-}
-
-.guide-en {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin: 0 0 0.75rem;
-}
-
-.guide-card p {
-  margin: 0 0 0.5rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.guide-examples {
-  font-size: 0.85rem !important;
-  color: var(--text) !important;
-  font-family: var(--font-mono);
-}
-
 /* Footer */
 .site-footer {
   border-top: 1px solid var(--border);
@@ -1128,6 +1107,12 @@
   text-align: center;
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.build-tag {
+  margin: 0.35rem 0 0;
+  font-size: 0.7rem;
+  opacity: 0.55;
 }
 
 .site-footer p {

@@ -5,21 +5,22 @@ import { getRouteDisplayTypes } from '../utils/routeTypes'
 import type { BusRoute } from '../types/route'
 import {
   getDirectionDataIndex,
-  getDirectionEndpointNames,
   getDirectionLengthKm,
   getDirectionServiceTime,
   getDirectionShortLabel,
   routeHasDirectionVariants,
 } from '../utils/routeDirections'
+import { getDirectionIntermediateStops, getDirectionVia } from '../utils/routeVia'
 import { DirectionToggle } from './DirectionToggle'
 import { RouteTypeTags } from './RouteTypeTags'
-import { getRouteArrow } from '../utils/routeDisplay'
+import { RouteEndpoints } from './RouteEndpoints'
 
 interface RouteDetailProps {
   route: BusRoute
   directionIndex: number
   onDirectionChange: (index: number) => void
   onClose: () => void
+  className?: string
 }
 
 export function RouteDetail({
@@ -27,21 +28,23 @@ export function RouteDetail({
   directionIndex,
   onDirectionChange,
   onClose,
+  className = '',
 }: RouteDetailProps) {
   const { locale, t } = useLocale()
   const hasDirections = routeHasDirectionVariants(route)
-  const directionEndpoints = hasDirections
-    ? getDirectionEndpointNames(route, directionIndex, locale)
-    : null
-  const activeStops = route.stops?.[getDirectionDataIndex(route, directionIndex)]
+  const stopDataIndex = getDirectionDataIndex(route, directionIndex)
+  const activeStops = route.stops?.[stopDataIndex]
+  const viaStops = getDirectionIntermediateStops(route, stopDataIndex, locale)
+  const viaText = viaStops.length > 0 ? null : getDirectionVia(route, stopDataIndex)
   const serviceTimeText = getDirectionServiceTime(route, directionIndex, locale)
-  const lengthKm =
-    getDirectionLengthKm(route, directionIndex, locale) ??
-    (route.length ? getPrimaryText(route.length, locale) : null)
+  const lengthKm = getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route)
 
   return (
-    <aside className="route-detail" aria-label={t('detailAria', { number: route.number })}>
+    <aside
+      className={`route-detail ${className}`.trim()}
+      aria-label={t('detailAria', { number: route.number })}
+    >
       <div className="detail-header">
         <div className="detail-header-title">
           <span className="detail-number">{route.number}</span>
@@ -71,22 +74,21 @@ export function RouteDetail({
             />
           )}
         </div>
-        <p className="detail-route-line detail-route-bilingual">
-          <strong>
-            {directionEndpoints?.origin ?? getPrimaryText(route.origin, locale)}
-          </strong>
-          <span className="detail-arrow" aria-hidden="true">
-            {hasDirections ? '→' : getRouteArrow(route.pattern)}
-          </span>
-          <strong>
-            {directionEndpoints?.destination ??
-              getPrimaryText(route.destination, locale)}
-          </strong>
-        </p>
-        {route.via && (
+        <RouteEndpoints
+          route={route}
+          directionIndex={directionIndex}
+          className="detail-route-summary-wrap"
+        />
+        {viaStops.length > 0 && (
+          <div className="detail-via-stops">
+            <h4>{t('viaStopsSection')}</h4>
+            <p className="detail-via-stops-list">{viaStops.join('、')}</p>
+          </div>
+        )}
+        {viaText && (
           <p className="detail-via">
             {t('viaPrefix')}
-            {getPrimaryText(route.via, locale)}
+            {getPrimaryText(viaText, locale)}
           </p>
         )}
       </section>

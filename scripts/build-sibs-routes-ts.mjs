@@ -7,24 +7,13 @@ import { resolve } from 'node:path'
 /** SIBS类型.txt 中尚无完整 Wiki 站序的线路 */
 const REQUIRED_STUB_IDS = [
   '76S',
-  '160R',
-  '170R',
-  '171R',
-  '376',
-  '475A',
   '476*',
   '476#',
   '476#*',
   '476%',
   '476P',
-  '476SA',
   '476X',
-  'F469A',
   'N476',
-  'N76A',
-  'S1A',
-  'S2A',
-  'U47*',
 ]
 
 const IMPORT_DIR = resolve('data/wiki-import')
@@ -78,7 +67,11 @@ const MANUAL_ORIGINS = {
   },
   C01: {
     origin: { zh: '际巴车厂', en: 'CSB Depot' },
-    destination: { zh: '北顿市中心', en: 'Norton Town Center' },
+    destination: { zh: '仙贝广场 / 际巴车厂', en: 'Senpai Shopping Center / CSB Depot' },
+    length: {
+      zh: '往仙贝广场 11.8 km / 往际巴车厂 11.6 km',
+      en: 'To Senpai Shopping Center 11.8 km / To CSB Depot 11.6 km',
+    },
   },
   C401: {
     origin: { zh: '际巴车厂', en: 'CSB Depot' },
@@ -93,8 +86,8 @@ const MANUAL_ORIGINS = {
     destination: { zh: '北顿市中心', en: 'Norton Town Center' },
   },
   F702: {
-    origin: { zh: '浅水湾车厂', en: 'FT Shallow Valley Depot' },
-    destination: { zh: '北顿市中心', en: 'Norton Town Center' },
+    origin: { zh: '海西邨', en: 'Haisey Estate' },
+    destination: { zh: '浅水湾车厂', en: 'FT Shallow Valley Depot' },
   },
   '475P': {
     origin: { zh: '海西邨', en: 'Haisey Estate' },
@@ -107,6 +100,18 @@ const MANUAL_ORIGINS = {
   N476: {
     origin: { zh: '北顿市中心', en: 'Norton Town Center' },
     destination: { zh: '彩虹中心', en: 'Rainbow Estate Complex' },
+  },
+  '160R': {
+    origin: { zh: '阳光体育馆', en: 'Sunshine Stadium' },
+    destination: { zh: '第七区转车站', en: 'Zone 7 Interchange' },
+  },
+  '170R': {
+    origin: { zh: '阳光体育馆', en: 'Sunshine Stadium' },
+    destination: { zh: '彩虹中心', en: 'Rainbow Estate Complex' },
+  },
+  '171R': {
+    origin: { zh: '阳光体育馆', en: 'Sunshine Stadium' },
+    destination: { zh: '叶欣海旁道', en: 'Praya YiYan Road' },
   },
 }
 

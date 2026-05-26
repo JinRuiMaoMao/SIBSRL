@@ -1,22 +1,31 @@
+import { convertToSimplified } from '../i18n/convert'
 import { getOptionalText, getPrimaryText } from '../i18n/displayText'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
+import { resolvePlaceName, resolvePlaceZh } from './placeNames'
 import { extractKmDisplay } from './routeDisplay'
 import {
   getRouteDirectionCount,
+  getSortedDirectionDataIndices,
   routeHasDirectionVariants,
 } from './routeDirections'
 
 function normalizePlaceToken(text: string): string {
-  return text
+  const raw = convertToSimplified(text)
+  return raw
     .toLowerCase()
     .replace(/['’]/g, '')
     .replace(
-      /(ferry pier|bus terminus|shopping center|shopping centre|estate complex|waterfront|promenade|interchange|roundabout|hospital|station|road|street|lane|pier|plaza|square|centre|center|码头|广场|中心|邨|海傍|大街)/gi,
+      /(ferry pier|bus terminus|shopping center|shopping centre|estate complex|waterfront|promenade|interchange|roundabout|hospital|station|road|street|lane|pier|plaza|square|centre|center|码头|广场|中心|邨|海傍|大街|车厂)/gi,
       '',
     )
     .replace(/\s+/g, '')
     .trim()
+}
+
+function canonicalPlaceToken(text: string, alt?: string): string {
+  const zh = resolvePlaceZh(text, alt ?? '')
+  return normalizePlaceToken(zh || text)
 }
 
 function extractLengthHints(segment: string): { zh?: string; en?: string } {
@@ -60,8 +69,9 @@ function scoreSegmentForDirection(
 
   const last = group.list[group.list.length - 1]
   const first = group.list[0]
-  const destZh = last.name.zh
-  const destEn = last.name.en
+  const destResolved = resolvePlaceName(last.name.zh, last.name.en)
+  const destZh = destResolved.zh
+  const destEn = destResolved.en
   const destPrimary = getPrimaryText(last.name, locale)
   const originPrimary = getPrimaryText(first.name, locale)
   const seg = segment.trim()
@@ -75,6 +85,10 @@ function scoreSegmentForDirection(
   score = Math.max(score, tokenMatchScore(seg, destPrimary))
   score = Math.max(score, tokenMatchScore(seg, destZh))
   score = Math.max(score, tokenMatchScore(seg, destEn))
+  score = Math.max(
+    score,
+    tokenMatchScore(canonicalPlaceToken(seg), canonicalPlaceToken(destZh, destEn)),
+  )
 
   const hints = extractLengthHints(segment)
   if (hints.zh) {
@@ -98,45 +112,71 @@ function scoreSegmentForDirection(
   return score
 }
 
-/** 按 dataIndex 解析各方向公里数 */
-export function buildDirectionLengthKmMap(
+const MIN_SEGMENT_MATCH_SCORE = 28
+
+/** 拆分路线级里程文案（支持 / 与 ·，并过滤含 km 的片段） */
+export function splitLengthSegments(text: string): string[] {
+  const parts = text
+    .split(/\s*\/\s*|\s*·\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const withKm = parts.filter((p) => /km/i.test(p))
+  return withKm.length ? withKm : parts
+}
+
+function pickKmBySortedPosition(
   route: BusRoute,
+  dataIndex: number,
+  segments: string[],
+): string | null {
+  const sorted = getSortedDirectionDataIndices(route)
+  const pos = sorted.indexOf(dataIndex)
+  if (pos < 0 || pos >= segments.length) return null
+  return extractKmDisplay(segments[pos])
+}
+
+/** 从一段里程文案中为指定方向选取公里数 */
+export function pickKmForDirection(
+  lengthText: string,
+  route: BusRoute,
+  dataIndex: number,
   locale: Locale,
-): Map<number, string> {
-  const map = new Map<number, string>()
+): string | null {
+  const segments = splitLengthSegments(lengthText)
+  if (!segments.length) return null
+  if (segments.length === 1) return extractKmDisplay(segments[0])
+
+  let bestIdx = -1
+  let bestScore = 0
+  segments.forEach((segment, idx) => {
+    const score = scoreSegmentForDirection(segment, route, dataIndex, locale)
+    if (score > bestScore) {
+      bestScore = score
+      bestIdx = idx
+    }
+  })
+
+  if (bestIdx >= 0 && bestScore >= MIN_SEGMENT_MATCH_SCORE) {
+    return extractKmDisplay(segments[bestIdx])
+  }
+
   const dirCount = getRouteDirectionCount(route)
-  if (dirCount === 0) return map
-
-  for (let di = 0; di < dirCount; di++) {
-    const group = route.stops?.[di]
-    if (group?.length) {
-      const km = extractKmDisplay(getPrimaryText(group.length, locale))
-      if (km) map.set(di, km)
-    }
+  if (segments.length === dirCount) {
+    return pickKmBySortedPosition(route, dataIndex, segments)
   }
 
-  const routeLength = getOptionalText(route.length, locale)
-  if (!routeLength) return map
+  return pickKmBySortedPosition(route, dataIndex, segments) ?? extractKmDisplay(segments[0])
+}
 
-  if (!routeHasDirectionVariants(route)) {
-    const km = extractKmDisplay(routeLength)
-    if (km && !map.has(0)) map.set(0, km)
-    return map
-  }
-
-  const segments = routeLength.split(/\s*\/\s*/).map((s) => s.trim()).filter(Boolean)
-
-  if (segments.length <= 1) {
-    const km = extractKmDisplay(routeLength)
-    if (km) {
-      for (let di = 0; di < dirCount; di++) {
-        if (!map.has(di)) map.set(di, km)
-      }
-    }
-    return map
-  }
-
-  const assignedSegments = new Set<number>()
+function assignSegmentsToDirections(
+  map: Map<number, string>,
+  route: BusRoute,
+  segments: string[],
+  locale: Locale,
+  assignedSegments: Set<number>,
+  minScore: number,
+): void {
+  const dirCount = getRouteDirectionCount(route)
   for (let di = 0; di < dirCount; di++) {
     if (map.has(di)) continue
 
@@ -151,7 +191,7 @@ export function buildDirectionLengthKmMap(
       }
     })
 
-    if (bestIdx >= 0 && bestScore >= 40) {
+    if (bestIdx >= 0 && bestScore >= minScore) {
       const km = extractKmDisplay(segments[bestIdx])
       if (km) {
         map.set(di, km)
@@ -159,30 +199,138 @@ export function buildDirectionLengthKmMap(
       }
     }
   }
+}
+
+/** 按 dataIndex 解析各方向公里数 */
+export function buildDirectionLengthKmMap(
+  route: BusRoute,
+  locale: Locale,
+): Map<number, string> {
+  const map = new Map<number, string>()
+  const dirCount = getRouteDirectionCount(route)
+  if (dirCount === 0) return map
+
+  for (let di = 0; di < dirCount; di++) {
+    const group = route.stops?.[di]
+    if (group?.length) {
+      const km = pickKmForDirection(getPrimaryText(group.length, locale), route, di, locale)
+      if (km) map.set(di, km)
+    }
+  }
+
+  const routeLength = getOptionalText(route.length, locale)
+  if (!routeLength) return map
+
+  if (!routeHasDirectionVariants(route)) {
+    const km = extractKmDisplay(routeLength)
+    if (km && !map.has(0)) map.set(0, km)
+    return map
+  }
+
+  const segments = splitLengthSegments(routeLength)
+
+  if (segments.length <= 1) {
+    const km = extractKmDisplay(routeLength)
+    if (km) {
+      for (let di = 0; di < dirCount; di++) {
+        if (!map.has(di)) map.set(di, km)
+      }
+    }
+    return map
+  }
+
+  const assignedSegments = new Set<number>()
+  assignSegmentsToDirections(map, route, segments, locale, assignedSegments, MIN_SEGMENT_MATCH_SCORE)
+  assignSegmentsToDirections(map, route, segments, locale, assignedSegments, 12)
+
+  if (map.size < dirCount && segments.length === dirCount) {
+    const sorted = getSortedDirectionDataIndices(route)
+    sorted.forEach((dataIndex, sortedIdx) => {
+      if (map.has(dataIndex)) return
+      const km = extractKmDisplay(segments[sortedIdx])
+      if (km) map.set(dataIndex, km)
+    })
+  }
 
   return map
 }
 
+/** 卡片 / 详情：指定站序方向的公里数 */
+export function resolveLengthKmForDataIndex(
+  route: BusRoute,
+  dataIndex: number,
+  locale: Locale,
+): string | null {
+  const routeLength = getOptionalText(route.length, locale)
+  if (routeLength && routeHasDirectionVariants(route)) {
+    const segments = splitLengthSegments(routeLength)
+    if (segments.length > 1) {
+      const km = pickKmForDirection(routeLength, route, dataIndex, locale)
+      if (km) return km
+    }
+  }
+
+  const map = buildDirectionLengthKmMap(route, locale)
+  if (map.has(dataIndex)) return map.get(dataIndex)!
+
+  const group = route.stops?.[dataIndex]
+  if (group?.length) {
+    const km = pickKmForDirection(getPrimaryText(group.length, locale), route, dataIndex, locale)
+    if (km) return km
+  }
+
+  if (!routeLength) return null
+
+  if (routeHasDirectionVariants(route)) {
+    return pickKmForDirection(routeLength, route, dataIndex, locale)
+  }
+
+  return extractKmDisplay(routeLength)
+}
+
+/** 无 Wiki 里程时，按站数粗估（约 0.72 km/站间） */
+function buildEstimatedRouteLength(route: BusRoute): BusRoute['length'] {
+  if (!route.stops?.length) return undefined
+  const partsZh: string[] = []
+  const partsEn: string[] = []
+  for (const group of route.stops) {
+    if (group.list.length < 4) continue
+    const km = Math.round((group.list.length - 1) * 0.72 * 10) / 10
+    const dest = resolvePlaceName(
+      group.list[group.list.length - 1].name.zh,
+      group.list[group.list.length - 1].name.en,
+    )
+    partsZh.push(`往${dest.zh} ${km} km`)
+    partsEn.push(`To ${dest.en} ${km} km`)
+  }
+  if (!partsZh.length) return undefined
+  return { zh: partsZh.join(' / '), en: partsEn.join(' / ') }
+}
+
 /** 启动时把路线级双向 length 写入各方向 stops[].length */
 export function enrichRouteDirectionLengths(route: BusRoute): BusRoute {
-  if (!route.stops?.length || !route.length) return route
+  let base = route
+  if (!route.length && route.stops?.length) {
+    const estimated = buildEstimatedRouteLength(route)
+    if (estimated) base = { ...route, length: estimated }
+  }
 
-  const zhMap = buildDirectionLengthKmMap(route, 'zh-Hans')
-  const enMap = buildDirectionLengthKmMap(route, 'en')
-  if (zhMap.size === 0 && enMap.size === 0) return route
+  if (!base.stops?.length || !base.length) return base
+
+  const zhMap = buildDirectionLengthKmMap(base, 'zh-Hans')
+  const enMap = buildDirectionLengthKmMap(base, 'en')
+  if (zhMap.size === 0 && enMap.size === 0) return base
 
   let changed = false
-  const stops = route.stops.map((group, di) => {
-    if (group.length) return group
+  const stops = base.stops.map((group, di) => {
     const zh = zhMap.get(di)
     const en = enMap.get(di)
     if (!zh && !en) return group
+    const nextLength = { zh: zh ?? en ?? '', en: en ?? zh ?? '' }
+    if (group.length?.zh === nextLength.zh && group.length?.en === nextLength.en) return group
     changed = true
-    return {
-      ...group,
-      length: { zh: zh ?? en ?? '', en: en ?? zh ?? '' },
-    }
+    return { ...group, length: nextLength }
   })
 
-  return changed ? { ...route, stops } : route
+  return changed ? { ...base, stops } : base
 }

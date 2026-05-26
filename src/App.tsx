@@ -6,9 +6,18 @@ import { RouteLookupPage } from './components/RouteLookupPage'
 import { useLocale } from './i18n/LocaleContext'
 import type { AppTab } from './types/appTab'
 
+function readPublishedBuild(): string | null {
+  return document.querySelector('meta[name="app-build"]')?.getAttribute('content') ?? null
+}
+
+function formatBuildLabel(iso: string): string {
+  return iso.replace('T', ' ').slice(0, 19)
+}
+
 function App() {
   const { t } = useLocale()
   const [activeTab, setActiveTab] = useState<AppTab>('routes')
+  const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
 
   return (
     <div className="app">
@@ -28,6 +37,9 @@ function App() {
           >
             {t('playGame')}
           </a>
+        </p>
+        <p className="build-tag" title={t('buildTagHint')}>
+          {t('buildTag', { time: buildLabel })}
         </p>
       </footer>
     </div>
