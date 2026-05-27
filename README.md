@@ -24,17 +24,27 @@ npm run build
 | 打开方式 | 正确做法 |
 |----------|----------|
 | 双击 `index.html` | 先执行 `npm run build` 或 `npm run build:only`，再打开**项目根目录**的 `index.html` |
-| 开发调试 | `npm run dev`，浏览器访问 http://localhost:5173/（**不要**看旧的 `index.html`） |
+| 开发调试 | `npm run dev` → 终端里的地址（默认 http://localhost:5173/，**不是** build 后的 index.html） |
 | 仍显示旧内容 | Ctrl+F5；确认页脚构建时间是否为刚才构建的时刻 |
 
-## 开发调试
+## 开发调试 vs 构建发布（不要混用）
+
+| 你想做什么 | 命令 | 打开哪个地址 |
+|------------|------|----------------|
+| **改代码、热更新** | `npm run dev` | http://localhost:5173/ 或 /dev.html（勿在 dev 时打开根目录构建版 index.html） |
+| **测刚构建的单文件页** | `npm run build:only` | 双击项目根目录 **`index.html`**（不是 5173） |
+| **本地预览构建结果** | `npm run build:only` 后 `npm run preview` | http://localhost:4173/dev.html |
+
+**`npm run build:only` 不会更新 `localhost:5173`**。5173 只有在你运行 `npm run dev` 时才是「源码开发版」；构建产物在根目录 `index.html`。
+
+若 5173 白屏或不对，先看终端是否写了 `Port 5173 is in use`（会改到 5174），或关掉占用 5173 的旧进程后重新 `npm run dev`。
 
 ```bash
 npm install
 npm run dev
 ```
 
-在浏览器打开 http://localhost:5173/（使用 `dev.html` 作为入口，支持热更新）。
+浏览器访问终端显示的 Local 地址（带 `/dev.html`）。
 
 ## 添加线路数据
 

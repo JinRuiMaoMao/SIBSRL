@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { showCircularLineBesideNumber } from '../utils/routeCategory'
 import { getPrimaryText } from '../i18n/displayText'
@@ -11,9 +12,11 @@ import {
   routeHasDirectionVariants,
 } from '../utils/routeDirections'
 import { getDirectionIntermediateStops, getDirectionVia } from '../utils/routeVia'
+import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
 import { DirectionToggle } from './DirectionToggle'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
+import { BroadcastAudioButton } from './BroadcastAudioButton'
 
 interface RouteDetailProps {
   route: BusRoute
@@ -31,6 +34,7 @@ export function RouteDetail({
   className = '',
 }: RouteDetailProps) {
   const { locale, t } = useLocale()
+  const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
   const hasDirections = routeHasDirectionVariants(route)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
   const activeStops = route.stops?.[stopDataIndex]
@@ -148,20 +152,67 @@ export function RouteDetail({
             {t('stopsSection')} ·{' '}
             {getDirectionShortLabel(route, directionIndex, t, locale)}
           </h3>
-          <ol className="stop-list">
-            {activeStops.list.map((stop, i) => {
-              const name = getPrimaryText(stop.name, locale)
-              return (
-                <li key={`${stop.name.en}-${i}`}>
-                  <span className="stop-index">{i + 1}</span>
-                  <span className="stop-name">
-                    <span className="stop-name-zh">{name}</span>
-                    {stop.zone != null && <span className="zone-tag">Z{stop.zone}</span>}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
+          <div className="stop-table" role="table">
+            <div className="stop-table-row stop-table-head" role="row">
+              <span className="stop-table-num" role="columnheader" aria-label="#">
+                #
+              </span>
+              <span className="stop-table-col-name" role="columnheader">
+                {t('stopColName')}
+              </span>
+              <span className="stop-table-col-zone" role="columnheader">
+                {t('stopColZone')}
+              </span>
+              <span className="stop-table-col-audio" role="columnheader">
+                {t('stopColAudio')}
+              </span>
+            </div>
+            <ol className="stop-table-body">
+              {activeStops.list.map((stop, i) => {
+                const name = getPrimaryText(stop.name, locale)
+                const stopAudio = getRouteStopAudioAtRow(route.id, i)
+                const audioId = `${route.id}-at-${i}`
+                const nextName = stopAudio
+                  ? getPrimaryText(stopAudio.nextStopLabel, locale)
+                  : ''
+
+                return (
+                  <li key={`${stop.name.en}-${i}`} className="stop-table-row" role="row">
+                    <span className="stop-index stop-table-num">{i + 1}</span>
+                    <span className="stop-table-name stop-name">
+                      <span className="stop-name-zh">{name}</span>
+                    </span>
+                    <span className="stop-table-zone">
+                      {stop.zone != null ? (
+                        <span className="zone-tag zone-tag--table">Z{stop.zone}</span>
+                      ) : (
+                        <span className="stop-table-empty" aria-hidden="true">
+                          —
+                        </span>
+                      )}
+                    </span>
+                    <span className="stop-table-audio">
+                      {stopAudio ? (
+                        <BroadcastAudioButton
+                          id={audioId}
+                          src={stopAudio.audioUrl}
+                          activeId={playingStopAudioId}
+                          onActiveChange={setPlayingStopAudioId}
+                          playLabel={t('routePaPlayNext', { stop: nextName })}
+                          pauseLabel={t('broadcastPause')}
+                          compact
+                        />
+                      ) : (
+                        <span className="stop-table-empty" aria-hidden="true">
+                          —
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
         </section>
       )}
 

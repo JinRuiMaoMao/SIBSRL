@@ -51,6 +51,9 @@ const messagesZhHans = {
   levelRequired: '解锁等级',
   routeLength: '全程',
   stopsSection: '分站',
+  stopColName: '车站',
+  stopColZone: '区域',
+  stopColAudio: '报站',
   linkCommunity: '社区站详情',
   linkWiki: 'Fandom Wiki',
   footer: '非官方粉丝工具 · 数据仅供参考，以游戏内及 Wiki 为准',
@@ -91,6 +94,7 @@ const messagesZhHans = {
   broadcastPlay: '播放广播',
   broadcastPause: '暂停播放',
   broadcastAudioUnsupported: '您的浏览器不支持音频播放。',
+  routePaPlayNext: '播放下一站报站：{stop}',
 } as const
 
 const messagesEn: Record<MessageKey, string> = {
@@ -140,6 +144,9 @@ const messagesEn: Record<MessageKey, string> = {
   levelRequired: 'Level required',
   routeLength: 'Length',
   stopsSection: 'Stops',
+  stopColName: 'Stop',
+  stopColZone: 'Zone',
+  stopColAudio: 'PA',
   linkCommunity: 'Community site',
   linkWiki: 'Fandom Wiki',
   footer: 'Unofficial fan tool · Data for reference only · In-game and Wiki prevail',
@@ -180,6 +187,7 @@ const messagesEn: Record<MessageKey, string> = {
   broadcastPlay: 'Play announcement',
   broadcastPause: 'Pause',
   broadcastAudioUnsupported: 'Your browser does not support audio playback.',
+  routePaPlayNext: 'Play next stop: {stop}',
 }
 
 let messagesZhHant: Record<MessageKey, string> | null = null

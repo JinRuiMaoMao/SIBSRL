@@ -38,10 +38,17 @@ export function RouteCard({
   const hasDirections = routeHasDirectionVariants(route)
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       className={`route-card ${selected ? 'selected' : ''}`}
       onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
       aria-pressed={selected}
     >
       <div className="route-card-top">
@@ -90,6 +97,6 @@ export function RouteCard({
           </div>
         )}
       </div>
-    </button>
+    </div>
   )
 }

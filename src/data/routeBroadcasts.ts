@@ -1,8 +1,20 @@
-import type { RouteBroadcast } from '../types/routeBroadcast'
+import { getRoute21AStopAudioByAtIndex, ROUTE_21A_ID } from './routeStopAudio21A'
+import type { RouteStopAudioAtRow } from './routeStopAudio21A'
 
-/** 线路报站文稿；在线路详情卡展示，后续按 routeId 补充 */
-export const routeBroadcasts: RouteBroadcast[] = []
+export function getRouteStopAudioAtRow(
+  routeId: string,
+  atStopIndex: number,
+): RouteStopAudioAtRow | undefined {
+  if (routeId === ROUTE_21A_ID) {
+    return getRoute21AStopAudioByAtIndex()?.get(atStopIndex)
+  }
+  return undefined
+}
 
-export function getRouteBroadcast(routeId: string): RouteBroadcast | undefined {
-  return routeBroadcasts.find((b) => b.routeId === routeId)
+export function routeHasStopAudio(routeId: string): boolean {
+  if (routeId === ROUTE_21A_ID) {
+    const map = getRoute21AStopAudioByAtIndex()
+    return map != null && map.size > 0
+  }
+  return false
 }

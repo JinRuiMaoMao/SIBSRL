@@ -5,7 +5,7 @@ import {
   getRouteDirectionCount,
   getSortedDirectionDataIndices,
   routeHasDirectionVariants,
-} from './routeDirections'
+} from './routeDirectionCore'
 
 /** 拆分路线级或方向级「A / B」服务时间 */
 export function splitServiceTimeSegments(text: string): string[] {

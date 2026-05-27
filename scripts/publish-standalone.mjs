@@ -32,6 +32,13 @@ export function publishStandalone(options = {}) {
       `name="app-build" content="${buildTag}"`,
     )
   }
+  if (!html.includes('class="boot-hint"')) {
+    html = html.replace(
+      '<div id="root"></div>',
+      '<div id="root"><p class="boot-hint">加载中…</p></div>',
+    )
+  }
+
   writeFileSync(target, html)
 
   if (existsSync(distAudio)) {

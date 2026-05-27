@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import { BroadcastPage } from './components/BroadcastPage'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { Header } from './components/Header'
 import { RouteLookupPage } from './components/RouteLookupPage'
 import { useLocale } from './i18n/LocaleContext'
@@ -24,7 +25,9 @@ function App() {
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
       <main className="main">
-        {activeTab === 'routes' ? <RouteLookupPage /> : <BroadcastPage />}
+        <ErrorBoundary>
+          {activeTab === 'routes' ? <RouteLookupPage /> : <BroadcastPage />}
+        </ErrorBoundary>
       </main>
 
       <footer className="site-footer">

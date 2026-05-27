@@ -8,7 +8,7 @@ import {
   getRouteDirectionCount,
   getSortedDirectionDataIndices,
   routeHasDirectionVariants,
-} from './routeDirections'
+} from './routeDirectionCore'
 
 function normalizePlaceToken(text: string): string {
   const raw = convertToSimplified(text)

@@ -7,6 +7,8 @@ interface BroadcastAudioButtonProps {
   onActiveChange: (id: string | null) => void
   playLabel: string
   pauseLabel: string
+  /** 分站名旁紧凑喇叭 */
+  compact?: boolean
 }
 
 export function BroadcastAudioButton({
@@ -16,6 +18,7 @@ export function BroadcastAudioButton({
   onActiveChange,
   playLabel,
   pauseLabel,
+  compact = false,
 }: BroadcastAudioButtonProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const playing = activeId === id
@@ -44,7 +47,7 @@ export function BroadcastAudioButton({
       <audio ref={audioRef} src={src} preload="none" className="broadcast-audio-hidden" />
       <button
         type="button"
-        className={`broadcast-play-btn ${playing ? 'playing' : ''}`}
+        className={`broadcast-play-btn ${compact ? 'broadcast-play-btn--compact' : ''} ${playing ? 'playing' : ''}`}
         onClick={toggle}
         aria-label={playing ? pauseLabel : playLabel}
         aria-pressed={playing}

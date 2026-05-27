@@ -3,36 +3,42 @@ import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteFilters } from './RouteFilters'
 import { SearchToolbar } from './SearchToolbar'
+import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
 
-const SHEET_ANIM_MS = 450
-const SHEET_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)'
+/** 详情全屏滑入/滑出时长（毫秒） */
+const DETAIL_ANIM_MS = 3000
+const DETAIL_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)'
 
-function runSheetAnimation(
+function motionDurationMs(): number {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return reduced ? 200 : DETAIL_ANIM_MS
+}
+
+function runDetailAnimation(
   el: HTMLElement,
   keyframes: Keyframe[],
-  options: KeyframeAnimationOptions,
+  options: Omit<KeyframeAnimationOptions, 'duration'> & { duration?: number },
 ): Animation {
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   return el.animate(keyframes, {
     ...options,
-    duration: reduced ? 1 : options.duration,
+    duration: options.duration ?? motionDurationMs(),
     fill: 'forwards',
   })
 }
 
 export function RouteLookupPage() {
   const { t } = useLocale()
-  const isWideLayout = useMediaQuery('(min-width: 901px)')
-  const [sheetRoute, setSheetRoute] = useState<BusRoute | null>(null)
-  const [detailRevealKey, setDetailRevealKey] = useState(0)
+  const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
+  const [overlayRoute, setOverlayRoute] = useState<BusRoute | null>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
-  const openAnimRef = useRef<Animation | null>(null)
-  const closeAnimRef = useRef<Animation | null>(null)
+  const openAnimsRef = useRef<Animation[]>([])
+  const closeAnimsRef = useRef<Animation[]>([])
+  const animGenerationRef = useRef(0)
 
   const {
     filters,
@@ -49,128 +55,135 @@ export function RouteLookupPage() {
     totalCount,
   } = useRouteSearch()
 
-  const cancelSheetAnimations = () => {
-    openAnimRef.current?.cancel()
-    closeAnimRef.current?.cancel()
-    openAnimRef.current = null
-    closeAnimRef.current = null
+  const cancelAnimations = (list: Animation[]) => {
+    for (const anim of list) {
+      anim.cancel()
+    }
+    list.length = 0
   }
 
-  const finishMobileClose = useCallback(() => {
-    cancelSheetAnimations()
-    setSheetRoute(null)
+  const finishDetailClose = useCallback(() => {
+    cancelAnimations(openAnimsRef.current)
+    cancelAnimations(closeAnimsRef.current)
+    setOverlayRoute(null)
     clearSelection()
   }, [clearSelection])
 
   useEffect(() => {
-    return () => cancelSheetAnimations()
-  }, [])
-
-  useEffect(() => {
-    if (!selectedRoute || isWideLayout) {
-      cancelSheetAnimations()
-      setSheetRoute(null)
-      return
+    if (selectedRoute) {
+      setOverlayRoute(selectedRoute)
     }
-    setSheetRoute(selectedRoute)
-  }, [selectedRoute?.id, isWideLayout])
+  }, [selectedRoute?.id])
 
   useEffect(() => {
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
-    if (!sheet || !sheetRoute || isWideLayout) return
+    if (!sheet || !overlayRoute) return
 
-    cancelSheetAnimations()
-    sheet.style.transform = 'translate3d(0, 100%, 0)'
+    const generation = ++animGenerationRef.current
+    cancelAnimations(closeAnimsRef.current)
+
+    const fromTransform = isWideLayout
+      ? 'translate3d(100%, 0, 0)'
+      : 'translate3d(0, 100%, 0)'
+
+    sheet.style.transform = fromTransform
     sheet.style.visibility = 'visible'
     sheet.style.pointerEvents = 'auto'
-    if (backdrop) backdrop.style.opacity = '0'
+    if (backdrop) {
+      backdrop.style.transition = 'none'
+      backdrop.style.opacity = '0'
+    }
 
-    let cancelled = false
-    void (async () => {
-      if (backdrop) {
-        await runSheetAnimation(
+    const duration = motionDurationMs()
+    const anims: Animation[] = []
+
+    if (backdrop) {
+      anims.push(
+        runDetailAnimation(
           backdrop,
           [{ opacity: 0 }, { opacity: 1 }],
-          { duration: SHEET_ANIM_MS, easing: 'ease', fill: 'forwards' },
-        )
-      }
-      if (cancelled) return
-      const anim = await runSheetAnimation(
-        sheet,
-        [{ transform: 'translate3d(0, 100%, 0)' }, { transform: 'translate3d(0, 0, 0)' }],
-        { duration: SHEET_ANIM_MS, easing: SHEET_EASING, fill: 'forwards' },
+          { duration, easing: 'ease' },
+        ),
       )
-      openAnimRef.current = anim
-      await anim.finished.catch(() => undefined)
-    })()
+    }
+
+    anims.push(
+      runDetailAnimation(
+        sheet,
+        [{ transform: fromTransform }, { transform: 'translate3d(0, 0, 0)' }],
+        { duration, easing: DETAIL_EASING },
+      ),
+    )
+
+    openAnimsRef.current = anims
 
     return () => {
-      cancelled = true
-      cancelSheetAnimations()
+      if (animGenerationRef.current !== generation) return
+      cancelAnimations(openAnimsRef.current)
     }
-  }, [sheetRoute?.id, isWideLayout])
+  }, [overlayRoute?.id, isWideLayout])
 
   useEffect(() => {
-    if (!sheetRoute || isWideLayout) return
+    if (!overlayRoute) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = prev
     }
-  }, [sheetRoute, isWideLayout])
+  }, [overlayRoute])
 
   const handleSelectRoute = (id: string) => {
-    cancelSheetAnimations()
     selectRoute(id)
-    setDetailRevealKey((k) => k + 1)
   }
 
   const handleCloseDetail = () => {
-    if (isWideLayout) {
-      clearSelection()
-      return
-    }
-
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
     if (!sheet) {
-      finishMobileClose()
+      finishDetailClose()
       return
     }
 
-    cancelSheetAnimations()
-    void (async () => {
-      const sheetAnim = runSheetAnimation(
+    cancelAnimations(openAnimsRef.current)
+
+    const toTransform = isWideLayout
+      ? 'translate3d(100%, 0, 0)'
+      : 'translate3d(0, 100%, 0)'
+    const duration = motionDurationMs()
+    const anims: Animation[] = []
+
+    anims.push(
+      runDetailAnimation(
         sheet,
-        [{ transform: 'translate3d(0, 0, 0)' }, { transform: 'translate3d(0, 100%, 0)' }],
-        { duration: SHEET_ANIM_MS, easing: SHEET_EASING, fill: 'forwards' },
-      )
-      closeAnimRef.current = sheetAnim
-      const anims: Promise<unknown>[] = [sheetAnim.finished]
-      if (backdrop) {
-        const backdropAnim = runSheetAnimation(backdrop, [{ opacity: 1 }, { opacity: 0 }], {
-          duration: SHEET_ANIM_MS,
+        [{ transform: 'translate3d(0, 0, 0)' }, { transform: toTransform }],
+        { duration, easing: DETAIL_EASING },
+      ),
+    )
+
+    if (backdrop) {
+      backdrop.style.transition = 'none'
+      anims.push(
+        runDetailAnimation(backdrop, [{ opacity: 1 }, { opacity: 0 }], {
+          duration,
           easing: 'ease',
-          fill: 'forwards',
-        })
-        anims.push(backdropAnim.finished)
-      }
-      await Promise.all(anims.map((p) => p.catch(() => undefined)))
-      finishMobileClose()
-    })()
+        }),
+      )
+    }
+
+    closeAnimsRef.current = anims
+
+    void Promise.all(anims.map((a) => a.finished.catch(() => undefined))).then(finishDetailClose)
   }
 
-  const buildDetailProps = (route: BusRoute) => ({
-    route,
-    directionIndex: getDirectionIndex(route),
-    onDirectionChange: (index: number) => setDirectionIndex(route.id, index),
-    onClose: handleCloseDetail,
-  })
-
-  const mobileRoute = !isWideLayout ? (selectedRoute ?? sheetRoute) : null
-  const wideDetailProps = selectedRoute && isWideLayout ? buildDetailProps(selectedRoute) : null
-  const mobileDetailProps = mobileRoute ? buildDetailProps(mobileRoute) : null
+  const detailProps = overlayRoute
+    ? {
+        route: overlayRoute,
+        directionIndex: getDirectionIndex(overlayRoute),
+        onDirectionChange: (index: number) => setDirectionIndex(overlayRoute.id, index),
+        onClose: handleCloseDetail,
+      }
+    : null
 
   return (
     <>
@@ -211,26 +224,18 @@ export function RouteLookupPage() {
               ))}
             </div>
           )}
-        </section>
-
-        {isWideLayout &&
-          (wideDetailProps ? (
-            <RouteDetail
-              key={`${wideDetailProps.route.id}-${detailRevealKey}`}
-              {...wideDetailProps}
-              className="route-detail--enter"
-            />
-          ) : (
-            <aside className="route-detail placeholder">
-              <p>{t('detailPlaceholder')}</p>
-              <p className="placeholder-hint">
+          {!selectedRoute && isWideLayout && (
+            <p className="detail-list-hint">
+              {t('detailPlaceholder')}
+              <span className="detail-list-hint-sub">
                 {t('detailPlaceholderHint', { total: totalCount })}
-              </p>
-            </aside>
-          ))}
+              </span>
+            </p>
+          )}
+        </section>
       </div>
 
-      {mobileDetailProps && (
+      {detailProps && (
         <>
           <button
             ref={backdropRef}
@@ -241,11 +246,11 @@ export function RouteLookupPage() {
           />
           <div
             ref={sheetRef}
-            className="route-detail-sheet is-open"
+            className={`route-detail-sheet is-open ${isWideLayout ? 'route-detail-sheet--wide' : ''}`}
             role="dialog"
             aria-modal="true"
           >
-            <RouteDetail {...mobileDetailProps} />
+            <RouteDetail {...detailProps} />
           </div>
         </>
       )}

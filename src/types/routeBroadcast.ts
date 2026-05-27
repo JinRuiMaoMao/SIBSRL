@@ -9,9 +9,13 @@ export type RouteBroadcastKind =
   | 'special'
 
 export interface RouteBroadcastLine {
+  id: string
   kind: RouteBroadcastKind
+  /** 对应分站序号（1 起） */
+  stopIndex?: number
   text: BilingualText
   note?: BilingualText
+  audioUrl: string
 }
 
 export interface RouteBroadcast {

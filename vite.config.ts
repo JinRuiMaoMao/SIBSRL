@@ -17,15 +17,47 @@ function publishStandalonePlugin(buildTag: string): Plugin {
   }
 }
 
+/** 开发时 / 与 /index.html 指向 dev.html，避免误加载根目录的构建版 index.html */
+function devEntryRedirectPlugin(): Plugin {
+  return {
+    name: 'dev-entry-redirect',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const path = req.url?.split('?')[0] ?? ''
+        if (path === '/' || path === '/index.html') {
+          const qs = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+          req.url = `/dev.html${qs}`
+        }
+        next()
+      })
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig(() => {
   const appBuild = new Date().toISOString()
 
   return {
-    plugins: [react(), viteSingleFile(), publishStandalonePlugin(appBuild)],
+    plugins: [
+      react(),
+      viteSingleFile({ useRecommendedBuildSettings: true }),
+      devEntryRedirectPlugin(),
+      publishStandalonePlugin(appBuild),
+    ],
     base: './',
     define: {
       __APP_BUILD__: JSON.stringify(appBuild),
+    },
+    server: {
+      port: 5173,
+      strictPort: false,
+      open: '/dev.html',
+    },
+    preview: {
+      port: 4173,
+      open: '/dev.html',
     },
     build: {
       outDir: 'dist',
