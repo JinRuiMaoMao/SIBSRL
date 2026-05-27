@@ -21,7 +21,7 @@ function App() {
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
 
   return (
-    <div className="app">
+    <div className="app sibs-scrollbar">
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
       <main className="main">

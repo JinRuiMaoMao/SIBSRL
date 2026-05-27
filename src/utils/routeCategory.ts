@@ -31,12 +31,17 @@ export function isCircularRoute(route: BusRoute): boolean {
   return route.pattern === 'circular'
 }
 
-/** 循环线：详情标题旁显示环线（zone-tag 样式） */
-export function showCircularLineBesideNumber(route: BusRoute): boolean {
-  return isCircularRoute(route)
+/** 已有彩色「循环 / Loop」服务类型标签（route.serviceTypes 含 loop） */
+export function hasLoopServiceTypeTag(route: BusRoute): boolean {
+  return route.serviceTypes?.includes('loop') ?? false
 }
 
-/** 循环线：卡片 Z 区标签旁显示循环（zone-tag 样式） */
+/** 循环线：详情标题旁环线（zone-tag）；与彩色 loop 重复时不显示 */
+export function showCircularLineBesideNumber(route: BusRoute): boolean {
+  return isCircularRoute(route) && !hasLoopServiceTypeTag(route)
+}
+
+/** 循环线：卡片 Z 区旁循环（zone-tag）；与彩色 loop 重复时不显示 */
 export function showCardLoopMark(route: BusRoute): boolean {
-  return isCircularRoute(route)
+  return isCircularRoute(route) && !hasLoopServiceTypeTag(route)
 }

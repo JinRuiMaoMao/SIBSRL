@@ -1,0 +1,273 @@
+{
+  "id": "472",
+  "number": "472",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Senpai Shopping Centre",
+    "en": "Senpai Shopping Centre"
+  },
+  "destination": {
+    "zh": "Norton Town Center / 仙貝廣場",
+    "en": "Norton Town Center / 仙貝廣場"
+  },
+  "via": {
+    "zh": "Kamaya, Zone 7 Interchange, Southern, Central",
+    "en": "Kamaya, Zone 7 Interchange, Southern, Central"
+  },
+  "interval": {
+    "zh": "6 - 20 minutes",
+    "en": "6 - 20 minutes"
+  },
+  "journeyTime": {
+    "zh": "40 minutes",
+    "en": "40 minutes"
+  },
+  "fare": "$11.4",
+  "levelRequired": 38,
+  "length": {
+    "zh": "11.3 km",
+    "en": "11.3 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（仙貝廣場 → 北頓市中心）",
+        "en": "Northbound (Senpai Shopping Center → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 23:45",
+        "en": "06:00 – 23:45"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Section fare begins here"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Red Wall Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓碼頭",
+            "en": "Norton Ferry Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → 仙貝廣場）",
+        "en": "Southbound (Norton Town Center → Senpai Shopping Center)"
+      },
+      "serviceTime": {
+        "zh": "06:10 – 23:40",
+        "en": "06:10 – 23:40"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "綠寶石中心",
+            "en": "Emerald Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Red Wall Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環花園二期",
+            "en": "Southern Two"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (東行)",
+            "en": "Section fare begins here / Near Thousand Leaf Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_472"
+}

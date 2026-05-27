@@ -1,0 +1,308 @@
+{
+  "id": "142",
+  "number": "142",
+  "operators": [
+    "REBC",
+    "FTCC",
+    "FT"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Dove Estate",
+    "en": "Dove Estate"
+  },
+  "destination": {
+    "zh": "Sunshine Pier / 白鴿邨",
+    "en": "Sunshine Pier / 白鴿邨"
+  },
+  "via": {
+    "zh": "Dove Island, Western Harbour Tunnel Interchange, Northern Interchange, Central",
+    "en": "Dove Island, Western Harbour Tunnel Interchange, Northern Interchange, Central"
+  },
+  "interval": {
+    "zh": "5 - 30 minutes",
+    "en": "5 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "23 mins",
+    "en": "23 mins"
+  },
+  "fare": "$11.4",
+  "levelRequired": 30,
+  "length": {
+    "zh": "11.8 km",
+    "en": "11.8 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（白鴿邨 → 陽光碼頭）",
+        "en": "Northbound (Dove Estate → Sunshine Pier)"
+      },
+      "serviceTime": {
+        "zh": "06:20 – 23:00",
+        "en": "06:20 – 23:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Timelapse Mall"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Section fare begins here"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Red Wall Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "亞特路",
+            "en": "Arctan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環消防局",
+            "en": "Central Fire Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環花園二期",
+            "en": "Southern Two"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "中葉隧道行政大樓",
+            "en": "Leafy-Central Tunnel Administration Block"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環文化區公園",
+            "en": "Southern Cultural District Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（陽光碼頭 → 白鴿邨）",
+        "en": "Southbound (Sunshine Pier → Dove Estate)"
+      },
+      "serviceTime": {
+        "zh": "06:40 – 23:45",
+        "en": "06:40 – 23:45"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "Museum Infinite",
+            "en": "Museum Infinite"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環文化區公園",
+            "en": "Southern Cultural District Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "中葉隧道行政大樓",
+            "en": "Leafy-Central Tunnel Administration Block"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環坊",
+            "en": "Langford Place"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環(中日街)",
+            "en": "Sun Central Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Bird Bridge"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環中心",
+            "en": "Northern Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Section fare begins here"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "銀行大廈",
+            "en": "Bank Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_142"
+}

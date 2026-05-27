@@ -1,0 +1,71 @@
+{
+  "id": "73S",
+  "number": "73S",
+  "operators": [
+    "CSB"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    7
+  ],
+  "origin": {
+    "zh": "Senpai Shopping Center",
+    "en": "Senpai Shopping Center"
+  },
+  "destination": {
+    "zh": "Leafy Bay / 仙貝廣場",
+    "en": "Leafy Bay / 仙貝廣場"
+  },
+  "via": {
+    "zh": "Leafy Bay Cemetery",
+    "en": "Leafy Bay Cemetery"
+  },
+  "interval": {
+    "zh": "Depends on ridership",
+    "en": "Depends on ridership"
+  },
+  "journeyTime": {
+    "zh": "To Leafy Bay: 2 mins / To Senpai: 6 mins",
+    "en": "To Leafy Bay: 2 mins / To Senpai: 6 mins"
+  },
+  "fare": "$8.7",
+  "levelRequired": 40,
+  "length": {
+    "zh": "3.3 km",
+    "en": "3.3 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（仙貝廣場 → 葉角灣）",
+        "en": "Direction 1 (Senpai Shopping Center → Leafy Bay)"
+      },
+      "serviceTime": {
+        "zh": "08:00 – 17:00, major events only}}Zone 7 route 73S is a special event route that runs between Leafy Bay and Senpai Shopping Center, via Leafy Bay Cemetery. This service is operated by Cityscape Bus using various types of buses, depending on ridership.",
+        "en": "08:00 – 17:00, major events only}}Zone 7 route 73S is a special event route that runs between Leafy Bay and Senpai Shopping Center, via Leafy Bay Cemetery. This service is operated by Cityscape Bus using various types of buses, depending on ridership."
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣墳場",
+            "en": "Leafy Bay Cemetery"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣",
+            "en": "Leafy Bay"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_73S"
+}

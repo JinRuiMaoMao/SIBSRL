@@ -362,16 +362,7 @@
   max-height: min(16rem, 50vh);
   overflow-x: hidden;
   overflow-y: auto;
-  padding-right: 0.15rem;
-}
-
-.settings-locale-grid::-webkit-scrollbar {
-  width: 6px;
-}
-
-.settings-locale-grid::-webkit-scrollbar-thumb {
-  background: rgba(245, 185, 66, 0.35);
-  border-radius: 999px;
+  padding-right: 0.35rem;
 }
 
 .settings-locale-option {
@@ -522,6 +513,17 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 0.75rem;
+}
+
+.route-group {
+  margin-top: 1.25rem;
+}
+
+.route-group-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-muted);
 }
 
 .empty-state {
@@ -835,7 +837,9 @@
   position: relative;
   top: auto;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
   padding: max(1rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
     max(1.25rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
 }

@@ -25,6 +25,9 @@ export type RouteServiceType =
 /** 筛选与展示用的「类型」（SIBS 服务类型 + Central Axis） */
 export type RouteTypeFilter = RouteServiceType | 'centralAxis'
 
+/** 游戏内“常规/每日挑战/季节限定（限时）”分组筛选 */
+export type RouteGroupFilter = 'all' | 'normal' | 'daily' | 'seasonal'
+
 export interface BilingualText {
   zh: string
   en: string
@@ -76,4 +79,5 @@ export interface RouteFilters {
   zone: number | 'all'
   operator: string | 'all'
   type: RouteTypeFilter | 'all'
+  routeGroup: RouteGroupFilter
 }

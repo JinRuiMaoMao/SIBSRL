@@ -1,0 +1,124 @@
+{
+  "id": "140P",
+  "number": "140P",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Sunshine Pier",
+    "en": "Sunshine Pier"
+  },
+  "destination": {
+    "zh": "Long Island Ferry Pier / 陽光碼頭",
+    "en": "Long Island Ferry Pier / 陽光碼頭"
+  },
+  "via": {
+    "zh": "Central, Western Harbour Tunnel Interchange, Long Island East",
+    "en": "Central, Western Harbour Tunnel Interchange, Long Island East"
+  },
+  "interval": {
+    "zh": "4 - 7 minutes",
+    "en": "4 - 7 minutes"
+  },
+  "journeyTime": {
+    "zh": "27 mins",
+    "en": "27 mins"
+  },
+  "fare": "$11.4",
+  "length": {
+    "zh": "10.5 km",
+    "en": "10.5 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（陽光碼頭 → 長島碼頭）",
+        "en": "Direction 1 (Sunshine Pier → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri : 17:30 – 20:00",
+        "en": "Mon – Fri : 17:30 – 20:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環坊",
+            "en": "Langford Place"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "長島中心",
+            "en": "Long Island Center"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "宜和劇場",
+            "en": "Jardine Theater"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島海濱長廊",
+            "en": "Long Island Waterfront Promenade"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_140P"
+}

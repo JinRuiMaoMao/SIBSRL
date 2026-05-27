@@ -56,54 +56,6 @@
       "list": [
         {
           "name": {
-            "zh": "彩虹中心",
-            "en": "Rainbow Estate Complex"
-          }
-        },
-        {
-          "name": {
-            "zh": "彩虹邨",
-            "en": "Rainbow Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "紅豆商場",
-            "en": "Redbean Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門邨",
-            "en": "East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門下邨",
-            "en": "Lower East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門花園",
-            "en": "East Door Garden"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門總站",
-            "en": "East Door Bus Terminus"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門路",
-            "en": "East Door Port Road"
-          }
-        },
-        {
-          "name": {
             "zh": "东门公园",
             "en": "East Door Park"
           },
@@ -176,54 +128,45 @@
           "name": {
             "zh": "第七区转车站 (西行)",
             "en": "Zone 7 Interchange (Westbound)"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "陽光鐵路站",
-            "en": "Sunshine Road"
-          }
+            "en": "Section fare begins here"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環醫院",
-            "en": "Central Hospital Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "南環街市",
-            "en": "Southern Market"
-          }
-        },
-        {
-          "name": {
-            "zh": "強生街市",
-            "en": "Johnson Market"
+            "en": "Central Hospital"
           }
         },
         {
           "name": {
             "zh": "中日街",
-            "en": "Beta Road"
-          }
+            "en": "Sun Central Street"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "新紀元中心",
-            "en": "Alpha Road"
+            "en": "Ping Center"
           }
         },
         {
           "name": {
             "zh": "雀鳥橋",
-            "en": "Verzion Road"
+            "en": "Bird Bridge"
           }
         },
         {
           "name": {
             "zh": "薄荷大廈",
-            "en": "Brown Street"
+            "en": "Mint Tower"
           },
           "zone": 4
         },
@@ -299,57 +242,48 @@
         {
           "name": {
             "zh": "薄荷大廈",
-            "en": "Brown Street"
+            "en": "Mint Tower"
           },
           "zone": 4
         },
         {
           "name": {
             "zh": "雀鳥橋",
-            "en": "Verzion Road"
+            "en": "Bird Bridge"
           }
         },
         {
           "name": {
             "zh": "新紀元中心",
-            "en": "Alpha Road"
+            "en": "Ping Center"
           }
         },
         {
           "name": {
             "zh": "中日街",
-            "en": "Beta Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "強生街市",
-            "en": "Johnson Market"
-          }
-        },
-        {
-          "name": {
-            "zh": "南環街市",
-            "en": "Southern Market"
-          }
+            "en": "Sun Central Street"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環醫院",
-            "en": "Central Hospital Road"
+            "en": "Central Hospital"
           }
         },
         {
           "name": {
             "zh": "陽光鐵路站",
-            "en": "Sunshine Road"
-          }
+            "en": "Section fare begins here"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "第七区转车站 (西行)",
             "en": "Zone 7 Interchange (Westbound)"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -420,54 +354,6 @@
             "en": "East Door Park"
           },
           "zone": 7
-        },
-        {
-          "name": {
-            "zh": "東門路",
-            "en": "East Door Port Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門總站",
-            "en": "East Door Bus Terminus"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門花園",
-            "en": "East Door Garden"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門下邨",
-            "en": "Lower East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門邨",
-            "en": "East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "紅豆商場",
-            "en": "Redbean Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "彩虹邨",
-            "en": "Rainbow Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "彩虹中心",
-            "en": "Rainbow Estate Complex"
-          }
         }
       ]
     }

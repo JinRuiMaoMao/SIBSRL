@@ -53,7 +53,8 @@
           "name": {
             "zh": "彩虹中心",
             "en": "Rainbow Estate Complex"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -71,7 +72,8 @@
           "name": {
             "zh": "東門邨",
             "en": "East Door Estate"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -87,21 +89,16 @@
         },
         {
           "name": {
-            "zh": "東門總站",
-            "en": "East Door Bus Terminus"
-          }
-        },
-        {
-          "name": {
             "zh": "東門路",
-            "en": "East Door Port Road"
+            "en": "East Door Road"
           }
         },
         {
           "name": {
             "zh": "仙貝",
-            "en": "Axis Road"
-          }
+            "en": "Senpai"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -123,81 +120,60 @@
         },
         {
           "name": {
-            "zh": "黑白中心",
-            "en": "Grayscale Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "國際塔",
-            "en": "Axis Road"
-          }
-        },
-        {
-          "name": {
             "zh": "鎌塔運動場",
-            "en": "Kamaya Circuit"
-          }
+            "en": "Kamaya Sports Field"
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "鎌塔花園",
-            "en": "Axis Road"
+            "en": "Kamaya Garden"
           }
         },
         {
           "name": {
             "zh": "第七區轉車站 (西行)",
-            "en": "Axis Road"
+            "en": "Two-way section fare ends here / Near Thousand Leaf Station"
           },
           "zone": 7
         },
         {
           "name": {
             "zh": "陽光鐵路站",
-            "en": "Sunshine Road"
-          }
+            "en": "Section fare begins here"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環醫院",
-            "en": "Central Hospital Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "南環街市",
-            "en": "Southern Market"
-          }
-        },
-        {
-          "name": {
-            "zh": "強生街市",
-            "en": "Johnson Market"
+            "en": "Central Hospital"
           }
         },
         {
           "name": {
             "zh": "中日街",
-            "en": "Beta Road"
-          }
+            "en": "Sun Central Street"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "新紀元中心",
-            "en": "Alpha Road"
+            "en": "Ping Center"
           }
         },
         {
           "name": {
             "zh": "雀鳥橋",
-            "en": "Verzion Road"
+            "en": "Bird Bridge"
           }
         },
         {
           "name": {
             "zh": "薄荷大廈",
-            "en": "Brown Street"
+            "en": "Mint Tower"
           },
           "zone": 4
         },
@@ -205,24 +181,19 @@
           "name": {
             "zh": "北頓路",
             "en": "Norton Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "北頓碼頭",
-            "en": "Norton Ferry Pier"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "北頓花園",
-            "en": "Norton Main Street"
+            "en": "Norton Garden"
           }
         },
         {
           "name": {
             "zh": "北頓邨",
-            "en": "Norton Hill Road"
+            "en": "Norton Estate"
           }
         },
         {
@@ -248,79 +219,69 @@
           "name": {
             "zh": "北頓市中心",
             "en": "Norton Town Center"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "北頓邨",
-            "en": "Norton Hill Road"
+            "en": "Norton Estate"
           }
         },
         {
           "name": {
             "zh": "北頓花園",
-            "en": "Norton Main Street"
+            "en": "Norton Garden"
           }
         },
         {
           "name": {
             "zh": "綠寶石中心",
-            "en": "Norton Road"
+            "en": "Emerald Plaza"
           }
         },
         {
           "name": {
             "zh": "北頓路",
-            "en": "North Island Road"
+            "en": "Norton Road"
           }
         },
         {
           "name": {
             "zh": "紅地磚",
-            "en": "Middle Road"
+            "en": "Red Wall Road"
           },
           "zone": 4
         },
         {
           "name": {
             "zh": "雀鳥橋",
-            "en": "Verzion Road"
-          }
+            "en": "Bird Bridge"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "新紀元中心",
-            "en": "Alpha Road"
+            "en": "Ping Center"
           }
         },
         {
           "name": {
-            "zh": "The One",
-            "en": "The One"
-          }
-        },
-        {
-          "name": {
-            "zh": "強生街市",
-            "en": "Johnson Market"
-          }
-        },
-        {
-          "name": {
-            "zh": "南環中心",
-            "en": "Sunshine Road"
+            "zh": "The ONE",
+            "en": "The ONE"
           }
         },
         {
           "name": {
             "zh": "中環醫院",
-            "en": "Central Hospital Road"
+            "en": "Central Hospital"
           }
         },
         {
           "name": {
             "zh": "陽光鐵路站",
-            "en": "Sunshine Road Passage"
+            "en": "Two-way section fare ends here"
           }
         },
         {
@@ -334,24 +295,13 @@
           "name": {
             "zh": "鎌塔花園",
             "en": "Kamaya Garden"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "鎌塔運動場",
-            "en": "Kamaya Circuit"
-          }
-        },
-        {
-          "name": {
-            "zh": "國際塔",
-            "en": "Axis Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "仙貝紀念碑花園",
-            "en": "The Stone of Memory"
+            "en": "Kamaya Sports Field"
           }
         },
         {
@@ -381,20 +331,15 @@
         {
           "name": {
             "zh": "仙貝",
-            "en": "Axis Road"
+            "en": "Senpai BRT Station"
           }
         },
         {
           "name": {
             "zh": "東門路",
-            "en": "East Door Port Road"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門總站",
-            "en": "East Door Bus Terminus"
-          }
+            "en": "East Door Road"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -418,7 +363,8 @@
           "name": {
             "zh": "紅豆商場",
             "en": "Redbean Center"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {

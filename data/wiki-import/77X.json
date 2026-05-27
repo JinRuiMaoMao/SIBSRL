@@ -1,0 +1,38 @@
+{
+  "id": "77X",
+  "number": "77X",
+  "operators": [
+    "CSB"
+  ],
+  "category": "inner",
+  "pattern": "circular",
+  "zones": [
+    7
+  ],
+  "origin": {
+    "zh": "Senpai Shopping Center ↺ [[Alexander Church",
+    "en": "Senpai Shopping Center ↺ [[Alexander Church"
+  },
+  "destination": {
+    "zh": "Senpai Shopping Center ↺ [[Alexander Church",
+    "en": "Senpai Shopping Center ↺ [[Alexander Church"
+  },
+  "via": {
+    "zh": "Senpai Multi-Storey Parking Garage",
+    "en": "Senpai Multi-Storey Parking Garage"
+  },
+  "interval": {
+    "zh": "N/A",
+    "en": "N/A"
+  },
+  "journeyTime": {
+    "zh": "10 mins",
+    "en": "10 mins"
+  },
+  "fare": "$6.3",
+  "length": {
+    "zh": "6.1 km",
+    "en": "6.1 km"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_77X"
+}

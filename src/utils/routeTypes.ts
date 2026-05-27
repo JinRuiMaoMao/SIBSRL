@@ -16,7 +16,7 @@ export function getRouteDisplayTypes(route: BusRoute): RouteTypeFilter[] {
   if (route.category === 'centralAxis' && !tags.includes('centralAxis')) {
     tags.unshift('centralAxis')
   }
-  return sortTypes(tags)
+  return sortTypes([...new Set(tags)])
 }
 
 export function routeMatchesTypeFilter(route: BusRoute, type: RouteTypeFilter): boolean {

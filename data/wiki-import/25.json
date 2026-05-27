@@ -1,0 +1,249 @@
+{
+  "id": "25",
+  "number": "25",
+  "operators": [
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "via": {
+    "zh": "Northern Dove Island, Hospital Island",
+    "en": "Northern Dove Island, Hospital Island"
+  },
+  "interval": {
+    "zh": "8 - 20 mins",
+    "en": "8 - 20 mins"
+  },
+  "journeyTime": {
+    "zh": "To Container's Island: 19 mins / To Long Island: 24 mins",
+    "en": "To Container's Island: 19 mins / To Long Island: 24 mins"
+  },
+  "fare": "$5.4",
+  "levelRequired": 52,
+  "length": {
+    "zh": "9.4 km",
+    "en": "9.4 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（長島碼頭 → 貨櫃碼頭島）",
+        "en": "Northbound (Long Island Ferry Pier → Container's Island B/T)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 00:30",
+        "en": "05:30 – 00:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "百彩新城",
+            "en": "N Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島東醫院",
+            "en": "East Long Island Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩色匯",
+            "en": "Rainbow Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Center"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "白鴿公園",
+            "en": "Dove Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭島",
+            "en": "Container's Island B/T"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（貨櫃碼頭島 → 長島碼頭）",
+        "en": "Southbound (Container's Island → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 00:30 / 06:00 – 01:00",
+        "en": "05:30 – 00:30 / 06:00 – 01:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "貨櫃碼頭島",
+            "en": "Container's Island"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "白鴿公園",
+            "en": "Dove Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "宜和劇場",
+            "en": "Jardine Theater"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光體育館",
+            "en": "Sunshine Stadium"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島海濱長廊",
+            "en": "Long Island Waterfront Promenade"
+          }
+        },
+        {
+          "name": {
+            "zh": "百彩新城",
+            "en": "N Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_25"
+}

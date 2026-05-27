@@ -169,7 +169,7 @@ function cleanRoute(route) {
 function isGoodRoute(route) {
   if (!route.stops?.length) return false
   const total = route.stops.reduce((n, d) => n + d.list.length, 0)
-  if (total < 4) return false
+  if (total < 3) return false
   const bad = route.stops.some((d) =>
     d.list.some(
       (s) =>

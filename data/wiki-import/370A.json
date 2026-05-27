@@ -1,10 +1,9 @@
 {
-  "id": "370",
-  "number": "370",
+  "id": "370A",
+  "number": "370A",
   "operators": [
     "REBC",
-    "HZ",
-    "CSB"
+    "HZ"
   ],
   "category": "inter",
   "pattern": "bidirectional",
@@ -21,21 +20,22 @@
     "en": "Senpai Shopping Centre / 長島碼頭"
   },
   "via": {
-    "zh": "Long Island East, Dove Island, Hospital Island, Container's Island, Central - Western Interchange, Zone 7 Interchange, Kamaya Garden, International Tower",
-    "en": "Long Island East, Dove Island, Hospital Island, Container's Island, Central - Western Interchange, Zone 7 Interchange, Kamaya Garden, International Tower"
+    "zh": "Long Island East, Dove Island, Hospital Island, Central - Western Interchange, Zone 7 Interchange, Kamaya Garden, International Tower",
+    "en": "Long Island East, Dove Island, Hospital Island, Central - Western Interchange, Zone 7 Interchange, Kamaya Garden, International Tower"
   },
   "interval": {
-    "zh": "10 - 60 minutes",
-    "en": "10 - 60 minutes"
+    "zh": "5 - 12 minutes",
+    "en": "5 - 12 minutes"
   },
   "journeyTime": {
-    "zh": "To Senpai: 25 mins / To Long Island: 24 mins",
-    "en": "To Senpai: 25 mins / To Long Island: 24 mins"
+    "zh": "AM: / To Senpai: 34 - 36 mins / To Long Island: 33 - 38 mins /  / PM: / To Senpai: 31 - 38 mins / To Long Island: 34 - 37 mins",
+    "en": "AM: / To Senpai: 34 - 36 mins / To Long Island: 33 - 38 mins /  / PM: / To Senpai: 31 - 38 mins / To Long Island: 34 - 37 mins"
   },
   "fare": "$18.2",
+  "levelRequired": 90,
   "length": {
-    "zh": "22.7 km",
-    "en": "22.7 km"
+    "zh": "19.1 km",
+    "en": "19.1 km"
   },
   "stops": [
     {
@@ -45,8 +45,8 @@
         "en": "Northbound (Long Island Ferry Pier → Senpai Shopping Centre)"
       },
       "serviceTime": {
-        "zh": "06:10 – 00:00",
-        "en": "06:10 – 00:00"
+        "zh": "Mon – Fri: 07:00 – 09:00, 16:30 – 19:20 / Sat, Sun and PH: 07:00 – 09:00",
+        "en": "Mon – Fri: 07:00 – 09:00, 16:30 – 19:20 / Sat, Sun and PH: 07:00 – 09:00"
       },
       "list": [
         {
@@ -70,6 +70,12 @@
         },
         {
           "name": {
+            "zh": "虹尾角街市",
+            "en": "Iris Point Market"
+          }
+        },
+        {
+          "name": {
             "zh": "時間里",
             "en": "Timelapse Lane"
           },
@@ -77,8 +83,20 @@
         },
         {
           "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
             "zh": "白鴿山",
             "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
           }
         },
         {
@@ -102,31 +120,6 @@
         },
         {
           "name": {
-            "zh": "三塔",
-            "en": "Triple Tower"
-          },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "貨櫃碼頭員工宿舍",
-            "en": "Containers Island Employee House"
-          }
-        },
-        {
-          "name": {
-            "zh": "海苔灣",
-            "en": "Seaweed Bay"
-          }
-        },
-        {
-          "name": {
-            "zh": "貨櫃碼頭",
-            "en": "Containers Terminal"
-          }
-        },
-        {
-          "name": {
             "zh": "中西轉車站",
             "en": "Central - Western Interchange"
           },
@@ -135,7 +128,7 @@
         {
           "name": {
             "zh": "第七區轉車站 (東行)",
-            "en": "Section fare begins here / Near Thousand Leaf Station"
+            "en": "Axis Road"
           },
           "zone": 7
         },
@@ -150,6 +143,19 @@
           "name": {
             "zh": "鎌塔運動場",
             "en": "Kamaya Sports Field"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際塔",
+            "en": "International Tower"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝紀念碑",
+            "en": "The Stone of Memory"
           }
         },
         {
@@ -185,8 +191,8 @@
         "en": "Southbound (Senpai Shopping Centre → Long Island Ferry Pier)"
       },
       "serviceTime": {
-        "zh": "06:30 – 00:30",
-        "en": "06:30 – 00:30"
+        "zh": "Mon – Fri: 07:30 – 11:00, 17:00 – 21:30 / Sat, Sun and PH: 07:30 – 11:00",
+        "en": "Mon – Fri: 07:30 – 11:00, 17:00 – 21:30 / Sat, Sun and PH: 07:30 – 11:00"
       },
       "list": [
         {
@@ -210,6 +216,18 @@
         },
         {
           "name": {
+            "zh": "黑白中心",
+            "en": "Grayscale Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際塔",
+            "en": "International Tower"
+          }
+        },
+        {
+          "name": {
             "zh": "鎌塔運動場",
             "en": "Kamaya Sports Field"
           },
@@ -223,35 +241,17 @@
         },
         {
           "name": {
+            "zh": "第七區轉車站 (西行)",
+            "en": "第七區轉車站 (西行)"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
             "zh": "中西轉車站",
-            "en": "Section fare begins here"
+            "en": "Central - Western Interchange"
           },
           "zone": 1
-        },
-        {
-          "name": {
-            "zh": "貨櫃碼頭",
-            "en": "Containers Terminal"
-          },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "海苔灣",
-            "en": "Seaweed Bay"
-          }
-        },
-        {
-          "name": {
-            "zh": "貨櫃碼頭員工宿舍",
-            "en": "Containers Island Employee House"
-          }
-        },
-        {
-          "name": {
-            "zh": "三塔",
-            "en": "Triple Tower"
-          }
         },
         {
           "name": {
@@ -281,9 +281,28 @@
         },
         {
           "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
             "zh": "賴得商場",
             "en": "Wright Shopping Centre"
           }
+        },
+        {
+          "name": {
+            "zh": "彩色匯",
+            "en": "Rainbow Center"
+          },
+          "zone": 1
         },
         {
           "name": {
@@ -306,5 +325,5 @@
       ]
     }
   ],
-  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_370"
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_370A"
 }

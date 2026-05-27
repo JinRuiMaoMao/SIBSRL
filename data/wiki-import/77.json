@@ -1,14 +1,13 @@
 {
-  "id": "76",
-  "number": "76",
+  "id": "77",
+  "number": "77",
   "operators": [
     "CSB"
   ],
   "category": "inner",
   "pattern": "bidirectional",
   "zones": [
-    7,
-    8
+    7
   ],
   "origin": {
     "zh": "Senpai Shopping Center",
@@ -19,33 +18,33 @@
     "en": "Praya YiYan Road / 仙貝廣場"
   },
   "via": {
-    "zh": "Leafy Bay Estate, Leafy Hospital",
-    "en": "Leafy Bay Estate, Leafy Hospital"
+    "zh": "Leafy University, Alexander",
+    "en": "Leafy University, Alexander"
   },
   "interval": {
-    "zh": "4 - 30 minutes",
-    "en": "4 - 30 minutes"
+    "zh": "7 - 30 minutes",
+    "en": "7 - 30 minutes"
   },
   "journeyTime": {
-    "zh": "to YiYan: 17 mins / To Senpai:18 mins",
-    "en": "to YiYan: 17 mins / To Senpai:18 mins"
+    "zh": "To YiYan: 16 - 24 mins / to Senpai: 16 - 23 mins",
+    "en": "To YiYan: 16 - 24 mins / to Senpai: 16 - 23 mins"
   },
   "fare": "$6.3",
-  "levelRequired": 84,
+  "levelRequired": 87,
   "length": {
-    "zh": "8.6 km",
-    "en": "8.6 km"
+    "zh": "9.9 km",
+    "en": "9.9 km"
   },
   "stops": [
     {
       "directionKey": "N",
       "direction": {
-        "zh": "北行（仙貝廣場 → 葉欣海傍道）",
+        "zh": "北行（仙貝廣場 → 葉欣海旁道）",
         "en": "Northbound (Senpai Shopping Center → Praya YiYan Road)"
       },
       "serviceTime": {
-        "zh": "06:00 – 01:30",
-        "en": "06:00 – 01:30"
+        "zh": "0600 – 0030",
+        "en": "0600 – 0030"
       },
       "list": [
         {
@@ -101,39 +100,52 @@
         },
         {
           "name": {
-            "zh": "勿莫街市",
-            "en": "Mo Market"
+            "zh": "羅力素花園二期",
+            "en": "Laws Garden 2"
           }
         },
         {
           "name": {
-            "zh": "中間花園",
-            "en": "Middle Garden"
+            "zh": "葉欣俓",
+            "en": "Leafy Walking Trail"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角醫院",
-            "en": "Leafy Hospital"
+            "zh": "仙貝山",
+            "en": "Senpai Hill"
           }
         },
         {
           "name": {
-            "zh": "葉角灣邨",
-            "en": "Leafy Bay Estate"
+            "zh": "亞歷山教堂",
+            "en": "Alexander Church"
           }
         },
         {
           "name": {
-            "zh": "葉角灣邨商場",
-            "en": "Leafy Bay Estate Shopping Center"
+            "zh": "仙貝多層停車場",
+            "en": "Senpai Multi-Storey Car Park"
           }
         },
         {
           "name": {
-            "zh": "葉角花園",
-            "en": "Leafy Bay Garden"
+            "zh": "亞歷山花園",
+            "en": "Alexander Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣警察局",
+            "en": "Leafy Police Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角大學",
+            "en": "Leafy University"
           }
         },
         {
@@ -157,7 +169,7 @@
         },
         {
           "name": {
-            "zh": "葉欣海傍道",
+            "zh": "葉欣海旁道",
             "en": "Praya YiYan Road"
           }
         }
@@ -170,8 +182,8 @@
         "en": "Southbound (Praya YiYan Road → Senpai Shopping Center)"
       },
       "serviceTime": {
-        "zh": "05:30 – 00:00",
-        "en": "05:30 – 00:00"
+        "zh": "0530 – 0000",
+        "en": "0530 – 0000"
       },
       "list": [
         {
@@ -201,39 +213,52 @@
         },
         {
           "name": {
-            "zh": "葉角花園",
-            "en": "Leafy Bay Garden"
+            "zh": "葉角大學",
+            "en": "Leafy University"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角灣邨商場",
-            "en": "Leafy Bay Estate Shopping Center"
+            "zh": "葉欣警察局",
+            "en": "Leafy Police Station"
           }
         },
         {
           "name": {
-            "zh": "葉角灣邨",
-            "en": "Leafy Bay Estate"
+            "zh": "亞歷山花園",
+            "en": "Alexander Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝多層停車場",
+            "en": "Senpai Multi-Storey Carpark"
           }
         },
         {
           "name": {
-            "zh": "葉角醫院",
-            "en": "Leafy Hospital"
+            "zh": "亞歷山教堂",
+            "en": "Alexander Church"
           }
         },
         {
           "name": {
-            "zh": "中間花園",
-            "en": "Middle Garden"
+            "zh": "仙貝山",
+            "en": "Senpai Hill"
           }
         },
         {
           "name": {
-            "zh": "勿莫商場",
-            "en": "Mo Shopping Center"
+            "zh": "葉欣俓",
+            "en": "Leafy Walking Trail"
+          }
+        },
+        {
+          "name": {
+            "zh": "羅力素花園二期",
+            "en": "Laws Garden 2"
           },
           "zone": 7
         },
@@ -296,5 +321,5 @@
       ]
     }
   ],
-  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_76"
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_77"
 }

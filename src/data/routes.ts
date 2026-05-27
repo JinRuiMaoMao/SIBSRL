@@ -1185,8 +1185,8 @@ const routesData: BusRoute[] = [
     externalUrl: 'https://sites.google.com/view/sunshine-islands/route/49a',
   },
   {
-    id: '73',
-    number: '73',
+    id: '73A',
+    number: '73A',
     operators: ['CSB', 'HZ'],
     category: 'inter',
     pattern: 'circular',

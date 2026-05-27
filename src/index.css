@@ -15,6 +15,12 @@
   --radius-lg: 16px;
   --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
   --font-mono: 'Cascadia Code', 'Consolas', monospace;
+  /* 自制滚动条 */
+  --scrollbar-size: 8px;
+  --scrollbar-track: rgba(26, 37, 64, 0.95);
+  --scrollbar-thumb: rgba(245, 185, 66, 0.45);
+  --scrollbar-thumb-hover: rgba(245, 185, 66, 0.72);
+  --scrollbar-thumb-active: #f5b942;
 }
 
 *,
@@ -42,6 +48,82 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+/* 自制滚动条（Firefox + Chromium / Edge） */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.sibs-scrollbar,
+.route-detail,
+.settings-locale-grid,
+.safety-broadcast-section {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.sibs-scrollbar::-webkit-scrollbar,
+.route-detail::-webkit-scrollbar,
+.settings-locale-grid::-webkit-scrollbar,
+.safety-broadcast-section::-webkit-scrollbar,
+html::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+.sibs-scrollbar::-webkit-scrollbar-track,
+.route-detail::-webkit-scrollbar-track,
+.settings-locale-grid::-webkit-scrollbar-track,
+.safety-broadcast-section::-webkit-scrollbar-track,
+html::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 999px;
+  margin: 2px;
+}
+
+.sibs-scrollbar::-webkit-scrollbar-thumb,
+.route-detail::-webkit-scrollbar-thumb,
+.settings-locale-grid::-webkit-scrollbar-thumb,
+.safety-broadcast-section::-webkit-scrollbar-thumb,
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--scrollbar-thumb-hover) 0%,
+    var(--scrollbar-thumb) 100%
+  );
+  border-radius: 999px;
+  border: 2px solid var(--scrollbar-track);
+  min-height: 2.5rem;
+}
+
+.sibs-scrollbar::-webkit-scrollbar-thumb:hover,
+.route-detail::-webkit-scrollbar-thumb:hover,
+.settings-locale-grid::-webkit-scrollbar-thumb:hover,
+.safety-broadcast-section::-webkit-scrollbar-thumb:hover,
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--scrollbar-thumb-active) 0%,
+    var(--scrollbar-thumb-hover) 100%
+  );
+}
+
+.sibs-scrollbar::-webkit-scrollbar-thumb:active,
+.route-detail::-webkit-scrollbar-thumb:active,
+.settings-locale-grid::-webkit-scrollbar-thumb:active,
+.safety-broadcast-section::-webkit-scrollbar-thumb:active,
+html::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+}
+
+.sibs-scrollbar::-webkit-scrollbar-corner,
+.route-detail::-webkit-scrollbar-corner,
+.settings-locale-grid::-webkit-scrollbar-corner,
+.safety-broadcast-section::-webkit-scrollbar-corner,
+html::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 a {

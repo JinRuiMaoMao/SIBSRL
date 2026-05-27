@@ -1,0 +1,312 @@
+{
+  "id": "473",
+  "number": "473",
+  "operators": [
+    "CSB",
+    "FTCC",
+    "FT"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Lunar Point",
+    "en": "Lunar Point"
+  },
+  "destination": {
+    "zh": "Leafy Bay / 明月角",
+    "en": "Leafy Bay / 明月角"
+  },
+  "via": {
+    "zh": "YiYan Estate, YiYan, Zone 7 Interchange, Southern, Central, Northern Interchange",
+    "en": "YiYan Estate, YiYan, Zone 7 Interchange, Southern, Central, Northern Interchange"
+  },
+  "interval": {
+    "zh": "5 - 20 minutes",
+    "en": "5 - 20 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Leafy Bay: 16 - 26 mins / To Lunar Point: 17 - 27 mins / Circular (Marathon only): 43 - 44 mins",
+    "en": "To Leafy Bay: 16 - 26 mins / To Lunar Point: 17 - 27 mins / Circular (Marathon only): 43 - 44 mins"
+  },
+  "fare": "$11.4",
+  "levelRequired": 78,
+  "length": {
+    "zh": "To Leafy Bay: 10.7 km / To Lunar Point: 11.3 km / Circular (Marathon only): 20.4 km",
+    "en": "To Leafy Bay: 10.7 km / To Lunar Point: 11.3 km / Circular (Marathon only): 20.4 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（明月角 → 葉角灣）",
+        "en": "Northbound (Lunar Point → Leafy Bay)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 00:30",
+        "en": "06:00 – 00:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "明月角",
+            "en": "Lunar Point"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環花園二期",
+            "en": "Southern Two"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (東行)",
+            "en": "Section fare begins here"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東廠",
+            "en": "East Factory"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣公園",
+            "en": "YiYan Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "鑽石交易塔",
+            "en": "Diamond Trading Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第四座",
+            "en": "YiYan Estate Block 4"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          }
+        },
+        {
+          "name": {
+            "zh": "新地公園",
+            "en": "Sindy Park"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "新地花園",
+            "en": "Sindy Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣",
+            "en": "Leafy Bay"
+          },
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（葉角灣 → 明月角）",
+        "en": "Southbound (Leafy Bay → Lunar Point)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 00:00",
+        "en": "06:00 – 00:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "葉角灣",
+            "en": "Leafy Bay"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "新地花園",
+            "en": "Sindy Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "新地公園",
+            "en": "Sindy Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第四座",
+            "en": "YiYan Estate Block 4"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣海旁道",
+            "en": "Praya YiYan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "南洋大廈",
+            "en": "Southern Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹廣場",
+            "en": "Rainbow Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "東廠",
+            "en": "East Factory"
+          }
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (西行)",
+            "en": "Axis Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Section fare begins here"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "警察總部",
+            "en": "Police Headquarters"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "薄荷大廈",
+            "en": "Mint Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "明月角",
+            "en": "Lunar Point"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_473"
+}

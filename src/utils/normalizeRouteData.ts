@@ -47,6 +47,15 @@ function localizeSchedulePhrase(s: string, preferChinese: boolean): string {
   )
 }
 
+/** 区号 7/8、Zones 7/8、日期 2024/6 等：勿按「/」拆成多段简介 */
+function shouldPreserveSlashInText(t: string): boolean {
+  if (/\d{1,2}\s*\/\s*\d{1,2}\s*区/.test(t)) return true
+  if (/[Zz]ones?\s+\d{1,2}\s*\/\s*\d{1,2}/i.test(t)) return true
+  if (/\d{4}\s*\/\s*\d{1,2}(?!\d)/.test(t)) return true
+  if (/第\s*\d{1,2}\s*\/\s*\d{1,2}\s*区/.test(t)) return true
+  return false
+}
+
 /** 双向里程 / 分方向行车时间等：保留全部片段，勿只取第一段 */
 function isMultiDirectionSlashList(parts: string[]): boolean {
   if (parts.length < 2) return false
@@ -66,7 +75,7 @@ function cleanPart(raw: string, preferChinese: boolean): string {
     .trim()
   t = localizeSchedulePhrase(t, preferChinese)
   if (!t) return t
-  if (t.includes('/')) {
+  if (t.includes('/') && !shouldPreserveSlashInText(t)) {
     const parts = t
       .split('/')
       .map((p) => p.trim())

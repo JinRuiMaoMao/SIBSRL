@@ -1,0 +1,46 @@
+{
+  "id": "171",
+  "number": "171",
+  "operators": [
+    "CSB",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "Rainbow Estate Complex / 長島碼頭",
+    "en": "Rainbow Estate Complex / 長島碼頭"
+  },
+  "via": {
+    "zh": "Long Island East, Dove Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Alexander, East Door, Rainbow",
+    "en": "Long Island East, Dove Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Alexander, East Door, Rainbow"
+  },
+  "interval": {
+    "zh": "4 - 30 mins",
+    "en": "4 - 30 mins"
+  },
+  "journeyTime": {
+    "zh": "To Rainbow: 33 - 44 mins / To Long Island: 35 - 45 mins",
+    "en": "To Rainbow: 33 - 44 mins / To Long Island: 35 - 45 mins"
+  },
+  "fare": "$18.2",
+  "levelRequired": 81,
+  "length": {
+    "zh": "21.6 km",
+    "en": "21.6 km"
+  },
+  "serviceTime": {
+    "zh": "06:30 – 23:30 (Mon – Fri only) 07:30 – 00:30 (Sat,Sun only) / 06:00 – 23:30",
+    "en": "06:30 – 23:30 (Mon – Fri only) 07:30 – 00:30 (Sat,Sun only) / 06:00 – 23:30"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_171"
+}

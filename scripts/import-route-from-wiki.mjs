@@ -2,6 +2,7 @@
  * Fetch & parse SIBS route pages from Fandom Wiki.
  * Usage: node scripts/import-route-from-wiki.mjs 476 N472 75P
  *        node scripts/import-route-from-wiki.mjs --all-stubs
+ *        node scripts/import-route-from-wiki.mjs --all-placeholders
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -9,6 +10,8 @@ import { resolve } from 'node:path'
 const WIKI = 'https://sunshine-islands-roblox.fandom.com/api.php'
 const OUT_DIR = resolve('data/wiki-import')
 const STUBS_FILE = resolve('src/data/routesSibsTypes.ts')
+const PLACEHOLDERS_FILE = resolve('src/data/routesStubs.ts')
+const ROUTE_MERGE_FILE = resolve('src/utils/routeMerge.ts')
 
 const OPERATOR_MAP = {
   FT: 'FT',
@@ -477,14 +480,79 @@ function getStubIds() {
   return [...new Set([...ids, ...EXTRA_STUB_IDS])]
 }
 
+/** Mirrors src/utils/routeMerge.ts base-number logic for Wiki page lookup */
+const EXACT_MERGE_BASE = (() => {
+  const map = {}
+  const src = readFileSync(ROUTE_MERGE_FILE, 'utf8')
+  for (const m of src.matchAll(/'([^']+)':\s*\{\s*base:\s*'([^']+)'/g)) {
+    map[m[1]] = m[2]
+  }
+  return map
+})()
+
+const STANDALONE_ROUTE_NUMBERS = (() => {
+  const block = readFileSync(ROUTE_MERGE_FILE, 'utf8').match(
+    /STANDALONE_ROUTE_NUMBERS = new Set\(\[([\s\S]*?)\]\)/,
+  )?.[1]
+  return new Set([...(block?.matchAll(/'([^']+)'/g) ?? [])].map((m) => m[1]))
+})()
+
+function toMergeBaseRouteNumber(routeNumber) {
+  if (EXACT_MERGE_BASE[routeNumber]) return EXACT_MERGE_BASE[routeNumber]
+  if (STANDALONE_ROUTE_NUMBERS.has(routeNumber)) return routeNumber
+  if (/(?<=[0-9Y])[NSEW]$/i.test(routeNumber)) return routeNumber.slice(0, -1)
+  return routeNumber
+}
+
+/** Wiki page title may differ from in-game merge base (e.g. N271 daily challenge) */
+const WIKI_PAGE_TRY_ORDER = {
+  N271: ['N271', 'N171'],
+  '370AEM': ['370A', '370'],
+  Y370A: ['370', '370B'],
+  '77XA': ['77X', '77'],
+}
+
+function wikiIdsForBase(base) {
+  const extra = WIKI_PAGE_TRY_ORDER[base]
+  return extra ? [...new Set(extra)] : [base]
+}
+
+function getPlaceholderWikiIds() {
+  const src = readFileSync(PLACEHOLDERS_FILE, 'utf8')
+  const block = src.match(/GAME_ROUTE_PLACEHOLDER_NUMBERS = \[([\s\S]*?)\]/)?.[1] ?? ''
+  const nums = [...block.matchAll(/'([^']+)'/g)].map((m) => m[1])
+  const bases = nums.map(toMergeBaseRouteNumber)
+  const ids = bases.flatMap((b) => wikiIdsForBase(b))
+  return [...new Set(ids)]
+}
+
+function getAllImportIds() {
+  return [...new Set([...getStubIds(), ...getPlaceholderWikiIds()])]
+}
+
+async function fetchWikiWithFallback(requestedId) {
+  const tryIds = wikiIdsForBase(requestedId)
+  let lastError
+  for (const id of tryIds) {
+    const result = await fetchWiki(id)
+    if (!result.error) return { ...result, resolvedId: id }
+    lastError = result.error
+  }
+  return { id: requestedId, error: lastError ?? 'Not found' }
+}
+
 async function main() {
   const args = process.argv.slice(2)
   const ids =
     args[0] === '--all-stubs'
       ? getStubIds()
-      : args.length
-        ? args
-        : getStubIds()
+      : args[0] === '--all-placeholders'
+        ? getPlaceholderWikiIds()
+        : args[0] === '--all'
+          ? getAllImportIds()
+          : args.length
+            ? args
+            : getStubIds()
 
   mkdirSync(OUT_DIR, { recursive: true })
   const results = []
@@ -493,13 +561,17 @@ async function main() {
   for (const id of ids) {
     process.stderr.write(`Fetching ${id}...\n`)
     try {
-      const { wikitext, error } = await fetchWiki(id)
+      const { wikitext, error, resolvedId } = await fetchWikiWithFallback(id)
+      const saveId = resolvedId ?? id
       if (error) {
         errors.push({ id, error })
         continue
       }
-      const route = buildRoute(id, wikitext)
-      writeFileSync(resolve(OUT_DIR, `${id.replace(/[%#*]/g, '_')}.json`), JSON.stringify(route, null, 2))
+      const route = buildRoute(saveId, wikitext)
+      writeFileSync(
+        resolve(OUT_DIR, `${saveId.replace(/[%#*]/g, '_')}.json`),
+        JSON.stringify(route, null, 2),
+      )
       results.push(route)
     } catch (e) {
       errors.push({ id, error: String(e) })

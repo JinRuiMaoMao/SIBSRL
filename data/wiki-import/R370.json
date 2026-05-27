@@ -1,0 +1,239 @@
+{
+  "id": "R370",
+  "number": "R370",
+  "operators": [
+    "REBC",
+    "HZ"
+  ],
+  "category": "special",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Praya YiYan Road",
+    "en": "Praya YiYan Road"
+  },
+  "destination": {
+    "zh": "Dove Park / 葉欣海旁道→白鴿公園",
+    "en": "Dove Park / 葉欣海旁道→白鴿公園"
+  },
+  "via": {
+    "zh": "Leafy Bay, Normal Gap, Rainbow, Haisey, East Door, Senpai, Kamaya, Zone 7 Interchange",
+    "en": "Leafy Bay, Normal Gap, Rainbow, Haisey, East Door, Senpai, Kamaya, Zone 7 Interchange"
+  },
+  "interval": {
+    "zh": "Depend on actual situation",
+    "en": "Depend on actual situation"
+  },
+  "journeyTime": {
+    "zh": "39 mins",
+    "en": "39 mins"
+  },
+  "fare": "$36.3",
+  "length": {
+    "zh": "26.5 km",
+    "en": "26.5 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（葉欣海旁道 → 白鴿公園）",
+        "en": "Direction 1 (Praya YiYan Road → Dove Park)"
+      },
+      "serviceTime": {
+        "zh": "Marathon Special Service",
+        "en": "Marathon Special Service"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "葉欣海旁道",
+            "en": "Praya YiYan Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "南洋大廈",
+            "en": "Southern Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹廣場",
+            "en": "Rainbow Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣公園",
+            "en": "YiYan Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "鑽石交易塔",
+            "en": "Diamond Trading Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第四座",
+            "en": "YiYan Estate Block 4"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨商場",
+            "en": "Leafy Bay Estate Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "中間花園",
+            "en": "Middle Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "勿莫商場",
+            "en": "Mo Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫街市",
+            "en": "Mo Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門公園",
+            "en": "East Door Park"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西邨",
+            "en": "Haisey Estate"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿公園",
+            "en": "Dove Park"
+          },
+          "zone": 1
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_R370"
+}

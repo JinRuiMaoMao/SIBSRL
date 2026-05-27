@@ -49,18 +49,19 @@
           "name": {
             "zh": "長島碼頭",
             "en": "Long Island Ferry Pier"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "文化廣場",
-            "en": "Long Island Pier Road"
+            "en": "Culture Square"
           }
         },
         {
           "name": {
             "zh": "百彩新城",
-            "en": "Long Island East Road"
+            "en": "N Park"
           }
         },
         {
@@ -84,20 +85,21 @@
         {
           "name": {
             "zh": "長島東醫院",
-            "en": "Long Island Pier Road"
+            "en": "East Long Island Hospital"
           }
         },
         {
           "name": {
             "zh": "彩色匯",
-            "en": "Cross Island Road"
+            "en": "Rainbow Center"
           }
         },
         {
           "name": {
             "zh": "時間里",
-            "en": "Dove Praya Road"
-          }
+            "en": "Timelapse Lane"
+          },
+          "zone": 1
         },
         {
           "name": {
@@ -108,13 +110,13 @@
         {
           "name": {
             "zh": "三哥大廈",
-            "en": "Dove Road"
+            "en": "Third Technology Building"
           }
         },
         {
           "name": {
             "zh": "白鴿山",
-            "en": "Dove Street"
+            "en": "Dove Hill"
           }
         },
         {
@@ -132,27 +134,27 @@
         {
           "name": {
             "zh": "艾迪城",
-            "en": "Aisan Road"
+            "en": "Addi City"
           }
         },
         {
           "name": {
             "zh": "西區醫院",
-            "en": "Cross Island Road"
+            "en": "Western Hospital"
           },
           "zone": 1
         },
         {
           "name": {
             "zh": "中西轉車站",
-            "en": "Central-Western Highway"
+            "en": "Central - Western Interchange"
           },
           "zone": 1
         },
         {
           "name": {
             "zh": "葉角灣墳場",
-            "en": "YiYan Road"
+            "en": "Leafy Bay Cemetery"
           },
           "zone": 7
         },
@@ -187,7 +189,8 @@
           "name": {
             "zh": "葉角灣墳場",
             "en": "Leafy Bay Cemetery"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -198,29 +201,30 @@
         {
           "name": {
             "zh": "葉欣海旁路",
-            "en": "YiYan Praya Road"
+            "en": "Praya YiYan Road"
           },
           "zone": 7
         },
         {
           "name": {
             "zh": "中西轉車站",
-            "en": "Central-Western Highway"
+            "en": "Central - Western Interchange"
           },
           "zone": 1
         },
         {
           "name": {
             "zh": "西區醫院",
-            "en": "Cross Island Road"
+            "en": "Western Hospital"
           },
           "zone": 1
         },
         {
           "name": {
             "zh": "艾迪城",
-            "en": "Aisan Road"
-          }
+            "en": "Addi City"
+          },
+          "zone": 1
         },
         {
           "name": {
@@ -231,7 +235,7 @@
         {
           "name": {
             "zh": "白鴿山",
-            "en": "Dove Street"
+            "en": "Dove Hill"
           }
         },
         {
@@ -243,20 +247,21 @@
         {
           "name": {
             "zh": "三哥大廈",
-            "en": "Dove Road"
+            "en": "Third Technology Building"
           }
         },
         {
           "name": {
             "zh": "艾迪路",
-            "en": "Dove Praya Road"
+            "en": "Addi Road"
           }
         },
         {
           "name": {
             "zh": "時間廊",
-            "en": "Dove Praya Road"
-          }
+            "en": "Timelapse Mall"
+          },
+          "zone": 1
         },
         {
           "name": {
@@ -268,7 +273,8 @@
           "name": {
             "zh": "虹尾角站",
             "en": "Iris Point Station"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
@@ -285,7 +291,7 @@
         {
           "name": {
             "zh": "藝術大廈",
-            "en": "Art Building"
+            "en": "LMK Long Island East is located here. Players can get food here."
           }
         },
         {
@@ -315,7 +321,7 @@
         {
           "name": {
             "zh": "文化廣場",
-            "en": "Long Island Pier Road"
+            "en": "Culture Square"
           }
         },
         {

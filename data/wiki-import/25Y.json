@@ -1,0 +1,39 @@
+{
+  "id": "25Y",
+  "number": "25Y",
+  "operators": [
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "via": {
+    "zh": "Northern Dove Island , Hospital Island, Northern",
+    "en": "Northern Dove Island , Hospital Island, Northern"
+  },
+  "interval": {
+    "zh": "Depends on Passenger Demand}}",
+    "en": "Depends on Passenger Demand}}"
+  },
+  "journeyTime": {
+    "zh": "To Container's Island: 25 mins / To Long Island: 28 mins",
+    "en": "To Container's Island: 25 mins / To Long Island: 28 mins"
+  },
+  "fare": "$5.4",
+  "length": {
+    "zh": "21.2 km",
+    "en": "21.2 km"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_25Y"
+}

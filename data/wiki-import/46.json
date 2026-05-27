@@ -1,0 +1,44 @@
+{
+  "id": "46",
+  "number": "46",
+  "operators": [
+    "FTCC",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    4
+  ],
+  "origin": {
+    "zh": "Lunar Point",
+    "en": "Lunar Point"
+  },
+  "destination": {
+    "zh": "Eastmallow Praya Road  / 明月角",
+    "en": "Eastmallow Praya Road  / 明月角"
+  },
+  "via": {
+    "zh": "Northern Interchange, Eastmallow Estate",
+    "en": "Northern Interchange, Eastmallow Estate"
+  },
+  "interval": {
+    "zh": "15 - 60 minutes}}Zone 4 route 46 is operated by FT Central Connect, travelling between Lunar Point and Eastmallow Praya Road. As a local service, it connects the northern end of Moon Island to the rest of the FTCC bus network.",
+    "en": "15 - 60 minutes}}Zone 4 route 46 is operated by FT Central Connect, travelling between Lunar Point and Eastmallow Praya Road. As a local service, it connects the northern end of Moon Island to the rest of the FTCC bus network."
+  },
+  "journeyTime": {
+    "zh": "To Eastmallow: 6 mins / To Lunar Point: 7 mins",
+    "en": "To Eastmallow: 6 mins / To Lunar Point: 7 mins"
+  },
+  "fare": "$3.7",
+  "levelRequired": 42,
+  "length": {
+    "zh": "3.5 km",
+    "en": "3.5 km"
+  },
+  "serviceTime": {
+    "zh": "07:00 – 24:00 / 06:30 – 23:30",
+    "en": "07:00 – 24:00 / 06:30 – 23:30"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_46"
+}

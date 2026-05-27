@@ -146,8 +146,8 @@
     {
       "directionKey": "S",
       "direction": {
-        "zh": "南行（仙貝廣場 → C01}} * [https://roblox.fandom.com/zh/wiki/際巴C01線 Roblox大典：際巴C01線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Crew Bus Routes Category:Overnight Bus Routes Category:Inter-zone routes）",
-        "en": "Southbound (Senpai Shopping Center → C401A}}, these routes are the first to be operated exclusively for staff of a bus company. * This route is one of two intra-zone service numbers to not follow the route numbering conventions aside from scheduled Private Hire trips (since it is a Zone 7/8 route). The other is Forever Transit's open day shuttle route, F469. * When the route was initially introduced, CSB's LED displays showed \"Crew Bus\" without the number, which was shown on a separate window card. The route number for each employee service was later added to the LED displays although \"Crew Bus\" is still shown. However, FT and REBC buses still have external LED data for this route. CSB's Scania K360IB also shares this trait, since its LED display was programmed like those at FT and REBC. ==Link== * {{Ref-SI)"
+        "zh": "南行（仙貝廣場 → 際巴車廠）",
+        "en": "Southbound (Senpai Shopping Center → CSB Depot)"
       },
       "list": [
         {
@@ -266,8 +266,8 @@
         },
         {
           "name": {
-            "zh": "C01}} * [https://roblox.fandom.com/zh/wiki/際巴C01線 Roblox大典：際巴C01線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Crew Bus Routes Category:Overnight Bus Routes Category:Inter-zone routes",
-            "en": "C401A}}, these routes are the first to be operated exclusively for staff of a bus company. * This route is one of two intra-zone service numbers to not follow the route numbering conventions aside from scheduled Private Hire trips (since it is a Zone 7/8 route). The other is Forever Transit's open day shuttle route, F469. * When the route was initially introduced, CSB's LED displays showed \"Crew Bus\" without the number, which was shown on a separate window card. The route number for each employee service was later added to the LED displays although \"Crew Bus\" is still shown. However, FT and REBC buses still have external LED data for this route. CSB's Scania K360IB also shares this trait, since its LED display was programmed like those at FT and REBC. ==Link== * {{Ref-SI"
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
           }
         }
       ]

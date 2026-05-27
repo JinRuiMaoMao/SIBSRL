@@ -3,7 +3,6 @@ import type { RouteServiceType } from '../types/route'
 
 export const ROUTE_SERVICE_TYPE_MAP: Record<string, RouteServiceType[]> = {
   '21A': ['loop'],
-  '73': ['festival'],
   '73A': ['loop'],
   '76': ['festival'],
   '76#': ['specialDeparture'],
@@ -17,7 +16,6 @@ export const ROUTE_SERVICE_TYPE_MAP: Record<string, RouteServiceType[]> = {
   '246XA': ['loop'],
   '370': ['specialDeparture'],
   '370B': ['specialDeparture'],
-  '376': ['festival'],
   '376S': ['peakExpress'],
   '475': ['peakExpress', 'specialDeparture'],
   '475A': ['peakExpress'],

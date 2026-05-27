@@ -1,0 +1,191 @@
+{
+  "id": "42",
+  "number": "42",
+  "operators": [
+    "FTCC",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    4
+  ],
+  "origin": {
+    "zh": "Southern Central",
+    "en": "Southern Central"
+  },
+  "destination": {
+    "zh": "Rocky Road / 中環南",
+    "en": "Rocky Road / 中環南"
+  },
+  "via": {
+    "zh": "Sunshine Station, Central Hospital, Northern Interchange",
+    "en": "Sunshine Station, Central Hospital, Northern Interchange"
+  },
+  "interval": {
+    "zh": "10 - 30 minutes",
+    "en": "10 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Rocky Road: 19 - 25 mins / To Southern Central: 20 - 24 mins",
+    "en": "To Rocky Road: 19 - 25 mins / To Southern Central: 20 - 24 mins"
+  },
+  "fare": "$4.8",
+  "levelRequired": 20,
+  "length": {
+    "zh": "9.8 km",
+    "en": "9.8 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（中環南總站 → 巨石路）",
+        "en": "Direction 1 (Southern Central Bus Terminus → Rocky Road)"
+      },
+      "serviceTime": {
+        "zh": "0630 – 2300",
+        "en": "0630 – 2300"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "中環南總站",
+            "en": "Southern Central Bus Terminus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中葉隧道行政大樓",
+            "en": "Leafy-Central Tunnel Administration Block"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環文化區公園",
+            "en": "Southern Cultural District Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環運動場",
+            "en": "Southern Sports Field"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環臺",
+            "en": "Southern Terrance"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中環消防局",
+            "en": "Central Fire Station"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中環(中日街)",
+            "en": "Sun Central Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Formerly Pink Mall"
+          }
+        },
+        {
+          "name": {
+            "zh": "雀鳥橋",
+            "en": "Bird Bridge"
+          }
+        },
+        {
+          "name": {
+            "zh": "班尼街",
+            "en": "Brown Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環中心",
+            "en": "Northern Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Red Wall Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓游泳池",
+            "en": "Norton Swimming Pool"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路",
+            "en": "Rocky Road"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_42"
+}

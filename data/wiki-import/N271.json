@@ -1,6 +1,6 @@
 {
-  "id": "N171",
-  "number": "N171",
+  "id": "N271",
+  "number": "N271",
   "operators": [
     "FT",
     "CSB"
@@ -22,22 +22,21 @@
     "en": "[[Rainbow Estate Complex"
   },
   "via": {
-    "zh": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern, Zone 7 Interchange, YiYan, Leafy Bay Estate, Alexander, North Leafy, East Door, Haisey",
-    "en": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern, Zone 7 Interchange, YiYan, Leafy Bay Estate, Alexander, North Leafy, East Door, Haisey"
+    "zh": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern Central, Southern, Southern Cultral District, Zone 7 Interchange, YiYan, Leafy Bay, Alexander, North Leafy, East Door, Haisey",
+    "en": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern Central, Southern, Southern Cultral District, Zone 7 Interchange, YiYan, Leafy Bay, Alexander, North Leafy, East Door, Haisey"
   },
   "interval": {
     "zh": "10 - 30 min",
     "en": "10 - 30 min"
   },
   "journeyTime": {
-    "zh": "To Rainbow: 76 mins / To Long Island: 73 min",
-    "en": "To Rainbow: 76 mins / To Long Island: 73 min"
+    "zh": "To Rainbow: 76 mins",
+    "en": "To Rainbow: 76 mins"
   },
   "fare": "$24.2",
-  "levelRequired": 95,
   "length": {
-    "zh": "往彩虹中心 40.4 km / 往长岛码头 40.5 km",
-    "en": "To Rainbow Estate Complex 40.4 km / To Long Island Ferry Pier 40.5 km"
+    "zh": "39.1 km",
+    "en": "39.1 km"
   },
   "stops": [
     {
@@ -90,8 +89,8 @@
         },
         {
           "name": {
-            "zh": "長島東醫院",
-            "en": "East Long Island Hospital"
+            "zh": "宜和劇場",
+            "en": "Jardine Theater"
           }
         },
         {
@@ -122,19 +121,7 @@
         {
           "name": {
             "zh": "購物廊",
-            "en": "Shopping Corridor"
-          }
-        },
-        {
-          "name": {
-            "zh": "白鴿消防局",
-            "en": "Dove Fire Station"
-          }
-        },
-        {
-          "name": {
-            "zh": "伊迪城",
-            "en": "subject =  Cross Island Highway (Dove Island Bypass),  Western Harbour Tunnel }}"
+            "en": "subject =  Western Harbour Tunnel }}"
           }
         },
         {
@@ -153,7 +140,7 @@
         {
           "name": {
             "zh": "北島花園商場",
-            "en": "NIE Shopping Center"
+            "en": "North Island Estate Shopping Centre"
           }
         },
         {
@@ -240,15 +227,14 @@
         {
           "name": {
             "zh": "中葉隧道行政大樓",
-            "en": "subject =  Leafy - Central Tunnel }}"
+            "en": "subject =  Leafy-Central Tunnel }}"
           }
         },
         {
           "name": {
             "zh": "東廠",
             "en": "East Factory"
-          },
-          "zone": 7
+          }
         },
         {
           "name": {
@@ -703,7 +689,7 @@
         {
           "name": {
             "zh": "北島花園商場",
-            "en": "NIE Shopping Center"
+            "en": "North Island Estate Shopping Centre"
           }
         },
         {
@@ -726,23 +712,10 @@
         },
         {
           "name": {
-            "zh": "西區海底隧道轉車站 (N2)",
-            "en": "subject =  Western Harbour Tunnel,  Cross Island Highway (Dove Island Bypass) }}"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "伊迪城",
+            "zh": "艾迪城",
             "en": "Section fare begins here"
           },
           "zone": 1
-        },
-        {
-          "name": {
-            "zh": "艾迪城",
-            "en": "Addi City"
-          }
         },
         {
           "name": {
@@ -807,5 +780,5 @@
       ]
     }
   ],
-  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N171"
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N271"
 }

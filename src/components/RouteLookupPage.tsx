@@ -195,12 +195,14 @@ export function RouteLookupPage() {
       />
 
       <RouteFilters
+        routeGroup={filters.routeGroup}
         zone={filters.zone}
         operator={filters.operator}
         type={filters.type}
         zones={zones}
         operators={operators}
         types={types}
+        onRouteGroupChange={(group) => updateFilter('routeGroup', group)}
         onZoneChange={(z) => updateFilter('zone', z)}
         onOperatorChange={(op) => updateFilter('operator', op)}
         onTypeChange={(item) => updateFilter('type', item)}

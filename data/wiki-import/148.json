@@ -1,0 +1,358 @@
+{
+  "id": "148",
+  "number": "148",
+  "operators": [
+    "REBC",
+    "FTCC",
+    "FT"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "destination": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "via": {
+    "zh": "Hospital Island, Dove Island, Western Harbour Tunnel Interchange, Northern Interchange, Sunshine University, North Island Estate",
+    "en": "Hospital Island, Dove Island, Western Harbour Tunnel Interchange, Northern Interchange, Sunshine University, North Island Estate"
+  },
+  "interval": {
+    "zh": "4 - 15 minutes",
+    "en": "4 - 15 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Norton: 25 - 35 mins / To Container's Island: 22 - 35 mins",
+    "en": "To Norton: 25 - 35 mins / To Container's Island: 22 - 35 mins"
+  },
+  "fare": "$12.1",
+  "levelRequired": 64,
+  "length": {
+    "zh": "17.4 km",
+    "en": "17.4 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（貨櫃碼頭島 → 北頓市中心）",
+        "en": "Northbound (Container's Island → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 00:00 / 05:00 – 23:30",
+        "en": "06:00 – 00:00 / 05:00 – 23:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "貨櫃碼頭島",
+            "en": "Container's Island"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "艾迪路",
+            "en": "Addi Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "North Island Estate Shopping Centre"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路",
+            "en": "Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓碼頭",
+            "en": "Norton Ferry Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → 貨櫃碼頭島）",
+        "en": "Southbound (Norton Town Center → Container's Island)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 00:00 / 05:00 – 23:30",
+        "en": "06:00 – 00:00 / 05:00 – 23:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "綠寶石中心",
+            "en": "Emerald Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "North Island Estate Shopping Centre"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Timelapse Mall"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "銀行大廈",
+            "en": "Bank Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "艾迪城",
+            "en": "Addi City"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區醫院",
+            "en": "Western Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "三塔",
+            "en": "Triple Tower"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭員工宿舍",
+            "en": "Containers Island Employee House"
+          }
+        },
+        {
+          "name": {
+            "zh": "海苔灣",
+            "en": "Seaweed Bay"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "Containers Terminal"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭島",
+            "en": "Container's Island"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_148"
+}

@@ -1,6 +1,6 @@
 {
-  "id": "76",
-  "number": "76",
+  "id": "75",
+  "number": "75",
   "operators": [
     "CSB"
   ],
@@ -19,33 +19,33 @@
     "en": "Praya YiYan Road / 仙貝廣場"
   },
   "via": {
-    "zh": "Leafy Bay Estate, Leafy Hospital",
-    "en": "Leafy Bay Estate, Leafy Hospital"
+    "zh": "YiYan Estate, Leafy Hospital, Rainbow Estate, East Door",
+    "en": "YiYan Estate, Leafy Hospital, Rainbow Estate, East Door"
   },
   "interval": {
-    "zh": "4 - 30 minutes",
-    "en": "4 - 30 minutes"
+    "zh": "6 - 20 mins}}Zone 7 Route 75 was introduced in the July 25, 2020 (Leafy Bay update). It runs from [[Praya YiYan Road",
+    "en": "6 - 20 mins}}Zone 7 Route 75 was introduced in the July 25, 2020 (Leafy Bay update). It runs from [[Praya YiYan Road"
   },
   "journeyTime": {
-    "zh": "to YiYan: 17 mins / To Senpai:18 mins",
-    "en": "to YiYan: 17 mins / To Senpai:18 mins"
+    "zh": "To YiYan: 17 - 30 mins / To Senpai: 17 - 29 mins",
+    "en": "To YiYan: 17 - 30 mins / To Senpai: 17 - 29 mins"
   },
   "fare": "$6.3",
-  "levelRequired": 84,
+  "levelRequired": 48,
   "length": {
-    "zh": "8.6 km",
-    "en": "8.6 km"
+    "zh": "12.1 km",
+    "en": "12.1 km"
   },
   "stops": [
     {
       "directionKey": "N",
       "direction": {
-        "zh": "北行（仙貝廣場 → 葉欣海傍道）",
+        "zh": "北行（仙貝廣場 → 葉欣海旁道）",
         "en": "Northbound (Senpai Shopping Center → Praya YiYan Road)"
       },
       "serviceTime": {
-        "zh": "06:00 – 01:30",
-        "en": "06:00 – 01:30"
+        "zh": "06:00 – 00:30",
+        "en": "06:00 – 00:30"
       },
       "list": [
         {
@@ -63,14 +63,14 @@
         },
         {
           "name": {
-            "zh": "上灣街市",
-            "en": "Sheung Bay Market"
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
           }
         },
         {
           "name": {
-            "zh": "仙貝市政大廈",
-            "en": "Senpai Municipal Services Building"
+            "zh": "黑白中心",
+            "en": "Grayscale Centre"
           }
         },
         {
@@ -81,54 +81,67 @@
         },
         {
           "name": {
-            "zh": "仙貝道",
-            "en": "Senpai Road"
+            "zh": "東門路",
+            "en": "East Door Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
           }
         },
         {
           "name": {
-            "zh": "北葉花園",
-            "en": "North Leafy Garden"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "羅力素花園一期",
-            "en": "Laws Garden"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "勿莫街市",
-            "en": "Mo Market"
+            "zh": "東門花園",
+            "en": "East Door Garden"
           }
         },
         {
           "name": {
-            "zh": "中間花園",
-            "en": "Middle Garden"
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆中心",
+            "en": "Redbean Center"
           },
           "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "海西迴旋處",
+            "en": "Haisey Roundabout"
+          },
+          "zone": 8
         },
         {
           "name": {
             "zh": "葉角醫院",
             "en": "Leafy Hospital"
-          }
-        },
-        {
-          "name": {
-            "zh": "葉角灣邨",
-            "en": "Leafy Bay Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "葉角灣邨商場",
-            "en": "Leafy Bay Estate Shopping Center"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -140,13 +153,19 @@
           "name": {
             "zh": "新地公園",
             "en": "Sindy Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "新地花園",
-            "en": "Sindy Garden"
+            "zh": "葉欣邨第四座",
+            "en": "YiYan Estate Block 4"
           }
         },
         {
@@ -157,7 +176,7 @@
         },
         {
           "name": {
-            "zh": "葉欣海傍道",
+            "zh": "葉欣海旁道",
             "en": "Praya YiYan Road"
           }
         }
@@ -189,33 +208,33 @@
         },
         {
           "name": {
-            "zh": "新地花園",
-            "en": "Sindy Garden"
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第四座",
+            "en": "YiYan Estate Block 4"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣邨第一座",
+            "en": "YiYan Estate Block 1"
           }
         },
         {
           "name": {
             "zh": "新地公園",
             "en": "Sindy Park"
-          }
-        },
-        {
-          "name": {
-            "zh": "葉角花園",
-            "en": "Leafy Bay Garden"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角灣邨商場",
-            "en": "Leafy Bay Estate Shopping Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "葉角灣邨",
-            "en": "Leafy Bay Estate"
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
           }
         },
         {
@@ -226,47 +245,72 @@
         },
         {
           "name": {
-            "zh": "中間花園",
-            "en": "Middle Garden"
+            "zh": "海西迴旋處",
+            "en": "Haisey Roundabout"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
           }
         },
         {
           "name": {
-            "zh": "勿莫商場",
-            "en": "Mo Shopping Center"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "羅力素花園一期",
-            "en": "Laws Garden"
+            "zh": "紅豆中心",
+            "en": "Redbean Center"
           }
         },
         {
           "name": {
-            "zh": "北葉花園",
-            "en": "North Leafy Garden"
+            "zh": "東門邨",
+            "en": "East Door Estate"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "仙貝道",
-            "en": "Senpai Road"
-          },
-          "zone": 7
+            "zh": "東門下邨",
+            "en": "Lower East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門花園",
+            "en": "East Door Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門總站",
+            "en": "East Door Bus Terminus"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門路",
+            "en": "East Door Road"
+          }
         },
         {
           "name": {
             "zh": "仙貝",
             "en": "Senpai"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
-            "zh": "仙貝市政大廈",
-            "en": "Senpai Municipal Services Building"
+            "zh": "紀念碑",
+            "en": "The Stone of Memory"
           }
         },
         {
@@ -296,5 +340,5 @@
       ]
     }
   ],
-  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_76"
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_75"
 }

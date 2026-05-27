@@ -122,8 +122,8 @@
     {
       "directionKey": "S",
       "direction": {
-        "zh": "南行（北頓市中心 → C401}} *[https://roblox.fandom.com/zh/wiki/%E9%9A%9B%E5%B7%B4C401%E7%B7%9A Roblox大典：際巴C401線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 4 Bus Routes Category:Inter-zone routes Category:Crew Bus Routes Category:Overnight Bus Routes）",
-        "en": "Southbound (Norton Town Center → C401A}}, 140/140P (if counting FT and FTCC as the same company) F701, F702, S1 and S2. *Forever Transit and REBC buses have external LED display data for this route, while the external LED displays on CSB buses will show \"Crew Bus\" and the route number. The route number was not initially displayed on CSB vehicles. However, CSB's Scania K360IB has LED display data that shows the route number and destination (as it was programmed like FT and REBC's vehicles). **The initial \"Crew Bus\" exposure (with no number) can only be accessed in Free Drive. ==Link== *{{Ref-SI)"
+        "zh": "南行（北頓市中心 → 際巴車廠）",
+        "en": "Southbound (Norton Town Center → CSB Depot)"
       },
       "serviceTime": {
         "zh": "03:45, 04:15}}",
@@ -203,8 +203,8 @@
         },
         {
           "name": {
-            "zh": "C401}} *[https://roblox.fandom.com/zh/wiki/%E9%9A%9B%E5%B7%B4C401%E7%B7%9A Roblox大典：際巴C401線]（只有中文版）  Category:CSB Bus Routes Category:Zone 7 Bus Routes Category:Zone 4 Bus Routes Category:Inter-zone routes Category:Crew Bus Routes Category:Overnight Bus Routes",
-            "en": "C401A}}, 140/140P (if counting FT and FTCC as the same company) F701, F702, S1 and S2. *Forever Transit and REBC buses have external LED display data for this route, while the external LED displays on CSB buses will show \"Crew Bus\" and the route number. The route number was not initially displayed on CSB vehicles. However, CSB's Scania K360IB has LED display data that shows the route number and destination (as it was programmed like FT and REBC's vehicles). **The initial \"Crew Bus\" exposure (with no number) can only be accessed in Free Drive. ==Link== *{{Ref-SI"
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
           }
         }
       ]

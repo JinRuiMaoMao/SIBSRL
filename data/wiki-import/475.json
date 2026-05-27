@@ -177,7 +177,7 @@
       "directionKey": "S",
       "direction": {
         "zh": "南行（北頓市中心 → 仙貝廣場）",
-        "en": "Southbound (Norton Town Center → 475}}  Category:CSB Bus Routes Category:HZSI Bus Routes Category:Inter-zone routes Category:Zone 4 Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Daytime Bus Routes)"
+        "en": "Southbound (Norton Town Center → Senpai Shopping Center)"
       },
       "serviceTime": {
         "zh": "0608 – 0038",
@@ -249,19 +249,6 @@
         },
         {
           "name": {
-            "zh": "東錦葵海傍路",
-            "en": "LMK Eastmallow is located here.<ref>Players can get food here</ref><ref>They can also change Route [https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_46 46] and [https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_47 47] there.</ref>"
-          }
-        },
-        {
-          "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Special Departure starts service here / Section fare begins here / Near Thousand Leaf Station"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
             "zh": "海西迴旋處",
             "en": "Section fare begins here"
           },
@@ -321,7 +308,7 @@
         {
           "name": {
             "zh": "仙貝廣場",
-            "en": "475}}  Category:CSB Bus Routes Category:HZSI Bus Routes Category:Inter-zone routes Category:Zone 4 Bus Routes Category:Zone 7 Bus Routes Category:Zone 8 Bus Routes Category:Daytime Bus Routes"
+            "en": "Senpai Shopping Center"
           }
         }
       ]
