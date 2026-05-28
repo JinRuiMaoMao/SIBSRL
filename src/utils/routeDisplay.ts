@@ -1,5 +1,5 @@
 import type { BilingualText, BusRoute, RoutePattern } from '../types/route'
-import { getPrimaryText } from '../i18n/displayText'
+import { getPrimaryText, localizeChinese } from '../i18n/displayText'
 import type { Locale } from '../i18n/types'
 import { isChineseLocale } from '../i18n/types'
 
@@ -24,7 +24,7 @@ export function formatEndpointLine(
 }
 
 function directionTextForLocale(direction: BilingualText, locale: Locale): string {
-  if (isChineseLocale(locale)) return direction.zh
+  if (isChineseLocale(locale)) return localizeChinese(direction.zh, locale)
   return direction.en.trim() || direction.zh
 }
 

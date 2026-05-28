@@ -6,10 +6,16 @@ import {
   ROUTE_21A_AT_PREFIX,
   ROUTE_21A_STOPS,
 } from './lib/route21a-audio-map.mjs'
+import {
+  buildRoute77XAStopAudioSlots,
+  ROUTE_77XA_AT_PREFIX,
+  ROUTE_77XA_STOPS,
+} from './lib/route77xa-audio-map.mjs'
 
 /** 已录入线路报站音频的 routeId */
-export const ROUTE_BROADCAST_IDS = ['21A']
+export const ROUTE_BROADCAST_IDS = ['21A', '77XA']
 const ROUTE_21A_ID = '21A'
+const ROUTE_77XA_ID = '77XA'
 
 function findSibsBroadcastRoot() {
   const candidates = ['E:\\SIBS广播', resolve('..', 'SIBS广播')]
@@ -58,6 +64,20 @@ function syncRoute21A(srcDir, destDir) {
   return { copied, slots }
 }
 
+function syncRoute77XA(srcDir, destDir) {
+  const sourceFiles = readdirSync(srcDir).filter((f) => f.toLowerCase().endsWith('.mp3'))
+  const slots = buildRoute77XAStopAudioSlots(ROUTE_77XA_STOPS, sourceFiles)
+  mkdirSync(destDir, { recursive: true })
+
+  let copied = 0
+  for (const slot of slots) {
+    const destName = `${ROUTE_77XA_AT_PREFIX}-${String(slot.atStopIndex).padStart(2, '0')}.mp3`
+    copyFileSync(join(srcDir, slot.sourceFile), join(destDir, destName))
+    copied++
+  }
+  return { copied, slots, sourceCount: sourceFiles.length }
+}
+
 export function syncRouteBroadcastAudio(options = {}) {
   const root = options.root ?? findSibsBroadcastRoot()
   const routeIds = options.routeIds ?? ROUTE_BROADCAST_IDS
@@ -85,6 +105,19 @@ export function syncRouteBroadcastAudio(options = {}) {
         const at = ROUTE_21A_STOPS[s.atStopIndex]
         const atName = at.name.zh || at.name.en
         console.log(`  [${s.atStopIndex + 1}] ${atName} → ${s.sourceFile}`)
+      }
+      results.push({ routeId, srcDir, destDir, count: copied, slots })
+    } else if (routeId === ROUTE_77XA_ID) {
+      const { copied, slots, sourceCount } = syncRoute77XA(srcDir, destDir)
+      if (sourceCount === 0) {
+        console.warn(`${routeId} 报站：源目录为空（${srcDir}），请先放入 MP3`)
+      } else {
+        console.log(`${routeId} 报站：${copied} 个（按「当前站 → 下一站」）→ ${destDir}`)
+        for (const s of slots) {
+          const at = ROUTE_77XA_STOPS[s.atStopIndex]
+          const atName = at.name.zh || at.name.en
+          console.log(`  [${s.atStopIndex + 1}] ${atName} → ${s.sourceFile}`)
+        }
       }
       results.push({ routeId, srcDir, destDir, count: copied, slots })
     } else {

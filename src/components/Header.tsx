@@ -13,6 +13,9 @@ const LINK_LABEL_KEYS: Record<string, MessageKey> = {
 const TAB_KEYS: Record<AppTab, MessageKey> = {
   routes: 'tabRoutes',
   broadcast: 'tabBroadcast',
+  music: 'tabMusic',
+  complaints: 'tabComplaints',
+  updates: 'tabUpdates',
 }
 
 interface HeaderProps {

@@ -20,12 +20,14 @@ function createPlaceholderRoute(number: string): BusRoute {
 
 /** Wiki ???? Wiki ?????????????? */
 const GAME_ROUTE_PLACEHOLDER_NUMBERS = [
+  '476SA',
+  'F469A',
+  'N76A',
   '25YN',
   '25YS',
   '370AW',
   '370AE',
   'N476E',
-  '77XA',
   '240A',
   '242A',
   '248A',

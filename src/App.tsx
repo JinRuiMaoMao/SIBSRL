@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import './App.css'
 import { BroadcastPage } from './components/BroadcastPage'
+import { ComplaintsPage } from './components/ComplaintsPage'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Header } from './components/Header'
+import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
+import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { useLocale } from './i18n/LocaleContext'
 import type { AppTab } from './types/appTab'
 
@@ -26,7 +29,17 @@ function App() {
 
       <main className="main">
         <ErrorBoundary>
-          {activeTab === 'routes' ? <RouteLookupPage /> : <BroadcastPage />}
+          {activeTab === 'routes' ? (
+            <RouteLookupPage />
+          ) : activeTab === 'broadcast' ? (
+            <BroadcastPage />
+          ) : activeTab === 'music' ? (
+            <MusicPage />
+          ) : activeTab === 'complaints' ? (
+            <ComplaintsPage />
+          ) : (
+            <VersionUpdatesPage />
+          )}
         </ErrorBoundary>
       </main>
 

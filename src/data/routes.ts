@@ -1756,6 +1756,57 @@ const routesData: BusRoute[] = [
     externalUrl: 'https://sites.google.com/view/sunshine-islands/route/77',
   },
   {
+    id: '77XA',
+    number: '77XA',
+    operators: ['CSB'],
+    category: 'inner',
+    pattern: 'circular',
+    zones: [7],
+    origin: { zh: '仙贝广场', en: 'Senpai Shopping Center' },
+    destination: { zh: '仙贝广场', en: 'Senpai Shopping Center' },
+    via: {
+      zh: '亚历山教堂、亚历山花园',
+      en: 'Alexander Church, Alexander Garden',
+    },
+    interval: { zh: '视乘客需求', en: 'Depends on passenger demand' },
+    journeyTime: { zh: '约 10 分钟', en: 'approx. 10 mins' },
+    fare: '$6.3',
+    levelRequired: 87,
+    length: { zh: '约 6.1 km（环线）', en: 'approx. 6.1 km (loop)' },
+    stops: [
+      {
+        direction: {
+          zh: '环线（仙贝广场 ↺ 经亚历山教堂、亚历山花园）',
+          en: 'Circular (Senpai Shopping Center ↺ via Alexander Church, Alexander Garden)',
+        },
+        list: [
+          { name: { zh: '仙贝广场', en: 'Senpai Shopping Center' }, zone: 7 },
+          { name: { zh: '仙贝图书馆', en: 'Senpai Library' }, zone: 7 },
+          { name: { zh: '上湾街市', en: 'Sheung Bay Market' }, zone: 7 },
+          {
+            name: { zh: '仙贝市政大厦', en: 'Senpai Municipal Services Building' },
+            zone: 7,
+          },
+          { name: { zh: '亚历山教堂', en: 'Alexander Church' }, zone: 7 },
+          { name: { zh: '亚历山花园', en: 'Alexander Garden' }, zone: 7 },
+          {
+            name: { zh: '仙贝市政大厦', en: 'Senpai Municipal Services Building' },
+            zone: 7,
+          },
+          { name: { zh: '红石楼', en: 'Redstone House' }, zone: 7 },
+          { name: { zh: '仙贝酒店', en: 'Senpai Hotel' }, zone: 7 },
+          { name: { zh: '仙贝图书馆', en: 'Senpai Library' }, zone: 7 },
+          { name: { zh: '仙贝广场', en: 'Senpai Shopping Center' }, zone: 7 },
+        ],
+      },
+    ],
+    notes: {
+      zh: '第 7 区每日挑战环线（CSB），仙贝广场 ↺ 仙贝广场，经市政大厦、亚历山教堂、亚历山花园、红石楼及仙贝酒店。',
+      en: 'Zone 7 daily-challenge loop (CSB), Senpai Shopping Center ↺ Senpai Shopping Center via Municipal Building, Alexander Church, Alexander Garden, Redstone House and Senpai Hotel.',
+    },
+    wikiUrl: 'https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_77X',
+  },
+  {
     id: '171',
     number: '171',
     operators: ['FT', 'CSB'],
