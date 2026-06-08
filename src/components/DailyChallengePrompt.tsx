@@ -1,0 +1,67 @@
+import { useEffect } from 'react'
+import { useLocale } from '../i18n/LocaleContext'
+import { DailyChallengeCard } from './DailyChallengeCard'
+
+interface DailyChallengePromptProps {
+  open: boolean
+  onClose: () => void
+  onOpenDetail: () => void
+}
+
+export function DailyChallengePrompt({ open, onClose, onOpenDetail }: DailyChallengePromptProps) {
+  const { t } = useLocale()
+
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open, onClose])
+
+  if (!open) return null
+
+  const handleOpenDetail = () => {
+    onClose()
+    onOpenDetail()
+  }
+
+  return (
+    <div className="daily-challenge-prompt-root">
+      <button
+        type="button"
+        className="daily-challenge-prompt-backdrop"
+        aria-label={t('dailyChallengePromptDismiss')}
+        onClick={onClose}
+      />
+      <div
+        className="daily-challenge-prompt-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="daily-challenge-prompt-title"
+      >
+        <h2 id="daily-challenge-prompt-title" className="daily-challenge-prompt-title">
+          {t('dailyChallengePromptTitle')}
+        </h2>
+        <DailyChallengeCard
+          className="daily-challenge-card--prompt"
+          showPlaceholderNote={false}
+          onSelect={handleOpenDetail}
+        />
+        <button type="button" className="daily-challenge-prompt-dismiss" onClick={onClose}>
+          {t('dailyChallengePromptDismiss')}
+        </button>
+      </div>
+    </div>
+  )
+}
