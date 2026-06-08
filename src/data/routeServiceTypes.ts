@@ -46,6 +46,7 @@ export function wikiUrlForRouteId(id: string): string {
   const wikiAliases: Record<string, string> = {
     S1A: 'S1',
     S2A: 'S2',
+    'U47*': 'U47',
   }
   const wikiId = wikiAliases[id] ?? id
   const encoded = encodeURIComponent(`Bus_route_${wikiId}`)

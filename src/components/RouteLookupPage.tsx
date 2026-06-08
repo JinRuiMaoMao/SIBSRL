@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
-import { RouteFilters } from './RouteFilters'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -48,6 +47,8 @@ export function RouteLookupPage() {
     getDirectionIndex,
     setDirectionIndex,
     selectRoute,
+    selectRandomRoute,
+    randomEligibleCount,
     clearSelection,
     zones,
     operators,
@@ -176,6 +177,12 @@ export function RouteLookupPage() {
     void Promise.all(anims.map((a) => a.finished.catch(() => undefined))).then(finishDetailClose)
   }
 
+  const filtersActive =
+    filters.routeGroup !== 'all' ||
+    filters.zone !== 'all' ||
+    filters.operator !== 'all' ||
+    filters.type !== 'all'
+
   const detailProps = overlayRoute
     ? {
         route: overlayRoute,
@@ -192,9 +199,9 @@ export function RouteLookupPage() {
         onChange={(q) => updateFilter('query', q)}
         resultCount={filteredRoutes.length}
         totalCount={totalCount}
-      />
-
-      <RouteFilters
+        randomEligibleCount={randomEligibleCount}
+        onRandom={selectRandomRoute}
+        filtersActive={filtersActive}
         routeGroup={filters.routeGroup}
         zone={filters.zone}
         operator={filters.operator}

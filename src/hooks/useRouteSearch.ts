@@ -6,6 +6,7 @@ import type { BusRoute, RouteFilters, RouteTypeFilter } from '../types/route'
 import { routeMatchesTypeFilter } from '../utils/routeTypes'
 import { clampDirectionIndex } from '../utils/routeDirections'
 import { compareRouteNumber } from '../utils/routeSort'
+import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
 
 const defaultFilters: RouteFilters = {
@@ -66,6 +67,11 @@ export function useRouteSearch() {
       .sort((a, b) => compareRouteNumber(a.number, b.number))
   }, [displayRoutes, filters])
 
+  const randomEligibleRoutes = useMemo(
+    () => filteredRoutes.filter(isRouteStopDataComplete),
+    [filteredRoutes],
+  )
+
   const selectedRoute = useMemo(
     () => displayRoutes.find((r) => r.id === selectedId) ?? null,
     [displayRoutes, selectedId],
@@ -98,6 +104,12 @@ export function useRouteSearch() {
   const selectRoute = (id: string) => setSelectedId(id)
   const clearSelection = () => setSelectedId(null)
 
+  const selectRandomRoute = useCallback(() => {
+    if (randomEligibleRoutes.length === 0) return
+    const pick = randomEligibleRoutes[Math.floor(Math.random() * randomEligibleRoutes.length)]!
+    setSelectedId(pick.id)
+  }, [randomEligibleRoutes])
+
   const zones = useMemo(() => {
     const set = new Set<number>()
     displayRoutes.forEach((r) => r.zones.forEach((z) => set.add(z)))
@@ -127,6 +139,8 @@ export function useRouteSearch() {
     getDirectionIndex,
     setDirectionIndex,
     selectRoute,
+    selectRandomRoute,
+    randomEligibleCount: randomEligibleRoutes.length,
     clearSelection,
     zones,
     operators,

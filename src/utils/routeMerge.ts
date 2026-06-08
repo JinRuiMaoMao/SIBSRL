@@ -12,7 +12,7 @@ export const EXCLUDED_ROUTE_NUMBERS = new Set([
 /** ?????? N/S/E/W ???????????? 73S?376S? */
 const STANDALONE_ROUTE_NUMBERS = new Set([
   '21A', '73A', '73S', '76S', '25Y', '140P', '141P', '475P', '376S',
-  '476SA', 'F469A', 'N76A', '246XA', 'S1A', 'S2A', '77X', '77XA',
+  '476SA', 'F469A', 'N76A', '246XA', 'S1A', 'S2A', '77X', '77XA', 'U47*',
 ])
 
 type MergeTarget = { base: string; directionKey?: DirectionKey }

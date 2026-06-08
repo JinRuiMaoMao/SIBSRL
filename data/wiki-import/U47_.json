@@ -1,28 +1,21 @@
 {
-  "id": "U47",
-  "number": "U47",
-  "operators": [
-    "FT",
-    "FTCC",
-    "CSB"
-  ],
+  "id": "U47*",
+  "number": "U47*",
+  "operators": ["FT", "FTCC", "CSB"],
   "category": "express",
   "pattern": "bidirectional",
-  "zones": [
-    4,
-    7
-  ],
+  "zones": [4, 7],
   "origin": {
     "zh": "Hotel Symbol",
     "en": "Hotel Symbol"
   },
   "destination": {
-    "zh": "North Sunshine University / 旭濤薈",
-    "en": "North Sunshine University / 旭濤薈"
+    "zh": "North Sunshine University",
+    "en": "North Sunshine University"
   },
   "via": {
-    "zh": "阳光大学南校园、阳光大学本部",
-    "en": "Sunshine University Southern Campus, Sunshine University Main Campus"
+    "zh": "阳光大学宿舍、阳光大学运动场",
+    "en": "Sunshine University Residences, Sunshine University Sports Field"
   },
   "interval": {
     "zh": "15 - 60 min",
@@ -32,15 +25,14 @@
     "zh": "6-10 min",
     "en": "6-10 min"
   },
-  "levelRequired": 25,
-  "variantUnlocks": {
-    "U47*": {
-      "sunshardsRequired": 300
-    }
-  },
+  "sunshardsRequired": 300,
   "length": {
     "zh": "往阳光大学北 7.9 km / 往旭涛荟 5.5 km",
     "en": "To North Sunshine University 7.9 km / To Hotel Symbol 5.5 km"
+  },
+  "notes": {
+    "zh": "特别班次：经阳光宿舍及运动场。需 300 阳光碎片解锁单方向。",
+    "en": "Special departure via Sunshine Residences and Sports Field. Unlocked with 300 Sunshards per direction."
   },
   "stops": [
     {
@@ -50,14 +42,16 @@
         "en": "Northbound (Hotel Symbol → North Sunshine University)"
       },
       "serviceTime": {
-        "zh": "08:15 – 19:30",
-        "en": "08:15 – 19:30"
+        "zh": "08:15 – 19:30（部分班次）",
+        "en": "08:15 – 19:30 (selected departures)"
       },
       "list": [
         { "name": { "zh": "旭涛荟", "en": "Hotel Symbol" }, "zone": 4 },
         { "name": { "zh": "阳光大学南校园", "en": "Sunshine University Southern Campus" }, "zone": 4 },
         { "name": { "zh": "阳光大学本部", "en": "Sunshine University Main Campus" }, "zone": 4 },
         { "name": { "zh": "阳光大学中", "en": "Central- Sunshine University" } },
+        { "name": { "zh": "阳光大学宿舍", "en": "Sunshine University Residences" } },
+        { "name": { "zh": "阳光大学运动场", "en": "Sunshine University Sports Field" } },
         { "name": { "zh": "阳光大学本部", "en": "Sunshine University Main Campus" }, "zone": 4 },
         { "name": { "zh": "甄博士楼", "en": "X.Y.Zhen College" } },
         { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } }
@@ -70,13 +64,15 @@
         "en": "Southbound (North Sunshine University → Hotel Symbol)"
       },
       "serviceTime": {
-        "zh": "08:45 – 20:50",
-        "en": "08:45 – 20:50"
+        "zh": "08:45 – 20:50（部分班次）",
+        "en": "08:45 – 20:50 (selected departures)"
       },
       "list": [
         { "name": { "zh": "阳光大学北", "en": "North Sunshine University" }, "zone": 4 },
         { "name": { "zh": "甄博士楼", "en": "X.Y.Zhen College" } },
         { "name": { "zh": "阳光大学中", "en": "Central- Sunshine University" } },
+        { "name": { "zh": "阳光大学运动场", "en": "Sunshine University Sports Field" } },
+        { "name": { "zh": "阳光大学宿舍", "en": "Sunshine University Residences" } },
         { "name": { "zh": "阳光大学本部", "en": "Sunshine University Main Campus" }, "zone": 4 },
         { "name": { "zh": "阳光大学南校园", "en": "Sunshine University Southern Campus" }, "zone": 4 },
         { "name": { "zh": "旭涛荟", "en": "Hotel Symbol" } }

@@ -1,0 +1,300 @@
+{
+  "id": "76#",
+  "number": "76#",
+  "operators": [
+    "CSB"
+  ],
+  "category": "special",
+  "pattern": "bidirectional",
+  "zones": [
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Senpai Shopping Center",
+    "en": "Senpai Shopping Center"
+  },
+  "destination": {
+    "zh": "Praya YiYan Road / 仙貝廣場",
+    "en": "Praya YiYan Road / 仙貝廣場"
+  },
+  "via": {
+    "zh": "Leafy Bay Estate, Leafy Hospital",
+    "en": "Leafy Bay Estate, Leafy Hospital"
+  },
+  "interval": {
+    "zh": "4 - 30 minutes",
+    "en": "4 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "to YiYan: 17 mins / To Senpai:18 mins",
+    "en": "to YiYan: 17 mins / To Senpai:18 mins"
+  },
+  "fare": "$6.3",
+  "levelRequired": 84,
+  "length": {
+    "zh": "8.6 km",
+    "en": "8.6 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（仙貝廣場 → 葉欣海傍道）",
+        "en": "Northbound (Senpai Shopping Center → Praya YiYan Road)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 01:30",
+        "en": "06:00 – 01:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "上灣街市",
+            "en": "Sheung Bay Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝市政大廈",
+            "en": "Senpai Municipal Services Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝道",
+            "en": "Senpai Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北葉花園",
+            "en": "North Leafy Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "羅力素花園一期",
+            "en": "Laws Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫街市",
+            "en": "Mo Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中間花園",
+            "en": "Middle Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨",
+            "en": "Leafy Bay Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨商場",
+            "en": "Leafy Bay Estate Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "新地公園",
+            "en": "Sindy Park"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "新地花園",
+            "en": "Sindy Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉欣海傍道",
+            "en": "Praya YiYan Road"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（葉欣海旁道 → 仙貝廣場）",
+        "en": "Southbound (Praya YiYan Road → Senpai Shopping Center)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 00:00",
+        "en": "05:30 – 00:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "葉欣海旁道",
+            "en": "Praya YiYan Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鑽石交易塔",
+            "en": "Diamond Trading Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "新地花園",
+            "en": "Sindy Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "新地公園",
+            "en": "Sindy Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨商場",
+            "en": "Leafy Bay Estate Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨",
+            "en": "Leafy Bay Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "中間花園",
+            "en": "Middle Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "勿莫商場",
+            "en": "Mo Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "羅力素花園一期",
+            "en": "Laws Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北葉花園",
+            "en": "North Leafy Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝道",
+            "en": "Senpai Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝市政大廈",
+            "en": "Senpai Municipal Services Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_76%23"
+}

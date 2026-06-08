@@ -1,0 +1,46 @@
+{
+  "id": "141P",
+  "number": "141P",
+  "operators": [
+    "FTCC",
+    "REBC",
+    "FT"
+  ],
+  "category": "special",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "destination": {
+    "zh": "[[Container's Island Bus Terminus",
+    "en": "[[Container's Island Bus Terminus"
+  },
+  "via": {
+    "zh": "Dove Island, Northern, Sunshine University, North Island Estate",
+    "en": "Dove Island, Northern, Sunshine University, North Island Estate"
+  },
+  "interval": {
+    "zh": "7 - 30 min",
+    "en": "7 - 30 min"
+  },
+  "journeyTime": {
+    "zh": "28 minutes",
+    "en": "28 minutes"
+  },
+  "fare": "$12.1",
+  "levelRequired": 64,
+  "length": {
+    "zh": "16.7 km",
+    "en": "16.7 km"
+  },
+  "serviceTime": {
+    "zh": "Mon – Sat: 07:15 – 08:25 / Mon – Sat: 17:30 – 18:45",
+    "en": "Mon – Sat: 07:15 – 08:25 / Mon – Sat: 17:30 – 18:45"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_141P"
+}

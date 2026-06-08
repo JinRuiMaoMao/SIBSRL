@@ -31,9 +31,31 @@
     "zh": "2.2 km",
     "en": "2.2 km"
   },
-  "serviceTime": {
-    "zh": "08:00 – 19:30, major events only}} / 08:00 – 19:30, major events only",
-    "en": "08:00 – 19:30, major events only}} / 08:00 – 19:30, major events only"
-  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（仙貝廣場 → 安靈台）",
+        "en": "Direction 1 (Senpai Shopping Center → Ambling Peak)"
+      },
+      "serviceTime": {
+        "zh": "08:00 – 19:30, major events only}}",
+        "en": "08:00 – 19:30, major events only}}"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "安靈台",
+            "en": "Ambling Peak"
+          }
+        }
+      ]
+    }
+  ],
   "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_76S"
 }

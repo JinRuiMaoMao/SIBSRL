@@ -1,0 +1,236 @@
+{
+  "id": "42A",
+  "number": "42A",
+  "operators": [
+    "FTCC",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    4
+  ],
+  "origin": {
+    "zh": "North Island (Rocky Road)",
+    "en": "North Island (Rocky Road)"
+  },
+  "destination": {
+    "zh": "Sunshine Pier / 北島（巨石路）",
+    "en": "Sunshine Pier / 北島（巨石路）"
+  },
+  "via": {
+    "zh": "Sunshine Station, Central Hospital, Northern Interchange",
+    "en": "Sunshine Station, Central Hospital, Northern Interchange"
+  },
+  "interval": {
+    "zh": "5 - 50 minutes}}Zone 4 route 42A is operated by FT Central Connect, travelling between North Island (Rocky Road) and Sunshine Pier.",
+    "en": "5 - 50 minutes}}Zone 4 route 42A is operated by FT Central Connect, travelling between North Island (Rocky Road) and Sunshine Pier."
+  },
+  "journeyTime": {
+    "zh": "24 mins (Both directions)",
+    "en": "24 mins (Both directions)"
+  },
+  "fare": "$5.4",
+  "levelRequired": 1,
+  "length": {
+    "zh": "6.3 km",
+    "en": "6.3 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（巨石路 → 陽光碼頭）",
+        "en": "Northbound (Rocky Road → Sunshine Pier)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 01:10 / Mon – Fri : 05:40 – 01:30  / Sat – Sun : 07:00 – 01:30",
+        "en": "05:30 – 01:10 / Mon – Fri : 05:40 – 01:30  / Sat – Sun : 07:00 – 01:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "巨石路",
+            "en": "Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "subject = Unnamed Bridge }}"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站（S3）",
+            "en": "Suggested interchange stop for Northern routes"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環中心",
+            "en": "The Southern"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站（S2）",
+            "en": "Sunshine Station (S2)"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（陽光碼頭 → 巨石路）",
+        "en": "Southbound (Sunshine Pier → Rocky Road)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri : 05:40 – 01:30  / Sat – Sun : 07:00 – 01:30",
+        "en": "Mon – Fri : 05:40 – 01:30  / Sat – Sun : 07:00 – 01:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站（N3）",
+            "en": "subject = Unnamed Bridge }}"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓游泳池",
+            "en": "Norton Swimming Pool"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路",
+            "en": "Rocky Road"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_42A"
+}

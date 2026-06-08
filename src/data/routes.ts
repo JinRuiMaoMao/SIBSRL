@@ -1,5 +1,6 @@
 import type { BusRoute } from '../types/route'
 import { applyRouteServiceTypes } from './routeServiceTypes'
+import { applyRouteUnlocks } from './routeUnlocks'
 import { enrichRouteDirectionLengths } from '../utils/routeLength'
 import { normalizeRouteData } from '../utils/normalizeRouteData'
 import { enrichDirectionServiceTimes } from '../utils/routeSchedule'
@@ -2018,6 +2019,7 @@ const mergedRoutes = [
   ...routesStubs,
 ]
   .map(applyRouteServiceTypes)
+  .map(applyRouteUnlocks)
   .map(normalizeRouteData)
   .map(enrichDirectionServiceTimes)
   .map(enrichRouteDirectionLengths)

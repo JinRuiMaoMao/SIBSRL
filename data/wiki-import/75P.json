@@ -1,0 +1,44 @@
+{
+  "id": "75P",
+  "number": "75P",
+  "operators": [
+    "CSB"
+  ],
+  "category": "special",
+  "pattern": "oneway",
+  "zones": [
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Haisey Estate",
+    "en": "Haisey Estate"
+  },
+  "destination": {
+    "zh": "East Factory",
+    "en": "East Factory"
+  },
+  "via": {
+    "zh": "East Door, Leafy Bay Estate, YiYan",
+    "en": "East Door, Leafy Bay Estate, YiYan"
+  },
+  "interval": {
+    "zh": "6 - 9 min}}",
+    "en": "6 - 9 min}}"
+  },
+  "journeyTime": {
+    "zh": "32 min",
+    "en": "32 min"
+  },
+  "fare": "$6.3",
+  "levelRequired": 72,
+  "length": {
+    "zh": "8.5 km",
+    "en": "8.5 km"
+  },
+  "serviceTime": {
+    "zh": "Mon – Fri: 07:20 – 07:50",
+    "en": "Mon – Fri: 07:20 – 07:50"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_75P"
+}

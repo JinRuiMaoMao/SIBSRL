@@ -1,0 +1,16 @@
+---
+description: Run build after implementing changes so index.html stays up to date
+alwaysApply: true
+---
+
+# Build after changes
+
+After completing code or data changes in this project, **always run a build** before finishing:
+
+```bash
+npm run build:only
+```
+
+Use the full `npm run build` only when TypeScript checking or audio sync is also needed.
+
+The publish step updates root `index.html`; skipping build leaves the standalone page stale.

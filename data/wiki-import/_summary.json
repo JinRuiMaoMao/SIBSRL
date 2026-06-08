@@ -1,313 +1,123 @@
 {
   "results": [
     {
-      "id": "S1",
-      "number": "S1",
+      "id": "U47",
+      "number": "U47",
       "operators": [
-        "FT"
+        "FT",
+        "FTCC",
+        "CSB"
       ],
-      "category": "inner",
-      "pattern": "circular",
+      "category": "express",
+      "pattern": "bidirectional",
       "zones": [
-        1,
-        4
+        4,
+        7
       ],
       "origin": {
-        "zh": "Long Island Ferry Pier",
-        "en": "Long Island Ferry Pier"
+        "zh": "Hotel Symbol",
+        "en": "Hotel Symbol"
       },
       "destination": {
-        "zh": "[[Sun Central Street",
-        "en": "[[Sun Central Street"
+        "zh": "North Sunshine University / 旭濤薈",
+        "en": "North Sunshine University / 旭濤薈"
       },
       "via": {
-        "zh": "Timelapse Mall, Sunshine Stadium, Northern Interchange, Sun Central Street, Southern Cultural District, Northern Interchange",
-        "en": "Timelapse Mall, Sunshine Stadium, Northern Interchange, Sun Central Street, Southern Cultural District, Northern Interchange"
+        "zh": "Sunshine University Southern Campus, [[Sunshine University",
+        "en": "Sunshine University Southern Campus, [[Sunshine University"
       },
       "interval": {
-        "zh": "30 mins",
-        "en": "30 mins"
+        "zh": "15 - 60 min",
+        "en": "15 - 60 min"
       },
       "journeyTime": {
-        "zh": "26 - 27 mins",
-        "en": "26 - 27 mins"
+        "zh": "6-10 min",
+        "en": "6-10 min"
       },
-      "fare": "$39.0",
+      "levelRequired": 25,
+      "variantUnlocks": {
+        "U47*": {
+          "sunshardsRequired": 300
+        }
+      },
       "length": {
-        "zh": "24.3 km",
-        "en": "24.3 km"
+        "zh": "13.05 km",
+        "en": "13.05 km"
       },
       "stops": [
         {
+          "directionKey": "N",
           "direction": {
-            "zh": "方向1（長島碼頭 → 長島碼頭）",
-            "en": "Direction 1 (Long Island Ferry Pier → Long Island Ferry Pier)"
+            "zh": "北行（旭濤薈 → 陽光大學北）",
+            "en": "Northbound (Hotel Symbol → North Sunshine University)"
           },
           "serviceTime": {
-            "zh": "11:00 – 18:00",
-            "en": "11:00 – 18:00"
+            "zh": "08:15 – 19:30",
+            "en": "08:15 – 19:30"
           },
           "list": [
             {
               "name": {
-                "zh": "長島碼頭",
-                "en": "Long Island Ferry Pier"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "文化廣場",
-                "en": "Culture Square"
-              }
-            },
-            {
-              "name": {
-                "zh": "時間廊",
-                "en": "Timelapse Mall"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "陽光體育館",
-                "en": "Sunshine Stadium"
-              }
-            },
-            {
-              "name": {
-                "zh": "北環轉車站 (南行)",
-                "en": "Northern Interchange (Southbound)"
+                "zh": "旭濤薈",
+                "en": "Hotel Symbol"
               },
               "zone": 4
             },
             {
               "name": {
-                "zh": "紅地磚",
-                "en": "Red Wall Road"
+                "zh": "陽光大學中",
+                "en": "Central- Sunshine University"
               }
             },
             {
               "name": {
-                "zh": "楓樹里",
-                "en": "Maple Lane"
+                "zh": "甄博士樓",
+                "en": "X.Y.Zhen College"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學北",
+                "en": "North Sunshine University"
+              }
+            }
+          ]
+        },
+        {
+          "directionKey": "S",
+          "direction": {
+            "zh": "南行（陽光大學北 → 旭濤薈）",
+            "en": "Southbound (North Sunshine University → Hotel Symbol)"
+          },
+          "serviceTime": {
+            "zh": "08:45 – 20:50",
+            "en": "08:45 – 20:50"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "陽光大學北",
+                "en": "North Sunshine University"
               },
               "zone": 4
             },
             {
               "name": {
-                "zh": "中環消防局",
-                "en": "Central Fire Station"
-              }
-            },
-            {
-              "name": {
-                "zh": "中環(中日街)",
-                "en": "Circular Point"
-              }
-            },
-            {
-              "name": {
-                "zh": "新紀元中心",
-                "en": "Ping Center"
+                "zh": "陽光大學南環校園",
+                "en": "Sunshine University Southern Campus"
               },
               "zone": 4
             },
             {
               "name": {
-                "zh": "The ONE",
-                "en": "The ONE"
-              }
-            },
-            {
-              "name": {
-                "zh": "強生街市",
-                "en": "Johnson Market"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "Museum Infinite",
-                "en": "Museum Infinite"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "陽光太空館",
-                "en": "Sunshine Space Museum"
-              }
-            },
-            {
-              "name": {
-                "zh": "北環轉車站 (北行)",
-                "en": "Northern Interchange (Northbound)"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "文化廣場",
-                "en": "Culture Square"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "長島碼頭",
-                "en": "Long Island Ferry Pier"
+                "zh": "旭濤薈",
+                "en": "Hotel Symbol"
               }
             }
           ]
         }
       ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_S1"
-    },
-    {
-      "id": "S2",
-      "number": "S2",
-      "operators": [
-        "FT"
-      ],
-      "category": "inner",
-      "pattern": "circular",
-      "zones": [
-        1,
-        4
-      ],
-      "origin": {
-        "zh": "Long Island Ferry Pier",
-        "en": "Long Island Ferry Pier"
-      },
-      "destination": {
-        "zh": "[[Sun Central Street",
-        "en": "[[Sun Central Street"
-      },
-      "via": {
-        "zh": "Northern Interchange, Sun Central Street, Southern Cultural District, Central - Western Bridge, Shopping Corridor",
-        "en": "Northern Interchange, Sun Central Street, Southern Cultural District, Central - Western Bridge, Shopping Corridor"
-      },
-      "interval": {
-        "zh": "30 mins",
-        "en": "30 mins"
-      },
-      "journeyTime": {
-        "zh": "21 - 23 mins",
-        "en": "21 - 23 mins"
-      },
-      "fare": "$39.0",
-      "length": {
-        "zh": "24.2 km",
-        "en": "24.2 km"
-      },
-      "stops": [
-        {
-          "direction": {
-            "zh": "方向1（長島碼頭 → 長島碼頭）",
-            "en": "Direction 1 (Long Island Ferry Pier → Long Island Ferry Pier)"
-          },
-          "serviceTime": {
-            "zh": "18:30 – 22:30",
-            "en": "18:30 – 22:30"
-          },
-          "list": [
-            {
-              "name": {
-                "zh": "長島碼頭",
-                "en": "Long Island Ferry Pier"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "文化廣場",
-                "en": "Culture Square"
-              }
-            },
-            {
-              "name": {
-                "zh": "時間廊",
-                "en": "Timelapse Mall"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "北環轉車站 (南行)",
-                "en": "Northern Interchange (Southbound)"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "楓樹里",
-                "en": "Maple Lane"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "中環(中日街)",
-                "en": "Circular Point"
-              }
-            },
-            {
-              "name": {
-                "zh": "新紀元中心",
-                "en": "Ping Center"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "The ONE",
-                "en": "The ONE"
-              }
-            },
-            {
-              "name": {
-                "zh": "強生街市",
-                "en": "Johnson Market"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "Museum Infinite",
-                "en": "Museum Infinite"
-              }
-            },
-            {
-              "name": {
-                "zh": "陽光太空館",
-                "en": "Sunshine Space Museum"
-              }
-            },
-            {
-              "name": {
-                "zh": "購物廊",
-                "en": "Shopping Corridor"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "文化廣場",
-                "en": "Culture Square"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "長島碼頭",
-                "en": "Long Island Ferry Pier"
-              }
-            }
-          ]
-        }
-      ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_S2"
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_U47"
     }
   ],
   "errors": []

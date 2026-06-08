@@ -10,12 +10,12 @@
     7
   ],
   "origin": {
-    "zh": "Senpai Shopping Center ↺ [[Alexander Church",
-    "en": "Senpai Shopping Center ↺ [[Alexander Church"
+    "zh": "Senpai Shopping Center",
+    "en": "Senpai Shopping Center"
   },
   "destination": {
-    "zh": "Senpai Shopping Center ↺ [[Alexander Church",
-    "en": "Senpai Shopping Center ↺ [[Alexander Church"
+    "zh": "[[Alexander Church",
+    "en": "[[Alexander Church"
   },
   "via": {
     "zh": "Senpai Multi-Storey Parking Garage",
@@ -34,5 +34,84 @@
     "zh": "6.1 km",
     "en": "6.1 km"
   },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（仙貝廣場 → 仙貝廣場）",
+        "en": "Direction 1 (Senpai Shopping Centre → Senpai Shopping Center)"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "上灣街市",
+            "en": "Sheung Bay Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝巿政大廈",
+            "en": "Senpai Municipal Services Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "亞歷山教堂",
+            "en": "Circular Point Here"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "亞歷山花園",
+            "en": "Alexander Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝巿政大廈",
+            "en": "Senpai Municipal Services Building"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        }
+      ]
+    }
+  ],
   "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_77X"
 }

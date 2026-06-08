@@ -55,6 +55,8 @@ export interface BusRoute {
   journeyTime?: BilingualText
   fare?: string
   levelRequired?: number
+  /** 解锁所需阳光碎片（Sunshards） */
+  sunshardsRequired?: number
   length?: BilingualText
   /**
    * Stop lists per travel direction. More than one entry enables direction toggle on card & detail.

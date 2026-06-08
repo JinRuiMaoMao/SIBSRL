@@ -37,6 +37,10 @@ const MANUAL_ORIGINS = {
     origin: { zh: '旭涛荟', en: 'Hotel Symbol' },
     destination: { zh: '阳光大学北', en: 'North Sunshine University' },
   },
+  'U47*': {
+    origin: { zh: '旭涛荟', en: 'Hotel Symbol' },
+    destination: { zh: '阳光大学北', en: 'North Sunshine University' },
+  },
   '370': {
     origin: { zh: '长岛码头', en: 'Long Island Ferry Pier' },
     destination: { zh: '仙贝广场', en: 'Senpai Shopping Centre' },
@@ -222,6 +226,8 @@ function emitRoute(route, indent = '  ') {
   if (route.journeyTime) lines.push(`${indent}  journeyTime: ${bilingual(route.journeyTime, indent + '  ')},`)
   if (route.fare) lines.push(`${indent}  fare: '${esc(route.fare)}',`)
   if (route.levelRequired != null) lines.push(`${indent}  levelRequired: ${route.levelRequired},`)
+  if (route.sunshardsRequired != null)
+    lines.push(`${indent}  sunshardsRequired: ${route.sunshardsRequired},`)
   if (route.length) {
     const len = route.length
     if (len.zh?.includes('往') && !len.zh.includes('km /')) {
@@ -273,15 +279,17 @@ for (const route of routes) {
   route.number = inGameNumber
   route.wikiUrl = `https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_${encodeURIComponent(wikiId)}`
   if (wikiId === 'S1') {
+    route.sunshardsRequired = route.sunshardsRequired ?? 1480
     route.notes = {
-      zh: '日间观光环线（Wiki 编号 S1，游戏内为 S1A）。需消耗 Sunshards 解锁。',
-      en: 'Daytime sightseeing loop (Wiki route S1, in-game as S1A). Unlocked with Sunshards.',
+      zh: '日间观光环线（Wiki 编号 S1，游戏内为 S1A）。需 1480 阳光碎片解锁。',
+      en: 'Daytime sightseeing loop (Wiki route S1, in-game as S1A). Unlocked with 1480 Sunshards.',
     }
   }
   if (wikiId === 'S2') {
+    route.sunshardsRequired = route.sunshardsRequired ?? 1480
     route.notes = {
-      zh: '晚间观光环线（Wiki 编号 S2，游戏内为 S2A）。需消耗 Sunshards 解锁。',
-      en: 'Evening sightseeing loop (Wiki route S2, in-game as S2A). Unlocked with Sunshards.',
+      zh: '晚间观光环线（Wiki 编号 S2，游戏内为 S2A）。需 1480 阳光碎片解锁。',
+      en: 'Evening sightseeing loop (Wiki route S2, in-game as S2A). Unlocked with 1480 Sunshards.',
     }
   }
 }
@@ -320,6 +328,7 @@ function emitStub(id) {
   if (meta.journeyTime) lines.push(`    journeyTime: ${bilingual(meta.journeyTime, '    ')},`)
   if (meta.fare) lines.push(`    fare: '${esc(meta.fare)}',`)
   if (meta.levelRequired != null) lines.push(`    levelRequired: ${meta.levelRequired},`)
+  if (meta.sunshardsRequired != null) lines.push(`    sunshardsRequired: ${meta.sunshardsRequired},`)
   if (meta.length) lines.push(`    length: ${bilingual(meta.length, '    ')},`)
   if (meta.serviceTime) lines.push(`    serviceTime: ${bilingual(meta.serviceTime, '    ')},`)
   lines.push(`  }),`)

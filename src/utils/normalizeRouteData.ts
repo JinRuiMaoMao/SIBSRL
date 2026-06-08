@@ -195,13 +195,44 @@ function repairStopList(list: StopGroup['list'], direction: BilingualText): Stop
   return repaired
 }
 
+/** Wiki 站序表 rowspan 合并区域格：向前继承；首段无区域时向后继承 */
+function fillStopZones(list: StopGroup['list']): StopGroup['list'] {
+  if (!list.length) return list
+
+  const filled = list.map((s) => ({ ...s }))
+  let lastZone: number | undefined
+
+  for (let i = 0; i < filled.length; i++) {
+    const stop = filled[i]!
+    if (stop.zone != null) {
+      lastZone = stop.zone
+    } else if (lastZone != null) {
+      stop.zone = lastZone
+    }
+  }
+
+  let nextZone: number | undefined
+  for (let i = filled.length - 1; i >= 0; i--) {
+    const stop = filled[i]!
+    if (stop.zone != null) {
+      nextZone = stop.zone
+    } else if (nextZone != null) {
+      stop.zone = nextZone
+    }
+  }
+
+  return filled
+}
+
 function normalizeStopGroup(group: StopGroup): StopGroup {
-  const list = repairStopList(group.list, group.direction)
-    .filter((s) => !isBrokenText(s.name.en) && !isBrokenText(s.name.zh))
-    .map((s) => ({
-      ...s,
-      name: cleanBilingual(s.name),
-    }))
+  const list = fillStopZones(
+    repairStopList(group.list, group.direction)
+      .filter((s) => !isBrokenText(s.name.en) && !isBrokenText(s.name.zh))
+      .map((s) => ({
+        ...s,
+        name: cleanBilingual(s.name),
+      })),
+  )
 
   return {
     ...group,

@@ -132,10 +132,15 @@ export function RouteDetail({
             <p>{route.fare}</p>
           </div>
         )}
-        {route.levelRequired != null && (
+        {(route.levelRequired != null || route.sunshardsRequired != null) && (
           <div>
-            <h4>{t('levelRequired')}</h4>
-            <p>Lv. {route.levelRequired}</p>
+            <h4>{t('unlockRequirements')}</h4>
+            {route.levelRequired != null && (
+              <p>{t('unlockLevelLine', { n: route.levelRequired })}</p>
+            )}
+            {route.sunshardsRequired != null && (
+              <p>{t('unlockSunshardsLine', { n: route.sunshardsRequired })}</p>
+            )}
           </div>
         )}
         {lengthKm && (

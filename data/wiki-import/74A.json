@@ -1,0 +1,310 @@
+{
+  "id": "74A",
+  "number": "74A",
+  "operators": [
+    "CSB"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "Rainbow Estate Complex",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "Leafy Hospital / 彩虹中心",
+    "en": "Leafy Hospital / 彩虹中心"
+  },
+  "via": {
+    "zh": "Haisey, East Door, Senpai, YiYan",
+    "en": "Haisey, East Door, Senpai, YiYan"
+  },
+  "interval": {
+    "zh": "3 - 20 minutes",
+    "en": "3 - 20 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Rainbow: 26 mins / To Leafy Hospital: 24 mins",
+    "en": "To Rainbow: 26 mins / To Leafy Hospital: 24 mins"
+  },
+  "fare": "$6.3",
+  "levelRequired": 68,
+  "length": {
+    "zh": "10.9 km",
+    "en": "10.9 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（彩虹中心 → 葉角醫院）",
+        "en": "Northbound (Rainbow Estate Complex → Leafy Hospital)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 01:00",
+        "en": "05:30 – 01:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "海西邨",
+            "en": "Haisey Estate"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門商業中心",
+            "en": "East Door Commercial Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "黑白中心",
+            "en": "Grayscale Centre"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際塔",
+            "en": "International Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "東廠",
+            "en": "East Factory"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣公園",
+            "en": "YiYan Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "鑽石交易塔",
+            "en": "Diamond Trading Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（葉角醫院 → 彩虹中心）",
+        "en": "Southbound (Leafy Hospital → Rainbow Estate Complex)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 01:15",
+        "en": "05:30 – 01:15"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "際巴車廠",
+            "en": "CSB Depot"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉欣海旁道",
+            "en": "Praya YiYan Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "南洋大廈",
+            "en": "Southern Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹廣場",
+            "en": "Rainbow Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "東廠",
+            "en": "East Factory"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際塔",
+            "en": "International Tower"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙貝紀念碑花園",
+            "en": "The Stone of Memory"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門碼頭",
+            "en": "East Door Pier"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "海西邨",
+            "en": "Haisey Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_74A"
+}

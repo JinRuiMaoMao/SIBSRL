@@ -1,0 +1,250 @@
+{
+  "id": "41A",
+  "number": "41A",
+  "operators": [
+    "FTCC",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    4
+  ],
+  "origin": {
+    "zh": "Sunshine Pier",
+    "en": "Sunshine Pier"
+  },
+  "destination": {
+    "zh": "Northern Beach / 陽光碼頭",
+    "en": "Northern Beach / 陽光碼頭"
+  },
+  "via": {
+    "zh": "Norton, Northern Interchange, Central, Southern",
+    "en": "Norton, Northern Interchange, Central, Southern"
+  },
+  "interval": {
+    "zh": "5 - 30 min.",
+    "en": "5 - 30 min."
+  },
+  "journeyTime": {
+    "zh": "To Northern Beach: 18 mins / To Sunshine Pier: 20 mins",
+    "en": "To Northern Beach: 18 mins / To Sunshine Pier: 20 mins"
+  },
+  "fare": "$5.4",
+  "levelRequired": 1,
+  "length": {
+    "zh": "6.6 km",
+    "en": "6.6 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（北灘 → 陽光碼頭）",
+        "en": "Northbound (Northern Beach → Sunshine Pier)"
+      },
+      "serviceTime": {
+        "zh": "05:30 – 00:30",
+        "en": "05:30 – 00:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北灘",
+            "en": "Northern Beach"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "綠寶石中心",
+            "en": "Emerald Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站",
+            "en": "Northern Interchange"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "Exit here for Ping Center",
+            "en": "Exit here for Ping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環中心",
+            "en": "The Southern"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（陽光碼頭 → 北灘）",
+        "en": "Southbound (Sunshine Pier → Northern Beach)"
+      },
+      "serviceTime": {
+        "zh": "05:40 – 00:30",
+        "en": "05:40 – 00:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "Exit here for Ping Center",
+            "en": "Exit here for Ping Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站",
+            "en": "Northern Interchange"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓碼頭",
+            "en": "Exit here for Norton Town Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北灘",
+            "en": "Northern Beach"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_41A"
+}

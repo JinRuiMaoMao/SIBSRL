@@ -1,0 +1,177 @@
+{
+  "id": "246X",
+  "number": "246X",
+  "operators": [
+    "FTCC",
+    "REBC",
+    "FT"
+  ],
+  "category": "inter",
+  "pattern": "circular",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Eastmallow Praya Road",
+    "en": "Eastmallow Praya Road"
+  },
+  "destination": {
+    "zh": "Timelapse Mall  / 東錦葵海傍路",
+    "en": "Timelapse Mall  / 東錦葵海傍路"
+  },
+  "via": {
+    "zh": "Northern Interchange, Dove Island, Containers Terminal, Southern, Central",
+    "en": "Northern Interchange, Dove Island, Containers Terminal, Southern, Central"
+  },
+  "interval": {
+    "zh": "7 - 30 min",
+    "en": "7 - 30 min"
+  },
+  "journeyTime": {
+    "zh": "Normal Departure: 31-33 mins / Special Departure 1: 18-19 mins / Special Departure 2 : 10-11 mins",
+    "en": "Normal Departure: 31-33 mins / Special Departure 1: 18-19 mins / Special Departure 2 : 10-11 mins"
+  },
+  "fare": "$11.4",
+  "levelRequired": 74,
+  "length": {
+    "zh": "19 km",
+    "en": "19 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（東錦葵海傍路 → 東錦葵海傍路）",
+        "en": "Direction 1 (A starts here → Eastmallow Praya Road)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35",
+        "en": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "A starts here"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨 - 陽葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環中心",
+            "en": "Northern Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Returning Point for normal depatures"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "銀行大廈",
+            "en": "Bank Tower"
+          }
+        },
+        {
+          "name": {
+            "zh": "三哥大廈",
+            "en": "Third Technology Building"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿消防局",
+            "en": "Dove Fire Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "伊迪城",
+            "en": "Eddie City"
+          }
+        },
+        {
+          "name": {
+            "zh": "貨櫃碼頭",
+            "en": "B omits this stop"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "中西轉車站",
+            "en": "Central - Western Interchange"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "B ends here"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_246X"
+}

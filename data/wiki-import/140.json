@@ -1,0 +1,299 @@
+{
+  "id": "140",
+  "number": "140",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "category": "inter",
+  "pattern": "bidirectional",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "Sunshine Pier / 長島碼頭",
+    "en": "Sunshine Pier / 長島碼頭"
+  },
+  "via": {
+    "zh": "Long Island East, (← Dove Island), Western Harbour Tunnel Interchange, Northern Interchange, Central",
+    "en": "Long Island East, (← Dove Island), Western Harbour Tunnel Interchange, Northern Interchange, Central"
+  },
+  "interval": {
+    "zh": "2 - 15 minutes",
+    "en": "2 - 15 minutes"
+  },
+  "journeyTime": {
+    "zh": "To Sunshine Pier: / AM: 27 mins / PM: 28 mins /  / To Long Island: / AM: 28 mins / PM: 31 mins",
+    "en": "To Sunshine Pier: / AM: 27 mins / PM: 28 mins /  / To Long Island: / AM: 28 mins / PM: 31 mins"
+  },
+  "fare": "$11.4",
+  "levelRequired": 5,
+  "length": {
+    "zh": "12.6 km",
+    "en": "12.6 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（長島碼頭 → 陽光碼頭）",
+        "en": "Northbound (Long Island Ferry Pier → Sunshine Pier)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri : 05:40 – 00:00 / Sat – Sun : 05:40 – 00:25",
+        "en": "Mon – Fri : 05:40 – 00:00 / Sat – Sun : 05:40 – 00:25"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際碼頭",
+            "en": "Regional Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "虹尾角街市",
+            "en": "Iris Point Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "智家坊",
+            "en": "I Home"
+          }
+        },
+        {
+          "name": {
+            "zh": "宜和劇場",
+            "en": "Jardine Theater"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光體育館",
+            "en": "Sunshine Stadium"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島海濱長廊",
+            "en": "Long Island Waterfront Promenade"
+          }
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環中心",
+            "en": "The Southern"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（陽光碼頭 → 長島碼頭）",
+        "en": "Southbound (Sunshine Pier → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "06:20 – 01:00",
+        "en": "06:20 – 01:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環坊",
+            "en": "Langford Place"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站",
+            "en": "Western Harbour Tunnel Interchange"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Timelapse Mall"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "賴得商場",
+            "en": "Wright Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "宜和劇場",
+            "en": "Jardine Theater"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光體育館",
+            "en": "Sunshine Stadium"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島海濱長廊",
+            "en": "Long Island Waterfront Promenade"
+          }
+        },
+        {
+          "name": {
+            "zh": "百彩新城",
+            "en": "N Park"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際碼頭",
+            "en": "Regional Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_140"
+}

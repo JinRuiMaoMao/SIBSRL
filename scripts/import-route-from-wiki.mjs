@@ -385,6 +385,62 @@ function inferCategory(id, row5, pattern) {
   return pattern === 'circular' ? 'inner' : 'inner'
 }
 
+function parseUnlockLine(line) {
+  const perDirM = line.match(/\((\d+)\s+for\s+one\s+direction\)/i)
+  const sunM =
+    line.match(/(\d+)\s*\[\[Sunshards?\]\]/i) ??
+    line.match(/paying\s*(\d+)\s*(?:\[\[)?Sunshards?/i) ??
+    line.match(/(\d+)\s*Sunshards?/i)
+  const levelM =
+    line.match(/(?:require|unlock|unlocked|reach|at)\s*(?:player\s*)?(?:rank\s*)?(?:reaches?\s*)?(?:''')?Level\s*(\d+)/i) ??
+    line.match(/Level\s*(\d+)/i) ??
+    line.match(/Lv\.?\s*(\d+)/i)
+
+  const info = {}
+  if (levelM) info.levelRequired = Number(levelM[1])
+  if (sunM) info.sunshardsRequired = perDirM ? Number(perDirM[1]) : Number(sunM[1])
+  return info
+}
+
+function parseUnlockRequirements(wt, pageId) {
+  const reqSection = wt.match(/==\s*Requirements\s*==([\s\S]*?)(?=\n==[^=]|$)/i)?.[1] ?? ''
+  const bullets = reqSection.split(/\n\s*\*/).map((s) => s.trim()).filter(Boolean)
+
+  let levelRequired
+  let sunshardsRequired
+  const variantUnlocks = {}
+
+  if (bullets.length > 0) {
+    for (const bullet of bullets) {
+      const routeIdM = bullet.match(/^([A-Za-z]?\d+[A-Za-z]?[%#*]*)\s*[:(]/)
+      const routeId = routeIdM?.[1] ?? pageId
+      const info = parseUnlockLine(bullet)
+      if (info.levelRequired == null && info.sunshardsRequired == null) continue
+
+      if (routeId === pageId) {
+        if (info.levelRequired != null) levelRequired = info.levelRequired
+        if (info.sunshardsRequired != null) sunshardsRequired = info.sunshardsRequired
+      } else {
+        variantUnlocks[routeId] = { ...variantUnlocks[routeId], ...info }
+      }
+    }
+  }
+
+  if (levelRequired == null && sunshardsRequired == null) {
+    for (const block of [reqSection, wt.slice(0, 2500)]) {
+      const info = parseUnlockLine(block)
+      if (levelRequired == null) levelRequired = info.levelRequired
+      if (sunshardsRequired == null) sunshardsRequired = info.sunshardsRequired
+    }
+  }
+
+  return {
+    levelRequired,
+    sunshardsRequired,
+    variantUnlocks: Object.keys(variantUnlocks).length ? variantUnlocks : undefined,
+  }
+}
+
 function inferPattern(endpoints, dirCount) {
   const e = endpoints.toLowerCase()
   if (dirCount <= 1 && (e.includes('↺') || /circular|loop/i.test(e))) return 'circular'
@@ -412,7 +468,7 @@ function buildRoute(id, wt) {
   const interval = pickField(wt, ['班次'])
   const journey = pickField(wt, ['行車時間', '行车时间'])
   const fareM = wt.match(/全程車費\s*=\s*\$?([\d.]+)/i)
-  const levelM = wt.match(/Level\s*(\d+)/i) ?? wt.match(/Lv\.?\s*(\d+)/i)
+  const unlock = parseUnlockRequirements(wt, id)
   const row5 = pickField(wt, ['row5'])
   const operators = parseOperators(pickField(wt, ['目前營辦商', '目前营办商']) + wt.slice(0, 800))
 
@@ -469,7 +525,9 @@ function buildRoute(id, wt) {
     interval: interval ? { zh: interval, en: interval } : undefined,
     journeyTime: journey ? { zh: journey, en: journey } : undefined,
     fare: fareM ? `$${fareM[1]}` : undefined,
-    levelRequired: levelM ? Number(levelM[1]) : undefined,
+    levelRequired: unlock.levelRequired,
+    sunshardsRequired: unlock.sunshardsRequired,
+    variantUnlocks: unlock.variantUnlocks,
     length,
     stops: stops.length ? stops : undefined,
     serviceTime:
@@ -532,8 +590,13 @@ function getPlaceholderWikiIds() {
   return [...new Set(ids)]
 }
 
+function getProjectRouteIds() {
+  const routesTs = readFileSync(resolve('src/data/routes.ts'), 'utf8')
+  return [...new Set([...routesTs.matchAll(/id: '([^']+)'/g)].map((m) => m[1]))]
+}
+
 function getAllImportIds() {
-  return [...new Set([...getStubIds(), ...getPlaceholderWikiIds()])]
+  return [...new Set([...getStubIds(), ...getPlaceholderWikiIds(), ...getProjectRouteIds()])]
 }
 
 async function fetchWikiWithFallback(requestedId) {

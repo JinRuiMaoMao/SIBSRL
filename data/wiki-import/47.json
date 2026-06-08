@@ -1,0 +1,294 @@
+{
+  "id": "47",
+  "number": "47",
+  "operators": [
+    "FTCC",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    4
+  ],
+  "origin": {
+    "zh": "Sun Central Street",
+    "en": "Sun Central Street"
+  },
+  "destination": {
+    "zh": "Norton Town Center / 中環(中日街)",
+    "en": "Norton Town Center / 中環(中日街)"
+  },
+  "via": {
+    "zh": "Central Hospital, Sunshine Station, Eastmallow Estate, Sunshine University, North Island Estate, Norton Garden",
+    "en": "Central Hospital, Sunshine Station, Eastmallow Estate, Sunshine University, North Island Estate, Norton Garden"
+  },
+  "interval": {
+    "zh": "6 - 30 minutes}}Zone 4 route 47 is operated by FT Central Connect, travelling between Sun Central Street and Norton Town Center via Southern, Eastmallow and North Island Hill.",
+    "en": "6 - 30 minutes}}Zone 4 route 47 is operated by FT Central Connect, travelling between Sun Central Street and Norton Town Center via Southern, Eastmallow and North Island Hill."
+  },
+  "journeyTime": {
+    "zh": "To Norton: 26 mins / To Sun Central Street: 24 mins",
+    "en": "To Norton: 26 mins / To Sun Central Street: 24 mins"
+  },
+  "fare": "$5.4",
+  "levelRequired": 10,
+  "length": {
+    "zh": "12.9 km",
+    "en": "12.9 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（中環(中日街) → 北頓市中心）",
+        "en": "Northbound (Sun Central Street → Norton Town Center)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 23:30",
+        "en": "06:00 – 23:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "中環(中日街)",
+            "en": "Sun Central Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環中心",
+            "en": "The Southern"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南路",
+            "en": "Southern Central Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨 - 陽葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓碼頭",
+            "en": "Norton Ferry Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（北頓市中心 → 中環(中日街)）",
+        "en": "Southbound (Norton Town Center → Sun Central Street)"
+      },
+      "serviceTime": {
+        "zh": "06:00 – 23:30",
+        "en": "06:00 – 23:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北頓市中心",
+            "en": "Norton Town Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北頓邨",
+            "en": "Norton Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓花園",
+            "en": "Norton Garden"
+          }
+        },
+        {
+          "name": {
+            "zh": "綠寶石中心",
+            "en": "Emerald Plaza"
+          }
+        },
+        {
+          "name": {
+            "zh": "北頓路",
+            "en": "Norton Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環南路",
+            "en": "Southern Central Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環(中日街)",
+            "en": "Sun Central Street"
+          },
+          "zone": 4
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_47"
+}

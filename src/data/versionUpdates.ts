@@ -28,6 +28,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
         zh: '将线路详情滑动标签页动画时长从 3 秒缩短至 0.5 秒。',
         en: 'Reduced the route detail slide tab animation duration from 3 seconds to 0.5 seconds.',
       },
+      {
+        zh: '线路详情新增「解锁条件」，已补充部分线路的等级或阳光碎片（Sunshards）解锁要求。',
+        en: 'Route details now show unlock requirements; level and Sunshards unlock info added for many routes.',
+      },
     ],
   },
   {

@@ -1,0 +1,298 @@
+{
+  "id": "49A",
+  "number": "49A",
+  "operators": [
+    "FTCC",
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "bidirectional",
+  "zones": [
+    4
+  ],
+  "origin": {
+    "zh": "Northern Beach",
+    "en": "Northern Beach"
+  },
+  "destination": {
+    "zh": "Sunshine Pier / 北灘",
+    "en": "Sunshine Pier / 北灘"
+  },
+  "via": {
+    "zh": "North Island Estate, Northern Interchange and Central Hospital",
+    "en": "North Island Estate, Northern Interchange and Central Hospital"
+  },
+  "interval": {
+    "zh": "16 - 30 minutes}}Zone 4 route 49A is operated by FT Central Connect, running between Northern Beach and Sunshine Pier, serving Rocky Road, Northern Interchange, Central Road and Sunshine Station.",
+    "en": "16 - 30 minutes}}Zone 4 route 49A is operated by FT Central Connect, running between Northern Beach and Sunshine Pier, serving Rocky Road, Northern Interchange, Central Road and Sunshine Station."
+  },
+  "journeyTime": {
+    "zh": "To Northern Beach: 20 mins / To Sunshine Pier: 23 mins",
+    "en": "To Northern Beach: 20 mins / To Sunshine Pier: 23 mins"
+  },
+  "fare": "$5.4",
+  "levelRequired": 34,
+  "length": {
+    "zh": "8.4 km",
+    "en": "8.4 km"
+  },
+  "stops": [
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（北灘 → 陽光碼頭）",
+        "en": "Northbound (Northern Beach → Sunshine Pier)"
+      },
+      "serviceTime": {
+        "zh": "0530 – 2400",
+        "en": "0530 – 2400"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "北灘",
+            "en": "Northern Beach"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "巨石路20號",
+            "en": "20 Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路35號",
+            "en": "35 Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島山頂",
+            "en": "North Island Hill Peak"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路60號",
+            "en": "60 Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路",
+            "en": "Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園",
+            "en": "North Island Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "落山邨",
+            "en": "Downhill Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "南環中心",
+            "en": "The Southern"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "S",
+      "direction": {
+        "zh": "南行（陽光碼頭 → 北灘）",
+        "en": "Southbound (Sunshine Pier → Northern Beach)"
+      },
+      "serviceTime": {
+        "zh": "0540 – 2430",
+        "en": "0540 – 2430"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "陽光碼頭",
+            "en": "Sunshine Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "落山邨",
+            "en": "Downhill Estate"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望環台",
+            "en": "Panorama Heights"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島花園商場",
+            "en": "NIE Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路",
+            "en": "Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路60號",
+            "en": "60 Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北島山頂",
+            "en": "North Island Hill Peak"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路35號",
+            "en": "35 Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "巨石路20號",
+            "en": "20 Rocky Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "北灘",
+            "en": "Northern Beach"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_49A"
+}
