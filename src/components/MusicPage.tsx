@@ -35,6 +35,7 @@ export function MusicPage() {
                     onActiveChange={setPlayingId}
                     playLabel={t('broadcastPlay')}
                     pauseLabel={t('broadcastPause')}
+                    loop={item.loop}
                   />
                 </div>
               </li>

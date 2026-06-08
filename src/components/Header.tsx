@@ -1,8 +1,6 @@
 import { useMemo, useRef } from 'react'
-import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { EXTERNAL_LINKS } from '../data/routes'
 import { useHeaderTabRows, useMeasureTabRefs } from '../hooks/useHeaderTabRows'
-import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
@@ -31,7 +29,6 @@ interface HeaderProps {
 
 export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: HeaderProps) {
   const { t, locale } = useLocale()
-  const isWideHeader = useMediaQuery(WIDE_LAYOUT_MEDIA)
   const tabOrder = useMemo(() => Object.keys(TAB_KEYS) as AppTab[], [])
 
   const actionsRef = useRef<HTMLDivElement>(null)
@@ -45,9 +42,10 @@ export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: 
     settingsRef,
     measureBoxRef,
     measureTabRefs,
-    [locale, t, isWideHeader],
-    { forceSingleRow: isWideHeader },
+    [locale, t],
   )
+
+  const singleTabRow = rows.length === 1
 
   const renderTabButton = (tab: AppTab) => (
     <button
@@ -118,7 +116,7 @@ export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: 
             </div>
 
             <nav
-              className={`header-tabs-cluster ${isWideHeader ? 'header-tabs-cluster--wide' : ''}`}
+              className={`header-tabs-cluster ${singleTabRow ? 'header-tabs-cluster--single-row' : ''}`}
               role="tablist"
               aria-label={t('navMain')}
             >

@@ -9,6 +9,8 @@ interface BroadcastAudioButtonProps {
   pauseLabel: string
   /** 分站名旁紧凑喇叭 */
   compact?: boolean
+  /** 播放结束后自动循环 */
+  loop?: boolean
 }
 
 export function BroadcastAudioButton({
@@ -19,6 +21,7 @@ export function BroadcastAudioButton({
   playLabel,
   pauseLabel,
   compact = false,
+  loop = false,
 }: BroadcastAudioButtonProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const playing = activeId === id
@@ -29,6 +32,14 @@ export function BroadcastAudioButton({
     audio.pause()
     audio.currentTime = 0
   }, [playing])
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio || loop) return
+    const onEnded = () => onActiveChange(null)
+    audio.addEventListener('ended', onEnded)
+    return () => audio.removeEventListener('ended', onEnded)
+  }, [loop, onActiveChange])
 
   const toggle = () => {
     const audio = audioRef.current
@@ -44,7 +55,7 @@ export function BroadcastAudioButton({
 
   return (
     <>
-      <audio ref={audioRef} src={src} preload="none" className="broadcast-audio-hidden" />
+      <audio ref={audioRef} src={src} preload="none" loop={loop} className="broadcast-audio-hidden" />
       <button
         type="button"
         className={`broadcast-play-btn ${compact ? 'broadcast-play-btn--compact' : ''} ${playing ? 'playing' : ''}`}
