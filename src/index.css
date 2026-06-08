@@ -15,6 +15,10 @@
   --radius-lg: 16px;
   --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
   --font-mono: 'Cascadia Code', 'Consolas', monospace;
+  --page-background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 185, 66, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(45, 212, 160, 0.06), transparent),
+    var(--bg-deep);
   /* 自制滚动条 */
   --scrollbar-size: 8px;
   --scrollbar-track: rgba(26, 37, 64, 0.95);
@@ -39,10 +43,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-sans);
   color: var(--text);
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 185, 66, 0.12), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(45, 212, 160, 0.06), transparent),
-    var(--bg-deep);
+  background: var(--page-background);
   line-height: 1.5;
 }
 

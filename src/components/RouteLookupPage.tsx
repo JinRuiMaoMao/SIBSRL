@@ -5,6 +5,7 @@ import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteSearch } from '../hooks/useRouteSearch'
+import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
 
@@ -41,6 +42,7 @@ function runDetailAnimation(
 export function RouteLookupPage() {
   const { t } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
+  useStickyLayoutOffsets()
   const [overlayRoute, setOverlayRoute] = useState<BusRoute | null>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
@@ -211,26 +213,28 @@ export function RouteLookupPage() {
 
   return (
     <>
-      <SearchToolbar
-        value={filters.query}
-        onChange={(q) => updateFilter('query', q)}
-        resultCount={filteredRoutes.length}
-        totalCount={totalCount}
-        randomEligibleCount={randomEligibleCount}
-        onRandom={handleRandomRoute}
-        filtersActive={filtersActive}
-        routeGroup={filters.routeGroup}
-        zone={filters.zone}
-        operator={filters.operator}
-        type={filters.type}
-        zones={zones}
-        operators={operators}
-        types={types}
-        onRouteGroupChange={(group) => updateFilter('routeGroup', group)}
-        onZoneChange={(z) => updateFilter('zone', z)}
-        onOperatorChange={(op) => updateFilter('operator', op)}
-        onTypeChange={(item) => updateFilter('type', item)}
-      />
+      <div className="route-lookup-sticky">
+        <SearchToolbar
+          value={filters.query}
+          onChange={(q) => updateFilter('query', q)}
+          resultCount={filteredRoutes.length}
+          totalCount={totalCount}
+          randomEligibleCount={randomEligibleCount}
+          onRandom={handleRandomRoute}
+          filtersActive={filtersActive}
+          routeGroup={filters.routeGroup}
+          zone={filters.zone}
+          operator={filters.operator}
+          type={filters.type}
+          zones={zones}
+          operators={operators}
+          types={types}
+          onRouteGroupChange={(group) => updateFilter('routeGroup', group)}
+          onZoneChange={(z) => updateFilter('zone', z)}
+          onOperatorChange={(op) => updateFilter('operator', op)}
+          onTypeChange={(item) => updateFilter('type', item)}
+        />
+      </div>
 
       <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>

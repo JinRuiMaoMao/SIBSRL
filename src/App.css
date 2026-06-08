@@ -438,12 +438,21 @@
   width: 100%;
 }
 
+/* Route lookup sticky toolbar — 无底色，避免与页面背景出现色差条 */
+.route-lookup-sticky {
+  position: sticky;
+  top: var(--site-header-sticky-offset, 0px);
+  z-index: 95;
+  margin-bottom: 1.25rem;
+  background: transparent;
+}
+
 /* Search toolbar */
 .search-toolbar {
   display: flex;
   align-items: stretch;
   gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
 }
 
 .search-toolbar .search-bar {
@@ -527,6 +536,10 @@
 
 .filter-menu-icon {
   display: block;
+}
+
+.filter-menu--open {
+  z-index: 110;
 }
 
 .filter-menu-panel {
@@ -1505,6 +1518,20 @@
   .main {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .filter-menu-panel {
+    position: fixed;
+    top: calc(var(--site-header-sticky-offset, 0px) + var(--route-toolbar-height, 3.5rem));
+    right: 0;
+    bottom: 0;
+    left: 3.25rem;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    border-radius: var(--radius-lg) 0 0 0;
+    border-right: none;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.35);
   }
 
   .filter-group {

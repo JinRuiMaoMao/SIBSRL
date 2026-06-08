@@ -21,7 +21,7 @@ export function FilterMenu({ active, children }: FilterMenuProps) {
   }, [open])
 
   return (
-    <div className="filter-menu">
+    <div className={`filter-menu${open ? ' filter-menu--open' : ''}`}>
       <button
         type="button"
         className={`filter-menu-trigger ${active ? 'filter-menu-trigger--active' : ''}`}
