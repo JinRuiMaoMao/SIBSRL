@@ -225,7 +225,8 @@ function parseRoutemapBlock(block) {
 
 function parseStopTables(wt) {
   const directions = []
-  const stopsIdx = wt.indexOf('Stops==')
+  const stopsMatch = wt.match(/==\s*Stops\s*==/i)
+  const stopsIdx = stopsMatch?.index ?? -1
   if (stopsIdx < 0) return directions
 
   const tail = wt.slice(stopsIdx)
@@ -235,7 +236,9 @@ function parseStopTables(wt) {
   while ((m = sectionRe.exec(tail))) {
     const destHint = stripWiki(m[1] || m[2] || '')
     const block = trimStopBlock(m[3])
-    const headerMatch = block.match(/Bus Route[^|]*\(([^→]+?)→\s*([^)]+)\)/i)
+    const headerMatch =
+      block.match(/Bus Route[^|]*\(([^→↺]+?)→\s*([^)]+)\)/i) ??
+      block.match(/Bus Route[^|]*\(([^→↺]+?)↺\s*([^)]+)\)/i)
     const enFrom = stripWiki(headerMatch?.[1] ?? '')
     const enTo = stripWiki(headerMatch?.[2] ?? '')
 
@@ -249,7 +252,9 @@ function parseStopTables(wt) {
   if (!directions.length) {
     const end = tail.search(/\n==[^=]/)
     const block = trimStopBlock(end > 0 ? tail.slice(0, end) : tail)
-    const headerMatch = block.match(/Bus Route[^|]*\(([^→]+?)→\s*([^)]+)\)/i)
+    const headerMatch =
+      block.match(/Bus Route[^|]*\(([^→↺]+?)→\s*([^)]+)\)/i) ??
+      block.match(/Bus Route[^|]*\(([^→↺]+?)↺\s*([^)]+)\)/i)
     let stops = parseWikitableBlock(block)
     if (!stops.length) stops = parseRoutemapBlock(block)
     if (stops.length) {
@@ -273,6 +278,7 @@ function parseBilingualEndpoints(raw) {
 
   const splitEnds = (line) => {
     if (line.includes('↔')) return line.split('↔').map((s) => s.trim())
+    if (line.includes('↺')) return line.split('↺').map((s) => s.trim())
     if (line.includes('→')) return line.split('→').map((s) => s.trim())
     return [line, line]
   }

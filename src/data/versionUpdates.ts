@@ -9,6 +9,28 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-08-mobile-filter-wrap',
+    date: '2026-06-08',
+    title: {
+      zh: '手机端筛选栏换行优化',
+      en: 'Mobile filter bar wrap layout',
+    },
+    items: [
+      {
+        zh: '修复线路查询页筛选按钮在手机端超出屏幕的问题，超出宽度时自动换到下一行。',
+        en: 'Fixed route filter chips overflowing on mobile; they now wrap to the next line when they exceed the screen width.',
+      },
+      {
+        zh: '同步优化顶部导航标签栏，窄屏下标签自动换行显示。',
+        en: 'Improved the header tab bar so tabs wrap on narrow screens.',
+      },
+      {
+        zh: '将线路详情滑动标签页动画时长从 3 秒缩短至 0.5 秒。',
+        en: 'Reduced the route detail slide tab animation duration from 3 seconds to 0.5 seconds.',
+      },
+    ],
+  },
+  {
     id: '2026-05-28-summary',
     date: '2026-05-28',
     title: {
@@ -26,6 +48,7 @@ export const versionUpdates: VersionUpdateEntry[] = [
       { zh: '抱怨页新增筛选：全部 / 行车 / 下车 / 服务（目前无广播）。', en: 'Added complaint filters: All / Driving / Alight / Service (no broadcast yet).' },
       { zh: '导航栏新增“音乐”栏目，并接入 SIBS广播/音乐 文件播放。', en: 'Added a Music tab and wired playback from SIBS广播/音乐 files.' },
       { zh: '已知问题：抱怨页仍有少量细节问题，计划在下个版本修复。', en: 'Known issue: the Complaints page still has minor issues and will be fixed in the next release.' },
+      { zh: '同步更新抱怨 8 音频，并新增结算音乐 1–3。', en: 'Synced updated complaint 8 audio and added settlement music tracks 1–3.' },
     ],
   },
   {

@@ -1,0 +1,164 @@
+{
+  "id": "S1",
+  "number": "S1",
+  "operators": [
+    "FT"
+  ],
+  "category": "inner",
+  "pattern": "circular",
+  "zones": [
+    1,
+    4
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "[[Sun Central Street",
+    "en": "[[Sun Central Street"
+  },
+  "via": {
+    "zh": "Timelapse Mall, Sunshine Stadium, Northern Interchange, Sun Central Street, Southern Cultural District, Northern Interchange",
+    "en": "Timelapse Mall, Sunshine Stadium, Northern Interchange, Sun Central Street, Southern Cultural District, Northern Interchange"
+  },
+  "interval": {
+    "zh": "30 mins",
+    "en": "30 mins"
+  },
+  "journeyTime": {
+    "zh": "26 - 27 mins",
+    "en": "26 - 27 mins"
+  },
+  "fare": "$39.0",
+  "length": {
+    "zh": "24.3 km",
+    "en": "24.3 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（長島碼頭 → 長島碼頭）",
+        "en": "Direction 1 (Long Island Ferry Pier → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "11:00 – 18:00",
+        "en": "11:00 – 18:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間廊",
+            "en": "Timelapse Mall"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "陽光體育館",
+            "en": "Sunshine Stadium"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "紅地磚",
+            "en": "Red Wall Road"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中環消防局",
+            "en": "Central Fire Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環(中日街)",
+            "en": "Circular Point"
+          }
+        },
+        {
+          "name": {
+            "zh": "新紀元中心",
+            "en": "Ping Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "Museum Infinite",
+            "en": "Museum Infinite"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光太空館",
+            "en": "Sunshine Space Museum"
+          }
+        },
+        {
+          "name": {
+            "zh": "北環轉車站 (北行)",
+            "en": "Northern Interchange (Northbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_S1"
+}

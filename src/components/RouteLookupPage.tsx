@@ -10,7 +10,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
 
 /** 详情全屏滑入/滑出时长（毫秒） */
-const DETAIL_ANIM_MS = 3000
+const DETAIL_ANIM_MS = 500
 const DETAIL_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)'
 
 function motionDurationMs(): number {

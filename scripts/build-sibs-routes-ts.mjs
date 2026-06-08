@@ -113,6 +113,20 @@ const MANUAL_ORIGINS = {
     origin: { zh: '阳光体育馆', en: 'Sunshine Stadium' },
     destination: { zh: '叶欣海旁道', en: 'Praya YiYan Road' },
   },
+  S1: {
+    origin: { zh: '长岛码头', en: 'Long Island Ferry Pier' },
+    destination: { zh: '中环（中日街）', en: 'Sun Central Street' },
+  },
+  S2: {
+    origin: { zh: '长岛码头', en: 'Long Island Ferry Pier' },
+    destination: { zh: '中环（中日街）', en: 'Sun Central Street' },
+  },
+}
+
+/** Wiki 编号 → 游戏内编号（SIBS 类型.txt） */
+const IN_GAME_ROUTE_NUMBERS = {
+  S1: 'S1A',
+  S2: 'S2A',
 }
 
 function cleanEn(en) {
@@ -249,6 +263,27 @@ for (const f of files) {
   const route = cleanRoute(JSON.parse(readFileSync(resolve(IMPORT_DIR, f), 'utf8')))
   if (isGoodRoute(route)) routes.push(route)
   else skipped.push(route.id)
+}
+
+for (const route of routes) {
+  const inGameNumber = IN_GAME_ROUTE_NUMBERS[route.id]
+  if (!inGameNumber) continue
+  const wikiId = route.id
+  route.id = inGameNumber
+  route.number = inGameNumber
+  route.wikiUrl = `https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_${encodeURIComponent(wikiId)}`
+  if (wikiId === 'S1') {
+    route.notes = {
+      zh: '日间观光环线（Wiki 编号 S1，游戏内为 S1A）。需消耗 Sunshards 解锁。',
+      en: 'Daytime sightseeing loop (Wiki route S1, in-game as S1A). Unlocked with Sunshards.',
+    }
+  }
+  if (wikiId === 'S2') {
+    route.notes = {
+      zh: '晚间观光环线（Wiki 编号 S2，游戏内为 S2A）。需消耗 Sunshards 解锁。',
+      en: 'Evening sightseeing loop (Wiki route S2, in-game as S2A). Unlocked with Sunshards.',
+    }
+  }
 }
 
 const have = new Set(routes.map((r) => r.id))

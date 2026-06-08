@@ -38,4 +38,22 @@ export const musicTracks: MusicTrack[] = [
     title: { zh: '车辆生成 3', en: 'Vehicle Spawn 3' },
     audioUrl: './audio/broadcasts/music/music-spawn-03.ogg',
   },
+  {
+    id: 'music-settlement-01',
+    number: 6,
+    title: { zh: '结算 1', en: 'Settlement 1' },
+    audioUrl: './audio/broadcasts/music/music-settlement-01.ogg',
+  },
+  {
+    id: 'music-settlement-02',
+    number: 7,
+    title: { zh: '结算 2', en: 'Settlement 2' },
+    audioUrl: './audio/broadcasts/music/music-settlement-02.ogg',
+  },
+  {
+    id: 'music-settlement-03',
+    number: 8,
+    title: { zh: '结算 3', en: 'Settlement 3' },
+    audioUrl: './audio/broadcasts/music/music-settlement-03.ogg',
+  },
 ]

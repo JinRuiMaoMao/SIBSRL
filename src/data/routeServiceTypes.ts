@@ -43,6 +43,11 @@ export function applyRouteServiceTypes(route: BusRoute): BusRoute {
 }
 
 export function wikiUrlForRouteId(id: string): string {
-  const encoded = encodeURIComponent(`Bus_route_${id}`)
+  const wikiAliases: Record<string, string> = {
+    S1A: 'S1',
+    S2A: 'S2',
+  }
+  const wikiId = wikiAliases[id] ?? id
+  const encoded = encodeURIComponent(`Bus_route_${wikiId}`)
   return `https://sunshine-islands-roblox.fandom.com/wiki/${encoded}`
 }
