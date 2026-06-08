@@ -9,6 +9,28 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-08-header-music',
+    date: '2026-06-08',
+    title: {
+      zh: '顶部栏收起与音乐循环',
+      en: 'Header collapse & music looping',
+    },
+    items: [
+      {
+        zh: '顶部栏右上角新增收起按钮，0.5 秒动画折叠标题、导航与外链；收起后设置与收起按钮仍固定在右上角。',
+        en: 'Added a collapse control at the top-right of the header; title, tabs, and external links fold with a 0.5s animation, while Settings and the toggle stay pinned top-right when collapsed.',
+      },
+      {
+        zh: '导航标签优先单行显示，仅当宽度不足时才自动换行叠放。',
+        en: 'Header tabs stay on one row when space allows; they wrap to multiple rows only when the viewport is too narrow.',
+      },
+      {
+        zh: '音乐页：主界面、地图界面与车辆生成曲目播放结束后自动循环；结算音乐不循环，播完自动停止。',
+        en: 'Music tab: main menu, map, and vehicle spawn tracks loop automatically; settlement tracks play once and stop when finished.',
+      },
+    ],
+  },
+  {
     id: '2026-06-08-daily-challenge-beta',
     date: '2026-06-08',
     title: {
