@@ -52,11 +52,13 @@
 
 .header-tabs-measure {
   position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
+  left: -10000px;
+  top: 0;
   visibility: hidden;
   pointer-events: none;
+  width: max-content;
+  height: auto;
+  overflow: visible;
 }
 
 .header-settings-wrap {
@@ -85,6 +87,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .header-tab:hover {
@@ -599,9 +603,16 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  min-width: 3rem;
   flex: 0 0 auto;
   padding-top: 0.35rem;
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+:lang(zh-Hans) .filter-label,
+:lang(zh-Hant) .filter-label {
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .chip-row {
@@ -621,6 +632,8 @@
   border-radius: 999px;
   font-size: 0.85rem;
   transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .chip:hover {
@@ -908,6 +921,8 @@
   background: rgba(100, 149, 237, 0.12);
   color: #8eb4ff;
   border: 1px solid rgba(100, 149, 237, 0.28);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .route-type-tag.tag-central-axis {
