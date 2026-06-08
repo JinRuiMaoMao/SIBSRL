@@ -17,6 +17,15 @@ function motionDurationMs(): number {
   return reduced ? 200 : DETAIL_ANIM_MS
 }
 
+function scrollRouteCardIntoView(routeId: string) {
+  const el = document.querySelector<HTMLElement>(
+    `[data-route-id="${CSS.escape(routeId)}"]`,
+  )
+  if (!el) return
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' })
+}
+
 function runDetailAnimation(
   el: HTMLElement,
   keyframes: Keyframe[],
@@ -138,6 +147,14 @@ export function RouteLookupPage() {
     selectRoute(id)
   }
 
+  const handleRandomRoute = () => {
+    const id = selectRandomRoute()
+    if (!id) return
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => scrollRouteCardIntoView(id))
+    })
+  }
+
   const handleCloseDetail = () => {
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
@@ -200,7 +217,7 @@ export function RouteLookupPage() {
         resultCount={filteredRoutes.length}
         totalCount={totalCount}
         randomEligibleCount={randomEligibleCount}
-        onRandom={selectRandomRoute}
+        onRandom={handleRandomRoute}
         filtersActive={filtersActive}
         routeGroup={filters.routeGroup}
         zone={filters.zone}
@@ -232,14 +249,6 @@ export function RouteLookupPage() {
                 />
               ))}
             </div>
-          )}
-          {!selectedRoute && isWideLayout && (
-            <p className="detail-list-hint">
-              {t('detailPlaceholder')}
-              <span className="detail-list-hint-sub">
-                {t('detailPlaceholderHint', { total: totalCount })}
-              </span>
-            </p>
           )}
         </section>
       </div>

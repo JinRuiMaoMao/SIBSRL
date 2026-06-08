@@ -104,10 +104,11 @@ export function useRouteSearch() {
   const selectRoute = (id: string) => setSelectedId(id)
   const clearSelection = () => setSelectedId(null)
 
-  const selectRandomRoute = useCallback(() => {
-    if (randomEligibleRoutes.length === 0) return
+  const selectRandomRoute = useCallback((): string | null => {
+    if (randomEligibleRoutes.length === 0) return null
     const pick = randomEligibleRoutes[Math.floor(Math.random() * randomEligibleRoutes.length)]!
     setSelectedId(pick.id)
+    return pick.id
   }, [randomEligibleRoutes])
 
   const zones = useMemo(() => {

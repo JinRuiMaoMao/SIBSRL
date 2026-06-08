@@ -773,24 +773,6 @@
   margin-bottom: 2.5rem;
 }
 
-.detail-list-hint {
-  margin: 1.25rem 0 0;
-  padding: 1.25rem 1.5rem;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  background: var(--bg-surface);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-}
-
-.detail-list-hint-sub {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.82rem;
-  opacity: 0.85;
-}
-
 .route-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));

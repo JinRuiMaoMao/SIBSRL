@@ -39,6 +39,7 @@ export function RouteCard({
 
   return (
     <div
+      data-route-id={route.id}
       role="button"
       tabIndex={0}
       className={`route-card ${selected ? 'selected' : ''}`}

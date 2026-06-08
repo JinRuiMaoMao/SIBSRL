@@ -32,6 +32,18 @@ export const versionUpdates: VersionUpdateEntry[] = [
         zh: '线路详情新增「解锁条件」，已补充部分线路的等级或阳光碎片（Sunshards）解锁要求。',
         en: 'Route details now show unlock requirements; level and Sunshards unlock info added for many routes.',
       },
+      {
+        zh: '搜索栏旁新增「随机」按钮，从已录入站序的线路中随机打开详情，并自动滚动到对应卡片。',
+        en: 'Added a Random button beside search to open a detail view from routes with complete stop data, scrolling the list to the selected card.',
+      },
+      {
+        zh: '筛选标签收进搜索栏右侧的 ≡ 菜单；点击页面其他区域不会自动关闭筛选面板。',
+        en: 'Moved all filter chips into a ≡ menu next to Random; the filter panel no longer closes when tapping elsewhere on the page.',
+      },
+      {
+        zh: '移除宽屏线路列表底部的占位提示文案。',
+        en: 'Removed the wide-layout placeholder hint below the route list.',
+      },
     ],
   },
   {
