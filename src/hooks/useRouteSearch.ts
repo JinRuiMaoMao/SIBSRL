@@ -107,8 +107,8 @@ export function useRouteSearch() {
     [displayRoutes],
   )
 
-  const selectRoute = (id: string) => setSelectedId(id)
-  const clearSelection = () => setSelectedId(null)
+  const selectRoute = useCallback((id: string) => setSelectedId(id), [])
+  const clearSelection = useCallback(() => setSelectedId(null), [])
 
   const selectRandomRoute = useCallback((): string | null => {
     if (randomEligibleRoutes.length === 0) return null

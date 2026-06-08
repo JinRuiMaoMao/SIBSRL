@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import './App.css'
 import { BroadcastPage } from './components/BroadcastPage'
 import { ComplaintsPage } from './components/ComplaintsPage'
@@ -23,6 +23,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<AppTab>('routes')
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(true)
   const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
+  const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
 
   const handleDailyChallengePromptOpenDetail = () => {
@@ -30,9 +31,18 @@ function App() {
     setPendingDailyChallengeDetail((count) => count + 1)
   }
 
+  const handlePendingDailyChallengeDetailConsumed = useCallback(() => {
+    setPendingDailyChallengeDetail(0)
+  }, [])
+
   return (
     <div className="app sibs-scrollbar">
-      <Header activeTab={activeTab} onTabChange={setActiveTab} />
+      <Header
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        collapsed={headerCollapsed}
+        onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
+      />
 
       <DailyChallengePrompt
         open={dailyChallengePromptOpen}
@@ -43,7 +53,10 @@ function App() {
       <main className="main">
         <ErrorBoundary>
           {activeTab === 'routes' ? (
-            <RouteLookupPage pendingDailyChallengeDetail={pendingDailyChallengeDetail} />
+            <RouteLookupPage
+              pendingDailyChallengeDetail={pendingDailyChallengeDetail}
+              onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
+            />
           ) : activeTab === 'broadcast' ? (
             <BroadcastPage />
           ) : activeTab === 'music' ? (

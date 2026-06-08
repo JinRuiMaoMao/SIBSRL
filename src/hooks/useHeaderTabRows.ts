@@ -9,6 +9,11 @@ function rowsEqual(a: string[][], b: string[][]): boolean {
  * Split header tabs into multiple rounded rows so each row shrink-wraps its buttons
  * without trailing empty space inside the group box.
  */
+export interface HeaderTabRowsOptions {
+  /** 横屏/宽屏：单行展开，不拆成多行 */
+  forceSingleRow?: boolean
+}
+
 export function useHeaderTabRows(
   tabs: string[],
   actionsRef: RefObject<HTMLElement | null>,
@@ -16,10 +21,17 @@ export function useHeaderTabRows(
   measureBoxRef: RefObject<HTMLElement | null>,
   measureTabRefs: RefObject<Map<string, HTMLButtonElement>>,
   deps: unknown[] = [],
+  options: HeaderTabRowsOptions = {},
 ) {
+  const { forceSingleRow = false } = options
   const [rows, setRows] = useState<string[][]>(() => [tabs])
 
   const recompute = useCallback(() => {
+    if (forceSingleRow) {
+      setRows((prev) => (rowsEqual(prev, [tabs]) ? prev : [tabs]))
+      return
+    }
+
     const actions = actionsRef.current
     const measureBox = measureBoxRef.current
     if (!actions || !measureBox) return
@@ -32,7 +44,10 @@ export function useHeaderTabRows(
     const innerGap = parseFloat(boxStyle.gap) || 0
     const actionsStyle = getComputedStyle(actions)
     const actionsGap = parseFloat(actionsStyle.gap) || 0
-    const settingsWidth = settingsRef.current?.offsetWidth ?? 0
+    const settingsInTabRow = Boolean(
+      settingsRef.current?.closest('.header-tabs-primary-row'),
+    )
+    const settingsWidth = settingsInTabRow ? (settingsRef.current?.offsetWidth ?? 0) : 0
 
     const rowOuterWidth = (tabWidths: number[]) =>
       boxPaddingX + tabWidths.reduce((sum, w) => sum + w, 0) + Math.max(0, tabWidths.length - 1) * innerGap
@@ -63,7 +78,7 @@ export function useHeaderTabRows(
     if (current.length > 0) nextRows.push(current)
 
     setRows((prev) => (rowsEqual(prev, nextRows) ? prev : nextRows))
-  }, [tabs, actionsRef, settingsRef, measureBoxRef, measureTabRefs])
+  }, [tabs, forceSingleRow, actionsRef, settingsRef, measureBoxRef, measureTabRefs])
 
   useLayoutEffect(() => {
     recompute()

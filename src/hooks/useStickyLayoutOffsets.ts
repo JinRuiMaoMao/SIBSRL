@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 /** 供置顶搜索栏、手机端筛选抽屉计算 top 偏移 */
 export function useStickyLayoutOffsets(
-  headerSelector = '.site-header',
+  headerSelector = '.site-header-shell',
   toolbarSelector = '.route-lookup-sticky',
 ) {
   useEffect(() => {

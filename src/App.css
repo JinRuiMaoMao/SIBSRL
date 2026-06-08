@@ -5,19 +5,99 @@
 }
 
 /* Header */
+.site-header-shell {
+  --header-collapse-duration: 0.5s;
+  --header-collapse-easing: cubic-bezier(0.32, 0.72, 0, 1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition:
+    background 0.5s var(--header-collapse-easing),
+    border-color 0.5s var(--header-collapse-easing),
+    padding 0.5s var(--header-collapse-easing);
+}
+
+.site-header-shell.is-collapsed {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.35rem 0.75rem;
+  background: rgba(20, 28, 46, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
 .site-header {
   border-bottom: 1px solid var(--border);
   background: rgba(20, 28, 46, 0.85);
   backdrop-filter: blur(12px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  overflow: hidden;
+  max-height: 16rem;
+  opacity: 1;
+  transition:
+    max-height var(--header-collapse-duration) var(--header-collapse-easing),
+    opacity var(--header-collapse-duration) var(--header-collapse-easing),
+    border-color var(--header-collapse-duration) var(--header-collapse-easing);
+}
+
+.site-header-shell.is-collapsed .site-header {
+  max-height: 0;
+  opacity: 0;
+  border-bottom-color: transparent;
+  pointer-events: none;
+}
+
+.header-shell-controls {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.site-header-shell.is-collapsed .header-shell-controls {
+  position: static;
+}
+
+.header-collapse-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.header-collapse-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.header-collapse-icon {
+  display: block;
+  transition: transform var(--header-collapse-duration) var(--header-collapse-easing);
+}
+
+.site-header-shell.is-collapsed .header-collapse-icon {
+  transform: rotate(180deg);
 }
 
 .header-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1rem 1.5rem 0.75rem;
+  padding: 1rem 5.75rem 0.75rem 1.5rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -41,6 +121,32 @@
   gap: 0.35rem;
   width: fit-content;
   max-width: 100%;
+}
+
+.header-tabs-cluster--wide {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+@media (min-width: 901px), (orientation: landscape) and (min-width: 568px) {
+  .header-inner {
+    flex-wrap: nowrap;
+  }
+
+  .header-actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+  }
+
+  .header-tabs-cluster--wide {
+    max-width: none;
+  }
+
+  .header-tabs-cluster--wide .header-tabs {
+    max-width: none;
+  }
 }
 
 .header-tabs-primary-row {
@@ -105,7 +211,7 @@
 .header-sub {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1.5rem 0.75rem;
+  padding: 0 5.75rem 0.75rem 1.5rem;
 }
 
 .page-intro {
@@ -596,9 +702,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 100%;
-  min-height: 3rem;
+  width: 2rem;
+  height: 2rem;
+  min-height: 2rem;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -646,7 +752,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
-  max-height: min(16rem, 50vh);
+  max-height: min(24rem, 70vh);
   overflow-x: hidden;
   overflow-y: auto;
   padding-right: 0.35rem;
@@ -1623,10 +1729,28 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .site-header-shell,
+  .site-header,
+  .header-collapse-icon,
+  .site-header-shell.is-collapsed .header-collapse-icon {
+    transform: none;
+  }
+}
+
 @media (max-width: 600px) {
   .header-inner {
     padding-left: 1rem;
-    padding-right: 1rem;
+    padding-right: 5.25rem;
+  }
+
+  .header-sub {
+    padding-right: 5.25rem;
+  }
+
+  .header-shell-controls {
+    top: 0.5rem;
+    right: 0.5rem;
   }
 
   .header-actions {

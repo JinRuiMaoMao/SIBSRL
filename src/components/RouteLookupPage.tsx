@@ -61,9 +61,13 @@ function runDetailAnimation(
 
 interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
+  onPendingDailyChallengeDetailConsumed?: () => void
 }
 
-export function RouteLookupPage({ pendingDailyChallengeDetail = 0 }: RouteLookupPageProps) {
+export function RouteLookupPage({
+  pendingDailyChallengeDetail = 0,
+  onPendingDailyChallengeDetailConsumed,
+}: RouteLookupPageProps) {
   const { t } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
@@ -73,6 +77,8 @@ export function RouteLookupPage({ pendingDailyChallengeDetail = 0 }: RouteLookup
   const openAnimsRef = useRef<Animation[]>([])
   const closeAnimsRef = useRef<Animation[]>([])
   const animGenerationRef = useRef(0)
+  const lastPendingDailyChallengeDetailRef = useRef(0)
+  const handleSelectDailyChallengeRef = useRef<() => void>(() => {})
 
   const {
     filters,
@@ -106,13 +112,13 @@ export function RouteLookupPage({ pendingDailyChallengeDetail = 0 }: RouteLookup
     cancelAnimations(closeAnimsRef.current)
     setDetailOverlay(null)
     clearSelection()
+    document.body.style.overflow = ''
   }, [clearSelection])
 
   useEffect(() => {
-    if (selectedRoute) {
-      setDetailOverlay({ kind: 'route', route: selectedRoute })
-    }
-  }, [selectedRoute?.id])
+    if (!selectedRoute) return
+    setDetailOverlay({ kind: 'route', route: selectedRoute })
+  }, [selectedRoute])
 
   useEffect(() => {
     const sheet = sheetRef.current
@@ -192,13 +198,19 @@ export function RouteLookupPage({ pendingDailyChallengeDetail = 0 }: RouteLookup
     setDetailOverlay({ kind: 'daily-challenge', challenge })
   }, [clearSelection, selectRoute])
 
+  handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
+
   useEffect(() => {
     if (!pendingDailyChallengeDetail) return
-    handleSelectDailyChallenge()
+    if (pendingDailyChallengeDetail === lastPendingDailyChallengeDetailRef.current) return
+    lastPendingDailyChallengeDetailRef.current = pendingDailyChallengeDetail
+
+    handleSelectDailyChallengeRef.current()
+    onPendingDailyChallengeDetailConsumed?.()
     requestAnimationFrame(() => {
       requestAnimationFrame(() => scrollRouteCardIntoView(DAILY_CHALLENGE_CARD_ID))
     })
-  }, [pendingDailyChallengeDetail, handleSelectDailyChallenge])
+  }, [pendingDailyChallengeDetail, onPendingDailyChallengeDetailConsumed])
 
   const handleRandomRoute = () => {
     const id = selectRandomRoute()

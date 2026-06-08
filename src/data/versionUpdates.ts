@@ -9,6 +9,32 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-08-daily-challenge-beta',
+    date: '2026-06-08',
+    title: {
+      zh: '每日挑战 Beta 测试版',
+      en: 'Daily Challenge (Beta)',
+    },
+    items: [
+      {
+        zh: '线路列表新增「今日每日挑战」卡片（样式与普通线路一致、占满整行），当前占位为 PH1 / PH 私人租用；暂无官方接口，以游戏内为准。',
+        en: 'Added a full-width “Today’s daily challenge” card in the route list (same style as route cards); placeholder is PH1 / Private Hire — no official API yet, in-game prevails.',
+      },
+      {
+        zh: '每次打开网站弹出「今天的挑战是：」提示，点击卡片可进入详情；PH 线路显示挑战说明，普通线路显示分站资料。',
+        en: 'A “Today’s challenge:” prompt appears on each visit; tap the card for details — PH routes show the challenge guide, regular routes show stop data.',
+      },
+      {
+        zh: '每日挑战参与搜索与筛选：关键词、线路分组、区域、运营商、类型等条件与其他线路相同，不匹配时自动隐藏。',
+        en: 'Daily challenge follows the same search and filters as other routes; the card hides when it does not match.',
+      },
+      {
+        zh: '详情页收录每日挑战规则说明：指定线路、运营要求、评分标准、奖励与注意事项。',
+        en: 'Detail view includes the daily challenge guide: assigned route, requirements, scoring, rewards, and notes.',
+      },
+    ],
+  },
+  {
     id: '2026-06-08-mobile-filter-wrap',
     date: '2026-06-08',
     title: {
@@ -35,10 +61,6 @@ export const versionUpdates: VersionUpdateEntry[] = [
       {
         zh: '搜索栏旁新增「随机」按钮，从已录入站序的线路中随机打开详情，并自动滚动到对应卡片。',
         en: 'Added a Random button beside search to open a detail view from routes with complete stop data, scrolling the list to the selected card.',
-      },
-      {
-        zh: '线路列表上方新增「今日每日挑战」占位条（暂为 PH 私人租用）；暂无官方接口，以游戏内为准。',
-        en: 'Added a “Today’s daily challenge” banner above the route list (placeholder: Private Hire / PH); no official API yet — in-game prevails.',
       },
       {
         zh: '筛选标签收进搜索栏右侧的 ≡ 菜单；点击页面其他区域不会自动关闭筛选面板。',
