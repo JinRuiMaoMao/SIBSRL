@@ -438,6 +438,12 @@
   width: 100%;
 }
 
+.route-lookup-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 /* Route lookup sticky toolbar — 无底色，避免与页面背景出现色差条 */
 .route-lookup-sticky {
   position: sticky;
@@ -790,6 +796,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 0.75rem;
+}
+
+.route-grid-span,
+.daily-challenge-card {
+  grid-column: 1 / -1;
 }
 
 .route-group {
@@ -1222,6 +1233,129 @@
 
 .detail-section h3 {
   font-size: 0.85rem;
+}
+
+.daily-challenge-guide-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.daily-challenge-guide-lead {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.daily-challenge-guide-section {
+  margin-top: 1rem;
+}
+
+.daily-challenge-guide-section h4 {
+  margin: 0.85rem 0 0.4rem;
+  font-size: 0.78rem;
+}
+
+.daily-challenge-guide-section h4:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.daily-challenge-guide-list {
+  margin: 0.35rem 0 0.5rem;
+  padding-left: 1.2rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.daily-challenge-guide-list li + li {
+  margin-top: 0.25rem;
+}
+
+.daily-challenge-guide-closing-lead {
+  margin: 1rem 0 0.35rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.daily-challenge-guide-closing {
+  margin: 0;
+  color: var(--text);
+}
+
+.daily-challenge-guide-footnote {
+  margin-top: 1rem;
+}
+
+.daily-challenge-card--prompt {
+  grid-column: auto;
+  width: 100%;
+}
+
+.daily-challenge-prompt-root {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  pointer-events: none;
+}
+
+.daily-challenge-prompt-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(8, 12, 22, 0.62);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.daily-challenge-prompt-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 28rem);
+  padding: 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.daily-challenge-prompt-title {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+}
+
+.daily-challenge-prompt-dismiss {
+  display: block;
+  width: 100%;
+  margin-top: 0.85rem;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.daily-challenge-prompt-dismiss:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
 }
 
 .detail-route-summary {

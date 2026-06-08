@@ -37,6 +37,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
         en: 'Added a Random button beside search to open a detail view from routes with complete stop data, scrolling the list to the selected card.',
       },
       {
+        zh: '线路列表上方新增「今日每日挑战」占位条（暂为 PH 私人租用）；暂无官方接口，以游戏内为准。',
+        en: 'Added a “Today’s daily challenge” banner above the route list (placeholder: Private Hire / PH); no official API yet — in-game prevails.',
+      },
+      {
         zh: '筛选标签收进搜索栏右侧的 ≡ 菜单；点击页面其他区域不会自动关闭筛选面板。',
         en: 'Moved all filter chips into a ≡ menu next to Random; the filter panel no longer closes when tapping elsewhere on the page.',
       },

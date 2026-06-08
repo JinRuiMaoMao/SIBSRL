@@ -1,4 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  DAILY_CHALLENGE_CARD_ID,
+  findRouteForDailyChallenge,
+  getTodaysDailyChallenge,
+  isPrivateHireChallengeRoute,
+  type DailyChallengeInfo,
+} from '../data/dailyChallenge'
+import { DailyChallengeBanner } from './DailyChallengeBanner'
+import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { SearchToolbar } from './SearchToolbar'
@@ -8,6 +17,17 @@ import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
+
+type DetailOverlay =
+  | { kind: 'route'; route: BusRoute }
+  | { kind: 'daily-challenge'; challenge: DailyChallengeInfo }
+  | null
+
+function overlayKey(overlay: DetailOverlay): string | null {
+  if (!overlay) return null
+  if (overlay.kind === 'route') return overlay.route.id
+  return `daily-challenge-${overlay.challenge.date}`
+}
 
 /** 详情全屏滑入/滑出时长（毫秒） */
 const DETAIL_ANIM_MS = 500
@@ -39,11 +59,15 @@ function runDetailAnimation(
   })
 }
 
-export function RouteLookupPage() {
+interface RouteLookupPageProps {
+  pendingDailyChallengeDetail?: number
+}
+
+export function RouteLookupPage({ pendingDailyChallengeDetail = 0 }: RouteLookupPageProps) {
   const { t } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
-  const [overlayRoute, setOverlayRoute] = useState<BusRoute | null>(null)
+  const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
   const openAnimsRef = useRef<Animation[]>([])
@@ -54,6 +78,7 @@ export function RouteLookupPage() {
     filters,
     updateFilter,
     filteredRoutes,
+    dailyChallengeVisible,
     selectedRoute,
     getDirectionIndex,
     setDirectionIndex,
@@ -67,6 +92,8 @@ export function RouteLookupPage() {
     totalCount,
   } = useRouteSearch()
 
+  const activeOverlayKey = overlayKey(detailOverlay)
+
   const cancelAnimations = (list: Animation[]) => {
     for (const anim of list) {
       anim.cancel()
@@ -77,20 +104,20 @@ export function RouteLookupPage() {
   const finishDetailClose = useCallback(() => {
     cancelAnimations(openAnimsRef.current)
     cancelAnimations(closeAnimsRef.current)
-    setOverlayRoute(null)
+    setDetailOverlay(null)
     clearSelection()
   }, [clearSelection])
 
   useEffect(() => {
     if (selectedRoute) {
-      setOverlayRoute(selectedRoute)
+      setDetailOverlay({ kind: 'route', route: selectedRoute })
     }
   }, [selectedRoute?.id])
 
   useEffect(() => {
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
-    if (!sheet || !overlayRoute) return
+    if (!sheet || !detailOverlay) return
 
     const generation = ++animGenerationRef.current
     cancelAnimations(closeAnimsRef.current)
@@ -134,20 +161,44 @@ export function RouteLookupPage() {
       if (animGenerationRef.current !== generation) return
       cancelAnimations(openAnimsRef.current)
     }
-  }, [overlayRoute?.id, isWideLayout])
+  }, [activeOverlayKey, isWideLayout])
 
   useEffect(() => {
-    if (!overlayRoute) return
+    if (!detailOverlay) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = prev
     }
-  }, [overlayRoute])
+  }, [detailOverlay])
 
   const handleSelectRoute = (id: string) => {
     selectRoute(id)
   }
+
+  const handleSelectDailyChallenge = useCallback(() => {
+    const challenge = getTodaysDailyChallenge()
+    const routeNumber = challenge.routeNumber
+
+    if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
+      const route = findRouteForDailyChallenge(routeNumber)
+      if (route) {
+        selectRoute(route.id)
+        return
+      }
+    }
+
+    clearSelection()
+    setDetailOverlay({ kind: 'daily-challenge', challenge })
+  }, [clearSelection, selectRoute])
+
+  useEffect(() => {
+    if (!pendingDailyChallengeDetail) return
+    handleSelectDailyChallenge()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => scrollRouteCardIntoView(DAILY_CHALLENGE_CARD_ID))
+    })
+  }, [pendingDailyChallengeDetail, handleSelectDailyChallenge])
 
   const handleRandomRoute = () => {
     const id = selectRandomRoute()
@@ -202,17 +253,20 @@ export function RouteLookupPage() {
     filters.operator !== 'all' ||
     filters.type !== 'all'
 
-  const detailProps = overlayRoute
-    ? {
-        route: overlayRoute,
-        directionIndex: getDirectionIndex(overlayRoute),
-        onDirectionChange: (index: number) => setDirectionIndex(overlayRoute.id, index),
-        onClose: handleCloseDetail,
-      }
-    : null
+  const dailyChallengeSelected = detailOverlay?.kind === 'daily-challenge'
+  const routeDetailProps =
+    detailOverlay?.kind === 'route'
+      ? {
+          route: detailOverlay.route,
+          directionIndex: getDirectionIndex(detailOverlay.route),
+          onDirectionChange: (index: number) =>
+            setDirectionIndex(detailOverlay.route.id, index),
+          onClose: handleCloseDetail,
+        }
+      : null
 
   return (
-    <>
+    <div className="route-lookup-page">
       <div className="route-lookup-sticky">
         <SearchToolbar
           value={filters.query}
@@ -238,11 +292,17 @@ export function RouteLookupPage() {
 
       <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>
-          {filteredRoutes.length === 0 ? (
-            <p className="empty-state">{t('emptyState')}</p>
-          ) : (
-            <div className="route-grid">
-              {filteredRoutes.map((route) => (
+          <div className="route-grid">
+            {dailyChallengeVisible ? (
+              <DailyChallengeBanner
+                selected={dailyChallengeSelected}
+                onSelect={handleSelectDailyChallenge}
+              />
+            ) : null}
+            {filteredRoutes.length === 0 && !dailyChallengeVisible ? (
+              <p className="empty-state route-grid-span">{t('emptyState')}</p>
+            ) : (
+              filteredRoutes.map((route) => (
                 <RouteCard
                   key={route.id}
                   route={route}
@@ -251,13 +311,13 @@ export function RouteLookupPage() {
                   onDirectionChange={(index) => setDirectionIndex(route.id, index)}
                   onSelect={() => handleSelectRoute(route.id)}
                 />
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </section>
       </div>
 
-      {detailProps && (
+      {detailOverlay && (
         <>
           <button
             ref={backdropRef}
@@ -272,10 +332,17 @@ export function RouteLookupPage() {
             role="dialog"
             aria-modal="true"
           >
-            <RouteDetail {...detailProps} />
+            {routeDetailProps ? (
+              <RouteDetail {...routeDetailProps} />
+            ) : detailOverlay.kind === 'daily-challenge' ? (
+              <DailyChallengeDetail
+                challenge={detailOverlay.challenge}
+                onClose={handleCloseDetail}
+              />
+            ) : null}
           </div>
         </>
       )}
-    </>
+    </div>
   )
 }

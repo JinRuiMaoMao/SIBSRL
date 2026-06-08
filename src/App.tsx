@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import { BroadcastPage } from './components/BroadcastPage'
 import { ComplaintsPage } from './components/ComplaintsPage'
+import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Header } from './components/Header'
 import { MusicPage } from './components/MusicPage'
@@ -9,7 +10,6 @@ import { RouteLookupPage } from './components/RouteLookupPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { useLocale } from './i18n/LocaleContext'
 import type { AppTab } from './types/appTab'
-
 function readPublishedBuild(): string | null {
   return document.querySelector('meta[name="app-build"]')?.getAttribute('content') ?? null
 }
@@ -21,16 +21,29 @@ function formatBuildLabel(iso: string): string {
 function App() {
   const { t } = useLocale()
   const [activeTab, setActiveTab] = useState<AppTab>('routes')
+  const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(true)
+  const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
+
+  const handleDailyChallengePromptOpenDetail = () => {
+    setActiveTab('routes')
+    setPendingDailyChallengeDetail((count) => count + 1)
+  }
 
   return (
     <div className="app sibs-scrollbar">
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
+      <DailyChallengePrompt
+        open={dailyChallengePromptOpen}
+        onClose={() => setDailyChallengePromptOpen(false)}
+        onOpenDetail={handleDailyChallengePromptOpenDetail}
+      />
+
       <main className="main">
         <ErrorBoundary>
           {activeTab === 'routes' ? (
-            <RouteLookupPage />
+            <RouteLookupPage pendingDailyChallengeDetail={pendingDailyChallengeDetail} />
           ) : activeTab === 'broadcast' ? (
             <BroadcastPage />
           ) : activeTab === 'music' ? (

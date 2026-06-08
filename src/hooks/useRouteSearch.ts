@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { dailyChallengeMatchesFilters, getTodaysDailyChallenge } from '../data/dailyChallenge'
 import { routes } from '../data/routes'
 import { getGameRouteGroup } from '../data/gameRouteGroups'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
@@ -66,6 +67,11 @@ export function useRouteSearch() {
       })
       .sort((a, b) => compareRouteNumber(a.number, b.number))
   }, [displayRoutes, filters])
+
+  const dailyChallengeVisible = useMemo(
+    () => dailyChallengeMatchesFilters(getTodaysDailyChallenge(), filters),
+    [filters],
+  )
 
   const randomEligibleRoutes = useMemo(
     () => filteredRoutes.filter(isRouteStopDataComplete),
@@ -136,6 +142,7 @@ export function useRouteSearch() {
     filters,
     updateFilter,
     filteredRoutes,
+    dailyChallengeVisible,
     selectedRoute,
     getDirectionIndex,
     setDirectionIndex,
