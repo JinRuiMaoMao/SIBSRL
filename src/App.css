@@ -27,21 +27,51 @@
 
 .header-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   gap: 0.5rem;
   min-width: 0;
+  position: relative;
+}
+
+.header-tabs-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.header-tabs-primary-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+}
+
+.header-tabs-measure {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.header-settings-wrap {
+  flex-shrink: 0;
 }
 
 .header-tabs {
-  display: flex;
-  flex-wrap: wrap;
+  display: inline-flex;
+  flex-wrap: nowrap;
   padding: 0.2rem;
   gap: 0.2rem;
   border-radius: 10px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  min-width: 0;
+  width: fit-content;
   max-width: 100%;
 }
 
@@ -1336,19 +1366,14 @@
   }
 
   .header-actions {
+    width: 100%;
+    max-width: 100%;
+    gap: 0.4rem;
+  }
+
+  .header-tabs-cluster {
     width: fit-content;
     max-width: 100%;
-    justify-content: flex-start;
-  }
-
-  .header-tabs {
-    flex: 0 1 auto;
-    width: fit-content;
-    max-width: calc(100% - 3.5rem);
-  }
-
-  .settings-menu {
-    margin-left: 0;
   }
 
   .header-tab {

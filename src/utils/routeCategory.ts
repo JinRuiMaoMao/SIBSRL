@@ -1,9 +1,7 @@
 import type { BusRoute, RouteCategory } from '../types/route'
 
-/** 游戏内未翻译、界面固定英文的类别（卡片类型 / 筛选 / 详情） */
-const ENGLISH_ONLY_CATEGORIES: Partial<Record<RouteCategory, string>> = {
-  centralAxis: 'Central Axis',
-}
+/** @deprecated 保留供兼容；卡片类型请用 i18n `categoryCentralAxis` */
+const ENGLISH_ONLY_CATEGORIES: Partial<Record<RouteCategory, string>> = {}
 
 export function getEnglishOnlyCategoryLabel(category: RouteCategory): string | null {
   return ENGLISH_ONLY_CATEGORIES[category] ?? null

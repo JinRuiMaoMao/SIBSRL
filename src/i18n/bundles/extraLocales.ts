@@ -1,6 +1,12 @@
 import type { MessageKey } from '../messages'
+import type { Locale } from '../types'
+import { extendedUiBundles } from './extendedUi'
 
 type Bundle = Partial<Record<MessageKey, string>>
+
+function withExtendedUi(locale: Locale, base: Bundle): Bundle {
+  return { ...base, ...extendedUiBundles[locale] }
+}
 
 const vi: Bundle = {
   appTitle: 'Tra cứu tuyến xe SIBS',
@@ -879,16 +885,16 @@ const sv: Bundle = {
 }
 
 export const extraLocaleBundles: Partial<Record<string, Bundle>> = {
-  vi,
-  da,
-  fil,
-  id,
-  ko,
-  'pt-BR': ptBR,
-  de,
-  es,
-  fr,
-  ja,
-  pl,
-  sv,
+  vi: withExtendedUi('vi', vi),
+  da: withExtendedUi('da', da),
+  fil: withExtendedUi('fil', fil),
+  id: withExtendedUi('id', id),
+  ko: withExtendedUi('ko', ko),
+  'pt-BR': withExtendedUi('pt-BR', ptBR),
+  de: withExtendedUi('de', de),
+  es: withExtendedUi('es', es),
+  fr: withExtendedUi('fr', fr),
+  ja: withExtendedUi('ja', ja),
+  pl: withExtendedUi('pl', pl),
+  sv: withExtendedUi('sv', sv),
 }
