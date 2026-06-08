@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useState, type ReactNode } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 
 interface FilterMenuProps {
@@ -9,29 +9,19 @@ interface FilterMenuProps {
 export function FilterMenu({ active, children }: FilterMenuProps) {
   const { t } = useLocale()
   const [open, setOpen] = useState(false)
-  const rootRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
 
   useEffect(() => {
     if (!open) return
-    const onPointerDown = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
-    }
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('pointerdown', onPointerDown)
     document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
+    return () => document.removeEventListener('keydown', onKeyDown)
   }, [open])
 
   return (
-    <div className="filter-menu" ref={rootRef}>
+    <div className="filter-menu">
       <button
         type="button"
         className={`filter-menu-trigger ${active ? 'filter-menu-trigger--active' : ''}`}
