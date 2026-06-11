@@ -5,6 +5,7 @@ import { ComplaintsPage } from './components/ComplaintsPage'
 import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Header } from './components/Header'
+import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
@@ -48,22 +49,10 @@ function App() {
 
     return (
       <div className="app sibs-scrollbar">
-        <header className="secret-site-header">
-          <div className="secret-site-header-inner">
-            <div className="brand">
-              <span className="brand-icon" aria-hidden>
-                🚌
-              </span>
-              <div>
-                <h1>{t('secretPageTitle')}</h1>
-                <p className="tagline">{t('secretPageTagline')}</p>
-              </div>
-            </div>
-            <a className="secret-back-link" href="./index.html">
-              {t('secretBackToRoutes')}
-            </a>
-          </div>
-        </header>
+        <SecretHeader
+          collapsed={headerCollapsed}
+          onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
+        />
 
         <main className="main">
           <ErrorBoundary>

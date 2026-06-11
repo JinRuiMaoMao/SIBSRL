@@ -8,6 +8,7 @@ import {
   injectDevToolsBlock,
   injectNoScriptGuard,
   injectSecretPageMeta,
+  injectThemeBootstrap,
 } from './lib/app-page-html.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 
@@ -50,8 +51,10 @@ export function publishStandalone(options = {}) {
     throw new Error('未找到 dist/dev.html，请先运行 vite build')
   }
 
-  const baseHtml = injectNoScriptGuard(
-    injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+  const baseHtml = injectThemeBootstrap(
+    injectNoScriptGuard(
+      injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+    ),
   )
 
   for (const page of APP_PAGES) {

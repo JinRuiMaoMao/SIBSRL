@@ -2,6 +2,17 @@
 <html lang="zh-Hans">
   <head>
     <meta charset="UTF-8" />
+    <script id="theme-bootstrap">
+      (function () {
+        try {
+          var theme = localStorage.getItem('sibs-theme');
+          if (theme !== 'light' && theme !== 'dark') theme = 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
     <meta name="app-tab" content="routes" />
     <meta name="app-build" content="development" />
     <!-- 开发入口：npm run dev。可双击的发布页是根目录 index.html（由 vite build 自动生成，勿改 dev.html 当发布包） -->

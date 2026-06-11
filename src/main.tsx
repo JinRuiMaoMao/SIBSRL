@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
 import { LocaleProvider } from './i18n/LocaleContext.tsx'
+import { ThemeProvider } from './theme/ThemeContext.tsx'
 import { installDevToolsBlock } from './utils/blockDevToolsShortcuts.ts'
 
 if (!import.meta.env.DEV) {
@@ -17,9 +18,11 @@ if (!rootEl) {
 
 createRoot(rootEl).render(
   <StrictMode>
-    <LocaleProvider>
-      <App />
-      <CustomContextMenu />
-    </LocaleProvider>
+    <ThemeProvider>
+      <LocaleProvider>
+        <App />
+        <CustomContextMenu />
+      </LocaleProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

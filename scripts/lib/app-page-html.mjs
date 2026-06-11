@@ -127,6 +127,26 @@ export function injectDevToolsBlock(html) {
   return html.replace('<head>', `<head>\n    ${DEVTOOLS_BLOCK_SCRIPT}`)
 }
 
+const THEME_STORAGE_KEY = 'sibs-theme'
+
+const THEME_BOOTSTRAP_SCRIPT = `<script id="theme-bootstrap">
+(function () {
+  try {
+    var theme = localStorage.getItem('${THEME_STORAGE_KEY}');
+    if (theme !== 'light' && theme !== 'dark') theme = 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>`
+
+/** @param {string} html */
+export function injectThemeBootstrap(html) {
+  if (html.includes('id="theme-bootstrap"')) return html
+  return html.replace('<head>', `<head>\n    ${THEME_BOOTSTRAP_SCRIPT}`)
+}
+
 const SECRET_ACCESS_STORAGE_KEY = 'sibs-secret-unlock'
 
 const SECRET_ACCESS_GUARD_SCRIPT = `<script id="secret-access-guard">

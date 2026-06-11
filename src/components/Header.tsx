@@ -5,8 +5,9 @@ import { useSecretLogoClick } from '../hooks/useSecretLogoClick'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
-import { getTabPageHref, readTabFromLocation } from '../utils/appTabNavigation'
-import { SettingsMenu } from './SettingsMenu'
+import { getTabPageHref } from '../utils/appTabNavigation'
+import { HeaderCollapseToggle } from './HeaderCollapseToggle'
+import { HeaderToolbar } from './HeaderToolbar'
 
 const LINK_LABEL_KEYS: Record<string, MessageKey> = {
   'https://www.roblox.com/games/1588965415': 'linkOfficialGame',
@@ -30,8 +31,7 @@ interface HeaderProps {
 
 export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) {
   const { t, locale } = useLocale()
-  const secretLogoEnabled = readTabFromLocation() === 'routes'
-  const onLogoClick = useSecretLogoClick(secretLogoEnabled)
+  const onLogoClick = useSecretLogoClick(activeTab)
   const tabOrder = useMemo(() => Object.keys(TAB_KEYS) as AppTab[], [])
 
   const actionsRef = useRef<HTMLDivElement>(null)
@@ -66,23 +66,9 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
     <div className={`site-header-shell ${collapsed ? 'is-collapsed' : ''}`}>
       <div className="header-shell-controls">
         <div className="header-settings-wrap" ref={settingsRef}>
-          <SettingsMenu />
+          <HeaderToolbar />
         </div>
-        <button
-          type="button"
-          className="header-collapse-toggle"
-          onClick={onToggleCollapse}
-          aria-expanded={!collapsed}
-          aria-label={collapsed ? t('headerExpand') : t('headerCollapse')}
-          title={collapsed ? t('headerExpand') : t('headerCollapse')}
-        >
-          <svg className="header-collapse-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden>
-            <path
-              fill="currentColor"
-              d="M12 7.5 18 13.5l-1.4 1.4L12 10.3 7.4 14.9 6 13.5z"
-            />
-          </svg>
-        </button>
+        <HeaderCollapseToggle collapsed={collapsed} onToggle={onToggleCollapse} />
       </div>
 
       <header className="site-header" aria-hidden={collapsed}>

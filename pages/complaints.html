@@ -2,6 +2,17 @@
 <html lang="zh-Hans">
   <head>
     <meta charset="UTF-8" />
+    <script id="theme-bootstrap">
+      (function () {
+        try {
+          var theme = localStorage.getItem('sibs-theme');
+          if (theme !== 'light' && theme !== 'dark') theme = 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
     <meta name="app-tab" content="complaints" />
     <meta name="app-build" content="development" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚌</text></svg>" />

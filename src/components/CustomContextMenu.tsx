@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import { isSecretPage } from '../utils/appPage'
-import { getTabPageHref, isRoutesPage } from '../utils/appTabNavigation'
+import { getTabPageHref } from '../utils/appTabNavigation'
 
-const ROBLOX_GAME_URL = 'https://www.roblox.com/games/1588965415'
-const MENU_WIDTH = 196
+const MENU_WIDTH = 208
 const MENU_ITEM_HEIGHT = 36
+const MENU_SEPARATOR_HEIGHT = 9
 const MENU_PADDING = 8
+const MENU_ITEM_COUNT = 6
 
 type MenuPoint = { x: number; y: number }
 
@@ -17,8 +17,9 @@ function isNativeContextMenuTarget(target: EventTarget | null): boolean {
   )
 }
 
-function clampMenuPosition(x: number, y: number, itemCount: number): MenuPoint {
-  const height = MENU_PADDING * 2 + itemCount * MENU_ITEM_HEIGHT
+function clampMenuPosition(x: number, y: number): MenuPoint {
+  const height =
+    MENU_PADDING * 2 + MENU_ITEM_COUNT * MENU_ITEM_HEIGHT + MENU_SEPARATOR_HEIGHT
   const maxX = Math.max(8, window.innerWidth - MENU_WIDTH - 8)
   const maxY = Math.max(8, window.innerHeight - height - 8)
   return {
@@ -34,18 +35,12 @@ export function CustomContextMenu() {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<MenuPoint>({ x: 0, y: 0 })
 
-  const showBackToRoutes = isSecretPage() || !isRoutesPage()
-
   const close = useCallback(() => setOpen(false), [])
 
-  const openAt = useCallback(
-    (x: number, y: number) => {
-      const itemCount = 3 + (showBackToRoutes ? 1 : 0)
-      setPosition(clampMenuPosition(x, y, itemCount))
-      setOpen(true)
-    },
-    [showBackToRoutes],
-  )
+  const openAt = useCallback((x: number, y: number) => {
+    setPosition(clampMenuPosition(x, y))
+    setOpen(true)
+  }, [])
 
   useEffect(() => {
     const onContextMenu = (event: MouseEvent) => {
@@ -101,9 +96,38 @@ export function CustomContextMenu() {
         type="button"
         className="context-menu-item"
         role="menuitem"
+        onClick={() => runAction(() => window.history.back())}
+      >
+        {t('contextMenuBack')}
+      </button>
+      <button
+        type="button"
+        className="context-menu-item"
+        role="menuitem"
+        onClick={() => runAction(() => window.history.forward())}
+      >
+        {t('contextMenuForward')}
+      </button>
+      <div className="context-menu-separator" role="separator" />
+      <button
+        type="button"
+        className="context-menu-item"
+        role="menuitem"
         onClick={() => runAction(() => window.location.reload())}
       >
         {t('contextMenuReload')}
+      </button>
+      <button
+        type="button"
+        className="context-menu-item"
+        role="menuitem"
+        onClick={() =>
+          runAction(() => {
+            window.location.href = getTabPageHref('routes')
+          })
+        }
+      >
+        {t('contextMenuBackHome')}
       </button>
       <button
         type="button"
@@ -117,29 +141,17 @@ export function CustomContextMenu() {
       >
         {t('contextMenuCopyLink')}
       </button>
-      {showBackToRoutes ? (
-        <button
-          type="button"
-          className="context-menu-item"
-          role="menuitem"
-          onClick={() => runAction(() => {
-            window.location.href = getTabPageHref('routes')
-          })}
-        >
-          {t('contextMenuBackToRoutes')}
-        </button>
-      ) : null}
       <button
         type="button"
         className="context-menu-item"
         role="menuitem"
         onClick={() =>
           runAction(() => {
-            window.open(ROBLOX_GAME_URL, '_blank', 'noopener,noreferrer')
+            window.open(window.location.href, '_blank', 'noopener,noreferrer')
           })
         }
       >
-        {t('contextMenuOpenGame')}
+        {t('contextMenuOpenNewTab')}
       </button>
     </div>
   )

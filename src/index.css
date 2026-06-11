@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --bg-deep: #0c1222;
   --bg-surface: #141c2e;
   --bg-elevated: #1a2540;
@@ -11,6 +12,8 @@
   --accent-soft: rgba(245, 185, 66, 0.15);
   --accent-glow: rgba(245, 185, 66, 0.4);
   --bus-green: #2dd4a0;
+  --header-shell-bg: rgba(20, 28, 46, 0.85);
+  --shadow-overlay: rgba(0, 0, 0, 0.45);
   --radius: 12px;
   --radius-lg: 16px;
   --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
@@ -25,6 +28,32 @@
   --scrollbar-thumb: rgba(245, 185, 66, 0.45);
   --scrollbar-thumb-hover: rgba(245, 185, 66, 0.72);
   --scrollbar-thumb-active: #f5b942;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg-deep: #dce1e9;
+  --bg-surface: #e4e9f0;
+  --bg-elevated: #d5dbe5;
+  --bg-card: #c9d1dc;
+  --border: rgba(140, 100, 40, 0.14);
+  --border-strong: rgba(140, 100, 40, 0.28);
+  --text: #2a3444;
+  --text-muted: #5f6d80;
+  --accent: #b07808;
+  --accent-soft: rgba(176, 120, 8, 0.14);
+  --accent-glow: rgba(176, 120, 8, 0.22);
+  --bus-green: #0a8a60;
+  --header-shell-bg: rgba(216, 222, 232, 0.94);
+  --shadow-overlay: rgba(20, 28, 40, 0.12);
+  --page-background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(176, 120, 8, 0.05), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(10, 138, 96, 0.04), transparent),
+    var(--bg-deep);
+  --scrollbar-track: rgba(200, 207, 218, 0.95);
+  --scrollbar-thumb: rgba(176, 120, 8, 0.35);
+  --scrollbar-thumb-hover: rgba(176, 120, 8, 0.5);
+  --scrollbar-thumb-active: #b07808;
 }
 
 *,
