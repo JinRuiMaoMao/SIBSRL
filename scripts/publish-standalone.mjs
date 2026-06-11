@@ -1,7 +1,14 @@
 import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { APP_PAGES, adjustAppPageTitle, injectAppTabMeta, injectSecretPageMeta } from './lib/app-page-html.mjs'
+import {
+  APP_PAGES,
+  adjustAppPageTitle,
+  injectAppTabMeta,
+  injectDevToolsBlock,
+  injectNoScriptGuard,
+  injectSecretPageMeta,
+} from './lib/app-page-html.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
@@ -43,7 +50,9 @@ export function publishStandalone(options = {}) {
     throw new Error('未找到 dist/dev.html，请先运行 vite build')
   }
 
-  const baseHtml = prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)
+  const baseHtml = injectNoScriptGuard(
+    injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+  )
 
   for (const page of APP_PAGES) {
     let html = injectAppTabMeta(baseHtml, page.tab)

@@ -15,6 +15,34 @@
     <title>抱怨 · 阳光群岛线路查询</title>
   </head>
   <body>
+    <noscript>
+  <style>
+    #root, .boot-hint { display: none !important; }
+    .noscript-wall {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+      font-family: system-ui, sans-serif;
+      background: #0f1419;
+      color: #e7e9ea;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .noscript-wall h1 { font-size: 1.25rem; margin: 0 0 0.75rem; font-weight: 700; }
+    .noscript-wall p { margin: 0.35rem 0; color: #8b98a5; max-width: 26rem; }
+  </style>
+  <div class="noscript-wall" id="noscript-wall" role="alert">
+    <p aria-hidden="true">🚌</p>
+    <h1>请启用 JavaScript</h1>
+    <p>阳光群岛线路查询工具需要 JavaScript 才能运行，请在浏览器设置中开启后刷新页面。</p>
+    <p lang="en">This site requires JavaScript. Please enable it in your browser settings and reload.</p>
+  </div>
+</noscript>
     <div id="root"><p class="boot-hint">加载中…</p></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

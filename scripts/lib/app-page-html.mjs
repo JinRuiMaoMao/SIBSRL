@@ -35,6 +35,98 @@ export function adjustAppPageTitle(html, titleZh) {
   return html.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
 }
 
+const NOSCRIPT_GUARD_HTML = `<noscript>
+  <style>
+    #root, .boot-hint { display: none !important; }
+    .noscript-wall {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+      font-family: system-ui, sans-serif;
+      background: #0f1419;
+      color: #e7e9ea;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .noscript-wall h1 { font-size: 1.25rem; margin: 0 0 0.75rem; font-weight: 700; }
+    .noscript-wall p { margin: 0.35rem 0; color: #8b98a5; max-width: 26rem; }
+  </style>
+  <div class="noscript-wall" id="noscript-wall" role="alert">
+    <p aria-hidden="true">🚌</p>
+    <h1>请启用 JavaScript</h1>
+    <p>阳光群岛线路查询工具需要 JavaScript 才能运行，请在浏览器设置中开启后刷新页面。</p>
+    <p lang="en">This site requires JavaScript. Please enable it in your browser settings and reload.</p>
+  </div>
+</noscript>`
+
+/** @param {string} html */
+export function injectNoScriptGuard(html) {
+  if (html.includes('id="noscript-wall"')) return html
+  return html.replace('<body>', `<body>\n    ${NOSCRIPT_GUARD_HTML}`)
+}
+
+const DEVTOOLS_BLOCK_SCRIPT = `<script id="devtools-block">
+(function () {
+  var INDEX = './index.html';
+  var href = String(window.location.href || '');
+  var protocol = String(window.location.protocol || '');
+  if (/^view-source:/i.test(href) || protocol === 'view-source:') {
+    window.location.replace(INDEX);
+    return;
+  }
+  function isBlocked(event) {
+    var key = event.key || '';
+    if (key === 'F12') return true;
+    var upper = key.toUpperCase();
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey && 'IJC'.indexOf(upper) >= 0) return true;
+    if (upper === 'U') {
+      if (event.ctrlKey && !event.shiftKey && !event.altKey) return true;
+      if (event.metaKey && event.altKey) return true;
+    }
+    if (upper === 'S' && (event.ctrlKey || event.metaKey)) return true;
+    return false;
+  }
+  function block(event) {
+    if (!isBlocked(event)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    return false;
+  }
+  ['keydown', 'keyup', 'keypress'].forEach(function (type) {
+    window.addEventListener(type, block, true);
+    document.addEventListener(type, block, true);
+  });
+  document.addEventListener(
+    'click',
+    function (event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var link = target.closest('a[href]');
+      if (!link) return;
+      var linkHref = String(link.getAttribute('href') || '');
+      if (/^view-source:/i.test(linkHref)) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.location.replace(INDEX);
+      }
+    },
+    true,
+  );
+})();
+</script>`
+
+/** @param {string} html */
+export function injectDevToolsBlock(html) {
+  if (html.includes('id="devtools-block"')) return html
+  return html.replace('<head>', `<head>\n    ${DEVTOOLS_BLOCK_SCRIPT}`)
+}
+
 const SECRET_ACCESS_STORAGE_KEY = 'sibs-secret-unlock'
 
 const SECRET_ACCESS_GUARD_SCRIPT = `<script id="secret-access-guard">

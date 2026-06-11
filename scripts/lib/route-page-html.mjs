@@ -1,3 +1,4 @@
+import { injectDevToolsBlock, injectNoScriptGuard } from './app-page-html.mjs'
 import { routeIdToPageFilename, buildRouteLandingUrl } from './route-page-filename.mjs'
 import { ROUTE_DATA_SCRIPT_ID } from './extract-route-page-data.mjs'
 
@@ -11,7 +12,7 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
   const safeTitle = aliasId.replace(/[<>&"]/g, (ch) =>
     ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[ch] ?? ch,
   )
-  return `<!DOCTYPE html>
+  return injectNoScriptGuard(injectDevToolsBlock(`<!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
   <meta charset="UTF-8" />
@@ -24,7 +25,7 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
   <p>此线路已改为 <a href="${landing}">${displayId}</a>，正在跳转…</p>
 </body>
 </html>
-`
+`))
 }
 
 export function renderRoutePageHtml(routeId, routeData) {
@@ -34,7 +35,7 @@ export function renderRoutePageHtml(routeId, routeData) {
   )
   const json = JSON.stringify(routeData, null, 2)
 
-  return `<!DOCTYPE html>
+  return injectNoScriptGuard(injectDevToolsBlock(`<!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
   <meta charset="UTF-8" />
@@ -65,7 +66,7 @@ ${json}
   <p><a href="${landing}">若未自动跳转，请点击此处</a></p>
 </body>
 </html>
-`
+`))
 }
 
 export { routeIdToPageFilename }
