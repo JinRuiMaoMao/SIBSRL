@@ -86,6 +86,42 @@ export const versionUpdates: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: {
+          zh: '浅色主题',
+          en: 'Light theme',
+        },
+        items: [
+          {
+            zh: '顶部栏设置按钮左侧新增深色 / 浅色切换，偏好写入本地存储，各栏目与秘密页共用。',
+            en: 'Added Dark / Light toggle to the left of Settings in the header; preference is saved locally and shared across tabs and the secret page.',
+          },
+          {
+            zh: '浅色模式采用柔和灰蓝背景，减轻刺眼感；顶栏、卡片、滚动条与弹层阴影随主题切换。',
+            en: 'Light mode uses a soft blue-grey palette to reduce glare; header, cards, scrollbars, and overlay shadows adapt to the theme.',
+          },
+          {
+            zh: '页面加载前注入主题脚本，避免刷新时先闪深色再切换。',
+            en: 'A head script applies the saved theme before paint to avoid a dark flash on reload.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '自定义右键菜单',
+          en: 'Custom context menu',
+        },
+        items: [
+          {
+            zh: '页面空白处右键打开站点菜单：返回、前进、刷新、返回首页、复制当前链接、在新标签页打开。',
+            en: 'Right-click on page chrome opens: Back, Forward, Reload, Back to home, Copy current link, and Open in new tab.',
+          },
+          {
+            zh: '输入框、文本域、下拉框等可编辑控件仍使用浏览器原生右键菜单。',
+            en: 'Inputs, text areas, selects, and other editable fields keep the browser’s native context menu.',
+          },
+        ],
+      },
     ],
     easterEgg: true,
     easterEggTitle: {
