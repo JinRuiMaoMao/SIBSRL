@@ -8,7 +8,11 @@ import { routeMatchesTypeFilter } from '../utils/routeTypes'
 import { clampDirectionIndex } from '../utils/routeDirections'
 import { compareRouteNumber } from '../utils/routeSort'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
-import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
+import {
+  mergeRoutesByBaseNumber,
+  getRouteNumberAliases,
+  findDisplayRouteByQuery,
+} from '../utils/routeMerge'
 
 const defaultFilters: RouteFilters = {
   query: '',
@@ -32,6 +36,7 @@ function matchesQuery(route: BusRoute, query: string): boolean {
 
   const haystack = [
     route.number,
+    ...getRouteNumberAliases(route.number),
     route.origin.zh,
     route.origin.en,
     route.destination.zh,
@@ -61,7 +66,7 @@ export function useRouteSearch() {
         if (filters.zone !== 'all' && !route.zones.includes(filters.zone)) return false
         if (filters.operator !== 'all' && !route.operators.includes(filters.operator)) return false
         if (filters.type !== 'all' && !routeMatchesTypeFilter(route, filters.type)) return false
-        if (filters.routeGroup !== 'all' && getGameRouteGroup(route.number) !== filters.routeGroup)
+        if (filters.routeGroup !== 'all' && getGameRouteGroup(route) !== filters.routeGroup)
           return false
         return matchesQuery(route, filters.query)
       })
@@ -78,10 +83,10 @@ export function useRouteSearch() {
     [filteredRoutes],
   )
 
-  const selectedRoute = useMemo(
-    () => displayRoutes.find((r) => r.id === selectedId) ?? null,
-    [displayRoutes, selectedId],
-  )
+  const selectedRoute = useMemo(() => {
+    if (!selectedId) return null
+    return displayRoutes.find((r) => r.id === selectedId) ?? null
+  }, [displayRoutes, selectedId])
 
   const updateFilter = <K extends keyof RouteFilters>(key: K, value: RouteFilters[K]) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
@@ -107,8 +112,19 @@ export function useRouteSearch() {
     [displayRoutes],
   )
 
-  const selectRoute = useCallback((id: string) => setSelectedId(id), [])
+  const selectRoute = useCallback(
+    (id: string) => {
+      const route = findDisplayRouteByQuery(displayRoutes, id)
+      setSelectedId(route?.id ?? id.trim())
+    },
+    [displayRoutes],
+  )
   const clearSelection = useCallback(() => setSelectedId(null), [])
+
+  const findDisplayRoute = useCallback(
+    (id: string) => findDisplayRouteByQuery(displayRoutes, id) ?? null,
+    [displayRoutes],
+  )
 
   const selectRandomRoute = useCallback((): string | null => {
     if (randomEligibleRoutes.length === 0) return null
@@ -150,6 +166,7 @@ export function useRouteSearch() {
     selectRandomRoute,
     randomEligibleCount: randomEligibleRoutes.length,
     clearSelection,
+    findDisplayRoute,
     zones,
     operators,
     types,

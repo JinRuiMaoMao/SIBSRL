@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C401A · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=C401A" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=C401A" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "C401A",
+  "operators": [
+    "CSB"
+  ],
+  "interval": {
+    "zh": "固定班次",
+    "en": "Fixed departure"
+  },
+  "journeyTime": {
+    "zh": "往Norton: 20 - 22 分钟 / 往CSB Depot: 19 - 21 分钟",
+    "en": "To Norton: 20 - 22 mins / To CSB Depot: 19 - 21 mins"
+  },
+  "length": {
+    "zh": "16.9 km",
+    "en": "16.9 km"
+  },
+  "origin": {
+    "zh": "际巴车厂",
+    "en": "CSB Depot"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "叶欣海旁路、仙贝广场、中环南、南环花园二期、阳光码头、阳光站、强生街市、The One、玻璃楼、枫树里、北环转车站、明月角、北顿花园、北顿邨",
+    "en": "YiYan Praya Road, Senpai Shopping Center, Southern Road, Central Road, Sunshine Pier, Sunshine Road Passage, Johnson Market, The One, Glass Office, Maple Lane, Moon Island Bypass, West Moon Road, Norton Main Street, Norton Hill Road"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（际巴车厂 → 北顿市中心）",
+        "en": "Northbound (CSB Depot → Norton Town Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "01:45、02:30",
+        "en": "01:45, 02:30"
+      },
+      "length": {
+        "zh": "16.9 km",
+        "en": "16.9 km"
+      },
+      "list": [
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁路",
+          "en": "YiYan Praya Road",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "中环南",
+          "en": "Southern Road",
+          "zone": 7
+        },
+        {
+          "zh": "南环花园二期",
+          "en": "Central Road",
+          "zone": 7
+        },
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 7
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Road Passage",
+          "zone": 7
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 7
+        },
+        {
+          "zh": "The One",
+          "en": "The One",
+          "zone": 7
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 7
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 7
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Moon Island Bypass",
+          "zone": 7
+        },
+        {
+          "zh": "明月角",
+          "en": "West Moon Road",
+          "zone": 7
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Main Street",
+          "zone": 7
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Hill Road",
+          "zone": 7
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（北顿市中心 → 际巴车厂）",
+        "en": "Southbound (Norton Town Center → CSB Depot)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "03:45、04:15",
+        "en": "03:45, 04:15"
+      },
+      "length": {
+        "zh": "16.9 km",
+        "en": "16.9 km"
+      },
+      "list": [
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 7
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Hill Road",
+          "zone": 7
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Main Street",
+          "zone": 7
+        },
+        {
+          "zh": "明月角",
+          "en": "West Moon Road",
+          "zone": 7
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Moon Island Bypass",
+          "zone": 7
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 7
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 7
+        },
+        {
+          "zh": "The One",
+          "en": "The One",
+          "zone": 7
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 7
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Road",
+          "zone": 7
+        },
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 7
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Centre",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=C401A");</script>
+  <p>正在打开线路 <strong>C401A</strong>…</p>
+  <p><a href="../index.html?route=C401A">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>46 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=46" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=46" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "46",
+  "operators": [
+    "FTCC"
+  ],
+  "fare": "$3.7",
+  "interval": {
+    "zh": "15 – 60 分钟",
+    "en": "15 – 60 mins"
+  },
+  "journeyTime": {
+    "zh": "单程约 10–15 分钟",
+    "en": "Approx. 10–15 mins per direction"
+  },
+  "length": {
+    "zh": "往东锦葵 3.5 km / 往明月角 3.7 km",
+    "en": "To Eastmallow 3.5 km / To Lunar Point 3.7 km"
+  },
+  "notes": {
+    "zh": "第 4 区内线（FTCC），明月角 ↔ 东锦葵海傍路。班次疏、客流偏低；2024/6 起不再停东锦葵邨春葵屋及西月路，明月角为西区总站新名。",
+    "en": "Zone 4 local (FTCC), Lunar Point ↔ Eastmallow Praya Road. Infrequent service and low ridership; from Jun 2024 no longer serves Eastmallow Estate Spring House or West Moon Road; Lunar Point renamed from Moon Island West terminus."
+  },
+  "origin": {
+    "zh": "明月角",
+    "en": "Lunar Point"
+  },
+  "destination": {
+    "zh": "东锦葵海傍路",
+    "en": "Eastmallow Praya Road"
+  },
+  "via": {
+    "zh": "东锦葵邨－阳葵屋、东锦葵邨－灯葵屋、东锦葵邨－花葵屋、东锦葵大街、中环桥、北环转车站（北行）",
+    "en": "Eastmallow Estate - Sunny House, Eastmallow Estate - Light House, Eastmallow Estate - Flower House, Eastmallow Main Street, Central Bridge, Northern Interchange (Northbound)"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "西行（明月角 → 东锦葵海傍路）",
+        "en": "Westbound (Lunar Point → Eastmallow Praya Road)"
+      },
+      "directionKey": "W",
+      "serviceTime": {
+        "zh": "07:00 – 00:00",
+        "en": "07:00 – 00:00"
+      },
+      "length": {
+        "zh": "3.5 km",
+        "en": "3.5 km"
+      },
+      "list": [
+        {
+          "zh": "明月角",
+          "en": "Lunar Point",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（南行）",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨－灯葵屋",
+          "en": "Eastmallow Estate - Light House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨－花葵屋",
+          "en": "Eastmallow Estate - Flower House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "东行（东锦葵海傍路 → 明月角）",
+        "en": "Eastbound (Eastmallow Praya Road → Lunar Point)"
+      },
+      "directionKey": "E",
+      "serviceTime": {
+        "zh": "06:30 – 00:00",
+        "en": "06:30 – 00:00"
+      },
+      "length": {
+        "zh": "3.7 km",
+        "en": "3.7 km"
+      },
+      "list": [
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨－阳葵屋",
+          "en": "Eastmallow Estate - Sunny House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨－灯葵屋",
+          "en": "Eastmallow Estate - Light House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨－花葵屋",
+          "en": "Eastmallow Estate - Flower House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（北行）",
+          "en": "Northern Interchange (Northbound)",
+          "zone": 4
+        },
+        {
+          "zh": "明月角",
+          "en": "Lunar Point",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=46");</script>
+  <p>正在打开线路 <strong>46</strong>…</p>
+  <p><a href="../index.html?route=46">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

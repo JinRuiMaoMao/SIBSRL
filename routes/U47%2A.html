@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>U47* · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=U47*" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=U47*" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "U47*",
+  "operators": [
+    "FT",
+    "FTCC",
+    "CSB"
+  ],
+  "interval": {
+    "zh": "15 - 60 分钟",
+    "en": "15 - 60 min"
+  },
+  "journeyTime": {
+    "zh": "6-10 分钟",
+    "en": "6-10 min"
+  },
+  "length": {
+    "zh": "往阳光大学北 7.9 km / 往旭涛荟 5.5 km",
+    "en": "To North Sunshine University 7.9 km / To Hotel Symbol 5.5 km"
+  },
+  "notes": {
+    "zh": "特别班次：经阳光宿舍及运动场。需 300 阳光碎片解锁单方向。",
+    "en": "Special departure via Sunshine Residences and Sports Field. Unlocked with 300 Sunshards per direction."
+  },
+  "origin": {
+    "zh": "旭涛荟",
+    "en": "Hotel Symbol"
+  },
+  "destination": {
+    "zh": "阳光大学北",
+    "en": "North Sunshine University"
+  },
+  "via": {
+    "zh": "阳光大学南校园、阳光大学本部、阳光大学中、阳光大学宿舍、阳光大学运动场、阳光大学本部、甄博士楼",
+    "en": "Sunshine University Southern Campus, Sunshine University Main Campus, Central- Sunshine University, Sunshine University Residences, Sunshine University Sports Field, Sunshine University Main Campus, X.Y.Zhen College"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（旭涛荟 → 阳光大学北）",
+        "en": "Northbound (Hotel Symbol → North Sunshine University)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "08:15 – 19:30（部分班次）",
+        "en": "08:15 – 19:30 (selected departures)"
+      },
+      "length": {
+        "zh": "7.9 km",
+        "en": "7.9 km"
+      },
+      "list": [
+        {
+          "zh": "旭涛荟",
+          "en": "Hotel Symbol",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学南校园",
+          "en": "Sunshine University Southern Campus",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学本部",
+          "en": "Sunshine University Main Campus",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学中",
+          "en": "Central- Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学宿舍",
+          "en": "Sunshine University Residences",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学运动场",
+          "en": "Sunshine University Sports Field",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学本部",
+          "en": "Sunshine University Main Campus",
+          "zone": 4
+        },
+        {
+          "zh": "甄博士楼",
+          "en": "X.Y.Zhen College",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学北",
+          "en": "North Sunshine University",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（阳光大学北 → 旭涛荟）",
+        "en": "Southbound (North Sunshine University → Hotel Symbol)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "08:45 – 20:50（部分班次）",
+        "en": "08:45 – 20:50 (selected departures)"
+      },
+      "length": {
+        "zh": "5.5 km",
+        "en": "5.5 km"
+      },
+      "list": [
+        {
+          "zh": "阳光大学北",
+          "en": "North Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "甄博士楼",
+          "en": "X.Y.Zhen College",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学中",
+          "en": "Central- Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学运动场",
+          "en": "Sunshine University Sports Field",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学宿舍",
+          "en": "Sunshine University Residences",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学本部",
+          "en": "Sunshine University Main Campus",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学南校园",
+          "en": "Sunshine University Southern Campus",
+          "zone": 4
+        },
+        {
+          "zh": "旭涛荟",
+          "en": "Hotel Symbol",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=U47*");</script>
+  <p>正在打开线路 <strong>U47*</strong>…</p>
+  <p><a href="../index.html?route=U47*">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

@@ -53,7 +53,7 @@ export interface BusRoute {
   serviceTime?: BilingualText
   interval?: BilingualText
   journeyTime?: BilingualText
-  fare?: string
+  fare?: string | BilingualText
   levelRequired?: number
   /** 解锁所需阳光碎片（Sunshards） */
   sunshardsRequired?: number

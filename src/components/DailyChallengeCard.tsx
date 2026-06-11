@@ -1,6 +1,15 @@
-import { DAILY_CHALLENGE_CARD_ID, getTodaysDailyChallenge } from '../data/dailyChallenge'
+import {
+  DAILY_CHALLENGE_CARD_ID,
+  findDailyChallengeDirectionIndex,
+  findRouteForDailyChallenge,
+  getDailyChallengeOperatorsLabel,
+  getTodaysDailyChallenge,
+  isPrivateHireChallengeRoute,
+} from '../data/dailyChallenge'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
+import { getDirectionLengthKm } from '../utils/routeDirections'
+import { DailyChallengeIntro } from './DailyChallengeIntro'
 
 interface DailyChallengeCardProps {
   selected?: boolean
@@ -18,7 +27,20 @@ export function DailyChallengeCard({
   const { locale, t } = useLocale()
   const challenge = getTodaysDailyChallenge()
   const eventLabel = getPrimaryText(challenge.event, locale)
+  const endpointsLabel = challenge.endpoints
+    ? getPrimaryText(challenge.endpoints, locale)
+    : null
   const routeNumber = challenge.routeNumber ?? '—'
+  const linkedRoute =
+    challenge.routeNumber && !isPrivateHireChallengeRoute(challenge.routeNumber)
+      ? findRouteForDailyChallenge(challenge.routeNumber)
+      : null
+  const directionIndex =
+    linkedRoute != null
+      ? (findDailyChallengeDirectionIndex(linkedRoute, challenge.directionKey) ?? 0)
+      : 0
+  const lengthKm = linkedRoute ? getDirectionLengthKm(linkedRoute, directionIndex, locale) : null
+  const operatorsLabel = getDailyChallengeOperatorsLabel(challenge, locale)
 
   return (
     <div
@@ -40,10 +62,20 @@ export function DailyChallengeCard({
         <div className="route-card-title">
           <span className="route-number">{routeNumber}</span>
         </div>
-        <span className="route-card-km">{t('dailyChallengeToday')}</span>
+        {lengthKm ? (
+          <span className="route-card-km" key={`${routeNumber}-km-${directionIndex}`}>
+            {lengthKm}
+          </span>
+        ) : null}
       </div>
 
-      <p className="route-endpoints">{eventLabel}</p>
+      <p className="route-endpoints">{endpointsLabel ?? eventLabel}</p>
+
+      {endpointsLabel ? <p className="route-meta">{eventLabel}</p> : null}
+
+      {challenge.intro ? (
+        <DailyChallengeIntro intro={challenge.intro} compact className="route-meta" />
+      ) : null}
 
       {showPlaceholderNote && challenge.isPlaceholder ? (
         <p className="route-meta">{t('dailyChallengePlaceholderNote')}</p>
@@ -55,6 +87,12 @@ export function DailyChallengeCard({
             <span className="zone-tag">{t('routeGroupDaily')}</span>
           </div>
         </div>
+
+        {operatorsLabel ? (
+          <div className="route-card-foot">
+            <span className="route-card-operators">{operatorsLabel}</span>
+          </div>
+        ) : null}
       </div>
     </div>
   )

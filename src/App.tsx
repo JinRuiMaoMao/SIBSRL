@@ -7,9 +7,13 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { Header } from './components/Header'
 import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
+import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { useLocale } from './i18n/LocaleContext'
-import type { AppTab } from './types/appTab'
+import { isSecretPage } from './utils/appPage'
+import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
+import { readTabFromLocation } from './utils/appTabNavigation'
+import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 function readPublishedBuild(): string | null {
   return document.querySelector('meta[name="app-build"]')?.getAttribute('content') ?? null
 }
@@ -20,14 +24,15 @@ function formatBuildLabel(iso: string): string {
 
 function App() {
   const { t } = useLocale()
-  const [activeTab, setActiveTab] = useState<AppTab>('routes')
-  const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(true)
+  const activeTab = readTabFromLocation() ?? 'routes'
+  const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
+    shouldShowDailyChallengePrompt,
+  )
   const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
 
   const handleDailyChallengePromptOpenDetail = () => {
-    setActiveTab('routes')
     setPendingDailyChallengeDetail((count) => count + 1)
   }
 
@@ -35,20 +40,61 @@ function App() {
     setPendingDailyChallengeDetail(0)
   }, [])
 
+  if (isSecretPage()) {
+    if (!hasSecretAccess()) {
+      redirectToRoutesIndex()
+      return null
+    }
+
+    return (
+      <div className="app sibs-scrollbar">
+        <header className="secret-site-header">
+          <div className="secret-site-header-inner">
+            <div className="brand">
+              <span className="brand-icon" aria-hidden>
+                🚌
+              </span>
+              <div>
+                <h1>{t('secretPageTitle')}</h1>
+                <p className="tagline">{t('secretPageTagline')}</p>
+              </div>
+            </div>
+            <a className="secret-back-link" href="./index.html">
+              {t('secretBackToRoutes')}
+            </a>
+          </div>
+        </header>
+
+        <main className="main">
+          <ErrorBoundary>
+            <SecretRoutesPage />
+          </ErrorBoundary>
+        </main>
+
+        <footer className="site-footer">
+          <p className="build-tag" title={t('buildTagHint')}>
+            {t('buildTag', { time: buildLabel })}
+          </p>
+        </footer>
+      </div>
+    )
+  }
+
   return (
     <div className="app sibs-scrollbar">
       <Header
         activeTab={activeTab}
-        onTabChange={setActiveTab}
         collapsed={headerCollapsed}
         onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
       />
 
-      <DailyChallengePrompt
-        open={dailyChallengePromptOpen}
-        onClose={() => setDailyChallengePromptOpen(false)}
-        onOpenDetail={handleDailyChallengePromptOpenDetail}
-      />
+      {activeTab === 'routes' ? (
+        <DailyChallengePrompt
+          open={dailyChallengePromptOpen}
+          onClose={() => setDailyChallengePromptOpen(false)}
+          onOpenDetail={handleDailyChallengePromptOpenDetail}
+        />
+      ) : null}
 
       <main className="main">
         <ErrorBoundary>
@@ -56,6 +102,7 @@ function App() {
             <RouteLookupPage
               pendingDailyChallengeDetail={pendingDailyChallengeDetail}
               onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
+              onRouteCardNavigate={() => setDailyChallengePromptOpen(false)}
             />
           ) : activeTab === 'broadcast' ? (
             <BroadcastPage />

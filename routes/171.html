@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>171 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=171" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=171" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "171",
+  "operators": [
+    "FT",
+    "CSB"
+  ],
+  "fare": "$18.2",
+  "interval": {
+    "zh": "4 – 30 分钟",
+    "en": "4 – 30 mins"
+  },
+  "journeyTime": {
+    "zh": "往彩虹 33–44 分钟 / 往长岛 35–45 分钟",
+    "en": "To Rainbow 33–44 mins / To Long Island 35–45 mins"
+  },
+  "length": {
+    "zh": "21.6 km · 往东 27 站",
+    "en": "21.6 km · 27 stops eastbound"
+  },
+  "notes": {
+    "zh": "第 1/4/7 区跨区干线（FT · CSB 联营），长岛码头 ↔ 彩虹中心，经中区及亚历山大。原 171P；2024/6 起全日服务。特开：中环南 → 彩虹（早/晚高峰）。通宵 N171；马拉松改 471。",
+    "en": "Zones 1/4/7 inter-zone trunk (FT · CSB joint), Long Island Ferry Pier ↔ Rainbow via Central and Alexander. Formerly 171P; full-day service from Jun 2024. Special: Southern Central → Rainbow (AM/PM peak). Overnight N171; Marathon diversion as 471."
+  },
+  "origin": {
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
+  "via": {
+    "zh": "东门总站、东门花园、东门下部、东门公园、勿莫商场、罗力素花园二期、叶欣径、仙贝山、亚历山大教堂、仙贝多层停车场、亚历山大花园、叶欣警察局、叶角大学、第7区转车站、中环南路、雀鸟桥、北环转车站、西区海底隧道转车站、时间廊、赖得商场、虹尾角站、宜和剧场、艺术大厦、长岛海滨长廊、百彩新城、文化广场",
+    "en": "East Door Bus Terminus, East Door Garden, Lower East Door Estate, East Door Park, Mo Shopping Center, Laws Garden 2, Leafy Walking Trail, Senpai Hill, Alexander Church, Senpai Multi-Storey Carpark, Alexander Garden, Leafy Police Station, Leafy University, Zone 7 Interchange, Southern Central Road, Bird Bridge, Northern Interchange, Western Harbour Tunnel Interchange, Timelapse Mall, Wright Shopping Center, Iris Point Station, Jardine Theater, Art Building, Long Island Waterfront Promenade, N Park, Culture Square"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "西行（彩虹中心 → 长岛码头）",
+        "en": "Westbound (Rainbow Estate Complex → Long Island Ferry Pier)"
+      },
+      "directionKey": "W",
+      "serviceTime": {
+        "zh": "06:00 – 23:30",
+        "en": "06:00 – 23:30"
+      },
+      "length": {
+        "zh": "21.6 km",
+        "en": "21.6 km"
+      },
+      "list": [
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下部",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门公园",
+          "en": "East Door Park",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫商场",
+          "en": "Mo Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园二期",
+          "en": "Laws Garden 2",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣径",
+          "en": "Leafy Walking Trail",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝山",
+          "en": "Senpai Hill",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大教堂",
+          "en": "Alexander Church",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝多层停车场",
+          "en": "Senpai Multi-Storey Carpark",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大花园",
+          "en": "Alexander Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣警察局",
+          "en": "Leafy Police Station",
+          "zone": 7
+        },
+        {
+          "zh": "叶角大学",
+          "en": "Leafy University",
+          "zone": 7
+        },
+        {
+          "zh": "第7区转车站",
+          "en": "Zone 7 Interchange",
+          "zone": 7
+        },
+        {
+          "zh": "中环南路",
+          "en": "Southern Central Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "虹尾角站",
+          "en": "Iris Point Station",
+          "zone": 1
+        },
+        {
+          "zh": "宜和剧场",
+          "en": "Jardine Theater",
+          "zone": 1
+        },
+        {
+          "zh": "艺术大厦",
+          "en": "Art Building",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "东行（长岛码头 → 彩虹中心）",
+        "en": "Eastbound (Long Island Ferry Pier → Rainbow Estate Complex)"
+      },
+      "directionKey": "E",
+      "serviceTime": {
+        "zh": "平日 06:30 – 23:30 / 周末 07:30 – 00:30",
+        "en": "Mon–Fri 06:30 – 23:30 / Sat–Sun 07:30 – 00:30"
+      },
+      "length": {
+        "zh": "21.6 km",
+        "en": "21.6 km"
+      },
+      "list": [
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "长岛东医院",
+          "en": "East Long Island Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "彩色汇",
+          "en": "Rainbow Center",
+          "zone": 1
+        },
+        {
+          "zh": "时间里",
+          "en": "Timelapse Lane",
+          "zone": 1
+        },
+        {
+          "zh": "赖得里",
+          "en": "Wright Lane",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪路",
+          "en": "Addi Road",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Bus Terminus",
+          "zone": 4
+        },
+        {
+          "zh": "第7区转车站",
+          "en": "Zone 7 Interchange",
+          "zone": 7
+        },
+        {
+          "zh": "叶角大学",
+          "en": "Leafy University",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣警察局",
+          "en": "Leafy Police Station",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大花园",
+          "en": "Alexander Garden",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝多层停车场",
+          "en": "Senpai Multi-Storey Car Park",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大教堂",
+          "en": "Alexander Church",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝山",
+          "en": "Senpai Hill",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣径",
+          "en": "Leafy Walking Trail",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园二期",
+          "en": "Laws Garden 2",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫商场",
+          "en": "Mo Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "东门公园",
+          "en": "East Door Park",
+          "zone": 7
+        },
+        {
+          "zh": "东门下部",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=171");</script>
+  <p>正在打开线路 <strong>171</strong>…</p>
+  <p><a href="../index.html?route=171">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

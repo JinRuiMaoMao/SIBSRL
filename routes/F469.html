@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F469 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=F469" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=F469" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "F469",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "fare": "Free",
+  "interval": {
+    "zh": "10 分钟",
+    "en": "10 mins"
+  },
+  "journeyTime": {
+    "zh": "约 1 分钟",
+    "en": "approx. 1 min"
+  },
+  "length": {
+    "zh": "2 km（环线）",
+    "en": "2 km (loop)"
+  },
+  "notes": {
+    "zh": "观光／节日短线（FT · FTCC），阳光体育馆 ↺ 四露谷车厂；四露谷车厂天台为车厂屋顶临时站。免费乘车；车厂：永巴四露谷车厂。车型：ADL Enviro500 MMC、MAN RR8、MAN RC2、Youngman JNP6120。",
+    "en": "Sightseeing and festival shuttle (FT · FTCC), Sunshine Stadium ↺ Shallow Valley Depot; Shallow Valley Depot Rooftop is a temporary stop on the depot roof. Free fare; depot: FT Shallow Valley Depot. Vehicles: ADL Enviro500 MMC, MAN RR8, MAN RC2, Youngman JNP6120."
+  },
+  "origin": {
+    "zh": "阳光体育馆",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "四露谷车厂",
+    "en": "Shallow Valley Depot"
+  },
+  "via": {
+    "zh": "四露谷车厂天台",
+    "en": "Shallow Valley Depot Rooftop"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "环线（阳光体育馆 ↺ 四露谷车厂）",
+        "en": "Circular (Sunshine Stadium ↺ Shallow Valley Depot)"
+      },
+      "serviceTime": {
+        "zh": "10:00 – 16:00",
+        "en": "10:00 – 16:00"
+      },
+      "length": {
+        "zh": "2 km",
+        "en": "2 km"
+      },
+      "list": [
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "四露谷车厂天台",
+          "en": "Shallow Valley Depot Rooftop",
+          "zone": 1
+        },
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=F469");</script>
+  <p>正在打开线路 <strong>F469</strong>…</p>
+  <p><a href="../index.html?route=F469">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

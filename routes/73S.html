@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>73S · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=73S" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=73S" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "73S",
+  "operators": [
+    "CSB"
+  ],
+  "fare": "$8.7",
+  "interval": {
+    "zh": "视客量",
+    "en": "Depends on ridership"
+  },
+  "journeyTime": {
+    "zh": "往Leafy Bay: 2 分钟 / 往Senpai: 6 分钟",
+    "en": "To Leafy Bay: 2 mins / To Senpai: 6 mins"
+  },
+  "length": {
+    "zh": "3.3 km",
+    "en": "3.3 km"
+  },
+  "origin": {
+    "zh": "仙贝广场",
+    "en": "Senpai Shopping Center"
+  },
+  "destination": {
+    "zh": "仙贝广场",
+    "en": "Leafy Bay"
+  },
+  "via": {
+    "zh": "叶角湾坟场",
+    "en": "Leafy Bay Cemetery"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（仙贝广场 → 叶角湾）",
+        "en": "Direction 1 (Senpai Shopping Center → Leafy Bay)"
+      },
+      "serviceTime": {
+        "zh": "08:00 – 17:00、仅大型活动",
+        "en": "08:00 – 17:00, major events only"
+      },
+      "length": {
+        "zh": "3.3 km",
+        "en": "3.3 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center"
+        },
+        {
+          "zh": "叶角湾坟场",
+          "en": "Leafy Bay Cemetery"
+        },
+        {
+          "zh": "叶角湾",
+          "en": "Leafy Bay"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=73S");</script>
+  <p>正在打开线路 <strong>73S</strong>…</p>
+  <p><a href="../index.html?route=73S">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

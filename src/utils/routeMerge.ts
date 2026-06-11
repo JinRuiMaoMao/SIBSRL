@@ -5,15 +5,34 @@ export type DirectionKey = 'N' | 'S' | 'E' | 'W'
 
 export const EXCLUDED_ROUTE_NUMBERS = new Set([
   '476EX', '476M', '476XE', '47A', '48A', '41AN', '41AS', '42AN', '42AS',
-  '49AN', '49AS', '74AN', '74AS', '673A', '141PE', '141PW', '370BW', '370BE',
-  '475AW', '475PW', 'C401AW', 'C401AE', '75PS',
+  '49AN', '49AS', '74AN', '74AS', '673A', '141PE', '141PW', '370AW', '370AE',
+  '370BW', '370BE', '475AW', '475PW', 'C401AW', 'C401AE', '75PS',
 ])
 
 /** ?????? N/S/E/W ???????????? 73S?376S? */
 const STANDALONE_ROUTE_NUMBERS = new Set([
-  '21A', '73A', '73S', '76S', '25Y', '140P', '141P', '475P', '376S',
-  '476SA', 'F469A', 'N76A', '246XA', 'S1A', 'S2A', '77X', '77XA', 'U47*',
+  '73A', '73S', '76S', '25Y', '140P', '141P', '475P', '376S', '242A', '248A',
+  '476SA', 'F469A', 'N76A', '246XA', 'S1A', 'S2A', '77XA', 'U47*', '473A', '370AEM', 'N146A', 'Y370A',
+  '21A', '240A',
 ])
+
+/** 仅简化展示编号与搜索别名，不参与多线路合并分组 */
+export const DISPLAY_ONLY_RENAMES: Record<string, string> = {
+  '21A': '21',
+  '240A': '240',
+  '242A': '242',
+  '248A': '248',
+  '473A': '473',
+  '476SA': '476S',
+  'F469A': 'F469',
+  'N146A': 'N146',
+  'N76A': 'N76',
+  'S1A': 'S1',
+  'S2A': 'S2',
+  'Y370A': 'Y370',
+  '370AEM': '270A',
+  '77XA': '77X',
+}
 
 type MergeTarget = { base: string; directionKey?: DirectionKey }
 
@@ -104,6 +123,46 @@ function sortSuffixPriority(routeNumber: string): number {
   return 9
 }
 
+const STUB_NOTES_RE = /站点与服务资料待补充|Stops and service details pending/i
+
+/** 合并时优先选用资料完整的主线，避免占位线路覆盖已录入数据 */
+function routeMergeDataScore(route: BusRoute): number {
+  let score = 0
+  const stopCount = route.stops?.flatMap((g) => g.list).length ?? 0
+  if (stopCount > 0) score += 1000 + stopCount
+  if (route.origin.zh !== '待补充' && route.origin.en !== 'To be added') score += 200
+  if (route.fare) score += 100
+  if (route.journeyTime) score += 80
+  if (route.interval) score += 60
+  if (route.length) score += 40
+  const notes = `${route.notes?.zh ?? ''} ${route.notes?.en ?? ''}`
+  if (STUB_NOTES_RE.test(notes)) score -= 500
+  return score
+}
+
+function displayRenameConflicts(route: BusRoute, peers: BusRoute[]): boolean {
+  const displayNumber = DISPLAY_ONLY_RENAMES[route.id] ?? DISPLAY_ONLY_RENAMES[route.number]
+  if (!displayNumber) return false
+  return peers.some(
+    (other) =>
+      other.id !== route.id &&
+      !DISPLAY_ONLY_RENAMES[other.id] &&
+      (other.id === displayNumber || other.number === displayNumber),
+  )
+}
+
+function applyDisplayRenames(routes: BusRoute[]): BusRoute[] {
+  return routes.map((route) => {
+    const displayNumber =
+      DISPLAY_ONLY_RENAMES[route.id] ?? DISPLAY_ONLY_RENAMES[route.number]
+    if (!displayNumber) return route
+    if (displayRenameConflicts(route, routes)) {
+      return { ...route, number: displayNumber }
+    }
+    return { ...route, id: displayNumber, number: displayNumber }
+  })
+}
+
 export function mergeRoutesByBaseNumber(all: BusRoute[]): BusRoute[] {
   const groups = new Map<string, BusRoute[]>()
   for (const route of all) {
@@ -118,11 +177,17 @@ export function mergeRoutesByBaseNumber(all: BusRoute[]): BusRoute[] {
   for (const [baseNumber, list] of groups) {
     if (list.length === 1) {
       const only = list[0]!
-      merged.push(only.id === only.number ? only : { ...only, id: baseNumber, number: baseNumber })
+      merged.push(
+        only.id === baseNumber && only.number === baseNumber
+          ? only
+          : { ...only, id: baseNumber, number: baseNumber },
+      )
       continue
     }
 
     const sorted = [...list].sort((a, b) => {
+      const scoreDiff = routeMergeDataScore(b) - routeMergeDataScore(a)
+      if (scoreDiff !== 0) return scoreDiff
       const pa = sortSuffixPriority(a.number)
       const pb = sortSuffixPriority(b.number)
       if (pa !== pb) return pa - pb
@@ -171,5 +236,43 @@ export function mergeRoutesByBaseNumber(all: BusRoute[]): BusRoute[] {
     })
   }
 
-  return merged.sort((a, b) => compareRouteNumber(a.number, b.number))
+  return applyDisplayRenames(merged).sort((a, b) =>
+    compareRouteNumber(a.number, b.number),
+  )
+}
+
+/** 合并后线路的其它编号（用于搜索） */
+export function getRouteNumberAliases(routeNumber: string): string[] {
+  const fromDisplay = Object.entries(DISPLAY_ONLY_RENAMES)
+    .filter(([, display]) => display === routeNumber)
+    .map(([alias]) => alias)
+  const fromMerge = Object.entries(EXACT_MERGE)
+    .filter(([, target]) => target.base === routeNumber && !target.directionKey)
+    .map(([alias]) => alias)
+  return [...new Set([...fromDisplay, ...fromMerge])]
+}
+
+/** 在展示线路列表中按编号或别名查找 */
+export function findDisplayRouteByQuery(
+  displayRoutes: BusRoute[],
+  queryId: string,
+): BusRoute | undefined {
+  const q = queryId.trim()
+  if (!q) return undefined
+
+  const byId = displayRoutes.find((route) => route.id === q)
+  if (byId) return byId
+
+  if (DISPLAY_ONLY_RENAMES[q]) {
+    const byAlias = displayRoutes.find((route) => route.id === q)
+    if (byAlias) return byAlias
+    const display = DISPLAY_ONLY_RENAMES[q]
+    const byDisplay = displayRoutes.filter((route) => route.number === display)
+    if (byDisplay.length === 1) return byDisplay[0]
+  }
+
+  const byNumber = displayRoutes.filter((route) => route.number === q)
+  if (byNumber.length === 1) return byNumber[0]
+
+  return undefined
 }

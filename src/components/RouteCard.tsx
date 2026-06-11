@@ -9,6 +9,7 @@ import {
 import { getDirectionLengthKm } from '../utils/routeDirections'
 import { formatRouteOperators } from '../utils/routeDisplay'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
+import { getRoutePageHref } from '../utils/routeNavigation'
 import { DirectionToggle } from './DirectionToggle'
 import { RouteEndpoints } from './RouteEndpoints'
 import { RouteTypeTags } from './RouteTypeTags'
@@ -18,7 +19,8 @@ interface RouteCardProps {
   selected: boolean
   directionIndex: number
   onDirectionChange: (index: number) => void
-  onSelect: () => void
+  onNavigate?: (routeId: string) => void
+  href?: string
 }
 
 export function RouteCard({
@@ -26,7 +28,8 @@ export function RouteCard({
   selected,
   directionIndex,
   onDirectionChange,
-  onSelect,
+  onNavigate,
+  href,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const displayTypes = getRouteDisplayTypes(route)
@@ -38,20 +41,20 @@ export function RouteCard({
   const hasDirections = routeHasDirectionVariants(route)
 
   return (
-    <div
+    <a
+      href={href ?? getRoutePageHref(route.id)}
       data-route-id={route.id}
-      role="button"
-      tabIndex={0}
-      className={`route-card ${selected ? 'selected' : ''}`}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onSelect()
-        }
+      className={`route-card-link ${selected ? 'route-card-link--selected' : ''}`}
+      aria-current={selected ? 'page' : undefined}
+      onClick={(event) => {
+        if (!onNavigate) return
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+        if (event.button !== 0) return
+        event.preventDefault()
+        onNavigate(route.id)
       }}
-      aria-pressed={selected}
     >
+      <article className="route-card">
       <div className="route-card-top">
         <div className="route-card-title">
           <span className="route-number">{route.number}</span>
@@ -98,6 +101,7 @@ export function RouteCard({
           </div>
         )}
       </div>
-    </div>
+      </article>
+    </a>
   )
 }

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>473 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=473" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=473" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "473",
+  "operators": [
+    "CSB",
+    "FTCC",
+    "FT"
+  ],
+  "fare": "$11.4",
+  "interval": {
+    "zh": "5 - 20 分钟",
+    "en": "5 - 20 minutes"
+  },
+  "journeyTime": {
+    "zh": "往Leafy Bay: 16 - 26 分钟 / 往Lunar Point: 17 - 27 分钟 / Circular (Marathon only): 43 - 44 分钟",
+    "en": "To Leafy Bay: 16 - 26 mins / To Lunar Point: 17 - 27 mins / Circular (Marathon only): 43 - 44 mins"
+  },
+  "length": {
+    "zh": "往Leafy Bay: 10.7 km / 往Lunar Point: 11.3 km / Circular (Marathon only): 20.4 km",
+    "en": "To Leafy Bay: 10.7 km / To Lunar Point: 11.3 km / Circular (Marathon only): 20.4 km"
+  },
+  "origin": {
+    "zh": "明月角",
+    "en": "Lunar Point"
+  },
+  "destination": {
+    "zh": "叶角湾",
+    "en": "Leafy Bay"
+  },
+  "via": {
+    "zh": "新地花园、新地公园、叶欣邨第一座、叶欣邨第四座、际巴车厂、叶欣海旁道、南洋大厦、彩虹广场、东厂、第七区转车站 (西行)、中环南总站、南环街市、强生街市、警察总部、新纪元中心、枫树里、薄荷大厦、北环转车站 (北行)",
+    "en": "Sindy Garden, Sindy Park, YiYan Estate Block 1, YiYan Estate Block 4, CSB Depot, Praya YiYan Road, Southern Building, Rainbow Plaza, East Factory, Axis Road, Section fare begins here, Southern Market, Johnson Market, Police Headquarters, Ping Center, Maple Lane, Mint Tower, Northern Interchange (Northbound)"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（明月角 → 叶角湾）",
+        "en": "Northbound (Lunar Point → Leafy Bay)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "06:00 – 00:30",
+        "en": "06:00 – 00:30"
+      },
+      "length": {
+        "zh": "10.7 km",
+        "en": "10.7 km"
+      },
+      "list": [
+        {
+          "zh": "明月角",
+          "en": "Lunar Point",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站 (南行)",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "南环花园二期",
+          "en": "Southern Two",
+          "zone": 4
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Terminal",
+          "zone": 4
+        },
+        {
+          "zh": "第七区转车站 (东行)",
+          "en": "Section fare begins here",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣公园",
+          "en": "YiYan Park",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第四座",
+          "en": "YiYan Estate Block 4",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾",
+          "en": "Leafy Bay",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（叶角湾 → 明月角）",
+        "en": "Southbound (Leafy Bay → Lunar Point)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "06:00 – 00:00",
+        "en": "06:00 – 00:00"
+      },
+      "length": {
+        "zh": "11.3 km",
+        "en": "11.3 km"
+      },
+      "list": [
+        {
+          "zh": "叶角湾",
+          "en": "Leafy Bay",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第四座",
+          "en": "YiYan Estate Block 4",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站 (西行)",
+          "en": "Axis Road",
+          "zone": 7
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Section fare begins here",
+          "zone": 4
+        },
+        {
+          "zh": "南环街市",
+          "en": "Southern Market",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "警察总部",
+          "en": "Police Headquarters",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "薄荷大厦",
+          "en": "Mint Tower",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站 (北行)",
+          "en": "Northern Interchange (Northbound)",
+          "zone": 4
+        },
+        {
+          "zh": "明月角",
+          "en": "Lunar Point",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=473");</script>
+  <p>正在打开线路 <strong>473</strong>…</p>
+  <p><a href="../index.html?route=473">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

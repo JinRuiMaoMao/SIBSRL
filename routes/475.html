@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>475 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=475" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=475" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "475",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "fare": "$12.1",
+  "interval": {
+    "zh": "3 - 20 分钟",
+    "en": "3 - 20 minutes"
+  },
+  "journeyTime": {
+    "zh": "38 分钟",
+    "en": "38 minutes"
+  },
+  "length": {
+    "zh": "往北顿市中心 22 km / 往仙贝广场 20.7 km",
+    "en": "To Norton Town Center 22 km / To Senpai Shopping Centre 20.7 km"
+  },
+  "origin": {
+    "zh": "仙贝广场",
+    "en": "Senpai Shopping Centre"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "北顿邨、北顿花园、绿宝石中心、北顿路、北岛花园、北岛花园商场、望环台、阳光大学、东锦葵大街、海西回旋处、彩虹中心、彩虹邨、红豆商场、东门邨、东门下邨、东门花园、东门路、仙贝",
+    "en": "Norton Estate, Norton Garden, Emerald Plaza, Norton Road, North Island Estate, NIE Shopping Center, Panorama Heights, Sunshine University, Eastmallow Main Street, Section fare begins here, Rainbow Estate Complex, Rainbow Estate, Redbean Center, East Door Estate, Lower East Door Estate, East Door Garden, East Door Road, Senpai"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（仙贝 → 北顿市中心）",
+        "en": "Northbound (Senpai → Norton Town Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "Weekdays: 0530 – 0720#、0830 – 0000 / 周末: 0540 – 2300 / 0608 – 0038",
+        "en": "Weekdays: 0530 – 0720#, 0830 – 0000 / Weekends: 0540 – 2300 / 0608 – 0038"
+      },
+      "length": {
+        "zh": "22 km",
+        "en": "22 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "东门路",
+          "en": "East Door Road",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "海西回旋处",
+          "en": "Haisey Roundabout",
+          "zone": 8
+        },
+        {
+          "zh": "东锦葵邨 - 阳葵屋",
+          "en": "Section fare begins here",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "NIE Shopping Center",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（北顿市中心 → 仙贝广场）",
+        "en": "Southbound (Norton Town Center → Senpai Shopping Center)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "0608 – 0038",
+        "en": "0608 – 0038"
+      },
+      "length": {
+        "zh": "20.7 km",
+        "en": "20.7 km"
+      },
+      "list": [
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "绿宝石中心",
+          "en": "Emerald Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "NIE Shopping Center",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "海西回旋处",
+          "en": "Section fare begins here",
+          "zone": 8
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门路",
+          "en": "East Door Road",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=475");</script>
+  <p>正在打开线路 <strong>475</strong>…</p>
+  <p><a href="../index.html?route=475">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

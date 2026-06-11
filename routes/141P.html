@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>141P · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=141P" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=141P" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "141P",
+  "operators": [
+    "REBC",
+    "FTCC"
+  ],
+  "fare": "$12.1",
+  "interval": {
+    "zh": "7 – 30 分钟",
+    "en": "7 – 30 mins"
+  },
+  "journeyTime": {
+    "zh": "约 28 分钟",
+    "en": "approx. 28 mins"
+  },
+  "length": {
+    "zh": "往北顿 16.7 km / 22 站 · 往货柜岛 15.3 km / 21 站",
+    "en": "To Norton 16.7 km / 22 stops · To Container's Island 15.3 km / 21 stops"
+  },
+  "notes": {
+    "zh": "148 繁忙时间特开（REBC · FTCC），货柜码头岛 ↔ 北顿市中心，经北岛及白鸽岛、不经中区。早高峰只开西行（往货柜岛），晚高峰只开东行（往北顿）；其余时间请乘 148。分段收费见 Wiki。2024/6 由原 141 改号 141P。",
+    "en": "Peak-hour variant of route 148 (REBC · FTCC), Container's Island ↔ Norton via North Island and Dove Island, skipping Central. AM peak westbound to Containers Island only; PM peak eastbound to Norton only; use route 148 off-peak. Section fares apply. Renumbered from 141 to 141P Jun 2024."
+  },
+  "origin": {
+    "zh": "货柜码头岛",
+    "en": "Container's Island Bus Terminus"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "货柜码头、海苔湾、货柜码头员工宿舍、三塔、西区医院、艾迪城、白鸽消防局、路博斯总部大楼、西区海底隧道转车站、北环转车站、中环桥、阳光大学、望环台、北岛花园商场、巨石路、北岛花园、北顿路、北顿码头、北顿花园、北顿邨",
+    "en": "Containers Terminal, Seaweed Bay, Containers Island Employee House, Triple Tower, Western Hospital, Addi City, Dove Fire Station, Roblox HQ, Western Harbour Tunnel Interchange, Northern Interchange, Central Bridge, Sunshine University, Panorama Heights, North Island Estate Shopping Centre, Rocky Road, North Island Estate, Norton Road, Norton Ferry Pier, Norton Garden, Norton Estate"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "西行（北顿市中心 → 货柜码头岛）",
+        "en": "Westbound (Norton Town Center → Container's Island Bus Terminus)"
+      },
+      "directionKey": "W",
+      "serviceTime": {
+        "zh": "平日及周六 07:15 – 08:25",
+        "en": "Mon–Sat 07:15 – 08:25"
+      },
+      "length": {
+        "zh": "15.3 km",
+        "en": "15.3 km"
+      },
+      "list": [
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "绿宝石中心",
+          "en": "Emerald Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "North Island Estate Shopping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "路博斯总部大楼",
+          "en": "Roblox HQ",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽消防局",
+          "en": "Dove Fire Station",
+          "zone": 1
+        },
+        {
+          "zh": "伊迪城",
+          "en": "Eddie City",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island Bus Terminus",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "东行（货柜码头岛 → 北顿市中心）",
+        "en": "Eastbound (Container's Island Bus Terminus → Norton Town Center)"
+      },
+      "directionKey": "E",
+      "serviceTime": {
+        "zh": "平日及周六 17:30 – 18:45",
+        "en": "Mon–Sat 17:30 – 18:45"
+      },
+      "length": {
+        "zh": "16.7 km",
+        "en": "16.7 km"
+      },
+      "list": [
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island Bus Terminus",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽消防局",
+          "en": "Dove Fire Station",
+          "zone": 1
+        },
+        {
+          "zh": "路博斯总部大楼",
+          "en": "Roblox HQ",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "North Island Estate Shopping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "巨石路",
+          "en": "Rocky Road",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北顿码头",
+          "en": "Norton Ferry Pier",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=141P");</script>
+  <p>正在打开线路 <strong>141P</strong>…</p>
+  <p><a href="../index.html?route=141P">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

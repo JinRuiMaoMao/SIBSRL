@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F702 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=F702" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=F702" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "F702",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "interval": {
+    "zh": "固定班次",
+    "en": "Fixed departure"
+  },
+  "journeyTime": {
+    "zh": "往Haisey: 21 分钟 / 往Shallow Valley Depot: 23 分钟",
+    "en": "Towards Haisey: 21 mins / Towards Shallow Valley Depot: 23 mins"
+  },
+  "length": {
+    "zh": "19.5 km",
+    "en": "19.5 km"
+  },
+  "origin": {
+    "zh": "海西邨",
+    "en": "Haisey Estate"
+  },
+  "destination": {
+    "zh": "浅水湾车厂",
+    "en": "FT Shallow Valley Depot"
+  },
+  "via": {
+    "zh": "雀鸟桥、中环南总站、第七区转车站 (东行)、镰塔花园、镰塔运动场、仙贝纪念碑花园、红石楼、仙贝酒店、仙贝图书馆、仙贝广场、仙贝、东门总站、东门花园、东门下邨、东门邨、红豆商场、彩虹邨、彩虹中心总站",
+    "en": "Bird Bridge, Southern Central Bus Terminus, Axis Road, Kamaya Garden, Kamaya Sports Field, The Stone of Memory, Redstone House, Senpai Hotel, Senpai Library, Senpai Shopping Center, Senpai BRT Station, East Door Bus Terminus, East Door Garden, Lower East Door Estate, East Door Estate, Redbean Center, Rainbow Estate, Rainbow Estate Complex"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（海西邨 → 永巴四露谷车厂）",
+        "en": "Northbound (Haisey Estate → FT Shallow Valley Depot)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "04:00、04:45、05:30",
+        "en": "04:00, 04:45, 05:30"
+      },
+      "length": {
+        "zh": "19.5 km",
+        "en": "19.5 km"
+      },
+      "list": [
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "黑白中心",
+          "en": "Grayscale Center",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站 (西行)",
+          "en": "第七區轉車站 (西行)",
+          "zone": 7
+        },
+        {
+          "zh": "中环南路",
+          "en": "Southern Central Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "永巴四露谷车厂",
+          "en": "FT Shallow Valley Depot",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（永巴四露谷车厂 → 海西邨）",
+        "en": "Southbound (FT Shallow Valley Depot → Haisey Estate)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "01:00、01:45、02:30、04:30、05:00",
+        "en": "01:00, 01:45, 02:30, 04:30, 05:00"
+      },
+      "length": {
+        "zh": "19.5 km",
+        "en": "19.5 km"
+      },
+      "list": [
+        {
+          "zh": "永巴四露谷车厂",
+          "en": "FT Shallow Valley Depot",
+          "zone": 1
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Bus Terminus",
+          "zone": 4
+        },
+        {
+          "zh": "第七区转车站 (东行)",
+          "en": "Axis Road",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝纪念碑花园",
+          "en": "The Stone of Memory",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai BRT Station",
+          "zone": 7
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心总站",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=F702");</script>
+  <p>正在打开线路 <strong>F702</strong>…</p>
+  <p><a href="../index.html?route=F702">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

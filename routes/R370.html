@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>R370 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=R370" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=R370" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "R370",
+  "operators": [
+    "REBC",
+    "HZ"
+  ],
+  "fare": "$36.3",
+  "interval": {
+    "zh": "视实际班次",
+    "en": "Depend on actual situation"
+  },
+  "journeyTime": {
+    "zh": "39 分钟",
+    "en": "39 mins"
+  },
+  "length": {
+    "zh": "26.5 km",
+    "en": "26.5 km"
+  },
+  "origin": {
+    "zh": "叶欣海旁道",
+    "en": "Praya YiYan Road"
+  },
+  "destination": {
+    "zh": "叶欣海旁道→白鸽公园",
+    "en": "Dove Park"
+  },
+  "via": {
+    "zh": "南洋大厦、彩虹广场、叶欣公园、钻石交易塔、际巴车厂、叶欣邨第四座、叶欣邨第一座、叶角花园、叶角湾邨商场、叶角医院、中间花园、勿莫商场、勿莫街市、东门公园、东门邨、红豆商场、彩虹邨、彩虹中心、海西邨、海西角、东门路、仙贝、仙贝广场、仙贝图书馆、仙贝酒店、镰塔运动场、镰塔花园",
+    "en": "Southern Building, Rainbow Plaza, YiYan Park, Diamond Trading Tower, CSB Depot, YiYan Estate Block 4, YiYan Estate Block 1, Leafy Bay Garden, Leafy Bay Estate Shopping Center, Leafy Hospital, Middle Garden, Mo Shopping Center, Mo Market, East Door Park, East Door Estate, Redbean Center, Rainbow Estate, Rainbow Estate Complex, Haisey Estate, Haisey Point, East Door Road, Senpai, Senpai Shopping Centre, Senpai Library, Senpai Hotel, Kamaya Sports Field, Kamaya Garden"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（叶欣海旁道 → 白鸽公园）",
+        "en": "Direction 1 (Praya YiYan Road → Dove Park)"
+      },
+      "serviceTime": {
+        "zh": "马拉松特别服务",
+        "en": "Marathon Special Service"
+      },
+      "length": {
+        "zh": "26.5 km",
+        "en": "26.5 km"
+      },
+      "list": [
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣公园",
+          "en": "YiYan Park",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第四座",
+          "en": "YiYan Estate Block 4",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "中间花园",
+          "en": "Middle Garden",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫商场",
+          "en": "Mo Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫街市",
+          "en": "Mo Market",
+          "zone": 7
+        },
+        {
+          "zh": "东门公园",
+          "en": "East Door Park",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "东门路",
+          "en": "East Door Road",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Centre",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "白鸽公园",
+          "en": "Dove Park",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=R370");</script>
+  <p>正在打开线路 <strong>R370</strong>…</p>
+  <p><a href="../index.html?route=R370">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

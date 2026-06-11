@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
   findRouteForDailyChallenge,
+  findDailyChallengeDirectionIndex,
   getTodaysDailyChallenge,
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
+import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { SearchToolbar } from './SearchToolbar'
@@ -17,15 +19,20 @@ import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
+import type { RoutePageData } from '../types/routePageData'
+import { loadRoutePageData } from '../utils/loadRoutePageData'
+import { clearRouteFromLocation, readRouteQueryFromLocation, setRouteInLocation } from '../utils/routeNavigation'
 
 type DetailOverlay =
   | { kind: 'route'; route: BusRoute }
   | { kind: 'daily-challenge'; challenge: DailyChallengeInfo }
+  | { kind: 'not-found'; routeId: string }
   | null
 
 function overlayKey(overlay: DetailOverlay): string | null {
   if (!overlay) return null
   if (overlay.kind === 'route') return overlay.route.id
+  if (overlay.kind === 'not-found') return `not-found-${overlay.routeId}`
   return `daily-challenge-${overlay.challenge.date}`
 }
 
@@ -62,16 +69,23 @@ function runDetailAnimation(
 interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
+  onRouteCardNavigate?: () => void
 }
 
 export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
+  onRouteCardNavigate,
 }: RouteLookupPageProps) {
   const { t } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
+  const [dailyChallengeRouteView, setDailyChallengeRouteView] = useState(false)
+  const [routePageDetail, setRoutePageDetail] = useState<{
+    route: BusRoute
+    pageData: RoutePageData | null
+  } | null>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
   const openAnimsRef = useRef<Animation[]>([])
@@ -92,6 +106,7 @@ export function RouteLookupPage({
     selectRandomRoute,
     randomEligibleCount,
     clearSelection,
+    findDisplayRoute,
     zones,
     operators,
     types,
@@ -111,9 +126,49 @@ export function RouteLookupPage({
     cancelAnimations(openAnimsRef.current)
     cancelAnimations(closeAnimsRef.current)
     setDetailOverlay(null)
+    setRoutePageDetail(null)
+    setDailyChallengeRouteView(false)
     clearSelection()
+    clearRouteFromLocation()
     document.body.style.overflow = ''
   }, [clearSelection])
+
+  useEffect(() => {
+    if (detailOverlay?.kind !== 'route') {
+      setRoutePageDetail(null)
+      return
+    }
+
+    const base = detailOverlay.route
+    let cancelled = false
+
+    void loadRoutePageData(base).then((loaded) => {
+      if (cancelled) return
+      setRoutePageDetail({
+        route: loaded?.route ?? base,
+        pageData: loaded?.pageData ?? null,
+      })
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [detailOverlay])
+
+  useEffect(() => {
+    const routeId = readRouteQueryFromLocation()
+    if (!routeId) return
+
+    const route = findDisplayRoute(routeId)
+    if (route) {
+      setDailyChallengeRouteView(false)
+      selectRoute(routeId)
+      return
+    }
+
+    clearSelection()
+    setDetailOverlay({ kind: 'not-found', routeId })
+  }, [clearSelection, findDisplayRoute, selectRoute])
 
   useEffect(() => {
     if (!selectedRoute) return
@@ -178,10 +233,6 @@ export function RouteLookupPage({
     }
   }, [detailOverlay])
 
-  const handleSelectRoute = (id: string) => {
-    selectRoute(id)
-  }
-
   const handleSelectDailyChallenge = useCallback(() => {
     const challenge = getTodaysDailyChallenge()
     const routeNumber = challenge.routeNumber
@@ -189,14 +240,28 @@ export function RouteLookupPage({
     if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
       const route = findRouteForDailyChallenge(routeNumber)
       if (route) {
+        const directionIndex = findDailyChallengeDirectionIndex(route, challenge.directionKey)
+        if (directionIndex != null) setDirectionIndex(route.id, directionIndex)
+        setDailyChallengeRouteView(true)
         selectRoute(route.id)
         return
       }
     }
 
+    setDailyChallengeRouteView(false)
     clearSelection()
     setDetailOverlay({ kind: 'daily-challenge', challenge })
-  }, [clearSelection, selectRoute])
+  }, [clearSelection, selectRoute, setDirectionIndex])
+
+  const handleRouteNavigate = useCallback(
+    (routeId: string) => {
+      setDailyChallengeRouteView(false)
+      onRouteCardNavigate?.()
+      selectRoute(routeId)
+      setRouteInLocation(routeId)
+    },
+    [onRouteCardNavigate, selectRoute],
+  )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
 
@@ -265,15 +330,25 @@ export function RouteLookupPage({
     filters.operator !== 'all' ||
     filters.type !== 'all'
 
-  const dailyChallengeSelected = detailOverlay?.kind === 'daily-challenge'
+  const dailyChallengeSelected =
+    detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteView
+  const todaysChallenge = getTodaysDailyChallenge()
   const routeDetailProps =
     detailOverlay?.kind === 'route'
       ? {
-          route: detailOverlay.route,
+          route: routePageDetail?.route ?? detailOverlay.route,
+          pageData: routePageDetail?.pageData ?? null,
           directionIndex: getDirectionIndex(detailOverlay.route),
           onDirectionChange: (index: number) =>
             setDirectionIndex(detailOverlay.route.id, index),
           onClose: handleCloseDetail,
+          lockDirection: dailyChallengeRouteView,
+          directionEndpoints: dailyChallengeRouteView
+            ? (todaysChallenge.endpoints ?? null)
+            : null,
+          dailyChallengeIntro: dailyChallengeRouteView
+            ? (todaysChallenge.intro ?? null)
+            : null,
         }
       : null
 
@@ -321,7 +396,7 @@ export function RouteLookupPage({
                   selected={selectedRoute?.id === route.id}
                   directionIndex={getDirectionIndex(route)}
                   onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-                  onSelect={() => handleSelectRoute(route.id)}
+                  onNavigate={handleRouteNavigate}
                 />
               ))
             )}
@@ -349,6 +424,11 @@ export function RouteLookupPage({
             ) : detailOverlay.kind === 'daily-challenge' ? (
               <DailyChallengeDetail
                 challenge={detailOverlay.challenge}
+                onClose={handleCloseDetail}
+              />
+            ) : detailOverlay.kind === 'not-found' ? (
+              <RouteNotFoundDetail
+                routeId={detailOverlay.routeId}
                 onClose={handleCloseDetail}
               />
             ) : null}

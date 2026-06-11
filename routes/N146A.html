@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N146A · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=N146A" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=N146A" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "N146A",
+  "operators": [
+    "FTCC",
+    "REBC"
+  ],
+  "fare": "$15.1",
+  "journeyTime": {
+    "zh": "约 42 分钟",
+    "en": "approx. 42 mins"
+  },
+  "length": {
+    "zh": "27.7 km（环线）",
+    "en": "27.7 km (loop)"
+  },
+  "notes": {
+    "zh": "每日挑战线路（FTCC · REBC），阳光马拉松期间开行，东锦葵海傍路 ↺ 货柜码头岛，经东锦葵、中区、北环、货柜岛、医院岛及白鸽岛。游戏内编号 N246，不设解锁等级；西区海底隧道转车站起分段收费。",
+    "en": "Daily challenge route (FTCC · REBC); Sunshine Marathon service, Eastmallow Praya Road ↺ Container's Island via Eastmallow, Central, Northern, Container's Island, Hospital Island and Dove Island. In-game route N246; no separate unlock level. Section fare from Western Harbour Tunnel Interchange."
+  },
+  "origin": {
+    "zh": "东锦葵海傍路",
+    "en": "Eastmallow Praya Road"
+  },
+  "destination": {
+    "zh": "货柜码头岛",
+    "en": "Container's Island"
+  },
+  "via": {
+    "zh": "东锦葵邨－阳葵屋、东锦葵大街、中环桥、枫树里、玻璃楼、亚特路、雀鸟桥、北环中心、货柜码头岛、货柜码头、海苔湾、货柜码头员工宿舍、三塔、西区医院、艾迪城、购物廊、白鸽山、白鸽邨、三哥大厦、赖得商场、时间廊、西区海底隧道转车站、北环转车站（南行）、红地砖、雀鸟桥、新纪元中心、枫树里、中环桥、东锦葵大街",
+    "en": "Eastmallow Estate - Sunny House, Eastmallow Main Street, Central Bridge, Maple Lane, Glass Office, Arctan Road, Bird Bridge, Northern Plaza, Container's Island, Containers Terminal, Seaweed Bay, Containers Island Employee House, Triple Tower, Western Hospital, Addi City, Shopping Corridor, Dove Hill, Dove Estate, Third Technology Building, Wright Shopping Center, Timelapse Mall, Western Harbour Tunnel Interchange, Northern Interchange (Southbound), Red Wall Road, Bird Bridge, Ping Center, Maple Lane, Central Bridge, Eastmallow Main Street"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "环线（东锦葵海傍路 ↺ 货柜码头岛）",
+        "en": "Circular (Eastmallow Praya Road ↺ Container's Island)"
+      },
+      "serviceTime": {
+        "zh": "阳光马拉松期间开行",
+        "en": "Services provided during Sunshine Marathon only"
+      },
+      "length": {
+        "zh": "27.7 km",
+        "en": "27.7 km"
+      },
+      "list": [
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨－阳葵屋",
+          "en": "Eastmallow Estate - Sunny House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "亚特路",
+          "en": "Arctan Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "北环中心",
+          "en": "Northern Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（南行）",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "红地砖",
+          "en": "Red Wall Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=N146A");</script>
+  <p>正在打开线路 <strong>N146A</strong>…</p>
+  <p><a href="../index.html?route=N146A">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

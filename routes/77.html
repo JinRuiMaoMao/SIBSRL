@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>77 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=77" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=77" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "77",
+  "operators": [
+    "CSB"
+  ],
+  "fare": "$6.3",
+  "interval": {
+    "zh": "7 – 30 分钟",
+    "en": "7 – 30 mins"
+  },
+  "journeyTime": {
+    "zh": "往叶欣海旁道约 16–24 分钟 / 往仙贝约 16–23 分钟",
+    "en": "To Praya YiYan Road approx. 16–24 mins / To Senpai approx. 16–23 mins"
+  },
+  "length": {
+    "zh": "往叶欣海旁道 9.9 km / 20 站 · 往仙贝 10.3 km / 21 站",
+    "en": "To Praya YiYan Road 9.9 km / 20 stops · To Senpai 10.3 km / 21 stops"
+  },
+  "notes": {
+    "zh": "第 7 区内线（CSB），叶欣海旁道 ↔ 仙贝广场，经亚历山大及叶角大学。与 75/76 同端点不同走线；完成 75/76/77 双向可获 Celestial Leaf 成就。2024/6 起改经仙贝多层停车场；亚历山大—仙贝特快改由 77X 应付。",
+    "en": "Zone 7 local (CSB), Praya YiYan Road ↔ Senpai via Alexander and Leafy University. Same endpoints as 75"
+  },
+  "origin": {
+    "zh": "叶欣海旁道",
+    "en": "Praya YiYan Road"
+  },
+  "destination": {
+    "zh": "仙贝广场",
+    "en": "Senpai Shopping Center"
+  },
+  "via": {
+    "zh": "钻石交易塔、新地花园、新地公园、叶角大学、叶欣警察局、亚历山大花园、仙贝多层停车场、亚历山大教堂、仙贝山、叶欣径、罗力素花园二期、罗力素花园一期、北叶花园、仙贝道、仙贝、仙贝市政大厦、红石楼、仙贝酒店、仙贝图书馆",
+    "en": "Diamond Trading Tower, Sindy Garden, Sindy Park, Leafy University, Leafy Police Station, Alexander Garden, Senpai Multi-Storey Car Park, Alexander Church, Senpai Hill, Leafy Walking Trail, Laws Garden 2, Laws Garden, North Leafy Garden, Senpai Road, Senpai, Senpai Municipal Services Building, Redstone House, Senpai Hotel, Senpai Library"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（叶欣海旁道 → 仙贝广场）",
+        "en": "Northbound (Praya YiYan Road → Senpai Shopping Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "05:30 – 00:00",
+        "en": "05:30 – 00:00"
+      },
+      "length": {
+        "zh": "10.3 km",
+        "en": "10.3 km"
+      },
+      "list": [
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "叶角大学",
+          "en": "Leafy University",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣警察局",
+          "en": "Leafy Police Station",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大花园",
+          "en": "Alexander Garden",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝多层停车场",
+          "en": "Senpai Multi-Storey Car Park",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大教堂",
+          "en": "Alexander Church",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝山",
+          "en": "Senpai Hill",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣径",
+          "en": "Leafy Walking Trail",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园二期",
+          "en": "Laws Garden 2",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园一期",
+          "en": "Laws Garden",
+          "zone": 7
+        },
+        {
+          "zh": "北叶花园",
+          "en": "North Leafy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝道",
+          "en": "Senpai Road",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝市政大厦",
+          "en": "Senpai Municipal Services Building",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（仙贝广场 → 叶欣海旁道）",
+        "en": "Southbound (Senpai Shopping Center → Praya YiYan Road)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "06:00 – 00:30",
+        "en": "06:00 – 00:30"
+      },
+      "length": {
+        "zh": "9.9 km",
+        "en": "9.9 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "上湾街市",
+          "en": "Sheung Bay Market",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝市政大厦",
+          "en": "Senpai Municipal Services Building",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝道",
+          "en": "Senpai Road",
+          "zone": 7
+        },
+        {
+          "zh": "北叶花园",
+          "en": "North Leafy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园一期",
+          "en": "Laws Garden",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园二期",
+          "en": "Laws Garden 2",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣径",
+          "en": "Leafy Walking Trail",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝山",
+          "en": "Senpai Hill",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大教堂",
+          "en": "Alexander Church",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝多层停车场",
+          "en": "Senpai Multi-Storey Car Park",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山大花园",
+          "en": "Alexander Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣警察局",
+          "en": "Leafy Police Station",
+          "zone": 7
+        },
+        {
+          "zh": "叶角大学",
+          "en": "Leafy University",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=77");</script>
+  <p>正在打开线路 <strong>77</strong>…</p>
+  <p><a href="../index.html?route=77">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

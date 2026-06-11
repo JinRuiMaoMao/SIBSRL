@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>376S · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=376S" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=376S" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "376S",
+  "operators": [
+    "FT",
+    "REBC"
+  ],
+  "fare": "$24.1",
+  "journeyTime": {
+    "zh": "往Ambling Peak: 32 分钟 / 往Long Island: 35 分钟",
+    "en": "To Ambling Peak: 32 mins / To Long Island: 35 mins"
+  },
+  "length": {
+    "zh": "20.3 km",
+    "en": "20.3 km"
+  },
+  "origin": {
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "长岛码头",
+    "en": "Ambling Peak"
+  },
+  "via": {
+    "zh": "叶角湾坟场、叶角湾、叶欣海旁路、中西转车站、西区医院、艾迪城、购物廊、白鸽山、白鸽邨、三哥大厦、艾迪路、时间廊、赖得商场、虹尾角站、智家坊、宜和剧场、艺术大厦、阳光体育馆、长岛海滨长廊、百彩新城、国际码头、文化广场",
+    "en": "Leafy Bay Cemetery, Leafy Bay, Praya YiYan Road, Central - Western Interchange, Western Hospital, Addi City, Shopping Corridor, Dove Hill, Dove Estate, Third Technology Building, Addi Road, Timelapse Mall, Wright Shopping Center, Iris Point Station, I Home, Jardine Theater, LMK Long Island East is located here. Players can get food here., Sunshine Stadium, Long Island Waterfront Promenade, N Park, Regional Pier, Culture Square"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（长岛码头 → 安灵台）",
+        "en": "Northbound (Long Island Ferry Pier → Ambling Peak Columbarium)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "08:00 – 15:20",
+        "en": "08:00 – 15:20"
+      },
+      "length": {
+        "zh": "20.3 km",
+        "en": "20.3 km"
+      },
+      "list": [
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "阳光殡仪馆",
+          "en": "Sunshine Funeral",
+          "zone": 1
+        },
+        {
+          "zh": "艺术大厦",
+          "en": "Art Building",
+          "zone": 1
+        },
+        {
+          "zh": "长岛东医院",
+          "en": "East Long Island Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "彩色汇",
+          "en": "Rainbow Center",
+          "zone": 1
+        },
+        {
+          "zh": "时间里",
+          "en": "Timelapse Lane",
+          "zone": 1
+        },
+        {
+          "zh": "赖得里",
+          "en": "Wright Lane",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "中西转车站",
+          "en": "Central - Western Interchange",
+          "zone": 1
+        },
+        {
+          "zh": "叶角湾坟场",
+          "en": "Leafy Bay Cemetery",
+          "zone": 7
+        },
+        {
+          "zh": "安灵台",
+          "en": "Ambling Peak Columbarium",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（安灵台 → 长岛码头）",
+        "en": "Southbound (Ambling Peak Columbarium → Long Island Ferry Pier)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "09:00 – 18:30",
+        "en": "09:00 – 18:30"
+      },
+      "length": {
+        "zh": "20.3 km",
+        "en": "20.3 km"
+      },
+      "list": [
+        {
+          "zh": "安灵台",
+          "en": "Ambling Peak Columbarium",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾坟场",
+          "en": "Leafy Bay Cemetery",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾",
+          "en": "Leafy Bay",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁路",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "中西转车站",
+          "en": "Central - Western Interchange",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪路",
+          "en": "Addi Road",
+          "zone": 1
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "虹尾角站",
+          "en": "Iris Point Station",
+          "zone": 1
+        },
+        {
+          "zh": "智家坊",
+          "en": "I Home",
+          "zone": 1
+        },
+        {
+          "zh": "宜和剧场",
+          "en": "Jardine Theater",
+          "zone": 1
+        },
+        {
+          "zh": "艺术大厦",
+          "en": "LMK Long Island East is located here. Players can get food here.",
+          "zone": 1
+        },
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "国际码头",
+          "en": "Regional Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=376S");</script>
+  <p>正在打开线路 <strong>376S</strong>…</p>
+  <p><a href="../index.html?route=376S">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

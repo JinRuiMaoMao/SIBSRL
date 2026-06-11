@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S1 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=S1" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=S1" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "S1",
+  "operators": [
+    "FT"
+  ],
+  "fare": "$39.0",
+  "interval": {
+    "zh": "30 分钟",
+    "en": "30 mins"
+  },
+  "journeyTime": {
+    "zh": "26 - 27 分钟",
+    "en": "26 - 27 mins"
+  },
+  "length": {
+    "zh": "24.3 km",
+    "en": "24.3 km"
+  },
+  "notes": {
+    "zh": "日间观光环线（Wiki 编号 S1，游戏内为 S1A）。需 1480 阳光碎片解锁。",
+    "en": "Daytime sightseeing loop (Wiki route S1, in-game as S1A). Unlocked with 1480 Sunshards."
+  },
+  "origin": {
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "中环（中日街）",
+    "en": "Sun Central Street"
+  },
+  "via": {
+    "zh": "文化广场、时间廊、阳光体育馆、北环转车站 (南行)、红地砖、枫树里、中环消防局、中环(中日街)、新纪元中心、The ONE、强生街市、Museum Infinite、阳光太空馆、北环转车站 (北行)、文化广场",
+    "en": "Culture Square, Timelapse Mall, Sunshine Stadium, Northern Interchange (Southbound), Red Wall Road, Maple Lane, Central Fire Station, Circular Point, Ping Center, The ONE, Johnson Market, Museum Infinite, Sunshine Space Museum, Northern Interchange (Northbound), Culture Square"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（长岛码头 → 长岛码头）",
+        "en": "Direction 1 (Long Island Ferry Pier → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "11:00 – 18:00",
+        "en": "11:00 – 18:00"
+      },
+      "length": {
+        "zh": "24.3 km",
+        "en": "24.3 km"
+      },
+      "list": [
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "北环转车站 (南行)",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "红地砖",
+          "en": "Red Wall Road",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "中环消防局",
+          "en": "Central Fire Station",
+          "zone": 4
+        },
+        {
+          "zh": "中环(中日街)",
+          "en": "Circular Point",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "Museum Infinite",
+          "en": "Museum Infinite",
+          "zone": 4
+        },
+        {
+          "zh": "阳光太空馆",
+          "en": "Sunshine Space Museum",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站 (北行)",
+          "en": "Northern Interchange (Northbound)",
+          "zone": 4
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=S1");</script>
+  <p>正在打开线路 <strong>S1</strong>…</p>
+  <p><a href="../index.html?route=S1">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

@@ -7,13 +7,27 @@ import {
   routeHasDirectionVariants,
 } from './routeDirectionCore'
 
+const SERVICE_TIME_SLASH = '\uE000'
+
+/** 保护 km/h、公里/小时 等单位中的斜杠，避免误拆双向服务时间 */
+function protectServiceTimeUnits(text: string): string {
+  return text
+    .replace(/km\s*\/\s*h/gi, (m) => m.replace('/', SERVICE_TIME_SLASH))
+    .replace(/公里\s*\/\s*小时/g, (m) => m.replace('/', SERVICE_TIME_SLASH))
+}
+
+function restoreServiceTimeUnits(text: string): string {
+  return text.replaceAll(SERVICE_TIME_SLASH, '/')
+}
+
 /** 拆分路线级或方向级「A / B」服务时间 */
 export function splitServiceTimeSegments(text: string): string[] {
-  const parts = text
+  const protectedText = protectServiceTimeUnits(text)
+  const parts = protectedText
     .split(/\s*\/\s*/)
-    .map((s) => s.trim())
+    .map((s) => restoreServiceTimeUnits(s).trim())
     .filter(Boolean)
-  return parts.length ? parts : [text.trim()].filter(Boolean)
+  return parts.length ? parts : [restoreServiceTimeUnits(text).trim()].filter(Boolean)
 }
 
 function pickServiceTimeBySortedPosition(

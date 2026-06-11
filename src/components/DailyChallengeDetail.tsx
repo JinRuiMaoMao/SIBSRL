@@ -10,6 +10,7 @@ import {
 } from '../data/dailyChallenge'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
+import { DailyChallengeIntro } from './DailyChallengeIntro'
 
 interface DailyChallengeDetailProps {
   challenge: DailyChallengeInfo
@@ -59,6 +60,7 @@ export function DailyChallengeDetail({
       <article className="daily-challenge-guide">
         <h2 className="daily-challenge-guide-title">{getPrimaryText(guide.title, locale)}</h2>
         <p className="daily-challenge-guide-lead">{getPrimaryText(guide.welcome, locale)}</p>
+        {challenge.intro ? <DailyChallengeIntro intro={challenge.intro} /> : null}
         <p>{getPrimaryText(guide.overview, locale)}</p>
         {showRouteNotFound ? (
           <p className="route-meta">{t('dailyChallengeRouteNotFound')}</p>

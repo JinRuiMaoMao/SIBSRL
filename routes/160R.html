@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>160R · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=160R" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=160R" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "160R",
+  "operators": [
+    "HZ",
+    "FTCC",
+    "FT"
+  ],
+  "fare": "$27.3",
+  "interval": {
+    "zh": "按活动安排（见永巴",
+    "en": "Per event (see HZ"
+  },
+  "journeyTime": {
+    "zh": "约 16 分钟",
+    "en": "approx. 16 mins"
+  },
+  "length": {
+    "zh": "15.8 km",
+    "en": "15.8 km"
+  },
+  "notes": {
+    "zh": "2024/6 起因 Horizon 岛改建，终点改至第七区转车站（不再进入第 6 区）。散场疏运线。",
+    "en": "Since Jun 2024 terminates at Zone 7 Interchange (Horizon Island closed). Post-event dispersal route."
+  },
+  "origin": {
+    "zh": "阳光体育馆",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "第七区转车站",
+    "en": "Zone 7 Interchange"
+  },
+  "via": {
+    "zh": "西区海底隧道转车站、北顿路、北顿码头、北顿花园、北顿邨、北顿市中心、绿宝石中心、北岛花园、望环台、北岛花园商场、阳光大学、东锦葵大街、东锦葵海傍路",
+    "en": "Western Harbour Tunnel Interchange, Norton Road, Norton Ferry Pier, Norton Garden, Norton Estate, Norton Town Center, Emerald Plaza, North Island Estate, Panorama Heights, NIE Shopping Center, Sunshine University, Eastmallow Main Street, Eastmallow Praya Road"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "单程（阳光体育馆 → 第七区转车站）",
+        "en": "One-way (Sunshine Stadium → Zone 7 Interchange)"
+      },
+      "serviceTime": {
+        "zh": "仅体育馆有演出/活动日开行；散场后约 15 分钟起至少一班",
+        "en": "Event days only; first bus ~15 min after show ends"
+      },
+      "length": {
+        "zh": "15.8 km",
+        "en": "15.8 km"
+      },
+      "list": [
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 1
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北顿码头",
+          "en": "Norton Ferry Pier",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        },
+        {
+          "zh": "绿宝石中心",
+          "en": "Emerald Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "NIE Shopping Center",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        },
+        {
+          "zh": "第七区转车站",
+          "en": "Zone 7 Interchange",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=160R");</script>
+  <p>正在打开线路 <strong>160R</strong>…</p>
+  <p><a href="../index.html?route=160R">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

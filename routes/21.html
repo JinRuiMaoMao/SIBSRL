@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>21 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=21" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=21" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "21",
+  "operators": [
+    "REBC"
+  ],
+  "fare": "$4.3",
+  "interval": {
+    "zh": "6 – 20 分钟（视时段）",
+    "en": "6 – 20 mins (varies by period)"
+  },
+  "journeyTime": {
+    "zh": "约 29 分钟",
+    "en": "approx. 29 mins"
+  },
+  "serviceTime": {
+    "zh": "05:45 – 01:00",
+    "en": "05:45 – 01:00"
+  },
+  "length": {
+    "zh": "约 9 km（环线）",
+    "en": "approx. 9 km (loop)"
+  },
+  "notes": {
+    "zh": "第 1 区日间循环线（REBC）。2024/6 起取消「购物廊」站，新增赖得里、艾迪路、银行大厦等；伊迪城与艾迪城为不同分站。",
+    "en": "Zone 1 daytime circular (REBC). Shopping Corridor stop removed Jun 2024; Wright Lane, Addi Road and Bank Tower added. Eddie City and Addi City are different stops."
+  },
+  "origin": {
+    "zh": "白鸽邨",
+    "en": "Dove Estate"
+  },
+  "destination": {
+    "zh": "阿周电视",
+    "en": "Roblox TV"
+  },
+  "via": {
+    "zh": "白鸽山、三哥大厦、赖得商场、时间廊、赖得里、艾迪路、路博斯总部大楼、白鸽消防局、伊迪城、、阿周电视、西区医院、艾迪城、白鸽消防局、路博斯总部大楼、银行大厦、三哥大厦、白鸽山",
+    "en": "Dove Hill, Third Technology Building, Wright Shopping Center, Timelapse Mall, Wright Lane, Addi Road, Roblox HQ, Dove Fire Station, Eddie City, Basketball Court, Roblox TV, Western Hospital, Addi City, Dove Fire Station, Roblox HQ, Bank Tower, Third Technology Building, Dove Hill"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "环线（白鸽邨 ↺ 阿周电视）",
+        "en": "Circular (Dove Estate ↺ Roblox TV)"
+      },
+      "length": {
+        "zh": "9 km",
+        "en": "9 km"
+      },
+      "list": [
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-00.mp3",
+            "nextStop": {
+              "zh": "白鸽山",
+              "en": "Dove Hill"
+            }
+          }
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-01.mp3",
+            "nextStop": {
+              "zh": "三哥大厦",
+              "en": "Third Technology Building"
+            }
+          }
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-02.mp3",
+            "nextStop": {
+              "zh": "赖得商场",
+              "en": "Wright Shopping Center"
+            }
+          }
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-03.mp3",
+            "nextStop": {
+              "zh": "时间廊",
+              "en": "Timelapse Mall"
+            }
+          }
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-04.mp3",
+            "nextStop": {
+              "zh": "赖得里",
+              "en": "Wright Lane"
+            }
+          }
+        },
+        {
+          "zh": "赖得里",
+          "en": "Wright Lane",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-05.mp3",
+            "nextStop": {
+              "zh": "艾迪路",
+              "en": "Addi Road"
+            }
+          }
+        },
+        {
+          "zh": "艾迪路",
+          "en": "Addi Road",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-06.mp3",
+            "nextStop": {
+              "zh": "路博斯总部大楼",
+              "en": "Roblox HQ"
+            }
+          }
+        },
+        {
+          "zh": "路博斯总部大楼",
+          "en": "Roblox HQ",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-07.mp3",
+            "nextStop": {
+              "zh": "白鸽消防局",
+              "en": "Dove Fire Station"
+            }
+          }
+        },
+        {
+          "zh": "白鸽消防局",
+          "en": "Dove Fire Station",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-08.mp3",
+            "nextStop": {
+              "zh": "伊迪城",
+              "en": "Eddie City"
+            }
+          }
+        },
+        {
+          "zh": "伊迪城",
+          "en": "Eddie City",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-09.mp3",
+            "nextStop": {
+              "zh": "",
+              "en": "Basketball Court"
+            }
+          }
+        },
+        {
+          "zh": "",
+          "en": "Basketball Court",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-10.mp3",
+            "nextStop": {
+              "zh": "阿周电视",
+              "en": "Roblox TV"
+            }
+          }
+        },
+        {
+          "zh": "阿周电视",
+          "en": "Roblox TV",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-11.mp3",
+            "nextStop": {
+              "zh": "西区医院",
+              "en": "Western Hospital"
+            }
+          }
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-12.mp3",
+            "nextStop": {
+              "zh": "艾迪城",
+              "en": "Addi City"
+            }
+          }
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-13.mp3",
+            "nextStop": {
+              "zh": "白鸽消防局",
+              "en": "Dove Fire Station"
+            }
+          }
+        },
+        {
+          "zh": "白鸽消防局",
+          "en": "Dove Fire Station",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-14.mp3",
+            "nextStop": {
+              "zh": "路博斯总部大楼",
+              "en": "Roblox HQ"
+            }
+          }
+        },
+        {
+          "zh": "路博斯总部大楼",
+          "en": "Roblox HQ",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-15.mp3",
+            "nextStop": {
+              "zh": "银行大厦",
+              "en": "Bank Tower"
+            }
+          }
+        },
+        {
+          "zh": "银行大厦",
+          "en": "Bank Tower",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-16.mp3",
+            "nextStop": {
+              "zh": "三哥大厦",
+              "en": "Third Technology Building"
+            }
+          }
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-17.mp3",
+            "nextStop": {
+              "zh": "白鸽山",
+              "en": "Dove Hill"
+            }
+          }
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-18.mp3",
+            "nextStop": {
+              "zh": "白鸽邨",
+              "en": "Dove Estate"
+            }
+          }
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/21A/21a-at-19.mp3",
+            "nextStop": {
+              "zh": "下车提醒",
+              "en": "Alighting reminder"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "stopAudio": [
+    {
+      "atStopIndex": 0,
+      "audioUrl": "./audio/routes/21A/21a-at-00.mp3",
+      "nextStop": {
+        "zh": "白鸽山",
+        "en": "Dove Hill"
+      }
+    },
+    {
+      "atStopIndex": 1,
+      "audioUrl": "./audio/routes/21A/21a-at-01.mp3",
+      "nextStop": {
+        "zh": "三哥大厦",
+        "en": "Third Technology Building"
+      }
+    },
+    {
+      "atStopIndex": 2,
+      "audioUrl": "./audio/routes/21A/21a-at-02.mp3",
+      "nextStop": {
+        "zh": "赖得商场",
+        "en": "Wright Shopping Center"
+      }
+    },
+    {
+      "atStopIndex": 3,
+      "audioUrl": "./audio/routes/21A/21a-at-03.mp3",
+      "nextStop": {
+        "zh": "时间廊",
+        "en": "Timelapse Mall"
+      }
+    },
+    {
+      "atStopIndex": 4,
+      "audioUrl": "./audio/routes/21A/21a-at-04.mp3",
+      "nextStop": {
+        "zh": "赖得里",
+        "en": "Wright Lane"
+      }
+    },
+    {
+      "atStopIndex": 5,
+      "audioUrl": "./audio/routes/21A/21a-at-05.mp3",
+      "nextStop": {
+        "zh": "艾迪路",
+        "en": "Addi Road"
+      }
+    },
+    {
+      "atStopIndex": 6,
+      "audioUrl": "./audio/routes/21A/21a-at-06.mp3",
+      "nextStop": {
+        "zh": "路博斯总部大楼",
+        "en": "Roblox HQ"
+      }
+    },
+    {
+      "atStopIndex": 7,
+      "audioUrl": "./audio/routes/21A/21a-at-07.mp3",
+      "nextStop": {
+        "zh": "白鸽消防局",
+        "en": "Dove Fire Station"
+      }
+    },
+    {
+      "atStopIndex": 8,
+      "audioUrl": "./audio/routes/21A/21a-at-08.mp3",
+      "nextStop": {
+        "zh": "伊迪城",
+        "en": "Eddie City"
+      }
+    },
+    {
+      "atStopIndex": 9,
+      "audioUrl": "./audio/routes/21A/21a-at-09.mp3",
+      "nextStop": {
+        "zh": "",
+        "en": "Basketball Court"
+      }
+    },
+    {
+      "atStopIndex": 10,
+      "audioUrl": "./audio/routes/21A/21a-at-10.mp3",
+      "nextStop": {
+        "zh": "阿周电视",
+        "en": "Roblox TV"
+      }
+    },
+    {
+      "atStopIndex": 11,
+      "audioUrl": "./audio/routes/21A/21a-at-11.mp3",
+      "nextStop": {
+        "zh": "西区医院",
+        "en": "Western Hospital"
+      }
+    },
+    {
+      "atStopIndex": 12,
+      "audioUrl": "./audio/routes/21A/21a-at-12.mp3",
+      "nextStop": {
+        "zh": "艾迪城",
+        "en": "Addi City"
+      }
+    },
+    {
+      "atStopIndex": 13,
+      "audioUrl": "./audio/routes/21A/21a-at-13.mp3",
+      "nextStop": {
+        "zh": "白鸽消防局",
+        "en": "Dove Fire Station"
+      }
+    },
+    {
+      "atStopIndex": 14,
+      "audioUrl": "./audio/routes/21A/21a-at-14.mp3",
+      "nextStop": {
+        "zh": "路博斯总部大楼",
+        "en": "Roblox HQ"
+      }
+    },
+    {
+      "atStopIndex": 15,
+      "audioUrl": "./audio/routes/21A/21a-at-15.mp3",
+      "nextStop": {
+        "zh": "银行大厦",
+        "en": "Bank Tower"
+      }
+    },
+    {
+      "atStopIndex": 16,
+      "audioUrl": "./audio/routes/21A/21a-at-16.mp3",
+      "nextStop": {
+        "zh": "三哥大厦",
+        "en": "Third Technology Building"
+      }
+    },
+    {
+      "atStopIndex": 17,
+      "audioUrl": "./audio/routes/21A/21a-at-17.mp3",
+      "nextStop": {
+        "zh": "白鸽山",
+        "en": "Dove Hill"
+      }
+    },
+    {
+      "atStopIndex": 18,
+      "audioUrl": "./audio/routes/21A/21a-at-18.mp3",
+      "nextStop": {
+        "zh": "白鸽邨",
+        "en": "Dove Estate"
+      }
+    },
+    {
+      "atStopIndex": 19,
+      "audioUrl": "./audio/routes/21A/21a-at-19.mp3",
+      "nextStop": {
+        "zh": "下车提醒",
+        "en": "Alighting reminder"
+      }
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=21");</script>
+  <p>正在打开线路 <strong>21</strong>…</p>
+  <p><a href="../index.html?route=21">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

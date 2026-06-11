@@ -20,23 +20,7 @@ function createPlaceholderRoute(number: string): BusRoute {
 
 /** Wiki ???? Wiki ?????????????? */
 const GAME_ROUTE_PLACEHOLDER_NUMBERS = [
-  '476SA',
-  'F469A',
-  'N76A',
-  '25YN',
-  '25YS',
-  '370AW',
-  '370AE',
   'N476E',
-  '240A',
-  '242A',
-  '248A',
-  '370AEM',
-  'Y370A',
-  '473A',
-  'N146A',
-  '76SN',
-  '76SS',
 ] as const
 
 export const routesStubs: BusRoute[] = GAME_ROUTE_PLACEHOLDER_NUMBERS.map(createPlaceholderRoute)

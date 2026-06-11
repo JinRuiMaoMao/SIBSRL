@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>473A · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=473A" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=473A" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "473A",
+  "operators": [
+    "CSB",
+    "FTCC",
+    "FT"
+  ],
+  "fare": "$11.4",
+  "journeyTime": {
+    "zh": "约 92 分钟",
+    "en": "approx. 92 mins"
+  },
+  "length": {
+    "zh": "约 20.4 km（环线，平均约 13.3 km",
+    "en": "approx. 20.4 km (loop, avg. ~13.3 km"
+  },
+  "notes": {
+    "zh": "阳光马拉松期间特别安排：473 线改以循环线模式来往叶角湾及北环。往北环方向在「薄荷大厦」后改行月亮绕道、中间道、班尼街、亚凡路及纵横路返回原线前往叶角湾，途中临时停靠中间道「红地砖」，不停北环转车站及明月角。全程约 20.4 km，行车约 92 分钟（平均约 13.3 km",
+    "en": "Sunshine Marathon special: route 473 runs circular between Leafy Bay and Northern Interchange. Northbound, after Mint Tower the service detours via Moon Bypass, Middle Road, Penny Street, Arthur Road and Cross Road back to Leafy Bay, with a temporary stop at Red Wall Road on Middle Road; Northern Interchange and Lunar Point are not served. Full loop approx. 20.4 km, 92 mins (avg. ~13.3 km"
+  },
+  "origin": {
+    "zh": "叶角湾总站",
+    "en": "Leafy Bay Bus Terminus"
+  },
+  "destination": {
+    "zh": "叶角湾总站",
+    "en": "Leafy Bay Bus Terminus"
+  },
+  "via": {
+    "zh": "新地花园、新地公园、叶欣邨第一座、叶欣邨第四座、城际巴士车厂、叶欣（海旁道）、南洋大厦、彩虹广场、东厂、第七区转车站（西行落客）、中环南、南环街市、强生街市、警察总部、新纪元中心、枫树里、薄荷大厦、红地砖、枫树里、玻璃楼、The ONE、强生街市、南环花园二期、中环南总站、第七区转车站（E2）、东厂、叶欣公园、钻石交易塔、际巴车厂、叶欣邨第四座、叶欣邨第一座、新地公园、新地花园",
+    "en": "Sindy Garden, Sindy Park, YiYan Estate Block 1, YiYan Estate Block 4, CSB Depot, Praya YiYan Road, Southern Building, Rainbow Plaza, East Factory, Zone 7 Interchange (W5-7) (Alighting Stop), Southern Central, Southern Market, Johnson Market, Police Headquarters, Ping Centre, Maple Lane, Mint Tower, Red Wall Road, Maple Lane, Glass Office, The ONE, Johnson Market, Southern Two, Southern Central Bus Terminus, Zone 7 Interchange (E2), East Factory, YiYan Park, Diamond Trading Tower, CSB Depot, YiYan Estate Block 4, YiYan Estate Block 1, Sindy Park, Sindy Garden"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "环线（叶角湾 ↺ 北环）",
+        "en": "Circular (Leafy Bay ↺ Northern Interchange)"
+      },
+      "serviceTime": {
+        "zh": "阳光马拉松期间开行",
+        "en": "Services provided during Sunshine Marathon only"
+      },
+      "length": {
+        "zh": "20.4 km",
+        "en": "20.4 km"
+      },
+      "list": [
+        {
+          "zh": "叶角湾总站",
+          "en": "Leafy Bay Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第四座",
+          "en": "YiYan Estate Block 4",
+          "zone": 7
+        },
+        {
+          "zh": "城际巴士车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣（海旁道）",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站（西行落客）",
+          "en": "Zone 7 Interchange (W5-7) (Alighting Stop)",
+          "zone": 7
+        },
+        {
+          "zh": "中环南",
+          "en": "Southern Central",
+          "zone": 4
+        },
+        {
+          "zh": "南环街市",
+          "en": "Southern Market",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "警察总部",
+          "en": "Police Headquarters",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "薄荷大厦",
+          "en": "Mint Tower",
+          "zone": 4
+        },
+        {
+          "zh": "红地砖",
+          "en": "Red Wall Road",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "南环花园二期",
+          "en": "Southern Two",
+          "zone": 4
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Bus Terminus",
+          "zone": 4
+        },
+        {
+          "zh": "第七区转车站（E2）",
+          "en": "Zone 7 Interchange (E2)",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣公园",
+          "en": "YiYan Park",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第四座",
+          "en": "YiYan Estate Block 4",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾总站",
+          "en": "Leafy Bay Bus Terminus",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=473A");</script>
+  <p>正在打开线路 <strong>473A</strong>…</p>
+  <p><a href="../index.html?route=473A">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

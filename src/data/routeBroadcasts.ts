@@ -6,21 +6,21 @@ export function getRouteStopAudioAtRow(
   routeId: string,
   atStopIndex: number,
 ): RouteStopAudioAtRow | undefined {
-  if (routeId === ROUTE_21A_ID) {
+  if (routeId === ROUTE_21A_ID || routeId === '21') {
     return getRoute21AStopAudioByAtIndex()?.get(atStopIndex)
   }
-  if (routeId === ROUTE_77XA_ID) {
+  if (routeId === ROUTE_77XA_ID || routeId === '77X') {
     return getRoute77XAStopAudioByAtIndex()?.get(atStopIndex)
   }
   return undefined
 }
 
 export function routeHasStopAudio(routeId: string): boolean {
-  if (routeId === ROUTE_21A_ID) {
+  if (routeId === ROUTE_21A_ID || routeId === '21') {
     const map = getRoute21AStopAudioByAtIndex()
     return map != null && map.size > 0
   }
-  if (routeId === ROUTE_77XA_ID) {
+  if (routeId === ROUTE_77XA_ID || routeId === '77X') {
     const map = getRoute77XAStopAudioByAtIndex()
     return map != null && map.size > 0
   }

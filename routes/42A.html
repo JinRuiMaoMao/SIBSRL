@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>42A · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=42A" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=42A" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "42A",
+  "operators": [
+    "FTCC"
+  ],
+  "fare": "$5.4",
+  "interval": {
+    "zh": "6 – 30 分钟",
+    "en": "6 – 30 mins"
+  },
+  "journeyTime": {
+    "zh": "往巨石路 / 往阳光码头（视路况）",
+    "en": "To Rocky Road / To Sunshine Pier (varies)"
+  },
+  "length": {
+    "zh": "往巨石路 6.3 km / 往阳光码头 6.9 km",
+    "en": "To Rocky Road 6.3 km / To Sunshine Pier 6.9 km"
+  },
+  "notes": {
+    "zh": "第 4 区干线（FTCC），中轴线成就线路；2024/6 开通。比 42 更直抵中区；往阳光码头需 Lv.3。",
+    "en": "Zone 4 trunk (FTCC); Central Axis route since Jun 2024. More direct to Central than route 42. To Sunshine Pier requires Lv.3."
+  },
+  "origin": {
+    "zh": "阳光码头",
+    "en": "Sunshine Pier"
+  },
+  "destination": {
+    "zh": "巨石路",
+    "en": "Rocky Road"
+  },
+  "via": {
+    "zh": "阳光站、中环医院、南环街市、强生街市、The ONE、玻璃楼、枫树里、北环转车站、北顿游泳池、北岛花园、望环台、北岛花园商场",
+    "en": "Sunshine Station, Central Hospital, Southern Market, Johnson Market, The ONE, Glass Office, Maple Lane, Northern Interchange, Norton Swimming Pool, North Island Estate, Panorama Heights, North Island Estate Shopping Centre"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（阳光码头 → 巨石路）",
+        "en": "Northbound (Sunshine Pier → Rocky Road)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "05:40 – 00:30",
+        "en": "05:40 – 00:30"
+      },
+      "length": {
+        "zh": "6.3 km",
+        "en": "6.3 km"
+      },
+      "list": [
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 4
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Station",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "南环街市",
+          "en": "Southern Market",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北顿游泳池",
+          "en": "Norton Swimming Pool",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "North Island Estate Shopping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "巨石路",
+          "en": "Rocky Road",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（巨石路 → 阳光码头）",
+        "en": "Southbound (Rocky Road → Sunshine Pier)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "05:30 – 00:00",
+        "en": "05:30 – 00:00"
+      },
+      "length": {
+        "zh": "6.9 km",
+        "en": "6.9 km"
+      },
+      "list": [
+        {
+          "zh": "巨石路",
+          "en": "Rocky Road",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "North Island Estate Shopping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "南环中心",
+          "en": "The Southern",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Station",
+          "zone": 4
+        },
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=42A");</script>
+  <p>正在打开线路 <strong>42A</strong>…</p>
+  <p><a href="../index.html?route=42A">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

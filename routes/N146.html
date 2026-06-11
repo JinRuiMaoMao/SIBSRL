@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N146 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=N146" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=N146" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "N146",
+  "operators": [
+    "FTCC",
+    "REBC",
+    "FT"
+  ],
+  "fare": "$15.1",
+  "interval": {
+    "zh": "20 - 30 分钟",
+    "en": "20 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "往Eastmallow: 29 分钟 / 往Container's Island: 28 分钟",
+    "en": "To Eastmallow: 29 minutes / To Container's Island: 28 minutes"
+  },
+  "length": {
+    "zh": "16.4 km",
+    "en": "16.4 km"
+  },
+  "origin": {
+    "zh": "货柜码头岛",
+    "en": "Container's Island"
+  },
+  "destination": {
+    "zh": "东锦葵海傍路",
+    "en": "Eastmallow Praya Road"
+  },
+  "via": {
+    "zh": "东锦葵邨 - 阳葵屋、东锦葵大街、中环桥、枫树里、玻璃楼、亚特路、雀鸟桥、北环中心、北环转车站 (北行)、西区海底隧道转车站、时间廊、银行大厦、三哥大厦、白鸽山、白鸽邨、购物廊、白鸽消防局、伊迪城、西区医院、三塔、货柜码头员工宿舍、海苔湾、货柜码头",
+    "en": "Eastmallow Estate - Sunny House, Eastmallow Main Street, Central Bridge, Maple Lane, Glass Office, Arctan Road, Bird Bridge, Northern Plaza, Northern Interchange (Northbound), Western Harbour Tunnel Interchange, Timelapse Mall, Bank Tower, Third Technology Building, Dove Hill, Dove Estate, Shopping Corridor, Dove Fire Station, Eddie City, Western Hospital, Triple Tower, Containers Island Employee House, Seaweed Bay, Containers Terminal"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（货柜码头岛 → 东锦葵海傍路）",
+        "en": "Northbound (Container's Island → Eastmallow Praya Road)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
+      },
+      "length": {
+        "zh": "16.4 km",
+        "en": "16.4 km"
+      },
+      "list": [
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽消防局",
+          "en": "Dove Fire Station",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站 (南行)",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "红地砖",
+          "en": "Red Wall Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（东锦葵海傍路 → 货柜码头岛）",
+        "en": "Southbound (Eastmallow Praya Road → Container's Island)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
+      },
+      "length": {
+        "zh": "16.4 km",
+        "en": "16.4 km"
+      },
+      "list": [
+        {
+          "zh": "东锦葵海傍路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨 - 阳葵屋",
+          "en": "Eastmallow Estate - Sunny House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "亚特路",
+          "en": "Arctan Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "北环中心",
+          "en": "Northern Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站 (北行)",
+          "en": "Northern Interchange (Northbound)",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "银行大厦",
+          "en": "Bank Tower",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽消防局",
+          "en": "Dove Fire Station",
+          "zone": 1
+        },
+        {
+          "zh": "伊迪城",
+          "en": "Eddie City",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=N146");</script>
+  <p>正在打开线路 <strong>N146</strong>…</p>
+  <p><a href="../index.html?route=N146">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

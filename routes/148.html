@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>148 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=148" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=148" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "148",
+  "operators": [
+    "REBC",
+    "FTCC"
+  ],
+  "fare": "$12.1",
+  "interval": {
+    "zh": "4 – 15 分钟",
+    "en": "4 – 15 mins"
+  },
+  "journeyTime": {
+    "zh": "往北顿约 25–35 分钟 / 往货柜岛约 22–35 分钟",
+    "en": "To Norton approx. 25–35 mins / To Container's Island approx. 22–35 mins"
+  },
+  "length": {
+    "zh": "往北顿 17.4 km / 23 站 · 往货柜岛 16.3 km / 23 站",
+    "en": "To Norton 17.4 km / 23 stops · To Container's Island 16.3 km / 23 stops"
+  },
+  "notes": {
+    "zh": "第 1/4 区跨区干线（REBC · FTCC），货柜码头岛 ↔ 北顿市中心；City Stepped 成就线路之一。繁忙时间特快为 141P。通宵分段由 N146 + N171 覆盖。2020/6 延至北顿；2024/6 新增望环台。强风 Desire Bridge 封闭改 S148；马拉松西行改 248A。",
+    "en": "Zones 1/4 inter-zone trunk (REBC · FTCC), Container's Island ↔ Norton; City Stepped achievement route. Peak express is 141P. Overnight covered by N146 + N171. Extended to Norton Jun 2020; Panorama Heights added Jun 2024. Diverted as S148 when Desire Bridge closed; westbound as 248A during Marathon."
+  },
+  "origin": {
+    "zh": "货柜码头岛",
+    "en": "Container's Island Bus Terminus"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "北顿邨、北顿花园、绿宝石中心、北顿路、北岛花园、北岛花园商场、望环台、阳光大学、中环桥、北环转车站（北行）、西区海底隧道转车站、时间廊、银行大厦、三哥大厦、购物廊、艾迪城、西区医院、三塔、货柜码头员工宿舍、海苔湾、货柜码头",
+    "en": "Norton Estate, Norton Garden, Emerald Plaza, Norton Road, North Island Estate, North Island Estate Shopping Centre, Panorama Heights, Sunshine University, Central Bridge, Northern Interchange (Northbound), Western Harbour Tunnel Interchange, Timelapse Mall, Bank Tower, Third Technology Building, Shopping Corridor, Addi City, Western Hospital, Triple Tower, Containers Island Employee House, Seaweed Bay, Containers Terminal"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "西行（北顿市中心 → 货柜码头岛）",
+        "en": "Westbound (Norton Town Center → Container's Island Bus Terminus)"
+      },
+      "directionKey": "W",
+      "serviceTime": {
+        "zh": "05:00 – 23:30",
+        "en": "05:00 – 23:30"
+      },
+      "length": {
+        "zh": "16.3 km",
+        "en": "16.3 km"
+      },
+      "list": [
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "绿宝石中心",
+          "en": "Emerald Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "North Island Estate Shopping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（北行）",
+          "en": "Northern Interchange (Northbound)",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "银行大厦",
+          "en": "Bank Tower",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island Bus Terminus",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "东行（货柜码头岛 → 北顿市中心）",
+        "en": "Eastbound (Container's Island Bus Terminus → Norton Town Center)"
+      },
+      "directionKey": "E",
+      "serviceTime": {
+        "zh": "06:00 – 00:00",
+        "en": "06:00 – 00:00"
+      },
+      "length": {
+        "zh": "17.4 km",
+        "en": "17.4 km"
+      },
+      "list": [
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island Bus Terminus",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪路",
+          "en": "Addi Road",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（南行）",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "中环桥",
+          "en": "Central Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "North Island Estate Shopping Centre",
+          "zone": 4
+        },
+        {
+          "zh": "巨石路",
+          "en": "Rocky Road",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北顿码头",
+          "en": "Norton Ferry Pier",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=148");</script>
+  <p>正在打开线路 <strong>148</strong>…</p>
+  <p><a href="../index.html?route=148">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>170R · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=170R" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=170R" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "170R",
+  "operators": [
+    "HZ",
+    "CSB",
+    "REBC"
+  ],
+  "fare": "$27.3",
+  "interval": {
+    "zh": "按活动安排（见运营商",
+    "en": "Per event (see operator"
+  },
+  "journeyTime": {
+    "zh": "约 23 分钟",
+    "en": "approx. 23 mins"
+  },
+  "length": {
+    "zh": "20.6 km",
+    "en": "20.6 km"
+  },
+  "notes": {
+    "zh": "2024/6 起延至彩虹中心，第 1/4 区站不再停；散场疏运线。",
+    "en": "Since Jun 2024 extended to Rainbow Estate Complex; Zone 1/4 stops bypassed. Post-event dispersal."
+  },
+  "origin": {
+    "zh": "阳光体育馆",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
+  "via": {
+    "zh": "第七区转车站、镰塔花园、镰塔运动场、国际塔、仙贝纪念碑花园、红石楼、仙贝酒店、仙贝图书馆、仙贝广场、仙贝、东门码头、海西角、海西邨总站、东门总站、东门花园、东门下邨、东门邨、红豆中心、彩虹邨",
+    "en": "Zone 7 Interchange, Kamaya Garden, Kamaya Sports Field, International Tower, The Stone of Memory, Redstone House, Senpai Hotel, Senpai Library, Senpai Shopping Center, Senpai, East Door Pier, Haisey Point, Haisey Estate Bus Terminus, East Door Bus Terminus, East Door Garden, Lower East Door Estate, East Door Estate, Redbean Center, Rainbow Estate"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "单程（阳光体育馆 → 彩虹中心）",
+        "en": "One-way (Sunshine Stadium → Rainbow Estate Complex)"
+      },
+      "serviceTime": {
+        "zh": "仅体育馆有演出/活动日开行；散场后约 15 分钟起至少一班",
+        "en": "Event days only; first bus ~15 min after show ends"
+      },
+      "length": {
+        "zh": "20.6 km",
+        "en": "20.6 km"
+      },
+      "list": [
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "第七区转车站",
+          "en": "Zone 7 Interchange",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "国际塔",
+          "en": "International Tower",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝纪念碑花园",
+          "en": "The Stone of Memory",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "东门码头",
+          "en": "East Door Pier",
+          "zone": 7
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "海西邨总站",
+          "en": "Haisey Estate Bus Terminus",
+          "zone": 8
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆中心",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=170R");</script>
+  <p>正在打开线路 <strong>170R</strong>…</p>
+  <p><a href="../index.html?route=170R">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

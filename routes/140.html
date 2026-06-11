@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>140 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=140" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=140" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "140",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "fare": "$11.4",
+  "interval": {
+    "zh": "2 – 15 分钟",
+    "en": "2 – 15 mins"
+  },
+  "journeyTime": {
+    "zh": "往阳光码头约 27–28 分钟 / 往长岛约 28–31 分钟",
+    "en": "To Sunshine Pier approx. 27–28 mins / To Long Island approx. 28–31 mins"
+  },
+  "length": {
+    "zh": "往阳光码头 12.6 km / 19 站 · 往长岛 11.9 km / 21 站",
+    "en": "To Sunshine Pier 12.6 km / 19 stops · To Long Island 11.9 km / 21 stops"
+  },
+  "notes": {
+    "zh": "第 1/4 区跨区干线（FT · FTCC 联营），长岛码头 ↔ 阳光码头。FT 首条线路；东行不经白鸽岛，西行经时间廊。分段收费：西区海底隧道起至阳光 $7.2、时间廊起至长岛 $7.2。2024/6 起终点改阳光码头；2024/6/29 起由 FTCC 接替 SE 联营。马拉松期间改行 240A。",
+    "en": "Zones 1/4 inter-zone trunk (FT · FTCC joint), Long Island Ferry Pier ↔ Sunshine Pier. First FT route; eastbound skips Dove Island, westbound via Timelapse Mall. Section fares $7.2 from WHT Interchange to Sunshine / Timelapse Mall to Long Island. Terminus moved to Sunshine Pier Jun 2024; FTCC replaced SE from 29 Jun 2024. Diverted as route 240A during Marathon."
+  },
+  "origin": {
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "阳光码头",
+    "en": "Sunshine Pier"
+  },
+  "via": {
+    "zh": "阳光站、中环医院、南环坊、强生街市、新纪元中心、玻璃楼、枫树里、北环转车站（北行）、西区海底隧道转车站、时间廊、赖得商场、虹尾角站、宜和剧场、艺术大厦、阳光体育馆、长岛海滨长廊、百彩新城、国际码头、文化广场",
+    "en": "Sunshine Station, Central Hospital, Langford Place, Johnson Market, Ping Center, Glass Office, Maple Lane, Northern Interchange (Northbound), Western Harbour Tunnel Interchange, Timelapse Mall, Wright Shopping Center, Iris Point Station, Jardine Theater, Art Building, Sunshine Stadium, Long Island Waterfront Promenade, N Park, Regional Pier, Culture Square"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "西行（阳光码头 → 长岛码头）",
+        "en": "Westbound (Sunshine Pier → Long Island Ferry Pier)"
+      },
+      "directionKey": "W",
+      "serviceTime": {
+        "zh": "06:20 – 01:00",
+        "en": "06:20 – 01:00"
+      },
+      "length": {
+        "zh": "11.9 km",
+        "en": "11.9 km"
+      },
+      "list": [
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 4
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Station",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "南环坊",
+          "en": "Langford Place",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（北行）",
+          "en": "Northern Interchange (Northbound)",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "虹尾角站",
+          "en": "Iris Point Station",
+          "zone": 1
+        },
+        {
+          "zh": "宜和剧场",
+          "en": "Jardine Theater",
+          "zone": 1
+        },
+        {
+          "zh": "艺术大厦",
+          "en": "Art Building",
+          "zone": 1
+        },
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "国际码头",
+          "en": "Regional Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "东行（长岛码头 → 阳光码头）",
+        "en": "Eastbound (Long Island Ferry Pier → Sunshine Pier)"
+      },
+      "directionKey": "E",
+      "serviceTime": {
+        "zh": "05:40 – 00:25",
+        "en": "05:40 – 00:25"
+      },
+      "length": {
+        "zh": "12.6 km",
+        "en": "12.6 km"
+      },
+      "list": [
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "国际码头",
+          "en": "Regional Pier",
+          "zone": 1
+        },
+        {
+          "zh": "虹尾角街市",
+          "en": "Iris Point Market",
+          "zone": 1
+        },
+        {
+          "zh": "智家坊",
+          "en": "I Home",
+          "zone": 1
+        },
+        {
+          "zh": "宜和剧场",
+          "en": "Jardine Theater",
+          "zone": 1
+        },
+        {
+          "zh": "艺术大厦",
+          "en": "Art Building",
+          "zone": 1
+        },
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（南行）",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "南环中心",
+          "en": "The Southern",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Station",
+          "zone": 4
+        },
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 4
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=140");</script>
+  <p>正在打开线路 <strong>140</strong>…</p>
+  <p><a href="../index.html?route=140">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

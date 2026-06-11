@@ -43,7 +43,11 @@ export function DirectionToggle({
           role="tab"
           aria-selected={value === sortedIndex}
           className={`direction-toggle-btn ${value === sortedIndex ? 'active' : ''}`}
-          onClick={() => onChange(sortedIndex)}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onChange(sortedIndex)
+          }}
         >
           {getDirectionShortLabel(route, sortedIndex, t, locale)}
         </button>

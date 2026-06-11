@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F701 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=F701" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=F701" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "F701",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "interval": {
+    "zh": "固定班次",
+    "en": "Fixed departure"
+  },
+  "journeyTime": {
+    "zh": "往YiYan: 25 分钟 / 往Shallow Valley Depot: 24 - 26 分钟",
+    "en": "To YiYan: 25 mins / To Shallow Valley Depot: 24 - 26 mins"
+  },
+  "length": {
+    "zh": "26.6 km",
+    "en": "26.6 km"
+  },
+  "origin": {
+    "zh": "浅水湾车厂",
+    "en": "FT Shallow Valley Depot"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "叶欣邨第一座、叶角花园、叶角湾邨商场、叶角湾邨、叶角医院、中间花园、勿莫商场、北叶花园、罗力素花园一期、罗力素花园二期、亚历山花园、亚历山教堂、第七区转车站、东锦葵邨阳葵楼、东锦葵大街、艾迪城、白鸽山、白鸽邨",
+    "en": "YiYan Estate Block 1, Leafy Bay Garden, Leafy Bay Estate Shopping Centre, Leafy Bay Estate, Leafy Hospital, Middle Garden, Mo Shopping Center, North Leafy Garden, Laws Garden 1, Laws Garden 2, Alexander Garden, Alexander Church, Axis Road, Sunny House, Eastmallow Estate, Eastmallow Main Street, Addi City, Dove Hill, Dove Estate"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（叶欣海旁路 → 永巴四露谷车厂）",
+        "en": "Northbound (Praya YiYan Road → FT Shallow Valley Depot)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "04:00、04:45、05:30",
+        "en": "04:00, 04:45, 05:30"
+      },
+      "length": {
+        "zh": "26.6 km",
+        "en": "26.6 km"
+      },
+      "list": [
+        {
+          "zh": "叶欣海旁路",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Centre",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨",
+          "en": "Leafy Bay Estate",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "中间花园",
+          "en": "Middle Garden",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫商场",
+          "en": "Mo Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "北叶花园",
+          "en": "North Leafy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园一期",
+          "en": "Laws Garden 1",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园二期",
+          "en": "Laws Garden 2",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山花园",
+          "en": "Alexander Garden",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山教堂",
+          "en": "Alexander Church",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站",
+          "en": "Axis Road",
+          "zone": 7
+        },
+        {
+          "zh": "东锦葵邨阳葵楼",
+          "en": "Sunny House, Eastmallow Estate",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "永巴四露谷车厂",
+          "en": "FT Shallow Valley Depot",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（永巴四露谷车厂 → 叶欣海旁路）",
+        "en": "Southbound (FT Shallow Valley Depot → Praya YiYan Road)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "01:00、01:45、02:30、04:30、05:00",
+        "en": "01:00, 01:45, 02:30, 04:30, 05:00"
+      },
+      "length": {
+        "zh": "26.6 km",
+        "en": "26.6 km"
+      },
+      "list": [
+        {
+          "zh": "永巴四露谷车厂",
+          "en": "FT Shallow Valley Depot",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "伊迪城",
+          "en": "Eddie City",
+          "zone": 1
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵海旁路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        },
+        {
+          "zh": "第七区转车站",
+          "en": "Axis Road",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山花园",
+          "en": "Alexander Garden",
+          "zone": 7
+        },
+        {
+          "zh": "亚历山教堂",
+          "en": "Alexander Church",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园二期",
+          "en": "Laws Garden 2",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园一期",
+          "en": "Laws Garden 1",
+          "zone": 7
+        },
+        {
+          "zh": "北叶花园",
+          "en": "North Leafy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫商场",
+          "en": "Mo Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "中间花园",
+          "en": "Middle Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨",
+          "en": "Leafy Bay Estate",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Centre",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁路",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=F701");</script>
+  <p>正在打开线路 <strong>F701</strong>…</p>
+  <p><a href="../index.html?route=F701">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

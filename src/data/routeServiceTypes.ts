@@ -10,6 +10,7 @@ export { ROUTE_SERVICE_TYPE_ORDER }
 const SERVICE_TYPE_ALIASES: Record<string, string[]> = {
   '140P': ['141P'],
   '141P': ['140P'],
+  '476SA': ['476S'],
 }
 
 function sortServiceTypes(types: RouteServiceType[]): RouteServiceType[] {

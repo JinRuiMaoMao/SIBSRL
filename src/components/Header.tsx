@@ -1,9 +1,11 @@
 import { useMemo, useRef } from 'react'
 import { EXTERNAL_LINKS } from '../data/routes'
 import { useHeaderTabRows, useMeasureTabRefs } from '../hooks/useHeaderTabRows'
+import { useSecretLogoClick } from '../hooks/useSecretLogoClick'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
+import { getTabPageHref, readTabFromLocation } from '../utils/appTabNavigation'
 import { SettingsMenu } from './SettingsMenu'
 
 const LINK_LABEL_KEYS: Record<string, MessageKey> = {
@@ -22,13 +24,14 @@ const TAB_KEYS: Record<AppTab, MessageKey> = {
 
 interface HeaderProps {
   activeTab: AppTab
-  onTabChange: (tab: AppTab) => void
   collapsed: boolean
   onToggleCollapse: () => void
 }
 
-export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: HeaderProps) {
+export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) {
   const { t, locale } = useLocale()
+  const secretLogoEnabled = readTabFromLocation() === 'routes'
+  const onLogoClick = useSecretLogoClick(secretLogoEnabled)
   const tabOrder = useMemo(() => Object.keys(TAB_KEYS) as AppTab[], [])
 
   const actionsRef = useRef<HTMLDivElement>(null)
@@ -47,17 +50,16 @@ export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: 
 
   const singleTabRow = rows.length === 1
 
-  const renderTabButton = (tab: AppTab) => (
-    <button
+  const renderTabLink = (tab: AppTab) => (
+    <a
       key={tab}
-      type="button"
+      href={getTabPageHref(tab)}
       role="tab"
       aria-selected={activeTab === tab}
-      className={`header-tab ${activeTab === tab ? 'active' : ''}`}
-      onClick={() => onTabChange(tab)}
+      className={`header-tab-link ${activeTab === tab ? 'header-tab-link--active' : ''}`}
     >
-      {t(TAB_KEYS[tab])}
-    </button>
+      <span className="header-tab">{t(TAB_KEYS[tab])}</span>
+    </a>
   )
 
   return (
@@ -86,9 +88,16 @@ export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: 
       <header className="site-header" aria-hidden={collapsed}>
         <div className="header-inner">
           <div className="brand">
-            <span className="brand-icon" aria-hidden>
-              🚌
-            </span>
+            <button
+              type="button"
+              className="brand-icon-btn"
+              onClick={onLogoClick}
+              aria-label={t('appTitle')}
+            >
+              <span className="brand-icon" aria-hidden>
+                🚌
+              </span>
+            </button>
             <div>
               <h1>{t('appTitle')}</h1>
               <p className="tagline">{t('appTagline')}</p>
@@ -122,7 +131,7 @@ export function Header({ activeTab, onTabChange, collapsed, onToggleCollapse }: 
             >
               {rows.map((row, rowIndex) => (
                 <div key={rowIndex} className="header-tabs" role="presentation">
-                  {row.map((tab) => renderTabButton(tab as AppTab))}
+                  {row.map((tab) => renderTabLink(tab as AppTab))}
                 </div>
               ))}
             </nav>

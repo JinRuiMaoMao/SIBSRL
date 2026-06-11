@@ -1,0 +1,127 @@
+{
+  "id": "270A",
+  "number": "270A",
+  "operators": [
+    "REBC",
+    "HZ"
+  ],
+  "category": "inter",
+  "pattern": "oneway",
+  "zones": [
+    1,
+    7
+  ],
+  "origin": {
+    "zh": "Long Island Ferry Pier",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "Senpai Shopping Centre / 長島碼頭",
+    "en": "Senpai Shopping Centre / 長島碼頭"
+  },
+  "via": {
+    "zh": "Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower",
+    "en": "Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower"
+  },
+  "fare": "$18.2",
+  "length": {
+    "zh": "17.8 km",
+    "en": "17.8 km"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（長島碼頭 → 仙貝廣場）",
+        "en": "Direction 1 (Long Island Ferry Pier → Senpai Shopping Centre)"
+      },
+      "serviceTime": {
+        "zh": "Services provided during Sunshine Marathon Only",
+        "en": "Services provided during Sunshine Marathon Only"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "長島碼頭",
+            "en": "Long Island Ferry Pier"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "文化廣場",
+            "en": "Culture Square"
+          }
+        },
+        {
+          "name": {
+            "zh": "國際碼頭",
+            "en": "Regional Pier"
+          }
+        },
+        {
+          "name": {
+            "zh": "時間里",
+            "en": "Timelapse Lane"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "白鴿山",
+            "en": "Dove Hill"
+          }
+        },
+        {
+          "name": {
+            "zh": "白鴿邨",
+            "en": "Dove Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "購物廊",
+            "en": "Shopping Corridor"
+          }
+        },
+        {
+          "name": {
+            "zh": "鎌塔花園",
+            "en": "Kamaya Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "鎌塔運動場",
+            "en": "Kamaya Sports Field"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅石樓",
+            "en": "Redstone House"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝酒店",
+            "en": "Senpai Hotel"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝圖書館",
+            "en": "Senpai Library"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Centre"
+          }
+        }
+      ]
+    }
+  ],
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_270A"
+}

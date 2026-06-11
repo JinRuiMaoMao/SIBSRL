@@ -1,123 +1,131 @@
 {
   "results": [
     {
-      "id": "U47",
-      "number": "U47",
+      "id": "270A",
+      "number": "270A",
       "operators": [
-        "FT",
-        "FTCC",
-        "CSB"
+        "REBC",
+        "HZ"
       ],
-      "category": "express",
-      "pattern": "bidirectional",
+      "category": "inter",
+      "pattern": "oneway",
       "zones": [
-        4,
+        1,
         7
       ],
       "origin": {
-        "zh": "Hotel Symbol",
-        "en": "Hotel Symbol"
+        "zh": "Long Island Ferry Pier",
+        "en": "Long Island Ferry Pier"
       },
       "destination": {
-        "zh": "North Sunshine University / 旭濤薈",
-        "en": "North Sunshine University / 旭濤薈"
+        "zh": "Senpai Shopping Centre / 長島碼頭",
+        "en": "Senpai Shopping Centre / 長島碼頭"
       },
       "via": {
-        "zh": "Sunshine University Southern Campus, [[Sunshine University",
-        "en": "Sunshine University Southern Campus, [[Sunshine University"
+        "zh": "Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower",
+        "en": "Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower"
       },
-      "interval": {
-        "zh": "15 - 60 min",
-        "en": "15 - 60 min"
-      },
-      "journeyTime": {
-        "zh": "6-10 min",
-        "en": "6-10 min"
-      },
-      "levelRequired": 25,
-      "variantUnlocks": {
-        "U47*": {
-          "sunshardsRequired": 300
-        }
-      },
+      "fare": "$18.2",
       "length": {
-        "zh": "13.05 km",
-        "en": "13.05 km"
+        "zh": "17.8 km",
+        "en": "17.8 km"
       },
       "stops": [
         {
-          "directionKey": "N",
           "direction": {
-            "zh": "北行（旭濤薈 → 陽光大學北）",
-            "en": "Northbound (Hotel Symbol → North Sunshine University)"
+            "zh": "方向1（長島碼頭 → 仙貝廣場）",
+            "en": "Direction 1 (Long Island Ferry Pier → Senpai Shopping Centre)"
           },
           "serviceTime": {
-            "zh": "08:15 – 19:30",
-            "en": "08:15 – 19:30"
+            "zh": "Services provided during Sunshine Marathon Only",
+            "en": "Services provided during Sunshine Marathon Only"
           },
           "list": [
             {
               "name": {
-                "zh": "旭濤薈",
-                "en": "Hotel Symbol"
+                "zh": "長島碼頭",
+                "en": "Long Island Ferry Pier"
               },
-              "zone": 4
+              "zone": 1
             },
             {
               "name": {
-                "zh": "陽光大學中",
-                "en": "Central- Sunshine University"
+                "zh": "文化廣場",
+                "en": "Culture Square"
               }
             },
             {
               "name": {
-                "zh": "甄博士樓",
-                "en": "X.Y.Zhen College"
+                "zh": "國際碼頭",
+                "en": "Regional Pier"
               }
             },
             {
               "name": {
-                "zh": "陽光大學北",
-                "en": "North Sunshine University"
+                "zh": "時間里",
+                "en": "Timelapse Lane"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "白鴿山",
+                "en": "Dove Hill"
               }
-            }
-          ]
-        },
-        {
-          "directionKey": "S",
-          "direction": {
-            "zh": "南行（陽光大學北 → 旭濤薈）",
-            "en": "Southbound (North Sunshine University → Hotel Symbol)"
-          },
-          "serviceTime": {
-            "zh": "08:45 – 20:50",
-            "en": "08:45 – 20:50"
-          },
-          "list": [
-            {
-              "name": {
-                "zh": "陽光大學北",
-                "en": "North Sunshine University"
-              },
-              "zone": 4
             },
             {
               "name": {
-                "zh": "陽光大學南環校園",
-                "en": "Sunshine University Southern Campus"
-              },
-              "zone": 4
+                "zh": "白鴿邨",
+                "en": "Dove Estate"
+              }
             },
             {
               "name": {
-                "zh": "旭濤薈",
-                "en": "Hotel Symbol"
+                "zh": "購物廊",
+                "en": "Shopping Corridor"
+              }
+            },
+            {
+              "name": {
+                "zh": "鎌塔花園",
+                "en": "Kamaya Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "鎌塔運動場",
+                "en": "Kamaya Sports Field"
+              }
+            },
+            {
+              "name": {
+                "zh": "紅石樓",
+                "en": "Redstone House"
+              }
+            },
+            {
+              "name": {
+                "zh": "仙貝酒店",
+                "en": "Senpai Hotel"
+              }
+            },
+            {
+              "name": {
+                "zh": "仙貝圖書館",
+                "en": "Senpai Library"
+              }
+            },
+            {
+              "name": {
+                "zh": "仙貝廣場",
+                "en": "Senpai Shopping Centre"
               }
             }
           ]
         }
       ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_U47"
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_270A"
     }
   ],
   "errors": []

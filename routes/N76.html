@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N76 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=N76" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=N76" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "N76",
+  "operators": [
+    "CSB"
+  ],
+  "fare": "$10.7",
+  "interval": {
+    "zh": "20 分钟",
+    "en": "20 mins"
+  },
+  "journeyTime": {
+    "zh": "待定",
+    "en": "TBA"
+  },
+  "length": {
+    "zh": "15.4 km（环线）",
+    "en": "15.4 km (loop)"
+  },
+  "notes": {
+    "zh": "季节限定环线（CSB），仙贝广场 ↺ 叶欣海旁道，经海西邨、彩虹邨、东门邨、勿莫街市、叶角湾邨、叶欣码头及镰塔花园。游戏内编号 N76，指定节日期间深夜开行；不设分段收费及解锁等级。",
+    "en": "Seasonal circular route (CSB), Senpai Shopping Center ↺ Praya YiYan Road via Haisey Estate, Rainbow Estate, Upper East Door Estate, Mo Market, Leafy Bay Estate, YiYan Ferry Pier and Kamaya Garden. In-game route N76; overnight service during specified festivals. No section fare or separate unlock level."
+  },
+  "origin": {
+    "zh": "仙贝广场",
+    "en": "Senpai Shopping Center"
+  },
+  "destination": {
+    "zh": "叶欣海旁道",
+    "en": "Praya YiYan Road"
+  },
+  "via": {
+    "zh": "仙贝市政大厦、仙贝、海西角、海西邨、海西回旋处、彩虹中心、彩虹邨、红豆中心、东门邨、东门公园、勿莫街市、中间花园、叶角医院、叶角湾邨、叶角湾邨商场、叶角花园、叶欣邨第一座、际巴车厂、叶欣海旁道、南洋大厦、彩虹广场、东厂、镰塔花园、镰塔运动场、红石楼、仙贝酒店、仙贝图书馆",
+    "en": "Senpai Municipal Services Building, Senpai, Haisey Point, Haisey Estate, Haisey Roundabout, Rainbow Estate Complex, Rainbow Estate, Redbean Center, East Door Estate, East Door Park, Mo Market, Middle Garden, Leafy Hospital, Leafy Bay Estate, Leafy Bay Estate Shopping Center, Leafy Bay Garden, YiYan Estate Block 1, CSB Depot, Praya YiYan Road, Southern Building, Rainbow Plaza, East Factory, Kamaya Garden, Kamaya Sports Field, Redstone House, Senpai Hotel, Senpai Library"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "环线（仙贝广场 ↺ 叶欣海旁道）",
+        "en": "Circular (Senpai Shopping Center ↺ Praya YiYan Road)"
+      },
+      "serviceTime": {
+        "zh": "指定节日期间 01:40 – 02:20",
+        "en": "During specified festivals: 01:40 – 02:20"
+      },
+      "length": {
+        "zh": "15.4 km",
+        "en": "15.4 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝市政大厦",
+          "en": "Senpai Municipal Services Building",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "海西回旋处",
+          "en": "Haisey Roundabout",
+          "zone": 8
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆中心",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门公园",
+          "en": "East Door Park",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫街市",
+          "en": "Mo Market",
+          "zone": 7
+        },
+        {
+          "zh": "中间花园",
+          "en": "Middle Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨",
+          "en": "Leafy Bay Estate",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=N76");</script>
+  <p>正在打开线路 <strong>N76</strong>…</p>
+  <p><a href="../index.html?route=N76">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

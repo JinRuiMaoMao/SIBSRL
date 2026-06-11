@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C401 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=C401" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=C401" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "C401",
+  "operators": [
+    "CSB"
+  ],
+  "interval": {
+    "zh": "固定班次",
+    "en": "Fixed departure"
+  },
+  "journeyTime": {
+    "zh": "往Norton: 13 - 14 分钟 / 往CSB Depot: 13 分钟",
+    "en": "To Norton: 13 - 14 mins / To CSB Depot: 13 mins"
+  },
+  "length": {
+    "zh": "13.6 km",
+    "en": "13.6 km"
+  },
+  "origin": {
+    "zh": "际巴车厂",
+    "en": "CSB Depot"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "北顿邨、北顿花园、北岛花园、北岛花园商场、望环台、阳光大学、东锦葵大街、东锦葵海旁路、中环南总站、钻石交易塔",
+    "en": "Norton Estate, Norton Garden, North Island Estate, NIE Shopping Center, Panorama Heights, Sunshine University, Eastmallow Main Street, Eastmallow Praya Road, Southern Central Bus Terminus, Diamond Trading Tower"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（际巴车厂 → 北顿市中心）",
+        "en": "Northbound (CSB Depot → Norton Town Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "01:45、02:30",
+        "en": "01:45, 02:30"
+      },
+      "length": {
+        "zh": "13.6 km",
+        "en": "13.6 km"
+      },
+      "list": [
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁路",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Bus Terminus",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵邨阳葵楼",
+          "en": "Eastmallow Estate - Sunny House",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "NIE Shopping Center",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（北顿市中心 → 际巴车厂）",
+        "en": "Southbound (Norton Town Center → CSB Depot)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "03:45、04:15",
+        "en": "03:45, 04:15"
+      },
+      "length": {
+        "zh": "13.6 km",
+        "en": "13.6 km"
+      },
+      "list": [
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园",
+          "en": "North Island Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北岛花园商场",
+          "en": "NIE Shopping Center",
+          "zone": 4
+        },
+        {
+          "zh": "望环台",
+          "en": "Panorama Heights",
+          "zone": 4
+        },
+        {
+          "zh": "阳光大学",
+          "en": "Sunshine University",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵大街",
+          "en": "Eastmallow Main Street",
+          "zone": 4
+        },
+        {
+          "zh": "东锦葵海旁路",
+          "en": "Eastmallow Praya Road",
+          "zone": 4
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Bus Terminus",
+          "zone": 4
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=C401");</script>
+  <p>正在打开线路 <strong>C401</strong>…</p>
+  <p><a href="../index.html?route=C401">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

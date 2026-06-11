@@ -3,7 +3,8 @@ import { useLocale } from '../i18n/LocaleContext'
 import { showCircularLineBesideNumber } from '../utils/routeCategory'
 import { getPrimaryText } from '../i18n/displayText'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
-import type { BusRoute } from '../types/route'
+import type { DailyChallengeIntro as DailyChallengeIntroContent } from '../data/dailyChallenge'
+import type { BilingualText, BusRoute } from '../types/route'
 import {
   getDirectionDataIndex,
   getDirectionLengthKm,
@@ -13,10 +14,13 @@ import {
 } from '../utils/routeDirections'
 import { getDirectionIntermediateStops, getDirectionVia } from '../utils/routeVia'
 import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
+import type { RoutePageData } from '../types/routePageData'
+import { getPageStopAudioAtRow } from '../utils/routePageDataFormat'
 import { DirectionToggle } from './DirectionToggle'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
+import { DailyChallengeIntro } from './DailyChallengeIntro'
 
 interface RouteDetailProps {
   route: BusRoute
@@ -24,6 +28,14 @@ interface RouteDetailProps {
   onDirectionChange: (index: number) => void
   onClose: () => void
   className?: string
+  /** 来自 routes/{id}.html 的可编辑数据（优先于 TS 内建报站） */
+  pageData?: RoutePageData | null
+  /** 从每日挑战进入时显示当日简介 */
+  dailyChallengeIntro?: DailyChallengeIntroContent | null
+  /** 每日挑战固定方向：隐藏西行/东行切换 */
+  lockDirection?: boolean
+  /** 每日挑战方向摘要（替代东行/西行标签） */
+  directionEndpoints?: BilingualText | null
 }
 
 export function RouteDetail({
@@ -32,6 +44,10 @@ export function RouteDetail({
   onDirectionChange,
   onClose,
   className = '',
+  pageData = null,
+  dailyChallengeIntro = null,
+  lockDirection = false,
+  directionEndpoints = null,
 }: RouteDetailProps) {
   const { locale, t } = useLocale()
   const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
@@ -67,10 +83,14 @@ export function RouteDetail({
         </button>
       </div>
 
+      {dailyChallengeIntro ? (
+        <DailyChallengeIntro intro={dailyChallengeIntro} className="detail-section" />
+      ) : null}
+
       <section className="detail-section">
         <div className="detail-section-head">
           <h3>{t('routeSection')}</h3>
-          {hasDirections && (
+          {hasDirections && !lockDirection && (
             <DirectionToggle
               route={route}
               value={directionIndex}
@@ -129,7 +149,11 @@ export function RouteDetail({
         {route.fare && (
           <div>
             <h4>{t('fare')}</h4>
-            <p>{route.fare}</p>
+            <p className="route-detail-fare">
+              {typeof route.fare === 'string'
+                ? route.fare
+                : getPrimaryText(route.fare, locale)}
+            </p>
           </div>
         )}
         {(route.levelRequired != null || route.sunshardsRequired != null) && (
@@ -154,8 +178,12 @@ export function RouteDetail({
       {activeStops && (
         <section className="detail-section">
           <h3>
-            {t('stopsSection')} ·{' '}
-            {getDirectionShortLabel(route, directionIndex, t, locale)}
+            {t('stopsSection')}
+            {lockDirection && directionEndpoints
+              ? ` · ${getPrimaryText(directionEndpoints, locale)}`
+              : !lockDirection
+                ? ` · ${getDirectionShortLabel(route, directionIndex, t, locale)}`
+                : ''}
           </h3>
           <div className="stop-table" role="table">
             <div className="stop-table-row stop-table-head" role="row">
@@ -175,7 +203,9 @@ export function RouteDetail({
             <ol className="stop-table-body">
               {activeStops.list.map((stop, i) => {
                 const name = getPrimaryText(stop.name, locale)
-                const stopAudio = getRouteStopAudioAtRow(route.id, i)
+                const stopAudio =
+                  getPageStopAudioAtRow(pageData, stopDataIndex, i) ??
+                  getRouteStopAudioAtRow(route.id, i)
                 const audioId = `${route.id}-at-${i}`
                 const nextName = stopAudio
                   ? getPrimaryText(stopAudio.nextStopLabel, locale)

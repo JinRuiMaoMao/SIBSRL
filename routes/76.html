@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>76 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=76" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=76" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "76",
+  "operators": [
+    "CSB"
+  ],
+  "fare": "$6.3",
+  "interval": {
+    "zh": "4 – 30 分钟",
+    "en": "4 – 30 mins"
+  },
+  "journeyTime": {
+    "zh": "往叶欣海旁道约 17 分钟 / 往仙贝约 18 分钟",
+    "en": "To Praya YiYan Road approx. 17 mins / To Senpai approx. 18 mins"
+  },
+  "length": {
+    "zh": "8.6 km（双向）",
+    "en": "8.6 km (both directions)"
+  },
+  "notes": {
+    "zh": "第 7 区内线（CSB），叶欣海旁道 ↔ 仙贝广场，经叶角湾及北叶角。与 75/77 同端点不同走线；完成 75/76/77 双向可获 Celestial Leaf 成就。2020/7 起改经叶角湾邨、不再经东门及彩虹。76# 特班经安灵台（$7.2，Lv.87）。",
+    "en": "Zone 7 local (CSB), Praya YiYan Road ↔ Senpai via Leafy Bay Estate and North Leafy. Same endpoints as 75"
+  },
+  "origin": {
+    "zh": "叶欣海旁道",
+    "en": "Praya YiYan Road"
+  },
+  "destination": {
+    "zh": "仙贝广场",
+    "en": "Senpai Shopping Center"
+  },
+  "via": {
+    "zh": "钻石交易塔、新地花园、新地公园、叶角花园、叶角湾邨商场、叶角湾邨、叶角医院、中间花园、勿莫商场、罗力素花园一期、北叶花园、仙贝道、仙贝、仙贝市政大厦、红石楼、仙贝酒店、仙贝图书馆",
+    "en": "Diamond Trading Tower, Sindy Garden, Sindy Park, Leafy Bay Garden, Leafy Bay Estate Shopping Center, Leafy Bay Estate, Leafy Hospital, Middle Garden, Mo Shopping Center, Laws Garden, North Leafy Garden, Senpai Road, Senpai, Senpai Municipal Services Building, Redstone House, Senpai Hotel, Senpai Library"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（叶欣海旁道 → 仙贝广场）",
+        "en": "Northbound (Praya YiYan Road → Senpai Shopping Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "05:30 – 00:00",
+        "en": "05:30 – 00:00"
+      },
+      "length": {
+        "zh": "8.6 km",
+        "en": "8.6 km"
+      },
+      "list": [
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨",
+          "en": "Leafy Bay Estate",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "中间花园",
+          "en": "Middle Garden",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫商场",
+          "en": "Mo Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园一期",
+          "en": "Laws Garden",
+          "zone": 7
+        },
+        {
+          "zh": "北叶花园",
+          "en": "North Leafy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝道",
+          "en": "Senpai Road",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝市政大厦",
+          "en": "Senpai Municipal Services Building",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（仙贝广场 → 叶欣海旁道）",
+        "en": "Southbound (Senpai Shopping Center → Praya YiYan Road)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "06:00 – 01:30",
+        "en": "06:00 – 01:30"
+      },
+      "length": {
+        "zh": "8.6 km",
+        "en": "8.6 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "上湾街市",
+          "en": "Sheung Bay Market",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝市政大厦",
+          "en": "Senpai Municipal Services Building",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝道",
+          "en": "Senpai Road",
+          "zone": 7
+        },
+        {
+          "zh": "北叶花园",
+          "en": "North Leafy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "罗力素花园一期",
+          "en": "Laws Garden",
+          "zone": 7
+        },
+        {
+          "zh": "勿莫街市",
+          "en": "Mo Market",
+          "zone": 7
+        },
+        {
+          "zh": "中间花园",
+          "en": "Middle Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨",
+          "en": "Leafy Bay Estate",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "新地公园",
+          "en": "Sindy Park",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=76");</script>
+  <p>正在打开线路 <strong>76</strong>…</p>
+  <p><a href="../index.html?route=76">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

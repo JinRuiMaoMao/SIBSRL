@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>25Y · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=25Y" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=25Y" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "25Y",
+  "operators": [
+    "FT"
+  ],
+  "fare": "$5.4",
+  "interval": {
+    "zh": "视乘客需求",
+    "en": "Depends on passenger demand"
+  },
+  "journeyTime": {
+    "zh": "往货柜岛约 25 分钟 / 往长岛约 28 分钟",
+    "en": "To Container's Island approx. 25 mins / To Long Island approx. 28 mins"
+  },
+  "length": {
+    "zh": "往货柜岛 21.2 km / 往长岛 21.5 km",
+    "en": "To Container's Island 21.2 km / To Long Island 21.5 km"
+  },
+  "notes": {
+    "zh": "第 1/4 区改道线（FT）。Desire Bridge 封闭（每日挑战「Bridge Closed」等）时替代 25；经跨岛公路绕道及西区海底隧道。",
+    "en": "Zones 1/4 diversion (FT). Replaces route 25 when Desire Bridge is closed (e.g. Bridge Closed daily challenge); via Cross-Island Highway bypass and Western Harbour Tunnel."
+  },
+  "origin": {
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "货柜码头岛",
+    "en": "Container's Island"
+  },
+  "via": {
+    "zh": "货柜码头、海苔湾、货柜码头员工宿舍、三塔、北环转车站、西区海底隧道转车站、西区医院、艾迪城、白鸽公园、赖得商场、虹尾角站、宜和剧场、艺术大厦、阳光体育馆、长岛海滨长廊、百彩新城、文化广场",
+    "en": "Containers Terminal, Seaweed Bay, Containers Island Employee House, Triple Tower, Northern Interchange, Western Harbour Tunnel Interchange, Western Hospital, Addi City, Dove Park, Wright Shopping Center, Iris Point Station, Jardine Theater, Art Building, Sunshine Stadium, Long Island Waterfront Promenade, N Park, Culture Square"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（货柜码头岛 → 长岛码头）",
+        "en": "Northbound (Container's Island B"
+      },
+      "directionKey": "N",
+      "length": {
+        "zh": "21.5 km",
+        "en": "21.5 km"
+      },
+      "list": [
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽公园",
+          "en": "Dove Park",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "虹尾角站",
+          "en": "Iris Point Station",
+          "zone": 1
+        },
+        {
+          "zh": "宜和剧场",
+          "en": "Jardine Theater",
+          "zone": 1
+        },
+        {
+          "zh": "艺术大厦",
+          "en": "Art Building",
+          "zone": 1
+        },
+        {
+          "zh": "阳光体育馆",
+          "en": "Sunshine Stadium",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（长岛码头 → 货柜码头岛）",
+        "en": "Southbound (Long Island Ferry Pier → Container's Island B"
+      },
+      "directionKey": "S",
+      "length": {
+        "zh": "21.2 km",
+        "en": "21.2 km"
+      },
+      "list": [
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "百彩新城",
+          "en": "N Park",
+          "zone": 1
+        },
+        {
+          "zh": "长岛东医院",
+          "en": "East Long Island Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "彩色汇",
+          "en": "Rainbow Center",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽公园",
+          "en": "Dove Park",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站",
+          "en": "Northern Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "货柜码头",
+          "en": "Containers Terminal",
+          "zone": 1
+        },
+        {
+          "zh": "海苔湾",
+          "en": "Seaweed Bay",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头员工宿舍",
+          "en": "Containers Island Employee House",
+          "zone": 1
+        },
+        {
+          "zh": "三塔",
+          "en": "Triple Tower",
+          "zone": 1
+        },
+        {
+          "zh": "货柜码头岛",
+          "en": "Container's Island",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=25Y");</script>
+  <p>正在打开线路 <strong>25Y</strong>…</p>
+  <p><a href="../index.html?route=25Y">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

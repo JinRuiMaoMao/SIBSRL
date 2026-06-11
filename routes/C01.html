@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C01 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=C01" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=C01" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "C01",
+  "operators": [
+    "CSB"
+  ],
+  "interval": {
+    "zh": "30 - 60 分钟",
+    "en": "30 - 60 mins"
+  },
+  "length": {
+    "zh": "往仙贝广场 11.8 km / 往际巴车厂 11.6 km",
+    "en": "To Senpai Shopping Center 11.8 km / To CSB Depot 11.6 km"
+  },
+  "origin": {
+    "zh": "际巴车厂",
+    "en": "CSB Depot"
+  },
+  "destination": {
+    "zh": "仙贝广场",
+    "en": "Senpai Shopping Center"
+  },
+  "via": {
+    "zh": "仙贝图书馆、仙贝酒店、黑白中心、仙贝、东门路、东门总站、东门花园、东门下邨、东门邨、红豆中心、彩虹邨、彩虹中心、海西回旋处、海西角、海西邨、叶角医院、叶欣邨第一座",
+    "en": "Senpai Library, Senpai Hotel, Grayscale Center, Senpai, East Door Road, East Door Bus Terminus, East Door Garden, Lower East Door Estate, East Door Estate, Redbean Center, Rainbow Estate, Rainbow Estate Complex, Haisey Roundabout, Haisey Point, Haisey Estate, Leafy Hospital, YiYan Estate Block 1"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（际巴车厂 → 仙贝广场）",
+        "en": "Northbound (CSB Depot → Senpai Shopping Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "04:00 – 06:00 / 00:30 – 02:00",
+        "en": "04:00 – 06:00 / 00:30 – 02:00"
+      },
+      "length": {
+        "zh": "11.8 km",
+        "en": "11.8 km"
+      },
+      "list": [
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "海西回旋处",
+          "en": "Haisey Roundabout",
+          "zone": 8
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（仙贝广场 → 际巴车厂）",
+        "en": "Southbound (Senpai Shopping Center → CSB Depot)"
+      },
+      "directionKey": "S",
+      "length": {
+        "zh": "11.6 km",
+        "en": "11.6 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "黑白中心",
+          "en": "Grayscale Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "东门路",
+          "en": "East Door Road",
+          "zone": 7
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆中心",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "海西回旋处",
+          "en": "Haisey Roundabout",
+          "zone": 8
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第一座",
+          "en": "YiYan Estate Block 1",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=C01");</script>
+  <p>正在打开线路 <strong>C01</strong>…</p>
+  <p><a href="../index.html?route=C01">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

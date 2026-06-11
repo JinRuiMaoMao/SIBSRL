@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>140P · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=140P" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=140P" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "140P",
+  "operators": [
+    "FT",
+    "FTCC"
+  ],
+  "fare": "$11.4",
+  "interval": {
+    "zh": "4 - 7 分钟",
+    "en": "4 - 7 minutes"
+  },
+  "journeyTime": {
+    "zh": "27 分钟",
+    "en": "27 mins"
+  },
+  "length": {
+    "zh": "10.5 km",
+    "en": "10.5 km"
+  },
+  "origin": {
+    "zh": "阳光码头",
+    "en": "Sunshine Pier"
+  },
+  "destination": {
+    "zh": "阳光码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "via": {
+    "zh": "阳光站、中环医院、南环坊、强生街市、新纪元中心、西区海底隧道转车站、长岛中心、宜和剧场、长岛海滨长廊",
+    "en": "Sunshine Station, Central Hospital, Langford Place, Johnson Market, Ping Center, Western Harbour Tunnel Interchange, Long Island Center, Jardine Theater, Long Island Waterfront Promenade"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（阳光码头 → 长岛码头）",
+        "en": "Direction 1 (Sunshine Pier → Long Island Ferry Pier)"
+      },
+      "serviceTime": {
+        "zh": "周一至五 : 17:30 – 20:00",
+        "en": "Mon – Fri : 17:30 – 20:00"
+      },
+      "length": {
+        "zh": "10.5 km",
+        "en": "10.5 km"
+      },
+      "list": [
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 4
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Station",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "南环坊",
+          "en": "Langford Place",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "长岛中心",
+          "en": "Long Island Center",
+          "zone": 1
+        },
+        {
+          "zh": "宜和剧场",
+          "en": "Jardine Theater",
+          "zone": 1
+        },
+        {
+          "zh": "长岛海滨长廊",
+          "en": "Long Island Waterfront Promenade",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=140P");</script>
+  <p>正在打开线路 <strong>140P</strong>…</p>
+  <p><a href="../index.html?route=140P">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

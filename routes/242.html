@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>242 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=242" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=242" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "242",
+  "operators": [
+    "REBC",
+    "FTCC"
+  ],
+  "fare": "$11.4",
+  "length": {
+    "zh": "往白鸽邨 15.1 km",
+    "en": "To Dove Estate 15.1 km"
+  },
+  "notes": {
+    "zh": "马拉松特别服务（REBC · FTCC），白鸽邨 ↺ 阳光码头，经白鸽岛、西区海底隧道及中区；替代 142 西行。设有分段收费（购物廊起至白鸽邨 $5.4）。",
+    "en": "Marathon special service (REBC · FTCC), Dove Estate ↺ Sunshine Pier via Dove Island, Western Harbour Tunnel and Central; replaces route 142 westbound. Section fare from Shopping Corridor to Dove Estate $5.4."
+  },
+  "origin": {
+    "zh": "白鸽邨",
+    "en": "Dove Estate"
+  },
+  "destination": {
+    "zh": "阳光码头",
+    "en": "Sunshine Pier"
+  },
+  "via": {
+    "zh": "白鸽山、三哥大厦、赖得商场、时间廊、西区海底隧道转车站、北环转车站（南行）、红地砖、枫树里、玻璃楼、亚特路、中环消防局、强生街市、南环花园二期、中环南总站、中叶隧道行政大楼、南环文化区公园、阳光站、阳光码头、购物廊、白鸽山",
+    "en": "Dove Hill, Third Technology Building, Wright Shopping Center, Timelapse Mall, Western Harbour Tunnel Interchange, Northern Interchange (Southbound), Red Wall Road, Maple Lane, Glass Office, Arctan Road, Central Fire Station, Johnson Market, Southern Two, Southern Central Terminus, Leafy-Central Tunnel Administration Block, Southern Cultural District Park, Sunshine Station, Sunshine Pier, Shopping Corridor, Dove Hill"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "环线（白鸽邨 ↺ 阳光码头）",
+        "en": "Circular (Dove Estate ↺ Sunshine Pier)"
+      },
+      "serviceTime": {
+        "zh": "马拉松期间开行",
+        "en": "Services provided during Sunshine Marathon only"
+      },
+      "length": {
+        "zh": "15.1 km",
+        "en": "15.1 km"
+      },
+      "list": [
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Center",
+          "zone": 1
+        },
+        {
+          "zh": "时间廊",
+          "en": "Timelapse Mall",
+          "zone": 1
+        },
+        {
+          "zh": "西区海底隧道转车站",
+          "en": "Western Harbour Tunnel Interchange",
+          "zone": 4
+        },
+        {
+          "zh": "北环转车站（南行）",
+          "en": "Northern Interchange (Southbound)",
+          "zone": 4
+        },
+        {
+          "zh": "红地砖",
+          "en": "Red Wall Road",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
+          "zone": 4
+        },
+        {
+          "zh": "玻璃楼",
+          "en": "Glass Office",
+          "zone": 4
+        },
+        {
+          "zh": "亚特路",
+          "en": "Arctan Road",
+          "zone": 4
+        },
+        {
+          "zh": "中环消防局",
+          "en": "Central Fire Station",
+          "zone": 4
+        },
+        {
+          "zh": "强生街市",
+          "en": "Johnson Market",
+          "zone": 4
+        },
+        {
+          "zh": "南环花园二期",
+          "en": "Southern Two",
+          "zone": 4
+        },
+        {
+          "zh": "中环南总站",
+          "en": "Southern Central Terminus",
+          "zone": 4
+        },
+        {
+          "zh": "中叶隧道行政大楼",
+          "en": "Leafy-Central Tunnel Administration Block",
+          "zone": 4
+        },
+        {
+          "zh": "南环文化区公园",
+          "en": "Southern Cultural District Park",
+          "zone": 4
+        },
+        {
+          "zh": "阳光站",
+          "en": "Sunshine Station",
+          "zone": 4
+        },
+        {
+          "zh": "阳光码头",
+          "en": "Sunshine Pier",
+          "zone": 4
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=242");</script>
+  <p>正在打开线路 <strong>242</strong>…</p>
+  <p><a href="../index.html?route=242">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N472 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=N472" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=N472" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "N472",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "fare": "$16.1",
+  "interval": {
+    "zh": "10 - 30 分钟",
+    "en": "10 - 30 minutes"
+  },
+  "journeyTime": {
+    "zh": "48 分钟",
+    "en": "48 minutes"
+  },
+  "length": {
+    "zh": "往北顿市中心 18.3 km / 往彩虹中心 19.1 km",
+    "en": "To Norton Town Center 18.3 km / To Rainbow Estate Complex 19.1 km"
+  },
+  "origin": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "via": {
+    "zh": "北顿邨、北顿花园、绿宝石中心、北顿路、红地砖、雀鸟桥、新纪元中心、The ONE、中环医院、阳光铁路站、第七区转车站 (东行)、镰塔花园、镰塔运动场、红石楼、仙贝酒店、仙贝图书馆、仙贝广场、仙贝、东门路、东门花园、东门下邨、东门邨、红豆商场、彩虹邨",
+    "en": "Norton Estate, Norton Garden, Emerald Plaza, Norton Road, Red Wall Road, Bird Bridge, Ping Center, The ONE, Central Hospital, Two-way section fare ends here, Section fare begins here, Kamaya Garden, Kamaya Sports Field, Redstone House, Senpai Hotel, Senpai Library, Senpai Shopping Center, Senpai BRT Station, East Door Road, East Door Garden, Lower East Door Estate, East Door Estate, Redbean Center, Rainbow Estate"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（彩虹中心 → 北顿市中心）",
+        "en": "Northbound (Rainbow Estate Complex → Norton Town Center)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "00:00 – 05:30",
+        "en": "00:00 – 05:30"
+      },
+      "length": {
+        "zh": "18.3 km",
+        "en": "18.3 km"
+      },
+      "list": [
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门路",
+          "en": "East Door Road",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站 (西行)",
+          "en": "Two-way section fare ends here",
+          "zone": 7
+        },
+        {
+          "zh": "阳光铁路站",
+          "en": "Section fare begins here",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "中日街",
+          "en": "Sun Central Street",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "薄荷大厦",
+          "en": "Mint Tower",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（北顿市中心 → 彩虹中心总站）",
+        "en": "Southbound (Norton Town Center → Rainbow Estate Complex)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
+      },
+      "length": {
+        "zh": "19.1 km",
+        "en": "19.1 km"
+      },
+      "list": [
+        {
+          "zh": "北顿市中心",
+          "en": "Norton Town Center",
+          "zone": 4
+        },
+        {
+          "zh": "北顿邨",
+          "en": "Norton Estate",
+          "zone": 4
+        },
+        {
+          "zh": "北顿花园",
+          "en": "Norton Garden",
+          "zone": 4
+        },
+        {
+          "zh": "绿宝石中心",
+          "en": "Emerald Plaza",
+          "zone": 4
+        },
+        {
+          "zh": "北顿路",
+          "en": "Norton Road",
+          "zone": 4
+        },
+        {
+          "zh": "红地砖",
+          "en": "Red Wall Road",
+          "zone": 4
+        },
+        {
+          "zh": "雀鸟桥",
+          "en": "Bird Bridge",
+          "zone": 4
+        },
+        {
+          "zh": "新纪元中心",
+          "en": "Ping Center",
+          "zone": 4
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "zone": 4
+        },
+        {
+          "zh": "中环医院",
+          "en": "Central Hospital",
+          "zone": 4
+        },
+        {
+          "zh": "阳光铁路站",
+          "en": "Two-way section fare ends here",
+          "zone": 4
+        },
+        {
+          "zh": "第七区转车站 (东行)",
+          "en": "Section fare begins here",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai BRT Station",
+          "zone": 7
+        },
+        {
+          "zh": "东门路",
+          "en": "East Door Road",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下邨",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门邨",
+          "en": "East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "红豆商场",
+          "en": "Redbean Center",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹邨",
+          "en": "Rainbow Estate",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹中心总站",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=N472");</script>
+  <p>正在打开线路 <strong>N472</strong>…</p>
+  <p><a href="../index.html?route=N472">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

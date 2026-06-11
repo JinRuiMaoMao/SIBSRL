@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N476 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=N476" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=N476" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "N476",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "fare": "$16.1",
+  "interval": {
+    "zh": "15 - 30 分钟",
+    "en": "15 - 30 min"
+  },
+  "journeyTime": {
+    "zh": "55 分钟",
+    "en": "55 mins"
+  },
+  "serviceTime": {
+    "zh": "00:00 – 02:30",
+    "en": "00:00 – 02:30"
+  },
+  "length": {
+    "zh": "20.2 km",
+    "en": "20.2 km"
+  },
+  "origin": {
+    "zh": "北顿市中心",
+    "en": "Norton Town Center"
+  },
+  "destination": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
+  "via": {
+    "zh": "North Island、北环、中环、南环、第七区转车站、叶角大学、叶角湾邨、普通道、东门",
+    "en": "North Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Leafy Bay Estate, Normal Gap, East Door"
+  }
+}
+  </script>
+  <script>location.replace("../index.html?route=N476");</script>
+  <p>正在打开线路 <strong>N476</strong>…</p>
+  <p><a href="../index.html?route=N476">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

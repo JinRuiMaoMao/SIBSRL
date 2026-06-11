@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>75P · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=75P" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=75P" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "75P",
+  "operators": [
+    "CSB"
+  ],
+  "fare": "$6.3",
+  "interval": {
+    "zh": "6 – 9 分钟",
+    "en": "6 – 9 mins"
+  },
+  "journeyTime": {
+    "zh": "约 32 分钟",
+    "en": "approx. 32 mins"
+  },
+  "serviceTime": {
+    "zh": "周一至五 07:20 – 07:50",
+    "en": "Mon–Fri 07:20 – 07:50"
+  },
+  "length": {
+    "zh": "8.5 km",
+    "en": "8.5 km"
+  },
+  "notes": {
+    "zh": "75 繁忙时间特快单程（CSB），海西邨 → 东厂，经东门、叶角湾及叶欣；平日早高峰 5 班。2024/6 起营运。",
+    "en": "Peak-hour one-way variant of route 75 (CSB), Haisey Estate → East Factory via East Door, Leafy Bay and YiYan; five Mon–Fri AM departures. In service from Jun 2024."
+  },
+  "origin": {
+    "zh": "海西邨",
+    "en": "Haisey Estate"
+  },
+  "destination": {
+    "zh": "东厂",
+    "en": "East Factory"
+  },
+  "via": {
+    "zh": "海西角、东门总站、东门花园、东门下部、东门公园、叶角湾邨、叶角湾邨商场、叶角花园、叶欣邨第二座、钻石交易塔、叶欣海旁道、南洋大厦、彩虹广场",
+    "en": "Haisey Point, East Door Bus Terminus, East Door Garden, Lower East Door Estate, East Door Park, Leafy Bay Estate, Leafy Bay Estate Shopping Center, Leafy Bay Garden, YiYan Estate Block 2, Diamond Trading Tower, Praya YiYan Road, Southern Building, Rainbow Plaza"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "单程（海西邨 → 东厂）",
+        "en": "One-way (Haisey Estate → East Factory)"
+      },
+      "serviceTime": {
+        "zh": "周一至五 07:20 – 07:50",
+        "en": "Mon–Fri 07:20 – 07:50"
+      },
+      "length": {
+        "zh": "8.5 km",
+        "en": "8.5 km"
+      },
+      "list": [
+        {
+          "zh": "海西邨总站",
+          "en": "Haisey Estate Bus Terminus",
+          "zone": 8
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "zone": 7
+        },
+        {
+          "zh": "东门花园",
+          "en": "East Door Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东门下部",
+          "en": "Lower East Door Estate",
+          "zone": 7
+        },
+        {
+          "zh": "东门公园",
+          "en": "East Door Park",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨",
+          "en": "Leafy Bay Estate",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾邨商场",
+          "en": "Leafy Bay Estate Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣邨第二座",
+          "en": "YiYan Estate Block 2",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=75P");</script>
+  <p>正在打开线路 <strong>75P</strong>…</p>
+  <p><a href="../index.html?route=75P">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

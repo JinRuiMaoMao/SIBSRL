@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>370A · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=370A" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=370A" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "370A",
+  "operators": [
+    "REBC",
+    "HZ"
+  ],
+  "fare": "$18.2",
+  "interval": {
+    "zh": "5 - 12 分钟",
+    "en": "5 - 12 minutes"
+  },
+  "journeyTime": {
+    "zh": "AM: / 往Senpai: 34 - 36 分钟 / 往Long Island: 33 - 38 分钟 / PM: / 往Senpai: 31 - 38 分钟 / 往Long Island: 34 - 37 分钟",
+    "en": "AM: / To Senpai: 34 - 36 mins / To Long Island: 33 - 38 mins / PM: / To Senpai: 31 - 38 mins / To Long Island: 34 - 37 mins"
+  },
+  "length": {
+    "zh": "19.1 km",
+    "en": "19.1 km"
+  },
+  "origin": {
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
+  },
+  "destination": {
+    "zh": "长岛码头",
+    "en": "Senpai Shopping Centre"
+  },
+  "via": {
+    "zh": "文化广场、国际码头、虹尾角街市、时间里、三哥大厦、白鸽山、白鸽邨、购物廊、艾迪城、西区医院、中西转车站、第七区转车站 (东行)、镰塔花园、镰塔运动场、国际塔、仙贝纪念碑、红石楼、仙贝酒店、仙贝图书馆",
+    "en": "Culture Square, Regional Pier, Iris Point Market, Timelapse Lane, Third Technology Building, Dove Hill, Dove Estate, Shopping Corridor, Addi City, Western Hospital, Central - Western Interchange, Axis Road, Kamaya Garden, Kamaya Sports Field, International Tower, The Stone of Memory, Redstone House, Senpai Hotel, Senpai Library"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（长岛码头 → 仙贝广场）",
+        "en": "Northbound (Long Island Ferry Pier → Senpai Shopping Centre)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "周一至五: 07:00 – 09:00、16:30 – 19:20 / Sat、Sun and PH: 07:00 – 09:00",
+        "en": "Mon – Fri: 07:00 – 09:00, 16:30 – 19:20 / Sat, Sun and PH: 07:00 – 09:00"
+      },
+      "length": {
+        "zh": "19.1 km",
+        "en": "19.1 km"
+      },
+      "list": [
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "国际码头",
+          "en": "Regional Pier",
+          "zone": 1
+        },
+        {
+          "zh": "虹尾角街市",
+          "en": "Iris Point Market",
+          "zone": 1
+        },
+        {
+          "zh": "时间里",
+          "en": "Timelapse Lane",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "中西转车站",
+          "en": "Central - Western Interchange",
+          "zone": 1
+        },
+        {
+          "zh": "第七区转车站 (东行)",
+          "en": "Axis Road",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "国际塔",
+          "en": "International Tower",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝纪念碑",
+          "en": "The Stone of Memory",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Centre",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（仙贝广场 → 长岛码头）",
+        "en": "Southbound (Senpai Shopping Centre → Long Island Ferry Pier)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "周一至五: 07:30 – 11:00、17:00 – 21:30 / Sat、Sun and PH: 07:30 – 11:00",
+        "en": "Mon – Fri: 07:30 – 11:00, 17:00 – 21:30 / Sat, Sun and PH: 07:30 – 11:00"
+      },
+      "length": {
+        "zh": "19.1 km",
+        "en": "19.1 km"
+      },
+      "list": [
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Centre",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "黑白中心",
+          "en": "Grayscale Center",
+          "zone": 7
+        },
+        {
+          "zh": "国际塔",
+          "en": "International Tower",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站 (西行)",
+          "en": "第七區轉車站 (西行)",
+          "zone": 7
+        },
+        {
+          "zh": "中西转车站",
+          "en": "Central - Western Interchange",
+          "zone": 1
+        },
+        {
+          "zh": "西区医院",
+          "en": "Western Hospital",
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
+        },
+        {
+          "zh": "购物廊",
+          "en": "Shopping Corridor",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽山",
+          "en": "Dove Hill",
+          "zone": 1
+        },
+        {
+          "zh": "白鸽邨",
+          "en": "Dove Estate",
+          "zone": 1
+        },
+        {
+          "zh": "三哥大厦",
+          "en": "Third Technology Building",
+          "zone": 1
+        },
+        {
+          "zh": "赖得商场",
+          "en": "Wright Shopping Centre",
+          "zone": 1
+        },
+        {
+          "zh": "彩色汇",
+          "en": "Rainbow Center",
+          "zone": 1
+        },
+        {
+          "zh": "国际码头",
+          "en": "Regional Pier",
+          "zone": 1
+        },
+        {
+          "zh": "文化广场",
+          "en": "Culture Square",
+          "zone": 1
+        },
+        {
+          "zh": "长岛码头",
+          "en": "Long Island Ferry Pier",
+          "zone": 1
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=370A");</script>
+  <p>正在打开线路 <strong>370A</strong>…</p>
+  <p><a href="../index.html?route=370A">若未自动跳转，请点击此处</a></p>
+</body>
+</html>

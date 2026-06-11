@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>74A · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../index.html?route=74A" />
+  <meta http-equiv="refresh" content="0;url=../index.html?route=74A" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #3b82f6; }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "74A",
+  "operators": [
+    "CSB"
+  ],
+  "fare": "$6.3",
+  "interval": {
+    "zh": "3 – 20 分钟",
+    "en": "3 – 20 mins"
+  },
+  "journeyTime": {
+    "zh": "往叶角医院约 24 分钟 / 往彩虹中心约 26 分钟",
+    "en": "To Leafy Hospital approx. 24 mins / To Rainbow approx. 26 mins"
+  },
+  "length": {
+    "zh": "往叶角医院 10.2 km / 往彩虹中心 10.9 km",
+    "en": "To Leafy Hospital 10.2 km / To Rainbow 10.9 km"
+  },
+  "notes": {
+    "zh": "第 7/8 区跨区线（CSB），Central Axis 成就线路之一。彩虹中心 ↔ 叶角医院，经海西、东门、仙贝。2021/2 起改经海西直达；八号风球或改行 Y74A（仅仙贝段）。",
+    "en": "Zones 7/8 inter-zone (CSB); Central Axis achievement route. Rainbow ↔ Leafy Hospital via Haisey, East Door and Senpai. Direct Haisey routing since Feb 2021; may divert as Y74A (Senpai only) in typhoon signal 8+."
+  },
+  "origin": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
+  "destination": {
+    "zh": "叶角医院",
+    "en": "Leafy Hospital"
+  },
+  "via": {
+    "zh": "叶角花园、际巴车厂、叶欣海旁道、南洋大厦、彩虹广场、东厂、镰塔花园、镰塔运动场、国际塔、仙贝纪念碑花园、红石楼、仙贝酒店、仙贝图书馆、仙贝广场、仙贝、东门码头、海西角、海西邨",
+    "en": "Leafy Bay Garden, CSB Depot, Praya YiYan Road, Southern Building, Rainbow Plaza, East Factory, Kamaya Garden, Kamaya Sports Field, International Tower, The Stone of Memory, Redstone House, Senpai Hotel, Senpai Library, Senpai Shopping Center, Senpai, East Door Pier, Haisey Point, Haisey Estate"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "北行（彩虹中心 → 叶角医院）",
+        "en": "Northbound (Rainbow Estate Complex → Leafy Hospital)"
+      },
+      "directionKey": "N",
+      "serviceTime": {
+        "zh": "05:30 – 01:00",
+        "en": "05:30 – 01:00"
+      },
+      "length": {
+        "zh": "10.2 km",
+        "en": "10.2 km"
+      },
+      "list": [
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "东门商业中心",
+          "en": "East Door Commercial Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "黑白中心",
+          "en": "Grayscale Centre",
+          "zone": 7
+        },
+        {
+          "zh": "国际塔",
+          "en": "International Tower",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣公园",
+          "en": "YiYan Park",
+          "zone": 7
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "南行（叶角医院 → 彩虹中心）",
+        "en": "Southbound (Leafy Hospital → Rainbow Estate Complex)"
+      },
+      "directionKey": "S",
+      "serviceTime": {
+        "zh": "05:30 – 01:15",
+        "en": "05:30 – 01:15"
+      },
+      "length": {
+        "zh": "10.9 km",
+        "en": "10.9 km"
+      },
+      "list": [
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "叶角花园",
+          "en": "Leafy Bay Garden",
+          "zone": 7
+        },
+        {
+          "zh": "际巴车厂",
+          "en": "CSB Depot",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔花园",
+          "en": "Kamaya Garden",
+          "zone": 7
+        },
+        {
+          "zh": "镰塔运动场",
+          "en": "Kamaya Sports Field",
+          "zone": 7
+        },
+        {
+          "zh": "国际塔",
+          "en": "International Tower",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝纪念碑花园",
+          "en": "The Stone of Memory",
+          "zone": 7
+        },
+        {
+          "zh": "红石楼",
+          "en": "Redstone House",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝酒店",
+          "en": "Senpai Hotel",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝图书馆",
+          "en": "Senpai Library",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝广场",
+          "en": "Senpai Shopping Center",
+          "zone": 7
+        },
+        {
+          "zh": "仙贝",
+          "en": "Senpai",
+          "zone": 7
+        },
+        {
+          "zh": "东门码头",
+          "en": "East Door Pier",
+          "zone": 7
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "彩虹中心",
+          "en": "Rainbow Estate Complex",
+          "zone": 7
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../index.html?route=74A");</script>
+  <p>正在打开线路 <strong>74A</strong>…</p>
+  <p><a href="../index.html?route=74A">若未自动跳转，请点击此处</a></p>
+</body>
+</html>
