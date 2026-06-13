@@ -1143,6 +1143,22 @@
   grid-column: 1 / -1;
 }
 
+.daily-challenge-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--shadow-overlay);
+}
+
+.daily-challenge-card.selected:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);
+}
+
+.daily-challenge-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .daily-challenge-reset-countdown {
   display: flex;
   flex-direction: column;
@@ -1195,6 +1211,17 @@
   border-radius: var(--radius-lg);
   background: var(--bg-surface);
   overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.route-group-collapse:has(.route-group-collapse-trigger:hover),
+.route-group-collapse:has(.route-group-collapse-trigger:focus-visible) {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--shadow-overlay);
 }
 
 .route-group-collapse-trigger {
@@ -1216,8 +1243,12 @@
 }
 
 .route-group-collapse-trigger:hover {
-  background: var(--accent-soft);
   color: var(--accent);
+}
+
+.route-group-collapse-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .route-group-collapse-title {
