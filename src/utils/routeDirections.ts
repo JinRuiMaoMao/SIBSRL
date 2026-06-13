@@ -79,7 +79,8 @@ export function getDirectionShortLabel(
       ? t(DIRECTION_MESSAGE_KEYS[key])
       : String(sortedIndex + 1)
   }
-  return key ?? String(sortedIndex + 1)
+  if (key && DIRECTION_MESSAGE_KEYS[key]) return t(DIRECTION_MESSAGE_KEYS[key])
+  return String(sortedIndex + 1)
 }
 
 export function formatDirectionEndpoints(

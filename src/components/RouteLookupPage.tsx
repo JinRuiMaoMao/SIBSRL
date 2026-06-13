@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
   findRouteForDailyChallenge,
@@ -7,11 +7,19 @@ import {
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
+import {
+  getGroupDisplaySlots,
+  getRouteDisplayIdsForGroup,
+  ROUTE_DISPLAY_GROUP_ORDER,
+  type RouteDisplayGroupKey,
+} from '../data/routeDisplayGroups'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
+import { RouteGroupCollapse } from './RouteGroupCollapse'
+import { RouteListPendingCard } from './RouteListPendingCard'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -325,7 +333,6 @@ export function RouteLookupPage({
   }
 
   const filtersActive =
-    filters.routeGroup !== 'all' ||
     filters.zone !== 'all' ||
     filters.operator !== 'all' ||
     filters.type !== 'all'
@@ -352,25 +359,105 @@ export function RouteLookupPage({
         }
       : null
 
+  const visibleDisplayGroups = useMemo(
+    () =>
+      ROUTE_DISPLAY_GROUP_ORDER.filter(
+        (group) => getRouteDisplayIdsForGroup(group).length > 0,
+      ),
+    [],
+  )
+
+  const groupedSlots = useMemo(() => {
+    const groups = {} as Record<RouteDisplayGroupKey, ReturnType<typeof getGroupDisplaySlots>>
+    for (const group of ROUTE_DISPLAY_GROUP_ORDER) {
+      groups[group] = getGroupDisplaySlots(group, filteredRoutes)
+    }
+    return groups
+  }, [filteredRoutes])
+
+  const groupedRouteCount = useMemo(() => {
+    const seenRouteIds = new Set<string>()
+    let count = 0
+    for (const group of visibleDisplayGroups) {
+      for (const slot of groupedSlots[group]) {
+        if (!slot.isVisible || !slot.entry) continue
+        if (seenRouteIds.has(slot.entry.route.id)) continue
+        seenRouteIds.add(slot.entry.route.id)
+        count++
+      }
+    }
+    return count
+  }, [groupedSlots, visibleDisplayGroups])
+
+  const listIsEmpty = !dailyChallengeVisible && groupedRouteCount === 0
+
+  const renderGroupedRouteCards = (group: RouteDisplayGroupKey) => {
+    const slots = groupedSlots[group]
+    const visibleSlots = slots.filter((slot) => slot.isVisible && slot.entry)
+    const hiddenSlots = filtersActive ? [] : slots.filter((slot) => !slot.isVisible)
+
+    return (
+      <>
+        {visibleSlots.map((slot) => {
+          const { route } = slot.entry!
+          return (
+            <RouteCard
+              key={`${group}-${route.id}`}
+              route={route}
+              selected={selectedRoute?.id === route.id}
+              directionIndex={getDirectionIndex(route)}
+              onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+              onNavigate={handleRouteNavigate}
+            />
+          )
+        })}
+        {visibleSlots.length > 0 && hiddenSlots.length > 0 ? (
+          <p className="route-group-hidden-divider route-grid-span">{t('routeListHiddenSection')}</p>
+        ) : null}
+        {hiddenSlots.map((slot) => {
+          if (!slot.entry) {
+            return (
+              <RouteListPendingCard
+                key={`${group}-pending-${slot.listedId}`}
+                routeId={slot.listedId}
+              />
+            )
+          }
+
+          const { route } = slot.entry
+          return (
+            <RouteCard
+              key={`${group}-hidden-${route.id}`}
+              route={route}
+              muted
+              selected={selectedRoute?.id === route.id}
+              directionIndex={getDirectionIndex(route)}
+              onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+              onNavigate={handleRouteNavigate}
+            />
+          )
+        })}
+      </>
+    )
+  }
+
   return (
     <div className="route-lookup-page">
       <div className="route-lookup-sticky">
         <SearchToolbar
           value={filters.query}
           onChange={(q) => updateFilter('query', q)}
-          resultCount={filteredRoutes.length}
+          resultCount={groupedRouteCount}
           totalCount={totalCount}
           randomEligibleCount={randomEligibleCount}
           onRandom={handleRandomRoute}
           filtersActive={filtersActive}
-          routeGroup={filters.routeGroup}
           zone={filters.zone}
           operator={filters.operator}
           type={filters.type}
           zones={zones}
           operators={operators}
           types={types}
-          onRouteGroupChange={(group) => updateFilter('routeGroup', group)}
           onZoneChange={(z) => updateFilter('zone', z)}
           onOperatorChange={(op) => updateFilter('operator', op)}
           onTypeChange={(item) => updateFilter('type', item)}
@@ -379,27 +466,35 @@ export function RouteLookupPage({
 
       <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>
-          <div className="route-grid">
+          <div className="route-display-group-list">
             {dailyChallengeVisible ? (
               <DailyChallengeBanner
                 selected={dailyChallengeSelected}
                 onSelect={handleSelectDailyChallenge}
               />
             ) : null}
-            {filteredRoutes.length === 0 && !dailyChallengeVisible ? (
+
+            {visibleDisplayGroups.map((group) => {
+              const slots = groupedSlots[group]
+              const visibleCount = slots.filter((slot) => slot.isVisible && slot.entry).length
+              return (
+                <RouteGroupCollapse
+                  key={group}
+                  groupId={group}
+                  count={visibleCount}
+                >
+                  {visibleCount === 0 ? (
+                    <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
+                  ) : (
+                    <div className="route-grid">{renderGroupedRouteCards(group)}</div>
+                  )}
+                </RouteGroupCollapse>
+              )
+            })}
+
+            {listIsEmpty ? (
               <p className="empty-state route-grid-span">{t('emptyState')}</p>
-            ) : (
-              filteredRoutes.map((route) => (
-                <RouteCard
-                  key={route.id}
-                  route={route}
-                  selected={selectedRoute?.id === route.id}
-                  directionIndex={getDirectionIndex(route)}
-                  onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-                  onNavigate={handleRouteNavigate}
-                />
-              ))
-            )}
+            ) : null}
           </div>
         </section>
       </div>

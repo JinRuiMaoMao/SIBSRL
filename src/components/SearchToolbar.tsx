@@ -1,5 +1,5 @@
 import { useLocale } from '../i18n/LocaleContext'
-import type { RouteGroupFilter, RouteTypeFilter } from '../types/route'
+import type { RouteTypeFilter } from '../types/route'
 import { FilterMenu } from './FilterMenu'
 import { RouteFilters } from './RouteFilters'
 import { SearchBar } from './SearchBar'
@@ -12,14 +12,12 @@ interface SearchToolbarProps {
   randomEligibleCount: number
   onRandom: () => void
   filtersActive: boolean
-  routeGroup: RouteGroupFilter
   zone: number | 'all'
   operator: string | 'all'
   type: RouteTypeFilter | 'all'
   zones: number[]
   operators: string[]
   types: RouteTypeFilter[]
-  onRouteGroupChange: (group: RouteGroupFilter) => void
   onZoneChange: (zone: number | 'all') => void
   onOperatorChange: (op: string | 'all') => void
   onTypeChange: (type: RouteTypeFilter | 'all') => void
@@ -33,14 +31,12 @@ export function SearchToolbar({
   randomEligibleCount,
   onRandom,
   filtersActive,
-  routeGroup,
   zone,
   operator,
   type,
   zones,
   operators,
   types,
-  onRouteGroupChange,
   onZoneChange,
   onOperatorChange,
   onTypeChange,
@@ -68,14 +64,12 @@ export function SearchToolbar({
         </button>
         <FilterMenu active={filtersActive}>
           <RouteFilters
-            routeGroup={routeGroup}
             zone={zone}
             operator={operator}
             type={type}
             zones={zones}
             operators={operators}
             types={types}
-            onRouteGroupChange={onRouteGroupChange}
             onZoneChange={onZoneChange}
             onOperatorChange={onOperatorChange}
             onTypeChange={onTypeChange}

@@ -95,7 +95,9 @@ export function DailyChallengeDetail({
         <p className="daily-challenge-guide-closing-lead">{getPrimaryText(guide.closingLead, locale)}</p>
         <p className="daily-challenge-guide-closing">{getPrimaryText(guide.closing, locale)}</p>
 
-        {challenge.isPlaceholder ? (
+        {challenge.fromSchedule ? (
+          <p className="route-meta daily-challenge-guide-footnote">{t('dailyChallengeScheduleNote')}</p>
+        ) : challenge.isPlaceholder ? (
           <p className="route-meta daily-challenge-guide-footnote">{t('dailyChallengePlaceholderNote')}</p>
         ) : null}
       </article>

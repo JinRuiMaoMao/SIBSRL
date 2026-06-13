@@ -10,6 +10,7 @@ import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
+import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
 import { useLocale } from './i18n/LocaleContext'
 import { isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
@@ -27,7 +28,7 @@ function App() {
   const { t } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
-    shouldShowDailyChallengePrompt,
+    () => shouldShowDailyChallengePrompt() && isDailyChallengeAvailable(getTodaysDailyChallenge()),
   )
   const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
   const [headerCollapsed, setHeaderCollapsed] = useState(false)

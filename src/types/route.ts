@@ -81,5 +81,4 @@ export interface RouteFilters {
   zone: number | 'all'
   operator: string | 'all'
   type: RouteTypeFilter | 'all'
-  routeGroup: RouteGroupFilter
 }

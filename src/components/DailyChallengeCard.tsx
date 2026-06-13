@@ -10,12 +10,14 @@ import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import { getDirectionLengthKm } from '../utils/routeDirections'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
+import { DailyChallengeResetCountdown } from './DailyChallengeResetCountdown'
 
 interface DailyChallengeCardProps {
   selected?: boolean
   onSelect: () => void
   className?: string
   showPlaceholderNote?: boolean
+  showResetCountdown?: boolean
 }
 
 export function DailyChallengeCard({
@@ -23,6 +25,7 @@ export function DailyChallengeCard({
   onSelect,
   className = '',
   showPlaceholderNote = true,
+  showResetCountdown = true,
 }: DailyChallengeCardProps) {
   const { locale, t } = useLocale()
   const challenge = getTodaysDailyChallenge()
@@ -58,6 +61,8 @@ export function DailyChallengeCard({
       aria-pressed={selected}
       aria-label={t('dailyChallengeAria')}
     >
+      {showResetCountdown ? <DailyChallengeResetCountdown /> : null}
+
       <div className="route-card-top">
         <div className="route-card-title">
           <span className="route-number">{routeNumber}</span>
@@ -75,6 +80,10 @@ export function DailyChallengeCard({
 
       {challenge.intro ? (
         <DailyChallengeIntro intro={challenge.intro} compact className="route-meta" />
+      ) : null}
+
+      {showPlaceholderNote && challenge.fromSchedule ? (
+        <p className="route-meta">{t('dailyChallengeScheduleNote')}</p>
       ) : null}
 
       {showPlaceholderNote && challenge.isPlaceholder ? (

@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { dailyChallengeMatchesFilters, getTodaysDailyChallenge } from '../data/dailyChallenge'
 import { routes } from '../data/routes'
-import { getGameRouteGroup } from '../data/gameRouteGroups'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 import type { BusRoute, RouteFilters, RouteTypeFilter } from '../types/route'
 import { routeMatchesTypeFilter } from '../utils/routeTypes'
@@ -19,7 +18,6 @@ const defaultFilters: RouteFilters = {
   zone: 'all',
   operator: 'all',
   type: 'all',
-  routeGroup: 'all',
 }
 
 function matchesQuery(route: BusRoute, query: string): boolean {
@@ -66,8 +64,6 @@ export function useRouteSearch() {
         if (filters.zone !== 'all' && !route.zones.includes(filters.zone)) return false
         if (filters.operator !== 'all' && !route.operators.includes(filters.operator)) return false
         if (filters.type !== 'all' && !routeMatchesTypeFilter(route, filters.type)) return false
-        if (filters.routeGroup !== 'all' && getGameRouteGroup(route) !== filters.routeGroup)
-          return false
         return matchesQuery(route, filters.query)
       })
       .sort((a, b) => compareRouteNumber(a.number, b.number))

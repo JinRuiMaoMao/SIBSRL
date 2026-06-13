@@ -9,7 +9,6 @@ import {
   getDirectionDataIndex,
   getDirectionLengthKm,
   getDirectionServiceTime,
-  getDirectionShortLabel,
   routeHasDirectionVariants,
 } from '../utils/routeDirections'
 import { getDirectionIntermediateStops, getDirectionVia } from '../utils/routeVia'
@@ -177,14 +176,7 @@ export function RouteDetail({
 
       {activeStops && (
         <section className="detail-section">
-          <h3>
-            {t('stopsSection')}
-            {lockDirection && directionEndpoints
-              ? ` · ${getPrimaryText(directionEndpoints, locale)}`
-              : !lockDirection
-                ? ` · ${getDirectionShortLabel(route, directionIndex, t, locale)}`
-                : ''}
-          </h3>
+          <h3>{t('stopsSection')}</h3>
           <div className="stop-table" role="table">
             <div className="stop-table-row stop-table-head" role="row">
               <span className="stop-table-num" role="columnheader" aria-label="#">

@@ -15,6 +15,68 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-13-summary',
+    date: '2026-06-13',
+    title: {
+      zh: '2026-06-13 更新',
+      en: '2026-06-13 updates',
+    },
+    groups: [
+      {
+        title: {
+          zh: '浅色主题',
+          en: 'Light theme',
+        },
+        items: [
+          {
+            zh: '顶部栏设置按钮左侧新增深色 / 浅色切换，偏好写入本地存储，各栏目与秘密页共用。',
+            en: 'Added Dark / Light toggle to the left of Settings in the header; preference is saved locally and shared across tabs and the secret page.',
+          },
+          {
+            zh: '浅色模式采用柔和灰蓝背景，减轻刺眼感；顶栏、卡片、滚动条与弹层阴影随主题切换。',
+            en: 'Light mode uses a soft blue-grey palette to reduce glare; header, cards, scrollbars, and overlay shadows adapt to the theme.',
+          },
+          {
+            zh: '页面加载前注入主题脚本，避免刷新时先闪深色再切换。',
+            en: 'A head script applies the saved theme before paint to avoid a dark flash on reload.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '自定义右键菜单',
+          en: 'Custom context menu',
+        },
+        items: [
+          {
+            zh: '页面空白处右键打开站点菜单：返回、前进、刷新、返回首页、复制当前链接、在新标签页打开。',
+            en: 'Right-click on page chrome opens: Back, Forward, Reload, Back to home, Copy current link, and Open in new tab.',
+          },
+          {
+            zh: '输入框、文本域、下拉框等可编辑控件仍使用浏览器原生右键菜单。',
+            en: 'Inputs, text areas, selects, and other editable fields keep the browser’s native context menu.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '每日挑战',
+          en: 'Daily Challenge',
+        },
+        items: [
+          {
+            zh: '「今日每日挑战」按社区公布的 2026 年 6 月日程自动切换（HKT 08:00 更换），卡片顶部显示距下次更换的秒级倒计时。',
+            en: '“Today’s daily challenge” follows a community-published June 2026 schedule (resets at 08:00 HKT), with a per-second countdown to the next reset at the top of the card.',
+          },
+          {
+            zh: '每日挑战资源来自社区整理，可能与游戏内实际不一致；请以实际游戏为准。',
+            en: 'Daily challenge data comes from community sources and may not match the live in-game event — please verify in-game.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: '2026-06-11-summary',
     date: '2026-06-11',
     title: {
@@ -83,42 +145,6 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '搜索栏仍可通过别名找到正确线路（如搜 476S 可定位 476SA），与 URL 跳转规则分离。',
             en: 'Search aliases still work (e.g. 476S finds 476SA); URL navigation no longer resolves retired aliases.',
-          },
-        ],
-      },
-      {
-        title: {
-          zh: '浅色主题',
-          en: 'Light theme',
-        },
-        items: [
-          {
-            zh: '顶部栏设置按钮左侧新增深色 / 浅色切换，偏好写入本地存储，各栏目与秘密页共用。',
-            en: 'Added Dark / Light toggle to the left of Settings in the header; preference is saved locally and shared across tabs and the secret page.',
-          },
-          {
-            zh: '浅色模式采用柔和灰蓝背景，减轻刺眼感；顶栏、卡片、滚动条与弹层阴影随主题切换。',
-            en: 'Light mode uses a soft blue-grey palette to reduce glare; header, cards, scrollbars, and overlay shadows adapt to the theme.',
-          },
-          {
-            zh: '页面加载前注入主题脚本，避免刷新时先闪深色再切换。',
-            en: 'A head script applies the saved theme before paint to avoid a dark flash on reload.',
-          },
-        ],
-      },
-      {
-        title: {
-          zh: '自定义右键菜单',
-          en: 'Custom context menu',
-        },
-        items: [
-          {
-            zh: '页面空白处右键打开站点菜单：返回、前进、刷新、返回首页、复制当前链接、在新标签页打开。',
-            en: 'Right-click on page chrome opens: Back, Forward, Reload, Back to home, Copy current link, and Open in new tab.',
-          },
-          {
-            zh: '输入框、文本域、下拉框等可编辑控件仍使用浏览器原生右键菜单。',
-            en: 'Inputs, text areas, selects, and other editable fields keep the browser’s native context menu.',
           },
         ],
       },

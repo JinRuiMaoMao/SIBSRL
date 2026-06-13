@@ -21,6 +21,10 @@ interface RouteCardProps {
   onDirectionChange: (index: number) => void
   onNavigate?: (routeId: string) => void
   href?: string
+  /** 分组列表中的展示编号；默认使用合并后的 route.number */
+  displayNumber?: string
+  /** 筛选不匹配等情况下置于列表底部时的弱化样式 */
+  muted?: boolean
 }
 
 export function RouteCard({
@@ -30,8 +34,11 @@ export function RouteCard({
   onDirectionChange,
   onNavigate,
   href,
+  displayNumber,
+  muted = false,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
+  const cardNumber = displayNumber ?? route.number
   const displayTypes = getRouteDisplayTypes(route)
   const lengthKm = getDirectionLengthKm(route, directionIndex, locale)
   const operatorsLabel = formatRouteOperators(route)
@@ -44,7 +51,7 @@ export function RouteCard({
     <a
       href={href ?? getRoutePageHref(route.id)}
       data-route-id={route.id}
-      className={`route-card-link ${selected ? 'route-card-link--selected' : ''}`}
+      className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''}`.trim()}
       aria-current={selected ? 'page' : undefined}
       onClick={(event) => {
         if (!onNavigate) return
@@ -57,7 +64,7 @@ export function RouteCard({
       <article className="route-card">
       <div className="route-card-top">
         <div className="route-card-title">
-          <span className="route-number">{route.number}</span>
+          <span className="route-number">{cardNumber}</span>
           {hasDirections && (
             <DirectionToggle
               route={route}
