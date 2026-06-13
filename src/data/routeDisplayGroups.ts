@@ -104,6 +104,28 @@ export function getMissingRouteDisplayIds(): string[] {
   return missing
 }
 
+/** 分组 JSON 中指向该展示线路的全部列表编号（含 25YN、240A 等合并前 ID） */
+const listedRouteIdsByDisplayId = (() => {
+  const map = new Map<string, string[]>()
+  for (const group of ROUTE_DISPLAY_GROUP_ORDER) {
+    for (const listedId of getRouteDisplayIdsForGroup(group)) {
+      const entry = resolveGroupedRouteEntry(listedId)
+      if (!entry) continue
+      const key = entry.route.id.toLowerCase()
+      const list = map.get(key) ?? []
+      if (!list.some((id) => id.toLowerCase() === listedId.toLowerCase())) {
+        list.push(listedId)
+      }
+      map.set(key, list)
+    }
+  }
+  return map
+})()
+
+export function getListedRouteIdsForRoute(route: BusRoute): string[] {
+  return listedRouteIdsByDisplayId.get(route.id.toLowerCase()) ?? []
+}
+
 export function filterGroupEntriesByRoutes(
   group: RouteDisplayGroupKey,
   visibleRoutes: BusRoute[],
@@ -122,31 +144,21 @@ export function getGroupDisplaySlots(
   const visibleIds = new Set(visibleRoutes.map((route) => route.id))
   const seenRouteIds = new Set<string>()
   const shown: GroupedRouteDisplaySlot[] = []
-  const hidden: GroupedRouteDisplaySlot[] = []
 
   for (const listedId of getRouteDisplayIdsForGroup(group)) {
     const entry = resolveGroupedRouteEntry(listedId)
+    if (!entry || seenRouteIds.has(entry.route.id)) continue
+    if (!visibleIds.has(entry.route.id)) continue
 
-    if (!entry) {
-      hidden.push({ listedId, entry: null, isVisible: false })
-      continue
-    }
-
-    if (seenRouteIds.has(entry.route.id)) continue
     seenRouteIds.add(entry.route.id)
-
-    const slot: GroupedRouteDisplaySlot = {
+    shown.push({
       listedId,
       entry,
-      isVisible: visibleIds.has(entry.route.id),
-    }
-
-    if (slot.isVisible) shown.push(slot)
-    else hidden.push(slot)
+      isVisible: true,
+    })
   }
 
   shown.sort((a, b) => compareRouteNumber(a.entry!.route.number, b.entry!.route.number))
-  hidden.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
 
-  return [...shown, ...hidden]
+  return shown
 }

@@ -19,7 +19,6 @@ import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
-import { RouteListPendingCard } from './RouteListPendingCard'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -47,6 +46,12 @@ function overlayKey(overlay: DetailOverlay): string | null {
 /** 详情全屏滑入/滑出时长（毫秒） */
 const DETAIL_ANIM_MS = 500
 const DETAIL_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)'
+
+const CLOSED_ROUTE_GROUPS: Record<RouteDisplayGroupKey, boolean> = {
+  normal: false,
+  daily: false,
+  seasonal: false,
+}
 
 function motionDurationMs(): number {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -90,6 +95,7 @@ export function RouteLookupPage({
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
   const [dailyChallengeRouteView, setDailyChallengeRouteView] = useState(false)
+  const [groupOpen, setGroupOpen] = useState(CLOSED_ROUTE_GROUPS)
   const [routePageDetail, setRoutePageDetail] = useState<{
     route: BusRoute
     pageData: RoutePageData | null
@@ -391,62 +397,49 @@ export function RouteLookupPage({
 
   const listIsEmpty = !dailyChallengeVisible && groupedRouteCount === 0
 
-  const renderGroupedRouteCards = (group: RouteDisplayGroupKey) => {
-    const slots = groupedSlots[group]
-    const visibleSlots = slots.filter((slot) => slot.isVisible && slot.entry)
-    const hiddenSlots = filtersActive ? [] : slots.filter((slot) => !slot.isVisible)
+  const handleSearchQueryChange = useCallback(
+    (q: string) => {
+      updateFilter('query', q)
+      setGroupOpen(CLOSED_ROUTE_GROUPS)
+    },
+    [updateFilter],
+  )
 
-    return (
-      <>
-        {visibleSlots.map((slot) => {
-          const { route } = slot.entry!
-          return (
-            <RouteCard
-              key={`${group}-${route.id}`}
-              route={route}
-              selected={selectedRoute?.id === route.id}
-              directionIndex={getDirectionIndex(route)}
-              onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-              onNavigate={handleRouteNavigate}
-            />
-          )
-        })}
-        {visibleSlots.length > 0 && hiddenSlots.length > 0 ? (
-          <p className="route-group-hidden-divider route-grid-span">{t('routeListHiddenSection')}</p>
-        ) : null}
-        {hiddenSlots.map((slot) => {
-          if (!slot.entry) {
-            return (
-              <RouteListPendingCard
-                key={`${group}-pending-${slot.listedId}`}
-                routeId={slot.listedId}
-              />
-            )
-          }
+  const handleSearchCommit = useCallback(() => {
+    if (!filters.query.trim()) return
 
-          const { route } = slot.entry
-          return (
-            <RouteCard
-              key={`${group}-hidden-${route.id}`}
-              route={route}
-              muted
-              selected={selectedRoute?.id === route.id}
-              directionIndex={getDirectionIndex(route)}
-              onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-              onNavigate={handleRouteNavigate}
-            />
-          )
-        })}
-      </>
-    )
-  }
+    const next = { ...CLOSED_ROUTE_GROUPS }
+    for (const group of visibleDisplayGroups) {
+      const visibleCount = groupedSlots[group].filter(
+        (slot) => slot.isVisible && slot.entry,
+      ).length
+      if (visibleCount > 0) next[group] = true
+    }
+    setGroupOpen(next)
+  }, [filters.query, groupedSlots, visibleDisplayGroups])
+
+  const renderGroupedRouteCards = (group: RouteDisplayGroupKey) =>
+    groupedSlots[group].map((slot) => {
+      const { route } = slot.entry!
+      return (
+        <RouteCard
+          key={`${group}-${route.id}`}
+          route={route}
+          selected={selectedRoute?.id === route.id}
+          directionIndex={getDirectionIndex(route)}
+          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+          onNavigate={handleRouteNavigate}
+        />
+      )
+    })
 
   return (
     <div className="route-lookup-page">
       <div className="route-lookup-sticky">
         <SearchToolbar
           value={filters.query}
-          onChange={(q) => updateFilter('query', q)}
+          onChange={handleSearchQueryChange}
+          onSearchCommit={handleSearchCommit}
           resultCount={groupedRouteCount}
           totalCount={totalCount}
           randomEligibleCount={randomEligibleCount}
@@ -482,6 +475,10 @@ export function RouteLookupPage({
                   key={group}
                   groupId={group}
                   count={visibleCount}
+                  open={groupOpen[group]}
+                  onOpenChange={(open) =>
+                    setGroupOpen((prev) => ({ ...prev, [group]: open }))
+                  }
                 >
                   {visibleCount === 0 ? (
                     <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>

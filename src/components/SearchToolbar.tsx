@@ -7,6 +7,7 @@ import { SearchBar } from './SearchBar'
 interface SearchToolbarProps {
   value: string
   onChange: (value: string) => void
+  onSearchCommit?: () => void
   resultCount: number
   totalCount: number
   randomEligibleCount: number
@@ -26,6 +27,7 @@ interface SearchToolbarProps {
 export function SearchToolbar({
   value,
   onChange,
+  onSearchCommit,
   resultCount,
   totalCount,
   randomEligibleCount,
@@ -48,6 +50,7 @@ export function SearchToolbar({
       <SearchBar
         value={value}
         onChange={onChange}
+        onSearchCommit={onSearchCommit}
         resultCount={resultCount}
         totalCount={totalCount}
       />

@@ -74,6 +74,46 @@ export const versionUpdates: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: {
+          zh: '线路列表分组',
+          en: 'Route list groups',
+        },
+        items: [
+          {
+            zh: '首页线路列表分为「常规路线」「每日挑战路线」「季节限定（限时）」三个可折叠分组，默认收起，点击标题展开。',
+            en: 'The home route list is split into three collapsible sections — Regular, Daily challenge, and Seasonal limited-time — collapsed by default; tap a heading to expand.',
+          },
+          {
+            zh: '各组线路依据维护清单归类；卡片展示合并后的编号（如 U47*、240），方向仍通过详情内切换查看。',
+            en: 'Group membership follows the maintained route list; cards show merged numbers (e.g. U47*, 240) with direction toggles in the detail view.',
+          },
+          {
+            zh: '筛选菜单保留区域、运营商、类型；原「线路分组」筛选项已移除，三组区块始终显示。',
+            en: 'Filters keep zone, operator, and type; the old route-group filter chip was removed — all three sections stay visible.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '编号前后缀搜索（Beta）',
+          en: 'Route number prefix/suffix search (Beta)',
+        },
+        items: [
+          {
+            zh: '搜索栏支持 `F...`（F 开头）与 `...A`（A 结尾）等编号模式，适用于数字、字母及 #、*、% 等字符。',
+            en: 'Search supports route-number patterns such as `F...` (starts with F) and `...A` (ends with A), including digits, letters, and characters like #, *, and %.',
+          },
+          {
+            zh: '输入编号时会显示可点击建议（如输入 F 可出现 F... / ...F），一键应用前后缀筛选。',
+            en: 'Typing a route token shows tappable suggestions (e.g. F → F... / ...F) to apply prefix or suffix filters in one tap.',
+          },
+          {
+            zh: '匹配时会同时检索合并前的列表编号（如 240A、25YN），每日挑战与季节限定线路亦可搜到。',
+            en: 'Matching also checks pre-merge list IDs (e.g. 240A, 25YN), so daily challenge and seasonal routes are included.',
+          },
+        ],
+      },
     ],
   },
   {

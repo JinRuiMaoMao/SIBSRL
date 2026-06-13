@@ -9,46 +9,15 @@ import { compareRouteNumber } from '../utils/routeSort'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import {
   mergeRoutesByBaseNumber,
-  getRouteNumberAliases,
   findDisplayRouteByQuery,
 } from '../utils/routeMerge'
+import { matchesRouteSearchQuery } from '../utils/routeSearchQuery'
 
 const defaultFilters: RouteFilters = {
   query: '',
   zone: 'all',
   operator: 'all',
   type: 'all',
-}
-
-function matchesQuery(route: BusRoute, query: string): boolean {
-  const q = query.trim().toLowerCase()
-  if (!q) return true
-
-  const directionQuery = q.match(/^(.+)([nsew])$/i)
-  if (directionQuery) {
-    const base = directionQuery[1]!.toLowerCase()
-    const dir = directionQuery[2]!.toUpperCase()
-    const hasDirection = route.stops?.some((s) => (s.directionKey ?? '').toUpperCase() === dir) ?? false
-    if (route.number.toLowerCase() === base && hasDirection) return true
-  }
-
-  const haystack = [
-    route.number,
-    ...getRouteNumberAliases(route.number),
-    route.origin.zh,
-    route.origin.en,
-    route.destination.zh,
-    route.destination.en,
-    route.via?.zh,
-    route.via?.en,
-    ...route.operators,
-    ...route.stops?.flatMap((s) => s.list.flatMap((stop) => [stop.name.zh, stop.name.en])) ?? [],
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase()
-
-  return haystack.includes(q) || route.number.toLowerCase().startsWith(q)
 }
 
 export function useRouteSearch() {
@@ -64,7 +33,7 @@ export function useRouteSearch() {
         if (filters.zone !== 'all' && !route.zones.includes(filters.zone)) return false
         if (filters.operator !== 'all' && !route.operators.includes(filters.operator)) return false
         if (filters.type !== 'all' && !routeMatchesTypeFilter(route, filters.type)) return false
-        return matchesQuery(route, filters.query)
+        return matchesRouteSearchQuery(route, filters.query)
       })
       .sort((a, b) => compareRouteNumber(a.number, b.number))
   }, [displayRoutes, filters])

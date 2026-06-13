@@ -15,6 +15,10 @@ import {
   getSortedDirectionDataIndices,
 } from '../utils/routeDirectionCore'
 import { routeMatchesTypeFilter } from '../utils/routeTypes'
+import {
+  challengeRouteNumberMatchesQuery,
+  matchesRouteSearchQuery,
+} from '../utils/routeSearchQuery'
 
 export interface DailyChallengeIntro {
   body: BilingualText
@@ -297,8 +301,17 @@ export function getDailyChallengeOperatorsLabel(
 }
 
 function matchesDailyChallengeQuery(challenge: DailyChallengeInfo, query: string): boolean {
-  const q = query.trim().toLowerCase()
+  const q = query.trim()
   if (!q) return true
+
+  const routeNumber = challenge.routeNumber?.trim()
+  const linkedRoute =
+    routeNumber && !isPrivateHireChallengeRoute(routeNumber)
+      ? findRouteForDailyChallenge(routeNumber)
+      : null
+
+  if (linkedRoute && matchesRouteSearchQuery(linkedRoute, q)) return true
+  if (challengeRouteNumberMatchesQuery(routeNumber, q)) return true
 
   const haystack = [
     challenge.routeNumber,
@@ -321,8 +334,7 @@ function matchesDailyChallengeQuery(challenge: DailyChallengeInfo, query: string
     .join(' ')
     .toLowerCase()
 
-  const routeNumber = challenge.routeNumber?.toLowerCase() ?? ''
-  return haystack.includes(q) || routeNumber.startsWith(q)
+  return haystack.includes(q.toLowerCase())
 }
 
 /** 与线路列表共用同一套筛选/搜索规则 */
