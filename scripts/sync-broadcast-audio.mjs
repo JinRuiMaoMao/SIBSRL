@@ -95,9 +95,11 @@ function copyMusicSet(srcDir, destDir) {
     { sourceIncludes: '车辆生成1', dest: 'music-spawn-01.ogg' },
     { sourceIncludes: '车辆生成2', dest: 'music-spawn-02.ogg' },
     { sourceIncludes: '车辆生成3', dest: 'music-spawn-03.ogg' },
+    { sourceIncludes: '车辆生成4', dest: 'music-spawn-04.ogg' },
     { sourceIncludes: '结算1', dest: 'music-settlement-01.ogg' },
     { sourceIncludes: '结算2', dest: 'music-settlement-02.ogg' },
     { sourceIncludes: '结算3', dest: 'music-settlement-03.ogg' },
+    { sourceIncludes: '结算后', dest: 'music-settlement-after.ogg' },
   ]
 
   let copied = 0
