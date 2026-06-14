@@ -22,7 +22,7 @@
 6/11: Foggy Day (141PE)
 6/12: Private Hire (PH1)
 6/13: [Race] Marathon Road Closure (N171EM)
-6/14: [Race] Rush Hour
+6/14: [Race] Rush Hour (475W)
 6/15:
 6/16:
 6/17:
@@ -33,7 +33,7 @@
 6/22:
 6/23:
 6/24: [Race] Urban Odyssey (77XA)
-6/25:
+6/25: Rare Appearance
 6/26:
 6/27: [Race] Marathon Shuttle
 6/28: [Race] Rush Hour

@@ -111,6 +111,7 @@ const EVENT_ZH: Record<string, string> = {
   'Safety First': '安全第一',
   'Private Hire': '私人租用',
   'Rare Appearance x Private Hire': '罕见外观 × 私人租用',
+  'Rare Appearance': '罕见外观',
   'Street light outage': '街灯停电',
   'Street Light Outage': '街灯停电',
   'Marathon Road Closure': '马拉松封路',
