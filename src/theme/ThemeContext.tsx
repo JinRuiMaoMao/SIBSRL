@@ -7,35 +7,34 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { ALL_THEMES, THEME_STORAGE_KEY, type Theme } from './types'
+import { stopSystemThemeSyncHandler, syncThemePreference } from './resolveTheme'
+import { ALL_THEME_PREFERENCES, THEME_STORAGE_KEY, type ThemePreference } from './types'
 
 interface ThemeContextValue {
-  theme: Theme
-  setTheme: (theme: Theme) => void
+  theme: ThemePreference
+  setTheme: (theme: ThemePreference) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
-function readStoredTheme(): Theme {
+function readStoredTheme(): ThemePreference {
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY)
-    if (stored && ALL_THEMES.includes(stored as Theme)) return stored as Theme
+    if (stored && ALL_THEME_PREFERENCES.includes(stored as ThemePreference)) {
+      return stored as ThemePreference
+    }
   } catch {
     /* ignore */
   }
-  return 'dark'
-}
-
-function applyTheme(theme: Theme): void {
-  document.documentElement.setAttribute('data-theme', theme)
+  return 'system'
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(readStoredTheme)
+  const [theme, setThemeState] = useState<ThemePreference>(readStoredTheme)
 
-  const setTheme = useCallback((next: Theme) => {
+  const setTheme = useCallback((next: ThemePreference) => {
     setThemeState(next)
-    applyTheme(next)
+    syncThemePreference(next)
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next)
     } catch {
@@ -44,7 +43,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    applyTheme(theme)
+    syncThemePreference(theme)
+    return () => stopSystemThemeSyncHandler()
   }, [theme])
 
   const value = useMemo(() => ({ theme, setTheme }), [theme, setTheme])

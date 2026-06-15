@@ -131,10 +131,21 @@ const THEME_STORAGE_KEY = 'sibs-theme'
 
 const THEME_BOOTSTRAP_SCRIPT = `<script id="theme-bootstrap">
 (function () {
+  function resolveSystemAppearance() {
+    try {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch (e) {
+      return 'dark';
+    }
+  }
+
   try {
-    var theme = localStorage.getItem('${THEME_STORAGE_KEY}');
-    if (theme !== 'light' && theme !== 'dark') theme = 'dark';
-    document.documentElement.setAttribute('data-theme', theme);
+    var pref = localStorage.getItem('${THEME_STORAGE_KEY}');
+    if (pref !== 'light' && pref !== 'dark' && pref !== 'system') pref = 'system';
+    document.documentElement.setAttribute(
+      'data-theme',
+      pref === 'system' ? resolveSystemAppearance() : pref,
+    );
   } catch (e) {
     document.documentElement.setAttribute('data-theme', 'dark');
   }

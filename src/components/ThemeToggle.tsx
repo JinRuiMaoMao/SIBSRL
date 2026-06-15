@@ -1,12 +1,17 @@
 import { useLocale } from '../i18n/LocaleContext'
 import { useTheme } from '../theme/ThemeContext'
-import type { Theme } from '../theme/types'
+import type { ThemePreference } from '../theme/types'
 
 export function ThemeToggle() {
   const { t } = useLocale()
   const { theme, setTheme } = useTheme()
 
-  const options: { id: Theme; labelKey: 'themeDark' | 'themeLight'; icon: string }[] = [
+  const options: {
+    id: ThemePreference
+    labelKey: 'themeSystem' | 'themeDark' | 'themeLight'
+    icon: string
+  }[] = [
+    { id: 'system', labelKey: 'themeSystem', icon: '🌓' },
     { id: 'dark', labelKey: 'themeDark', icon: '🌙' },
     { id: 'light', labelKey: 'themeLight', icon: '☀️' },
   ]

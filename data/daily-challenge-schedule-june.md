@@ -3,7 +3,8 @@
 > 来源：社区／游戏内公布的 ~June Daily Challenge~ 列表（Discord 格式，已去除 emoji 自定义码）。  
 > 已接入 `getTodaysDailyChallenge()`，读取 [`daily-challenge-schedule-2026-06.json`](./daily-challenge-schedule-2026-06.json)，每日 **HKT 08:00** 切换。  
 > 主站线路列表折叠分组见 [`route-display-groups.json`](./route-display-groups.json)。  
-> 月份假定 **2026-06**（与站点更新日期一致）；若年份不同请改 JSON 内 `month` 与各 `date`。
+> 月份假定 **2026-06**（与站点更新日期一致）；若年份不同请改 JSON 内 `month` 与各 `date`。  
+> **暂无公布内容的日期**（6/16–19、6/22–23、6/26、6/29）暂时填为 **Private Hire (PH1)**，待官方数据后再改。
 
 ## 原文
 
@@ -23,7 +24,7 @@
 6/12: Private Hire (PH1)
 6/13: [Race] Marathon Road Closure (N171EM)
 6/14: [Race] Rush Hour (475W)
-6/15:
+6/15: Private Hire (PH1)
 6/16:
 6/17:
 6/18:
@@ -33,7 +34,7 @@
 6/22:
 6/23:
 6/24: [Race] Urban Odyssey (77XA)
-6/25: Rare Appearance
+6/25: Rare appearance
 6/26:
 6/27: [Race] Marathon Shuttle
 6/28: [Race] Rush Hour
