@@ -1138,14 +1138,15 @@
 }
 
 .settings-panel {
-  position: absolute;
-  top: calc(100% + 0.4rem);
-  right: 0;
+  position: fixed;
+  top: calc(var(--site-header-sticky-offset, 0px) + 2.85rem);
+  right: max(0.75rem, var(--header-controls-inset-right, 0.75rem));
   left: auto;
-  z-index: 200;
+  bottom: auto;
+  z-index: 300;
   width: min(20rem, calc(100vw - 1.5rem));
   max-width: calc(100vw - 1.5rem);
-  max-height: min(85vh, calc(100dvh - 5rem));
+  max-height: calc(100dvh - var(--site-header-sticky-offset, 0px) - 3.5rem);
   padding: 0.75rem;
   background: var(--bg-deep);
   border: 1px solid var(--border);
@@ -1155,6 +1156,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .settings-panel-title {
@@ -2695,17 +2697,15 @@
 
 @media (max-width: 640px) {
   .settings-panel {
-    position: fixed;
+    top: auto;
     left: 0.75rem;
     right: 0.75rem;
-    top: auto;
     bottom: 0;
     width: auto;
     max-width: none;
     max-height: min(88dvh, calc(100dvh - 3.5rem));
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-    overflow-y: auto;
   }
 
   .settings-locale-grid {
