@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { RouteTypeFilter } from '../types/route'
 import { FilterMenu } from './FilterMenu'
@@ -22,6 +23,10 @@ interface SearchToolbarProps {
   onZoneChange: (zone: number | 'all') => void
   onOperatorChange: (op: string | 'all') => void
   onTypeChange: (type: RouteTypeFilter | 'all') => void
+  searchHistory?: string[]
+  onApplyHistory?: (query: string) => void
+  onClearHistory?: () => void
+  searchInputRef?: RefObject<HTMLInputElement | null>
 }
 
 export function SearchToolbar({
@@ -42,6 +47,10 @@ export function SearchToolbar({
   onZoneChange,
   onOperatorChange,
   onTypeChange,
+  searchHistory,
+  onApplyHistory,
+  onClearHistory,
+  searchInputRef,
 }: SearchToolbarProps) {
   const { t } = useLocale()
 
@@ -53,6 +62,10 @@ export function SearchToolbar({
         onSearchCommit={onSearchCommit}
         resultCount={resultCount}
         totalCount={totalCount}
+        searchHistory={searchHistory}
+        onApplyHistory={onApplyHistory}
+        onClearHistory={onClearHistory}
+        inputRef={searchInputRef}
       />
       <div className="search-toolbar-actions">
         <button

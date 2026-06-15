@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, type RefObject } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import {
@@ -16,6 +16,10 @@ interface SearchBarProps {
   id?: string
   labelKey?: MessageKey
   placeholderKey?: MessageKey
+  searchHistory?: string[]
+  onApplyHistory?: (query: string) => void
+  onClearHistory?: () => void
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 function suggestionLabel(suggestion: string, t: (key: MessageKey, vars?: Record<string, string | number>) => string): string {
@@ -38,9 +42,15 @@ export function SearchBar({
   id = 'route-search',
   labelKey = 'searchLabel',
   placeholderKey = 'searchPlaceholder',
+  searchHistory = [],
+  onApplyHistory,
+  onClearHistory,
+  inputRef,
 }: SearchBarProps) {
   const { t } = useLocale()
+  const [focused, setFocused] = useState(false)
   const suggestions = useMemo(() => getRouteSearchSuggestions(value), [value])
+  const showHistory = focused && !value.trim() && searchHistory.length > 0
 
   return (
     <div className="search-bar-wrap">
@@ -52,11 +62,14 @@ export function SearchBar({
           ⌕
         </span>
         <input
+          ref={inputRef}
           id={id}
           type="search"
           placeholder={t(placeholderKey)}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => window.setTimeout(() => setFocused(false), 120)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault()
@@ -91,6 +104,34 @@ export function SearchBar({
           })}
         </div>
       ) : null}
+
+      {showHistory ? (
+        <div className="search-history" aria-label={t('searchHistory')}>
+          <div className="search-history-head">
+            <span className="search-history-title">{t('searchHistory')}</span>
+            {onClearHistory ? (
+              <button type="button" className="search-history-clear" onClick={onClearHistory}>
+                {t('searchHistoryClear')}
+              </button>
+            ) : null}
+          </div>
+          <div className="search-history-chips">
+            {searchHistory.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className="search-history-chip"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => onApplyHistory?.(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <p className="search-shortcut-hint">{t('searchShortcutHint')}</p>
     </div>
   )
 }

@@ -2,14 +2,20 @@ import { useId, type ReactNode } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 
-const GROUP_TITLE_KEYS: Record<'normal' | 'daily' | 'seasonal', MessageKey> = {
+const GROUP_TITLE_KEYS: Record<
+  'normal' | 'daily' | 'seasonal' | 'favorites' | 'recent' | 'viaStop',
+  MessageKey
+> = {
+  favorites: 'favoriteRoutes',
+  recent: 'recentRoutes',
+  viaStop: 'routesViaStop',
   normal: 'routeGroupNormal',
   daily: 'routeGroupDaily',
   seasonal: 'routeGroupSeasonal',
 }
 
 interface RouteGroupCollapseProps {
-  groupId: 'normal' | 'daily' | 'seasonal'
+  groupId: 'normal' | 'daily' | 'seasonal' | 'favorites' | 'recent' | 'viaStop'
   count: number
   open: boolean
   onOpenChange: (open: boolean) => void

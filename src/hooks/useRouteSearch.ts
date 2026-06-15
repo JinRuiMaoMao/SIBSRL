@@ -1,9 +1,13 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { dailyChallengeMatchesFilters, getTodaysDailyChallenge } from '../data/dailyChallenge'
 import { routes } from '../data/routes'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
+import {
+  readStoredRouteFilters,
+  writeStoredRouteFilters,
+} from '../storage/routePreferences'
 import type { BusRoute, RouteFilters, RouteTypeFilter } from '../types/route'
-import { routeMatchesTypeFilter } from '../utils/routeTypes'
+import { routeMatchesFilters } from '../utils/routeFilterMatch'
 import { clampDirectionIndex } from '../utils/routeDirections'
 import { compareRouteNumber } from '../utils/routeSort'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
@@ -11,13 +15,10 @@ import {
   mergeRoutesByBaseNumber,
   findDisplayRouteByQuery,
 } from '../utils/routeMerge'
-import { matchesRouteSearchQuery } from '../utils/routeSearchQuery'
 
 const defaultFilters: RouteFilters = {
   query: '',
-  zone: 'all',
-  operator: 'all',
-  type: 'all',
+  ...readStoredRouteFilters(),
 }
 
 export function useRouteSearch() {
@@ -29,14 +30,17 @@ export function useRouteSearch() {
 
   const filteredRoutes = useMemo(() => {
     return displayRoutes
-      .filter((route) => {
-        if (filters.zone !== 'all' && !route.zones.includes(filters.zone)) return false
-        if (filters.operator !== 'all' && !route.operators.includes(filters.operator)) return false
-        if (filters.type !== 'all' && !routeMatchesTypeFilter(route, filters.type)) return false
-        return matchesRouteSearchQuery(route, filters.query)
-      })
+      .filter((route) => routeMatchesFilters(route, filters))
       .sort((a, b) => compareRouteNumber(a.number, b.number))
   }, [displayRoutes, filters])
+
+  useEffect(() => {
+    writeStoredRouteFilters({
+      zone: filters.zone,
+      operator: filters.operator,
+      type: filters.type,
+    })
+  }, [filters.zone, filters.operator, filters.type])
 
   const dailyChallengeVisible = useMemo(
     () => dailyChallengeMatchesFilters(getTodaysDailyChallenge(), filters),
@@ -123,6 +127,7 @@ export function useRouteSearch() {
     filters,
     updateFilter,
     filteredRoutes,
+    displayRoutes,
     dailyChallengeVisible,
     selectedRoute,
     getDirectionIndex,

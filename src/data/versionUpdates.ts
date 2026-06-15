@@ -15,6 +15,124 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-15-summary',
+    date: '2026-06-15',
+    title: {
+      zh: '2026-06-15 更新',
+      en: '2026-06-15 updates',
+    },
+    groups: [
+      {
+        title: {
+          zh: '收藏线路',
+          en: 'Favorite routes',
+        },
+        items: [
+          {
+            zh: '线路卡片与详情页可点星标收藏，偏好写入本地存储。',
+            en: 'Star routes on list cards or in the detail view; favorites are saved locally.',
+          },
+          {
+            zh: '「收藏线路」为可折叠分组，位于今日每日挑战下方、常规路线上方；收藏的线路仍保留在原有分组中显示。',
+            en: '“Favorites” is a collapsible section below Today’s daily challenge and above Regular routes; favorited routes still appear in their original groups.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '设置面板',
+          en: 'Settings panel',
+        },
+        items: [
+          {
+            zh: '外观切换（跟随系统 / 深色 / 浅色）移入设置菜单，顶栏仅保留齿轮按钮。',
+            en: 'Appearance (System / Dark / Light) moved into the Settings menu; the header now shows only the gear button.',
+          },
+          {
+            zh: '跟随系统时随操作系统或浏览器主题自动切换；各栏目与秘密页共用同一偏好。',
+            en: 'System mode follows the OS or browser theme; the preference is shared across tabs and the secret page.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '记住筛选与分组',
+          en: 'Saved filters & groups',
+        },
+        items: [
+          {
+            zh: '区域、运营商、类型筛选在刷新后保留；搜索框文字不保留，避免上次搜索残留。',
+            en: 'Zone, operator, and type filters persist after reload; the search box is not saved so old queries do not linger.',
+          },
+          {
+            zh: '常规路线、收藏线路、每日挑战路线、季节限定等分组的展开 / 收起状态一并记住。',
+            en: 'Expanded or collapsed state is remembered for Regular, Favorites, Daily challenge, Seasonal, and other list sections.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '最近查看与搜索历史',
+          en: 'Recently viewed & search history',
+        },
+        items: [
+          {
+            zh: '自动记录最近打开的线路（最多 10 条），「最近查看」分组位于收藏下方、常规路线上方。',
+            en: 'Automatically tracks up to 10 recently opened routes; “Recently viewed” sits below Favorites and above Regular routes.',
+          },
+          {
+            zh: '按 Enter 搜索后写入搜索历史；聚焦空搜索框时可点历史词条快速复搜，并支持一键清空。',
+            en: 'Press Enter to save a query to search history; focus an empty search box to re-run past queries, with a clear-all control.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '键盘快捷键',
+          en: 'Keyboard shortcuts',
+        },
+        items: [
+          {
+            zh: '「/」聚焦搜索框；「↑ / ↓」在可见线路卡片间移动焦点；「Esc」关闭线路详情。',
+            en: 'Press / to focus search; ↑ / ↓ move focus across visible route cards; Esc closes route detail.',
+          },
+          {
+            zh: '使用「/」时请先点一下页面空白处，确保光标不在其他输入框内；搜索框下方亦有快捷键提示。',
+            en: 'For /, click page chrome first so focus is not in another field; a shortcut hint also appears below the search box.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '显示与备份',
+          en: 'Display & backup',
+        },
+        items: [
+          {
+            zh: '设置中可开启「减少动态效果」或切换「标准 / 紧凑」列表密度。',
+            en: 'Settings adds Reduce motion and Comfortable / Compact list density.',
+          },
+          {
+            zh: '收藏可导出为 JSON 复制到剪贴板，或粘贴 JSON 导入（覆盖当前收藏）。',
+            en: 'Favorites can be exported as JSON to the clipboard or imported by pasting JSON (replaces current favorites).',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '按站点反查线路',
+          en: 'Stop-based route lookup',
+        },
+        items: [
+          {
+            zh: '搜索站名（至少 2 字）时显示「经过此站的线路」分组，列出途经该站的线路。',
+            en: 'When a stop name is searched (2+ characters), a “Routes via this stop” section lists routes that serve matching stops.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: '2026-06-13-summary',
     date: '2026-06-13',
     title: {

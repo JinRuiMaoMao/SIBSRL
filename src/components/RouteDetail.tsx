@@ -20,6 +20,7 @@ import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
+import { RouteFavoriteButton } from './RouteFavoriteButton'
 
 interface RouteDetailProps {
   route: BusRoute
@@ -77,9 +78,12 @@ export function RouteDetail({
           )}
           {displayTypes.length > 0 && <RouteTypeTags types={displayTypes} />}
         </div>
-        <button type="button" className="close-btn" onClick={onClose} aria-label={t('closeDetail')}>
-          ×
-        </button>
+        <div className="detail-header-actions">
+          <RouteFavoriteButton routeId={route.id} className="route-favorite-btn--detail" />
+          <button type="button" className="close-btn" onClick={onClose} aria-label={t('closeDetail')}>
+            ×
+          </button>
+        </div>
       </div>
 
       {dailyChallengeIntro ? (

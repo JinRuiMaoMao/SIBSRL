@@ -2,7 +2,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import { useTheme } from '../theme/ThemeContext'
 import type { ThemePreference } from '../theme/types'
 
-export function ThemeToggle() {
+export function ThemeToggle({ className = '' }: { className?: string }) {
   const { t } = useLocale()
   const { theme, setTheme } = useTheme()
 
@@ -17,7 +17,11 @@ export function ThemeToggle() {
   ]
 
   return (
-    <div className="theme-toggle" role="group" aria-label={t('themeLabel')}>
+    <div
+      className={`theme-toggle ${className}`.trim()}
+      role="group"
+      aria-label={t('themeLabel')}
+    >
       {options.map((opt) => (
         <button
           key={opt.id}

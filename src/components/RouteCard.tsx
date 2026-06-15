@@ -10,6 +10,7 @@ import { getDirectionLengthKm } from '../utils/routeDirections'
 import { formatRouteOperators } from '../utils/routeDisplay'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
 import { getRoutePageHref } from '../utils/routeNavigation'
+import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { DirectionToggle } from './DirectionToggle'
 import { RouteEndpoints } from './RouteEndpoints'
 import { RouteTypeTags } from './RouteTypeTags'
@@ -74,11 +75,14 @@ export function RouteCard({
             />
           )}
         </div>
-        {lengthKm && (
-          <span className="route-card-km" key={`${route.id}-km-${directionIndex}`}>
-            {lengthKm}
-          </span>
-        )}
+        <div className="route-card-top-end">
+          {lengthKm && (
+            <span className="route-card-km" key={`${route.id}-km-${directionIndex}`}>
+              {lengthKm}
+            </span>
+          )}
+          <RouteFavoriteButton routeId={route.id} />
+        </div>
       </div>
 
       <RouteEndpoints route={route} directionIndex={directionIndex} />

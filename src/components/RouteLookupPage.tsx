@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
   findRouteForDailyChallenge,
@@ -28,7 +28,26 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { loadRoutePageData } from '../utils/loadRoutePageData'
+import {
+  defaultClosedRouteGroups,
+  readStoredRouteGroupOpen,
+  writeStoredRouteGroupOpen,
+} from '../storage/routePreferences'
+import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
+import { useRecentRoutes } from '../contexts/RecentRoutesContext'
+import { useRouteListKeyboard } from '../hooks/useRouteListKeyboard'
+import {
+  clearSearchHistory,
+  pushSearchHistory,
+  readSearchHistory,
+} from '../storage/routeActivity'
+import { shouldReduceMotion } from '../storage/appPreferences'
 import { clearRouteFromLocation, readRouteQueryFromLocation, setRouteInLocation } from '../utils/routeNavigation'
+import { routeMatchesFilters } from '../utils/routeFilterMatch'
+import {
+  findStopsMatchingQuery,
+  routePassesStopQuery,
+} from '../utils/routeStopLookup'
 
 type DetailOverlay =
   | { kind: 'route'; route: BusRoute }
@@ -47,15 +66,9 @@ function overlayKey(overlay: DetailOverlay): string | null {
 const DETAIL_ANIM_MS = 500
 const DETAIL_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)'
 
-const CLOSED_ROUTE_GROUPS: Record<RouteDisplayGroupKey, boolean> = {
-  normal: false,
-  daily: false,
-  seasonal: false,
-}
 
 function motionDurationMs(): number {
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  return reduced ? 200 : DETAIL_ANIM_MS
+  return shouldReduceMotion() ? 200 : DETAIL_ANIM_MS
 }
 
 function scrollRouteCardIntoView(routeId: string) {
@@ -63,8 +76,7 @@ function scrollRouteCardIntoView(routeId: string) {
     `[data-route-id="${CSS.escape(routeId)}"]`,
   )
   if (!el) return
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' })
+  el.scrollIntoView({ behavior: shouldReduceMotion() ? 'auto' : 'smooth', block: 'center' })
 }
 
 function runDetailAnimation(
@@ -95,7 +107,10 @@ export function RouteLookupPage({
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
   const [dailyChallengeRouteView, setDailyChallengeRouteView] = useState(false)
-  const [groupOpen, setGroupOpen] = useState(CLOSED_ROUTE_GROUPS)
+  const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
+  const [searchHistory, setSearchHistory] = useState(readSearchHistory)
+  const [stopSectionOpen, setStopSectionOpen] = useState(true)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [routePageDetail, setRoutePageDetail] = useState<{
     route: BusRoute
     pageData: RoutePageData | null
@@ -112,6 +127,7 @@ export function RouteLookupPage({
     filters,
     updateFilter,
     filteredRoutes,
+    displayRoutes,
     dailyChallengeVisible,
     selectedRoute,
     getDirectionIndex,
@@ -126,6 +142,46 @@ export function RouteLookupPage({
     types,
     totalCount,
   } = useRouteSearch()
+  const { favorites } = useFavoriteRoutes()
+  const { recentIds, recordRecent } = useRecentRoutes()
+
+  const favoriteRoutes = useMemo(() => {
+    const byId = new Map(displayRoutes.map((route) => [route.id, route]))
+    return favorites
+      .map((id) => byId.get(id))
+      .filter((route): route is BusRoute => route != null)
+  }, [displayRoutes, favorites])
+
+  const recentRoutes = useMemo(() => {
+    const byId = new Map(displayRoutes.map((route) => [route.id, route]))
+    return recentIds
+      .map((id) => byId.get(id))
+      .filter((route): route is BusRoute => route != null)
+  }, [displayRoutes, recentIds])
+
+  const matchedStops = useMemo(
+    () => findStopsMatchingQuery(filters.query),
+    [filters.query],
+  )
+
+  const stopLookupRoutes = useMemo(() => {
+    const q = filters.query.trim()
+    if (q.length < 2 || matchedStops.length === 0) return []
+    return displayRoutes
+      .filter(
+        (route) =>
+          routePassesStopQuery(route, q) && routeMatchesFilters(route, filters),
+      )
+      .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }))
+  }, [displayRoutes, filters, matchedStops.length])
+
+  useEffect(() => {
+    if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
+  }, [filters.query, stopLookupRoutes.length])
+
+  useEffect(() => {
+    writeStoredRouteGroupOpen(groupOpen)
+  }, [groupOpen])
 
   const activeOverlayKey = overlayKey(detailOverlay)
 
@@ -176,13 +232,14 @@ export function RouteLookupPage({
     const route = findDisplayRoute(routeId)
     if (route) {
       setDailyChallengeRouteView(false)
+      recordRecent(route.id)
       selectRoute(routeId)
       return
     }
 
     clearSelection()
     setDetailOverlay({ kind: 'not-found', routeId })
-  }, [clearSelection, findDisplayRoute, selectRoute])
+  }, [clearSelection, findDisplayRoute, recordRecent, selectRoute])
 
   useEffect(() => {
     if (!selectedRoute) return
@@ -270,11 +327,12 @@ export function RouteLookupPage({
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
       setDailyChallengeRouteView(false)
+      recordRecent(routeId)
       onRouteCardNavigate?.()
       selectRoute(routeId)
       setRouteInLocation(routeId)
     },
-    [onRouteCardNavigate, selectRoute],
+    [onRouteCardNavigate, recordRecent, selectRoute],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
@@ -294,6 +352,7 @@ export function RouteLookupPage({
   const handleRandomRoute = () => {
     const id = selectRandomRoute()
     if (!id) return
+    recordRecent(id)
     requestAnimationFrame(() => {
       requestAnimationFrame(() => scrollRouteCardIntoView(id))
     })
@@ -381,6 +440,12 @@ export function RouteLookupPage({
     return groups
   }, [filteredRoutes])
 
+  const countVisibleGroupSlots = useCallback(
+    (group: RouteDisplayGroupKey) =>
+      groupedSlots[group].filter((slot) => slot.isVisible && slot.entry).length,
+    [groupedSlots],
+  )
+
   const groupedRouteCount = useMemo(() => {
     const seenRouteIds = new Set<string>()
     let count = 0
@@ -400,23 +465,37 @@ export function RouteLookupPage({
   const handleSearchQueryChange = useCallback(
     (q: string) => {
       updateFilter('query', q)
-      setGroupOpen(CLOSED_ROUTE_GROUPS)
+      setGroupOpen(defaultClosedRouteGroups())
     },
     [updateFilter],
   )
 
   const handleSearchCommit = useCallback(() => {
-    if (!filters.query.trim()) return
+    const q = filters.query.trim()
+    if (!q) return
 
-    const next = { ...CLOSED_ROUTE_GROUPS }
+    setSearchHistory((prev) => pushSearchHistory(q, prev))
+
+    const next = defaultClosedRouteGroups()
     for (const group of visibleDisplayGroups) {
-      const visibleCount = groupedSlots[group].filter(
-        (slot) => slot.isVisible && slot.entry,
-      ).length
-      if (visibleCount > 0) next[group] = true
+      if (countVisibleGroupSlots(group) > 0) next[group] = true
     }
+    if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
     setGroupOpen(next)
-  }, [filters.query, groupedSlots, visibleDisplayGroups])
+  }, [countVisibleGroupSlots, filters.query, stopLookupRoutes.length, visibleDisplayGroups])
+
+  const handleApplyHistory = useCallback(
+    (query: string) => {
+      updateFilter('query', query)
+      searchInputRef.current?.focus()
+    },
+    [updateFilter],
+  )
+
+  const handleClearHistory = useCallback(() => {
+    clearSearchHistory()
+    setSearchHistory([])
+  }, [])
 
   const renderGroupedRouteCards = (group: RouteDisplayGroupKey) =>
     groupedSlots[group].map((slot) => {
@@ -432,6 +511,63 @@ export function RouteLookupPage({
         />
       )
     })
+
+  const renderFavoriteRouteCards = () =>
+    favoriteRoutes.map((route) => (
+      <RouteCard
+        key={`favorite-${route.id}`}
+        route={route}
+        selected={selectedRoute?.id === route.id}
+        directionIndex={getDirectionIndex(route)}
+        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onNavigate={handleRouteNavigate}
+        muted={!routeMatchesFilters(route, filters)}
+      />
+    ))
+
+  const renderRecentRouteCards = () =>
+    recentRoutes.map((route) => (
+      <RouteCard
+        key={`recent-${route.id}`}
+        route={route}
+        selected={selectedRoute?.id === route.id}
+        directionIndex={getDirectionIndex(route)}
+        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onNavigate={handleRouteNavigate}
+        muted={!routeMatchesFilters(route, filters)}
+      />
+    ))
+
+  const renderStopRouteCards = () =>
+    stopLookupRoutes.map((route) => (
+      <RouteCard
+        key={`via-stop-${route.id}`}
+        route={route}
+        selected={selectedRoute?.id === route.id}
+        directionIndex={getDirectionIndex(route)}
+        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onNavigate={handleRouteNavigate}
+      />
+    ))
+
+  const stopLookupSummary = useMemo(() => {
+    if (matchedStops.length === 0) return ''
+    const names = matchedStops.slice(0, 3).map((stop) => stop.zh)
+    if (matchedStops.length > 3) {
+      return t('stopLookupMatchesMore', {
+        stops: names.join('、'),
+        count: matchedStops.length,
+      })
+    }
+    return t('stopLookupMatches', { stops: names.join('、') })
+  }, [matchedStops, t])
+
+  useRouteListKeyboard({
+    enabled: true,
+    detailOpen: Boolean(detailOverlay),
+    onCloseDetail: handleCloseDetail,
+    searchInputId: 'route-search',
+  })
 
   return (
     <div className="route-lookup-page">
@@ -454,6 +590,10 @@ export function RouteLookupPage({
           onZoneChange={(z) => updateFilter('zone', z)}
           onOperatorChange={(op) => updateFilter('operator', op)}
           onTypeChange={(item) => updateFilter('type', item)}
+          searchHistory={searchHistory}
+          onApplyHistory={handleApplyHistory}
+          onClearHistory={handleClearHistory}
+          searchInputRef={searchInputRef}
         />
       </div>
 
@@ -467,27 +607,62 @@ export function RouteLookupPage({
               />
             ) : null}
 
-            {visibleDisplayGroups.map((group) => {
-              const slots = groupedSlots[group]
-              const visibleCount = slots.filter((slot) => slot.isVisible && slot.entry).length
-              return (
+            {stopLookupRoutes.length > 0 ? (
+              <RouteGroupCollapse
+                groupId="viaStop"
+                count={stopLookupRoutes.length}
+                open={stopSectionOpen}
+                onOpenChange={setStopSectionOpen}
+              >
+                <p className="stop-lookup-summary">{stopLookupSummary}</p>
+                <div className="route-grid">{renderStopRouteCards()}</div>
+              </RouteGroupCollapse>
+            ) : null}
+
+            {visibleDisplayGroups.map((group) => (
+              <Fragment key={group}>
+                {group === 'normal' && favoriteRoutes.length > 0 ? (
+                  <RouteGroupCollapse
+                    groupId="favorites"
+                    count={favoriteRoutes.length}
+                    open={groupOpen.favorites}
+                    onOpenChange={(open) =>
+                      setGroupOpen((prev) => ({ ...prev, favorites: open }))
+                    }
+                  >
+                    <div className="route-grid">{renderFavoriteRouteCards()}</div>
+                  </RouteGroupCollapse>
+                ) : null}
+
+                {group === 'normal' && recentRoutes.length > 0 ? (
+                  <RouteGroupCollapse
+                    groupId="recent"
+                    count={recentRoutes.length}
+                    open={groupOpen.recent}
+                    onOpenChange={(open) =>
+                      setGroupOpen((prev) => ({ ...prev, recent: open }))
+                    }
+                  >
+                    <div className="route-grid">{renderRecentRouteCards()}</div>
+                  </RouteGroupCollapse>
+                ) : null}
+
                 <RouteGroupCollapse
-                  key={group}
                   groupId={group}
-                  count={visibleCount}
+                  count={countVisibleGroupSlots(group)}
                   open={groupOpen[group]}
                   onOpenChange={(open) =>
                     setGroupOpen((prev) => ({ ...prev, [group]: open }))
                   }
                 >
-                  {visibleCount === 0 ? (
+                  {countVisibleGroupSlots(group) === 0 ? (
                     <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
                   ) : (
                     <div className="route-grid">{renderGroupedRouteCards(group)}</div>
                   )}
                 </RouteGroupCollapse>
-              )
-            })}
+              </Fragment>
+            ))}
 
             {listIsEmpty ? (
               <p className="empty-state route-grid-span">{t('emptyState')}</p>

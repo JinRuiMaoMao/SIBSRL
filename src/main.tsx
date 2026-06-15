@@ -3,9 +3,15 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
+import { AppPreferencesProvider } from './contexts/AppPreferencesContext.tsx'
+import { FavoriteRoutesProvider } from './contexts/FavoriteRoutesContext.tsx'
+import { RecentRoutesProvider } from './contexts/RecentRoutesContext.tsx'
 import { LocaleProvider } from './i18n/LocaleContext.tsx'
 import { ThemeProvider } from './theme/ThemeContext.tsx'
+import { applyAppPreferences, readAppPreferences } from './storage/appPreferences.ts'
 import { installDevToolsBlock } from './utils/blockDevToolsShortcuts.ts'
+
+applyAppPreferences(readAppPreferences())
 
 if (!import.meta.env.DEV) {
   installDevToolsBlock()
@@ -20,8 +26,14 @@ createRoot(rootEl).render(
   <StrictMode>
     <ThemeProvider>
       <LocaleProvider>
-        <App />
-        <CustomContextMenu />
+        <AppPreferencesProvider>
+          <FavoriteRoutesProvider>
+            <RecentRoutesProvider>
+              <App />
+              <CustomContextMenu />
+            </RecentRoutesProvider>
+          </FavoriteRoutesProvider>
+        </AppPreferencesProvider>
       </LocaleProvider>
     </ThemeProvider>
   </StrictMode>,
