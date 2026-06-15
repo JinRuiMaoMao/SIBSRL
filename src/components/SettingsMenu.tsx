@@ -61,7 +61,12 @@ export function SettingsMenu() {
       </button>
 
       {open && (
-        <div id={panelId} className="settings-panel" role="dialog" aria-label={t('settings')}>
+        <div
+          id={panelId}
+          className="settings-panel sibs-scrollbar"
+          role="dialog"
+          aria-label={t('settings')}
+        >
           <section className="settings-section">
             <p className="settings-panel-title">{t('themeLabel')}</p>
             <ThemeToggle className="settings-theme-toggle" />

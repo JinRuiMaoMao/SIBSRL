@@ -1145,12 +1145,16 @@
   z-index: 200;
   width: min(20rem, calc(100vw - 1.5rem));
   max-width: calc(100vw - 1.5rem);
+  max-height: min(85vh, calc(100dvh - 5rem));
   padding: 0.75rem;
   background: var(--bg-deep);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 40px var(--shadow-overlay);
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .settings-panel-title {
@@ -1166,9 +1170,6 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
-  max-height: min(24rem, 70vh);
-  overflow-x: hidden;
-  overflow-y: auto;
   padding-right: 0.35rem;
 }
 
@@ -2701,14 +2702,14 @@
     bottom: 0;
     width: auto;
     max-width: none;
-    max-height: min(72vh, calc(100dvh - 4rem));
+    max-height: min(88dvh, calc(100dvh - 3.5rem));
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    overflow-y: auto;
   }
 
   .settings-locale-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-height: min(48vh, 18rem);
   }
 
   .settings-locale-option {
