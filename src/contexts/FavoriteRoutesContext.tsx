@@ -16,6 +16,7 @@ interface FavoriteRoutesContextValue {
   isFavorite: (routeId: string) => boolean
   toggleFavorite: (routeId: string) => void
   replaceFavorites: (routeIds: string[]) => void
+  reorderFavorites: (dragRouteId: string, targetRouteId: string) => void
 }
 
 const FavoriteRoutesContext = createContext<FavoriteRoutesContextValue | null>(null)
@@ -44,9 +45,24 @@ export function FavoriteRoutesProvider({ children }: { children: ReactNode }) {
     setFavorites(next)
   }, [])
 
+  const reorderFavorites = useCallback((dragRouteId: string, targetRouteId: string) => {
+    if (!dragRouteId || !targetRouteId || dragRouteId === targetRouteId) return
+    setFavorites((prev) => {
+      const fromIndex = prev.indexOf(dragRouteId)
+      const toIndex = prev.indexOf(targetRouteId)
+      if (fromIndex < 0 || toIndex < 0) return prev
+      const next = [...prev]
+      const [moved] = next.splice(fromIndex, 1)
+      if (!moved) return prev
+      next.splice(toIndex, 0, moved)
+      writeStoredFavoriteRouteIds(next)
+      return next
+    })
+  }, [])
+
   const value = useMemo(
-    () => ({ favorites, isFavorite, toggleFavorite, replaceFavorites }),
-    [favorites, isFavorite, toggleFavorite, replaceFavorites],
+    () => ({ favorites, isFavorite, toggleFavorite, replaceFavorites, reorderFavorites }),
+    [favorites, isFavorite, toggleFavorite, replaceFavorites, reorderFavorites],
   )
 
   return (

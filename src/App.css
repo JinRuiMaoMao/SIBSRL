@@ -1279,6 +1279,11 @@
   color: var(--accent);
 }
 
+.settings-action-btn.danger:hover:not(:disabled) {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 .settings-action-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
@@ -1881,6 +1886,20 @@
   width: 2rem;
   height: 2rem;
   font-size: 1.05rem;
+}
+
+.favorite-draggable {
+  border-radius: var(--radius);
+}
+
+.favorite-draggable.is-dragging {
+  opacity: 0.6;
+}
+
+.favorite-drag-hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
 }
 
 .route-card-km {

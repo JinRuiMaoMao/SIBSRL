@@ -142,8 +142,9 @@ export function RouteLookupPage({
     types,
     totalCount,
   } = useRouteSearch()
-  const { favorites } = useFavoriteRoutes()
+  const { favorites, reorderFavorites } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
+  const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)
 
   const favoriteRoutes = useMemo(() => {
     const byId = new Map(displayRoutes.map((route) => [route.id, route]))
@@ -514,15 +515,33 @@ export function RouteLookupPage({
 
   const renderFavoriteRouteCards = () =>
     favoriteRoutes.map((route) => (
-      <RouteCard
+      <div
         key={`favorite-${route.id}`}
-        route={route}
-        selected={selectedRoute?.id === route.id}
-        directionIndex={getDirectionIndex(route)}
-        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-        onNavigate={handleRouteNavigate}
-        muted={!routeMatchesFilters(route, filters)}
-      />
+        className={`favorite-draggable ${draggingFavoriteId === route.id ? 'is-dragging' : ''}`}
+        draggable
+        onDragStart={(event) => {
+          setDraggingFavoriteId(route.id)
+          event.dataTransfer.effectAllowed = 'move'
+          event.dataTransfer.setData('text/plain', route.id)
+        }}
+        onDragEnd={() => setDraggingFavoriteId(null)}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={(event) => {
+          event.preventDefault()
+          const dragRouteId = event.dataTransfer.getData('text/plain')
+          reorderFavorites(dragRouteId, route.id)
+          setDraggingFavoriteId(null)
+        }}
+      >
+        <RouteCard
+          route={route}
+          selected={selectedRoute?.id === route.id}
+          directionIndex={getDirectionIndex(route)}
+          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+          onNavigate={handleRouteNavigate}
+          muted={!routeMatchesFilters(route, filters)}
+        />
+      </div>
     ))
 
   const renderRecentRouteCards = () =>
@@ -630,6 +649,7 @@ export function RouteLookupPage({
                       setGroupOpen((prev) => ({ ...prev, favorites: open }))
                     }
                   >
+                    <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
                     <div className="route-grid">{renderFavoriteRouteCards()}</div>
                   </RouteGroupCollapse>
                 ) : null}
