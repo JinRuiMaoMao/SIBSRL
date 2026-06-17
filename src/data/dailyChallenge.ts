@@ -118,6 +118,7 @@ const EVENT_ZH: Record<string, string> = {
   'Marathon Road Closure (N)': '马拉松封路（北行）',
   'Rush Hour': '繁忙时间',
   'Foggy Day': '浓雾天气',
+  'Daily Challenge': '每日挑战',
   'Urban Odyssey': '城市漫游',
   'Marathon Shuttle': '马拉松接驳',
 }
