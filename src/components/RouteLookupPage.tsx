@@ -3,7 +3,6 @@ import {
   DAILY_CHALLENGE_CARD_ID,
   findRouteForDailyChallenge,
   findDailyChallengeDirectionIndex,
-  getTodaysDailyChallenge,
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
@@ -95,12 +94,14 @@ interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
   onRouteCardNavigate?: () => void
+  dailyChallenge: DailyChallengeInfo
 }
 
 export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
   onRouteCardNavigate,
+  dailyChallenge,
 }: RouteLookupPageProps) {
   const { t } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
@@ -141,10 +142,9 @@ export function RouteLookupPage({
     operators,
     types,
     totalCount,
-  } = useRouteSearch()
-  const { favorites, reorderFavorites } = useFavoriteRoutes()
+  } = useRouteSearch(dailyChallenge)
+  const { favorites } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
-  const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)
 
   const favoriteRoutes = useMemo(() => {
     const byId = new Map(displayRoutes.map((route) => [route.id, route]))
@@ -306,7 +306,7 @@ export function RouteLookupPage({
   }, [detailOverlay])
 
   const handleSelectDailyChallenge = useCallback(() => {
-    const challenge = getTodaysDailyChallenge()
+    const challenge = dailyChallenge
     const routeNumber = challenge.routeNumber
 
     if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
@@ -323,7 +323,7 @@ export function RouteLookupPage({
     setDailyChallengeRouteView(false)
     clearSelection()
     setDetailOverlay({ kind: 'daily-challenge', challenge })
-  }, [clearSelection, selectRoute, setDirectionIndex])
+  }, [clearSelection, dailyChallenge, selectRoute, setDirectionIndex])
 
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
@@ -405,7 +405,7 @@ export function RouteLookupPage({
 
   const dailyChallengeSelected =
     detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteView
-  const todaysChallenge = getTodaysDailyChallenge()
+  const todaysChallenge = dailyChallenge
   const routeDetailProps =
     detailOverlay?.kind === 'route'
       ? {
@@ -515,33 +515,15 @@ export function RouteLookupPage({
 
   const renderFavoriteRouteCards = () =>
     favoriteRoutes.map((route) => (
-      <div
+      <RouteCard
         key={`favorite-${route.id}`}
-        className={`favorite-draggable ${draggingFavoriteId === route.id ? 'is-dragging' : ''}`}
-        draggable
-        onDragStart={(event) => {
-          setDraggingFavoriteId(route.id)
-          event.dataTransfer.effectAllowed = 'move'
-          event.dataTransfer.setData('text/plain', route.id)
-        }}
-        onDragEnd={() => setDraggingFavoriteId(null)}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault()
-          const dragRouteId = event.dataTransfer.getData('text/plain')
-          reorderFavorites(dragRouteId, route.id)
-          setDraggingFavoriteId(null)
-        }}
-      >
-        <RouteCard
-          route={route}
-          selected={selectedRoute?.id === route.id}
-          directionIndex={getDirectionIndex(route)}
-          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-          onNavigate={handleRouteNavigate}
-          muted={!routeMatchesFilters(route, filters)}
-        />
-      </div>
+        route={route}
+        selected={selectedRoute?.id === route.id}
+        directionIndex={getDirectionIndex(route)}
+        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onNavigate={handleRouteNavigate}
+        muted={!routeMatchesFilters(route, filters)}
+      />
     ))
 
   const renderRecentRouteCards = () =>
@@ -623,6 +605,7 @@ export function RouteLookupPage({
               <DailyChallengeBanner
                 selected={dailyChallengeSelected}
                 onSelect={handleSelectDailyChallenge}
+                challenge={dailyChallenge}
               />
             ) : null}
 
@@ -649,7 +632,6 @@ export function RouteLookupPage({
                       setGroupOpen((prev) => ({ ...prev, favorites: open }))
                     }
                   >
-                    <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
                     <div className="route-grid">{renderFavoriteRouteCards()}</div>
                   </RouteGroupCollapse>
                 ) : null}

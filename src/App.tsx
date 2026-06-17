@@ -11,6 +11,7 @@ import { RouteLookupPage } from './components/RouteLookupPage'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
+import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useLocale } from './i18n/LocaleContext'
 import { isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
@@ -27,6 +28,7 @@ function formatBuildLabel(iso: string): string {
 function App() {
   const { t } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
+  const dailyChallenge = useDailyChallenge()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
     () => shouldShowDailyChallengePrompt() && isDailyChallengeAvailable(getTodaysDailyChallenge()),
   )
@@ -83,6 +85,7 @@ function App() {
           open={dailyChallengePromptOpen}
           onClose={() => setDailyChallengePromptOpen(false)}
           onOpenDetail={handleDailyChallengePromptOpenDetail}
+          challenge={dailyChallenge}
         />
       ) : null}
 
@@ -93,6 +96,7 @@ function App() {
               pendingDailyChallengeDetail={pendingDailyChallengeDetail}
               onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
               onRouteCardNavigate={() => setDailyChallengePromptOpen(false)}
+              dailyChallenge={dailyChallenge}
             />
           ) : activeTab === 'broadcast' ? (
             <BroadcastPage />

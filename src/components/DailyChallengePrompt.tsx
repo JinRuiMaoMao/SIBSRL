@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import type { DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
 import { DailyChallengeCard } from './DailyChallengeCard'
 
@@ -6,9 +7,15 @@ interface DailyChallengePromptProps {
   open: boolean
   onClose: () => void
   onOpenDetail: () => void
+  challenge: DailyChallengeInfo
 }
 
-export function DailyChallengePrompt({ open, onClose, onOpenDetail }: DailyChallengePromptProps) {
+export function DailyChallengePrompt({
+  open,
+  onClose,
+  onOpenDetail,
+  challenge,
+}: DailyChallengePromptProps) {
   const { t } = useLocale()
 
   useEffect(() => {
@@ -57,6 +64,7 @@ export function DailyChallengePrompt({ open, onClose, onOpenDetail }: DailyChall
           className="daily-challenge-card--prompt"
           showPlaceholderNote={false}
           onSelect={handleOpenDetail}
+          challenge={challenge}
         />
         <button type="button" className="daily-challenge-prompt-dismiss" onClick={onClose}>
           {t('dailyChallengePromptDismiss')}

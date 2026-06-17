@@ -61,6 +61,131 @@ npm run dev
 
 完整说明见 `src/data/routes.ts` 文件顶部的注释。
 
+## Discord Daily Challenge 自动同步
+
+仓库内置一个 Node.js Discord bot，可监听指定频道中 Ena Bot 发出的 Daily Challenge 消息，解析 `Route` / `Type` / `RtInfoBoard` 字段，写入本地 JSON，并通过 HTTP API 给网站读取。
+
+### 1. 准备 Discord bot
+
+先在 Discord Developer Portal：
+
+1. 新建一个 application / bot。
+2. 在 **Bot** 页面开启 **Message Content Intent**。
+3. 复制 bot token，保存到部署平台的 `DISCORD_TOKEN`。
+4. 邀请 bot 进入服务器，并确保它能读取 Daily Challenge 频道。
+5. 复制 Daily Challenge 频道 ID，保存到 `DAILY_CHALLENGE_CHANNEL_ID`。
+6. 可选但建议：复制 Ena Bot 的用户 ID，保存到 `ENA_BOT_USER_ID`，这样只接受 Ena Bot 发出的消息。
+
+### 2. 真实部署（Render）
+
+仓库已包含 `Dockerfile` 和 `render.yaml`。推荐部署成 Render Web Service，因为它可以同时跑 Discord bot 和 HTTP API。
+
+1. 登录 Render，选择 **New +** → **Blueprint**。
+2. 选择这个 GitHub 仓库。
+3. Render 会读取 `render.yaml`，创建 `sibs-daily-challenge-bot` 服务。
+4. 在 Render 的环境变量里填写：
+
+| 变量 | 必填 | 说明 |
+|------|------|------|
+| `DISCORD_TOKEN` | 是 | Discord bot token |
+| `DAILY_CHALLENGE_CHANNEL_ID` | 是 | 要监听的频道 ID |
+| `ENA_BOT_USER_ID` | 建议 | 只接受 Ena Bot 消息 |
+| `DAILY_CHALLENGE_CORS_ORIGIN` | 否 | 网站域名；不确定可先用 `*` |
+
+`render.yaml` 已配置：
+
+- `healthCheckPath: /healthz`
+- 持久磁盘：`/var/data`
+- JSON 存储：`/var/data/daily-challenge-live.json`
+- API 会自动使用 Render 提供的 `PORT`
+
+部署完成后，Render 会给一个域名，例如：
+
+```text
+https://sibs-daily-challenge-bot.onrender.com
+```
+
+API 地址就是：
+
+```text
+https://sibs-daily-challenge-bot.onrender.com/api/daily-challenge/latest
+```
+
+### 3. 本地运行 bot + API
+
+本地调试时用 `.env.example` 作为环境变量参考。运行服务时用环境变量配置密钥和频道：
+
+```bash
+export DISCORD_TOKEN="你的 Discord bot token"
+export DAILY_CHALLENGE_CHANNEL_ID="Daily Challenge 频道 ID"
+# 可选：只接受 Ena Bot 的消息，强烈建议填写
+export ENA_BOT_USER_ID="Ena Bot 用户 ID"
+
+npm run bot:daily
+```
+
+默认会：
+
+- 监听 `DAILY_CHALLENGE_CHANNEL_ID`
+- 处理普通消息和 embed message
+- 防重复写入相同 message / 相同内容
+- 本地写入 `data/daily-challenge-live.json`（已被 `.gitignore` 忽略）
+- 提供 `http://localhost:8787/api/daily-challenge/latest`
+
+只启动 API（读取已有 JSON，不连接 Discord）：
+
+```bash
+npm run bot:daily:api
+```
+
+可选环境变量：
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `DAILY_CHALLENGE_STORE_PATH` | `data/daily-challenge-live.json` | 本地 JSON 存储位置 |
+| `PORT` | 无 | 部署平台端口，优先于 `DAILY_CHALLENGE_API_PORT` |
+| `DAILY_CHALLENGE_API_PORT` | `8787` | 本地 API 端口 |
+| `DAILY_CHALLENGE_CORS_ORIGIN` | `*` | 允许读取 API 的网站来源 |
+| `DAILY_CHALLENGE_HISTORY_LIMIT` | `90` | 保留历史记录数量 |
+
+API：
+
+```text
+GET /healthz
+GET /api/daily-challenge/latest
+GET /api/daily-challenge/history
+```
+
+返回的 `latest` 会包含：
+
+```json
+{
+  "date": "2026-06-17",
+  "event": "Daily Challenge",
+  "routeCode": "240A",
+  "race": false,
+  "rtInfoBoard": null
+}
+```
+
+### 4. 让网站读取真实 API
+
+构建网站前设置 API URL，然后重新构建并推送 `index.html` 等 standalone 页面：
+
+```bash
+VITE_DAILY_CHALLENGE_API_URL="https://你的-api-domain/api/daily-challenge/latest" npm run build:only
+```
+
+可选轮询间隔（毫秒，默认 5000）：
+
+```bash
+VITE_DAILY_CHALLENGE_POLL_MS=3000 npm run build:only
+```
+
+如果 API 不可用、返回日期不是今天，或没有配置 API URL，网站会自动回退到 `data/daily-challenge-schedule-2026-06.json` 的静态排期。
+
+如果网站部署在 GitHub Pages，请确保构建后的根目录 `index.html` 已提交并推送到 `master`。
+
 ## GitHub Pages 子路径
 
 若站点地址为 `https://用户名.github.io/仓库名/`，构建前设置环境变量：

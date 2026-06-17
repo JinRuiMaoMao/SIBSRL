@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: sibs-daily-challenge-bot
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    disk:
+      name: daily-challenge-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DAILY_CHALLENGE_STORE_PATH
+        value: /var/data/daily-challenge-live.json
+      - key: DAILY_CHALLENGE_CORS_ORIGIN
+        value: "*"
+      - key: DAILY_CHALLENGE_HISTORY_LIMIT
+        value: "90"
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: DAILY_CHALLENGE_CHANNEL_ID
+        sync: false
+      - key: ENA_BOT_USER_ID
+        sync: false

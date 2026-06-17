@@ -13,11 +13,14 @@
     "build:sibs-routes": "node scripts/compose-476-route.mjs && node scripts/build-route-unlocks.mjs && node scripts/build-sibs-routes-ts.mjs",
     "build": "node scripts/sync-broadcast-audio.mjs && node scripts/sync-route-broadcast-audio.mjs && tsc -b && vite build",
     "build:only": "vite build",
+    "bot:daily": "node scripts/daily-challenge-bot.mjs",
+    "bot:daily:api": "node scripts/daily-challenge-bot.mjs --api-only",
     "publish:index": "node scripts/publish-standalone.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "discord.js": "^14.26.4",
     "opencc-js": "^1.3.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
