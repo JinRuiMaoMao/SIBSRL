@@ -15,6 +15,44 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-17-summary',
+    date: '2026-06-17',
+    title: {
+      zh: '2026-06-17 更新',
+      en: '2026-06-17 updates',
+    },
+    groups: [
+      {
+        title: {
+          zh: '收藏排序与设置恢复',
+          en: 'Favorite ordering & settings reset',
+        },
+        items: [
+          {
+            zh: '收藏线路支持拖拽排序，顺序会写入本地并在刷新后保持一致。',
+            en: 'Favorites now support drag-and-drop ordering; order is saved locally and persists after reload.',
+          },
+          {
+            zh: '设置面板新增「恢复默认设置」，可一键清空主题、语言、收藏、最近查看、筛选、分组状态、搜索历史与显示偏好。',
+            en: 'Settings now include “Reset all settings” to clear theme, language, favorites, recent routes, filters, group states, search history, and display preferences.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '设置面板滚动',
+          en: 'Settings panel scrolling',
+        },
+        items: [
+          {
+            zh: '修复设置面板在小屏和内容较多时超出屏幕的问题，面板可在视口内纵向滚动查看完整内容。',
+            en: 'Fixed settings panel overflow on smaller screens or larger content; the panel now scrolls vertically within the viewport.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: '2026-06-15-summary',
     date: '2026-06-15',
     title: {
