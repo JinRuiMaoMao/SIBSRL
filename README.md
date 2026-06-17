@@ -61,6 +61,82 @@ npm run dev
 
 完整说明见 `src/data/routes.ts` 文件顶部的注释。
 
+## Discord Daily Challenge 自动同步
+
+仓库内置一个 Node.js Discord bot，可监听指定频道中 Ena Bot 发出的 Daily Challenge 消息，解析 `Route` / `Type` / `RtInfoBoard` 字段，写入本地 JSON，并通过 HTTP API 给网站读取。
+
+### 1. 启动 bot + API
+
+先在 Discord Developer Portal 给 bot 开启 **Message Content Intent**，并邀请 bot 进入服务器。运行服务时用环境变量配置密钥和频道：
+
+```bash
+export DISCORD_TOKEN="你的 Discord bot token"
+export DAILY_CHALLENGE_CHANNEL_ID="Daily Challenge 频道 ID"
+# 可选：只接受 Ena Bot 的消息，强烈建议填写
+export ENA_BOT_USER_ID="Ena Bot 用户 ID"
+
+npm run bot:daily
+```
+
+默认会：
+
+- 监听 `DAILY_CHALLENGE_CHANNEL_ID`
+- 处理普通消息和 embed message
+- 防重复写入相同 message / 相同内容
+- 写入 `data/daily-challenge-live.json`（已被 `.gitignore` 忽略）
+- 提供 `http://localhost:8787/api/daily-challenge/latest`
+
+只启动 API（读取已有 JSON，不连接 Discord）：
+
+```bash
+npm run bot:daily:api
+```
+
+可选环境变量：
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `DAILY_CHALLENGE_STORE_PATH` | `data/daily-challenge-live.json` | 本地 JSON 存储位置 |
+| `DAILY_CHALLENGE_API_PORT` | `8787` | API 端口 |
+| `DAILY_CHALLENGE_CORS_ORIGIN` | `*` | 允许读取 API 的网站来源 |
+| `DAILY_CHALLENGE_HISTORY_LIMIT` | `90` | 保留历史记录数量 |
+
+API：
+
+```text
+GET /healthz
+GET /api/daily-challenge/latest
+GET /api/daily-challenge/history
+```
+
+返回的 `latest` 会包含：
+
+```json
+{
+  "date": "2026-06-17",
+  "event": "Daily Challenge",
+  "routeCode": "240A",
+  "race": false,
+  "rtInfoBoard": null
+}
+```
+
+### 2. 让网站读取实时 API
+
+构建网站前设置 API URL：
+
+```bash
+VITE_DAILY_CHALLENGE_API_URL="https://你的-api-domain/api/daily-challenge/latest" npm run build:only
+```
+
+可选轮询间隔（毫秒，默认 5000）：
+
+```bash
+VITE_DAILY_CHALLENGE_POLL_MS=3000 npm run build:only
+```
+
+如果 API 不可用、返回日期不是今天，或没有配置 API URL，网站会自动回退到 `data/daily-challenge-schedule-2026-06.json` 的静态排期。
+
 ## GitHub Pages 子路径
 
 若站点地址为 `https://用户名.github.io/仓库名/`，构建前设置环境变量：

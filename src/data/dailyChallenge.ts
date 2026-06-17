@@ -1,5 +1,8 @@
 import { routes } from './routes'
-import { findScheduledDailyChallenge } from './dailyChallengeSchedule'
+import {
+  findScheduledDailyChallenge,
+  type DailyChallengeScheduleDay,
+} from './dailyChallengeSchedule'
 import { getPrimaryText } from '../i18n/displayText'
 import type { Locale } from '../i18n/types'
 import type { BilingualText, BusRoute, RouteFilters } from '../types/route'
@@ -209,11 +212,12 @@ function buildIntro(
   }
 }
 
-function buildFromSchedule(date: string): DailyChallengeInfo {
-  const entry = findScheduledDailyChallenge(date)
-  if (!entry?.event) {
+export function buildDailyChallengeFromScheduleDay(
+  entry: DailyChallengeScheduleDay,
+): DailyChallengeInfo {
+  if (!entry.event) {
     return {
-      date,
+      date: entry.date,
       event: { zh: '', en: '' },
       isAvailable: false,
       isPlaceholder: false,
@@ -236,7 +240,7 @@ function buildFromSchedule(date: string): DailyChallengeInfo {
   }
 
   return {
-    date,
+    date: entry.date,
     event,
     routeNumber,
     endpoints,
@@ -247,6 +251,21 @@ function buildFromSchedule(date: string): DailyChallengeInfo {
     fromSchedule: true,
     race: entry.race,
   }
+}
+
+function buildFromSchedule(date: string): DailyChallengeInfo {
+  const entry = findScheduledDailyChallenge(date)
+  if (!entry) {
+    return {
+      date,
+      event: { zh: '', en: '' },
+      isAvailable: false,
+      isPlaceholder: false,
+      fromSchedule: true,
+    }
+  }
+
+  return buildDailyChallengeFromScheduleDay(entry)
 }
 
 const EMPTY_CHALLENGE: DailyChallengeInfo = {

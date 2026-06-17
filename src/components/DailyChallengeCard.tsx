@@ -3,8 +3,8 @@ import {
   findDailyChallengeDirectionIndex,
   findRouteForDailyChallenge,
   getDailyChallengeOperatorsLabel,
-  getTodaysDailyChallenge,
   isPrivateHireChallengeRoute,
+  type DailyChallengeInfo,
 } from '../data/dailyChallenge'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
@@ -18,6 +18,7 @@ interface DailyChallengeCardProps {
   className?: string
   showPlaceholderNote?: boolean
   showResetCountdown?: boolean
+  challenge: DailyChallengeInfo
 }
 
 export function DailyChallengeCard({
@@ -26,9 +27,9 @@ export function DailyChallengeCard({
   className = '',
   showPlaceholderNote = true,
   showResetCountdown = true,
+  challenge,
 }: DailyChallengeCardProps) {
   const { locale, t } = useLocale()
-  const challenge = getTodaysDailyChallenge()
   const eventLabel = getPrimaryText(challenge.event, locale)
   const endpointsLabel = challenge.endpoints
     ? getPrimaryText(challenge.endpoints, locale)

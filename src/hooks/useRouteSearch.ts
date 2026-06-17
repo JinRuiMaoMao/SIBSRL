@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { dailyChallengeMatchesFilters, getTodaysDailyChallenge } from '../data/dailyChallenge'
+import {
+  dailyChallengeMatchesFilters,
+  getTodaysDailyChallenge,
+  type DailyChallengeInfo,
+} from '../data/dailyChallenge'
 import { routes } from '../data/routes'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 import {
@@ -21,7 +25,7 @@ const defaultFilters: RouteFilters = {
   ...readStoredRouteFilters(),
 }
 
-export function useRouteSearch() {
+export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDailyChallenge()) {
   const [filters, setFilters] = useState<RouteFilters>(defaultFilters)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [directionByRouteId, setDirectionByRouteId] = useState<Record<string, number>>({})
@@ -43,8 +47,8 @@ export function useRouteSearch() {
   }, [filters.zone, filters.operator, filters.type])
 
   const dailyChallengeVisible = useMemo(
-    () => dailyChallengeMatchesFilters(getTodaysDailyChallenge(), filters),
-    [filters],
+    () => dailyChallengeMatchesFilters(dailyChallenge, filters),
+    [dailyChallenge, filters],
   )
 
   const randomEligibleRoutes = useMemo(

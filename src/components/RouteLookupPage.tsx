@@ -3,7 +3,6 @@ import {
   DAILY_CHALLENGE_CARD_ID,
   findRouteForDailyChallenge,
   findDailyChallengeDirectionIndex,
-  getTodaysDailyChallenge,
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
@@ -95,12 +94,14 @@ interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
   onRouteCardNavigate?: () => void
+  dailyChallenge: DailyChallengeInfo
 }
 
 export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
   onRouteCardNavigate,
+  dailyChallenge,
 }: RouteLookupPageProps) {
   const { t } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
@@ -141,7 +142,7 @@ export function RouteLookupPage({
     operators,
     types,
     totalCount,
-  } = useRouteSearch()
+  } = useRouteSearch(dailyChallenge)
   const { favorites } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
 
@@ -305,7 +306,7 @@ export function RouteLookupPage({
   }, [detailOverlay])
 
   const handleSelectDailyChallenge = useCallback(() => {
-    const challenge = getTodaysDailyChallenge()
+    const challenge = dailyChallenge
     const routeNumber = challenge.routeNumber
 
     if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
@@ -322,7 +323,7 @@ export function RouteLookupPage({
     setDailyChallengeRouteView(false)
     clearSelection()
     setDetailOverlay({ kind: 'daily-challenge', challenge })
-  }, [clearSelection, selectRoute, setDirectionIndex])
+  }, [clearSelection, dailyChallenge, selectRoute, setDirectionIndex])
 
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
@@ -404,7 +405,7 @@ export function RouteLookupPage({
 
   const dailyChallengeSelected =
     detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteView
-  const todaysChallenge = getTodaysDailyChallenge()
+  const todaysChallenge = dailyChallenge
   const routeDetailProps =
     detailOverlay?.kind === 'route'
       ? {
@@ -604,6 +605,7 @@ export function RouteLookupPage({
               <DailyChallengeBanner
                 selected={dailyChallengeSelected}
                 onSelect={handleSelectDailyChallenge}
+                challenge={dailyChallenge}
               />
             ) : null}
 
