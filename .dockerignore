@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+.cache
+.git
+.github
+*.log
+*.local
+data/daily-challenge-live.json

@@ -19,13 +19,23 @@ const DEFAULT_API_PORT = 8787
 const args = new Set(process.argv.slice(2))
 const apiOnly = args.has('--api-only')
 
+function readPort() {
+  const raw = process.env.PORT ?? process.env.DAILY_CHALLENGE_API_PORT
+  if (!raw) return DEFAULT_API_PORT
+  const port = Number(raw)
+  if (!Number.isInteger(port) || port <= 0) {
+    throw new Error(`Invalid API port: ${raw}`)
+  }
+  return port
+}
+
 const config = {
   token: process.env.DISCORD_TOKEN,
   channelId: process.env.DAILY_CHALLENGE_CHANNEL_ID,
   enaBotUserId: process.env.ENA_BOT_USER_ID,
   storePath: resolve(process.cwd(), process.env.DAILY_CHALLENGE_STORE_PATH ?? DEFAULT_STORE_PATH),
   historyLimit: Number(process.env.DAILY_CHALLENGE_HISTORY_LIMIT ?? DEFAULT_HISTORY_LIMIT),
-  apiPort: Number(process.env.DAILY_CHALLENGE_API_PORT ?? DEFAULT_API_PORT),
+  apiPort: readPort(),
   corsOrigin: process.env.DAILY_CHALLENGE_CORS_ORIGIN ?? '*',
 }
 
@@ -184,8 +194,6 @@ async function handleMessage(message) {
 }
 
 async function startDiscordBot() {
-  requireBotConfig()
-
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -215,13 +223,20 @@ async function startDiscordBot() {
   await client.login(config.token)
 }
 
-startApiServer()
+async function main() {
+  if (!apiOnly) requireBotConfig()
 
-if (apiOnly) {
-  console.log('[daily-bot] running in API-only mode')
-} else {
-  void startDiscordBot().catch((error) => {
-    console.error('[daily-bot] startup failed:', error.message)
-    process.exitCode = 1
-  })
+  startApiServer()
+
+  if (apiOnly) {
+    console.log('[daily-bot] running in API-only mode')
+    return
+  }
+
+  await startDiscordBot()
 }
+
+void main().catch((error) => {
+  console.error('[daily-bot] startup failed:', error.message)
+  process.exit(1)
+})
