@@ -20,6 +20,7 @@ import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
+import { buildRouteShareUrl } from '../utils/routeNavigation'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 
 interface RouteDetailProps {
@@ -79,6 +80,20 @@ export function RouteDetail({
           {displayTypes.length > 0 && <RouteTypeTags types={displayTypes} />}
         </div>
         <div className="detail-header-actions">
+          <button
+            type="button"
+            className="detail-share-btn"
+            aria-label={t('shareRoute')}
+            title={t('shareRoute')}
+            onClick={() => {
+              const url = new URL(buildRouteShareUrl(route.id, directionIndex), window.location.href).href
+              void navigator.clipboard.writeText(url).catch(() => {
+                window.prompt(t('shareRoute'), url)
+              })
+            }}
+          >
+            {t('shareRoute')}
+          </button>
           <RouteFavoriteButton routeId={route.id} className="route-favorite-btn--detail" />
           <button type="button" className="close-btn" onClick={onClose} aria-label={t('closeDetail')}>
             ×

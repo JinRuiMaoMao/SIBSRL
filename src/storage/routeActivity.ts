@@ -63,30 +63,82 @@ export function clearSearchHistory(): void {
   writeSearchHistory([])
 }
 
-export interface FavoritesExportPayload {
+import type { FavoriteFoldersState } from './favoriteFolders'
+import { DEFAULT_FAVORITE_FOLDER_ID, readFavoriteFoldersState } from './favoriteFolders'
+
+export interface FavoritesExportPayloadV1 {
   version: 1
   favorites: string[]
 }
 
-export function parseFavoritesImport(raw: string): string[] {
+export interface FavoritesExportPayloadV2 {
+  version: 2
+  folders: { id: string; name: string; routeIds: string[] }[]
+  activeFolderId: string
+}
+
+export type FavoritesExportPayload = FavoritesExportPayloadV1 | FavoritesExportPayloadV2
+
+export function parseFavoritesImport(raw: string): FavoriteFoldersState {
   const trimmed = raw.trim()
-  if (!trimmed) return []
+  if (!trimmed) {
+    return readFavoriteFoldersState()
+  }
 
   const parsed = JSON.parse(trimmed) as unknown
   if (Array.isArray(parsed)) {
-    return parsed.filter((id): id is string => typeof id === 'string' && id.trim().length > 0)
+    return {
+      version: 2,
+      folders: [{ id: DEFAULT_FAVORITE_FOLDER_ID, name: '', routeIds: parsed.filter(
+        (id): id is string => typeof id === 'string' && id.trim().length > 0,
+      ) }],
+      activeFolderId: DEFAULT_FAVORITE_FOLDER_ID,
+    }
   }
 
-  if (parsed && typeof parsed === 'object' && Array.isArray((parsed as FavoritesExportPayload).favorites)) {
-    return (parsed as FavoritesExportPayload).favorites.filter(
+  if (!parsed || typeof parsed !== 'object') {
+    throw new Error('invalid format')
+  }
+
+  if ((parsed as FavoritesExportPayloadV1).version === 1) {
+    const favorites = (parsed as FavoritesExportPayloadV1).favorites.filter(
       (id): id is string => typeof id === 'string' && id.trim().length > 0,
     )
+    return {
+      version: 2,
+      folders: [{ id: DEFAULT_FAVORITE_FOLDER_ID, name: '', routeIds: favorites }],
+      activeFolderId: DEFAULT_FAVORITE_FOLDER_ID,
+    }
+  }
+
+  if ((parsed as FavoritesExportPayloadV2).version === 2) {
+    const payload = parsed as FavoritesExportPayloadV2
+    const folders = (payload.folders ?? [])
+      .map((folder) => ({
+        id: typeof folder.id === 'string' ? folder.id.trim() : '',
+        name: typeof folder.name === 'string' ? folder.name.trim() : '',
+        routeIds: Array.isArray(folder.routeIds)
+          ? folder.routeIds.filter((id): id is string => typeof id === 'string' && id.trim().length > 0)
+          : [],
+      }))
+      .filter((folder) => folder.id)
+    if (folders.length === 0) throw new Error('invalid format')
+    const activeFolderId =
+      typeof payload.activeFolderId === 'string' &&
+      folders.some((folder) => folder.id === payload.activeFolderId)
+        ? payload.activeFolderId
+        : folders[0]!.id
+    return { version: 2, folders, activeFolderId }
   }
 
   throw new Error('invalid format')
 }
 
-export function buildFavoritesExport(favorites: string[]): string {
-  const payload: FavoritesExportPayload = { version: 1, favorites }
+export function buildFavoritesExport(state: FavoriteFoldersState): string {
+  const payload: FavoritesExportPayloadV2 = {
+    version: 2,
+    folders: state.folders,
+    activeFolderId: state.activeFolderId,
+  }
   return JSON.stringify(payload, null, 2)
 }

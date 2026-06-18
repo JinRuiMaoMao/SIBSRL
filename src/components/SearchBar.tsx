@@ -131,7 +131,9 @@ export function SearchBar({
         </div>
       ) : null}
 
-      <p className="search-shortcut-hint">{t('searchShortcutHint')}</p>
+      <p className="search-shortcut-hint">
+        {t('searchShortcutHint')} · {t('searchSyntaxHint')}
+      </p>
     </div>
   )
 }

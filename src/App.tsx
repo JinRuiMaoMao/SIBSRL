@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 import { BroadcastPage } from './components/BroadcastPage'
 import { ComplaintsPage } from './components/ComplaintsPage'
@@ -10,13 +10,17 @@ import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
+import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
 import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useLocale } from './i18n/LocaleContext'
+import { markUpdatesPromptShown } from './storage/updatesViewing'
+import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
 import { isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
+import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 function readPublishedBuild(): string | null {
   return document.querySelector('meta[name="app-build"]')?.getAttribute('content') ?? null
 }
@@ -25,16 +29,41 @@ function formatBuildLabel(iso: string): string {
   return iso.replace('T', ' ').slice(0, 19)
 }
 
+function readInitialDailyChallengePromptOpen(): boolean {
+  if (!shouldShowDailyChallengePrompt()) return false
+  if (!isDailyChallengeAvailable(getTodaysDailyChallenge())) return false
+  markDailyChallengePromptSeen()
+  return true
+}
+
 function App() {
   const { t } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
   const dailyChallenge = useDailyChallenge()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
-    () => shouldShowDailyChallengePrompt() && isDailyChallengeAvailable(getTodaysDailyChallenge()),
+    readInitialDailyChallengePromptOpen,
   )
+  const [updatesPromptOpen, setUpdatesPromptOpen] = useState(false)
   const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
+
+  const openUpdatesPrompt = useCallback(() => {
+    if (!shouldShowUpdatesPrompt()) return
+    markUpdatesPromptShown()
+    setUpdatesPromptOpen(true)
+  }, [])
+
+  const closeDailyChallengePrompt = useCallback(() => {
+    setDailyChallengePromptOpen(false)
+    openUpdatesPrompt()
+  }, [openUpdatesPrompt])
+
+  useEffect(() => {
+    if (!dailyChallengePromptOpen) {
+      openUpdatesPrompt()
+    }
+  }, [dailyChallengePromptOpen, openUpdatesPrompt])
 
   const handleDailyChallengePromptOpenDetail = () => {
     setPendingDailyChallengeDetail((count) => count + 1)
@@ -81,12 +110,18 @@ function App() {
       />
 
       {activeTab === 'routes' ? (
-        <DailyChallengePrompt
-          open={dailyChallengePromptOpen}
-          onClose={() => setDailyChallengePromptOpen(false)}
-          onOpenDetail={handleDailyChallengePromptOpenDetail}
-          challenge={dailyChallenge}
-        />
+        <>
+          <DailyChallengePrompt
+            open={dailyChallengePromptOpen}
+            onClose={closeDailyChallengePrompt}
+            onOpenDetail={handleDailyChallengePromptOpenDetail}
+            challenge={dailyChallenge}
+          />
+          <VersionUpdatesPrompt
+            open={updatesPromptOpen}
+            onClose={() => setUpdatesPromptOpen(false)}
+          />
+        </>
       ) : null}
 
       <main className="main">
@@ -95,7 +130,7 @@ function App() {
             <RouteLookupPage
               pendingDailyChallengeDetail={pendingDailyChallengeDetail}
               onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
-              onRouteCardNavigate={() => setDailyChallengePromptOpen(false)}
+              onRouteCardNavigate={closeDailyChallengePrompt}
               dailyChallenge={dailyChallenge}
             />
           ) : activeTab === 'broadcast' ? (

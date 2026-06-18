@@ -1,10 +1,23 @@
 import type { BusRoute, RouteFilters } from '../types/route'
 import { routeMatchesTypeFilter } from './routeTypes'
 import { matchesRouteSearchQuery } from './routeSearchQuery'
+import { parseStructuredSearchQuery } from './structuredSearchQuery'
 
 export function routeMatchesFilters(route: BusRoute, filters: RouteFilters): boolean {
-  if (filters.zone !== 'all' && !route.zones.includes(filters.zone)) return false
-  if (filters.operator !== 'all' && !route.operators.includes(filters.operator)) return false
-  if (filters.type !== 'all' && !routeMatchesTypeFilter(route, filters.type)) return false
-  return matchesRouteSearchQuery(route, filters.query)
+  const structured = parseStructuredSearchQuery(filters.query)
+
+  const zone = structured.zone ?? (filters.zone !== 'all' ? filters.zone : 'all')
+  if (zone !== 'all' && !route.zones.includes(zone)) return false
+
+  const operator = structured.operator ?? filters.operator
+  if (operator !== 'all' && !route.operators.includes(operator)) return false
+
+  const type = structured.type ?? filters.type
+  if (type !== 'all' && !routeMatchesTypeFilter(route, type)) return false
+
+  for (const excluded of structured.excludeTypes) {
+    if (routeMatchesTypeFilter(route, excluded)) return false
+  }
+
+  return matchesRouteSearchQuery(route, structured.text)
 }

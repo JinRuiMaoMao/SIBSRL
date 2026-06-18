@@ -13,6 +13,7 @@ import {
   type RouteDisplayGroupKey,
 } from '../data/routeDisplayGroups'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
+import { FavoritesFolderBar } from './FavoritesFolderBar'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
@@ -41,7 +42,7 @@ import {
   readSearchHistory,
 } from '../storage/routeActivity'
 import { shouldReduceMotion } from '../storage/appPreferences'
-import { clearRouteFromLocation, readRouteQueryFromLocation, setRouteInLocation } from '../utils/routeNavigation'
+import { buildRouteShareUrl, clearRouteFromLocation, readDirectionQueryFromLocation, readRouteQueryFromLocation, replaceRouteInLocation, setRouteInLocation } from '../utils/routeNavigation'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
 import {
   findStopsMatchingQuery,
@@ -143,7 +144,7 @@ export function RouteLookupPage({
     types,
     totalCount,
   } = useRouteSearch(dailyChallenge)
-  const { favorites, reorderFavorites } = useFavoriteRoutes()
+  const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
   const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)
 
@@ -153,6 +154,11 @@ export function RouteLookupPage({
       .map((id) => byId.get(id))
       .filter((route): route is BusRoute => route != null)
   }, [displayRoutes, favorites])
+
+  const showFavoritesSection = useMemo(
+    () => folders.some((folder) => folder.routeIds.length > 0) || folders.length > 1,
+    [folders],
+  )
 
   const recentRoutes = useMemo(() => {
     const byId = new Map(displayRoutes.map((route) => [route.id, route]))
@@ -236,12 +242,16 @@ export function RouteLookupPage({
       setDailyChallengeRouteView(false)
       recordRecent(route.id)
       selectRoute(routeId)
+      const directionIndex = readDirectionQueryFromLocation()
+      if (directionIndex != null) {
+        setDirectionIndex(route.id, directionIndex)
+      }
       return
     }
 
     clearSelection()
     setDetailOverlay({ kind: 'not-found', routeId })
-  }, [clearSelection, findDisplayRoute, recordRecent, selectRoute])
+  }, [clearSelection, findDisplayRoute, recordRecent, selectRoute, setDirectionIndex])
 
   useEffect(() => {
     if (!selectedRoute) return
@@ -332,9 +342,11 @@ export function RouteLookupPage({
       recordRecent(routeId)
       onRouteCardNavigate?.()
       selectRoute(routeId)
-      setRouteInLocation(routeId)
+      const route = findDisplayRoute(routeId)
+      const directionIndex = route ? getDirectionIndex(route) : 0
+      setRouteInLocation(routeId, directionIndex)
     },
-    [onRouteCardNavigate, recordRecent, selectRoute],
+    [findDisplayRoute, getDirectionIndex, onRouteCardNavigate, recordRecent, selectRoute],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
@@ -413,8 +425,10 @@ export function RouteLookupPage({
           route: routePageDetail?.route ?? detailOverlay.route,
           pageData: routePageDetail?.pageData ?? null,
           directionIndex: getDirectionIndex(detailOverlay.route),
-          onDirectionChange: (index: number) =>
-            setDirectionIndex(detailOverlay.route.id, index),
+          onDirectionChange: (index: number) => {
+            setDirectionIndex(detailOverlay.route.id, index)
+            replaceRouteInLocation(detailOverlay.route.id, index)
+          },
           onClose: handleCloseDetail,
           lockDirection: dailyChallengeRouteView,
           directionEndpoints: dailyChallengeRouteView
@@ -642,7 +656,7 @@ export function RouteLookupPage({
 
             {visibleDisplayGroups.map((group) => (
               <Fragment key={group}>
-                {group === 'normal' && favoriteRoutes.length > 0 ? (
+                {group === 'normal' && showFavoritesSection ? (
                   <RouteGroupCollapse
                     groupId="favorites"
                     count={favoriteRoutes.length}
@@ -651,8 +665,15 @@ export function RouteLookupPage({
                       setGroupOpen((prev) => ({ ...prev, favorites: open }))
                     }
                   >
-                    <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
-                    <div className="route-grid">{renderFavoriteRouteCards()}</div>
+                    <FavoritesFolderBar />
+                    {favoriteRoutes.length > 0 ? (
+                      <>
+                        <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
+                        <div className="route-grid">{renderFavoriteRouteCards()}</div>
+                      </>
+                    ) : (
+                      <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
+                    )}
                   </RouteGroupCollapse>
                 ) : null}
 

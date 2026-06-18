@@ -21,7 +21,7 @@
     { "date": "2026-06-15", "event": "Private Hire", "routeCode": "PH1", "race": false },
     { "date": "2026-06-16", "event": "Marathon Road Closure", "routeCode": "471E", "race": false },
     { "date": "2026-06-17", "event": "Daily Challenge", "routeCode": "240A", "race": false },
-    { "date": "2026-06-18", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    { "date": "2026-06-18", "event": "Daily Challenge", "routeCode": "Y370", "race": false },
     { "date": "2026-06-19", "event": "Private Hire", "routeCode": "PH1", "race": false },
     { "date": "2026-06-20", "event": "Street Light Outage", "routeCode": null, "race": true },
     { "date": "2026-06-21", "event": "Rush Hour", "routeCode": null, "race": true },

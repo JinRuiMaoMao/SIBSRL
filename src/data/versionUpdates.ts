@@ -15,6 +15,76 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-18-folders',
+    date: '2026-06-18',
+    title: {
+      zh: '2026-06-18 更新（收藏夹与分享）',
+      en: '2026-06-18 updates (folders & sharing)',
+    },
+    groups: [
+      {
+        title: { zh: '收藏夹', en: 'Favorite folders' },
+        items: [
+          {
+            zh: '收藏支持多个自定义收藏夹：列表区分页签切换，点 + 可新建；星标按钮可选择加入哪些收藏夹。',
+            en: 'Favorites now support multiple custom folders—switch tabs in the list, tap + to create one, and use the star to pick folders.',
+          },
+          {
+            zh: '导出/导入收藏移至收藏区分页旁，不再放在设置里。',
+            en: 'Export/import moved next to the favorites tabs instead of Settings.',
+          },
+        ],
+      },
+      {
+        title: { zh: '搜索与分享', en: 'Search & share' },
+        items: [
+          {
+            zh: '搜索框支持 zone:3、op:FT、type:express、-night 等语法（可与关键词组合）。',
+            en: 'Search supports zone:3, op:FT, type:express, -night, etc., combined with free text.',
+          },
+          {
+            zh: '线路详情新增「分享线路」，链接包含当前方向（?route=…&dir=…）。',
+            en: 'Route detail adds “Share route” with the current direction in the URL (?route=…&dir=…).',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '2026-06-18-summary',
+    date: '2026-06-18',
+    title: {
+      zh: '2026-06-18 更新',
+      en: '2026-06-18 updates',
+    },
+    groups: [
+      {
+        title: {
+          zh: '更新日志弹窗',
+          en: 'Change log prompt',
+        },
+        items: [
+          {
+            zh: '首次进入线路首页且未查看过更新页时，在关闭每日挑战提示后会弹出近期更新摘要；也可点「查看全部更新」进入完整更新页。',
+            en: 'On your first visit to the routes home (if you have not opened the change log yet), a summary appears after you dismiss the daily challenge prompt; tap “View full change log” for the full page.',
+          },
+        ],
+      },
+      {
+        title: {
+          zh: '紧凑列表',
+          en: 'Compact list density',
+        },
+        items: [
+          {
+            zh: '设置中的「紧凑」列表密度进一步缩小卡片内边距、字号与分组间距，同屏可显示更多线路。',
+            en: '“Compact” list density in Settings is tighter—smaller card padding, type, and group spacing so more routes fit on screen.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: '2026-06-17-summary',
     date: '2026-06-17',
     title: {

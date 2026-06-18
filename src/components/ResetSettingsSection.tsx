@@ -5,19 +5,25 @@ import { useRecentRoutes } from '../contexts/RecentRoutesContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_STORAGE_KEY } from '../i18n/types'
 import { APP_PREFERENCES_STORAGE_KEY } from '../storage/appPreferences'
+import { DEFAULT_FAVORITE_FOLDER_ID, FAVORITE_FOLDERS_STORAGE_KEY } from '../storage/favoriteFolders'
+import { DAILY_CHALLENGE_PROMPT_SEEN_KEY } from '../storage/dailyChallengePrompt'
 import { clearSearchHistory, RECENT_ROUTES_STORAGE_KEY } from '../storage/routeActivity'
 import {
   FAVORITE_ROUTES_STORAGE_KEY,
   ROUTE_FILTERS_STORAGE_KEY,
   ROUTE_GROUP_OPEN_STORAGE_KEY,
 } from '../storage/routePreferences'
+import {
+  UPDATES_LOG_VIEWED_KEY,
+  UPDATES_PROMPT_SHOWN_KEY,
+} from '../storage/updatesViewing'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
 
 export function ResetSettingsSection() {
   const { t, setLocale } = useLocale()
   const { setTheme } = useTheme()
-  const { replaceFavorites } = useFavoriteRoutes()
+  const { replaceFoldersState } = useFavoriteRoutes()
   const { clearRecent } = useRecentRoutes()
   const { setListDensity, setReduceMotion } = useAppPreferences()
 
@@ -29,9 +35,13 @@ export function ResetSettingsSection() {
       localStorage.removeItem(LOCALE_STORAGE_KEY)
       localStorage.removeItem(APP_PREFERENCES_STORAGE_KEY)
       localStorage.removeItem(FAVORITE_ROUTES_STORAGE_KEY)
+      localStorage.removeItem(FAVORITE_FOLDERS_STORAGE_KEY)
       localStorage.removeItem(ROUTE_FILTERS_STORAGE_KEY)
       localStorage.removeItem(ROUTE_GROUP_OPEN_STORAGE_KEY)
       localStorage.removeItem(RECENT_ROUTES_STORAGE_KEY)
+      localStorage.removeItem(DAILY_CHALLENGE_PROMPT_SEEN_KEY)
+      localStorage.removeItem(UPDATES_LOG_VIEWED_KEY)
+      localStorage.removeItem(UPDATES_PROMPT_SHOWN_KEY)
     } catch {
       /* ignore */
     }
@@ -41,12 +51,16 @@ export function ResetSettingsSection() {
     setLocale('zh-Hans')
     setReduceMotion(false)
     setListDensity('comfortable')
-    replaceFavorites([])
+    replaceFoldersState({
+      version: 2,
+      folders: [{ id: DEFAULT_FAVORITE_FOLDER_ID, name: '', routeIds: [] }],
+      activeFolderId: DEFAULT_FAVORITE_FOLDER_ID,
+    })
     clearRecent()
 
     window.alert(t('resetSettingsDone'))
     window.location.reload()
-  }, [clearRecent, replaceFavorites, setListDensity, setLocale, setReduceMotion, setTheme, t])
+  }, [clearRecent, replaceFoldersState, setListDensity, setLocale, setReduceMotion, setTheme, t])
 
   return (
     <section className="settings-section">

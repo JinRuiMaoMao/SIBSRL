@@ -2,7 +2,6 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
-import { FavoritesBackupSection } from './FavoritesBackupSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -73,10 +72,6 @@ export function SettingsMenu() {
             <ThemeToggle className="settings-theme-toggle" />
           </section>
 
-          <DisplayPreferencesSection />
-          <FavoritesBackupSection />
-          <ResetSettingsSection />
-
           <section className="settings-section">
             <p className="settings-panel-title">{t('language')}</p>
             <div className="settings-locale-grid">
@@ -93,6 +88,9 @@ export function SettingsMenu() {
               ))}
             </div>
           </section>
+
+          <DisplayPreferencesSection />
+          <ResetSettingsSection />
         </div>
       )}
     </div>
