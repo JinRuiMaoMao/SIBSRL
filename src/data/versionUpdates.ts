@@ -156,6 +156,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复展开顶栏时上方出现空白：收起态标题条在展开时不再占用高度。',
             en: 'Fixed a blank gap above the expanded header—the collapsed title bar no longer reserves height when the header is open.',
           },
+          {
+            zh: '顶栏折叠改为分步动画：先隐藏页签与外链，再缩小标题，最后收拢顶栏高度；展开时顺序相反。',
+            en: 'Header collapse now animates in stages—tabs and links hide first, then the title shrinks, then the bar height folds; expand reverses the sequence.',
+          },
         ],
       },
     ],

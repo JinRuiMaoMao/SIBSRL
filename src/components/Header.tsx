@@ -6,7 +6,6 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
 import { getTabPageHref } from '../utils/appTabNavigation'
-import { HeaderCollapsedBar } from './HeaderCollapsedBar'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
 
@@ -72,14 +71,7 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
         <HeaderCollapseToggle collapsed={collapsed} onToggle={onToggleCollapse} />
       </div>
 
-      <HeaderCollapsedBar
-        collapsed={collapsed}
-        title={t('appTitle')}
-        logoAriaLabel={t('appTitle')}
-        onLogoClick={onLogoClick}
-      />
-
-      <header className="site-header" aria-hidden={collapsed}>
+      <header className="site-header">
         <div className="header-inner">
           <div className="brand">
             <button
@@ -98,7 +90,7 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
             </div>
           </div>
 
-          <div className="header-actions" ref={actionsRef}>
+          <div className="header-actions" ref={actionsRef} aria-hidden={collapsed}>
             <div className="header-tabs-measure" aria-hidden>
               <div className="header-tabs" ref={measureBoxRef}>
                 {tabOrder.map((tab) => (
@@ -132,7 +124,7 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
           </div>
         </div>
 
-        <div className="header-sub">
+        <div className="header-sub" aria-hidden={collapsed}>
           <nav className="header-links" aria-label={t('externalLinks')}>
             {EXTERNAL_LINKS.map((link) => (
               <a key={link.url} href={link.url} target="_blank" rel="noreferrer">

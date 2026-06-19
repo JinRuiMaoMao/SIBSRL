@@ -1,7 +1,6 @@
 import { useLogoClickNavigate } from '../hooks/useLogoClickNavigate'
 import { useLocale } from '../i18n/LocaleContext'
 import { routesIndexHref } from '../utils/secretAccess'
-import { HeaderCollapsedBar } from './HeaderCollapsedBar'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
 
@@ -23,14 +22,7 @@ export function SecretHeader({ collapsed, onToggleCollapse }: SecretHeaderProps)
         <HeaderCollapseToggle collapsed={collapsed} onToggle={onToggleCollapse} />
       </div>
 
-      <HeaderCollapsedBar
-        collapsed={collapsed}
-        title={t('secretPageTitle')}
-        logoAriaLabel={t('secretPageTitle')}
-        onLogoClick={onLogoClick}
-      />
-
-      <header className="site-header secret-site-header" aria-hidden={collapsed}>
+      <header className="site-header secret-site-header">
         <div className="header-inner">
           <div className="brand">
             <button
