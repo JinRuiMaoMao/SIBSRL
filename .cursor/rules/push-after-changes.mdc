@@ -1,6 +1,11 @@
+---
+description: Commit and push to origin/master after completing project changes
+alwaysApply: true
+---
+
 # Push after changes
 
-After completing code or data changes in this project, **commit and push to `origin/master`** when the user has asked to keep master up to date (or as part of an explicit release/update request).
+After completing code or data changes in this project, **always commit and push to `origin/master`** before finishing the task (unless the user explicitly says not to push).
 
 Workflow:
 
@@ -10,3 +15,4 @@ Workflow:
 4. `git push origin master`
 
 Do not force-push unless the user explicitly requests it.
+Do not push if there are no changes to commit.
