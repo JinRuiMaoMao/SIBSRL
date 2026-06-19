@@ -140,8 +140,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Fixed the mobile settings gear being too small to tap—larger touch targets, higher stacking order, and bigger controls inside the settings panel.',
           },
           {
-            zh: '修复设置面板高度计算：按齿轮按钮位置撑满至屏幕底部，内容超出时在面板内滚动（不再卡在约半屏）。',
-            en: 'Fixed settings panel height—it now fills from the gear button down to the bottom of the screen, scrolling inside the panel when content overflows.',
+            zh: '修复设置面板高度：随内容收缩，最高不超过齿轮下方至屏幕底部的可用空间；内容超出时在面板内滚动。',
+            en: 'Fixed settings panel height—it sizes to content up to the space below the gear button, scrolling inside the panel only when needed.',
           },
         ],
       },

@@ -1357,11 +1357,13 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   position: fixed;
   top: calc(var(--settings-panel-top, 3.5rem) + 0.35rem);
   right: max(var(--settings-panel-right, 0.75rem), env(safe-area-inset-right, 0px));
-  bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
   left: auto;
   z-index: 300;
   width: min(20rem, calc(100vw - 1.5rem));
   max-width: calc(100vw - 1.5rem);
+  max-height: calc(
+    100dvh - var(--settings-panel-top, 3.5rem) - 0.35rem - max(0.75rem, env(safe-area-inset-bottom, 0px))
+  );
   padding: 0.75rem;
   background: var(--bg-deep);
   border: 1px solid var(--border);
@@ -3019,9 +3021,11 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
     top: calc(var(--settings-panel-top, 4rem) + 0.5rem);
     left: 0.75rem;
     right: 0.75rem;
-    bottom: 0;
     width: auto;
     max-width: none;
+    max-height: calc(
+      100dvh - var(--settings-panel-top, 4rem) - 0.5rem - max(0.75rem, env(safe-area-inset-bottom, 0px))
+    );
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
