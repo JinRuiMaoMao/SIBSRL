@@ -187,6 +187,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: { zh: '乘客抱怨', en: 'Complaints' },
+        items: [
+          {
+            zh: '行车抱怨 8 标题去掉括号及「日文不会念」备注。',
+            en: 'Removed the parenthetical note from driving complaint 8’s title.',
+          },
+        ],
+      },
     ],
   },
   {

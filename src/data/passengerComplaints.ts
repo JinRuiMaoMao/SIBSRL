@@ -71,7 +71,7 @@ export const passengerComplaints: PassengerComplaint[] = [
     id: 'complaint-08',
     number: 8,
     category: 'driving',
-    title: { zh: '行车抱怨 8（日文不会念）', en: 'Driving complaint 8 (Japanese)' },
+    title: { zh: '行车抱怨 8', en: 'Driving complaint 8' },
     detail: {
       zh: '行车抱怨广播 8。',
       en: 'Driving complaint broadcast 8.',
