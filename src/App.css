@@ -975,13 +975,12 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 
 .route-syntax-dock.is-scroll-hidden .route-syntax-shell {
   visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .route-syntax-dock.is-scroll-hidden {
-  visibility: hidden;
-  height: 0;
-  margin: 0;
-  overflow: hidden;
+  /* 仅视觉隐藏，保留占位，避免页面高度突变导致 scroll 回弹抽搐 */
   pointer-events: none;
 }
 

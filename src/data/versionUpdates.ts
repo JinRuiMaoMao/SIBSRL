@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r28',
+    id: '2026-06-19-r29',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -112,6 +112,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '语法说明末行「可与站名、线路号混用…」下方增加留白。',
             en: 'Added spacing below the last syntax help line about combining queries and full-width colons.',
+          },
+          {
+            zh: '修复标签页全折叠时未收起语法下滑页面抽搐（滚动隐藏不再压缩布局高度）。',
+            en: 'Fixed scroll jitter when all route groups are collapsed—scroll-hide no longer collapses layout height.',
           },
         ],
       },

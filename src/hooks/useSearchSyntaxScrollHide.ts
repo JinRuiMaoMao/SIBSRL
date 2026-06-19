@@ -1,13 +1,16 @@
-import { useEffect, useState, type RefObject } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 
-/** 语法顶缘进入搜索框下沿此范围内即隐藏 */
+/** 语法顶缘进入搜索框下沿时隐藏（仅视觉，不改变布局高度） */
 const HIDE_INSET_PX = 1
+/** 重新显示时的滞后距离，避免临界区闪烁 */
+const SHOW_CLEAR_PX = 10
 
 export function useSearchSyntaxScrollHide(
   stickyRef: RefObject<HTMLElement | null>,
   syntaxRef: RefObject<HTMLElement | null>,
 ): boolean {
   const [hidden, setHidden] = useState(false)
+  const hiddenRef = useRef(false)
 
   useEffect(() => {
     const sync = () => {
@@ -20,7 +23,16 @@ export function useSearchSyntaxScrollHide(
 
       const searchBottom = searchBar.getBoundingClientRect().bottom
       const syntaxTop = syntax.getBoundingClientRect().top
-      setHidden(syntaxTop < searchBottom - HIDE_INSET_PX)
+
+      let next = hiddenRef.current
+      if (syntaxTop < searchBottom - HIDE_INSET_PX) {
+        next = true
+      } else if (syntaxTop >= searchBottom + SHOW_CLEAR_PX) {
+        next = false
+      }
+
+      hiddenRef.current = next
+      setHidden(next)
     }
 
     sync()
