@@ -646,6 +646,7 @@ export function RouteLookupPage({
           onApplyHistory={handleApplyHistory}
           onClearHistory={handleClearHistory}
           searchInputRef={searchInputRef}
+          showShortcutHint={false}
         />
       </div>
 

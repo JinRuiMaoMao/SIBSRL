@@ -957,6 +957,26 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   margin: 0 0 0.85rem;
 }
 
+.route-syntax-shell {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: var(--bg-deep);
+}
+
+.route-syntax-dock .search-help-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.2rem 0.65rem 0.15rem;
+}
+
+.route-syntax-dock.is-hidden .route-syntax-shell {
+  visibility: hidden;
+}
+
 .route-syntax-dock.is-hidden {
   visibility: hidden;
   height: 0;
@@ -965,9 +985,40 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   pointer-events: none;
 }
 
+.search-syntax-toggle {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.search-syntax-toggle:hover {
+  border-color: var(--border-strong);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.search-syntax-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .search-syntax-panel {
   max-height: var(--search-syntax-max-height, 20rem);
   overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .search-syntax-panel.is-scrollable .search-syntax-panel-inner {
@@ -978,10 +1029,10 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .search-syntax-panel-inner {
-  padding: 0.35rem 0.65rem 0.55rem;
-  border-radius: var(--radius-lg);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  padding: 0.15rem 0.65rem 0.55rem;
+  background: transparent;
+  border: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .search-syntax-help {

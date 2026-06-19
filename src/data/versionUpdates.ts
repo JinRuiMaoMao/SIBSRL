@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r25',
+    id: '2026-06-19-r26',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -100,6 +100,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '移除折叠动画：语法说明移至每日挑战上方随页滚动，顶缘越过搜索框时隐藏。',
             en: 'Removed fold animations: syntax sits above daily challenge and scrolls with the page; hides when its top passes the search box.',
+          },
+          {
+            zh: '恢复语法区块底部圆角与「展开/收起语法」按钮。',
+            en: 'Restored syntax panel bottom corners and the show/hide syntax toggle.',
           },
         ],
       },
