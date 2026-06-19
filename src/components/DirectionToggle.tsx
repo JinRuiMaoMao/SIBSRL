@@ -49,7 +49,7 @@ export function DirectionToggle({
             onChange(sortedIndex)
           }}
         >
-          {getDirectionShortLabel(route, sortedIndex, t, locale)}
+          {getDirectionShortLabel(route, sortedIndex, t, locale, compact)}
         </button>
       ))}
     </div>

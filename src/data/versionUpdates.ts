@@ -170,6 +170,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: { zh: '线路列表', en: 'Route list' },
+        items: [
+          {
+            zh: '修复紧凑模式英文下方向按钮换行后右侧留白：切换条随内容收缩，英文紧凑态改用 North/South 等短标签。',
+            en: 'Fixed empty space beside wrapped direction toggles in compact English—toggle bar fits content and uses short North/South labels.',
+          },
+        ],
+      },
     ],
   },
   {

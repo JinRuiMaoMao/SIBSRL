@@ -33,8 +33,26 @@ const DIRECTION_MESSAGE_KEYS: Record<string, MessageKey> = {
   W: 'directionWest',
 }
 
+const DIRECTION_COMPACT_MESSAGE_KEYS: Record<string, MessageKey> = {
+  N: 'directionNorthCompact',
+  S: 'directionSouthCompact',
+  E: 'directionEastCompact',
+  W: 'directionWestCompact',
+}
+
 const ZH_DIRECTION_HEAD =
   /^(北行|南行|东行|西行|环线|循环|循环方向|方向\d+)/
+
+function directionLabelKey(
+  key: string,
+  compact: boolean,
+  locale: Locale,
+): MessageKey {
+  if (compact && !isChineseLocale(locale)) {
+    return DIRECTION_COMPACT_MESSAGE_KEYS[key] ?? DIRECTION_MESSAGE_KEYS[key]
+  }
+  return DIRECTION_MESSAGE_KEYS[key]
+}
 
 /** 方向切换按钮：仅显示「北行/南行」等，不显示起终点全文 */
 export function getDirectionShortLabel(
@@ -42,12 +60,12 @@ export function getDirectionShortLabel(
   sortedIndex: number,
   t: (key: MessageKey) => string,
   locale: Locale,
+  compact = false,
 ): string {
   const dataIndex = getDirectionDataIndex(route, sortedIndex)
   const key = getDirectionKey(route, dataIndex)
-  if (key) {
-    const msgKey = DIRECTION_MESSAGE_KEYS[key]
-    if (msgKey) return t(msgKey)
+  if (key && DIRECTION_MESSAGE_KEYS[key]) {
+    return t(directionLabelKey(key, compact, locale))
   }
   const group = route.stops?.[dataIndex]
   if (!group) return String(sortedIndex + 1)
@@ -61,7 +79,7 @@ export function getDirectionShortLabel(
     }
     if (/→|↔/.test(group.direction.zh)) {
       return key && DIRECTION_MESSAGE_KEYS[key]
-        ? t(DIRECTION_MESSAGE_KEYS[key])
+        ? t(directionLabelKey(key, compact, locale))
         : String(sortedIndex + 1)
     }
     const short = group.direction.zh.match(/^([^（(→↔]+)/)?.[1]?.trim()
@@ -70,16 +88,16 @@ export function getDirectionShortLabel(
   }
 
   const en = group.direction.en
-  if (/southbound/i.test(en)) return t('directionSouth')
-  if (/northbound/i.test(en)) return t('directionNorth')
-  if (/eastbound/i.test(en)) return t('directionEast')
-  if (/westbound/i.test(en)) return t('directionWest')
+  if (/southbound/i.test(en)) return t(directionLabelKey('S', compact, locale))
+  if (/northbound/i.test(en)) return t(directionLabelKey('N', compact, locale))
+  if (/eastbound/i.test(en)) return t(directionLabelKey('E', compact, locale))
+  if (/westbound/i.test(en)) return t(directionLabelKey('W', compact, locale))
   if (/→|↔/.test(en)) {
     return key && DIRECTION_MESSAGE_KEYS[key]
-      ? t(DIRECTION_MESSAGE_KEYS[key])
+      ? t(directionLabelKey(key, compact, locale))
       : String(sortedIndex + 1)
   }
-  if (key && DIRECTION_MESSAGE_KEYS[key]) return t(DIRECTION_MESSAGE_KEYS[key])
+  if (key && DIRECTION_MESSAGE_KEYS[key]) return t(directionLabelKey(key, compact, locale))
   return String(sortedIndex + 1)
 }
 
