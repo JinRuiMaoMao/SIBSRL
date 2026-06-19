@@ -942,6 +942,21 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   gap: 0.25rem;
 }
 
+.search-help--syntax-open {
+  position: relative;
+  z-index: 2;
+  margin-top: 0.1rem;
+  padding: 0.35rem 0.65rem 0.55rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-deep);
+}
+
+.route-lookup-sticky--fade .search-help--syntax-open {
+  background: color-mix(in srgb, var(--bg-deep) 96%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 .search-help-bar {
   position: relative;
   z-index: 1;
@@ -995,23 +1010,21 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .search-syntax-collapsible {
-  display: grid;
-  grid-template-rows: 0fr;
+  max-height: 0;
   opacity: 0;
   overflow: hidden;
   transition:
-    grid-template-rows 0.38s cubic-bezier(0.32, 0.72, 0, 1),
+    max-height 0.38s cubic-bezier(0.32, 0.72, 0, 1),
     opacity 0.28s ease;
 }
 
 .search-syntax-collapsible.is-open {
-  grid-template-rows: 1fr;
+  max-height: 20rem;
   opacity: 1;
 }
 
 .search-syntax-collapsible-inner {
-  min-height: 0;
-  overflow: hidden;
+  padding-bottom: 0.05rem;
 }
 
 .search-syntax-help {
@@ -1028,9 +1041,9 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 
 .search-syntax-list {
   margin: 0;
-  padding: 0 0 0 1.1rem;
+  padding: 0 0 0.15rem 1.1rem;
   font-size: 0.72rem;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--text-muted);
 }
 

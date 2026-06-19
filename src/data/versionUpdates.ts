@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r7',
+    id: '2026-06-19-r8',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -36,6 +36,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复「收起语法」在页顶或滚动后点击无效的问题。',
             en: 'Fixed “Hide syntax” not responding at the top of the page or after scrolling.',
+          },
+          {
+            zh: '修复高级搜索语法末行文字被裁切、或与下方线路卡片重叠的问题。',
+            en: 'Fixed advanced syntax help text being clipped or overlapped by route cards below.',
           },
         ],
       },

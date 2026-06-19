@@ -134,7 +134,7 @@ export function SearchBar({
         </div>
       ) : null}
 
-      <div className="search-help">
+      <div className={`search-help${syntaxOpen ? ' search-help--syntax-open' : ''}`}>
         <div className="search-help-bar">
           <p className="search-shortcut-hint">
             <span>{t('searchShortcutHint')}</span>
