@@ -19,13 +19,26 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r3',
+    id: '2026-06-19-r4',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
       en: '2026-06-19 updates',
     },
     groups: [
+      {
+        title: { zh: '界面', en: 'UI' },
+        items: [
+          {
+            zh: '线路合集内容区底部增加内边距；设置面板在各页均对齐齿轮按钮弹出。',
+            en: 'Route group panels now have bottom padding; settings opens aligned to the gear button on every tab.',
+          },
+          {
+            zh: '英文界面下经停站搜索结果改为显示英文站名，不再夹中文。',
+            en: 'Stop-based search summaries use English stop names when the UI is in English.',
+          },
+        ],
+      },
       {
         title: { zh: '搜索说明', en: 'Search help' },
         items: [

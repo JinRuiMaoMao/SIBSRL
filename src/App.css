@@ -1224,15 +1224,15 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .settings-panel {
-  position: fixed;
-  top: calc(var(--site-header-sticky-offset, 0px) + 2.85rem);
-  right: max(0.75rem, var(--header-controls-inset-right, 0.75rem));
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
   left: auto;
   bottom: auto;
   z-index: 300;
   width: min(20rem, calc(100vw - 1.5rem));
   max-width: calc(100vw - 1.5rem);
-  max-height: calc(100dvh - var(--site-header-sticky-offset, 0px) - 3.5rem);
+  max-height: min(32rem, calc(100dvh - 5rem));
   padding: 0.75rem;
   background: var(--bg-deep);
   border: 1px solid var(--border);
@@ -1806,7 +1806,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .route-group-collapse.is-open .route-group-collapse-panel-inner {
-  padding: 0.85rem 0.85rem 0;
+  padding: 0.85rem;
 }
 
 .route-group-collapse-panel-inner .route-grid {

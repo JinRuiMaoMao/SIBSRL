@@ -25,7 +25,9 @@ import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
+import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
+import { isChineseLocale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { loadRoutePageData } from '../utils/loadRoutePageData'
@@ -105,7 +107,7 @@ export function RouteLookupPage({
   onRouteCardNavigate,
   dailyChallenge,
 }: RouteLookupPageProps) {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
@@ -589,15 +591,24 @@ export function RouteLookupPage({
 
   const stopLookupSummary = useMemo(() => {
     if (matchedStops.length === 0) return ''
-    const names = matchedStops.slice(0, 3).map((stop) => stop.zh)
+    const separator = isChineseLocale(locale) ? '、' : ', '
+    const labels: string[] = []
+    const seen = new Set<string>()
+    for (const stop of matchedStops) {
+      const label = getPrimaryText({ zh: stop.zh, en: stop.en }, locale)
+      if (!label || seen.has(label)) continue
+      seen.add(label)
+      labels.push(label)
+      if (labels.length >= 3) break
+    }
     if (matchedStops.length > 3) {
       return t('stopLookupMatchesMore', {
-        stops: names.join('、'),
+        stops: labels.join(separator),
         count: matchedStops.length,
       })
     }
-    return t('stopLookupMatches', { stops: names.join('、') })
-  }, [matchedStops, t])
+    return t('stopLookupMatches', { stops: labels.join(separator) })
+  }, [locale, matchedStops, t])
 
   useRouteListKeyboard({
     enabled: true,
