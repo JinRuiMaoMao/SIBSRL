@@ -395,6 +395,14 @@ export function dailyChallengeMatchesFilters(
     }
   }
 
+  if (structured.category) {
+    if (linkedRoute?.category !== structured.category) return false
+  }
+
+  for (const excluded of structured.excludeCategories) {
+    if (linkedRoute?.category === excluded) return false
+  }
+
   if (structured.level != null) {
     if (linkedRoute?.levelRequired !== structured.level) return false
   }

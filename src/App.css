@@ -932,8 +932,43 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 
 .search-toolbar .search-suggestions,
 .search-toolbar .search-history,
-.search-toolbar .search-shortcut-hint {
+.search-toolbar .search-help {
   grid-column: 1 / -1;
+}
+
+.search-help {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.search-syntax-help {
+  margin: 0;
+}
+
+.search-syntax-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.search-syntax-list {
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.search-syntax-list li + li {
+  margin-top: 0.12rem;
+}
+
+.search-syntax-list code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--text);
 }
 
 .main > .search-bar {

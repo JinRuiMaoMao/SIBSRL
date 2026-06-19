@@ -1,4 +1,4 @@
-import type { RouteTypeFilter } from '../types/route'
+import type { RouteCategory, RouteTypeFilter } from '../types/route'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 
 export interface ParsedStructuredSearchQuery {
@@ -6,18 +6,38 @@ export interface ParsedStructuredSearchQuery {
   zone?: number
   operator?: string
   type?: RouteTypeFilter
+  category?: RouteCategory
   level?: number
   excludeTypes: RouteTypeFilter[]
+  excludeCategories: RouteCategory[]
 }
 
 const STRUCTURED_TOKEN =
-  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular)\b/gi
+  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular|axis|loop|peakexpress)\b/gi
+
+function normalizeCategoryToken(raw: string): RouteCategory | null {
+  const value = raw.trim().toLowerCase()
+  const map: Record<string, RouteCategory> = {
+    inner: 'inner',
+    inter: 'inter',
+    express: 'express',
+    night: 'night',
+    special: 'special',
+    centralaxis: 'centralAxis',
+    'central-axis': 'centralAxis',
+    axis: 'centralAxis',
+  }
+  return map[value] ?? null
+}
 
 function normalizeTypeToken(raw: string): RouteTypeFilter | null {
   const value = raw.trim().toLowerCase()
   if (value === 'centralaxis' || value === 'central-axis' || value === 'axis') {
     return 'centralAxis'
   }
+  if (value === 'circular') return 'loop'
+  if (value === 'peakexpress' || value === 'peak-express') return 'peakExpress'
+  if (value === 'special') return 'specialDeparture'
   return TYPE_FILTER_ORDER.find((item) => item.toLowerCase() === value) ?? null
 }
 
@@ -25,6 +45,7 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
   const parsed: ParsedStructuredSearchQuery = {
     text: query,
     excludeTypes: [],
+    excludeCategories: [],
   }
 
   let text = query
@@ -37,7 +58,14 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
 
     if (exclude) {
       const type = normalizeTypeToken(exclude)
-      if (type && !parsed.excludeTypes.includes(type)) parsed.excludeTypes.push(type)
+      if (type && !parsed.excludeTypes.includes(type)) {
+        parsed.excludeTypes.push(type)
+        continue
+      }
+      const category = normalizeCategoryToken(exclude)
+      if (category && !parsed.excludeCategories.includes(category)) {
+        parsed.excludeCategories.push(category)
+      }
       continue
     }
 
@@ -55,6 +83,11 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     }
 
     if (key === 'type' || key === 'cat') {
+      const category = normalizeCategoryToken(value)
+      if (category) {
+        parsed.category = category
+        continue
+      }
       const type = normalizeTypeToken(value)
       if (type) parsed.type = type
       continue

@@ -6,6 +6,7 @@ import {
   isRouteSearchSuggestionActive,
   parseRouteNumberPatternQuery,
 } from '../utils/routeSearchQuery'
+import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 
 interface SearchBarProps {
   value: string
@@ -131,9 +132,10 @@ export function SearchBar({
         </div>
       ) : null}
 
-      <p className="search-shortcut-hint">
-        {t('searchShortcutHint')} · {t('searchSyntaxHint')}
-      </p>
+      <div className="search-help">
+        <p className="search-shortcut-hint">{t('searchShortcutHint')}</p>
+        <SearchSyntaxHelp />
+      </div>
     </div>
   )
 }

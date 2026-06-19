@@ -19,13 +19,22 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r2',
+    id: '2026-06-19-r3',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
       en: '2026-06-19 updates',
     },
     groups: [
+      {
+        title: { zh: '搜索说明', en: 'Search help' },
+        items: [
+          {
+            zh: '搜索框下方直接列出高级语法含义（分区、运营商、等级、类型、排除等），无需再去更新日志猜测。',
+            en: 'Advanced search syntax is explained under the search box (zone, operator, level, type, exclude, etc.)—no need to guess from the change log.',
+          },
+        ],
+      },
       {
         title: { zh: '音乐页', en: 'Music page' },
         items: [

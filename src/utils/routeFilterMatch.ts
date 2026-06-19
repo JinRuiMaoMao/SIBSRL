@@ -20,8 +20,14 @@ export function routeMatchesFilters(route: BusRoute, filters: RouteFilters): boo
   const type = structured.type ?? filters.type
   if (type !== 'all' && !routeMatchesTypeFilter(route, type)) return false
 
+  if (structured.category && route.category !== structured.category) return false
+
   for (const excluded of structured.excludeTypes) {
     if (routeMatchesTypeFilter(route, excluded)) return false
+  }
+
+  for (const excluded of structured.excludeCategories) {
+    if (route.category === excluded) return false
   }
 
   if (structured.level != null) {
