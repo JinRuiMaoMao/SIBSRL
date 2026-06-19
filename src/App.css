@@ -1649,8 +1649,14 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 
 .daily-challenge-card:hover {
   border-color: var(--border-strong);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow-overlay);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .daily-challenge-card:hover {
+    background: var(--bg-elevated);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--accent-soft);
+  }
 }
 
 .daily-challenge-card.selected:hover {
@@ -1854,14 +1860,18 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius);
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .route-card-link:hover,
 .route-card-link:focus,
 .route-card-link:active,
-.route-card-link:visited {
+.route-card-link:visited,
+.route-card-link:any-link {
   text-decoration: none;
   color: inherit;
+  background: transparent;
 }
 
 .route-card-link--selected .route-card {
@@ -1869,8 +1879,14 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);
 }
 
-.route-card-link--muted {
-  opacity: 0.58;
+.route-card-link--muted .route-card {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--border) 72%, transparent);
+}
+
+.route-card-link--muted:hover .route-card,
+.route-card-link--muted:focus-visible .route-card {
+  border-style: solid;
 }
 
 .route-card--pending,
@@ -1896,9 +1912,9 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem;
-  color: inherit;
+  color: var(--text);
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s, background-color 0.15s;
   flex: 1 1 auto;
   width: 100%;
   display: flex;
@@ -1906,10 +1922,19 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   min-height: 7.5rem;
 }
 
-.route-card-link:hover .route-card {
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow-overlay);
+@media (hover: hover) and (pointer: fine) {
+  .route-card-link:hover .route-card {
+    background: var(--bg-elevated);
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--accent-soft);
+  }
+}
+
+.route-card-link:active .route-card {
+  background: var(--bg-card);
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .route-card-link:focus-visible {
@@ -3055,9 +3080,27 @@ html[data-list-density='compact'] .daily-challenge-card:hover {
   transform: translateY(-1px);
 }
 
+@media (hover: none), (pointer: coarse) {
+  html[data-list-density='compact'] .route-card-link:hover .route-card,
+  html[data-list-density='compact'] .daily-challenge-card:hover {
+    transform: none;
+  }
+}
+
 html[data-reduce-motion='true'] .route-card-link:hover .route-card,
 html[data-reduce-motion='true'] .daily-challenge-card:hover {
   transform: none;
+}
+
+@media (forced-colors: active) {
+  .route-card-link:hover .route-card,
+  .route-card-link:active .route-card,
+  .daily-challenge-card:hover {
+    background: Canvas;
+    border-color: Highlight;
+    box-shadow: none;
+    transform: none;
+  }
 }
 
 html[data-reduce-motion='true'] .route-group-collapse-panel,

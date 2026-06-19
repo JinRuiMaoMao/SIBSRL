@@ -19,13 +19,22 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r4',
+    id: '2026-06-19-r5',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
       en: '2026-06-19 updates',
     },
     groups: [
+      {
+        title: { zh: '线路卡片', en: 'Route cards' },
+        items: [
+          {
+            zh: '修复部分浏览器悬停线路卡片时发灰：仅在真鼠标悬停时高亮，并改用亮色背景而非深色阴影。',
+            en: 'Fixed some browsers greying route cards on hover—highlight only on real mouse hover with a lighter background instead of a heavy dark shadow.',
+          },
+        ],
+      },
       {
         title: { zh: '界面', en: 'UI' },
         items: [
