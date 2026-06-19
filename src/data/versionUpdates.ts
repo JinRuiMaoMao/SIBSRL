@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r22',
+    id: '2026-06-19-r23',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -88,6 +88,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '高级搜索语法展开高度随屏幕剩余空间自适应（最高 20rem）；超出部分在面板内滚动查看。',
             en: 'Advanced syntax panel height adapts to remaining viewport (capped at 20rem); overflow scrolls inside the panel.',
+          },
+          {
+            zh: '加宽半折叠滞后区间（1–48px），减轻全开/全关之间抽搐且跳过半折叠的问题。',
+            en: 'Wider half-fold hysteresis (1–48px) reduces open/closed flicker that skipped the half-fold state.',
           },
         ],
       },

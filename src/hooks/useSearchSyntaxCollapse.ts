@@ -2,17 +2,28 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type SyntaxFold = 'open' | 'half' | 'closed'
 
-/** 停下时高于此值则完全收起 */
-const SCROLL_COLLAPSE_Y = 5
-/** 滚动停下多久后更新折叠状态（毫秒） */
-const SCROLL_IDLE_MS = 1
+/** 离开页面最顶部后进入半折叠 */
+const SCROLL_HALF_ENTER_Y = 1
+/** 超过此距离才完全收起（与半折叠之间留滞后带） */
+const SCROLL_FULL_COLLAPSE_Y = 48
+/** 视为顶部区域：滚轮上滑可展开 */
+const SCROLL_TOP_ZONE_Y = 80
+/** 滚动停下后再更新折叠（毫秒） */
+const SCROLL_IDLE_MS = 48
 
 function readScrollY(): number {
   return window.scrollY || document.documentElement.scrollTop || 0
 }
 
-function isAtScrollTop(): boolean {
-  return readScrollY() <= SCROLL_COLLAPSE_Y
+function isInTopZone(): boolean {
+  return readScrollY() <= SCROLL_TOP_ZONE_Y
+}
+
+function resolveAutoFold(scrollY: number, previous: SyntaxFold): SyntaxFold {
+  if (scrollY > SCROLL_FULL_COLLAPSE_Y) return 'closed'
+  if (scrollY > SCROLL_HALF_ENTER_Y) return 'half'
+  if (previous === 'half' || previous === 'closed') return previous
+  return 'open'
 }
 
 export function useSearchSyntaxCollapse() {
@@ -21,6 +32,7 @@ export function useSearchSyntaxCollapse() {
   const [manualFold, setManualFold] = useState<SyntaxFold | null>(null)
   const idleTimerRef = useRef<number | null>(null)
   const syntaxFoldRef = useRef<SyntaxFold>('open')
+  const manualFoldRef = useRef<SyntaxFold | null>(null)
 
   const fold = manualFold ?? syntaxFold
   const syntaxOpen = fold === 'open'
@@ -29,9 +41,21 @@ export function useSearchSyntaxCollapse() {
     syntaxFoldRef.current = fold
   }, [fold])
 
+  useEffect(() => {
+    manualFoldRef.current = manualFold
+  }, [manualFold])
+
   const expandSyntax = useCallback(() => {
     setManualFold(null)
     setSyntaxFold('open')
+  }, [])
+
+  const applyScrollFold = useCallback(() => {
+    if (manualFoldRef.current != null) return
+    const next = resolveAutoFold(readScrollY(), syntaxFoldRef.current)
+    if (next !== syntaxFoldRef.current) {
+      setSyntaxFold(next)
+    }
   }, [])
 
   const scheduleScrollIdle = useCallback(() => {
@@ -40,16 +64,9 @@ export function useSearchSyntaxCollapse() {
     }
     idleTimerRef.current = window.setTimeout(() => {
       idleTimerRef.current = null
-      const y = readScrollY()
-      if (y > SCROLL_COLLAPSE_Y) {
-        setManualFold(null)
-        setSyntaxFold('closed')
-      } else if (y > 0) {
-        setManualFold(null)
-        setSyntaxFold('half')
-      }
+      requestAnimationFrame(applyScrollFold)
     }, SCROLL_IDLE_MS)
-  }, [])
+  }, [applyScrollFold])
 
   useEffect(() => {
     const onScroll = () => {
@@ -58,7 +75,7 @@ export function useSearchSyntaxCollapse() {
 
     const onWheel = (event: WheelEvent) => {
       if (event.deltaY >= 0) return
-      if (!isAtScrollTop()) return
+      if (!isInTopZone()) return
       if (syntaxFoldRef.current === 'open') return
       expandSyntax()
     }
