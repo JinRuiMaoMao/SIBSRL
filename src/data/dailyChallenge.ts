@@ -22,6 +22,7 @@ import {
   challengeRouteNumberMatchesQuery,
   matchesRouteSearchQuery,
 } from '../utils/routeSearchQuery'
+import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
 
 export interface DailyChallengeIntro {
   body: BilingualText
@@ -322,7 +323,7 @@ export function getDailyChallengeOperatorsLabel(
 }
 
 function matchesDailyChallengeQuery(challenge: DailyChallengeInfo, query: string): boolean {
-  const q = query.trim()
+  const q = parseStructuredSearchQuery(query).text.trim()
   if (!q) return true
 
   const routeNumber = challenge.routeNumber?.trim()
@@ -366,26 +367,36 @@ export function dailyChallengeMatchesFilters(
   if (!isDailyChallengeAvailable(challenge)) return false
   if (!matchesDailyChallengeQuery(challenge, filters.query)) return false
 
+  const structured = parseStructuredSearchQuery(filters.query)
   const routeNumber = challenge.routeNumber
   const linkedRoute =
     routeNumber && !isPrivateHireChallengeRoute(routeNumber)
       ? findRouteForDailyChallenge(routeNumber)
       : null
 
-  if (filters.zone !== 'all') {
-    if (!linkedRoute?.zones.includes(filters.zone)) return false
+  const zone = structured.zone ?? (filters.zone !== 'all' ? filters.zone : 'all')
+  if (zone !== 'all') {
+    if (!linkedRoute?.zones.includes(zone)) return false
   }
 
-  if (filters.operator !== 'all') {
-    if (!linkedRoute?.operators.includes(filters.operator)) return false
-  }
-
-  if (filters.type !== 'all') {
-    if (linkedRoute) {
-      if (!routeMatchesTypeFilter(linkedRoute, filters.type)) return false
-    } else if (filters.type !== 'event') {
+  const operator = structured.operator ?? filters.operator
+  if (operator !== 'all') {
+    if (!linkedRoute?.operators.some((o) => o.toLowerCase() === operator.toLowerCase())) {
       return false
     }
+  }
+
+  const type = structured.type ?? filters.type
+  if (type !== 'all') {
+    if (linkedRoute) {
+      if (!routeMatchesTypeFilter(linkedRoute, type)) return false
+    } else if (type !== 'event') {
+      return false
+    }
+  }
+
+  if (structured.level != null) {
+    if (linkedRoute?.levelRequired !== structured.level) return false
   }
 
   return true

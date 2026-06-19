@@ -8,7 +8,8 @@ import {
   type ReactNode,
 } from 'react'
 import { formatMessage, getMessages, type MessageKey } from './messages'
-import { ALL_LOCALES, DEFAULT_LOCALE, LOCALE_STORAGE_KEY, type Locale } from './types'
+import { detectBrowserLocale } from './detectBrowserLocale'
+import { ALL_LOCALES, LOCALE_STORAGE_KEY, type Locale } from './types'
 
 interface LocaleContextValue {
   locale: Locale
@@ -25,7 +26,7 @@ function readStoredLocale(): Locale {
   } catch {
     /* ignore */
   }
-  return DEFAULT_LOCALE
+  return detectBrowserLocale()
 }
 
 const HTML_LANG: Record<Locale, string> = {

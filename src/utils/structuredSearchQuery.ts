@@ -6,11 +6,12 @@ export interface ParsedStructuredSearchQuery {
   zone?: number
   operator?: string
   type?: RouteTypeFilter
+  level?: number
   excludeTypes: RouteTypeFilter[]
 }
 
 const STRUCTURED_TOKEN =
-  /(?:^|\s)(zone|z|operator|op|type|cat)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular)\b/gi
+  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular)\b/gi
 
 function normalizeTypeToken(raw: string): RouteTypeFilter | null {
   const value = raw.trim().toLowerCase()
@@ -56,6 +57,12 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     if (key === 'type' || key === 'cat') {
       const type = normalizeTypeToken(value)
       if (type) parsed.type = type
+      continue
+    }
+
+    if (key === 'level' || key === 'lv' || key === 'lvl') {
+      const level = Number.parseInt(value, 10)
+      if (Number.isFinite(level)) parsed.level = level
     }
   }
 

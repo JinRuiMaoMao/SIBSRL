@@ -24,5 +24,9 @@ export function routeMatchesFilters(route: BusRoute, filters: RouteFilters): boo
     if (routeMatchesTypeFilter(route, excluded)) return false
   }
 
+  if (structured.level != null) {
+    if (route.levelRequired !== structured.level) return false
+  }
+
   return matchesRouteSearchQuery(route, structured.text)
 }

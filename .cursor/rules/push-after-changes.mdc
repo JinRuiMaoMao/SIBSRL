@@ -1,0 +1,12 @@
+# Push after changes
+
+After completing code or data changes in this project, **commit and push to `origin/master`** when the user has asked to keep master up to date (or as part of an explicit release/update request).
+
+Workflow:
+
+1. Run `npm run build:only` (see `build-after-changes.mdc`).
+2. `git add` relevant files (not secrets).
+3. Commit with a concise message focused on why.
+4. `git push origin master`
+
+Do not force-push unless the user explicitly requests it.

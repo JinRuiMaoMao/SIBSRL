@@ -13,9 +13,13 @@ export interface VersionUpdateEntry {
   easterEggHex?: string
 }
 
+export function getLatestUpdateId(): string | undefined {
+  return versionUpdates[0]?.id
+}
+
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-summary',
+    id: '2026-06-19-r2',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -51,14 +55,27 @@ export const versionUpdates: VersionUpdateEntry[] = [
             zh: 'zone:、op:、type: 等语法同时支持半角与全角冒号（如 op：ft）。',
             en: 'zone:, op:, type:, etc. accept both half-width and full-width colons (e.g. op：ft).',
           },
+          {
+            zh: '新增 lv:（或 level:）按解锁等级筛选，如 lv:75 列出 Lv. 75 解锁的线路。',
+            en: 'New lv: (or level:) filter by unlock level—e.g. lv:75 lists routes unlocked at Lv. 75.',
+          },
         ],
       },
       {
         title: { zh: '语言', en: 'Language' },
         items: [
           {
-            zh: '首次进入默认语言改为 English；恢复默认设置时也会回到英文。',
-            en: 'First visit now defaults to English; “Reset all settings” also restores English.',
+            zh: '首次进入时读取浏览器语言并自动匹配站点语言；无法匹配时默认 English。手动选择后会记住偏好。',
+            en: 'First visit picks a supported language from your browser; falls back to English. Manual choice is remembered.',
+          },
+        ],
+      },
+      {
+        title: { zh: '更新提示', en: 'Change log prompt' },
+        items: [
+          {
+            zh: '每次发布新更新日志后，未读过该条目的用户会再次看到更新弹窗。',
+            en: 'After each new change-log entry ships, users who have not read it will see the update prompt again.',
           },
         ],
       },
