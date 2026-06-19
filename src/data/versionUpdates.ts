@@ -139,6 +139,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复手机端右上角设置齿轮过小、难以点击的问题：放大触控区域并提高层级，避免被顶栏遮挡；设置面板内语言等按钮同步加大。',
             en: 'Fixed the mobile settings gear being too small to tap—larger touch targets, higher stacking order, and bigger controls inside the settings panel.',
           },
+          {
+            zh: '修复设置面板高度计算：按齿轮按钮位置撑满至屏幕底部，内容超出时在面板内滚动（不再卡在约半屏）。',
+            en: 'Fixed settings panel height—it now fills from the gear button down to the bottom of the screen, scrolling inside the panel when content overflows.',
+          },
         ],
       },
     ],

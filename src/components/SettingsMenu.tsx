@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
@@ -9,7 +9,37 @@ export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
+
+  useLayoutEffect(() => {
+    if (!open) {
+      document.documentElement.style.removeProperty('--settings-panel-top')
+      document.documentElement.style.removeProperty('--settings-panel-right')
+      return
+    }
+
+    const syncPanelAnchor = () => {
+      const trigger = triggerRef.current
+      if (!trigger) return
+      const rect = trigger.getBoundingClientRect()
+      document.documentElement.style.setProperty('--settings-panel-top', `${rect.bottom}px`)
+      document.documentElement.style.setProperty(
+        '--settings-panel-right',
+        `${Math.max(0, window.innerWidth - rect.right)}px`,
+      )
+    }
+
+    syncPanelAnchor()
+    window.addEventListener('resize', syncPanelAnchor)
+    window.addEventListener('scroll', syncPanelAnchor, { passive: true, capture: true })
+    return () => {
+      window.removeEventListener('resize', syncPanelAnchor)
+      window.removeEventListener('scroll', syncPanelAnchor, true)
+      document.documentElement.style.removeProperty('--settings-panel-top')
+      document.documentElement.style.removeProperty('--settings-panel-right')
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -37,6 +67,7 @@ export function SettingsMenu() {
   return (
     <div className="settings-menu" ref={rootRef}>
       <button
+        ref={triggerRef}
         type="button"
         className="settings-trigger"
         onClick={() => setOpen((v) => !v)}
