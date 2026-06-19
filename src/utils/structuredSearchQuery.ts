@@ -10,7 +10,7 @@ export interface ParsedStructuredSearchQuery {
 }
 
 const STRUCTURED_TOKEN =
-  /(?:^|\s)(zone|z|operator|op|type|cat):([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular)\b/gi
+  /(?:^|\s)(zone|z|operator|op|type|cat)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular)\b/gi
 
 function normalizeTypeToken(raw: string): RouteTypeFilter | null {
   const value = raw.trim().toLowerCase()
@@ -49,7 +49,7 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     }
 
     if (key === 'operator' || key === 'op') {
-      parsed.operator = value
+      parsed.operator = value.toUpperCase()
       continue
     }
 

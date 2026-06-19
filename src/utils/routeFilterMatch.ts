@@ -10,7 +10,12 @@ export function routeMatchesFilters(route: BusRoute, filters: RouteFilters): boo
   if (zone !== 'all' && !route.zones.includes(zone)) return false
 
   const operator = structured.operator ?? filters.operator
-  if (operator !== 'all' && !route.operators.includes(operator)) return false
+  if (
+    operator !== 'all' &&
+    !route.operators.some((o) => o.toLowerCase() === operator.toLowerCase())
+  ) {
+    return false
+  }
 
   const type = structured.type ?? filters.type
   if (type !== 'all' && !routeMatchesTypeFilter(route, type)) return false

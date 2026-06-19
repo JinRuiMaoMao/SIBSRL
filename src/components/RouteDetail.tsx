@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { showCircularLineBesideNumber } from '../utils/routeCategory'
 import { getPrimaryText } from '../i18n/displayText'
@@ -51,6 +52,7 @@ export function RouteDetail({
   directionEndpoints = null,
 }: RouteDetailProps) {
   const { locale, t } = useLocale()
+  const { alert } = useAppDialog()
   const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
   const hasDirections = routeHasDirectionVariants(route)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
@@ -87,9 +89,10 @@ export function RouteDetail({
             title={t('shareRoute')}
             onClick={() => {
               const url = new URL(buildRouteShareUrl(route.id, directionIndex), window.location.href).href
-              void navigator.clipboard.writeText(url).catch(() => {
-                window.prompt(t('shareRoute'), url)
-              })
+              void navigator.clipboard.writeText(url).then(
+                () => alert({ message: t('shareRouteCopied') }),
+                () => alert({ message: t('shareRouteCopyManual'), detail: url }),
+              )
             }}
           >
             {t('shareRoute')}

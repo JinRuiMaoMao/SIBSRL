@@ -17,6 +17,8 @@ export type Locale =
 
 export const LOCALE_STORAGE_KEY = 'sibs-locale'
 
+export const DEFAULT_LOCALE: Locale = 'en'
+
 /**
  * 语言选择器顺序（双列横排，自上而下）：
  * dansk · deutsche | English · espanol | Filipino · francais

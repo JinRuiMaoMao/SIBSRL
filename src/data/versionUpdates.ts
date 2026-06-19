@@ -15,6 +15,56 @@ export interface VersionUpdateEntry {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
+    id: '2026-06-19-summary',
+    date: '2026-06-19',
+    title: {
+      zh: '2026-06-19 更新',
+      en: '2026-06-19 updates',
+    },
+    groups: [
+      {
+        title: { zh: '音乐页', en: 'Music page' },
+        items: [
+          {
+            zh: '前 6 首曲目显示名改为游戏内曲名：San Francisco Nights、Radium、Shiawase、Daily Rush、Meltdown、Night Run，并记录对应 Roblox 资产 ID。',
+            en: 'The first six tracks now show in-game titles—San Francisco Nights, Radium, Shiawase, Daily Rush, Meltdown, Night Run—with their Roblox asset IDs.',
+          },
+        ],
+      },
+      {
+        title: { zh: '每日挑战', en: 'Daily challenge' },
+        items: [
+          {
+            zh: '6 月 19 日每日挑战更正为 R370。',
+            en: 'Daily challenge for 19 Jun corrected to R370.',
+          },
+        ],
+      },
+      {
+        title: { zh: '搜索', en: 'Search' },
+        items: [
+          {
+            zh: 'op: 运营商筛选不区分大小写（op:ft 与 op:FT 等效）。',
+            en: 'op: operator filters are now case-insensitive (op:ft works the same as op:FT).',
+          },
+          {
+            zh: 'zone:、op:、type: 等语法同时支持半角与全角冒号（如 op：ft）。',
+            en: 'zone:, op:, type:, etc. accept both half-width and full-width colons (e.g. op：ft).',
+          },
+        ],
+      },
+      {
+        title: { zh: '语言', en: 'Language' },
+        items: [
+          {
+            zh: '首次进入默认语言改为 English；恢复默认设置时也会回到英文。',
+            en: 'First visit now defaults to English; “Reset all settings” also restores English.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: '2026-06-18-folders',
     date: '2026-06-18',
     title: {

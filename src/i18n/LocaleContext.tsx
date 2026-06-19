@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { formatMessage, getMessages, type MessageKey } from './messages'
-import { ALL_LOCALES, LOCALE_STORAGE_KEY, type Locale } from './types'
+import { ALL_LOCALES, DEFAULT_LOCALE, LOCALE_STORAGE_KEY, type Locale } from './types'
 
 interface LocaleContextValue {
   locale: Locale
@@ -25,7 +25,7 @@ function readStoredLocale(): Locale {
   } catch {
     /* ignore */
   }
-  return 'zh-Hans'
+  return DEFAULT_LOCALE
 }
 
 const HTML_LANG: Record<Locale, string> = {

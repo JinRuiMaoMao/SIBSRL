@@ -13,7 +13,7 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
     ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[ch] ?? ch,
   )
   return injectNoScriptGuard(injectDevToolsBlock(`<!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,7 +36,7 @@ export function renderRoutePageHtml(routeId, routeData) {
   const json = JSON.stringify(routeData, null, 2)
 
   return injectNoScriptGuard(injectDevToolsBlock(`<!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -90,11 +90,17 @@ function copyMusicSet(srcDir, destDir) {
   })
 
   const NAME_MAP = [
+    { sourceIncludes: 'San Francisco Nights', dest: 'music-main-menu.ogg' },
     { sourceIncludes: '主界面', dest: 'music-main-menu.ogg' },
+    { sourceIncludes: 'Radium', dest: 'music-map-menu.ogg' },
     { sourceIncludes: '地图界面', dest: 'music-map-menu.ogg' },
+    { sourceIncludes: 'Shiawase', dest: 'music-spawn-01.ogg' },
     { sourceIncludes: '车辆生成1', dest: 'music-spawn-01.ogg' },
+    { sourceIncludes: 'Daily Rush', dest: 'music-spawn-02.ogg' },
     { sourceIncludes: '车辆生成2', dest: 'music-spawn-02.ogg' },
+    { sourceIncludes: 'Meltdown', dest: 'music-spawn-03.ogg' },
     { sourceIncludes: '车辆生成3', dest: 'music-spawn-03.ogg' },
+    { sourceIncludes: 'Night Run', dest: 'music-spawn-04.ogg' },
     { sourceIncludes: '车辆生成4', dest: 'music-spawn-04.ogg' },
     { sourceIncludes: '结算1', dest: 'music-settlement-01.ogg' },
     { sourceIncludes: '结算2', dest: 'music-settlement-02.ogg' },

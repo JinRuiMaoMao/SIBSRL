@@ -1,9 +1,10 @@
 import { useCallback } from 'react'
+import { useAppDialog } from '../contexts/AppDialogContext'
 import { useAppPreferences } from '../contexts/AppPreferencesContext'
 import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
 import { useRecentRoutes } from '../contexts/RecentRoutesContext'
 import { useLocale } from '../i18n/LocaleContext'
-import { LOCALE_STORAGE_KEY } from '../i18n/types'
+import { DEFAULT_LOCALE, LOCALE_STORAGE_KEY } from '../i18n/types'
 import { APP_PREFERENCES_STORAGE_KEY } from '../storage/appPreferences'
 import { DEFAULT_FAVORITE_FOLDER_ID, FAVORITE_FOLDERS_STORAGE_KEY } from '../storage/favoriteFolders'
 import { DAILY_CHALLENGE_PROMPT_SEEN_KEY } from '../storage/dailyChallengePrompt'
@@ -22,13 +23,15 @@ import { THEME_STORAGE_KEY } from '../theme/types'
 
 export function ResetSettingsSection() {
   const { t, setLocale } = useLocale()
+  const { alert, confirm } = useAppDialog()
   const { setTheme } = useTheme()
   const { replaceFoldersState } = useFavoriteRoutes()
   const { clearRecent } = useRecentRoutes()
   const { setListDensity, setReduceMotion } = useAppPreferences()
 
-  const resetAll = useCallback(() => {
-    if (!window.confirm(t('resetSettingsConfirm'))) return
+  const resetAll = useCallback(async () => {
+    const ok = await confirm({ message: t('resetSettingsConfirm'), danger: true })
+    if (!ok) return
 
     try {
       localStorage.removeItem(THEME_STORAGE_KEY)
@@ -48,7 +51,7 @@ export function ResetSettingsSection() {
     clearSearchHistory()
 
     setTheme('system')
-    setLocale('zh-Hans')
+    setLocale(DEFAULT_LOCALE)
     setReduceMotion(false)
     setListDensity('comfortable')
     replaceFoldersState({
@@ -58,16 +61,16 @@ export function ResetSettingsSection() {
     })
     clearRecent()
 
-    window.alert(t('resetSettingsDone'))
+    await alert({ message: t('resetSettingsDone') })
     window.location.reload()
-  }, [clearRecent, replaceFoldersState, setListDensity, setLocale, setReduceMotion, setTheme, t])
+  }, [alert, clearRecent, confirm, replaceFoldersState, setListDensity, setLocale, setReduceMotion, setTheme, t])
 
   return (
     <section className="settings-section">
       <p className="settings-panel-title">{t('resetSettings')}</p>
       <p className="settings-hint">{t('resetSettingsHint')}</p>
       <div className="settings-action-row">
-        <button type="button" className="settings-action-btn danger" onClick={resetAll}>
+        <button type="button" className="settings-action-btn danger" onClick={() => void resetAll()}>
           {t('resetSettingsAction')}
         </button>
       </div>

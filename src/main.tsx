@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { AppDialogProvider } from './contexts/AppDialogContext.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
 import { AppPreferencesProvider } from './contexts/AppPreferencesContext.tsx'
 import { FavoriteRoutesProvider } from './contexts/FavoriteRoutesContext.tsx'
@@ -26,14 +27,16 @@ createRoot(rootEl).render(
   <StrictMode>
     <ThemeProvider>
       <LocaleProvider>
-        <AppPreferencesProvider>
-          <FavoriteRoutesProvider>
-            <RecentRoutesProvider>
-              <App />
-              <CustomContextMenu />
-            </RecentRoutesProvider>
-          </FavoriteRoutesProvider>
-        </AppPreferencesProvider>
+        <AppDialogProvider>
+          <AppPreferencesProvider>
+            <FavoriteRoutesProvider>
+              <RecentRoutesProvider>
+                <App />
+                <CustomContextMenu />
+              </RecentRoutesProvider>
+            </FavoriteRoutesProvider>
+          </AppPreferencesProvider>
+        </AppDialogProvider>
       </LocaleProvider>
     </ThemeProvider>
   </StrictMode>,

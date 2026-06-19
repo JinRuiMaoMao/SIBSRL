@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useAppDialog } from '../contexts/AppDialogContext'
 import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { DEFAULT_FAVORITE_FOLDER_ID } from '../storage/favoriteFolders'
@@ -10,6 +11,7 @@ function folderDisplayName(name: string, t: (key: 'favoriteFolderDefault') => st
 
 export function FavoritesFolderBar() {
   const { t } = useLocale()
+  const { prompt, confirm } = useAppDialog()
   const {
     folders,
     activeFolderId,
@@ -25,27 +27,34 @@ export function FavoritesFolderBar() {
   const importPanelId = useId()
   const importRef = useRef<HTMLDivElement>(null)
 
-  const handleCreateFolder = useCallback(() => {
-    const name = window.prompt(t('favoriteFolderCreatePrompt'))
+  const handleCreateFolder = useCallback(async () => {
+    const name = await prompt({ title: t('favoriteFolderCreatePrompt') })
     if (!name?.trim()) return
     createFolder(name)
-  }, [createFolder, t])
+  }, [createFolder, prompt, t])
 
   const handleRenameFolder = useCallback(
-    (folderId: string, currentName: string) => {
-      const name = window.prompt(t('favoriteFolderRenamePrompt'), currentName)
+    async (folderId: string, currentName: string) => {
+      const name = await prompt({
+        title: t('favoriteFolderRenamePrompt'),
+        defaultValue: currentName,
+      })
       if (!name?.trim()) return
       renameFolder(folderId, name)
     },
-    [renameFolder, t],
+    [prompt, renameFolder, t],
   )
 
   const handleDeleteFolder = useCallback(
-    (folderId: string) => {
-      if (!window.confirm(t('favoriteFolderDeleteConfirm'))) return
+    async (folderId: string) => {
+      const ok = await confirm({
+        message: t('favoriteFolderDeleteConfirm'),
+        danger: true,
+      })
+      if (!ok) return
       deleteFolder(folderId)
     },
-    [deleteFolder, t],
+    [confirm, deleteFolder, t],
   )
 
   const handleExport = useCallback(async () => {
@@ -105,7 +114,7 @@ export function FavoritesFolderBar() {
                 onClick={() => setActiveFolderId(folder.id)}
                 onDoubleClick={() => {
                   if (folder.id !== DEFAULT_FAVORITE_FOLDER_ID || folder.name.trim()) {
-                    handleRenameFolder(folder.id, folder.name)
+                    void handleRenameFolder(folder.id, folder.name)
                   }
                 }}
                 title={t('favoriteFolderRenameHint')}
@@ -119,7 +128,7 @@ export function FavoritesFolderBar() {
                   className="favorites-folder-tab-delete"
                   aria-label={t('favoriteFolderDelete')}
                   title={t('favoriteFolderDelete')}
-                  onClick={() => handleDeleteFolder(folder.id)}
+                  onClick={() => void handleDeleteFolder(folder.id)}
                 >
                   ×
                 </button>
@@ -132,7 +141,7 @@ export function FavoritesFolderBar() {
           className="favorites-folder-add"
           aria-label={t('favoriteFolderNew')}
           title={t('favoriteFolderNew')}
-          onClick={handleCreateFolder}
+          onClick={() => void handleCreateFolder()}
         >
           +
         </button>

@@ -4,6 +4,8 @@ export interface MusicTrack {
   id: string
   number: number
   title: BilingualText
+  /** Roblox 音频资产 ID（游戏内） */
+  robloxAssetId?: string
   audioUrl: string
   /** 播放结束后自动循环（结算音乐除外） */
   loop: boolean
@@ -13,42 +15,48 @@ export const musicTracks: MusicTrack[] = [
   {
     id: 'music-main-menu',
     number: 1,
-    title: { zh: '主界面', en: 'Main Menu' },
+    title: { zh: 'San Francisco Nights', en: 'San Francisco Nights' },
+    robloxAssetId: '1844594737',
     audioUrl: './audio/broadcasts/music/music-main-menu.ogg',
     loop: true,
   },
   {
     id: 'music-map-menu',
     number: 2,
-    title: { zh: '地图界面', en: 'Map Menu' },
+    title: { zh: 'Radium', en: 'Radium' },
+    robloxAssetId: '1837646460',
     audioUrl: './audio/broadcasts/music/music-map-menu.ogg',
     loop: true,
   },
   {
     id: 'music-spawn-01',
     number: 3,
-    title: { zh: '车辆生成 1', en: 'Vehicle Spawn 1' },
+    title: { zh: 'Shiawase', en: 'Shiawase' },
+    robloxAssetId: '5409360995',
     audioUrl: './audio/broadcasts/music/music-spawn-01.ogg',
     loop: true,
   },
   {
     id: 'music-spawn-02',
     number: 4,
-    title: { zh: '车辆生成 2', en: 'Vehicle Spawn 2' },
+    title: { zh: 'Daily Rush', en: 'Daily Rush' },
+    robloxAssetId: '1846560262',
     audioUrl: './audio/broadcasts/music/music-spawn-02.ogg',
     loop: true,
   },
   {
     id: 'music-spawn-03',
     number: 5,
-    title: { zh: '车辆生成 3', en: 'Vehicle Spawn 3' },
+    title: { zh: 'Meltdown', en: 'Meltdown' },
+    robloxAssetId: '1845092181',
     audioUrl: './audio/broadcasts/music/music-spawn-03.ogg',
     loop: true,
   },
   {
     id: 'music-spawn-04',
     number: 6,
-    title: { zh: '车辆生成 4', en: 'Vehicle Spawn 4' },
+    title: { zh: 'Night Run', en: 'Night Run' },
+    robloxAssetId: '9040101258',
     audioUrl: './audio/broadcasts/music/music-spawn-04.ogg',
     loop: true,
   },

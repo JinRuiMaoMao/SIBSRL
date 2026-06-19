@@ -55,6 +55,7 @@ export function RouteCard({
       className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''}`.trim()}
       aria-current={selected ? 'page' : undefined}
       onClick={(event) => {
+        if ((event.target as Element).closest('.route-favorite-picker')) return
         if (!onNavigate) return
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
         if (event.button !== 0) return
@@ -63,55 +64,55 @@ export function RouteCard({
       }}
     >
       <article className="route-card">
-      <div className="route-card-top">
-        <div className="route-card-title">
-          <span className="route-number">{cardNumber}</span>
-          {hasDirections && (
-            <DirectionToggle
-              route={route}
-              value={directionIndex}
-              onChange={onDirectionChange}
-              compact
-            />
-          )}
-        </div>
-        <div className="route-card-top-end">
-          {lengthKm && (
-            <span className="route-card-km" key={`${route.id}-km-${directionIndex}`}>
-              {lengthKm}
-            </span>
-          )}
-          <RouteFavoriteButton routeId={route.id} />
-        </div>
-      </div>
-
-      <RouteEndpoints route={route} directionIndex={directionIndex} />
-
-      {serviceTime && <p className="route-meta">{serviceTime}</p>}
-
-      <div className="route-card-bottom">
-        <div className="route-card-meta-left">
-          {displayTypes.length > 0 && (
-            <RouteTypeTags types={displayTypes} compact />
-          )}
-          <div className="route-zones">
-            {route.zones.map((z) => (
-              <span key={z} className="zone-tag">
-                Z{z}
-              </span>
-            ))}
-            {showCardLoopMark(route) && (
-              <span className="zone-tag">{t('cardLoopMark')}</span>
+        <div className="route-card-top">
+          <div className="route-card-title">
+            <span className="route-number">{cardNumber}</span>
+            {hasDirections && (
+              <DirectionToggle
+                route={route}
+                value={directionIndex}
+                onChange={onDirectionChange}
+                compact
+              />
             )}
           </div>
+          <div className="route-card-top-end">
+            {lengthKm && (
+              <span className="route-card-km" key={`${route.id}-km-${directionIndex}`}>
+                {lengthKm}
+              </span>
+            )}
+            <RouteFavoriteButton routeId={route.id} />
+          </div>
         </div>
 
-        {operatorsLabel && (
-          <div className="route-card-foot">
-            <span className="route-card-operators">{operatorsLabel}</span>
+        <RouteEndpoints route={route} directionIndex={directionIndex} />
+
+        {serviceTime && <p className="route-meta">{serviceTime}</p>}
+
+        <div className="route-card-bottom">
+          <div className="route-card-meta-left">
+            {displayTypes.length > 0 && (
+              <RouteTypeTags types={displayTypes} compact />
+            )}
+            <div className="route-zones">
+              {route.zones.map((z) => (
+                <span key={z} className="zone-tag">
+                  Z{z}
+                </span>
+              ))}
+              {showCardLoopMark(route) && (
+                <span className="zone-tag">{t('cardLoopMark')}</span>
+              )}
+            </div>
           </div>
-        )}
-      </div>
+
+          {operatorsLabel && (
+            <div className="route-card-foot">
+              <span className="route-card-operators">{operatorsLabel}</span>
+            </div>
+          )}
+        </div>
       </article>
     </a>
   )

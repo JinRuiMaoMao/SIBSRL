@@ -3000,6 +3000,124 @@ html[data-reduce-motion='true'] .site-header {
   border-radius: var(--radius);
 }
 
+.app-dialog-root {
+  position: fixed;
+  inset: 0;
+  z-index: 280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  pointer-events: none;
+}
+
+.app-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(8, 12, 22, 0.62);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.app-dialog-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 24rem);
+  padding: 1.15rem 1.25rem 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px var(--shadow-overlay);
+  pointer-events: auto;
+}
+
+.app-dialog-title {
+  margin: 0 0 0.85rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.app-dialog-message {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.app-dialog-input,
+.app-dialog-detail {
+  display: block;
+  width: 100%;
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.app-dialog-detail {
+  resize: vertical;
+  min-height: 4.5rem;
+  line-height: 1.45;
+}
+
+.app-dialog-input:focus-visible,
+.app-dialog-detail:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.app-dialog-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.app-dialog-btn {
+  flex: 1 1 auto;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.app-dialog-btn--block {
+  width: 100%;
+}
+
+.app-dialog-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.app-dialog-btn--primary {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.app-dialog-btn--danger {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
 .favorites-folder-bar {
   display: flex;
   flex-wrap: wrap;
@@ -3160,6 +3278,7 @@ html[data-reduce-motion='true'] .site-header {
 
 .route-favorite-picker {
   position: relative;
+  flex-shrink: 0;
 }
 
 .route-favorite-picker-panel {

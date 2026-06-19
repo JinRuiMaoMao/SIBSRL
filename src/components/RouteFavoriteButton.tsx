@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type MouseEvent } from 'react'
+import { useAppDialog } from '../contexts/AppDialogContext'
 import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
 import { useLocale } from '../i18n/LocaleContext'
 
@@ -13,6 +14,7 @@ function folderLabel(name: string, t: (key: 'favoriteFolderDefault') => string):
 
 export function RouteFavoriteButton({ routeId, className = '' }: RouteFavoriteButtonProps) {
   const { t } = useLocale()
+  const { prompt } = useAppDialog()
   const {
     folders,
     activeFolderId,
@@ -20,7 +22,6 @@ export function RouteFavoriteButton({ routeId, className = '' }: RouteFavoriteBu
     folderContains,
     setRouteFolders,
     createFolder,
-    setActiveFolderId,
   } = useFavoriteRoutes()
   const [open, setOpen] = useState(false)
   const [draftIds, setDraftIds] = useState<string[]>([])
@@ -58,18 +59,21 @@ export function RouteFavoriteButton({ routeId, className = '' }: RouteFavoriteBu
     )
   }
 
-  const applySelection = () => {
+  const applySelection = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
     setRouteFolders(routeId, draftIds)
     setOpen(false)
   }
 
-  const handleCreateAndSelect = () => {
-    const name = window.prompt(t('favoriteFolderCreatePrompt'))
+  const handleCreateAndSelect = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const name = await prompt({ title: t('favoriteFolderCreatePrompt') })
     if (!name?.trim()) return
     const id = createFolder(name)
     if (!id) return
     setDraftIds((prev) => [...prev, id])
-    setActiveFolderId(id)
   }
 
   return (
@@ -116,7 +120,11 @@ export function RouteFavoriteButton({ routeId, className = '' }: RouteFavoriteBu
             ))}
           </ul>
           <div className="route-favorite-picker-actions">
-            <button type="button" className="route-favorite-picker-new" onClick={handleCreateAndSelect}>
+            <button
+              type="button"
+              className="route-favorite-picker-new"
+              onClick={(event) => void handleCreateAndSelect(event)}
+            >
               + {t('favoriteFolderNew')}
             </button>
             <button type="button" className="route-favorite-picker-apply" onClick={applySelection}>
