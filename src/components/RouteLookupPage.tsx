@@ -22,6 +22,7 @@ import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
+import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { useLocale } from '../i18n/LocaleContext'
@@ -113,6 +114,7 @@ export function RouteLookupPage({
   const [searchHistory, setSearchHistory] = useState(readSearchHistory)
   const [stopSectionOpen, setStopSectionOpen] = useState(true)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const stickyToolbarRef = useRef<HTMLDivElement>(null)
   const [routePageDetail, setRoutePageDetail] = useState<{
     route: BusRoute
     pageData: RoutePageData | null
@@ -144,6 +146,7 @@ export function RouteLookupPage({
     types,
     totalCount,
   } = useRouteSearch(dailyChallenge)
+  const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
   const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
   const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)
@@ -605,7 +608,10 @@ export function RouteLookupPage({
 
   return (
     <div className="route-lookup-page">
-      <div className="route-lookup-sticky">
+      <div
+        ref={stickyToolbarRef}
+        className={`route-lookup-sticky${stickyToolbarFade ? ' route-lookup-sticky--fade' : ''}`}
+      >
         <SearchToolbar
           value={filters.query}
           onChange={handleSearchQueryChange}
