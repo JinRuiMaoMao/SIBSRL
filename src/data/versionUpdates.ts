@@ -152,6 +152,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '收起顶部栏后保留站点标题与图标，避免顶栏只剩设置与展开按钮显得过空。',
             en: 'When the header is collapsed, the site title and icon stay visible so the bar does not look empty beside Settings and Expand.',
           },
+          {
+            zh: '修复展开顶栏时上方出现空白：收起态标题条在展开时不再占用高度。',
+            en: 'Fixed a blank gap above the expanded header—the collapsed title bar no longer reserves height when the header is open.',
+          },
         ],
       },
     ],
