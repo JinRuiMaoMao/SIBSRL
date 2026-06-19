@@ -1,4 +1,5 @@
 import type { RefObject } from 'react'
+import type { SearchSyntaxCollapseOptions } from '../hooks/useSearchSyntaxCollapse'
 import { useLocale } from '../i18n/LocaleContext'
 import type { RouteTypeFilter } from '../types/route'
 import { FilterMenu } from './FilterMenu'
@@ -27,6 +28,7 @@ interface SearchToolbarProps {
   onApplyHistory?: (query: string) => void
   onClearHistory?: () => void
   searchInputRef?: RefObject<HTMLInputElement | null>
+  syntaxCollapse?: SearchSyntaxCollapseOptions
 }
 
 export function SearchToolbar({
@@ -51,6 +53,7 @@ export function SearchToolbar({
   onApplyHistory,
   onClearHistory,
   searchInputRef,
+  syntaxCollapse,
 }: SearchToolbarProps) {
   const { t } = useLocale()
 
@@ -66,6 +69,7 @@ export function SearchToolbar({
         onApplyHistory={onApplyHistory}
         onClearHistory={onClearHistory}
         inputRef={searchInputRef}
+        syntaxCollapse={syntaxCollapse}
       />
       <div className="search-toolbar-actions">
         <button

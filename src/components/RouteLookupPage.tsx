@@ -645,6 +645,10 @@ export function RouteLookupPage({
           onApplyHistory={handleApplyHistory}
           onClearHistory={handleClearHistory}
           searchInputRef={searchInputRef}
+          syntaxCollapse={{
+            stickyRef: stickyToolbarRef,
+            dailyChallengeVisible,
+          }}
         />
       </div>
 

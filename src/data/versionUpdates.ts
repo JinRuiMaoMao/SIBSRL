@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r8',
+    id: '2026-06-19-r9',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -40,6 +40,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复高级搜索语法末行文字被裁切、或与下方线路卡片重叠的问题。',
             en: 'Fixed advanced syntax help text being clipped or overlapped by route cards below.',
+          },
+          {
+            zh: '每日挑战上滑至搜索栏区域时，高级搜索语法自动折叠。',
+            en: 'Advanced search syntax auto-collapses when the daily challenge scrolls into the search bar area.',
           },
         ],
       },
