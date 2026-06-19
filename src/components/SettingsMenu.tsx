@@ -48,8 +48,8 @@ export function SettingsMenu() {
         <svg
           className="settings-icon"
           viewBox="0 0 24 24"
-          width="20"
-          height="20"
+          width="22"
+          height="22"
           aria-hidden
         >
           <path

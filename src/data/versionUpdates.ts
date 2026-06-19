@@ -131,7 +131,17 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: '2026-06-20 更新',
       en: '2026-06-20 updates',
     },
-    groups: [],
+    groups: [
+      {
+        title: { zh: '设置', en: 'Settings' },
+        items: [
+          {
+            zh: '修复手机端右上角设置齿轮过小、难以点击的问题：放大触控区域并提高层级，避免被顶栏遮挡；设置面板内语言等按钮同步加大。',
+            en: 'Fixed the mobile settings gear being too small to tap—larger touch targets, higher stacking order, and bigger controls inside the settings panel.',
+          },
+        ],
+      },
+    ],
   },
   {
     id: '2026-06-19-r35',
