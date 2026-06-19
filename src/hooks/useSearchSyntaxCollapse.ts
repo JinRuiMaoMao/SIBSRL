@@ -1,56 +1,73 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-/** 滚回此距离内时自动展开语法说明 */
-const SCROLL_TOP_THRESHOLD = 80
-/** 滚动超过此距离且停顿后收起语法说明 */
+/** 停下时高于此值则收起；低于等于则展开 */
 const SCROLL_COLLAPSE_Y = 5
-/** 滚动停下多久后判定为一次滑动结束（毫秒） */
+/** 滚动停下多久后更新展开/收起（毫秒） */
 const SCROLL_IDLE_MS = 1
 
 function readScrollY(): number {
   return window.scrollY || document.documentElement.scrollTop || 0
 }
 
+function isAtScrollTop(): boolean {
+  return readScrollY() <= SCROLL_COLLAPSE_Y
+}
+
 export function useSearchSyntaxCollapse() {
   const [syntaxDismissed, setSyntaxDismissed] = useState(false)
-  /** 手动展开/收起；滚回顶部时清除 */
+  /** 手动展开/收起 */
   const [manualOpen, setManualOpen] = useState<boolean | null>(null)
-  const wasInTopZoneRef = useRef(true)
   const idleTimerRef = useRef<number | null>(null)
+  const syntaxOpenRef = useRef(true)
+
+  const syntaxOpen = manualOpen ?? !syntaxDismissed
+
+  useEffect(() => {
+    syntaxOpenRef.current = syntaxOpen
+  }, [syntaxOpen])
+
+  const expandSyntax = useCallback(() => {
+    setManualOpen(null)
+    setSyntaxDismissed(false)
+  }, [])
+
+  const scheduleScrollIdle = useCallback(() => {
+    if (idleTimerRef.current != null) {
+      window.clearTimeout(idleTimerRef.current)
+    }
+    idleTimerRef.current = window.setTimeout(() => {
+      idleTimerRef.current = null
+      if (readScrollY() > SCROLL_COLLAPSE_Y) {
+        setSyntaxDismissed(true)
+      } else {
+        expandSyntax()
+      }
+    }, SCROLL_IDLE_MS)
+  }, [expandSyntax])
 
   useEffect(() => {
     const onScroll = () => {
-      const y = readScrollY()
-      const inTopZone = y <= SCROLL_TOP_THRESHOLD
-
-      if (inTopZone && !wasInTopZoneRef.current) {
-        setManualOpen(null)
-        setSyntaxDismissed(false)
-      }
-      wasInTopZoneRef.current = inTopZone
-
-      if (idleTimerRef.current != null) {
-        window.clearTimeout(idleTimerRef.current)
-      }
-      idleTimerRef.current = window.setTimeout(() => {
-        idleTimerRef.current = null
-        if (readScrollY() > SCROLL_COLLAPSE_Y) {
-          setSyntaxDismissed(true)
-        }
-      }, SCROLL_IDLE_MS)
+      scheduleScrollIdle()
     }
 
-    wasInTopZoneRef.current = readScrollY() <= SCROLL_TOP_THRESHOLD
+    const onWheel = (event: WheelEvent) => {
+      if (event.deltaY >= 0) return
+      if (!isAtScrollTop()) return
+      if (syntaxOpenRef.current) return
+      expandSyntax()
+    }
+
+    scheduleScrollIdle()
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('wheel', onWheel, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('wheel', onWheel)
       if (idleTimerRef.current != null) {
         window.clearTimeout(idleTimerRef.current)
       }
     }
-  }, [])
-
-  const syntaxOpen = manualOpen ?? !syntaxDismissed
+  }, [expandSyntax, scheduleScrollIdle])
 
   const toggleSyntax = useCallback(() => {
     setManualOpen((prev) => {

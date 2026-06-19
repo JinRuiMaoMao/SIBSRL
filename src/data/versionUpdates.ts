@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r19',
+    id: '2026-06-19-r20',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -76,6 +76,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复轻微滑动无法收起语法说明的问题（改为按页面滚动距离判定，不再误算增量）。',
             en: 'Fixed syntax not collapsing on small scrolls (use page scrollY after idle, not per-event delta).',
+          },
+          {
+            zh: '页面已到顶时，滚轮向上滑可重新展开语法说明；滚回顶部停下也会自动展开。',
+            en: 'Wheel up at scroll top re-expands syntax; stopping near the top also expands it again.',
           },
         ],
       },
