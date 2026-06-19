@@ -2,6 +2,9 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 
 const SCROLL_TOP_THRESHOLD = 80
 const HIDE_INSET_PX = 1
+/** 固定展开后忽略布局触发的 scroll，再启用滑动关闭 */
+const FORCE_OPEN_GRACE_MS = 320
+const FORCE_OPEN_SCROLL_DELTA_PX = 6
 
 function readScrollY(): number {
   return window.scrollY || document.documentElement.scrollTop || 0
@@ -22,6 +25,8 @@ export function useSearchSyntaxScrollHide(
   const hideTriggeredAtScrollYRef = useRef(0)
   const forceOpenRef = useRef(false)
   const forceOpenScrollYRef = useRef(0)
+  const skipForceDismissRef = useRef(false)
+  const forceOpenGraceTimerRef = useRef<number | null>(null)
 
   const dismissForceOpen = useCallback(() => {
     forceOpenRef.current = false
@@ -30,19 +35,35 @@ export function useSearchSyntaxScrollHide(
     setHidden(true)
   }, [])
 
-  const clearScrollHidden = useCallback((options?: { forceOpen?: boolean }) => {
-    latchedRef.current = false
-    if (options?.forceOpen) {
-      forceOpenRef.current = true
-      forceOpenScrollYRef.current = readScrollY()
-      setForceOpen(true)
-      setHidden(true)
-      return
+  const beginForceOpenGrace = useCallback(() => {
+    skipForceDismissRef.current = true
+    if (forceOpenGraceTimerRef.current != null) {
+      window.clearTimeout(forceOpenGraceTimerRef.current)
     }
-    forceOpenRef.current = false
-    setForceOpen(false)
-    setHidden(false)
+    forceOpenGraceTimerRef.current = window.setTimeout(() => {
+      forceOpenGraceTimerRef.current = null
+      skipForceDismissRef.current = false
+      forceOpenScrollYRef.current = readScrollY()
+    }, FORCE_OPEN_GRACE_MS)
   }, [])
+
+  const clearScrollHidden = useCallback(
+    (options?: { forceOpen?: boolean }) => {
+      latchedRef.current = false
+      if (options?.forceOpen) {
+        forceOpenRef.current = true
+        forceOpenScrollYRef.current = readScrollY()
+        setForceOpen(true)
+        setHidden(true)
+        beginForceOpenGrace()
+        return
+      }
+      forceOpenRef.current = false
+      setForceOpen(false)
+      setHidden(false)
+    },
+    [beginForceOpenGrace],
+  )
 
   const releaseForceOpen = useCallback(() => {
     dismissForceOpen()
@@ -73,13 +94,19 @@ export function useSearchSyntaxScrollHide(
       })
     }
 
+    const dismissForceOpenFromUserScroll = () => {
+      if (!forceOpenRef.current || skipForceDismissRef.current) return
+      dismissForceOpen()
+    }
+
     const sync = () => {
       if (forceOpenRef.current) {
+        setHidden(true)
+        if (skipForceDismissRef.current) return
+
         const scrollY = readScrollY()
-        if (Math.abs(scrollY - forceOpenScrollYRef.current) > 2) {
-          dismissForceOpen()
-        } else {
-          setHidden(true)
+        if (Math.abs(scrollY - forceOpenScrollYRef.current) > FORCE_OPEN_SCROLL_DELTA_PX) {
+          dismissForceOpenFromUserScroll()
         }
         return
       }
@@ -116,9 +143,16 @@ export function useSearchSyntaxScrollHide(
     }
 
     const onWheel = (event: WheelEvent) => {
+      if (forceOpenRef.current) {
+        if (skipForceDismissRef.current) return
+        if (Math.abs(event.deltaY) < 1) return
+        dismissForceOpenFromUserScroll()
+        return
+      }
+
       if (event.deltaY >= 0) return
       if (!isAtScrollTop()) return
-      if (!latchedRef.current || skipUnhideRef.current || forceOpenRef.current) return
+      if (!latchedRef.current || skipUnhideRef.current) return
       clearScrollHidden()
     }
 
@@ -135,6 +169,9 @@ export function useSearchSyntaxScrollHide(
       window.removeEventListener('resize', sync)
       window.removeEventListener('wheel', onWheel)
       ro.disconnect()
+      if (forceOpenGraceTimerRef.current != null) {
+        window.clearTimeout(forceOpenGraceTimerRef.current)
+      }
     }
   }, [clearScrollHidden, dismissForceOpen, stickyRef, syntaxRef])
 

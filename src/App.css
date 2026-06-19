@@ -599,6 +599,25 @@
   margin-top: 0.25rem;
 }
 
+.updates-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.updates-section-head .section-title {
+  margin: 0;
+}
+
+.updates-build-time {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
 .updates-list {
   list-style: none;
   margin: 0;

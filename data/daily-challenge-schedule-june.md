@@ -4,7 +4,7 @@
 > 已接入 `getTodaysDailyChallenge()`，读取 [`daily-challenge-schedule-2026-06.json`](./daily-challenge-schedule-2026-06.json)，每日 **HKT 08:00** 切换。  
 > 主站线路列表折叠分组见 [`route-display-groups.json`](./route-display-groups.json)。  
 > 月份假定 **2026-06**（与站点更新日期一致）；若年份不同请改 JSON 内 `month` 与各 `date`。  
-> **暂无公布内容的日期**（6/18–19、6/22–23、6/26、6/29）暂时填为 **Private Hire (PH1)**，待官方数据后再改。
+> **暂无公布内容的日期**（6/22–23、6/26、6/29）暂时填为 **Private Hire (PH1)**，待官方数据后再改。
 
 ## 原文
 
@@ -26,10 +26,10 @@
 6/14: [Race] Rush Hour (475W)
 6/15: Private Hire (PH1)
 6/16: Marathon Road Closure (471E)
-6/17: Daily Challenge (240A)
-6/18:
-6/19:
-6/20: [Race] Street Light Outage
+6/17: Marathon Road Closure (240A)
+6/18: Bridge Closure (Y370)
+6/19: Marathon Shuttle (R370)
+6/20: [Race] Street light outage
 6/21: [Race] Rush Hour
 6/22:
 6/23:

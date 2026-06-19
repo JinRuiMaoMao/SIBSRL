@@ -22,13 +22,7 @@ import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
-function readPublishedBuild(): string | null {
-  return document.querySelector('meta[name="app-build"]')?.getAttribute('content') ?? null
-}
-
-function formatBuildLabel(iso: string): string {
-  return iso.replace('T', ' ').slice(0, 19)
-}
+import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
 
 function readInitialDailyChallengePromptOpen(): boolean {
   if (!shouldShowDailyChallengePrompt()) return false
@@ -38,7 +32,7 @@ function readInitialDailyChallengePromptOpen(): boolean {
 }
 
 function App() {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
   const dailyChallenge = useDailyChallenge()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
@@ -47,7 +41,7 @@ function App() {
   const [updatesPromptOpen, setUpdatesPromptOpen] = useState(false)
   const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
-  const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__)
+  const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
 
   const openUpdatesPrompt = useCallback(() => {
     if (!shouldShowUpdatesPrompt()) return

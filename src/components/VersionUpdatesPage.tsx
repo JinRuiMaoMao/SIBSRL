@@ -2,10 +2,12 @@ import { useEffect } from 'react'
 import { getLatestUpdateId, versionUpdates } from '../data/versionUpdates'
 import { useLocale } from '../i18n/LocaleContext'
 import { markUpdatesLogViewed } from '../storage/updatesViewing'
+import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { VersionUpdateEntry } from './VersionUpdateEntry'
 
 export function VersionUpdatesPage() {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
+  const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
 
   useEffect(() => {
     const latestId = getLatestUpdateId()
@@ -17,7 +19,12 @@ export function VersionUpdatesPage() {
       <p className="page-intro">{t('updatesIntro')}</p>
 
       <section className="updates-section">
-        <h2 className="section-title">{t('updatesList')}</h2>
+        <div className="updates-section-head">
+          <h2 className="section-title">{t('updatesList')}</h2>
+          <time className="updates-build-time" dateTime={readPublishedBuild() ?? __APP_BUILD__} title={t('buildTagHint')}>
+            {t('buildTag', { time: buildLabel })}
+          </time>
+        </div>
         {versionUpdates.length === 0 ? (
           <p className="empty">{t('updatesEmpty')}</p>
         ) : (

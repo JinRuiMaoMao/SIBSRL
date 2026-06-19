@@ -1,0 +1,20 @@
+# Changelog entries
+
+When shipping user-visible changes, append bilingual items to **`src/data/versionUpdates.ts`**.
+
+## Active date
+
+- Use **`CURRENT_CHANGELOG_DATE`** (`2026-06-20` as of now) for all new items.
+- Append to the **first raw entry** with that `date` (id `2026-06-20-summary`).
+- Do **not** create a new dated entry for each small change; add groups/items under the active day.
+- Same-day multiple raw entries are merged at runtime—prefer one raw block per day.
+
+## Item format
+
+- Each item: `{ zh: '…', en: '…' }`
+- Group related items under `groups[].title` (zh/en).
+- Keep ids stable; bump `CURRENT_CHANGELOG_DATE` only when the user asks to roll to a new day.
+
+## After edits
+
+Run `npm run build:only` (see build-after-changes rule).

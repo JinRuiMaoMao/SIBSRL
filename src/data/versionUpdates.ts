@@ -17,9 +17,124 @@ export function getLatestUpdateId(): string | undefined {
   return versionUpdates[0]?.id
 }
 
-export const versionUpdates: VersionUpdateEntry[] = [
+/** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
+export const CURRENT_CHANGELOG_DATE = '2026-06-20'
+
+function standardUpdateTitle(date: string): BilingualText {
+  return { zh: `${date} 更新`, en: `${date} updates` }
+}
+
+function groupKey(title: BilingualText): string {
+  return `${title.zh}\0${title.en}`
+}
+
+function mergeGroupLists(
+  a: NonNullable<VersionUpdateEntry['groups']>,
+  b: NonNullable<VersionUpdateEntry['groups']>,
+): NonNullable<VersionUpdateEntry['groups']> {
+  const merged = a.map((group) => ({ title: group.title, items: [...group.items] }))
+  for (const group of b) {
+    const key = groupKey(group.title)
+    const existing = merged.find((item) => groupKey(item.title) === key)
+    if (existing) {
+      existing.items.push(...group.items)
+    } else {
+      merged.push({ title: group.title, items: [...group.items] })
+    }
+  }
+  return merged
+}
+
+function itemsAsGroup(items: BilingualText[]): NonNullable<VersionUpdateEntry['groups']> {
+  return [{ title: { zh: '其他', en: 'Other' }, items: [...items] }]
+}
+
+/** 同一天多条记录合并为一条（保留 groups 小节，同标题合并条目）。 */
+export function mergeVersionUpdatesByDate(entries: VersionUpdateEntry[]): VersionUpdateEntry[] {
+  const order: string[] = []
+  const byDate = new Map<string, VersionUpdateEntry[]>()
+
+  for (const entry of entries) {
+    if (!byDate.has(entry.date)) order.push(entry.date)
+    byDate.get(entry.date)?.push(entry) ?? byDate.set(entry.date, [entry])
+  }
+
+  return order.map((date) => {
+    const sameDay = byDate.get(date)!
+    if (sameDay.length === 1) {
+      const entry = sameDay[0]!
+      return {
+        ...entry,
+        title: standardUpdateTitle(date),
+      }
+    }
+
+    const primary = sameDay[0]!
+    let groups = primary.groups ? [...primary.groups.map((g) => ({ ...g, items: [...g.items] }))] : []
+    let items = primary.items ? [...primary.items] : []
+    let easterEgg = primary.easterEgg
+    let easterEggTitle = primary.easterEggTitle
+    let easterEggHex = primary.easterEggHex
+
+    for (const entry of sameDay.slice(1)) {
+      if (entry.groups?.length) {
+        groups = mergeGroupLists(groups, entry.groups)
+      }
+      if (entry.items?.length) {
+        groups = groups.length
+          ? mergeGroupLists(groups, itemsAsGroup(entry.items))
+          : itemsAsGroup(entry.items)
+      }
+      if (entry.easterEggHex) {
+        easterEgg = entry.easterEgg ?? easterEgg
+        easterEggTitle = entry.easterEggTitle ?? easterEggTitle
+        easterEggHex = entry.easterEggHex
+      }
+    }
+
+    if (!groups.length && items.length) {
+      return {
+        id: primary.id,
+        date,
+        title: standardUpdateTitle(date),
+        items,
+        easterEgg,
+        easterEggTitle,
+        easterEggHex,
+      }
+    }
+
+    return {
+      id: primary.id,
+      date,
+      title: standardUpdateTitle(date),
+      groups,
+      easterEgg,
+      easterEggTitle,
+      easterEggHex,
+    }
+  })
+}
+
+function entryHasContent(entry: VersionUpdateEntry): boolean {
+  if (entry.easterEggHex) return true
+  if (entry.items?.length) return true
+  return !!entry.groups?.some((group) => group.items.length > 0)
+}
+
+const versionUpdatesRaw: VersionUpdateEntry[] = [
+  // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
-    id: '2026-06-19-r34',
+    id: '2026-06-20-summary',
+    date: CURRENT_CHANGELOG_DATE,
+    title: {
+      zh: '2026-06-20 更新',
+      en: '2026-06-20 updates',
+    },
+    groups: [],
+  },
+  {
+    id: '2026-06-19-r35',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -137,6 +252,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
             zh: '固定展开的语法在用户再次滚动页面时自动隐藏。',
             en: 'Pinned syntax auto-hides when the user scrolls the page again.',
           },
+          {
+            zh: '修复点击展开后语法立刻缩回的问题（展开保护期 + 滚轮/滑动才关闭）。',
+            en: 'Fixed pinned syntax closing immediately after expand (grace period; dismiss on wheel/scroll only).',
+          },
         ],
       },
       {
@@ -183,8 +302,8 @@ export const versionUpdates: VersionUpdateEntry[] = [
         title: { zh: '每日挑战', en: 'Daily challenge' },
         items: [
           {
-            zh: '6 月 19 日每日挑战更正为 R370。',
-            en: 'Daily challenge for 19 Jun corrected to R370.',
+            zh: '同步社区 6 月日程：17 日马拉松封路 240A、18 日桥梁封闭 Y370、19 日马拉松接驳 R370 等。',
+            en: 'Synced June community schedule: 17 Jun Marathon Road Closure 240A, 18 Jun Bridge Closure Y370, 19 Jun Marathon Shuttle R370, etc.',
           },
         ],
       },
@@ -215,8 +334,16 @@ export const versionUpdates: VersionUpdateEntry[] = [
         ],
       },
       {
-        title: { zh: '更新提示', en: 'Change log prompt' },
+        title: { zh: '更新日志', en: 'Change log' },
         items: [
+          {
+            zh: '同日期多条更新合并为单条记录，避免重复标题。',
+            en: 'Multiple updates on the same day are merged into one entry to avoid duplicate headings.',
+          },
+          {
+            zh: '更新记录右上角构建时间按访客电脑本地时区显示。',
+            en: 'The build timestamp at the top-right of the change log uses your local timezone.',
+          },
           {
             zh: '每次发布新更新日志后，未读过该条目的用户会再次看到更新弹窗。',
             en: 'After each new change-log entry ships, users who have not read it will see the update prompt again.',
@@ -226,11 +353,11 @@ export const versionUpdates: VersionUpdateEntry[] = [
     ],
   },
   {
-    id: '2026-06-18-folders',
+    id: '2026-06-18-summary',
     date: '2026-06-18',
     title: {
-      zh: '2026-06-18 更新（收藏夹与分享）',
-      en: '2026-06-18 updates (folders & sharing)',
+      zh: '2026-06-18 更新',
+      en: '2026-06-18 updates',
     },
     groups: [
       {
@@ -259,21 +386,8 @@ export const versionUpdates: VersionUpdateEntry[] = [
           },
         ],
       },
-    ],
-  },
-  {
-    id: '2026-06-18-summary',
-    date: '2026-06-18',
-    title: {
-      zh: '2026-06-18 更新',
-      en: '2026-06-18 updates',
-    },
-    groups: [
       {
-        title: {
-          zh: '更新日志弹窗',
-          en: 'Change log prompt',
-        },
+        title: { zh: '更新日志弹窗', en: 'Change log prompt' },
         items: [
           {
             zh: '首次进入线路首页且未查看过更新页时，在关闭每日挑战提示后会弹出近期更新摘要；也可点「查看全部更新」进入完整更新页。',
@@ -282,10 +396,7 @@ export const versionUpdates: VersionUpdateEntry[] = [
         ],
       },
       {
-        title: {
-          zh: '紧凑列表',
-          en: 'Compact list density',
-        },
+        title: { zh: '紧凑列表', en: 'Compact list density' },
         items: [
           {
             zh: '设置中的「紧凑」列表密度进一步缩小卡片内边距、字号与分组间距，同屏可显示更多线路。',
@@ -800,3 +911,5 @@ export const versionUpdates: VersionUpdateEntry[] = [
     ],
   },
 ]
+
+export const versionUpdates = mergeVersionUpdatesByDate(versionUpdatesRaw).filter(entryHasContent)
