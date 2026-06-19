@@ -943,6 +943,8 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .search-help-bar {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;

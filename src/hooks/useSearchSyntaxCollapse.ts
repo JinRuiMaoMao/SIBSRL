@@ -4,7 +4,8 @@ const SCROLL_COLLAPSE_THRESHOLD = 80
 
 export function useSearchSyntaxCollapse() {
   const [scrolled, setScrolled] = useState(false)
-  const [expanded, setExpanded] = useState(true)
+  /** 用户手动展开/收起；回顶后恢复自动 */
+  const [manualOpen, setManualOpen] = useState<boolean | null>(null)
 
   useEffect(() => {
     const sync = () => {
@@ -16,14 +17,18 @@ export function useSearchSyntaxCollapse() {
   }, [])
 
   useEffect(() => {
-    if (!scrolled) setExpanded(true)
+    if (!scrolled) setManualOpen(null)
   }, [scrolled])
 
-  const syntaxOpen = !scrolled || expanded
+  const autoOpen = !scrolled
+  const syntaxOpen = manualOpen ?? autoOpen
 
   const toggleSyntax = useCallback(() => {
-    setExpanded((value) => !value)
-  }, [])
+    setManualOpen((prev) => {
+      const current = prev ?? !scrolled
+      return !current
+    })
+  }, [scrolled])
 
-  return { syntaxOpen, toggleSyntax, autoCollapsed: scrolled && !expanded }
+  return { syntaxOpen, toggleSyntax, autoCollapsed: scrolled && !syntaxOpen }
 }

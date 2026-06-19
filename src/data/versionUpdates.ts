@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r6',
+    id: '2026-06-19-r7',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -32,6 +32,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '页面向下滚动后自动收起「高级搜索语法」，「展开语法」按钮位于 Esc 关闭详情 右侧，带平滑折叠动画。',
             en: 'Advanced search syntax auto-collapses after scrolling; “Show syntax” sits beside Esc close details with a smooth animation.',
+          },
+          {
+            zh: '修复「收起语法」在页顶或滚动后点击无效的问题。',
+            en: 'Fixed “Hide syntax” not responding at the top of the page or after scrolling.',
           },
         ],
       },
