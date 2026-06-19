@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r32',
+    id: '2026-06-19-r33',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -128,6 +128,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '下滑后点「展开语法」可立即显示并滚至搜索栏下方，且不会被滚动检测立刻再藏。',
             en: 'After scrolling down, “Show syntax” reveals the panel below the search bar and keeps it open until you hide it.',
+          },
+          {
+            zh: '下滑后展开语法改为在当前位置固定显示于搜索栏下方，不再滚回顶部。',
+            en: 'Expanded syntax after scrolling now pins below the search bar at your current scroll position instead of jumping to the top.',
           },
         ],
       },

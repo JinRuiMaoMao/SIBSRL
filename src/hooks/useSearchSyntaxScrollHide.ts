@@ -16,6 +16,7 @@ export function useSearchSyntaxScrollHide(
   syntaxRef: RefObject<HTMLElement | null>,
 ) {
   const [hidden, setHidden] = useState(false)
+  const [forceOpen, setForceOpen] = useState(false)
   const latchedRef = useRef(false)
   const skipUnhideRef = useRef(false)
   const hideTriggeredAtScrollYRef = useRef(0)
@@ -25,12 +26,22 @@ export function useSearchSyntaxScrollHide(
     latchedRef.current = false
     if (options?.forceOpen) {
       forceOpenRef.current = true
+      setForceOpen(true)
+      setHidden(true)
+      return
     }
+    forceOpenRef.current = false
+    setForceOpen(false)
     setHidden(false)
   }, [])
 
   const releaseForceOpen = useCallback(() => {
     forceOpenRef.current = false
+    setForceOpen(false)
+    if (readScrollY() > SCROLL_TOP_THRESHOLD) {
+      latchedRef.current = true
+      setHidden(true)
+    }
   }, [])
 
   useEffect(() => {
@@ -60,7 +71,7 @@ export function useSearchSyntaxScrollHide(
 
     const sync = () => {
       if (forceOpenRef.current) {
-        setHidden(false)
+        setHidden(true)
         return
       }
 
@@ -118,5 +129,5 @@ export function useSearchSyntaxScrollHide(
     }
   }, [clearScrollHidden, stickyRef, syntaxRef])
 
-  return { scrollHidden: hidden, clearScrollHidden, releaseForceOpen }
+  return { scrollHidden: hidden, forceOpen, clearScrollHidden, releaseForceOpen }
 }

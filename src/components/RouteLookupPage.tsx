@@ -20,6 +20,7 @@ import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
+import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -153,34 +154,23 @@ export function RouteLookupPage({
     totalCount,
   } = useRouteSearch(dailyChallenge)
   const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
-  const { scrollHidden: syntaxScrollHidden, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
+  const { scrollHidden: syntaxScrollHidden, forceOpen: syntaxForceOpen, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
     useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef)
-  const syntaxVisible = !syntaxScrollHidden && !syntaxManualHidden
-
-  const revealSyntaxPanel = useCallback(() => {
-    const panel = syntaxPanelRef.current
-    const sticky = stickyToolbarRef.current
-    if (!panel || !sticky) return
-
-    requestAnimationFrame(() => {
-      const stickyBottom = sticky.getBoundingClientRect().bottom
-      const panelTop = panel.getBoundingClientRect().top
-      const gap = 8
-      const delta = panelTop - stickyBottom - gap
-      if (delta < 0) {
-        window.scrollBy(0, delta)
-      }
-    })
-  }, [])
+  const syntaxInFlowVisible = !syntaxScrollHidden && !syntaxManualHidden && !syntaxForceOpen
+  const syntaxExpanded = syntaxForceOpen || (!syntaxScrollHidden && !syntaxManualHidden)
 
   const handleSyntaxToggle = () => {
-    if (!syntaxVisible) {
-      clearSyntaxScrollHidden({ forceOpen: true })
-      setSyntaxManualHidden(false)
-      revealSyntaxPanel()
+    if (!syntaxExpanded) {
+      if (syntaxScrollHidden) {
+        clearSyntaxScrollHidden({ forceOpen: true })
+      } else {
+        setSyntaxManualHidden(false)
+      }
       return
     }
-    releaseSyntaxForceOpen()
+    if (syntaxForceOpen) {
+      releaseSyntaxForceOpen()
+    }
     setSyntaxManualHidden(true)
   }
   const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
@@ -679,9 +669,14 @@ export function RouteLookupPage({
           onApplyHistory={handleApplyHistory}
           onClearHistory={handleClearHistory}
           searchInputRef={searchInputRef}
-          syntaxVisible={syntaxVisible}
+          syntaxVisible={syntaxExpanded}
           onSyntaxToggle={handleSyntaxToggle}
         />
+        {syntaxForceOpen ? (
+          <div className="search-syntax-pinned">
+            <SearchSyntaxHelp stickyRef={stickyToolbarRef} visible />
+          </div>
+        ) : null}
       </div>
 
       <div className="content-layout">
@@ -690,7 +685,7 @@ export function RouteLookupPage({
             <RouteSearchSyntaxDock
               panelRef={syntaxPanelRef}
               stickyRef={stickyToolbarRef}
-              visible={syntaxVisible}
+              visible={syntaxInFlowVisible}
             />
 
             {dailyChallengeVisible ? (

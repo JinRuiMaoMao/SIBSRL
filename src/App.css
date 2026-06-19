@@ -948,6 +948,14 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   flex-wrap: wrap;
 }
 
+.search-syntax-pinned {
+  margin: 0.2rem 0 0;
+}
+
+.search-syntax-pinned .search-syntax-panel-inner {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
 .search-shortcut-hint {
   margin: 0;
   flex: 1 1 auto;
