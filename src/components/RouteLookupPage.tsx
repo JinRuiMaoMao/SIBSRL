@@ -153,17 +153,35 @@ export function RouteLookupPage({
     totalCount,
   } = useRouteSearch(dailyChallenge)
   const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
-  const { scrollHidden: syntaxScrollHidden, clearScrollHidden: clearSyntaxScrollHidden } =
+  const { scrollHidden: syntaxScrollHidden, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
     useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef)
   const syntaxVisible = !syntaxScrollHidden && !syntaxManualHidden
 
+  const revealSyntaxPanel = useCallback(() => {
+    const panel = syntaxPanelRef.current
+    const sticky = stickyToolbarRef.current
+    if (!panel || !sticky) return
+
+    requestAnimationFrame(() => {
+      const stickyBottom = sticky.getBoundingClientRect().bottom
+      const panelTop = panel.getBoundingClientRect().top
+      const gap = 8
+      const delta = panelTop - stickyBottom - gap
+      if (delta < 0) {
+        window.scrollBy(0, delta)
+      }
+    })
+  }, [])
+
   const handleSyntaxToggle = () => {
-    if (syntaxScrollHidden) {
-      clearSyntaxScrollHidden()
+    if (!syntaxVisible) {
+      clearSyntaxScrollHidden({ forceOpen: true })
       setSyntaxManualHidden(false)
+      revealSyntaxPanel()
       return
     }
-    setSyntaxManualHidden((value) => !value)
+    releaseSyntaxForceOpen()
+    setSyntaxManualHidden(true)
   }
   const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()

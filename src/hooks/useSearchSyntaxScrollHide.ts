@@ -17,19 +17,26 @@ export function useSearchSyntaxScrollHide(
 ) {
   const [hidden, setHidden] = useState(false)
   const latchedRef = useRef(false)
-  const lastScrollYRef = useRef(0)
   const skipUnhideRef = useRef(false)
   const hideTriggeredAtScrollYRef = useRef(0)
+  const forceOpenRef = useRef(false)
 
-  const clearScrollHidden = useCallback(() => {
+  const clearScrollHidden = useCallback((options?: { forceOpen?: boolean }) => {
     latchedRef.current = false
+    if (options?.forceOpen) {
+      forceOpenRef.current = true
+    }
     setHidden(false)
+  }, [])
+
+  const releaseForceOpen = useCallback(() => {
+    forceOpenRef.current = false
   }, [])
 
   useEffect(() => {
     const hideWithCollapse = () => {
       const syntax = syntaxRef.current
-      if (!syntax || latchedRef.current) return
+      if (!syntax || latchedRef.current || forceOpenRef.current) return
 
       const removedHeight = syntax.offsetHeight
       hideTriggeredAtScrollYRef.current = readScrollY()
@@ -45,7 +52,6 @@ export function useSearchSyntaxScrollHide(
         if (nextY !== scrollY) {
           window.scrollTo(0, nextY)
         }
-        lastScrollYRef.current = nextY
         window.setTimeout(() => {
           skipUnhideRef.current = false
         }, 120)
@@ -53,12 +59,16 @@ export function useSearchSyntaxScrollHide(
     }
 
     const sync = () => {
+      if (forceOpenRef.current) {
+        setHidden(false)
+        return
+      }
+
       const sticky = stickyRef.current
       const syntax = syntaxRef.current
       if (!sticky || !syntax) return
 
       const scrollY = readScrollY()
-      lastScrollYRef.current = scrollY
 
       if (latchedRef.current) {
         setHidden(true)
@@ -88,11 +98,10 @@ export function useSearchSyntaxScrollHide(
     const onWheel = (event: WheelEvent) => {
       if (event.deltaY >= 0) return
       if (!isAtScrollTop()) return
-      if (!latchedRef.current || skipUnhideRef.current) return
+      if (!latchedRef.current || skipUnhideRef.current || forceOpenRef.current) return
       clearScrollHidden()
     }
 
-    lastScrollYRef.current = readScrollY()
     sync()
     window.addEventListener('scroll', sync, { passive: true })
     window.addEventListener('resize', sync)
@@ -109,5 +118,5 @@ export function useSearchSyntaxScrollHide(
     }
   }, [clearScrollHidden, stickyRef, syntaxRef])
 
-  return { scrollHidden: hidden, clearScrollHidden }
+  return { scrollHidden: hidden, clearScrollHidden, releaseForceOpen }
 }
