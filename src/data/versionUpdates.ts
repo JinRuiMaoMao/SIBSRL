@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r30',
+    id: '2026-06-19-r31',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -120,6 +120,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '滚动隐藏语法时收起占位并补偿滚动，消除与每日挑战之间的大空隙。',
             en: 'Scroll-hide now collapses syntax layout with scroll compensation, removing the large gap above daily challenge.',
+          },
+          {
+            zh: '快捷键与「展开/收起语法」移回置顶搜索栏，下滑隐藏语法后仍可点击展开。',
+            en: 'Shortcut hint and syntax toggle moved back to the sticky search bar so expand stays available after scroll-hide.',
           },
         ],
       },

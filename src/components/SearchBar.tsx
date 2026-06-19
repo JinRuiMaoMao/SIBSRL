@@ -21,6 +21,8 @@ interface SearchBarProps {
   onClearHistory?: () => void
   inputRef?: RefObject<HTMLInputElement | null>
   showShortcutHint?: boolean
+  syntaxVisible?: boolean
+  onSyntaxToggle?: () => void
 }
 
 function suggestionLabel(suggestion: string, t: (key: MessageKey, vars?: Record<string, string | number>) => string): string {
@@ -48,6 +50,8 @@ export function SearchBar({
   onClearHistory,
   inputRef,
   showShortcutHint = true,
+  syntaxVisible = true,
+  onSyntaxToggle,
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
@@ -135,15 +139,28 @@ export function SearchBar({
 
       {showShortcutHint ? (
         <div className="search-help">
-          <p className="search-shortcut-hint">
-            <span>{t('searchShortcutHint')}</span>
-            <span className="search-shortcut-sep" aria-hidden>
-              {' · '}
-            </span>
-            <span className="search-shortcut-close">
-              Esc {t('closeDetail')}
-            </span>
-          </p>
+          <div className="search-help-bar">
+            <p className="search-shortcut-hint">
+              <span>{t('searchShortcutHint')}</span>
+              <span className="search-shortcut-sep" aria-hidden>
+                {' · '}
+              </span>
+              <span className="search-shortcut-close">
+                Esc {t('closeDetail')}
+              </span>
+            </p>
+            {onSyntaxToggle ? (
+              <button
+                type="button"
+                className="search-syntax-toggle"
+                aria-expanded={syntaxVisible}
+                aria-controls="search-syntax-panel"
+                onClick={onSyntaxToggle}
+              >
+                {syntaxVisible ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
+              </button>
+            ) : null}
+          </div>
         </div>
       ) : null}
     </div>

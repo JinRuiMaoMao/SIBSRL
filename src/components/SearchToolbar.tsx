@@ -28,6 +28,8 @@ interface SearchToolbarProps {
   onClearHistory?: () => void
   searchInputRef?: RefObject<HTMLInputElement | null>
   showShortcutHint?: boolean
+  syntaxVisible?: boolean
+  onSyntaxToggle?: () => void
 }
 
 export function SearchToolbar({
@@ -53,6 +55,8 @@ export function SearchToolbar({
   onClearHistory,
   searchInputRef,
   showShortcutHint = true,
+  syntaxVisible,
+  onSyntaxToggle,
 }: SearchToolbarProps) {
   const { t } = useLocale()
 
@@ -69,6 +73,8 @@ export function SearchToolbar({
         onClearHistory={onClearHistory}
         inputRef={searchInputRef}
         showShortcutHint={showShortcutHint}
+        syntaxVisible={syntaxVisible}
+        onSyntaxToggle={onSyntaxToggle}
       />
       <div className="search-toolbar-actions">
         <button

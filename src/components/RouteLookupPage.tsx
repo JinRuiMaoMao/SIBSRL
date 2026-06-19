@@ -24,6 +24,7 @@ import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
+import { useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { getPrimaryText } from '../i18n/displayText'
@@ -118,6 +119,8 @@ export function RouteLookupPage({
   const [stopSectionOpen, setStopSectionOpen] = useState(true)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
+  const syntaxPanelRef = useRef<HTMLDivElement>(null)
+  const [syntaxManualHidden, setSyntaxManualHidden] = useState(false)
   const [routePageDetail, setRoutePageDetail] = useState<{
     route: BusRoute
     pageData: RoutePageData | null
@@ -150,6 +153,18 @@ export function RouteLookupPage({
     totalCount,
   } = useRouteSearch(dailyChallenge)
   const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
+  const { scrollHidden: syntaxScrollHidden, clearScrollHidden: clearSyntaxScrollHidden } =
+    useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef)
+  const syntaxVisible = !syntaxScrollHidden && !syntaxManualHidden
+
+  const handleSyntaxToggle = () => {
+    if (syntaxScrollHidden) {
+      clearSyntaxScrollHidden()
+      setSyntaxManualHidden(false)
+      return
+    }
+    setSyntaxManualHidden((value) => !value)
+  }
   const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
   const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)
@@ -646,14 +661,19 @@ export function RouteLookupPage({
           onApplyHistory={handleApplyHistory}
           onClearHistory={handleClearHistory}
           searchInputRef={searchInputRef}
-          showShortcutHint={false}
+          syntaxVisible={syntaxVisible}
+          onSyntaxToggle={handleSyntaxToggle}
         />
       </div>
 
       <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>
           <div className="route-display-group-list">
-            <RouteSearchSyntaxDock stickyRef={stickyToolbarRef} />
+            <RouteSearchSyntaxDock
+              panelRef={syntaxPanelRef}
+              stickyRef={stickyToolbarRef}
+              visible={syntaxVisible}
+            />
 
             {dailyChallengeVisible ? (
               <DailyChallengeBanner
