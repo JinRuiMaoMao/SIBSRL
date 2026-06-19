@@ -11,8 +11,17 @@ export function RouteSearchSyntaxDock({ stickyRef }: RouteSearchSyntaxDockProps)
   const { t } = useLocale()
   const dockRef = useRef<HTMLDivElement>(null)
   const [manualHidden, setManualHidden] = useState(false)
-  const scrollHidden = useSearchSyntaxScrollHide(stickyRef, dockRef)
+  const { scrollHidden, clearScrollHidden } = useSearchSyntaxScrollHide(stickyRef, dockRef)
   const syntaxVisible = !scrollHidden && !manualHidden
+
+  const handleToggle = () => {
+    if (scrollHidden) {
+      clearScrollHidden()
+      setManualHidden(false)
+      return
+    }
+    setManualHidden((value) => !value)
+  }
 
   return (
     <div
@@ -35,7 +44,7 @@ export function RouteSearchSyntaxDock({ stickyRef }: RouteSearchSyntaxDockProps)
             className="search-syntax-toggle"
             aria-expanded={syntaxVisible}
             aria-controls="search-syntax-panel"
-            onClick={() => setManualHidden((value) => !value)}
+            onClick={handleToggle}
           >
             {syntaxVisible ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
           </button>

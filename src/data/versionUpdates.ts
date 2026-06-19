@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r29',
+    id: '2026-06-19-r30',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -116,6 +116,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复标签页全折叠时未收起语法下滑页面抽搐（滚动隐藏不再压缩布局高度）。',
             en: 'Fixed scroll jitter when all route groups are collapsed—scroll-hide no longer collapses layout height.',
+          },
+          {
+            zh: '滚动隐藏语法时收起占位并补偿滚动，消除与每日挑战之间的大空隙。',
+            en: 'Scroll-hide now collapses syntax layout with scroll compensation, removing the large gap above daily challenge.',
           },
         ],
       },

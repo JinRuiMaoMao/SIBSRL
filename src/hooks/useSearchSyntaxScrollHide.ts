@@ -1,22 +1,76 @@
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 
-/** 语法顶缘进入搜索框下沿时隐藏（仅视觉，不改变布局高度） */
+const SCROLL_TOP_THRESHOLD = 80
 const HIDE_INSET_PX = 1
-/** 重新显示时的滞后距离，避免临界区闪烁 */
-const SHOW_CLEAR_PX = 10
+
+function readScrollY(): number {
+  return window.scrollY || document.documentElement.scrollTop || 0
+}
+
+function isAtScrollTop(): boolean {
+  return readScrollY() <= SCROLL_TOP_THRESHOLD
+}
 
 export function useSearchSyntaxScrollHide(
   stickyRef: RefObject<HTMLElement | null>,
   syntaxRef: RefObject<HTMLElement | null>,
-): boolean {
+) {
   const [hidden, setHidden] = useState(false)
-  const hiddenRef = useRef(false)
+  const latchedRef = useRef(false)
+  const lastScrollYRef = useRef(0)
+  const skipUnhideRef = useRef(false)
+  const hideTriggeredAtScrollYRef = useRef(0)
+
+  const clearScrollHidden = useCallback(() => {
+    latchedRef.current = false
+    setHidden(false)
+  }, [])
 
   useEffect(() => {
+    const hideWithCollapse = () => {
+      const syntax = syntaxRef.current
+      if (!syntax || latchedRef.current) return
+
+      const removedHeight = syntax.offsetHeight
+      hideTriggeredAtScrollYRef.current = readScrollY()
+      latchedRef.current = true
+      skipUnhideRef.current = true
+      setHidden(true)
+
+      if (removedHeight <= 0) return
+
+      requestAnimationFrame(() => {
+        const scrollY = readScrollY()
+        const nextY = Math.max(0, scrollY - removedHeight)
+        if (nextY !== scrollY) {
+          window.scrollTo(0, nextY)
+        }
+        lastScrollYRef.current = nextY
+        window.setTimeout(() => {
+          skipUnhideRef.current = false
+        }, 120)
+      })
+    }
+
     const sync = () => {
       const sticky = stickyRef.current
       const syntax = syntaxRef.current
       if (!sticky || !syntax) return
+
+      const scrollY = readScrollY()
+      lastScrollYRef.current = scrollY
+
+      if (latchedRef.current) {
+        setHidden(true)
+        if (
+          scrollY <= SCROLL_TOP_THRESHOLD &&
+          !skipUnhideRef.current &&
+          hideTriggeredAtScrollYRef.current > SCROLL_TOP_THRESHOLD
+        ) {
+          clearScrollHidden()
+        }
+        return
+      }
 
       const searchBar = sticky.querySelector<HTMLElement>('.search-bar')
       if (!searchBar) return
@@ -24,33 +78,36 @@ export function useSearchSyntaxScrollHide(
       const searchBottom = searchBar.getBoundingClientRect().bottom
       const syntaxTop = syntax.getBoundingClientRect().top
 
-      let next = hiddenRef.current
       if (syntaxTop < searchBottom - HIDE_INSET_PX) {
-        next = true
-      } else if (syntaxTop >= searchBottom + SHOW_CLEAR_PX) {
-        next = false
+        hideWithCollapse()
+      } else {
+        setHidden(false)
       }
-
-      hiddenRef.current = next
-      setHidden(next)
     }
 
+    const onWheel = (event: WheelEvent) => {
+      if (event.deltaY >= 0) return
+      if (!isAtScrollTop()) return
+      if (!latchedRef.current || skipUnhideRef.current) return
+      clearScrollHidden()
+    }
+
+    lastScrollYRef.current = readScrollY()
     sync()
     window.addEventListener('scroll', sync, { passive: true })
     window.addEventListener('resize', sync)
+    window.addEventListener('wheel', onWheel, { passive: true })
 
     const ro = new ResizeObserver(sync)
-    const sticky = stickyRef.current
-    const syntax = syntaxRef.current
-    if (sticky) ro.observe(sticky)
-    if (syntax) ro.observe(syntax)
+    if (stickyRef.current) ro.observe(stickyRef.current)
 
     return () => {
       window.removeEventListener('scroll', sync)
       window.removeEventListener('resize', sync)
+      window.removeEventListener('wheel', onWheel)
       ro.disconnect()
     }
-  }, [stickyRef, syntaxRef])
+  }, [clearScrollHidden, stickyRef, syntaxRef])
 
-  return hidden
+  return { scrollHidden: hidden, clearScrollHidden }
 }
