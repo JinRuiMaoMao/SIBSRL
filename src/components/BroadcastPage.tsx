@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { safetyBroadcasts } from '../data/safetyBroadcasts'
+import { useListDensityCompact } from '../hooks/useListDensityCompact'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
 import type { MessageKey } from '../i18n/messages'
@@ -20,6 +21,7 @@ function setHasBroadcasts(set: BroadcastSet): boolean {
 
 export function BroadcastPage() {
   const { locale, t } = useLocale()
+  const compact = useListDensityCompact()
   const [query, setQuery] = useState('')
   const [broadcastSet, setBroadcastSet] = useState<BroadcastSet>('common')
   const [playingId, setPlayingId] = useState<string | null>(null)
@@ -112,6 +114,7 @@ export function BroadcastPage() {
                     onActiveChange={setPlayingId}
                     playLabel={t('broadcastPlay')}
                     pauseLabel={t('broadcastPause')}
+                    compact={compact}
                   />
                 </div>
                 {item.note && (

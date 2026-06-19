@@ -3327,6 +3327,163 @@ html[data-list-density='compact'] .daily-challenge-reset-countdown-time {
   font-size: 1.05rem;
 }
 
+/* Compact — Broadcast / Music / Complaints / Updates */
+html[data-list-density='compact'] .main {
+  padding-top: 1rem;
+  padding-bottom: 1.25rem;
+}
+
+html[data-list-density='compact'] .page-intro {
+  margin-bottom: 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+html[data-list-density='compact'] .broadcast-filters {
+  margin-bottom: 0.75rem;
+}
+
+html[data-list-density='compact'] .filter-group {
+  gap: 0.35rem 0.55rem;
+}
+
+html[data-list-density='compact'] .filter-label {
+  font-size: 0.7rem;
+  padding-top: 0.28rem;
+}
+
+html[data-list-density='compact'] .chip {
+  padding: 0.28rem 0.58rem;
+  font-size: 0.78rem;
+}
+
+html[data-list-density='compact'] .main > .search-bar {
+  margin-bottom: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  gap: 0.55rem;
+}
+
+html[data-list-density='compact'] .search-bar input {
+  font-size: 0.9rem;
+}
+
+html[data-list-density='compact'] .search-icon {
+  font-size: 1.05rem;
+}
+
+html[data-list-density='compact'] .section-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+html[data-list-density='compact'] .safety-broadcast-list,
+html[data-list-density='compact'] .complaints-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.45rem;
+}
+
+html[data-list-density='compact'] .safety-broadcast-card,
+html[data-list-density='compact'] .complaints-card {
+  padding: 0.6rem 0.7rem;
+}
+
+html[data-list-density='compact'] .safety-broadcast-card-head,
+html[data-list-density='compact'] .complaints-head {
+  gap: 0.45rem;
+}
+
+html[data-list-density='compact'] .complaints-head {
+  margin-bottom: 0.3rem;
+}
+
+html[data-list-density='compact'] .safety-broadcast-title {
+  font-size: 0.92rem;
+}
+
+html[data-list-density='compact'] .safety-broadcast-no {
+  font-size: 1.08rem;
+  min-width: 1.35rem;
+}
+
+html[data-list-density='compact'] .safety-broadcast-note {
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+html[data-list-density='compact'] .complaints-title {
+  font-size: 0.92rem;
+}
+
+html[data-list-density='compact'] .complaints-no {
+  min-width: 1.15rem;
+  font-size: 0.88rem;
+}
+
+html[data-list-density='compact'] .complaints-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+html[data-list-density='compact'] .complaints-section,
+html[data-list-density='compact'] .updates-section {
+  margin-top: 0;
+}
+
+html[data-list-density='compact'] .updates-section-head {
+  margin-bottom: 0.45rem;
+  gap: 0.5rem;
+}
+
+html[data-list-density='compact'] .updates-build-time {
+  font-size: 0.72rem;
+}
+
+html[data-list-density='compact'] .updates-list {
+  gap: 0.45rem;
+}
+
+html[data-list-density='compact'] .updates-card {
+  padding: 0.65rem 0.75rem;
+}
+
+html[data-list-density='compact'] .updates-head {
+  margin-bottom: 0.35rem;
+  gap: 0.5rem;
+}
+
+html[data-list-density='compact'] .updates-title {
+  font-size: 0.92rem;
+}
+
+html[data-list-density='compact'] .updates-date {
+  font-size: 0.72rem;
+}
+
+html[data-list-density='compact'] .updates-groups {
+  gap: 0.55rem;
+}
+
+html[data-list-density='compact'] .updates-group-title {
+  margin-bottom: 0.25rem;
+  font-size: 0.82rem;
+}
+
+html[data-list-density='compact'] .updates-items {
+  padding-left: 1rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+html[data-list-density='compact'] .empty-state {
+  padding: 1.15rem;
+  font-size: 0.85rem;
+}
+
 html[data-list-density='compact'] .route-card-link:hover .route-card,
 html[data-list-density='compact'] .daily-challenge-card:hover {
   transform: translateY(-1px);

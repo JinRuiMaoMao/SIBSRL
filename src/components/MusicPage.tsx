@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { musicTracks } from '../data/musicTracks'
+import { useListDensityCompact } from '../hooks/useListDensityCompact'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
 
 export function MusicPage() {
   const { locale, t } = useLocale()
+  const compact = useListDensityCompact()
   const [playingId, setPlayingId] = useState<string | null>(null)
   const tracks = [...musicTracks].sort((a, b) => a.number - b.number)
 
@@ -36,6 +38,7 @@ export function MusicPage() {
                     playLabel={t('broadcastPlay')}
                     pauseLabel={t('broadcastPause')}
                     loop={item.loop}
+                    compact={compact}
                   />
                 </div>
               </li>

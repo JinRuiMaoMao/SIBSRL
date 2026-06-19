@@ -177,6 +177,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复紧凑模式英文下方向按钮换行后右侧留白：切换条随内容收缩，英文紧凑态改用 North/South 等短标签。',
             en: 'Fixed empty space beside wrapped direction toggles in compact English—toggle bar fits content and uses short North/South labels.',
           },
+          {
+            zh: '紧凑列表密度现同步作用于广播、音乐、乘客抱怨与版本更新页：缩小间距与字号，广播/音乐/抱怨卡片改为多列网格，播放按钮同步缩小。',
+            en: 'Compact list density now applies to Broadcast, Music, Complaints, and Updates—tighter spacing and type, multi-column grids for audio lists, and smaller play buttons.',
+          },
         ],
       },
     ],

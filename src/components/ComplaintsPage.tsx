@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { passengerComplaints } from '../data/passengerComplaints'
+import { useListDensityCompact } from '../hooks/useListDensityCompact'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
 import type { ComplaintFilter } from '../types/passengerComplaint'
@@ -7,6 +8,7 @@ import { BroadcastAudioButton } from './BroadcastAudioButton'
 
 export function ComplaintsPage() {
   const { locale, t } = useLocale()
+  const compact = useListDensityCompact()
   const [playingId, setPlayingId] = useState<string | null>(null)
   const [filter, setFilter] = useState<ComplaintFilter>('all')
 
@@ -59,6 +61,7 @@ export function ComplaintsPage() {
                     onActiveChange={setPlayingId}
                     playLabel={t('broadcastPlay')}
                     pauseLabel={t('broadcastPause')}
+                    compact={compact}
                   />
                 </div>
                 <p className="complaints-detail">{getPrimaryText(item.detail, locale)}</p>
