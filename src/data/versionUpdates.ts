@@ -160,6 +160,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '顶栏折叠改为分步动画：先隐藏页签与外链，再缩小标题，最后收拢顶栏高度；展开时顺序相反。',
             en: 'Header collapse now animates in stages—tabs and links hide first, then the title shrinks, then the bar height folds; expand reverses the sequence.',
           },
+          {
+            zh: '修复收起顶栏底部出现双线：仅保留外层一条主题分隔线，去掉内层重复边框。',
+            en: 'Fixed a double line at the bottom of the collapsed header—one theme divider on the shell only, no duplicate inner border.',
+          },
         ],
       },
     ],

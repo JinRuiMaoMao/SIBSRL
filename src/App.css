@@ -48,6 +48,7 @@
 
 .site-header-shell.is-collapsed .site-header {
   max-height: calc(var(--header-controls-inset-top) + 2.75rem + 0.35rem);
+  border-bottom-color: transparent;
   transition-delay: var(--header-collapse-delay-shell);
 }
 
