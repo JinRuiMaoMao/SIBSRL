@@ -6,6 +6,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
 import { getTabPageHref } from '../utils/appTabNavigation'
+import { HeaderCollapsedBar } from './HeaderCollapsedBar'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
 
@@ -70,6 +71,13 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
         </div>
         <HeaderCollapseToggle collapsed={collapsed} onToggle={onToggleCollapse} />
       </div>
+
+      <HeaderCollapsedBar
+        collapsed={collapsed}
+        title={t('appTitle')}
+        logoAriaLabel={t('appTitle')}
+        onLogoClick={onLogoClick}
+      />
 
       <header className="site-header" aria-hidden={collapsed}>
         <div className="header-inner">

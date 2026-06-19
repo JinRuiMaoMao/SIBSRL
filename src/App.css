@@ -47,6 +47,48 @@
   pointer-events: none;
 }
 
+.header-collapsed-bar {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--header-controls-inset-top) var(--header-controls-reserve) 0.35rem 1.5rem;
+  box-sizing: border-box;
+  min-height: calc(var(--header-controls-inset-top) + 2.75rem + 0.35rem);
+  display: flex;
+  align-items: center;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    max-height var(--header-collapse-duration) var(--header-collapse-easing),
+    opacity var(--header-collapse-duration) var(--header-collapse-easing);
+}
+
+.site-header-shell.is-collapsed .header-collapsed-bar {
+  max-height: calc(var(--header-controls-inset-top) + 2.75rem + 0.35rem);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.brand--collapsed {
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.brand--collapsed .brand-icon {
+  font-size: 1.35rem;
+}
+
+.header-collapsed-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .header-shell-controls {
   position: absolute;
   top: var(--header-controls-inset-top);
@@ -3011,6 +3053,10 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
     --header-controls-reserve: 8.75rem;
   }
 
+  .header-collapsed-bar {
+    padding-top: max(var(--header-controls-inset-top), env(safe-area-inset-top, 0px));
+  }
+
   .header-shell-controls {
     top: max(var(--header-controls-inset-top), env(safe-area-inset-top, 0px));
     right: max(var(--header-controls-inset-right), env(safe-area-inset-right, 0px));
@@ -3049,6 +3095,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 @media (prefers-reduced-motion: reduce) {
   .site-header-shell,
   .site-header,
+  .header-collapsed-bar,
   .header-collapse-icon,
   .site-header-shell.is-collapsed .header-collapse-icon {
     transform: none;
@@ -3068,6 +3115,10 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   }
 
   .header-inner {
+    padding-left: 1rem;
+  }
+
+  .header-collapsed-bar {
     padding-left: 1rem;
   }
 
@@ -3248,7 +3299,8 @@ html[data-reduce-motion='true'] .daily-challenge-card:hover {
 html[data-reduce-motion='true'] .route-group-collapse-panel,
 html[data-reduce-motion='true'] .route-group-collapse-icon,
 html[data-reduce-motion='true'] .site-header-shell,
-html[data-reduce-motion='true'] .site-header {
+html[data-reduce-motion='true'] .site-header,
+html[data-reduce-motion='true'] .header-collapsed-bar {
   transition: none !important;
 }
 

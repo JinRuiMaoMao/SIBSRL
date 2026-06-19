@@ -145,6 +145,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: { zh: '顶部栏', en: 'Header' },
+        items: [
+          {
+            zh: '收起顶部栏后保留站点标题与图标，避免顶栏只剩设置与展开按钮显得过空。',
+            en: 'When the header is collapsed, the site title and icon stay visible so the bar does not look empty beside Settings and Expand.',
+          },
+        ],
+      },
     ],
   },
   {
