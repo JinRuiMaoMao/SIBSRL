@@ -164,6 +164,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复收起顶栏底部出现双线：仅保留外层一条主题分隔线，去掉内层重复边框。',
             en: 'Fixed a double line at the bottom of the collapsed header—one theme divider on the shell only, no duplicate inner border.',
           },
+          {
+            zh: '缩小右上角设置与收起顶栏按钮（2.25rem），图标同步缩小，右侧留白随按钮尺寸自适应。',
+            en: 'Smaller settings and collapse-header buttons (2.25rem) with matching icons; right-side padding adapts to the new size.',
+          },
         ],
       },
     ],
