@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r11',
+    id: '2026-06-19-r12',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -52,6 +52,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复页顶「收起语法」按钮无法点击的问题。',
             en: 'Fixed “Hide syntax” not working at the top of the page.',
+          },
+          {
+            zh: '高级搜索语法改为与倒计时同步：倒计时滚入搜索栏后方时自动收起，重新露出时自动展开。',
+            en: 'Advanced syntax now follows the countdown—collapses when it scrolls under the search bar, expands when it comes back.',
           },
         ],
       },

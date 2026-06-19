@@ -1,3 +1,4 @@
+import { isDailyChallengeCountdownUnderSticky } from '../utils/dailyChallengeStickyOverlap'
 import { useEffect, useState, type RefObject } from 'react'
 
 /**
@@ -19,14 +20,7 @@ export function useRouteLookupStickyFade(
     if (!sticky) return
 
     const sync = () => {
-      const countdown = document.querySelector<HTMLElement>('.daily-challenge-reset-countdown')
-      if (!countdown) {
-        setFade(false)
-        return
-      }
-      const stickyBottom = sticky.getBoundingClientRect().bottom
-      const countdownBottom = countdown.getBoundingClientRect().bottom
-      setFade(countdownBottom <= stickyBottom + 1)
+      setFade(isDailyChallengeCountdownUnderSticky(sticky))
     }
 
     sync()
