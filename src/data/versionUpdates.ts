@@ -181,6 +181,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '紧凑列表密度现同步作用于广播、音乐、乘客抱怨与版本更新页：缩小间距与字号，广播/音乐/抱怨卡片改为多列网格，播放按钮同步缩小。',
             en: 'Compact list density now applies to Broadcast, Music, Complaints, and Updates—tighter spacing and type, multi-column grids for audio lists, and smaller play buttons.',
           },
+          {
+            zh: '紧凑模式下广播/音乐/抱怨卡片将播放控件移至标题下方，留出分隔空隙，避免长标题与侧边按钮重叠。',
+            en: 'In compact mode, audio controls on Broadcast/Music/Complaints cards sit below the title with a divider gap so long labels no longer collide with side buttons.',
+          },
         ],
       },
     ],

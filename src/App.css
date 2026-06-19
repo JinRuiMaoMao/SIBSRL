@@ -3392,7 +3392,36 @@ html[data-list-density='compact'] .complaints-card {
 
 html[data-list-density='compact'] .safety-broadcast-card-head,
 html[data-list-density='compact'] .complaints-head {
-  gap: 0.45rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+html[data-list-density='compact'] .safety-broadcast-card-head .safety-broadcast-title,
+html[data-list-density='compact'] .complaints-head .complaints-title {
+  flex: none;
+  width: 100%;
+}
+
+html[data-list-density='compact'] .safety-broadcast-card-head .broadcast-audio-player,
+html[data-list-density='compact'] .complaints-head .broadcast-audio-player {
+  margin-top: 0.45rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border);
+  align-self: stretch;
+  max-width: none;
+}
+
+html[data-list-density='compact'] .safety-broadcast-card-head .broadcast-audio-player--engaged,
+html[data-list-density='compact'] .complaints-head .broadcast-audio-player--engaged {
+  flex: none;
+  width: 100%;
+  max-width: none;
+}
+
+html[data-list-density='compact'] .safety-broadcast-card-head .broadcast-play-btn--compact,
+html[data-list-density='compact'] .complaints-head .broadcast-play-btn--compact {
+  margin-left: 0;
 }
 
 html[data-list-density='compact'] .complaints-head {
