@@ -5,7 +5,7 @@ const SCROLL_TOP_THRESHOLD = 80
 /** 累计几次滑动后自动收起语法说明 */
 const SCROLL_GESTURES_TO_COLLAPSE = 1
 /** 一次滑动结束的空闲判定（毫秒） */
-const SCROLL_GESTURE_IDLE_MS = 5
+const SCROLL_GESTURE_IDLE_MS = 1
 /** 至少滚动这么多像素才算一次有效滑动 */
 const SCROLL_GESTURE_MIN_DELTA_PX = 5
 
