@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r33',
+    id: '2026-06-19-r34',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -132,6 +132,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '下滑后展开语法改为在当前位置固定显示于搜索栏下方，不再滚回顶部。',
             en: 'Expanded syntax after scrolling now pins below the search bar at your current scroll position instead of jumping to the top.',
+          },
+          {
+            zh: '固定展开的语法在用户再次滚动页面时自动隐藏。',
+            en: 'Pinned syntax auto-hides when the user scrolls the page again.',
           },
         ],
       },

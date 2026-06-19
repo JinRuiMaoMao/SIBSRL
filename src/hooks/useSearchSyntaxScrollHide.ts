@@ -21,11 +21,20 @@ export function useSearchSyntaxScrollHide(
   const skipUnhideRef = useRef(false)
   const hideTriggeredAtScrollYRef = useRef(0)
   const forceOpenRef = useRef(false)
+  const forceOpenScrollYRef = useRef(0)
+
+  const dismissForceOpen = useCallback(() => {
+    forceOpenRef.current = false
+    setForceOpen(false)
+    latchedRef.current = true
+    setHidden(true)
+  }, [])
 
   const clearScrollHidden = useCallback((options?: { forceOpen?: boolean }) => {
     latchedRef.current = false
     if (options?.forceOpen) {
       forceOpenRef.current = true
+      forceOpenScrollYRef.current = readScrollY()
       setForceOpen(true)
       setHidden(true)
       return
@@ -36,13 +45,8 @@ export function useSearchSyntaxScrollHide(
   }, [])
 
   const releaseForceOpen = useCallback(() => {
-    forceOpenRef.current = false
-    setForceOpen(false)
-    if (readScrollY() > SCROLL_TOP_THRESHOLD) {
-      latchedRef.current = true
-      setHidden(true)
-    }
-  }, [])
+    dismissForceOpen()
+  }, [dismissForceOpen])
 
   useEffect(() => {
     const hideWithCollapse = () => {
@@ -71,7 +75,12 @@ export function useSearchSyntaxScrollHide(
 
     const sync = () => {
       if (forceOpenRef.current) {
-        setHidden(true)
+        const scrollY = readScrollY()
+        if (Math.abs(scrollY - forceOpenScrollYRef.current) > 2) {
+          dismissForceOpen()
+        } else {
+          setHidden(true)
+        }
         return
       }
 
@@ -127,7 +136,7 @@ export function useSearchSyntaxScrollHide(
       window.removeEventListener('wheel', onWheel)
       ro.disconnect()
     }
-  }, [clearScrollHidden, stickyRef, syntaxRef])
+  }, [clearScrollHidden, dismissForceOpen, stickyRef, syntaxRef])
 
   return { scrollHidden: hidden, forceOpen, clearScrollHidden, releaseForceOpen }
 }
