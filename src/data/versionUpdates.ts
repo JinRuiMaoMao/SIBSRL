@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r12',
+    id: '2026-06-19-r13',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -56,6 +56,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '高级搜索语法改为与倒计时同步：倒计时滚入搜索栏后方时自动收起，重新露出时自动展开。',
             en: 'Advanced syntax now follows the countdown—collapses when it scrolls under the search bar, expands when it comes back.',
+          },
+          {
+            zh: '修复倒计时临界区语法说明反复折叠/展开的抖动（稳定参考线 + 滞后区间）。',
+            en: 'Fixed syntax panel flicker near the countdown threshold (stable anchor + hysteresis).',
           },
         ],
       },

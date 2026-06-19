@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
-import { isDailyChallengeCountdownUnderSticky } from '../utils/dailyChallengeStickyOverlap'
+import { shouldCollapseSyntaxForCountdown } from '../utils/dailyChallengeStickyOverlap'
 
 /** 视为「页面顶部」的滚动距离；从下方滚回此处时自动展开语法说明 */
 const SCROLL_TOP_THRESHOLD = 80
@@ -16,6 +16,11 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
   /** 手动展开/收起；从下方滚回顶部时清除以恢复默认展开 */
   const [manualOpen, setManualOpen] = useState<boolean | null>(null)
   const wasAtPageTopRef = useRef(true)
+  const countdownHiddenRef = useRef(false)
+
+  useEffect(() => {
+    countdownHiddenRef.current = countdownHidden
+  }, [countdownHidden])
 
   useEffect(() => {
     const sync = () => {
@@ -29,13 +34,16 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
   useEffect(() => {
     if (atPageTop && !wasAtPageTopRef.current) {
       setManualOpen(null)
+      setCountdownHidden(false)
+      countdownHiddenRef.current = false
     }
     wasAtPageTopRef.current = atPageTop
   }, [atPageTop])
 
   useEffect(() => {
-    if (!dailyChallengeVisible || !stickyRef) {
+    if (!dailyChallengeVisible || !stickyRef || atPageTop) {
       setCountdownHidden(false)
+      countdownHiddenRef.current = false
       return
     }
 
@@ -43,24 +51,20 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
     if (!sticky) return
 
     const sync = () => {
-      setCountdownHidden(isDailyChallengeCountdownUnderSticky(sticky))
+      const next = shouldCollapseSyntaxForCountdown(sticky, countdownHiddenRef.current)
+      countdownHiddenRef.current = next
+      setCountdownHidden(next)
     }
 
     sync()
     window.addEventListener('scroll', sync, { passive: true })
     window.addEventListener('resize', sync)
 
-    const ro = new ResizeObserver(sync)
-    ro.observe(sticky)
-    const countdown = document.querySelector<HTMLElement>('.daily-challenge-reset-countdown')
-    if (countdown) ro.observe(countdown)
-
     return () => {
       window.removeEventListener('scroll', sync)
       window.removeEventListener('resize', sync)
-      ro.disconnect()
     }
-  }, [dailyChallengeVisible, stickyRef])
+  }, [atPageTop, dailyChallengeVisible, stickyRef])
 
   const shouldAutoCollapse = atPageTop
     ? false
