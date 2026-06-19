@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState, type RefObject } from 'react'
 import { DAILY_CHALLENGE_CARD_ID } from '../data/dailyChallenge'
 
-const SCROLL_COLLAPSE_THRESHOLD = 80
-/** 每日挑战回到搜索栏下方足够远时，才解除折叠锁定 */
-const CHALLENGE_EXPAND_CLEAR_GAP_PX = 72
+/** 视为「页面顶部」的滚动距离；回到此处自动展开语法说明 */
+const SCROLL_TOP_THRESHOLD = 80
+/** 每日挑战顶缘进入搜索框下方此距离内时折叠语法 */
+const CHALLENGE_COLLAPSE_GAP_PX = 12
 
 export interface SearchSyntaxCollapseOptions {
   stickyRef?: RefObject<HTMLElement | null>
@@ -12,15 +13,14 @@ export interface SearchSyntaxCollapseOptions {
 
 export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {}) {
   const { stickyRef, dailyChallengeVisible = false } = options
-  const [scrolled, setScrolled] = useState(false)
-  const [overlapsChallenge, setOverlapsChallenge] = useState(false)
-  const [challengeCollapseLatched, setChallengeCollapseLatched] = useState(false)
-  /** 用户手动展开/收起；离开自动折叠区后恢复自动 */
+  const [atPageTop, setAtPageTop] = useState(true)
+  const [challengeNearToolbar, setChallengeNearToolbar] = useState(false)
+  /** 离开顶部后的手动展开/收起；回顶时清除 */
   const [manualOpen, setManualOpen] = useState<boolean | null>(null)
 
   useEffect(() => {
     const sync = () => {
-      setScrolled(window.scrollY > SCROLL_COLLAPSE_THRESHOLD)
+      setAtPageTop(window.scrollY <= SCROLL_TOP_THRESHOLD)
     }
     sync()
     window.addEventListener('scroll', sync, { passive: true })
@@ -28,9 +28,8 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
   }, [])
 
   useEffect(() => {
-    if (!dailyChallengeVisible || !stickyRef) {
-      setOverlapsChallenge(false)
-      setChallengeCollapseLatched(false)
+    if (!dailyChallengeVisible || !stickyRef || atPageTop) {
+      setChallengeNearToolbar(false)
       return
     }
 
@@ -38,25 +37,18 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
     if (!sticky) return
 
     const sync = () => {
+      const searchBar = sticky.querySelector<HTMLElement>('.search-bar')
       const challenge = document.querySelector<HTMLElement>(
         `[data-route-id="${DAILY_CHALLENGE_CARD_ID}"]`,
       )
-      if (!challenge) {
-        setOverlapsChallenge(false)
-        setChallengeCollapseLatched(false)
+      if (!searchBar || !challenge) {
+        setChallengeNearToolbar(false)
         return
       }
 
-      const stickyBottom = sticky.getBoundingClientRect().bottom
+      const searchBarBottom = searchBar.getBoundingClientRect().bottom
       const challengeTop = challenge.getBoundingClientRect().top
-      const overlapping = stickyBottom >= challengeTop - 4
-
-      setOverlapsChallenge(overlapping)
-      if (overlapping) {
-        setChallengeCollapseLatched(true)
-      } else if (challengeTop > stickyBottom + CHALLENGE_EXPAND_CLEAR_GAP_PX) {
-        setChallengeCollapseLatched(false)
-      }
+      setChallengeNearToolbar(challengeTop <= searchBarBottom + CHALLENGE_COLLAPSE_GAP_PX)
     }
 
     sync()
@@ -75,33 +67,31 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
       window.removeEventListener('resize', sync)
       ro.disconnect()
     }
-  }, [dailyChallengeVisible, stickyRef])
+  }, [atPageTop, dailyChallengeVisible, stickyRef])
 
   useEffect(() => {
-    if (overlapsChallenge) setManualOpen(null)
-  }, [overlapsChallenge])
+    if (atPageTop) setManualOpen(null)
+  }, [atPageTop])
 
-  const shouldAutoCollapse = dailyChallengeVisible
-    ? overlapsChallenge || challengeCollapseLatched
-    : scrolled
+  const shouldAutoCollapse = atPageTop
+    ? false
+    : dailyChallengeVisible
+      ? challengeNearToolbar
+      : true
 
-  useEffect(() => {
-    if (!shouldAutoCollapse) setManualOpen(null)
-  }, [shouldAutoCollapse])
-
-  const autoOpen = !shouldAutoCollapse
-  const syntaxOpen = manualOpen ?? autoOpen
+  const syntaxOpen = atPageTop ? true : (manualOpen ?? !shouldAutoCollapse)
 
   const toggleSyntax = useCallback(() => {
+    if (atPageTop) return
     setManualOpen((prev) => {
       const current = prev ?? !shouldAutoCollapse
       return !current
     })
-  }, [shouldAutoCollapse])
+  }, [atPageTop, shouldAutoCollapse])
 
   return {
     syntaxOpen,
     toggleSyntax,
-    autoCollapsed: shouldAutoCollapse && !syntaxOpen,
+    autoCollapsed: !atPageTop && shouldAutoCollapse && !syntaxOpen,
   }
 }

@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r9',
+    id: '2026-06-19-r10',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -44,6 +44,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '每日挑战上滑至搜索栏区域时，高级搜索语法自动折叠。',
             en: 'Advanced search syntax auto-collapses when the daily challenge scrolls into the search bar area.',
+          },
+          {
+            zh: '修复语法说明折叠/展开抖动；回到页面顶部时自动展开。',
+            en: 'Fixed syntax panel flicker on collapse/expand; it auto-expands again when you scroll back to the top.',
           },
         ],
       },
