@@ -6,7 +6,7 @@ import {
   isRouteSearchSuggestionActive,
   parseRouteNumberPatternQuery,
 } from '../utils/routeSearchQuery'
-import { useSearchSyntaxCollapse, type SearchSyntaxCollapseOptions } from '../hooks/useSearchSyntaxCollapse'
+import { useSearchSyntaxCollapse } from '../hooks/useSearchSyntaxCollapse'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 
 interface SearchBarProps {
@@ -22,7 +22,6 @@ interface SearchBarProps {
   onApplyHistory?: (query: string) => void
   onClearHistory?: () => void
   inputRef?: RefObject<HTMLInputElement | null>
-  syntaxCollapse?: SearchSyntaxCollapseOptions
 }
 
 function suggestionLabel(suggestion: string, t: (key: MessageKey, vars?: Record<string, string | number>) => string): string {
@@ -49,11 +48,10 @@ export function SearchBar({
   onApplyHistory,
   onClearHistory,
   inputRef,
-  syntaxCollapse,
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
-  const { syntaxOpen, toggleSyntax } = useSearchSyntaxCollapse(syntaxCollapse ?? {})
+  const { syntaxOpen, toggleSyntax } = useSearchSyntaxCollapse()
   const suggestions = useMemo(() => getRouteSearchSuggestions(value), [value])
   const showHistory = focused && !value.trim() && searchHistory.length > 0
 

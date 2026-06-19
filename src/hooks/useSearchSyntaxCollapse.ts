@@ -1,76 +1,80 @@
-import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
-import { shouldCollapseSyntaxForCountdown } from '../utils/dailyChallengeStickyOverlap'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-/** 视为「页面顶部」的滚动距离；从下方滚回此处时自动展开语法说明 */
+/** 视为「页面顶部」的滚动距离；滚回此处时自动展开语法说明 */
 const SCROLL_TOP_THRESHOLD = 80
+/** 累计几次滑动后自动收起语法说明 */
+const SCROLL_GESTURES_TO_COLLAPSE = 2
+/** 一次滑动结束的空闲判定（毫秒） */
+const SCROLL_GESTURE_IDLE_MS = 140
+/** 至少滚动这么多像素才算一次有效滑动 */
+const SCROLL_GESTURE_MIN_DELTA_PX = 12
 
-export interface SearchSyntaxCollapseOptions {
-  stickyRef?: RefObject<HTMLElement | null>
-  dailyChallengeVisible?: boolean
-}
-
-export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {}) {
-  const { stickyRef, dailyChallengeVisible = false } = options
+export function useSearchSyntaxCollapse() {
   const [atPageTop, setAtPageTop] = useState(true)
-  const [countdownHidden, setCountdownHidden] = useState(false)
+  const [scrollGestures, setScrollGestures] = useState(0)
   /** 手动展开/收起；从下方滚回顶部时清除以恢复默认展开 */
   const [manualOpen, setManualOpen] = useState<boolean | null>(null)
   const wasAtPageTopRef = useRef(true)
-  const countdownHiddenRef = useRef(false)
+  const gestureTimerRef = useRef<number | null>(null)
+  const gestureStartYRef = useRef(0)
 
   useEffect(() => {
-    countdownHiddenRef.current = countdownHidden
-  }, [countdownHidden])
-
-  useEffect(() => {
-    const sync = () => {
-      setAtPageTop(window.scrollY <= SCROLL_TOP_THRESHOLD)
+    const finishGesture = () => {
+      const delta = Math.abs(window.scrollY - gestureStartYRef.current)
+      if (delta < SCROLL_GESTURE_MIN_DELTA_PX) return
+      gestureStartYRef.current = window.scrollY
+      setScrollGestures((count) => count + 1)
     }
-    sync()
-    window.addEventListener('scroll', sync, { passive: true })
-    return () => window.removeEventListener('scroll', sync)
+
+    const onScroll = () => {
+      const y = window.scrollY
+      const atTop = y <= SCROLL_TOP_THRESHOLD
+      setAtPageTop(atTop)
+
+      if (atTop) {
+        if (gestureTimerRef.current != null) {
+          window.clearTimeout(gestureTimerRef.current)
+          gestureTimerRef.current = null
+        }
+        return
+      }
+
+      if (gestureTimerRef.current == null) {
+        gestureStartYRef.current = y
+      }
+
+      if (gestureTimerRef.current != null) {
+        window.clearTimeout(gestureTimerRef.current)
+      }
+      gestureTimerRef.current = window.setTimeout(() => {
+        gestureTimerRef.current = null
+        finishGesture()
+      }, SCROLL_GESTURE_IDLE_MS)
+    }
+
+    gestureStartYRef.current = window.scrollY
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (gestureTimerRef.current != null) {
+        window.clearTimeout(gestureTimerRef.current)
+      }
+    }
   }, [])
 
   useEffect(() => {
     if (atPageTop && !wasAtPageTopRef.current) {
       setManualOpen(null)
-      setCountdownHidden(false)
-      countdownHiddenRef.current = false
+    }
+    if (atPageTop) {
+      setScrollGestures(0)
+      gestureStartYRef.current = window.scrollY
     }
     wasAtPageTopRef.current = atPageTop
   }, [atPageTop])
 
-  useEffect(() => {
-    if (!dailyChallengeVisible || !stickyRef || atPageTop) {
-      setCountdownHidden(false)
-      countdownHiddenRef.current = false
-      return
-    }
-
-    const sticky = stickyRef.current
-    if (!sticky) return
-
-    const sync = () => {
-      const next = shouldCollapseSyntaxForCountdown(sticky, countdownHiddenRef.current)
-      countdownHiddenRef.current = next
-      setCountdownHidden(next)
-    }
-
-    sync()
-    window.addEventListener('scroll', sync, { passive: true })
-    window.addEventListener('resize', sync)
-
-    return () => {
-      window.removeEventListener('scroll', sync)
-      window.removeEventListener('resize', sync)
-    }
-  }, [atPageTop, dailyChallengeVisible, stickyRef])
-
-  const shouldAutoCollapse = atPageTop
-    ? false
-    : dailyChallengeVisible
-      ? countdownHidden
-      : true
+  const shouldAutoCollapse = !atPageTop && scrollGestures >= SCROLL_GESTURES_TO_COLLAPSE
 
   const syntaxOpen = atPageTop
     ? manualOpen !== false
@@ -86,6 +90,6 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
   return {
     syntaxOpen,
     toggleSyntax,
-    autoCollapsed: !atPageTop && shouldAutoCollapse && !syntaxOpen,
+    autoCollapsed: shouldAutoCollapse && !syntaxOpen,
   }
 }
