@@ -84,6 +84,7 @@ export function BroadcastPage() {
         totalCount={setItems.length}
         labelKey="broadcastSearchLabel"
         placeholderKey="broadcastSearchPlaceholder"
+        showShortcutHint={false}
       />
 
       <section className="safety-broadcast-section" aria-label={t('broadcastList')}>

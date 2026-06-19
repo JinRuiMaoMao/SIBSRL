@@ -19,6 +19,7 @@ import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
+import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -651,6 +652,8 @@ export function RouteLookupPage({
       <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>
           <div className="route-display-group-list">
+            <RouteSearchSyntaxDock stickyRef={stickyToolbarRef} />
+
             {dailyChallengeVisible ? (
               <DailyChallengeBanner
                 selected={dailyChallengeSelected}

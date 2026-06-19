@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r24',
+    id: '2026-06-19-r25',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -96,6 +96,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '顶部滚轮侦测：向下滑第 1 次半折叠，第 2 次全折叠；向上滑恢复展开。',
             en: 'Wheel at top: first scroll down half-folds, second fully collapses; scroll up expands again.',
+          },
+          {
+            zh: '移除折叠动画：语法说明移至每日挑战上方随页滚动，顶缘越过搜索框时隐藏。',
+            en: 'Removed fold animations: syntax sits above daily challenge and scrolls with the page; hides when its top passes the search box.',
           },
         ],
       },

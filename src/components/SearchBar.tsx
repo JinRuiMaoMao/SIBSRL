@@ -6,8 +6,6 @@ import {
   isRouteSearchSuggestionActive,
   parseRouteNumberPatternQuery,
 } from '../utils/routeSearchQuery'
-import { useSearchSyntaxCollapse } from '../hooks/useSearchSyntaxCollapse'
-import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 
 interface SearchBarProps {
   value: string
@@ -22,6 +20,7 @@ interface SearchBarProps {
   onApplyHistory?: (query: string) => void
   onClearHistory?: () => void
   inputRef?: RefObject<HTMLInputElement | null>
+  showShortcutHint?: boolean
 }
 
 function suggestionLabel(suggestion: string, t: (key: MessageKey, vars?: Record<string, string | number>) => string): string {
@@ -48,10 +47,10 @@ export function SearchBar({
   onApplyHistory,
   onClearHistory,
   inputRef,
+  showShortcutHint = true,
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
-  const { syntaxFold, syntaxOpen, toggleSyntax } = useSearchSyntaxCollapse()
   const suggestions = useMemo(() => getRouteSearchSuggestions(value), [value])
   const showHistory = focused && !value.trim() && searchHistory.length > 0
 
@@ -134,10 +133,8 @@ export function SearchBar({
         </div>
       ) : null}
 
-      <div
-        className={`search-help${syntaxFold !== 'closed' ? ' search-help--syntax-open' : ''}${syntaxFold === 'half' ? ' search-help--syntax-half' : ''}`}
-      >
-        <div className="search-help-bar">
+      {showShortcutHint ? (
+        <div className="search-help">
           <p className="search-shortcut-hint">
             <span>{t('searchShortcutHint')}</span>
             <span className="search-shortcut-sep" aria-hidden>
@@ -147,18 +144,8 @@ export function SearchBar({
               Esc {t('closeDetail')}
             </span>
           </p>
-          <button
-            type="button"
-            className="search-syntax-toggle"
-            aria-expanded={syntaxOpen}
-            aria-controls="search-syntax-panel"
-            onClick={toggleSyntax}
-          >
-            {syntaxOpen ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
-          </button>
         </div>
-        <SearchSyntaxHelp fold={syntaxFold} />
-      </div>
+      ) : null}
     </div>
   )
 }

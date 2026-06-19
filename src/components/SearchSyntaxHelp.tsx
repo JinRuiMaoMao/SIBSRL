@@ -1,18 +1,18 @@
-import { useRef } from 'react'
+import { useRef, type RefObject } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import type { SyntaxFold } from '../hooks/useSearchSyntaxCollapse'
 import { useSearchSyntaxPanelHeight } from '../hooks/useSearchSyntaxPanelHeight'
 
 interface SearchSyntaxHelpProps {
-  fold: SyntaxFold
+  stickyRef: RefObject<HTMLElement | null>
+  visible?: boolean
 }
 
-export function SearchSyntaxHelp({ fold }: SearchSyntaxHelpProps) {
+export function SearchSyntaxHelp({ stickyRef, visible = true }: SearchSyntaxHelpProps) {
   const { t } = useLocale()
   const panelRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  useSearchSyntaxPanelHeight(fold, panelRef, contentRef)
+  useSearchSyntaxPanelHeight(stickyRef, panelRef, contentRef, visible)
 
   const items = [
     'searchSyntaxZone',
@@ -24,22 +24,14 @@ export function SearchSyntaxHelp({ fold }: SearchSyntaxHelpProps) {
     'searchSyntaxCombine',
   ] as const
 
-  const panelClass = [
-    'search-syntax-collapsible',
-    fold === 'open' ? 'is-open' : '',
-    fold === 'half' ? 'is-half' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
-
   return (
     <div
       ref={panelRef}
       id="search-syntax-panel"
-      className={panelClass}
-      aria-hidden={fold === 'closed'}
+      className="search-syntax-panel"
+      aria-hidden={!visible}
     >
-      <div className="search-syntax-collapsible-inner sibs-scrollbar">
+      <div className="search-syntax-panel-inner sibs-scrollbar">
         <div ref={contentRef} className="search-syntax-help" aria-label={t('searchSyntaxTitle')}>
           <p className="search-syntax-title">{t('searchSyntaxTitle')}</p>
           <ul className="search-syntax-list">
