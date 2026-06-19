@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r15',
+    id: '2026-06-19-r16',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
