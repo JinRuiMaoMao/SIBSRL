@@ -1019,8 +1019,15 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .search-syntax-collapsible.is-open {
-  max-height: 20rem;
+  max-height: var(--search-syntax-open-height, 20rem);
   opacity: 1;
+}
+
+.search-syntax-collapsible.is-open.is-scrollable .search-syntax-collapsible-inner {
+  max-height: var(--search-syntax-open-height, 20rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .search-syntax-collapsible.is-half {

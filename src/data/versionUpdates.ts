@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r21',
+    id: '2026-06-19-r22',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -84,6 +84,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '慢速滚轮时改为半折叠中间态，避免未滚够距离就弹回全开展开导致页面抖动循环。',
             en: 'Slow wheel scroll now uses a half-folded state to avoid expand/collapse layout bounce loops at the top.',
+          },
+          {
+            zh: '高级搜索语法展开高度随屏幕剩余空间自适应（最高 20rem）；超出部分在面板内滚动查看。',
+            en: 'Advanced syntax panel height adapts to remaining viewport (capped at 20rem); overflow scrolls inside the panel.',
           },
         ],
       },
