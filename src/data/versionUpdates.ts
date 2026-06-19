@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r18',
+    id: '2026-06-19-r19',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -72,6 +72,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '语法说明收起判定：滑动 1 次、停顿超过 1ms 即隐藏。',
             en: 'Syntax panel hides after one scroll gesture with a pause over 1ms.',
+          },
+          {
+            zh: '修复轻微滑动无法收起语法说明的问题（改为按页面滚动距离判定，不再误算增量）。',
+            en: 'Fixed syntax not collapsing on small scrolls (use page scrollY after idle, not per-event delta).',
           },
         ],
       },
