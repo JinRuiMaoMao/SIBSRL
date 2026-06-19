@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r16',
+    id: '2026-06-19-r17',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -64,6 +64,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '高级搜索语法改为滑动 2 次后自动收起，滚回页面顶部时自动展开。',
             en: 'Advanced syntax now auto-hides after two scroll gestures and re-expands at the top.',
+          },
+          {
+            zh: '修复须滚过很深才收起的问题：滑动 1 次（≥5px、停顿 5ms）即收起，顶部 80px 内不再误清零计数。',
+            en: 'Fixed syntax staying open until deep scroll—one 5px gesture with 5ms pause now collapses it; counter no longer resets in the top 80px band.',
           },
         ],
       },

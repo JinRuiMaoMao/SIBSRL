@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-/** 视为「页面顶部」的滚动距离；滚回此处时自动展开语法说明 */
+/** 滚回此距离内时自动展开语法说明并清零滑动计数 */
 const SCROLL_TOP_THRESHOLD = 80
 /** 累计几次滑动后自动收起语法说明 */
-const SCROLL_GESTURES_TO_COLLAPSE = 2
+const SCROLL_GESTURES_TO_COLLAPSE = 1
 /** 一次滑动结束的空闲判定（毫秒） */
 const SCROLL_GESTURE_IDLE_MS = 5
 /** 至少滚动这么多像素才算一次有效滑动 */
@@ -28,10 +28,9 @@ export function useSearchSyntaxCollapse() {
 
     const onScroll = () => {
       const y = window.scrollY
-      const atTop = y <= SCROLL_TOP_THRESHOLD
-      setAtPageTop(atTop)
+      setAtPageTop(y <= SCROLL_TOP_THRESHOLD)
 
-      if (atTop) {
+      if (y <= SCROLL_GESTURE_MIN_DELTA_PX) {
         if (gestureTimerRef.current != null) {
           window.clearTimeout(gestureTimerRef.current)
           gestureTimerRef.current = null
@@ -66,26 +65,21 @@ export function useSearchSyntaxCollapse() {
   useEffect(() => {
     if (atPageTop && !wasAtPageTopRef.current) {
       setManualOpen(null)
-    }
-    if (atPageTop) {
       setScrollGestures(0)
       gestureStartYRef.current = window.scrollY
     }
     wasAtPageTopRef.current = atPageTop
   }, [atPageTop])
 
-  const shouldAutoCollapse = !atPageTop && scrollGestures >= SCROLL_GESTURES_TO_COLLAPSE
-
-  const syntaxOpen = atPageTop
-    ? manualOpen !== false
-    : (manualOpen ?? !shouldAutoCollapse)
+  const shouldAutoCollapse = scrollGestures >= SCROLL_GESTURES_TO_COLLAPSE
+  const syntaxOpen = manualOpen ?? !shouldAutoCollapse
 
   const toggleSyntax = useCallback(() => {
     setManualOpen((prev) => {
-      const current = atPageTop ? prev !== false : (prev ?? !shouldAutoCollapse)
+      const current = prev ?? !shouldAutoCollapse
       return !current
     })
-  }, [atPageTop, shouldAutoCollapse])
+  }, [shouldAutoCollapse])
 
   return {
     syntaxOpen,
