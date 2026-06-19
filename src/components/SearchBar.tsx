@@ -51,7 +51,7 @@ export function SearchBar({
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
-  const { syntaxOpen, toggleSyntax } = useSearchSyntaxCollapse()
+  const { syntaxFold, syntaxOpen, toggleSyntax } = useSearchSyntaxCollapse()
   const suggestions = useMemo(() => getRouteSearchSuggestions(value), [value])
   const showHistory = focused && !value.trim() && searchHistory.length > 0
 
@@ -134,7 +134,9 @@ export function SearchBar({
         </div>
       ) : null}
 
-      <div className={`search-help${syntaxOpen ? ' search-help--syntax-open' : ''}`}>
+      <div
+        className={`search-help${syntaxFold !== 'closed' ? ' search-help--syntax-open' : ''}${syntaxFold === 'half' ? ' search-help--syntax-half' : ''}`}
+      >
         <div className="search-help-bar">
           <p className="search-shortcut-hint">
             <span>{t('searchShortcutHint')}</span>
@@ -155,7 +157,7 @@ export function SearchBar({
             {syntaxOpen ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
           </button>
         </div>
-        <SearchSyntaxHelp open={syntaxOpen} />
+        <SearchSyntaxHelp fold={syntaxFold} />
       </div>
     </div>
   )

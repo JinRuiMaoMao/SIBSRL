@@ -1023,6 +1023,14 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   opacity: 1;
 }
 
+.search-syntax-collapsible.is-half {
+  max-height: 2.85rem;
+  opacity: 0.92;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+
 .search-syntax-collapsible-inner {
   padding-bottom: 0.05rem;
 }

@@ -1,10 +1,11 @@
 import { useLocale } from '../i18n/LocaleContext'
+import type { SyntaxFold } from '../hooks/useSearchSyntaxCollapse'
 
 interface SearchSyntaxHelpProps {
-  open: boolean
+  fold: SyntaxFold
 }
 
-export function SearchSyntaxHelp({ open }: SearchSyntaxHelpProps) {
+export function SearchSyntaxHelp({ fold }: SearchSyntaxHelpProps) {
   const { t } = useLocale()
 
   const items = [
@@ -17,12 +18,20 @@ export function SearchSyntaxHelp({ open }: SearchSyntaxHelpProps) {
     'searchSyntaxCombine',
   ] as const
 
+  const panelClass = [
+    'search-syntax-collapsible',
+    fold === 'open' ? 'is-open' : '',
+    fold === 'half' ? 'is-half' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-        <div
-          id="search-syntax-panel"
-          className={`search-syntax-collapsible ${open ? 'is-open' : ''}`}
-          aria-hidden={!open}
-        >
+    <div
+      id="search-syntax-panel"
+      className={panelClass}
+      aria-hidden={fold === 'closed'}
+    >
       <div className="search-syntax-collapsible-inner">
         <div className="search-syntax-help" aria-label={t('searchSyntaxTitle')}>
           <p className="search-syntax-title">{t('searchSyntaxTitle')}</p>
