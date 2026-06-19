@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r10',
+    id: '2026-06-19-r11',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -48,6 +48,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复语法说明折叠/展开抖动；回到页面顶部时自动展开。',
             en: 'Fixed syntax panel flicker on collapse/expand; it auto-expands again when you scroll back to the top.',
+          },
+          {
+            zh: '修复页顶「收起语法」按钮无法点击的问题。',
+            en: 'Fixed “Hide syntax” not working at the top of the page.',
           },
         ],
       },

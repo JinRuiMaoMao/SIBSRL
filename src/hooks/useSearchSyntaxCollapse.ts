@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 import { DAILY_CHALLENGE_CARD_ID } from '../data/dailyChallenge'
 
-/** 视为「页面顶部」的滚动距离；回到此处自动展开语法说明 */
+/** 视为「页面顶部」的滚动距离；从下方滚回此处时自动展开语法说明 */
 const SCROLL_TOP_THRESHOLD = 80
 /** 每日挑战顶缘进入搜索框下方此距离内时折叠语法 */
 const CHALLENGE_COLLAPSE_GAP_PX = 12
@@ -15,8 +15,9 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
   const { stickyRef, dailyChallengeVisible = false } = options
   const [atPageTop, setAtPageTop] = useState(true)
   const [challengeNearToolbar, setChallengeNearToolbar] = useState(false)
-  /** 离开顶部后的手动展开/收起；回顶时清除 */
+  /** 手动展开/收起；从下方滚回顶部时清除以恢复默认展开 */
   const [manualOpen, setManualOpen] = useState<boolean | null>(null)
+  const wasAtPageTopRef = useRef(true)
 
   useEffect(() => {
     const sync = () => {
@@ -26,6 +27,13 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
     window.addEventListener('scroll', sync, { passive: true })
     return () => window.removeEventListener('scroll', sync)
   }, [])
+
+  useEffect(() => {
+    if (atPageTop && !wasAtPageTopRef.current) {
+      setManualOpen(null)
+    }
+    wasAtPageTopRef.current = atPageTop
+  }, [atPageTop])
 
   useEffect(() => {
     if (!dailyChallengeVisible || !stickyRef || atPageTop) {
@@ -69,22 +77,19 @@ export function useSearchSyntaxCollapse(options: SearchSyntaxCollapseOptions = {
     }
   }, [atPageTop, dailyChallengeVisible, stickyRef])
 
-  useEffect(() => {
-    if (atPageTop) setManualOpen(null)
-  }, [atPageTop])
-
   const shouldAutoCollapse = atPageTop
     ? false
     : dailyChallengeVisible
       ? challengeNearToolbar
       : true
 
-  const syntaxOpen = atPageTop ? true : (manualOpen ?? !shouldAutoCollapse)
+  const syntaxOpen = atPageTop
+    ? manualOpen !== false
+    : (manualOpen ?? !shouldAutoCollapse)
 
   const toggleSyntax = useCallback(() => {
-    if (atPageTop) return
     setManualOpen((prev) => {
-      const current = prev ?? !shouldAutoCollapse
+      const current = atPageTop ? prev !== false : (prev ?? !shouldAutoCollapse)
       return !current
     })
   }, [atPageTop, shouldAutoCollapse])
