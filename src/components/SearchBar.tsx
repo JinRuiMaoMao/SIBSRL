@@ -6,6 +6,7 @@ import {
   isRouteSearchSuggestionActive,
   parseRouteNumberPatternQuery,
 } from '../utils/routeSearchQuery'
+import { useSearchSyntaxCollapse } from '../hooks/useSearchSyntaxCollapse'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 
 interface SearchBarProps {
@@ -50,6 +51,7 @@ export function SearchBar({
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
+  const { syntaxOpen, toggleSyntax } = useSearchSyntaxCollapse()
   const suggestions = useMemo(() => getRouteSearchSuggestions(value), [value])
   const showHistory = focused && !value.trim() && searchHistory.length > 0
 
@@ -133,8 +135,27 @@ export function SearchBar({
       ) : null}
 
       <div className="search-help">
-        <p className="search-shortcut-hint">{t('searchShortcutHint')}</p>
-        <SearchSyntaxHelp />
+        <div className="search-help-bar">
+          <p className="search-shortcut-hint">
+            <span>{t('searchShortcutHint')}</span>
+            <span className="search-shortcut-sep" aria-hidden>
+              {' · '}
+            </span>
+            <span className="search-shortcut-close">
+              Esc {t('closeDetail')}
+            </span>
+          </p>
+          <button
+            type="button"
+            className="search-syntax-toggle"
+            aria-expanded={syntaxOpen}
+            aria-controls="search-syntax-panel"
+            onClick={toggleSyntax}
+          >
+            {syntaxOpen ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
+          </button>
+        </div>
+        <SearchSyntaxHelp open={syntaxOpen} />
       </div>
     </div>
   )

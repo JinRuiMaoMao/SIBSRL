@@ -19,13 +19,22 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r5',
+    id: '2026-06-19-r6',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
       en: '2026-06-19 updates',
     },
     groups: [
+      {
+        title: { zh: '搜索栏', en: 'Search bar' },
+        items: [
+          {
+            zh: '页面向下滚动后自动收起「高级搜索语法」，「展开语法」按钮位于 Esc 关闭详情 右侧，带平滑折叠动画。',
+            en: 'Advanced search syntax auto-collapses after scrolling; “Show syntax” sits beside Esc close details with a smooth animation.',
+          },
+        ],
+      },
       {
         title: { zh: '线路卡片', en: 'Route cards' },
         items: [
