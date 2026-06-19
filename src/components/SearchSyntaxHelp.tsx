@@ -36,7 +36,12 @@ export function SearchSyntaxHelp({ stickyRef, visible = true }: SearchSyntaxHelp
           <p className="search-syntax-title">{t('searchSyntaxTitle')}</p>
           <ul className="search-syntax-list">
             {items.map((key) => (
-              <li key={key}>{t(key)}</li>
+              <li
+                key={key}
+                className={key === 'searchSyntaxCombine' ? 'search-syntax-list-footnote' : undefined}
+              >
+                {t(key)}
+              </li>
             ))}
           </ul>
         </div>

@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r27',
+    id: '2026-06-19-r28',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -108,6 +108,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '修复手动收起后无法展开（收起时仍保留按钮栏可点击）。',
             en: 'Fixed manual collapse leaving the expand button unreachable; the control bar stays visible.',
+          },
+          {
+            zh: '语法说明末行「可与站名、线路号混用…」下方增加留白。',
+            en: 'Added spacing below the last syntax help line about combining queries and full-width colons.',
           },
         ],
       },

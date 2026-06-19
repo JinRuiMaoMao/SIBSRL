@@ -1063,6 +1063,10 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   margin-top: 0.12rem;
 }
 
+.search-syntax-list-footnote {
+  margin-bottom: 0.45rem;
+}
+
 .search-syntax-list code {
   font-family: var(--font-mono);
   font-size: 0.9em;
