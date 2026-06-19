@@ -14,9 +14,14 @@ function isAtScrollTop(): boolean {
   return readScrollY() <= SCROLL_TOP_THRESHOLD
 }
 
+export function isSearchSyntaxAtScrollTop(): boolean {
+  return isAtScrollTop()
+}
+
 export function useSearchSyntaxScrollHide(
   stickyRef: RefObject<HTMLElement | null>,
   syntaxRef: RefObject<HTMLElement | null>,
+  options?: { onReturnToTop?: () => void },
 ) {
   const [hidden, setHidden] = useState(false)
   const [forceOpen, setForceOpen] = useState(false)
@@ -70,6 +75,19 @@ export function useSearchSyntaxScrollHide(
   }, [dismissForceOpen])
 
   useEffect(() => {
+    const onReturnToTop = options?.onReturnToTop
+    let prevScrollY = readScrollY()
+
+    const notifyReturnToTop = () => {
+      onReturnToTop?.()
+    }
+
+    const maybeNotifyReturnToTop = (scrollY: number) => {
+      if (prevScrollY > SCROLL_TOP_THRESHOLD && scrollY <= SCROLL_TOP_THRESHOLD) {
+        notifyReturnToTop()
+      }
+      prevScrollY = scrollY
+    }
     const hideWithCollapse = () => {
       const syntax = syntaxRef.current
       if (!syntax || latchedRef.current || forceOpenRef.current) return
@@ -125,7 +143,15 @@ export function useSearchSyntaxScrollHide(
           hideTriggeredAtScrollYRef.current > SCROLL_TOP_THRESHOLD
         ) {
           clearScrollHidden()
+          notifyReturnToTop()
         }
+        maybeNotifyReturnToTop(scrollY)
+        return
+      }
+
+      if (scrollY <= SCROLL_TOP_THRESHOLD) {
+        setHidden(false)
+        maybeNotifyReturnToTop(scrollY)
         return
       }
 
@@ -140,6 +166,7 @@ export function useSearchSyntaxScrollHide(
       } else {
         setHidden(false)
       }
+      maybeNotifyReturnToTop(scrollY)
     }
 
     const onWheel = (event: WheelEvent) => {
@@ -154,6 +181,7 @@ export function useSearchSyntaxScrollHide(
       if (!isAtScrollTop()) return
       if (!latchedRef.current || skipUnhideRef.current) return
       clearScrollHidden()
+      notifyReturnToTop()
     }
 
     sync()
@@ -173,7 +201,7 @@ export function useSearchSyntaxScrollHide(
         window.clearTimeout(forceOpenGraceTimerRef.current)
       }
     }
-  }, [clearScrollHidden, dismissForceOpen, stickyRef, syntaxRef])
+  }, [clearScrollHidden, dismissForceOpen, options?.onReturnToTop, stickyRef, syntaxRef])
 
   return { scrollHidden: hidden, forceOpen, clearScrollHidden, releaseForceOpen }
 }

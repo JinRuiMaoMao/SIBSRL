@@ -25,7 +25,7 @@ import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
-import { useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
+import { isSearchSyntaxAtScrollTop, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { getPrimaryText } from '../i18n/displayText'
@@ -122,6 +122,19 @@ export function RouteLookupPage({
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
   const syntaxPanelRef = useRef<HTMLDivElement>(null)
   const [syntaxManualHidden, setSyntaxManualHidden] = useState(false)
+  const syntaxManualHiddenRef = useRef(false)
+  const manualHideCanUnlockAtTopRef = useRef(false)
+
+  const clearManualSyntaxHide = useCallback(() => {
+    syntaxManualHiddenRef.current = false
+    manualHideCanUnlockAtTopRef.current = false
+    setSyntaxManualHidden(false)
+  }, [])
+
+  const tryUnlockManualSyntaxHideAtTop = useCallback(() => {
+    if (!syntaxManualHiddenRef.current || !manualHideCanUnlockAtTopRef.current) return
+    clearManualSyntaxHide()
+  }, [clearManualSyntaxHide])
   const [routePageDetail, setRoutePageDetail] = useState<{
     route: BusRoute
     pageData: RoutePageData | null
@@ -155,24 +168,72 @@ export function RouteLookupPage({
   } = useRouteSearch(dailyChallenge)
   const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
   const { scrollHidden: syntaxScrollHidden, forceOpen: syntaxForceOpen, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
-    useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef)
+    useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef, {
+      onReturnToTop: tryUnlockManualSyntaxHideAtTop,
+    })
   const syntaxInFlowVisible = !syntaxScrollHidden && !syntaxManualHidden && !syntaxForceOpen
   const syntaxExpanded = syntaxForceOpen || (!syntaxScrollHidden && !syntaxManualHidden)
 
   const handleSyntaxToggle = () => {
     if (!syntaxExpanded) {
+      const atTop = isSearchSyntaxAtScrollTop()
       if (syntaxScrollHidden) {
-        clearSyntaxScrollHidden({ forceOpen: true })
+        if (atTop) {
+          clearSyntaxScrollHidden()
+          clearManualSyntaxHide()
+        } else {
+          clearSyntaxScrollHidden({ forceOpen: true })
+        }
       } else {
-        setSyntaxManualHidden(false)
+        clearManualSyntaxHide()
+        if (atTop) clearSyntaxScrollHidden()
       }
       return
     }
     if (syntaxForceOpen) {
       releaseSyntaxForceOpen()
     }
+    syntaxManualHiddenRef.current = true
+    manualHideCanUnlockAtTopRef.current =
+      (window.scrollY || document.documentElement.scrollTop || 0) > 80
     setSyntaxManualHidden(true)
   }
+
+  useEffect(() => {
+    const SCROLL_TOP_THRESHOLD = 80
+
+    const syncManualHideUnlock = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0
+      if (syntaxManualHiddenRef.current && scrollY > SCROLL_TOP_THRESHOLD) {
+        manualHideCanUnlockAtTopRef.current = true
+      }
+      if (
+        syntaxManualHiddenRef.current &&
+        scrollY <= SCROLL_TOP_THRESHOLD &&
+        manualHideCanUnlockAtTopRef.current
+      ) {
+        clearManualSyntaxHide()
+        clearSyntaxScrollHidden()
+      }
+    }
+
+    const onWheel = (event: WheelEvent) => {
+      if (event.deltaY >= 0) return
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0
+      if (scrollY > SCROLL_TOP_THRESHOLD) return
+      if (!syntaxManualHiddenRef.current) return
+      clearManualSyntaxHide()
+      clearSyntaxScrollHidden()
+    }
+
+    syncManualHideUnlock()
+    window.addEventListener('scroll', syncManualHideUnlock, { passive: true })
+    window.addEventListener('wheel', onWheel, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', syncManualHideUnlock)
+      window.removeEventListener('wheel', onWheel)
+    }
+  }, [clearManualSyntaxHide, clearSyntaxScrollHidden])
   const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
   const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)

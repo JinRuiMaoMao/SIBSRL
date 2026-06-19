@@ -145,116 +145,20 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         title: { zh: '搜索栏', en: 'Search bar' },
         items: [
           {
-            zh: '页面向下滚动后自动收起「高级搜索语法」，「展开语法」按钮位于 Esc 关闭详情 右侧，带平滑折叠动画。',
-            en: 'Advanced search syntax auto-collapses after scrolling; “Show syntax” sits beside Esc close details with a smooth animation.',
+            zh: '高级搜索语法移至每日挑战上方随页滚动；置顶栏 Esc 旁保留「展开/收起语法」与快捷键提示。面板高度随视口自适应（最高 20rem），内容过多时在内部滚动。',
+            en: 'Advanced syntax sits above the daily challenge and scrolls with the page; the sticky bar keeps Show/Hide syntax beside Esc and shortcut hints. Panel height adapts to the viewport (max 20rem) with internal scrolling when needed.',
           },
           {
-            zh: '修复「收起语法」在页顶或滚动后点击无效的问题。',
-            en: 'Fixed “Hide syntax” not responding at the top of the page or after scrolling.',
+            zh: '向下滑动：语法顶缘越过搜索框时自动隐藏，隐藏后仍可通过置顶按钮展开；页顶区域内不触发滚动隐藏，滚回顶部自动恢复展开。',
+            en: 'Scrolling down: syntax auto-hides when its top passes the search box, but the sticky toggle still works; the top band skips scroll-hide and syntax re-expands when you return to the top.',
           },
           {
-            zh: '修复高级搜索语法末行文字被裁切、或与下方线路卡片重叠的问题。',
-            en: 'Fixed advanced syntax help text being clipped or overlapped by route cards below.',
+            zh: '页面中部点「展开语法」时，在当前位置固定显示于搜索栏下方（不跳回顶部）；再次滚动或手动收起后隐藏。',
+            en: 'Mid-page, Show syntax pins the panel below the search bar at your current scroll position (no jump to top); scroll again or tap Hide to dismiss.',
           },
           {
-            zh: '每日挑战上滑至搜索栏区域时，高级搜索语法自动折叠。',
-            en: 'Advanced search syntax auto-collapses when the daily challenge scrolls into the search bar area.',
-          },
-          {
-            zh: '修复语法说明折叠/展开抖动；回到页面顶部时自动展开。',
-            en: 'Fixed syntax panel flicker on collapse/expand; it auto-expands again when you scroll back to the top.',
-          },
-          {
-            zh: '修复页顶「收起语法」按钮无法点击的问题。',
-            en: 'Fixed “Hide syntax” not working at the top of the page.',
-          },
-          {
-            zh: '高级搜索语法改为与倒计时同步：倒计时滚入搜索栏后方时自动收起，重新露出时自动展开。',
-            en: 'Advanced syntax now follows the countdown—collapses when it scrolls under the search bar, expands when it comes back.',
-          },
-          {
-            zh: '修复倒计时临界区语法说明反复折叠/展开的抖动（稳定参考线 + 滞后区间）。',
-            en: 'Fixed syntax panel flicker near the countdown threshold (stable anchor + hysteresis).',
-          },
-          {
-            zh: '高级搜索语法改为滑动 2 次后自动收起，滚回页面顶部时自动展开。',
-            en: 'Advanced syntax now auto-hides after two scroll gestures and re-expands at the top.',
-          },
-          {
-            zh: '修复须滚过很深才收起的问题：滑动 1 次（≥5px、停顿 5ms）即收起，顶部 80px 内不再误清零计数。',
-            en: 'Fixed syntax staying open until deep scroll—one 5px gesture with 5ms pause now collapses it; counter no longer resets in the top 80px band.',
-          },
-          {
-            zh: '语法说明收起判定：滑动 1 次、停顿超过 1ms 即隐藏。',
-            en: 'Syntax panel hides after one scroll gesture with a pause over 1ms.',
-          },
-          {
-            zh: '修复轻微滑动无法收起语法说明的问题（改为按页面滚动距离判定，不再误算增量）。',
-            en: 'Fixed syntax not collapsing on small scrolls (use page scrollY after idle, not per-event delta).',
-          },
-          {
-            zh: '页面已到顶时，滚轮向上滑可重新展开语法说明；滚回顶部停下也会自动展开。',
-            en: 'Wheel up at scroll top re-expands syntax; stopping near the top also expands it again.',
-          },
-          {
-            zh: '慢速滚轮时改为半折叠中间态，避免未滚够距离就弹回全开展开导致页面抖动循环。',
-            en: 'Slow wheel scroll now uses a half-folded state to avoid expand/collapse layout bounce loops at the top.',
-          },
-          {
-            zh: '高级搜索语法展开高度随屏幕剩余空间自适应（最高 20rem）；超出部分在面板内滚动查看。',
-            en: 'Advanced syntax panel height adapts to remaining viewport (capped at 20rem); overflow scrolls inside the panel.',
-          },
-          {
-            zh: '加宽半折叠滞后区间（1–48px），减轻全开/全关之间抽搐且跳过半折叠的问题。',
-            en: 'Wider half-fold hysteresis (1–48px) reduces open/closed flicker that skipped the half-fold state.',
-          },
-          {
-            zh: '顶部滚轮侦测：向下滑第 1 次半折叠，第 2 次全折叠；向上滑恢复展开。',
-            en: 'Wheel at top: first scroll down half-folds, second fully collapses; scroll up expands again.',
-          },
-          {
-            zh: '移除折叠动画：语法说明移至每日挑战上方随页滚动，顶缘越过搜索框时隐藏。',
-            en: 'Removed fold animations: syntax sits above daily challenge and scrolls with the page; hides when its top passes the search box.',
-          },
-          {
-            zh: '恢复语法区块底部圆角与「展开/收起语法」按钮。',
-            en: 'Restored syntax panel bottom corners and the show/hide syntax toggle.',
-          },
-          {
-            zh: '修复手动收起后无法展开（收起时仍保留按钮栏可点击）。',
-            en: 'Fixed manual collapse leaving the expand button unreachable; the control bar stays visible.',
-          },
-          {
-            zh: '语法说明末行「可与站名、线路号混用…」下方增加留白。',
-            en: 'Added spacing below the last syntax help line about combining queries and full-width colons.',
-          },
-          {
-            zh: '修复标签页全折叠时未收起语法下滑页面抽搐（滚动隐藏不再压缩布局高度）。',
-            en: 'Fixed scroll jitter when all route groups are collapsed—scroll-hide no longer collapses layout height.',
-          },
-          {
-            zh: '滚动隐藏语法时收起占位并补偿滚动，消除与每日挑战之间的大空隙。',
-            en: 'Scroll-hide now collapses syntax layout with scroll compensation, removing the large gap above daily challenge.',
-          },
-          {
-            zh: '快捷键与「展开/收起语法」移回置顶搜索栏，下滑隐藏语法后仍可点击展开。',
-            en: 'Shortcut hint and syntax toggle moved back to the sticky search bar so expand stays available after scroll-hide.',
-          },
-          {
-            zh: '下滑后点「展开语法」可立即显示并滚至搜索栏下方，且不会被滚动检测立刻再藏。',
-            en: 'After scrolling down, “Show syntax” reveals the panel below the search bar and keeps it open until you hide it.',
-          },
-          {
-            zh: '下滑后展开语法改为在当前位置固定显示于搜索栏下方，不再滚回顶部。',
-            en: 'Expanded syntax after scrolling now pins below the search bar at your current scroll position instead of jumping to the top.',
-          },
-          {
-            zh: '固定展开的语法在用户再次滚动页面时自动隐藏。',
-            en: 'Pinned syntax auto-hides when the user scrolls the page again.',
-          },
-          {
-            zh: '修复点击展开后语法立刻缩回的问题（展开保护期 + 滚轮/滑动才关闭）。',
-            en: 'Fixed pinned syntax closing immediately after expand (grace period; dismiss on wheel/scroll only).',
+            zh: '一并修复：收起/展开按钮无效、与线路卡片重叠或末行裁切、滚动隐藏布局抽搐与大空隙、手动收起回顶不展开、页顶展开后滚轮立刻又隐藏等问题。',
+            en: 'Also fixed: hide/show toggle not responding, clipped or overlapping syntax text, scroll-hide layout jitter and gaps, manual hide not restoring at the top, and wheel immediately re-hiding after expand at the top.',
           },
         ],
       },
