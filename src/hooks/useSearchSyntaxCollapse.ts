@@ -2,13 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type SyntaxFold = 'open' | 'half' | 'closed'
 
-/** 离开页面最顶部后进入半折叠 */
-const SCROLL_HALF_ENTER_Y = 1
-/** 超过此距离才完全收起（与半折叠之间留滞后带） */
-const SCROLL_FULL_COLLAPSE_Y = 48
-/** 视为顶部区域：滚轮上滑可展开 */
+/** 视为顶部区域：在此区域内用滚轮阶梯折叠 */
 const SCROLL_TOP_ZONE_Y = 80
-/** 滚动停下后再更新折叠（毫秒） */
+/** 页面实际滚过此距离则强制全折叠（触摸/拖动滚动） */
+const SCROLL_FULL_COLLAPSE_Y = 48
+/** 同一记滚轮手势内多次 tick 的合并窗口（毫秒） */
+const WHEEL_GESTURE_IDLE_MS = 100
+/** 页面滚动停下后再判定强制全折叠（毫秒） */
 const SCROLL_IDLE_MS = 48
 
 function readScrollY(): number {
@@ -19,18 +19,19 @@ function isInTopZone(): boolean {
   return readScrollY() <= SCROLL_TOP_ZONE_Y
 }
 
-function resolveAutoFold(scrollY: number, previous: SyntaxFold): SyntaxFold {
-  if (scrollY > SCROLL_FULL_COLLAPSE_Y) return 'closed'
-  if (scrollY > SCROLL_HALF_ENTER_Y) return 'half'
-  if (previous === 'half' || previous === 'closed') return previous
+function foldFromWheelSteps(steps: number): SyntaxFold {
+  if (steps >= 2) return 'closed'
+  if (steps >= 1) return 'half'
   return 'open'
 }
 
 export function useSearchSyntaxCollapse() {
   const [syntaxFold, setSyntaxFold] = useState<SyntaxFold>('open')
-  /** 手动覆盖自动折叠；滚轮上滑回顶时清除 */
+  /** 手动覆盖自动折叠 */
   const [manualFold, setManualFold] = useState<SyntaxFold | null>(null)
-  const idleTimerRef = useRef<number | null>(null)
+  const scrollIdleRef = useRef<number | null>(null)
+  const wheelIdleRef = useRef<number | null>(null)
+  const wheelStepsRef = useRef(0)
   const syntaxFoldRef = useRef<SyntaxFold>('open')
   const manualFoldRef = useRef<SyntaxFold | null>(null)
 
@@ -45,57 +46,85 @@ export function useSearchSyntaxCollapse() {
     manualFoldRef.current = manualFold
   }, [manualFold])
 
+  const applyWheelSteps = useCallback((steps: number) => {
+    wheelStepsRef.current = steps
+    setManualFold(null)
+    setSyntaxFold(foldFromWheelSteps(steps))
+  }, [])
+
   const expandSyntax = useCallback(() => {
+    wheelStepsRef.current = 0
     setManualFold(null)
     setSyntaxFold('open')
   }, [])
 
+  const registerWheelDownGesture = useCallback(() => {
+    if (manualFoldRef.current != null) return
+    if (!isInTopZone()) return
+    applyWheelSteps(Math.min(2, wheelStepsRef.current + 1))
+  }, [applyWheelSteps])
+
   const applyScrollFold = useCallback(() => {
     if (manualFoldRef.current != null) return
-    const next = resolveAutoFold(readScrollY(), syntaxFoldRef.current)
-    if (next !== syntaxFoldRef.current) {
-      setSyntaxFold(next)
+    if (readScrollY() > SCROLL_FULL_COLLAPSE_Y) {
+      applyWheelSteps(2)
     }
-  }, [])
-
-  const scheduleScrollIdle = useCallback(() => {
-    if (idleTimerRef.current != null) {
-      window.clearTimeout(idleTimerRef.current)
-    }
-    idleTimerRef.current = window.setTimeout(() => {
-      idleTimerRef.current = null
-      requestAnimationFrame(applyScrollFold)
-    }, SCROLL_IDLE_MS)
-  }, [applyScrollFold])
+  }, [applyWheelSteps])
 
   useEffect(() => {
     const onScroll = () => {
-      scheduleScrollIdle()
+      if (scrollIdleRef.current != null) {
+        window.clearTimeout(scrollIdleRef.current)
+      }
+      scrollIdleRef.current = window.setTimeout(() => {
+        scrollIdleRef.current = null
+        requestAnimationFrame(applyScrollFold)
+      }, SCROLL_IDLE_MS)
     }
 
     const onWheel = (event: WheelEvent) => {
-      if (event.deltaY >= 0) return
-      if (!isInTopZone()) return
-      if (syntaxFoldRef.current === 'open') return
-      expandSyntax()
+      if (event.deltaY < 0) {
+        if (wheelIdleRef.current != null) {
+          window.clearTimeout(wheelIdleRef.current)
+          wheelIdleRef.current = null
+        }
+        if (!isInTopZone()) return
+        if (syntaxFoldRef.current === 'open') return
+        expandSyntax()
+        return
+      }
+
+      if (event.deltaY <= 0 || !isInTopZone()) return
+
+      if (wheelIdleRef.current != null) {
+        window.clearTimeout(wheelIdleRef.current)
+      }
+      wheelIdleRef.current = window.setTimeout(() => {
+        wheelIdleRef.current = null
+        registerWheelDownGesture()
+      }, WHEEL_GESTURE_IDLE_MS)
     }
 
-    scheduleScrollIdle()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('wheel', onWheel, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('wheel', onWheel)
-      if (idleTimerRef.current != null) {
-        window.clearTimeout(idleTimerRef.current)
+      if (scrollIdleRef.current != null) {
+        window.clearTimeout(scrollIdleRef.current)
+      }
+      if (wheelIdleRef.current != null) {
+        window.clearTimeout(wheelIdleRef.current)
       }
     }
-  }, [expandSyntax, scheduleScrollIdle])
+  }, [applyScrollFold, expandSyntax, registerWheelDownGesture])
 
   const toggleSyntax = useCallback(() => {
     setManualFold((prev) => {
       const current = prev ?? syntaxFold
-      return current === 'open' ? 'closed' : 'open'
+      const next = current === 'open' ? 'closed' : 'open'
+      wheelStepsRef.current = next === 'closed' ? 2 : 0
+      return next
     })
   }, [syntaxFold])
 

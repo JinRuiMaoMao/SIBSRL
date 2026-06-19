@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r23',
+    id: '2026-06-19-r24',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -92,6 +92,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '加宽半折叠滞后区间（1–48px），减轻全开/全关之间抽搐且跳过半折叠的问题。',
             en: 'Wider half-fold hysteresis (1–48px) reduces open/closed flicker that skipped the half-fold state.',
+          },
+          {
+            zh: '顶部滚轮侦测：向下滑第 1 次半折叠，第 2 次全折叠；向上滑恢复展开。',
+            en: 'Wheel at top: first scroll down half-folds, second fully collapses; scroll up expands again.',
           },
         ],
       },
