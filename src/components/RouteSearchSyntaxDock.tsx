@@ -12,13 +12,12 @@ export function RouteSearchSyntaxDock({ stickyRef }: RouteSearchSyntaxDockProps)
   const dockRef = useRef<HTMLDivElement>(null)
   const [manualHidden, setManualHidden] = useState(false)
   const scrollHidden = useSearchSyntaxScrollHide(stickyRef, dockRef)
-  const hidden = scrollHidden || manualHidden
-  const syntaxOpen = !hidden
+  const syntaxVisible = !scrollHidden && !manualHidden
 
   return (
     <div
       ref={dockRef}
-      className={`route-syntax-dock${hidden ? ' is-hidden' : ''}`}
+      className={`route-syntax-dock${scrollHidden ? ' is-scroll-hidden' : ''}${manualHidden ? ' is-manual-collapsed' : ''}`}
     >
       <div className="route-syntax-shell">
         <div className="search-help-bar">
@@ -34,14 +33,14 @@ export function RouteSearchSyntaxDock({ stickyRef }: RouteSearchSyntaxDockProps)
           <button
             type="button"
             className="search-syntax-toggle"
-            aria-expanded={syntaxOpen}
+            aria-expanded={syntaxVisible}
             aria-controls="search-syntax-panel"
             onClick={() => setManualHidden((value) => !value)}
           >
-            {syntaxOpen ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
+            {syntaxVisible ? t('searchSyntaxCollapse') : t('searchSyntaxExpand')}
           </button>
         </div>
-        <SearchSyntaxHelp stickyRef={stickyRef} visible={!hidden} />
+        <SearchSyntaxHelp stickyRef={stickyRef} visible={syntaxVisible} />
       </div>
     </div>
   )

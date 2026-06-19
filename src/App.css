@@ -973,16 +973,20 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   padding: 0.2rem 0.65rem 0.15rem;
 }
 
-.route-syntax-dock.is-hidden .route-syntax-shell {
+.route-syntax-dock.is-scroll-hidden .route-syntax-shell {
   visibility: hidden;
 }
 
-.route-syntax-dock.is-hidden {
+.route-syntax-dock.is-scroll-hidden {
   visibility: hidden;
   height: 0;
   margin: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+.route-syntax-dock.is-manual-collapsed .search-syntax-panel {
+  display: none;
 }
 
 .search-syntax-toggle {

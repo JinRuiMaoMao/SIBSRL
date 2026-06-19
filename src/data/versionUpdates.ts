@@ -19,7 +19,7 @@ export function getLatestUpdateId(): string | undefined {
 
 export const versionUpdates: VersionUpdateEntry[] = [
   {
-    id: '2026-06-19-r26',
+    id: '2026-06-19-r27',
     date: '2026-06-19',
     title: {
       zh: '2026-06-19 更新',
@@ -104,6 +104,10 @@ export const versionUpdates: VersionUpdateEntry[] = [
           {
             zh: '恢复语法区块底部圆角与「展开/收起语法」按钮。',
             en: 'Restored syntax panel bottom corners and the show/hide syntax toggle.',
+          },
+          {
+            zh: '修复手动收起后无法展开（收起时仍保留按钮栏可点击）。',
+            en: 'Fixed manual collapse leaving the expand button unreachable; the control bar stays visible.',
           },
         ],
       },
