@@ -103,10 +103,33 @@ function expandLegsFromStop(
 
     const routeDirKey = `${route.id}\0${directionIndex}`
 
+    /** 终点在同线同方向前方时，一段坐到终点（不必在途经枢纽「假换乘」） */
+    let destinationIndex = -1
+    for (let i = fromIndex + 1; i < list.length; i++) {
+      const stop = list[i]!
+      if (stopKey(stop.name.zh, stop.name.en) === toKey) {
+        destinationIndex = i
+        break
+      }
+    }
+    if (destinationIndex >= 0) {
+      const stop = list[destinationIndex]!
+      bestByRouteDir.set(routeDirKey, {
+        leg: {
+          route,
+          directionIndex,
+          from: current,
+          to: { zh: stop.name.zh, en: stop.name.en },
+        },
+        distance: destinationIndex - fromIndex,
+      })
+      continue
+    }
+
     for (let toIndex = fromIndex + 1; toIndex < list.length; toIndex++) {
       const stop = list[toIndex]!
       const nextKey = stopKey(stop.name.zh, stop.name.en)
-      if (nextKey !== toKey && !transferHubs.has(nextKey)) continue
+      if (!transferHubs.has(nextKey)) continue
 
       const distance = toIndex - fromIndex
       const leg: RouteLeg = {
@@ -119,7 +142,6 @@ function expandLegsFromStop(
       if (!existing || distance < existing.distance) {
         bestByRouteDir.set(routeDirKey, { leg, distance })
       }
-      if (nextKey === toKey) break
     }
   }
 

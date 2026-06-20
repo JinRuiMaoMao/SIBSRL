@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useAppDialog } from '../contexts/AppDialogContext'
 import type { DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
@@ -11,6 +12,7 @@ import {
   sortTransferPlans,
   type TransferPlanSortMode,
 } from '../utils/stopTransferPlans'
+import { DepartureTimeInput } from './DepartureTimeInput'
 import { RouteCard } from './RouteCard'
 import { TransferPlanList } from './TransferPlanList'
 
@@ -50,6 +52,7 @@ export function BetweenStopsResults({
   onRouteNavigate,
   onSelectPlan,
 }: BetweenStopsResultsProps) {
+  const { alert } = useAppDialog()
   const { locale, t } = useLocale()
   const { from, to, fromQuery, toQuery, routes, transferPlans } = lookup
 
@@ -77,22 +80,16 @@ export function BetweenStopsResults({
     return notes
   }, [from, to, fromQuery, toQuery, t])
 
-  const handleShare = async () => {
+  const handleCopyLink = () => {
     if (!from || !to) return
-    const url = buildStopPairShareUrl(fromQuery, toQuery, departTime || null)
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: summary, url })
-        return
-      }
-    } catch {
-      /* user cancelled */
-    }
-    try {
-      await navigator.clipboard.writeText(url)
-    } catch {
-      window.prompt(t('betweenStopsSharePrompt'), url)
-    }
+    const url = new URL(
+      buildStopPairShareUrl(fromQuery, toQuery, departTime || null),
+      window.location.href,
+    ).href
+    void navigator.clipboard.writeText(url).then(
+      () => alert({ message: t('shareRouteCopied') }),
+      () => alert({ message: t('shareRouteCopyManual'), detail: url }),
+    )
   }
 
   const sortOptions: TransferPlanSortMode[] = ['transfers', 'time', 'distance']
@@ -108,15 +105,10 @@ export function BetweenStopsResults({
       ))}
 
       <div className="between-stops-toolbar">
-        <label className="between-stops-depart">
+        <div className="between-stops-depart">
           <span>{t('betweenStopsDepartLabel')}</span>
-          <input
-            type="time"
-            value={departTime}
-            onChange={(event) => onDepartTimeChange(event.target.value)}
-            aria-label={t('betweenStopsDepartLabel')}
-          />
-        </label>
+          <DepartureTimeInput value={departTime} onChange={onDepartTimeChange} />
+        </div>
         <div className="between-stops-sort" role="group" aria-label={t('betweenStopsSortLabel')}>
           {sortOptions.map((mode) => (
             <button
@@ -136,8 +128,8 @@ export function BetweenStopsResults({
           ))}
         </div>
         {from && to ? (
-          <button type="button" className="between-stops-share-btn" onClick={() => void handleShare()}>
-            {t('betweenStopsShare')}
+          <button type="button" className="between-stops-share-btn" onClick={handleCopyLink}>
+            {t('betweenStopsCopyLink')}
           </button>
         ) : null}
       </div>

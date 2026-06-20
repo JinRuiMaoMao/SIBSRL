@@ -1799,19 +1799,78 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 .between-stops-depart {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.4rem;
   font-size: 0.78rem;
   color: var(--text-muted);
 }
 
-.between-stops-depart input {
+.depart-time-input {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+}
+
+.depart-time-select {
   font: inherit;
   font-size: 0.82rem;
-  padding: 0.2rem 0.45rem;
+  padding: 0.2rem 0.35rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--bg-elevated);
   color: inherit;
+  min-width: 3.1rem;
+}
+
+.depart-time-sep {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.depart-time-period {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+
+.depart-time-period-btn {
+  font: inherit;
+  font-size: 0.76rem;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.depart-time-period-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.depart-time-period-btn.is-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--bg-elevated));
+  color: var(--text);
+}
+
+.depart-time-clear {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.1rem 0.35rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.depart-time-clear:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .between-stops-sort {

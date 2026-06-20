@@ -31,6 +31,37 @@ export function formatDepartureTimeInput(minutes: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
 
+export type DepartureTimePeriod = 'am' | 'pm'
+
+export interface DepartureTimeParts {
+  hour12: number
+  minute: number
+  period: DepartureTimePeriod
+}
+
+/** 将 HH:MM（24 小时）拆为 12 小时制片段 */
+export function parseDepartureTimeParts(value: string): DepartureTimeParts | null {
+  const totalMinutes = parseDepartureTimeInput(value)
+  if (totalMinutes == null) return null
+  const hour24 = Math.floor(totalMinutes / 60) % 24
+  const minute = totalMinutes % 60
+  const period: DepartureTimePeriod = hour24 < 12 ? 'am' : 'pm'
+  let hour12 = hour24 % 12
+  if (hour12 === 0) hour12 = 12
+  return { hour12, minute, period }
+}
+
+/** 由 12 小时制片段合成 HH:MM（24 小时） */
+export function buildDepartureTimeInput(parts: DepartureTimeParts): string {
+  const { hour12, minute, period } = parts
+  if (hour12 < 1 || hour12 > 12 || minute < 0 || minute > 59) {
+    throw new Error('Invalid departure time parts')
+  }
+  let hour24 = hour12 % 12
+  if (period === 'pm') hour24 += 12
+  return formatDepartureTimeInput(hour24 * 60 + minute)
+}
+
 /** 无法解析班次间隔时的保守最大等车时间（分钟） */
 const DEFAULT_MAX_HEADWAY_MINUTES = 30
 

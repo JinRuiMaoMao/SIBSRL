@@ -185,6 +185,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '扩充步行接驳：叶角湾坟场↔叶角湾、叶角湾↔叶角湾邨、东门总站↔东门等。',
             en: 'Expanded walk links—Leafy Bay Cemetery↔Leafy Bay, East Door Terminus↔East Door, and more.',
           },
+          {
+            zh: '修复同线终点被拆成假换乘导致漏方案（如东锦葵→北岛山顶经 49A 望环台段）。',
+            en: 'Fixed missing plans when the destination lies past a hub on the same route (e.g. Eastmallow → North Island Hill Peak via 49A).',
+          },
         ],
       },
       {
