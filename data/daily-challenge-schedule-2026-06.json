@@ -23,7 +23,7 @@
     { "date": "2026-06-17", "event": "Marathon Road Closure", "routeCode": "240A", "race": false },
     { "date": "2026-06-18", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
     { "date": "2026-06-19", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
-    { "date": "2026-06-20", "event": "Street light outage", "routeCode": null, "race": true },
+    { "date": "2026-06-20", "event": "Street light outage", "routeCode": "41AS", "race": true },
     { "date": "2026-06-21", "event": "Rush Hour", "routeCode": null, "race": true },
     { "date": "2026-06-22", "event": "Private Hire", "routeCode": "PH1", "race": false },
     { "date": "2026-06-23", "event": "Private Hire", "routeCode": "PH1", "race": false },

@@ -196,6 +196,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: { zh: '每日挑战', en: 'Daily challenge' },
+        items: [
+          {
+            zh: '同步 6/20 每日挑战：街灯停电（比赛）41AS。',
+            en: 'Synced 6/20 daily challenge: Street light outage (race) on 41AS.',
+          },
+        ],
+      },
     ],
   },
   {
