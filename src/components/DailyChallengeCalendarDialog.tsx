@@ -32,11 +32,13 @@ function CalendarDayCell({
   day,
   isToday,
   locale,
+  emptyLabel,
 }: {
   date: string
   day: DailyChallengeScheduleDay | null
   isToday: boolean
   locale: ReturnType<typeof useLocale>['locale']
+  emptyLabel: string
 }) {
   const challenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
   const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
@@ -49,12 +51,18 @@ function CalendarDayCell({
       className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'} ${isRace ? 'is-race' : ''}`.trim()}
     >
       <span className="daily-challenge-calendar-day-number">{dayNumberFromDate(date)}</span>
-      {routeCode ? <span className="daily-challenge-calendar-day-route">{routeCode}</span> : null}
-      {eventLabel ? (
-        <span className="daily-challenge-calendar-day-event" title={eventLabel}>
-          {eventLabel}
-        </span>
-      ) : null}
+      {hasData ? (
+        <>
+          {routeCode ? <span className="daily-challenge-calendar-day-route">{routeCode}</span> : null}
+          {eventLabel ? (
+            <span className="daily-challenge-calendar-day-event" title={eventLabel}>
+              {eventLabel}
+            </span>
+          ) : null}
+        </>
+      ) : (
+        <span className="daily-challenge-calendar-day-empty">{emptyLabel}</span>
+      )}
     </div>
   )
 }
@@ -142,6 +150,7 @@ export function DailyChallengeCalendarDialog({
                     day={cell.day}
                     isToday={cell.date === todayDate}
                     locale={locale}
+                    emptyLabel={t('dailyChallengeCalendarNoData')}
                   />
                 ) : (
                   <div

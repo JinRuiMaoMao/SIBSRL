@@ -2121,7 +2121,17 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 .daily-challenge-calendar-day.is-empty {
   border-style: dashed;
   background: transparent;
-  opacity: 0.72;
+  opacity: 0.82;
+}
+
+.daily-challenge-calendar-day-empty {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
 }
 
 .daily-challenge-calendar-day.is-empty.is-today {
@@ -3677,6 +3687,12 @@ html[data-list-density='compact'] .daily-challenge-calendar-day-event {
   font-size: 0.58rem;
   line-height: 1.2;
   -webkit-line-clamp: 2;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-day-empty {
+  font-size: 0.54rem;
+  line-height: 1.25;
+  -webkit-line-clamp: 3;
 }
 
 /* Compact — Broadcast / Music / Complaints / Updates */

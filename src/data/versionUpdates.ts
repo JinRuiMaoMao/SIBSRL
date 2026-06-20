@@ -227,6 +227,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '每日挑战日历中竞速（Race）日期以珊瑚红高亮，并附图例说明。',
             en: 'Race days in the daily challenge calendar use a coral highlight with a legend.',
           },
+          {
+            zh: '每日挑战日历中尚未公布内容的日期显示「暂无数据，等待游戏内更新」。',
+            en: 'Days without schedule data in the calendar show “No data yet — waiting for in-game update”.',
+          },
         ],
       },
     ],
