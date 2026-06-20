@@ -41,22 +41,39 @@ function CalendarDayCell({
   emptyLabel: string
 }) {
   const challenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
+  const plainEventChallenge =
+    day?.event && day.race ? buildDailyChallengeFromScheduleDay({ ...day, race: false }) : null
   const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
+  const plainEventLabel = plainEventChallenge
+    ? getPrimaryText(plainEventChallenge.event, locale)
+    : null
+  const raceTag = isChineseLocale(locale) ? '[竞速]' : '[Race]'
   const routeCode = day?.routeCode?.trim() || null
   const hasData = Boolean(day?.event)
   const isRace = Boolean(day?.event && day.race)
 
   return (
     <div
-      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'} ${isRace ? 'is-race' : ''}`.trim()}
+      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'}`.trim()}
     >
-      <span className="daily-challenge-calendar-day-number">{dayNumberFromDate(date)}</span>
+      <span
+        className={`daily-challenge-calendar-day-number ${isRace ? 'is-race' : ''}`.trim()}
+      >
+        {dayNumberFromDate(date)}
+      </span>
       {hasData ? (
         <>
           {routeCode ? <span className="daily-challenge-calendar-day-route">{routeCode}</span> : null}
           {eventLabel ? (
             <span className="daily-challenge-calendar-day-event" title={eventLabel}>
-              {eventLabel}
+              {isRace ? (
+                <>
+                  <span className="daily-challenge-calendar-day-race-tag">{raceTag}</span>
+                  {plainEventLabel ? ` ${plainEventLabel}` : null}
+                </>
+              ) : (
+                eventLabel
+              )}
             </span>
           ) : null}
         </>
@@ -125,7 +142,12 @@ export function DailyChallengeCalendarDialog({
 
         <p className="daily-challenge-calendar-note">{t('dailyChallengeScheduleNote')}</p>
         <p className="daily-challenge-calendar-legend">
-          <span className="daily-challenge-calendar-legend-swatch is-race" aria-hidden />
+          <span className="daily-challenge-calendar-legend-race-demo" aria-hidden>
+            <span className="daily-challenge-calendar-day-number is-race">6</span>
+            <span className="daily-challenge-calendar-day-race-tag">
+              {isChineseLocale(locale) ? '[竞速]' : '[Race]'}
+            </span>
+          </span>
           {t('dailyChallengeCalendarRaceLegend')}
         </p>
 

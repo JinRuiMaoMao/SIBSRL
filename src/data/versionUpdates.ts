@@ -224,8 +224,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Compact mode now tightens the daily challenge card and calendar dialog—calendar button inline with km in the header, denser month grid and type.',
           },
           {
-            zh: '每日挑战日历中竞速（Race）日期以珊瑚红高亮，并附图例说明。',
-            en: 'Race days in the daily challenge calendar use a coral highlight with a legend.',
+            zh: '竞速日历样式改为仅高亮日期数字与 [竞速] 标记，线路号与活动名称保持常色。',
+            en: 'Race calendar styling now highlights only the date number and [Race] tag—route code and event name stay normal.',
           },
           {
             zh: '每日挑战日历中尚未公布内容的日期显示「暂无数据，等待游戏内更新」。',

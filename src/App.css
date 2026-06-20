@@ -2035,13 +2035,19 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   line-height: 1.35;
 }
 
-.daily-challenge-calendar-legend-swatch {
+.daily-challenge-calendar-legend-race-demo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
   flex-shrink: 0;
-  width: 0.85rem;
-  height: 0.85rem;
-  border-radius: 4px;
-  border: 1px solid color-mix(in srgb, var(--race) 50%, var(--border));
-  background: color-mix(in srgb, var(--race-soft) 88%, var(--bg-card));
+}
+
+.daily-challenge-calendar-legend-race-demo .daily-challenge-calendar-day-number {
+  font-size: 0.82rem;
+}
+
+.daily-challenge-calendar-legend-race-demo .daily-challenge-calendar-day-race-tag {
+  font-size: 0.72rem;
 }
 
 .daily-challenge-calendar-month + .daily-challenge-calendar-month {
@@ -2097,27 +2103,6 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
-.daily-challenge-calendar-day.is-race {
-  border-color: color-mix(in srgb, var(--race) 50%, var(--border));
-  background: color-mix(in srgb, var(--race-soft) 88%, var(--bg-card));
-}
-
-.daily-challenge-calendar-day.is-race .daily-challenge-calendar-day-number,
-.daily-challenge-calendar-day.is-race .daily-challenge-calendar-day-route {
-  color: var(--race);
-}
-
-.daily-challenge-calendar-day.is-race .daily-challenge-calendar-day-event {
-  color: color-mix(in srgb, var(--race) 28%, var(--text-muted));
-}
-
-.daily-challenge-calendar-day.is-race.is-today {
-  border-color: var(--accent);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, var(--race) 35%, transparent);
-}
-
 .daily-challenge-calendar-day.is-empty {
   border-style: dashed;
   background: transparent;
@@ -2142,6 +2127,15 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   font-size: 0.82rem;
   font-weight: 700;
   line-height: 1.1;
+}
+
+.daily-challenge-calendar-day-number.is-race,
+.daily-challenge-calendar-day-race-tag {
+  color: var(--race);
+}
+
+.daily-challenge-calendar-day-race-tag {
+  font-weight: 700;
 }
 
 .daily-challenge-calendar-day-route {
@@ -3640,9 +3634,12 @@ html[data-list-density='compact'] .daily-challenge-calendar-legend {
   gap: 0.35rem;
 }
 
-html[data-list-density='compact'] .daily-challenge-calendar-legend-swatch {
-  width: 0.72rem;
-  height: 0.72rem;
+html[data-list-density='compact'] .daily-challenge-calendar-legend-race-demo .daily-challenge-calendar-day-number {
+  font-size: 0.72rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-legend-race-demo .daily-challenge-calendar-day-race-tag {
+  font-size: 0.64rem;
 }
 
 html[data-list-density='compact'] .daily-challenge-calendar-month + .daily-challenge-calendar-month {
