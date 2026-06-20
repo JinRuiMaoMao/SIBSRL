@@ -1,5 +1,19 @@
 /** 常见站名：错误/英文 → 简体中文（游戏内通用译名） */
+import { GENERATED_ZH_STOP_ALIASES } from '../data/stopAliases.generated'
+
 const ZH_ALIASES: Record<string, string> = {
+  安灵台灵灰安置所: '安灵台',
+  灵灰安置所: '安灵台',
+  伊迪城: '艾迪城',
+  第7区转车站: '第七区转车站',
+  城际巴士车厂: '际巴车厂',
+  叶欣海旁路: '叶欣海旁道',
+  东锦葵海旁路: '东锦葵海傍路',
+  叶欣𠇹: '叶欣径',
+  亚历山花园: '亚历山大花园',
+  亚历山教堂: '亚历山大教堂',
+  东锦葵邨阳葵楼: '东锦葵邨 - 阳葵屋',
+  '东锦葵邨－阳葵屋': '东锦葵邨 - 阳葵屋',
   诺顿市镇中心: '北顿市中心',
   诺顿市中心: '北顿市中心',
   诺顿花园: '北顿花园',
@@ -92,6 +106,7 @@ function normKey(s: string): string {
 export function resolvePlaceZh(zh: string, en: string): string {
   let z = zh.trim()
   if (ZH_ALIASES[z]) return ZH_ALIASES[z]
+  if (GENERATED_ZH_STOP_ALIASES[z]) return GENERATED_ZH_STOP_ALIASES[z]
   if (/[\u4e00-\u9fff]/.test(z)) return z
   const fromEn = EN_TO_ZH[normKey(en)] ?? EN_TO_ZH[normKey(z)]
   return fromEn ?? z

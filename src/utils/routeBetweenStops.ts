@@ -1,6 +1,11 @@
 import type { BusRoute } from '../types/route'
 import { compareRouteNumber } from './routeSort'
-import { findStopsMatchingQuery, type MatchedStop } from './routeStopLookup'
+import {
+  findStopsMatchingQuery,
+  type MatchedStop,
+} from './routeStopLookup'
+import { canonicalStopKey } from './stopIdentity'
+import { resolveCanonicalStop } from './stopCanonicalIndex'
 
 export interface DirectRouteBetweenStops {
   route: BusRoute
@@ -8,7 +13,7 @@ export interface DirectRouteBetweenStops {
 }
 
 export function stopKey(zh: string, en: string): string {
-  return `${zh.trim().toLowerCase()}|${en.trim().toLowerCase()}`
+  return canonicalStopKey(zh, en)
 }
 
 /** 将搜索片段解析为唯一站点（精确 > 唯一 > 前缀 > 首个） */
@@ -19,18 +24,19 @@ export function resolveStopByQuery(query: string): MatchedStop | null {
   const matches = findStopsMatchingQuery(q)
   if (matches.length === 0) return null
 
+  const resolved = resolveCanonicalStop(matches[0]!)
+  if (matches.length === 1) return resolved
+
   const lower = q.toLowerCase()
   const exact = matches.find(
     (stop) => stop.zh === q || stop.en.toLowerCase() === lower,
   )
-  if (exact) return exact
-
-  if (matches.length === 1) return matches[0]!
+  if (exact) return resolveCanonicalStop(exact)
 
   const prefix = matches.find(
     (stop) => stop.zh.startsWith(q) || stop.en.toLowerCase().startsWith(lower),
   )
-  return prefix ?? matches[0]!
+  return resolveCanonicalStop(prefix ?? matches[0]!)
 }
 
 /** 同一条线同一方向内，起点站在终点站之前（直达，不含换乘） */

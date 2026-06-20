@@ -55,6 +55,7 @@ import {
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { buildRouteShareUrl, clearRouteFromLocation, readDirectionQueryFromLocation, readRouteQueryFromLocation, replaceRouteInLocation, setRouteInLocation } from '../utils/routeNavigation'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
+import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import { matchesTripPlanningRoute } from '../utils/randomRoutePool'
 import {
   findStopsMatchingQuery,
@@ -309,23 +310,21 @@ export function RouteLookupPage({
 
     const from = resolveStopByQuery(fromQuery)
     const to = resolveStopByQuery(toQuery)
-    const tripRouteFilter = (route: BusRoute) =>
-      matchesTripPlanningRoute(route, dailyChallenge, (candidate) =>
-        routeMatchesFilters(candidate, filters),
-      )
+    const betweenStopRouteFilter = (route: BusRoute) =>
+      isRouteStopDataComplete(route) && routeMatchesFilters(route, filters)
     const routes =
       from && to
         ? findDirectRoutesBetweenStops(from, to, displayRoutes).filter(
             ({ route, directionIndex }) =>
-              tripRouteFilter(route) &&
+              betweenStopRouteFilter(route) &&
               isDirectRouteBetweenStopsFeasible(from, to, route, directionIndex),
           )
         : []
     const transferPlans =
       from && to && routes.length === 0
         ? mergeTransferAndWalkPlans(
-            findTransferPlansBetweenStops(from, to, displayRoutes, tripRouteFilter),
-            findWalkTransferPlans(from, to, displayRoutes, tripRouteFilter),
+            findTransferPlansBetweenStops(from, to, displayRoutes, betweenStopRouteFilter),
+            findWalkTransferPlans(from, to, displayRoutes, betweenStopRouteFilter),
           )
         : []
 
@@ -333,7 +332,6 @@ export function RouteLookupPage({
   }, [
     committedStructuredStopPair.from,
     committedStructuredStopPair.to,
-    dailyChallenge,
     displayRoutes,
     filters,
     stopPairSearchCommitted,
