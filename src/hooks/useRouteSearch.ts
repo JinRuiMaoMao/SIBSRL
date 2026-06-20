@@ -14,7 +14,7 @@ import type { BusRoute, RouteFilters, RouteTypeFilter } from '../types/route'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
 import { clampDirectionIndex } from '../utils/routeDirections'
 import { compareRouteNumber } from '../utils/routeSort'
-import { isRouteStopDataComplete } from '../utils/routeCompleteness'
+import { buildRandomEligibleRoutes } from '../utils/randomRoutePool'
 import {
   mergeRoutesByBaseNumber,
   findDisplayRouteByQuery,
@@ -52,8 +52,8 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
   )
 
   const randomEligibleRoutes = useMemo(
-    () => filteredRoutes.filter(isRouteStopDataComplete),
-    [filteredRoutes],
+    () => buildRandomEligibleRoutes(filteredRoutes, dailyChallenge),
+    [dailyChallenge, filteredRoutes],
   )
 
   const selectedRoute = useMemo(() => {

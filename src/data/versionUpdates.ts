@@ -298,6 +298,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '转车方案按线路组合去重：相同线路链（如 140 → 140P）只保留站数最少的一条，不再重复列出。',
             en: 'Transfer plans dedupe by route chain—identical chains like 140 → 140P show once, keeping the fewest-stop variant.',
           },
+          {
+            zh: '随机奖池改为：常规线路始终参与；仅当日每日挑战线路、以及已到开放期的季节限定可额外加入（见 data/seasonal-route-availability.json）。',
+            en: 'Random pool now uses regular routes always, plus today’s daily challenge route and seasonal routes only during their configured availability windows.',
+          },
         ],
       },
       {

@@ -126,6 +126,26 @@ export function getListedRouteIdsForRoute(route: BusRoute): string[] {
   return listedRouteIdsByDisplayId.get(route.id.toLowerCase()) ?? []
 }
 
+const displayGroupsByRouteId = (() => {
+  const map = new Map<string, RouteDisplayGroupKey[]>()
+  for (const group of ROUTE_DISPLAY_GROUP_ORDER) {
+    for (const listedId of getRouteDisplayIdsForGroup(group)) {
+      const entry = resolveGroupedRouteEntry(listedId)
+      if (!entry) continue
+      const key = entry.route.id.toLowerCase()
+      const groups = map.get(key) ?? []
+      if (!groups.includes(group)) groups.push(group)
+      map.set(key, groups)
+    }
+  }
+  return map
+})()
+
+/** 该展示线路在 route-display-groups.json 中属于哪些分组 */
+export function getRouteDisplayGroupsForRoute(route: BusRoute): RouteDisplayGroupKey[] {
+  return displayGroupsByRouteId.get(route.id.toLowerCase()) ?? []
+}
+
 export function filterGroupEntriesByRoutes(
   group: RouteDisplayGroupKey,
   visibleRoutes: BusRoute[],
