@@ -207,6 +207,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '当日挑战线路（如 41AS）自动出现在「每日挑战路线」分组，卡片显示完整编号并预选南行/北行等方向，点开详情可看站序。',
             en: 'Today’s challenge route (e.g. 41AS) now appears under Daily challenge routes with the full code, preset direction, and stop list in detail.',
           },
+          {
+            zh: '今日每日挑战卡片右上角新增日历按钮，可打开每日挑战日历查看当月日程（目前为 2026 年 6 月社区数据）。',
+            en: 'Added a calendar button on today’s daily challenge card to open the monthly schedule (currently June 2026 community data).',
+          },
         ],
       },
     ],

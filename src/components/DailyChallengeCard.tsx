@@ -11,10 +11,12 @@ import { useLocale } from '../i18n/LocaleContext'
 import { getDirectionLengthKm } from '../utils/routeDirections'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { DailyChallengeResetCountdown } from './DailyChallengeResetCountdown'
+import { DailyChallengeCalendarButton } from './DailyChallengeCalendarButton'
 
 interface DailyChallengeCardProps {
   selected?: boolean
   onSelect: () => void
+  onOpenCalendar?: () => void
   className?: string
   showPlaceholderNote?: boolean
   showResetCountdown?: boolean
@@ -24,6 +26,7 @@ interface DailyChallengeCardProps {
 export function DailyChallengeCard({
   selected = false,
   onSelect,
+  onOpenCalendar,
   className = '',
   showPlaceholderNote = true,
   showResetCountdown = true,
@@ -62,6 +65,7 @@ export function DailyChallengeCard({
       aria-pressed={selected}
       aria-label={t('dailyChallengeAria')}
     >
+      {onOpenCalendar ? <DailyChallengeCalendarButton onClick={onOpenCalendar} /> : null}
       {showResetCountdown ? <DailyChallengeResetCountdown /> : null}
 
       <div className="route-card-top">

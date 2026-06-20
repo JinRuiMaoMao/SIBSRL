@@ -14,6 +14,7 @@ import {
   type RouteDisplayGroupKey,
 } from '../data/routeDisplayGroups'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
+import { DailyChallengeCalendarDialog } from './DailyChallengeCalendarDialog'
 import { FavoritesFolderBar } from './FavoritesFolderBar'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
@@ -116,6 +117,7 @@ export function RouteLookupPage({
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
   const [dailyChallengeRouteView, setDailyChallengeRouteView] = useState(false)
+  const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
   const [searchHistory, setSearchHistory] = useState(readSearchHistory)
   const [stopSectionOpen, setStopSectionOpen] = useState(true)
@@ -768,6 +770,7 @@ export function RouteLookupPage({
               <DailyChallengeBanner
                 selected={dailyChallengeSelected}
                 onSelect={handleSelectDailyChallenge}
+                onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
                 challenge={dailyChallenge}
               />
             ) : null}
@@ -875,6 +878,12 @@ export function RouteLookupPage({
           </div>
         </>
       )}
+
+      <DailyChallengeCalendarDialog
+        open={dailyChallengeCalendarOpen}
+        onClose={() => setDailyChallengeCalendarOpen(false)}
+        todayDate={dailyChallenge.date}
+      />
     </div>
   )
 }

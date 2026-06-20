@@ -1862,6 +1862,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 .route-grid-span,
 .daily-challenge-card {
   grid-column: 1 / -1;
+  position: relative;
 }
 
 .daily-challenge-card:hover {
@@ -1917,6 +1918,218 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 .daily-challenge-reset-countdown-hint {
   font-size: 0.68rem;
   color: var(--text-muted);
+}
+
+.daily-challenge-calendar-btn {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.daily-challenge-calendar-btn:hover,
+.daily-challenge-calendar-btn:focus-visible {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  outline: none;
+}
+
+.daily-challenge-calendar-icon {
+  display: block;
+}
+
+.daily-challenge-calendar-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.daily-challenge-calendar-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: color-mix(in srgb, var(--bg) 20%, transparent);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+
+.daily-challenge-calendar-panel {
+  position: relative;
+  z-index: 1;
+  width: min(960px, 100%);
+  max-height: min(88vh, 920px);
+  overflow: auto;
+  padding: 1rem 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: 0 16px 48px var(--shadow-overlay);
+}
+
+.daily-challenge-calendar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.daily-challenge-calendar-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.daily-challenge-calendar-close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.daily-challenge-calendar-close:hover,
+.daily-challenge-calendar-close:focus-visible {
+  color: var(--text);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.daily-challenge-calendar-note {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.daily-challenge-calendar-month + .daily-challenge-calendar-month {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+}
+
+.daily-challenge-calendar-month-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.daily-challenge-calendar-weekdays,
+.daily-challenge-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.daily-challenge-calendar-weekdays {
+  margin-bottom: 0.35rem;
+}
+
+.daily-challenge-calendar-weekday {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.daily-challenge-calendar-day {
+  min-height: 5.5rem;
+  padding: 0.35rem 0.35rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.daily-challenge-calendar-day.is-pad {
+  border-color: transparent;
+  background: transparent;
+  min-height: 0;
+  padding: 0;
+}
+
+.daily-challenge-calendar-day.is-today {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.daily-challenge-calendar-day-number {
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.daily-challenge-calendar-day-route {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.daily-challenge-calendar-day-event {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+@media (max-width: 720px) {
+  .daily-challenge-calendar-root {
+    padding: 0.5rem;
+  }
+
+  .daily-challenge-calendar-panel {
+    max-height: 92vh;
+    padding: 0.85rem;
+  }
+
+  .daily-challenge-calendar-day {
+    min-height: 4.6rem;
+    padding: 0.28rem;
+  }
+
+  .daily-challenge-calendar-day-event {
+    -webkit-line-clamp: 2;
+  }
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-btn {
+  width: 1.85rem;
+  height: 1.85rem;
+  top: 0.55rem;
+  right: 0.55rem;
 }
 
 .route-display-group-list,
