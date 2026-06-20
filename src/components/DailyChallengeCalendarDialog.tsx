@@ -27,6 +27,15 @@ function dayNumberFromDate(date: string): number {
   return Number(date.slice(-2))
 }
 
+function RaceTagLabel({ locale }: { locale: ReturnType<typeof useLocale>['locale'] }) {
+  const label = isChineseLocale(locale) ? '竞速' : 'Race'
+  return (
+    <span className="daily-challenge-calendar-day-race-tag">
+      [<span className="daily-challenge-calendar-day-race-label">{label}</span>]
+    </span>
+  )
+}
+
 function CalendarDayCell({
   date,
   day,
@@ -47,7 +56,6 @@ function CalendarDayCell({
   const plainEventLabel = plainEventChallenge
     ? getPrimaryText(plainEventChallenge.event, locale)
     : null
-  const raceTag = isChineseLocale(locale) ? '[竞速]' : '[Race]'
   const routeCode = day?.routeCode?.trim() || null
   const hasData = Boolean(day?.event)
   const isRace = Boolean(day?.event && day.race)
@@ -68,7 +76,7 @@ function CalendarDayCell({
             <span className="daily-challenge-calendar-day-event" title={eventLabel}>
               {isRace ? (
                 <>
-                  <span className="daily-challenge-calendar-day-race-tag">{raceTag}</span>
+                  <RaceTagLabel locale={locale} />
                   {plainEventLabel ? ` ${plainEventLabel}` : null}
                 </>
               ) : (
@@ -144,9 +152,7 @@ export function DailyChallengeCalendarDialog({
         <p className="daily-challenge-calendar-legend">
           <span className="daily-challenge-calendar-legend-race-demo" aria-hidden>
             <span className="daily-challenge-calendar-day-number is-race">6</span>
-            <span className="daily-challenge-calendar-day-race-tag">
-              {isChineseLocale(locale) ? '[竞速]' : '[Race]'}
-            </span>
+            <RaceTagLabel locale={locale} />
           </span>
           {t('dailyChallengeCalendarRaceLegend')}
         </p>

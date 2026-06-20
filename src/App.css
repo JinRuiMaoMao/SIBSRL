@@ -2129,9 +2129,13 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   line-height: 1.1;
 }
 
-.daily-challenge-calendar-day-number.is-race,
-.daily-challenge-calendar-day-race-tag {
+.daily-challenge-calendar-day-number.is-race {
+  color: var(--race-day);
+}
+
+.daily-challenge-calendar-day-race-label {
   color: var(--race);
+  font-weight: 700;
 }
 
 .daily-challenge-calendar-day-race-tag {

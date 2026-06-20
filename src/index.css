@@ -13,6 +13,7 @@
   --accent-glow: rgba(245, 185, 66, 0.4);
   --race: #ff6b52;
   --race-soft: rgba(255, 107, 82, 0.16);
+  --race-day: #a78bfa;
   --bus-green: #2dd4a0;
   --header-shell-bg: rgba(20, 28, 46, 0.85);
   --shadow-overlay: rgba(0, 0, 0, 0.45);
@@ -47,6 +48,7 @@
   --accent-glow: rgba(176, 120, 8, 0.22);
   --race: #d94532;
   --race-soft: rgba(217, 69, 50, 0.12);
+  --race-day: #7c3aed;
   --bus-green: #0a8a60;
   --header-shell-bg: rgba(216, 222, 232, 0.94);
   --shadow-overlay: rgba(20, 28, 40, 0.12);
