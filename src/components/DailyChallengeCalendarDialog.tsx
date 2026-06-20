@@ -38,13 +38,14 @@ function CalendarDayCell({
   isToday: boolean
   locale: ReturnType<typeof useLocale>['locale']
 }) {
-  const challenge = day ? buildDailyChallengeFromScheduleDay(day) : null
+  const challenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
   const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
   const routeCode = day?.routeCode?.trim() || null
+  const hasData = Boolean(day?.event)
 
   return (
     <div
-      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${day ? 'has-data' : 'is-empty'}`.trim()}
+      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'}`.trim()}
     >
       <span className="daily-challenge-calendar-day-number">{dayNumberFromDate(date)}</span>
       {routeCode ? <span className="daily-challenge-calendar-day-route">{routeCode}</span> : null}

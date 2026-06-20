@@ -2082,6 +2082,16 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
+.daily-challenge-calendar-day.is-empty {
+  border-style: dashed;
+  background: transparent;
+  opacity: 0.72;
+}
+
+.daily-challenge-calendar-day.is-empty.is-today {
+  opacity: 1;
+}
+
 .daily-challenge-calendar-day-number {
   font-size: 0.82rem;
   font-weight: 700;
