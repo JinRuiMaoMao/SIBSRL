@@ -189,6 +189,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复同线终点被拆成假换乘导致漏方案（如东锦葵→北岛山顶经 49A 望环台段）。',
             en: 'Fixed missing plans when the destination lies past a hub on the same route (e.g. Eastmallow → North Island Hill Peak via 49A).',
           },
+          {
+            zh: '合并同线连续乘车段，不再出现 46→46、47→47 等假转车方案。',
+            en: 'Merged consecutive segments on the same route so plans no longer show fake transfers like 46→46 or 47→47.',
+          },
         ],
       },
       {

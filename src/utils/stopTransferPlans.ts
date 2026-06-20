@@ -255,15 +255,42 @@ function finalizePlans(
   return deduped.slice(0, maxPlans)
 }
 
+function mergeConsecutiveSameRouteLegs(legs: RouteLeg[]): RouteLeg[] {
+  const merged: RouteLeg[] = []
+  for (const leg of legs) {
+    const prev = merged[merged.length - 1]
+    if (prev && prev.route.id === leg.route.id && prev.directionIndex === leg.directionIndex) {
+      merged[merged.length - 1] = { ...prev, to: leg.to }
+    } else {
+      merged.push(leg)
+    }
+  }
+  return merged
+}
+
+function appendLeg(existingLegs: RouteLeg[], leg: RouteLeg): RouteLeg[] | null {
+  const lastLeg = existingLegs[existingLegs.length - 1]
+  if (
+    lastLeg &&
+    lastLeg.route.id === leg.route.id &&
+    lastLeg.directionIndex === leg.directionIndex
+  ) {
+    return mergeConsecutiveSameRouteLegs([...existingLegs.slice(0, -1), { ...lastLeg, to: leg.to }])
+  }
+  if (existingLegs.some((entry) => entry.route.id === leg.route.id)) return null
+  return mergeConsecutiveSameRouteLegs([...existingLegs, leg])
+}
+
 function tryCollectPlan(
   collected: TransferPlan[],
   seenChains: Set<string>,
   nextLegs: RouteLeg[],
 ): void {
   if (collected.length >= MAX_RAW_COLLECTED) return
+  const legs = mergeConsecutiveSameRouteLegs(nextLegs)
   const plan: TransferPlan = {
-    legs: nextLegs,
-    transferCount: nextLegs.length - 1,
+    legs,
+    transferCount: legs.length - 1,
   }
   seenChains.add(transferPlanRouteChainKey(plan))
   collected.push(plan)
@@ -304,7 +331,8 @@ export function findTransferPlansBetweenStops(
         const nextKey = stopKey(leg.to.zh, leg.to.en)
         if (state.visited.has(nextKey)) continue
 
-        const nextLegs = [...state.legs, leg]
+        const nextLegs = appendLeg(state.legs, leg)
+        if (!nextLegs) continue
 
         if (nextKey === toKey) {
           if (nextLegs.length >= 2) {
