@@ -4,7 +4,7 @@ export const UPDATES_LAST_SEEN_ID_KEY = 'sibs-updates-last-seen-id'
 const LEGACY_UPDATES_LOG_VIEWED_KEY = 'sibs-updates-log-viewed'
 const LEGACY_UPDATES_PROMPT_SHOWN_KEY = 'sibs-updates-prompt-shown'
 
-export function getLastSeenUpdateId(): string | null {
+export function getLastSeenUpdatePromptKey(): string | null {
   try {
     return localStorage.getItem(UPDATES_LAST_SEEN_ID_KEY)
   } catch {
@@ -12,9 +12,24 @@ export function getLastSeenUpdateId(): string | null {
   }
 }
 
+/** @deprecated 使用 getLastSeenUpdatePromptKey */
+export function getLastSeenUpdateId(): string | null {
+  return getLastSeenUpdatePromptKey()
+}
+
 export function markUpdateSeen(promptKey: string): void {
   try {
     localStorage.setItem(UPDATES_LAST_SEEN_ID_KEY, promptKey)
+    localStorage.removeItem(LEGACY_UPDATES_LOG_VIEWED_KEY)
+    localStorage.removeItem(LEGACY_UPDATES_PROMPT_SHOWN_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearUpdatesPromptSeen(): void {
+  try {
+    localStorage.removeItem(UPDATES_LAST_SEEN_ID_KEY)
     localStorage.removeItem(LEGACY_UPDATES_LOG_VIEWED_KEY)
     localStorage.removeItem(LEGACY_UPDATES_PROMPT_SHOWN_KEY)
   } catch {

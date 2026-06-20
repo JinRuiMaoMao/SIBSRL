@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import './App.css'
 import { BroadcastPage } from './components/BroadcastPage'
 import { ComplaintsPage } from './components/ComplaintsPage'
@@ -24,21 +24,29 @@ import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
 
-function readInitialDailyChallengePromptOpen(): boolean {
-  if (!shouldShowDailyChallengePrompt()) return false
-  if (!isDailyChallengeAvailable(getTodaysDailyChallenge())) return false
-  markDailyChallengePromptSeen()
-  return true
+function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean } {
+  const showDailyChallenge =
+    shouldShowDailyChallengePrompt() && isDailyChallengeAvailable(getTodaysDailyChallenge())
+
+  if (showDailyChallenge) {
+    markDailyChallengePromptSeen()
+  }
+
+  return {
+    dailyChallenge: showDailyChallenge,
+    updates: !showDailyChallenge && shouldShowUpdatesPrompt(),
+  }
 }
 
 function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
   const dailyChallenge = useDailyChallenge()
+  const initialOverlays = readInitialOverlayState()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
-    readInitialDailyChallengePromptOpen,
+    initialOverlays.dailyChallenge,
   )
-  const [updatesPromptOpen, setUpdatesPromptOpen] = useState(false)
+  const [updatesPromptOpen, setUpdatesPromptOpen] = useState(initialOverlays.updates)
   const [pendingDailyChallengeDetail, setPendingDailyChallengeDetail] = useState(0)
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
@@ -58,12 +66,6 @@ function App() {
     setDailyChallengePromptOpen(false)
     openUpdatesPrompt()
   }, [openUpdatesPrompt])
-
-  useEffect(() => {
-    if (!dailyChallengePromptOpen) {
-      openUpdatesPrompt()
-    }
-  }, [dailyChallengePromptOpen, openUpdatesPrompt])
 
   const handleDailyChallengePromptOpenDetail = () => {
     setPendingDailyChallengeDetail((count) => count + 1)

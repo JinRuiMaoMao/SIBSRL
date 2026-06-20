@@ -258,8 +258,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Compact mode now tightens the daily challenge card and calendar dialog—calendar button inline with km in the header, denser month grid and type.',
           },
           {
-            zh: '页面滚动条槽与背景融为一体：渐变移至 html 固定绘制，滚动条轨道透明，仅保留滑块。',
-            en: 'Page scrollbar gutter now blends with the background—gradient on html (fixed), transparent track, thumb only.',
+            zh: '更新日志弹窗仅在首次访问、changelog 内容有变化、或恢复默认设置后再出现；关闭后同内容不再重复弹出。',
+            en: 'Updates popup shows only on first visit, when the changelog changes, or after reset—not again for the same content once dismissed.',
           },
           {
             zh: '修复同日多次追加更新日志后弹窗不再出现的问题：已读标记改为跟踪最新条目内容指纹，而非仅条目 id。',

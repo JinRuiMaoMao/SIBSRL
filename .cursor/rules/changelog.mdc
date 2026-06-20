@@ -14,7 +14,7 @@ When shipping user-visible changes, append bilingual items to **`src/data/versio
 - Each item: `{ zh: '…', en: '…' }`
 - Group related items under `groups[].title` (zh/en).
 - Keep ids stable; bump `CURRENT_CHANGELOG_DATE` only when the user asks to roll to a new day.
-- The updates prompt uses **`getLatestUpdatePromptKey()`** (id + content fingerprint). Appending items to the active day re-triggers the prompt until dismissed again.
+- The updates prompt uses **`getLatestUpdatePromptKey()`** (id + content fingerprint). Appending items to the active day re-triggers the prompt until dismissed again; same content after dismiss does not re-show until the next edit or reset.
 
 ## After edits
 

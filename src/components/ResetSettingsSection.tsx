@@ -14,7 +14,7 @@ import {
   ROUTE_FILTERS_STORAGE_KEY,
   ROUTE_GROUP_OPEN_STORAGE_KEY,
 } from '../storage/routePreferences'
-import { UPDATES_LAST_SEEN_ID_KEY } from '../storage/updatesViewing'
+import { clearUpdatesPromptSeen } from '../storage/updatesViewing'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
 
@@ -40,9 +40,7 @@ export function ResetSettingsSection() {
       localStorage.removeItem(ROUTE_GROUP_OPEN_STORAGE_KEY)
       localStorage.removeItem(RECENT_ROUTES_STORAGE_KEY)
       localStorage.removeItem(DAILY_CHALLENGE_PROMPT_SEEN_KEY)
-      localStorage.removeItem(UPDATES_LAST_SEEN_ID_KEY)
-      localStorage.removeItem('sibs-updates-log-viewed')
-      localStorage.removeItem('sibs-updates-prompt-shown')
+      clearUpdatesPromptSeen()
     } catch {
       /* ignore */
     }

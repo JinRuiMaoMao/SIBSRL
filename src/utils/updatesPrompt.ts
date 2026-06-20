@@ -1,9 +1,14 @@
 import { getLatestUpdatePromptKey } from '../data/versionUpdates'
-import { getLastSeenUpdateId } from '../storage/updatesViewing'
+import { getLastSeenUpdatePromptKey } from '../storage/updatesViewing'
 import { isRoutesPage } from './appTabNavigation'
 import { readRouteQueryFromLocation } from './routeNavigation'
 
-/** 线路首页、无线路详情，且最新更新条目尚未标记已读时展示弹窗 */
+/**
+ * 是否应展示更新日志弹窗：
+ * - 首次访问（无已读记录）
+ * - 或最新条目内容指纹与已读不一致（changelog 有新增/修改）
+ * 恢复默认设置会清空已读记录，因此会再弹一次。
+ */
 export function shouldShowUpdatesPrompt(): boolean {
   if (!isRoutesPage()) return false
   if (readRouteQueryFromLocation()) return false
@@ -11,5 +16,5 @@ export function shouldShowUpdatesPrompt(): boolean {
   const latestPromptKey = getLatestUpdatePromptKey()
   if (!latestPromptKey) return false
 
-  return getLastSeenUpdateId() !== latestPromptKey
+  return getLastSeenUpdatePromptKey() !== latestPromptKey
 }
