@@ -1,12 +1,17 @@
 import { useLocale } from '../i18n/LocaleContext'
 import { formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
+import {
+  estimateTransferPlanMetrics,
+  formatTransferPlanMetrics,
+} from '../utils/transferPlanMetrics'
+
 interface TransferPlanListProps {
   plans: TransferPlan[]
   onSelectPlan: (plan: TransferPlan, planIndex: number) => void
 }
 
 export function TransferPlanList({ plans, onSelectPlan }: TransferPlanListProps) {
-  const { t } = useLocale()
+  const { locale, t } = useLocale()
 
   return (
     <div className="transfer-plan-list">
@@ -16,6 +21,7 @@ export function TransferPlanList({ plans, onSelectPlan }: TransferPlanListProps)
         const chainLabel = plan.walkToDestination
           ? `${routeChain} → ${t('transferPlanWalkShort')}`
           : routeChain
+        const metrics = estimateTransferPlanMetrics(plan, locale)
 
         return (
           <button
@@ -37,6 +43,7 @@ export function TransferPlanList({ plans, onSelectPlan }: TransferPlanListProps)
                 <span className="transfer-plan-card-hint">{t('transferPlanExpand')}</span>
               </div>
               <p className="transfer-plan-route-chain">{chainLabel}</p>
+              <p className="transfer-plan-metrics">{formatTransferPlanMetrics(metrics, t)}</p>
             </article>
           </button>
         )

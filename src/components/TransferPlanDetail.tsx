@@ -3,6 +3,10 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MatchedStop } from '../utils/routeStopLookup'
 import { formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
 import { TransferPlanJourney } from './TransferPlanJourney'
+import {
+  estimateTransferPlanMetrics,
+  formatTransferPlanMetrics,
+} from '../utils/transferPlanMetrics'
 
 interface TransferPlanDetailProps {
   plan: TransferPlan
@@ -27,6 +31,7 @@ export function TransferPlanDetail({
   const routeChain = formatTransferPlanRouteChain(plan)
   const fromLabel = getPrimaryText({ zh: from.zh, en: from.en }, locale)
   const toLabel = getPrimaryText({ zh: to.zh, en: to.en }, locale)
+  const metrics = estimateTransferPlanMetrics(plan, locale)
 
   return (
     <aside
@@ -51,6 +56,11 @@ export function TransferPlanDetail({
       <p className="transfer-plan-detail-summary">
         {t('betweenStopsSummary', { from: fromLabel, to: toLabel })}
       </p>
+
+      <p className="transfer-plan-metrics transfer-plan-metrics--detail">
+        {formatTransferPlanMetrics(metrics, t)}
+      </p>
+      <p className="transfer-plan-metrics-note">{t('transferPlanMetricsNote')}</p>
 
       <p className="transfer-plan-timetable-note">{t('transferPlanTimetableNote')}</p>
 

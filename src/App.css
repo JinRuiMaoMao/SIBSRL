@@ -1839,6 +1839,24 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   letter-spacing: -0.02em;
 }
 
+.transfer-plan-metrics {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.transfer-plan-metrics--detail {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.transfer-plan-metrics-note {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .transfer-plan-card-hint {
   font-size: 0.72rem;
   color: var(--text-muted);

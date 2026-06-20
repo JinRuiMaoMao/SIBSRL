@@ -330,6 +330,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '两站查询新增步行接驳方案（如 171 至彩虹中心再步行至彩虹广场）；步行链接见 data/walkLinks。',
             en: 'Stop-to-stop search now includes walk-transfer options (e.g. route 171 to Rainbow Estate Complex then walk to Rainbow Plaza); see walkLinks data.',
           },
+          {
+            zh: '转车/步行方案卡片显示估算总时间与里程（含候车、转车与步行）。',
+            en: 'Transfer and walk-transfer cards now show estimated total time and distance (waiting, transfers, and walking included).',
+          },
         ],
       },
       {

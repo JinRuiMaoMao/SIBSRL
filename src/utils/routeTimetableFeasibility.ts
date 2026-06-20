@@ -178,10 +178,14 @@ export function getLegServiceWindows(leg: RouteLeg, weekday = getHktWeekday()): 
   return parseServiceWindows(text, weekday)
 }
 
-function getLegHeadwayMinutes(leg: RouteLeg, weekday: number): number {
+function getLegHeadwayMinutes(leg: RouteLeg, weekday = getHktWeekday()): number {
   const structured = resolveStructuredLegSchedule(leg, weekday)
   if (structured) return structured.maxHeadwayMinutes
   return parseMaxHeadwayMinutes(leg.route.interval?.en ?? leg.route.interval?.zh)
+}
+
+export function estimateLegHeadwayMinutes(leg: RouteLeg, weekday = getHktWeekday()): number {
+  return getLegHeadwayMinutes(leg, weekday)
 }
 
 export function estimateLegTravelMinutes(leg: RouteLeg): number {
