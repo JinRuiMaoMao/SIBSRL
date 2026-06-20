@@ -200,12 +200,16 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         title: { zh: '每日挑战', en: 'Daily challenge' },
         items: [
           {
-            zh: '按 Discord 社区原文更新 6 月日程：6/20 街灯停电（比赛）无公布线路；6/22、23、26、29 留空；移除此前 PH1 占位。',
-            en: 'Updated June schedule from Discord: 6/20 Street light outage (race) has no listed route; 6/22, 23, 26, 29 left blank; removed PH1 placeholders.',
+            zh: '按 Discord 社区原文更新 6 月日程：6/22、23、26、29 留空；移除此前 PH1 占位。',
+            en: 'Updated June schedule from Discord: 6/22, 23, 26, 29 left blank; removed PH1 placeholders.',
           },
           {
-            zh: '同步 6/20 每日挑战：街灯停电（比赛），暂无公布线路代号。',
-            en: 'Synced 6/20 daily challenge: Street light outage (race); no route code published yet.',
+            zh: '修正 6/20 每日挑战线路为 41AS（街灯停电·比赛）；Discord 原文未写括号内代号，以游戏内为准。',
+            en: 'Corrected 6/20 daily challenge route to 41AS (Street light outage, race); Discord omitted the code—matches in-game.',
+          },
+          {
+            zh: '同步 6/20 每日挑战：街灯停电（比赛）41AS。',
+            en: 'Synced 6/20 daily challenge: Street light outage (race) on 41AS.',
           },
           {
             zh: '当日挑战线路（如 41AS）自动出现在「每日挑战路线」分组，卡片显示完整编号并预选南行/北行等方向，点开详情可看站序。',

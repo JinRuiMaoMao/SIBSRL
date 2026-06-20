@@ -29,7 +29,7 @@
 6/17: Marathon Road Closure (240A)
 6/18: Bridge Closure (whY370)
 6/19: Marathon Shuttle (R370)
-6/20: [Race] Street light outage
+6/20: [Race] Street light outage (41AS)
 6/21: [Race] Rush Hour
 6/22:
 6/23:
