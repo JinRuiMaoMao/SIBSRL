@@ -89,6 +89,44 @@ export function formatTransferPlanRouteChain(plan: TransferPlan): string {
   return plan.legs.map((leg) => leg.route.number).join(' → ')
 }
 
+/** 同一线路组合（如 140 → 140P）只保留站数最少的一条 */
+function transferPlanRouteChainKey(plan: TransferPlan): string {
+  return plan.legs.map((leg) => leg.route.number).join('\0')
+}
+
+function transferPlanJourneyStopCount(plan: TransferPlan): number {
+  let count = 0
+  for (let legIndex = 0; legIndex < plan.legs.length; legIndex++) {
+    const stops = getStopsOnLeg(plan.legs[legIndex]!)
+    count += legIndex === 0 ? stops.length : Math.max(0, stops.length - 1)
+  }
+  return count
+}
+
+function dedupeTransferPlansByRouteChain(plans: TransferPlan[]): TransferPlan[] {
+  const bestByChain = new Map<string, TransferPlan>()
+
+  for (const plan of plans) {
+    const key = transferPlanRouteChainKey(plan)
+    const existing = bestByChain.get(key)
+    if (!existing) {
+      bestByChain.set(key, plan)
+      continue
+    }
+
+    const planStops = transferPlanJourneyStopCount(plan)
+    const existingStops = transferPlanJourneyStopCount(existing)
+    if (
+      plan.transferCount < existing.transferCount ||
+      (plan.transferCount === existing.transferCount && planStops < existingStops)
+    ) {
+      bestByChain.set(key, plan)
+    }
+  }
+
+  return [...bestByChain.values()]
+}
+
 /** 最少乘车段数的转车方案（BFS）；乘车段数 = 转车次数 + 1 */
 export function findTransferPlansBetweenStops(
   from: MatchedStop,
@@ -137,12 +175,10 @@ export function findTransferPlansBetweenStops(
     frontier = nextFrontier
   }
 
-  return results
+  return dedupeTransferPlansByRouteChain(results)
     .sort((a, b) => {
       if (a.transferCount !== b.transferCount) return a.transferCount - b.transferCount
-      const aStops = a.legs.reduce((sum, leg) => sum + 1, 0)
-      const bStops = b.legs.reduce((sum, leg) => sum + 1, 0)
-      return aStops - bStops
+      return transferPlanJourneyStopCount(a) - transferPlanJourneyStopCount(b)
     })
     .slice(0, maxPlans)
 }

@@ -294,6 +294,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '转车方案详情改为与线路相同的全屏滑入面板，展示完整途经站与转车位置。',
             en: 'Transfer plan details now open in the same full-screen slide-in sheet as route detail, with full stops and transfer points.',
           },
+          {
+            zh: '转车方案按线路组合去重：相同线路链（如 140 → 140P）只保留站数最少的一条，不再重复列出。',
+            en: 'Transfer plans dedupe by route chain—identical chains like 140 → 140P show once, keeping the fewest-stop variant.',
+          },
         ],
       },
       {
