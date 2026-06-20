@@ -326,6 +326,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复两站转车查询卡死：仅在 Enter 确认后搜索，并限制 BFS 规模与枢纽段展开数量。',
             en: 'Fixed stop-to-stop transfer search freezing—search runs on Enter only, with tighter BFS bounds and hub leg caps.',
           },
+          {
+            zh: '两站查询新增步行接驳方案（如 171 至彩虹中心再步行至彩虹广场）；步行链接见 data/walkLinks。',
+            en: 'Stop-to-stop search now includes walk-transfer options (e.g. route 171 to Rainbow Estate Complex then walk to Rainbow Plaza); see walkLinks data.',
+          },
         ],
       },
       {

@@ -1,6 +1,6 @@
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
-import { getStopsOnLeg, type TransferPlan } from '../utils/stopTransferPlans'
+import { formatTransferPlanRouteChain, getStopsOnLeg, type TransferPlan } from '../utils/stopTransferPlans'
 
 interface TransferPlanJourneyProps {
   plan: TransferPlan
@@ -16,6 +16,7 @@ function stopLabel(
 
 export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProps) {
   const { locale, t } = useLocale()
+  const hasWalk = plan.walkToDestination != null
 
   return (
     <div className="transfer-plan-journey">
@@ -26,6 +27,7 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
           locale,
         )
         const displayStops = legIndex === 0 ? stops : stops.slice(1)
+        const isLastBusLeg = legIndex === plan.legs.length - 1
 
         return (
           <section
@@ -63,10 +65,12 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
             <ol className="transfer-plan-stops">
               {displayStops.map((stop, stopIndex) => {
                 const isOrigin = legIndex === 0 && stopIndex === 0
-                const isDestination =
-                  legIndex === plan.legs.length - 1 && stopIndex === displayStops.length - 1
+                const isBusDestination =
+                  !hasWalk && isLastBusLeg && stopIndex === displayStops.length - 1
+                const isWalkAlight =
+                  hasWalk && isLastBusLeg && stopIndex === displayStops.length - 1
                 const isTransferAlight =
-                  legIndex < plan.legs.length - 1 && stopIndex === displayStops.length - 1
+                  !isLastBusLeg && stopIndex === displayStops.length - 1
 
                 return (
                   <li
@@ -74,7 +78,8 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
                     className={[
                       'transfer-plan-stop',
                       isOrigin ? 'is-origin' : '',
-                      isDestination ? 'is-destination' : '',
+                      isBusDestination ? 'is-destination' : '',
+                      isWalkAlight ? 'is-walk-alight' : '',
                       isTransferAlight ? 'is-transfer-alight' : '',
                     ]
                       .filter(Boolean)
@@ -87,7 +92,10 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
                     {isTransferAlight ? (
                       <span className="transfer-plan-stop-tag">{t('transferPlanTransferTag')}</span>
                     ) : null}
-                    {isDestination ? (
+                    {isWalkAlight ? (
+                      <span className="transfer-plan-stop-tag">{t('transferPlanWalkAlightTag')}</span>
+                    ) : null}
+                    {isBusDestination ? (
                       <span className="transfer-plan-stop-tag">{t('transferPlanDestinationTag')}</span>
                     ) : null}
                   </li>
@@ -97,6 +105,24 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
           </section>
         )
       })}
+
+      {plan.walkToDestination ? (
+        <section className="transfer-plan-segment transfer-plan-walk">
+          <p className="transfer-plan-walk-leg">
+            {t('transferPlanWalkLeg', {
+              minutes: plan.walkToDestination.minutes,
+              from: stopLabel(plan.walkToDestination.from, locale),
+              to: stopLabel(plan.walkToDestination.to, locale),
+            })}
+          </p>
+          <p className="transfer-plan-stop transfer-plan-stop is-destination transfer-plan-walk-end">
+            <span className="transfer-plan-stop-name">
+              {stopLabel(plan.walkToDestination.to, locale)}
+            </span>
+            <span className="transfer-plan-stop-tag">{t('transferPlanDestinationTag')}</span>
+          </p>
+        </section>
+      ) : null}
     </div>
   )
 }

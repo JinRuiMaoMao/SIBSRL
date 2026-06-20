@@ -8,7 +8,15 @@ export interface RouteLeg {
   to: MatchedStop
 }
 
+export interface WalkSegment {
+  from: MatchedStop
+  to: MatchedStop
+  minutes: number
+}
+
 export interface TransferPlan {
   legs: RouteLeg[]
   transferCount: number
+  /** 下车后步行至查询终点 */
+  walkToDestination?: WalkSegment
 }

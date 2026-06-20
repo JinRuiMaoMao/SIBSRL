@@ -151,7 +151,9 @@ export function formatTransferPlanRouteChain(plan: TransferPlan): string {
 }
 
 function transferPlanRouteChainKey(plan: TransferPlan): string {
-  return plan.legs.map((leg) => leg.route.number).join('\0')
+  const bus = plan.legs.map((leg) => leg.route.number).join('\0')
+  if (!plan.walkToDestination) return bus
+  return `${bus}\0walk`
 }
 
 function transferPlanJourneyStopCount(plan: TransferPlan): number {

@@ -53,6 +53,10 @@ const messagesZhHans = {
   transferPlanOriginTag: '起点',
   transferPlanTransferTag: '转车',
   transferPlanDestinationTag: '终点',
+  transferPlanWalkShort: '步行',
+  transferPlanWalkLeg: '步行约 {minutes} 分钟：{from} → {to}',
+  transferPlanWalkAlightTag: '下车步行',
+  transferPlanTitleWithWalk: '方案 {index}（含步行）',
   transferPlanTimetableNote:
     '方案已按班次时刻表（data/route-timetables.json）或各线服务时间/班次间隔估算过滤；每日挑战等 custom 日程仍可能无法验证。',
   routeDataIncomplete: '资料不全',
@@ -326,6 +330,10 @@ const messagesEn: Record<MessageKey, string> = {
   transferPlanOriginTag: 'Start',
   transferPlanTransferTag: 'Transfer',
   transferPlanDestinationTag: 'End',
+  transferPlanWalkShort: 'Walk',
+  transferPlanWalkLeg: 'Walk ~{minutes} min: {from} → {to}',
+  transferPlanWalkAlightTag: 'Alight & walk',
+  transferPlanTitleWithWalk: 'Option {index} (incl. walk)',
   transferPlanTimetableNote:
     'Options use shift timetables (data/route-timetables.json) or service hours/headway estimates; custom schedules (e.g. daily challenge) may still be unverified.',
   routeDataIncomplete: 'Incomplete data',

@@ -66,6 +66,7 @@ import {
 } from '../utils/routeBetweenStops'
 import { isDirectRouteBetweenStopsFeasible } from '../utils/routeTimetableFeasibility'
 import { findTransferPlansBetweenStops, formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
+import { findWalkTransferPlans, mergeTransferAndWalkPlans } from '../utils/walkTransferPlans'
 import { TransferPlanDetail } from './TransferPlanDetail'
 import { TransferPlanList } from './TransferPlanList'
 import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
@@ -322,7 +323,10 @@ export function RouteLookupPage({
         : []
     const transferPlans =
       from && to && routes.length === 0
-        ? findTransferPlansBetweenStops(from, to, displayRoutes, tripRouteFilter)
+        ? mergeTransferAndWalkPlans(
+            findTransferPlansBetweenStops(from, to, displayRoutes, tripRouteFilter),
+            findWalkTransferPlans(from, to, displayRoutes, tripRouteFilter),
+          )
         : []
 
     return { from, to, fromQuery, toQuery, routes, transferPlans }
