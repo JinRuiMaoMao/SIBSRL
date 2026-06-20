@@ -193,6 +193,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '合并同线连续乘车段，不再出现 46→46、47→47 等假转车方案。',
             en: 'Merged consecutive segments on the same route so plans no longer show fake transfers like 46→46 or 47→47.',
           },
+          {
+            zh: '统一「阳光站」与「阳光铁路站」为同一站点（含 476/N472 站序修正）。',
+            en: 'Unified Sunshine Station and Sunshine Rail Station as the same stop (incl. 476/N472 stop lists).',
+          },
         ],
       },
       {

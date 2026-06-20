@@ -20,6 +20,8 @@ const ZH_ALIASES: Record<string, string> = {
   诺顿邨: '北顿邨',
   诺顿路: '北顿路',
   诺顿码头: '北顿码头',
+  阳光铁路站: '阳光站',
+  陽光鐵路站: '阳光站',
 }
 
 const EN_TO_ZH: Record<string, string> = {
@@ -72,6 +74,8 @@ const EN_TO_ZH: Record<string, string> = {
   'leafy university': '叶角大学',
   'leafy hospital': '叶角医院',
   'sunshine station': '阳光站',
+  'sunshine rail station': '阳光站',
+  'sunshine railway station': '阳光站',
   southern: '南环',
   central: '中环',
   northern: '北环',
