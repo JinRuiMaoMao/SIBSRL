@@ -282,6 +282,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '新增两站直达搜索：from:起点 to:终点、起:/终: 或「起点 → 终点」，列出同线同方向内起点在终点前的直达线路。',
             en: 'Added stop-to-stop direct route search—from:/to:, 起:/终:, or start → end lists routes where the start stop precedes the end on the same line and direction.',
           },
+          {
+            zh: '两站搜索语法改为「起点--终点」；若无直达线路，自动列出最少转车次数的乘车方案，可点击各段打开线路详情。',
+            en: 'Stop-to-stop search now uses start--end; when no direct route exists, minimum-transfer plans appear and each leg opens route detail.',
+          },
         ],
       },
       {

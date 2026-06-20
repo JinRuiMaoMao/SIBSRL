@@ -63,6 +63,8 @@ import {
   findDirectRoutesBetweenStops,
   resolveStopByQuery,
 } from '../utils/routeBetweenStops'
+import { findTransferPlansBetweenStops } from '../utils/stopTransferPlans'
+import { TransferPlanList } from './TransferPlanList'
 import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
 
 type DetailOverlay =
@@ -292,8 +294,14 @@ export function RouteLookupPage({
             routeMatchesFilters(route, filters),
           )
         : []
+    const transferPlans =
+      from && to && routes.length === 0
+        ? findTransferPlansBetweenStops(from, to, displayRoutes, (route) =>
+            routeMatchesFilters(route, filters),
+          )
+        : []
 
-    return { from, to, fromQuery, toQuery, routes }
+    return { from, to, fromQuery, toQuery, routes, transferPlans }
   }, [displayRoutes, filters, structuredStopPair.from, structuredStopPair.to])
 
   const stopLookupRoutes = useMemo(() => {
@@ -313,7 +321,10 @@ export function RouteLookupPage({
   }, [filters.query, stopLookupRoutes.length])
 
   useEffect(() => {
-    if (betweenStopLookup && betweenStopLookup.routes.length > 0) {
+    if (
+      betweenStopLookup &&
+      (betweenStopLookup.routes.length > 0 || betweenStopLookup.transferPlans.length > 0)
+    ) {
       setBetweenStopsSectionOpen(true)
     }
   }, [betweenStopLookup])
@@ -768,6 +779,18 @@ export function RouteLookupPage({
     return t('betweenStopsSummary', { from: fromLabel, to: toLabel })
   }, [betweenStopLookup, locale, t])
 
+  const betweenStopResultCount = betweenStopLookup
+    ? betweenStopLookup.routes.length || betweenStopLookup.transferPlans.length
+    : 0
+
+  const handleOpenTransferLeg = useCallback(
+    (routeId: string, directionIndex: number) => {
+      setDirectionIndex(routeId, directionIndex)
+      handleRouteNavigate(routeId)
+    },
+    [handleRouteNavigate, setDirectionIndex],
+  )
+
   const stopLookupSummary = useMemo(() => {
     if (matchedStops.length === 0) return ''
     const separator = isChineseLocale(locale) ? '、' : ', '
@@ -855,13 +878,18 @@ export function RouteLookupPage({
             {betweenStopLookup ? (
               <RouteGroupCollapse
                 groupId="betweenStops"
-                count={betweenStopLookup.routes.length}
+                count={betweenStopResultCount}
                 open={betweenStopsSectionOpen}
                 onOpenChange={setBetweenStopsSectionOpen}
               >
                 <p className="stop-lookup-summary">{betweenStopSummary}</p>
                 {betweenStopLookup.routes.length > 0 ? (
                   <div className="route-grid">{renderBetweenStopRouteCards()}</div>
+                ) : betweenStopLookup.transferPlans.length > 0 ? (
+                  <TransferPlanList
+                    plans={betweenStopLookup.transferPlans}
+                    onOpenLeg={handleOpenTransferLeg}
+                  />
                 ) : betweenStopLookup.from && betweenStopLookup.to ? (
                   <p className="route-group-empty">{t('betweenStopsNoRoutes')}</p>
                 ) : null}

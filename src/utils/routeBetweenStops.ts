@@ -7,7 +7,7 @@ export interface DirectRouteBetweenStops {
   directionIndex: number
 }
 
-function stopKey(zh: string, en: string): string {
+export function stopKey(zh: string, en: string): string {
   return `${zh.trim().toLowerCase()}|${en.trim().toLowerCase()}`
 }
 

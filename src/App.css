@@ -1781,6 +1781,83 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   line-height: 1.45;
 }
 
+.transfer-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.transfer-plan-heading {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.transfer-plan-card {
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.transfer-plan-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.transfer-plan-legs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.transfer-plan-leg {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.transfer-plan-change {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.transfer-plan-leg-button {
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.transfer-plan-leg-button:hover,
+.transfer-plan-leg-button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+html[data-list-density='compact'] .transfer-plan-card {
+  padding: 0.55rem 0.65rem;
+}
+
+html[data-list-density='compact'] .transfer-plan-leg-button {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.45rem;
+}
+
 /* Filters */
 .filters {
   display: flex;

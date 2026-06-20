@@ -15,9 +15,7 @@ export interface ParsedStructuredSearchQuery {
 }
 
 const STRUCTURED_TOKEN =
-  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl|from|to|起|终)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular|axis|loop|peakexpress)\b/gi
-
-const STOP_PAIR_ARROW = /^(.+?)\s*(?:→|->)\s*(.+)$/
+  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular|axis|loop|peakexpress)\b/gi
 
 function normalizeCategoryToken(raw: string): RouteCategory | null {
   const value = raw.trim().toLowerCase()
@@ -45,6 +43,17 @@ function normalizeTypeToken(raw: string): RouteTypeFilter | null {
   return TYPE_FILTER_ORDER.find((item) => item.toLowerCase() === value) ?? null
 }
 
+function parseStopPairFromText(text: string): { from?: string; to?: string; rest: string } {
+  const dashIndex = text.indexOf('--')
+  if (dashIndex <= 0) return { rest: text }
+
+  const from = text.slice(0, dashIndex).trim()
+  const to = text.slice(dashIndex + 2).trim()
+  if (!from || !to) return { rest: text }
+
+  return { from, to, rest: '' }
+}
+
 export function parseStructuredSearchQuery(query: string): ParsedStructuredSearchQuery {
   const parsed: ParsedStructuredSearchQuery = {
     text: query,
@@ -53,13 +62,6 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
   }
 
   let text = query
-  const arrowMatch = text.match(STOP_PAIR_ARROW)
-  if (arrowMatch) {
-    parsed.from = arrowMatch[1]?.trim()
-    parsed.to = arrowMatch[2]?.trim()
-    text = ''
-  }
-
   const matches = [...query.matchAll(STRUCTURED_TOKEN)]
   for (const match of matches) {
     text = text.replace(match[0], ' ')
@@ -81,16 +83,6 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     }
 
     if (!key || !value) continue
-
-    if (key === 'from' || key === '起') {
-      parsed.from = value
-      continue
-    }
-
-    if (key === 'to' || key === '终') {
-      parsed.to = value
-      continue
-    }
 
     if (key === 'zone' || key === 'z') {
       const zone = Number.parseInt(value, 10)
@@ -120,6 +112,14 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     }
   }
 
-  parsed.text = text.replace(/\s+/g, ' ').trim()
+  text = text.replace(/\s+/g, ' ').trim()
+  const stopPair = parseStopPairFromText(text)
+  if (stopPair.from && stopPair.to) {
+    parsed.from = stopPair.from
+    parsed.to = stopPair.to
+    text = stopPair.rest
+  }
+
+  parsed.text = text
   return parsed
 }
