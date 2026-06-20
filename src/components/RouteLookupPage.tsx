@@ -55,6 +55,7 @@ import {
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { buildRouteShareUrl, clearRouteFromLocation, readDirectionQueryFromLocation, readRouteQueryFromLocation, replaceRouteInLocation, setRouteInLocation } from '../utils/routeNavigation'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
+import { matchesTripPlanningRoute } from '../utils/randomRoutePool'
 import {
   findStopsMatchingQuery,
   routePassesStopQuery,
@@ -294,21 +295,23 @@ export function RouteLookupPage({
 
     const from = resolveStopByQuery(fromQuery)
     const to = resolveStopByQuery(toQuery)
+    const tripRouteFilter = (route: BusRoute) =>
+      matchesTripPlanningRoute(route, dailyChallenge, (candidate) =>
+        routeMatchesFilters(candidate, filters),
+      )
     const routes =
       from && to
         ? findDirectRoutesBetweenStops(from, to, displayRoutes).filter(({ route }) =>
-            routeMatchesFilters(route, filters),
+            tripRouteFilter(route),
           )
         : []
     const transferPlans =
       from && to && routes.length === 0
-        ? findTransferPlansBetweenStops(from, to, displayRoutes, (route) =>
-            routeMatchesFilters(route, filters),
-          )
+        ? findTransferPlansBetweenStops(from, to, displayRoutes, tripRouteFilter)
         : []
 
     return { from, to, fromQuery, toQuery, routes, transferPlans }
-  }, [displayRoutes, filters, structuredStopPair.from, structuredStopPair.to])
+  }, [dailyChallenge, displayRoutes, filters, structuredStopPair.from, structuredStopPair.to])
 
   const stopLookupRoutes = useMemo(() => {
     if (betweenStopLookup) return []

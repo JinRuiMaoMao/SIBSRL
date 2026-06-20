@@ -302,6 +302,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '随机奖池改为：常规线路始终参与；仅当日每日挑战线路、以及已到开放期的季节限定可额外加入（见 data/seasonal-route-availability.json）。',
             en: 'Random pool now uses regular routes always, plus today’s daily challenge route and seasonal routes only during their configured availability windows.',
           },
+          {
+            zh: '两站直达与转车方案同步上述规则：非今日每日挑战线（如 270A）、未到开放期的季节限定不会出现在方案中。',
+            en: 'Stop-to-stop direct and transfer plans follow the same rules—daily routes like 270A only when featured today; seasonal routes only when unlocked.',
+          },
         ],
       },
       {

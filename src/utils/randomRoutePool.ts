@@ -21,8 +21,8 @@ function isTodaysDailyChallengeRoute(
   return todayRoute?.id === route.id
 }
 
-/** 随机奖池：常规线路 + 当日挑战（若是今天）+ 已开放的季节限定 */
-export function isRouteEligibleForRandomPool(
+/** 行程规划（随机 / 两站直达 / 转车）：常规 + 当日挑战 + 已开放季节限定 */
+export function isRouteEligibleForTripPlanning(
   route: BusRoute,
   dailyChallenge: DailyChallengeInfo,
   now = new Date(),
@@ -37,10 +37,22 @@ export function isRouteEligibleForRandomPool(
   return false
 }
 
+/** @deprecated 使用 isRouteEligibleForTripPlanning */
+export const isRouteEligibleForRandomPool = isRouteEligibleForTripPlanning
+
 export function buildRandomEligibleRoutes(
   routes: BusRoute[],
   dailyChallenge: DailyChallengeInfo,
   now = new Date(),
 ): BusRoute[] {
-  return routes.filter((route) => isRouteEligibleForRandomPool(route, dailyChallenge, now))
+  return routes.filter((route) => isRouteEligibleForTripPlanning(route, dailyChallenge, now))
+}
+
+export function matchesTripPlanningRoute(
+  route: BusRoute,
+  dailyChallenge: DailyChallengeInfo,
+  matchesUserFilters: (route: BusRoute) => boolean,
+  now = new Date(),
+): boolean {
+  return matchesUserFilters(route) && isRouteEligibleForTripPlanning(route, dailyChallenge, now)
 }
