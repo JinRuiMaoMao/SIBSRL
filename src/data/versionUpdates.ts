@@ -286,6 +286,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '两站搜索语法改为「起点--终点」；若无直达线路，自动列出最少转车次数的乘车方案，可点击各段打开线路详情。',
             en: 'Stop-to-stop search now uses start--end; when no direct route exists, minimum-transfer plans appear and each leg opens route detail.',
           },
+          {
+            zh: '转车方案改为卡片列表：点击方案可展开途经站序，并标注起点、转车站与终点；线路号可点开详情。',
+            en: 'Transfer plans are now cards—tap to expand the full stop sequence with start, transfer, and end tags; route numbers open detail.',
+          },
         ],
       },
       {

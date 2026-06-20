@@ -60,6 +60,35 @@ function expandLegsFromStop(
   return legs
 }
 
+/** 列出某段乘车区间内经过的站点（含起终点） */
+export function getStopsOnLeg(leg: RouteLeg): MatchedStop[] {
+  const list = leg.route.stops?.[leg.directionIndex]?.list
+  if (!list?.length) return [leg.from, leg.to]
+
+  const fromKey = stopKey(leg.from.zh, leg.from.en)
+  const toKey = stopKey(leg.to.zh, leg.to.en)
+  let fromIndex = -1
+  let toIndex = -1
+
+  for (let i = 0; i < list.length; i++) {
+    const stop = list[i]!
+    const key = stopKey(stop.name.zh, stop.name.en)
+    if (key === fromKey) fromIndex = i
+    if (key === toKey) toIndex = i
+  }
+
+  if (fromIndex < 0 || toIndex < fromIndex) return [leg.from, leg.to]
+
+  return list.slice(fromIndex, toIndex + 1).map((stop) => ({
+    zh: stop.name.zh,
+    en: stop.name.en,
+  }))
+}
+
+export function formatTransferPlanRouteChain(plan: TransferPlan): string {
+  return plan.legs.map((leg) => leg.route.number).join(' → ')
+}
+
 /** 最少乘车段数的转车方案（BFS）；乘车段数 = 转车次数 + 1 */
 export function findTransferPlansBetweenStops(
   from: MatchedStop,

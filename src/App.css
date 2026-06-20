@@ -1795,14 +1795,171 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .transfer-plan-card {
-  padding: 0.75rem 0.85rem;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.transfer-plan-card-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.85rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.transfer-plan-card-trigger:hover,
+.transfer-plan-card-trigger:focus-visible {
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.transfer-plan-card-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.transfer-plan-route-chain {
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.transfer-plan-card-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.transfer-plan-card-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.transfer-plan-card.is-expanded .transfer-plan-card-icon {
+  transform: rotate(180deg);
+}
+
+.transfer-plan-detail {
+  padding: 0 0.85rem 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.transfer-plan-segment + .transfer-plan-segment {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border);
+}
+
+.transfer-plan-transfer-node {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.transfer-plan-segment-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.55rem;
+  margin-bottom: 0.45rem;
+}
+
+.transfer-plan-route-link {
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.transfer-plan-route-link:hover,
+.transfer-plan-route-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.transfer-plan-direction {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.transfer-plan-stop-count {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.transfer-plan-stops {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.transfer-plan-stop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  padding: 0.28rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.transfer-plan-stop.is-origin,
+.transfer-plan-stop.is-destination {
+  background: rgba(45, 212, 160, 0.1);
+}
+
+.transfer-plan-stop.is-transfer-alight {
+  background: rgba(251, 146, 60, 0.12);
+}
+
+.transfer-plan-stop-name {
+  min-width: 0;
+}
+
+.transfer-plan-stop-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.15);
+}
+
+.transfer-plan-stop.is-origin .transfer-plan-stop-tag,
+.transfer-plan-stop.is-destination .transfer-plan-stop-tag {
+  color: var(--bus-green);
+  background: rgba(45, 212, 160, 0.18);
+}
+
+.transfer-plan-stop.is-transfer-alight .transfer-plan-stop-tag {
+  color: #fb923c;
+  background: rgba(251, 146, 60, 0.18);
 }
 
 .transfer-plan-title {
-  margin: 0 0 0.55rem;
+  margin: 0;
   font-size: 0.84rem;
   font-weight: 700;
   color: var(--text);
@@ -1849,13 +2006,17 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   color: var(--accent);
 }
 
-html[data-list-density='compact'] .transfer-plan-card {
+html[data-list-density='compact'] .transfer-plan-card-trigger {
   padding: 0.55rem 0.65rem;
 }
 
-html[data-list-density='compact'] .transfer-plan-leg-button {
-  font-size: 0.78rem;
-  padding: 0.35rem 0.45rem;
+html[data-list-density='compact'] .transfer-plan-detail {
+  padding: 0 0.65rem 0.65rem;
+}
+
+html[data-list-density='compact'] .transfer-plan-stop {
+  font-size: 0.76rem;
+  padding: 0.22rem 0.35rem;
 }
 
 /* Filters */
