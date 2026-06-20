@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { lockPageScroll } from '../utils/pageScrollLock'
 import { getLatestUpdatePromptKey, versionUpdates } from '../data/versionUpdates'
 import { useLocale } from '../i18n/LocaleContext'
 import { markUpdatesLogViewed } from '../storage/updatesViewing'
@@ -16,11 +17,7 @@ export function VersionUpdatesPrompt({ open, onClose }: VersionUpdatesPromptProp
 
   useEffect(() => {
     if (!open) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockPageScroll()
   }, [open])
 
   useEffect(() => {

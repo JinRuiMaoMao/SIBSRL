@@ -258,8 +258,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Compact mode now tightens the daily challenge card and calendar dialog—calendar button inline with km in the header, denser month grid and type.',
           },
           {
-            zh: '竞速日历样式：日期数字改用紫色，[Race] 仅标记内文字变色、括号与活动名保持常色。',
-            en: 'Race calendar styling: purple date number; only the Race label text is colored—brackets and event name stay normal.',
+            zh: '修复弹窗打开时页面因滚动条消失而右移：根元素预留滚动条槽位，并统一滚动锁定逻辑。',
+            en: 'Fixed page shifting right when modals hide the scrollbar—stable scrollbar gutter on html and unified scroll lock.',
           },
           {
             zh: '修复同日多次追加更新日志后弹窗不再出现的问题：已读标记改为跟踪最新条目内容指纹，而非仅条目 id。',

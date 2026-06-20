@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { lockPageScroll } from '../utils/pageScrollLock'
 import type { DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
 import { DailyChallengeCard } from './DailyChallengeCard'
@@ -20,11 +21,7 @@ export function DailyChallengePrompt({
 
   useEffect(() => {
     if (!open) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockPageScroll()
   }, [open])
 
   useEffect(() => {

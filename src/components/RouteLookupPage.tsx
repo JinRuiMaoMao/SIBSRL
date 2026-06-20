@@ -36,6 +36,7 @@ import { isChineseLocale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { loadRoutePageData } from '../utils/loadRoutePageData'
+import { lockPageScroll } from '../utils/pageScrollLock'
 import {
   defaultClosedRouteGroups,
   readStoredRouteGroupOpen,
@@ -301,7 +302,6 @@ export function RouteLookupPage({
     setDailyChallengeRouteView(false)
     clearSelection()
     clearRouteFromLocation()
-    document.body.style.overflow = ''
   }, [clearSelection])
 
   useEffect(() => {
@@ -402,11 +402,7 @@ export function RouteLookupPage({
 
   useEffect(() => {
     if (!detailOverlay) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockPageScroll()
   }, [detailOverlay])
 
   const handleSelectDailyChallenge = useCallback(() => {

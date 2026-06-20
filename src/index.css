@@ -71,6 +71,13 @@
 html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+html.is-scroll-locked {
+  overflow: hidden;
 }
 
 body {
@@ -87,11 +94,6 @@ body {
 }
 
 /* 自制滚动条（Firefox + Chromium / Edge） */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
 .sibs-scrollbar,
 .route-detail,
 .settings-locale-grid,

@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { lockPageScroll } from '../utils/pageScrollLock'
 import { buildDailyChallengeFromScheduleDay } from '../data/dailyChallenge'
 import {
   buildMonthCalendarCells,
@@ -102,11 +103,7 @@ export function DailyChallengeCalendarDialog({
 
   useEffect(() => {
     if (!open) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockPageScroll()
   }, [open])
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import { lockPageScroll } from '../utils/pageScrollLock'
 
 interface AlertOptions {
   message: string
@@ -68,11 +69,7 @@ function AppDialogHost({
   )
 
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockPageScroll()
   }, [])
 
   useEffect(() => {

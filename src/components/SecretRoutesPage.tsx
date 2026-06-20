@@ -10,6 +10,7 @@ import {
   readRouteQueryFromLocation,
   setRouteInLocation,
 } from '../utils/routeNavigation'
+import { lockPageScroll } from '../utils/pageScrollLock'
 import { RouteCard } from './RouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
@@ -76,7 +77,6 @@ export function SecretRoutesPage() {
     setSelectedRoute(null)
     setNotFoundRouteId(null)
     clearRouteFromLocation()
-    document.body.style.overflow = ''
   }, [])
 
   const openRoute = useCallback((routeId: string) => {
@@ -148,11 +148,7 @@ export function SecretRoutesPage() {
 
   useEffect(() => {
     if (!detailOpen) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockPageScroll()
   }, [detailOpen])
 
   const handleCloseDetail = () => {
