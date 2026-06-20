@@ -64,6 +64,7 @@ import {
   findDirectRoutesBetweenStops,
   resolveStopByQuery,
 } from '../utils/routeBetweenStops'
+import { isDirectRouteBetweenStopsFeasible } from '../utils/routeTimetableFeasibility'
 import { findTransferPlansBetweenStops, formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
 import { TransferPlanDetail } from './TransferPlanDetail'
 import { TransferPlanList } from './TransferPlanList'
@@ -139,6 +140,8 @@ export function RouteLookupPage({
   const [searchHistory, setSearchHistory] = useState(readSearchHistory)
   const [stopSectionOpen, setStopSectionOpen] = useState(true)
   const [betweenStopsSectionOpen, setBetweenStopsSectionOpen] = useState(true)
+  /** 两站 `起点--终点` 仅在 Enter / 历史记录选中后执行搜索，避免输入时主线程卡死 */
+  const [committedStopPairQuery, setCommittedStopPairQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
   const syntaxPanelRef = useRef<HTMLDivElement>(null)
@@ -288,9 +291,19 @@ export function RouteLookupPage({
     [filters.query],
   )
 
+  const committedStructuredStopPair = useMemo(
+    () => parseStructuredSearchQuery(committedStopPairQuery),
+    [committedStopPairQuery],
+  )
+
+  const stopPairSearchCommitted =
+    committedStopPairQuery.length > 0 && filters.query.trim() === committedStopPairQuery
+
   const betweenStopLookup = useMemo(() => {
-    const fromQuery = structuredStopPair.from?.trim()
-    const toQuery = structuredStopPair.to?.trim()
+    if (!stopPairSearchCommitted) return null
+
+    const fromQuery = committedStructuredStopPair.from?.trim()
+    const toQuery = committedStructuredStopPair.to?.trim()
     if (!fromQuery || !toQuery) return null
 
     const from = resolveStopByQuery(fromQuery)
@@ -301,8 +314,10 @@ export function RouteLookupPage({
       )
     const routes =
       from && to
-        ? findDirectRoutesBetweenStops(from, to, displayRoutes).filter(({ route }) =>
-            tripRouteFilter(route),
+        ? findDirectRoutesBetweenStops(from, to, displayRoutes).filter(
+            ({ route, directionIndex }) =>
+              tripRouteFilter(route) &&
+              isDirectRouteBetweenStopsFeasible(from, to, route, directionIndex),
           )
         : []
     const transferPlans =
@@ -311,7 +326,14 @@ export function RouteLookupPage({
         : []
 
     return { from, to, fromQuery, toQuery, routes, transferPlans }
-  }, [dailyChallenge, displayRoutes, filters, structuredStopPair.from, structuredStopPair.to])
+  }, [
+    committedStructuredStopPair.from,
+    committedStructuredStopPair.to,
+    dailyChallenge,
+    displayRoutes,
+    filters,
+    stopPairSearchCommitted,
+  ])
 
   const stopLookupRoutes = useMemo(() => {
     if (betweenStopLookup) return []
@@ -641,16 +663,22 @@ export function RouteLookupPage({
     return count
   }, [groupedSlots, visibleDisplayGroups])
 
+  const betweenStopPairDraft =
+    Boolean(structuredStopPair.from?.trim() && structuredStopPair.to?.trim()) &&
+    !stopPairSearchCommitted
+
   const listIsEmpty =
     !dailyChallengeVisible &&
     groupedRouteCount === 0 &&
     stopLookupRoutes.length === 0 &&
-    !betweenStopLookup
+    !betweenStopLookup &&
+    !betweenStopPairDraft
 
   const handleSearchQueryChange = useCallback(
     (q: string) => {
       updateFilter('query', q)
       setGroupOpen(defaultClosedRouteGroups())
+      if (!q.trim()) setCommittedStopPairQuery('')
     },
     [updateFilter],
   )
@@ -661,18 +689,29 @@ export function RouteLookupPage({
 
     setSearchHistory((prev) => pushSearchHistory(q, prev))
 
+    const parsed = parseStructuredSearchQuery(q)
+    if (parsed.from?.trim() && parsed.to?.trim()) {
+      setCommittedStopPairQuery(q)
+    }
+
     const next = defaultClosedRouteGroups()
     for (const group of visibleDisplayGroups) {
       if (countVisibleGroupSlots(group) > 0) next[group] = true
     }
     if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
-    if (betweenStopLookup) setBetweenStopsSectionOpen(true)
+    if (parsed.from?.trim() && parsed.to?.trim()) setBetweenStopsSectionOpen(true)
     setGroupOpen(next)
-  }, [betweenStopLookup, countVisibleGroupSlots, filters.query, stopLookupRoutes.length, visibleDisplayGroups])
+  }, [countVisibleGroupSlots, filters.query, stopLookupRoutes.length, visibleDisplayGroups])
 
   const handleApplyHistory = useCallback(
     (query: string) => {
-      updateFilter('query', query)
+      const trimmed = query.trim()
+      updateFilter('query', trimmed)
+      const parsed = parseStructuredSearchQuery(trimmed)
+      if (parsed.from?.trim() && parsed.to?.trim()) {
+        setCommittedStopPairQuery(trimmed)
+        setBetweenStopsSectionOpen(true)
+      }
       searchInputRef.current?.focus()
     },
     [updateFilter],
@@ -899,6 +938,10 @@ export function RouteLookupPage({
                 onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
                 challenge={dailyChallenge}
               />
+            ) : null}
+
+            {betweenStopPairDraft ? (
+              <p className="stop-lookup-summary stop-lookup-pending">{t('betweenStopsPressEnter')}</p>
             ) : null}
 
             {betweenStopLookup ? (

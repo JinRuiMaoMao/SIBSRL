@@ -1852,6 +1852,13 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   color: var(--text-muted);
 }
 
+.transfer-plan-timetable-note {
+  margin: -0.5rem 0 1rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
 .transfer-plan-journey {
   display: flex;
   flex-direction: column;

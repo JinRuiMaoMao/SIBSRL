@@ -52,6 +52,8 @@ export function TransferPlanDetail({
         {t('betweenStopsSummary', { from: fromLabel, to: toLabel })}
       </p>
 
+      <p className="transfer-plan-timetable-note">{t('transferPlanTimetableNote')}</p>
+
       <TransferPlanJourney plan={plan} onOpenLeg={onOpenLeg} />
     </aside>
   )

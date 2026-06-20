@@ -41,6 +41,7 @@ const messagesZhHans = {
   betweenStopsFromUnresolved: '未找到起点「{query}」',
   betweenStopsToUnresolved: '未找到终点「{query}」',
   betweenStopsNoRoutes: '没有直达或转车方案',
+  betweenStopsPressEnter: '已识别两站查询，按 Enter 开始搜索转车方案',
   transferPlanHeading: '转车方案',
   transferPlanTitle: '方案 {index}（{transfers} 次转车）',
   transferPlanLeg: '{route}：{from} → {to}',
@@ -52,6 +53,8 @@ const messagesZhHans = {
   transferPlanOriginTag: '起点',
   transferPlanTransferTag: '转车',
   transferPlanDestinationTag: '终点',
+  transferPlanTimetableNote:
+    '方案已按班次时刻表（data/route-timetables.json）或各线服务时间/班次间隔估算过滤；每日挑战等 custom 日程仍可能无法验证。',
   routeDataIncomplete: '资料不全',
   routeDataIncompleteHint: '此线路站序或部分站点资料尚未收录完整',
   stopLookupMatches: '匹配站点：{stops}',
@@ -311,6 +314,7 @@ const messagesEn: Record<MessageKey, string> = {
   betweenStopsFromUnresolved: 'Start stop not found: “{query}”',
   betweenStopsToUnresolved: 'End stop not found: “{query}”',
   betweenStopsNoRoutes: 'No direct or transfer route found',
+  betweenStopsPressEnter: 'Stop pair recognized — press Enter to search transfer options',
   transferPlanHeading: 'Transfer options',
   transferPlanTitle: 'Option {index} ({transfers} transfer(s))',
   transferPlanLeg: '{route}: {from} → {to}',
@@ -322,6 +326,8 @@ const messagesEn: Record<MessageKey, string> = {
   transferPlanOriginTag: 'Start',
   transferPlanTransferTag: 'Transfer',
   transferPlanDestinationTag: 'End',
+  transferPlanTimetableNote:
+    'Options use shift timetables (data/route-timetables.json) or service hours/headway estimates; custom schedules (e.g. daily challenge) may still be unverified.',
   routeDataIncomplete: 'Incomplete data',
   routeDataIncompleteHint: 'Stop list or some stop details for this route are not fully recorded yet',
   stopLookupMatches: 'Matching stops: {stops}',

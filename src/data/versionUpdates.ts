@@ -310,6 +310,22 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '转车方案至少展示 6 条（按线路组合去重）：1 次转车不足 6 种时自动纳入 2 次、3 次转车等更深方案。',
             en: 'Transfer plans show at least six unique route chains—if one-transfer options are fewer, two- and three-transfer plans are included.',
           },
+          {
+            zh: '转车方案参考各线服务时间、班次间隔与行车时间估算，过滤运营时段不重叠或换乘来不及的方案；详情页有说明。',
+            en: 'Transfer plans are filtered by overlapping service hours, headway, and estimated travel time—connections that cannot be timed are dropped; see the detail note.',
+          },
+          {
+            zh: '修复两站转车搜索卡死：改为仅经换乘枢纽扩展、预建站点索引并限制搜索规模，查询恢复即时响应。',
+            en: 'Fixed stop-to-stop transfer search freezing—search now uses transfer hubs only, a stop index, and bounded exploration for instant results.',
+          },
+          {
+            zh: '导入游戏 routeData 班次时刻表（33 线 → data/route-timetables.json）；转车可行性优先按分时段首末班与间隔校验，无结构化数据的线路仍用文案 fallback。',
+            en: 'Imported in-game shift timetables (33 routes → data/route-timetables.json); transfer feasibility prefers banded first/last times and headways, with text fallback elsewhere.',
+          },
+          {
+            zh: '修复两站转车查询卡死：仅在 Enter 确认后搜索，并限制 BFS 规模与枢纽段展开数量。',
+            en: 'Fixed stop-to-stop transfer search freezing—search runs on Enter only, with tighter BFS bounds and hub leg caps.',
+          },
         ],
       },
       {
