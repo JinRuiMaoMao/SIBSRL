@@ -17,6 +17,40 @@ export function getLatestUpdateId(): string | undefined {
   return versionUpdates[0]?.id
 }
 
+function hashUpdatePromptContent(value: string): string {
+  let hash = 0
+  for (let i = 0; i < value.length; i++) {
+    hash = (Math.imul(31, hash) + value.charCodeAt(i)) | 0
+  }
+  return (hash >>> 0).toString(36)
+}
+
+function collectUpdateEntryPromptContent(entry: VersionUpdateEntry): string {
+  const parts: string[] = []
+  if (entry.items?.length) {
+    for (const item of entry.items) {
+      parts.push(item.zh, item.en)
+    }
+  }
+  if (entry.groups?.length) {
+    for (const group of entry.groups) {
+      parts.push(group.title.zh, group.title.en)
+      for (const item of group.items) {
+        parts.push(item.zh, item.en)
+      }
+    }
+  }
+  if (entry.easterEggHex) parts.push(entry.easterEggHex)
+  return parts.join('\0')
+}
+
+/** 弹窗已读标记：同日追加条目时 id 不变，但内容指纹会变。 */
+export function getLatestUpdatePromptKey(): string | undefined {
+  const entry = versionUpdates[0]
+  if (!entry) return undefined
+  return `${entry.id}#${hashUpdatePromptContent(collectUpdateEntryPromptContent(entry))}`
+}
+
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
 export const CURRENT_CHANGELOG_DATE = '2026-06-20'
 
@@ -228,8 +262,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Race calendar styling now highlights only the date number and [Race] tag—route code and event name stay normal.',
           },
           {
-            zh: '每日挑战日历中尚未公布内容的日期显示「暂无数据，等待游戏内更新」。',
-            en: 'Days without schedule data in the calendar show “No data yet — waiting for in-game update”.',
+            zh: '修复同日多次追加更新日志后弹窗不再出现的问题：已读标记改为跟踪最新条目内容指纹，而非仅条目 id。',
+            en: 'Fixed the updates prompt not reappearing after same-day changelog additions—seen state now tracks a content fingerprint, not just entry id.',
           },
         ],
       },

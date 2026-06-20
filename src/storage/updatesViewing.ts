@@ -12,9 +12,9 @@ export function getLastSeenUpdateId(): string | null {
   }
 }
 
-export function markUpdateSeen(updateId: string): void {
+export function markUpdateSeen(promptKey: string): void {
   try {
-    localStorage.setItem(UPDATES_LAST_SEEN_ID_KEY, updateId)
+    localStorage.setItem(UPDATES_LAST_SEEN_ID_KEY, promptKey)
     localStorage.removeItem(LEGACY_UPDATES_LOG_VIEWED_KEY)
     localStorage.removeItem(LEGACY_UPDATES_PROMPT_SHOWN_KEY)
   } catch {
@@ -23,6 +23,6 @@ export function markUpdateSeen(updateId: string): void {
 }
 
 /** 打开完整更新页时标记已读 */
-export function markUpdatesLogViewed(updateId: string): void {
-  markUpdateSeen(updateId)
+export function markUpdatesLogViewed(promptKey: string): void {
+  markUpdateSeen(promptKey)
 }

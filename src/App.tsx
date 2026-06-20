@@ -14,7 +14,7 @@ import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
 import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useLocale } from './i18n/LocaleContext'
-import { getLatestUpdateId } from './data/versionUpdates'
+import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markUpdateSeen } from './storage/updatesViewing'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
 import { isSecretPage } from './utils/appPage'
@@ -49,8 +49,8 @@ function App() {
   }, [])
 
   const closeUpdatesPrompt = useCallback(() => {
-    const latestId = getLatestUpdateId()
-    if (latestId) markUpdateSeen(latestId)
+    const latestPromptKey = getLatestUpdatePromptKey()
+    if (latestPromptKey) markUpdateSeen(latestPromptKey)
     setUpdatesPromptOpen(false)
   }, [])
 

@@ -1,4 +1,4 @@
-import { getLatestUpdateId } from '../data/versionUpdates'
+import { getLatestUpdatePromptKey } from '../data/versionUpdates'
 import { getLastSeenUpdateId } from '../storage/updatesViewing'
 import { isRoutesPage } from './appTabNavigation'
 import { readRouteQueryFromLocation } from './routeNavigation'
@@ -8,8 +8,8 @@ export function shouldShowUpdatesPrompt(): boolean {
   if (!isRoutesPage()) return false
   if (readRouteQueryFromLocation()) return false
 
-  const latestId = getLatestUpdateId()
-  if (!latestId) return false
+  const latestPromptKey = getLatestUpdatePromptKey()
+  if (!latestPromptKey) return false
 
-  return getLastSeenUpdateId() !== latestId
+  return getLastSeenUpdateId() !== latestPromptKey
 }

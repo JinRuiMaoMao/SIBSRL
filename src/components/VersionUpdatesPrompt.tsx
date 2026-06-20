@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { getLatestUpdateId, versionUpdates } from '../data/versionUpdates'
+import { getLatestUpdatePromptKey, versionUpdates } from '../data/versionUpdates'
 import { useLocale } from '../i18n/LocaleContext'
 import { markUpdatesLogViewed } from '../storage/updatesViewing'
 import { getTabPageHref } from '../utils/appTabNavigation'
@@ -35,8 +35,8 @@ export function VersionUpdatesPrompt({ open, onClose }: VersionUpdatesPromptProp
   if (!open || !latestEntry) return null
 
   const handleViewAll = () => {
-    const latestId = getLatestUpdateId()
-    if (latestId) markUpdatesLogViewed(latestId)
+    const latestPromptKey = getLatestUpdatePromptKey()
+    if (latestPromptKey) markUpdatesLogViewed(latestPromptKey)
     onClose()
     window.location.href = getTabPageHref('updates')
   }
