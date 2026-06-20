@@ -10,6 +10,7 @@ import { getDirectionLengthKm } from '../utils/routeDirections'
 import { formatRouteOperators } from '../utils/routeDisplay'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
 import { getRoutePageHref } from '../utils/routeNavigation'
+import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { DirectionToggle } from './DirectionToggle'
 import { RouteEndpoints } from './RouteEndpoints'
@@ -47,6 +48,7 @@ export function RouteCard({
     getDirectionServiceTime(route, directionIndex, locale) ??
     getOptionalText(route.serviceTime, locale)
   const hasDirections = routeHasDirectionVariants(route)
+  const dataIncomplete = !isRouteStopDataComplete(route)
 
   return (
     <a
@@ -75,6 +77,11 @@ export function RouteCard({
                 compact
               />
             )}
+            {dataIncomplete ? (
+              <span className="route-completeness-badge" title={t('routeDataIncompleteHint')}>
+                {t('routeDataIncomplete')}
+              </span>
+            ) : null}
           </div>
           <div className="route-card-top-end">
             {lengthKm && (

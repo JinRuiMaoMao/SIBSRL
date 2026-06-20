@@ -106,3 +106,48 @@ export async function fetchLiveDailyChallenge(
     fromSchedule: false,
   }
 }
+
+export function getDailyChallengeHistoryApiUrl(): string | null {
+  const latestUrl = getDailyChallengeApiUrl()
+  if (!latestUrl) return null
+  if (latestUrl.includes('/latest')) {
+    return latestUrl.replace(/\/latest\/?$/, '/history')
+  }
+  const trimmed = latestUrl.replace(/\/$/, '')
+  return `${trimmed}/history`
+}
+
+export async function fetchDailyChallengeHistory(
+  signal?: AbortSignal,
+): Promise<DailyChallengeScheduleDay[]> {
+  const apiUrl = getDailyChallengeHistoryApiUrl()
+  if (!apiUrl) return []
+
+  try {
+    const response = await fetch(apiUrl, {
+      signal,
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    })
+    if (!response.ok) return []
+
+    const payload = (await response.json()) as {
+      latest?: unknown
+      history?: unknown[]
+    }
+    const records = [payload.latest, ...(payload.history ?? [])]
+    const days: DailyChallengeScheduleDay[] = []
+    const seenDates = new Set<string>()
+
+    for (const record of records) {
+      const day = normalizeApiRecord(record)
+      if (!day || seenDates.has(day.date)) continue
+      seenDates.add(day.date)
+      days.push(day)
+    }
+
+    return days
+  } catch {
+    return []
+  }
+}

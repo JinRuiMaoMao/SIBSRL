@@ -1,12 +1,14 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
+  buildDailyChallengeFromScheduleDay,
   findRouteForDailyChallenge,
   findDailyChallengeDirectionIndex,
   getDailyChallengeListedRouteId,
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
+import type { DailyChallengeScheduleDay } from '../data/dailyChallengeSchedule'
 import {
   getGroupDisplaySlots,
   getRouteDisplayIdsForGroup,
@@ -57,6 +59,11 @@ import {
   findStopsMatchingQuery,
   routePassesStopQuery,
 } from '../utils/routeStopLookup'
+import {
+  findDirectRoutesBetweenStops,
+  resolveStopByQuery,
+} from '../utils/routeBetweenStops'
+import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
 
 type DetailOverlay =
   | { kind: 'route'; route: BusRoute }
@@ -122,6 +129,7 @@ export function RouteLookupPage({
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
   const [searchHistory, setSearchHistory] = useState(readSearchHistory)
   const [stopSectionOpen, setStopSectionOpen] = useState(true)
+  const [betweenStopsSectionOpen, setBetweenStopsSectionOpen] = useState(true)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
   const syntaxPanelRef = useRef<HTMLDivElement>(null)
@@ -266,7 +274,30 @@ export function RouteLookupPage({
     [filters.query],
   )
 
+  const structuredStopPair = useMemo(
+    () => parseStructuredSearchQuery(filters.query),
+    [filters.query],
+  )
+
+  const betweenStopLookup = useMemo(() => {
+    const fromQuery = structuredStopPair.from?.trim()
+    const toQuery = structuredStopPair.to?.trim()
+    if (!fromQuery || !toQuery) return null
+
+    const from = resolveStopByQuery(fromQuery)
+    const to = resolveStopByQuery(toQuery)
+    const routes =
+      from && to
+        ? findDirectRoutesBetweenStops(from, to, displayRoutes).filter(({ route }) =>
+            routeMatchesFilters(route, filters),
+          )
+        : []
+
+    return { from, to, fromQuery, toQuery, routes }
+  }, [displayRoutes, filters, structuredStopPair.from, structuredStopPair.to])
+
   const stopLookupRoutes = useMemo(() => {
+    if (betweenStopLookup) return []
     const q = filters.query.trim()
     if (q.length < 2 || matchedStops.length === 0) return []
     return displayRoutes
@@ -275,11 +306,17 @@ export function RouteLookupPage({
           routePassesStopQuery(route, q) && routeMatchesFilters(route, filters),
       )
       .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }))
-  }, [displayRoutes, filters, matchedStops.length])
+  }, [betweenStopLookup, displayRoutes, filters, matchedStops.length])
 
   useEffect(() => {
     if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
   }, [filters.query, stopLookupRoutes.length])
+
+  useEffect(() => {
+    if (betweenStopLookup && betweenStopLookup.routes.length > 0) {
+      setBetweenStopsSectionOpen(true)
+    }
+  }, [betweenStopLookup])
 
   useEffect(() => {
     writeStoredRouteGroupOpen(groupOpen)
@@ -405,25 +442,39 @@ export function RouteLookupPage({
     return lockPageScroll()
   }, [detailOverlay])
 
-  const handleSelectDailyChallenge = useCallback(() => {
-    const challenge = dailyChallenge
-    const routeNumber = challenge.routeNumber
+  const openDailyChallenge = useCallback(
+    (challenge: DailyChallengeInfo) => {
+      const routeNumber = challenge.routeNumber
 
-    if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
-      const route = findRouteForDailyChallenge(routeNumber)
-      if (route) {
-        const directionIndex = findDailyChallengeDirectionIndex(route, challenge.directionKey)
-        if (directionIndex != null) setDirectionIndex(route.id, directionIndex)
-        setDailyChallengeRouteView(true)
-        selectRoute(route.id)
-        return
+      if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
+        const route = findRouteForDailyChallenge(routeNumber)
+        if (route) {
+          const directionIndex = findDailyChallengeDirectionIndex(route, challenge.directionKey)
+          if (directionIndex != null) setDirectionIndex(route.id, directionIndex)
+          setDailyChallengeRouteView(true)
+          selectRoute(route.id)
+          return
+        }
       }
-    }
 
-    setDailyChallengeRouteView(false)
-    clearSelection()
-    setDetailOverlay({ kind: 'daily-challenge', challenge })
-  }, [clearSelection, dailyChallenge, selectRoute, setDirectionIndex])
+      setDailyChallengeRouteView(false)
+      clearSelection()
+      setDetailOverlay({ kind: 'daily-challenge', challenge })
+    },
+    [clearSelection, selectRoute, setDirectionIndex],
+  )
+
+  const handleSelectDailyChallenge = useCallback(() => {
+    openDailyChallenge(dailyChallenge)
+  }, [dailyChallenge, openDailyChallenge])
+
+  const handleSelectScheduleDay = useCallback(
+    (day: DailyChallengeScheduleDay) => {
+      setDailyChallengeCalendarOpen(false)
+      openDailyChallenge(buildDailyChallengeFromScheduleDay(day))
+    },
+    [openDailyChallenge],
+  )
 
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
@@ -570,7 +621,11 @@ export function RouteLookupPage({
     return count
   }, [groupedSlots, visibleDisplayGroups])
 
-  const listIsEmpty = !dailyChallengeVisible && groupedRouteCount === 0
+  const listIsEmpty =
+    !dailyChallengeVisible &&
+    groupedRouteCount === 0 &&
+    stopLookupRoutes.length === 0 &&
+    !betweenStopLookup
 
   const handleSearchQueryChange = useCallback(
     (q: string) => {
@@ -591,8 +646,9 @@ export function RouteLookupPage({
       if (countVisibleGroupSlots(group) > 0) next[group] = true
     }
     if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
+    if (betweenStopLookup) setBetweenStopsSectionOpen(true)
     setGroupOpen(next)
-  }, [countVisibleGroupSlots, filters.query, stopLookupRoutes.length, visibleDisplayGroups])
+  }, [betweenStopLookup, countVisibleGroupSlots, filters.query, stopLookupRoutes.length, visibleDisplayGroups])
 
   const handleApplyHistory = useCallback(
     (query: string) => {
@@ -675,6 +731,21 @@ export function RouteLookupPage({
       />
     ))
 
+  const renderBetweenStopRouteCards = () =>
+    betweenStopLookup?.routes.map(({ route, directionIndex }) => (
+      <RouteCard
+        key={`between-${route.id}-${directionIndex}`}
+        route={route}
+        selected={selectedRoute?.id === route.id}
+        directionIndex={directionIndex}
+        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onNavigate={(routeId) => {
+          setDirectionIndex(routeId, directionIndex)
+          handleRouteNavigate(routeId)
+        }}
+      />
+    ))
+
   const renderStopRouteCards = () =>
     stopLookupRoutes.map((route) => (
       <RouteCard
@@ -686,6 +757,16 @@ export function RouteLookupPage({
         onNavigate={handleRouteNavigate}
       />
     ))
+
+  const betweenStopSummary = useMemo(() => {
+    if (!betweenStopLookup) return ''
+    const { from, to, fromQuery, toQuery } = betweenStopLookup
+    if (!from) return t('betweenStopsFromUnresolved', { query: fromQuery })
+    if (!to) return t('betweenStopsToUnresolved', { query: toQuery })
+    const fromLabel = getPrimaryText({ zh: from.zh, en: from.en }, locale)
+    const toLabel = getPrimaryText({ zh: to.zh, en: to.en }, locale)
+    return t('betweenStopsSummary', { from: fromLabel, to: toLabel })
+  }, [betweenStopLookup, locale, t])
 
   const stopLookupSummary = useMemo(() => {
     if (matchedStops.length === 0) return ''
@@ -769,6 +850,22 @@ export function RouteLookupPage({
                 onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
                 challenge={dailyChallenge}
               />
+            ) : null}
+
+            {betweenStopLookup ? (
+              <RouteGroupCollapse
+                groupId="betweenStops"
+                count={betweenStopLookup.routes.length}
+                open={betweenStopsSectionOpen}
+                onOpenChange={setBetweenStopsSectionOpen}
+              >
+                <p className="stop-lookup-summary">{betweenStopSummary}</p>
+                {betweenStopLookup.routes.length > 0 ? (
+                  <div className="route-grid">{renderBetweenStopRouteCards()}</div>
+                ) : betweenStopLookup.from && betweenStopLookup.to ? (
+                  <p className="route-group-empty">{t('betweenStopsNoRoutes')}</p>
+                ) : null}
+              </RouteGroupCollapse>
             ) : null}
 
             {stopLookupRoutes.length > 0 ? (
@@ -878,6 +975,7 @@ export function RouteLookupPage({
       <DailyChallengeCalendarDialog
         open={dailyChallengeCalendarOpen}
         onClose={() => setDailyChallengeCalendarOpen(false)}
+        onSelectDay={handleSelectScheduleDay}
         todayDate={dailyChallenge.date}
       />
     </div>

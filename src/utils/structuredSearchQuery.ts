@@ -3,6 +3,8 @@ import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 
 export interface ParsedStructuredSearchQuery {
   text: string
+  from?: string
+  to?: string
   zone?: number
   operator?: string
   type?: RouteTypeFilter
@@ -13,7 +15,9 @@ export interface ParsedStructuredSearchQuery {
 }
 
 const STRUCTURED_TOKEN =
-  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular|axis|loop|peakexpress)\b/gi
+  /(?:^|\s)(zone|z|operator|op|type|cat|level|lv|lvl|from|to|起|终)[：:]([^\s]+)|(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular|axis|loop|peakexpress)\b/gi
+
+const STOP_PAIR_ARROW = /^(.+?)\s*(?:→|->)\s*(.+)$/
 
 function normalizeCategoryToken(raw: string): RouteCategory | null {
   const value = raw.trim().toLowerCase()
@@ -49,6 +53,13 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
   }
 
   let text = query
+  const arrowMatch = text.match(STOP_PAIR_ARROW)
+  if (arrowMatch) {
+    parsed.from = arrowMatch[1]?.trim()
+    parsed.to = arrowMatch[2]?.trim()
+    text = ''
+  }
+
   const matches = [...query.matchAll(STRUCTURED_TOKEN)]
   for (const match of matches) {
     text = text.replace(match[0], ' ')
@@ -70,6 +81,16 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     }
 
     if (!key || !value) continue
+
+    if (key === 'from' || key === '起') {
+      parsed.from = value
+      continue
+    }
+
+    if (key === 'to' || key === '终') {
+      parsed.to = value
+      continue
+    }
 
     if (key === 'zone' || key === 'z') {
       const zone = Number.parseInt(value, 10)

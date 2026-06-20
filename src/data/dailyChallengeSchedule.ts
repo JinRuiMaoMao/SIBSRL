@@ -77,3 +77,32 @@ export function formatScheduleMonthLabel(month: string, locale: Locale): string 
     timeZone: 'UTC',
   }).format(new Date(Date.UTC(year, monthNum - 1, 1)))
 }
+
+/** 用 Discord API 历史覆盖同月静态日程（有 event 的 live 条目优先） */
+export function mergeScheduleWithLiveDays(
+  schedule: DailyChallengeSchedule,
+  liveDays: DailyChallengeScheduleDay[],
+): DailyChallengeSchedule {
+  const byDate = new Map<string, DailyChallengeScheduleDay>()
+  for (const day of schedule.days) {
+    byDate.set(day.date, day)
+  }
+
+  for (const live of liveDays) {
+    if (!live.date.startsWith(schedule.month)) continue
+    if (!live.event) continue
+
+    const existing = byDate.get(live.date)
+    byDate.set(live.date, {
+      date: live.date,
+      event: live.event,
+      routeCode: live.routeCode ?? existing?.routeCode ?? null,
+      race: live.race,
+    })
+  }
+
+  return {
+    ...schedule,
+    days: [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date)),
+  }
+}

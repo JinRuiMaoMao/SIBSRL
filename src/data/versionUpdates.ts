@@ -265,6 +265,32 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复同日多次追加更新日志后弹窗不再出现的问题：已读标记改为跟踪最新条目内容指纹，而非仅条目 id。',
             en: 'Fixed the updates prompt not reappearing after same-day changelog additions—seen state now tracks a content fingerprint, not just entry id.',
           },
+          {
+            zh: '每日挑战日历可点击有数据的日期，直接打开该日挑战详情或对应线路。',
+            en: 'Daily challenge calendar days with data are clickable—opens that day’s challenge detail or matching route.',
+          },
+          {
+            zh: '日历合并 Discord 机器人同步的历史日程，覆盖同日本地数据；有 live 数据时显示提示。',
+            en: 'Calendar merges history synced from the Discord bot, overriding local data for the same date; a note appears when live data is present.',
+          },
+        ],
+      },
+      {
+        title: { zh: '搜索', en: 'Search' },
+        items: [
+          {
+            zh: '新增两站直达搜索：from:起点 to:终点、起:/终: 或「起点 → 终点」，列出同线同方向内起点在终点前的直达线路。',
+            en: 'Added stop-to-stop direct route search—from:/to:, 起:/终:, or start → end lists routes where the start stop precedes the end on the same line and direction.',
+          },
+        ],
+      },
+      {
+        title: { zh: '线路卡片', en: 'Route cards' },
+        items: [
+          {
+            zh: '站序资料未收录完整的线路卡片显示「资料不全」标记，悬停可查看说明。',
+            en: 'Routes with incomplete stop data show an “Incomplete data” badge with a tooltip explaining the gap.',
+          },
         ],
       },
     ],

@@ -3,18 +3,19 @@ import { lockPageScroll } from '../utils/pageScrollLock'
 import { buildDailyChallengeFromScheduleDay } from '../data/dailyChallenge'
 import {
   buildMonthCalendarCells,
-  DAILY_CHALLENGE_SCHEDULES,
   formatScheduleMonthLabel,
   type DailyChallengeScheduleDay,
 } from '../data/dailyChallengeSchedule'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import { isChineseLocale } from '../i18n/types'
+import { useCalendarSchedules } from '../hooks/useCalendarSchedules'
 
 interface DailyChallengeCalendarDialogProps {
   open: boolean
   onClose: () => void
   todayDate: string
+  onSelectDay?: (day: DailyChallengeScheduleDay) => void
 }
 
 function weekdayLabels(locale: ReturnType<typeof useLocale>['locale']): string[] {
@@ -43,12 +44,14 @@ function CalendarDayCell({
   isToday,
   locale,
   emptyLabel,
+  onSelectDay,
 }: {
   date: string
   day: DailyChallengeScheduleDay | null
   isToday: boolean
   locale: ReturnType<typeof useLocale>['locale']
   emptyLabel: string
+  onSelectDay?: (day: DailyChallengeScheduleDay) => void
 }) {
   const challenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
   const plainEventChallenge =
@@ -60,11 +63,10 @@ function CalendarDayCell({
   const routeCode = day?.routeCode?.trim() || null
   const hasData = Boolean(day?.event)
   const isRace = Boolean(day?.event && day.race)
+  const className = `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data is-clickable' : 'is-empty'}`.trim()
 
-  return (
-    <div
-      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'}`.trim()}
-    >
+  const inner = (
+    <>
       <span
         className={`daily-challenge-calendar-day-number ${isRace ? 'is-race' : ''}`.trim()}
       >
@@ -89,16 +91,33 @@ function CalendarDayCell({
       ) : (
         <span className="daily-challenge-calendar-day-empty">{emptyLabel}</span>
       )}
-    </div>
+    </>
   )
+
+  if (hasData && day && onSelectDay) {
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={() => onSelectDay(day)}
+        aria-label={eventLabel ?? undefined}
+      >
+        {inner}
+      </button>
+    )
+  }
+
+  return <div className={className}>{inner}</div>
 }
 
 export function DailyChallengeCalendarDialog({
   open,
   onClose,
   todayDate,
+  onSelectDay,
 }: DailyChallengeCalendarDialogProps) {
   const { locale, t } = useLocale()
+  const { schedules, hasLiveOverlay } = useCalendarSchedules()
   const weekdays = useMemo(() => weekdayLabels(locale), [locale])
 
   useEffect(() => {
@@ -146,6 +165,11 @@ export function DailyChallengeCalendarDialog({
         </div>
 
         <p className="daily-challenge-calendar-note">{t('dailyChallengeScheduleNote')}</p>
+        {hasLiveOverlay ? (
+          <p className="daily-challenge-calendar-note daily-challenge-calendar-note--live">
+            {t('dailyChallengeCalendarLiveNote')}
+          </p>
+        ) : null}
         <p className="daily-challenge-calendar-legend">
           <span className="daily-challenge-calendar-legend-race-demo" aria-hidden>
             <span className="daily-challenge-calendar-day-number is-race">6</span>
@@ -154,7 +178,7 @@ export function DailyChallengeCalendarDialog({
           {t('dailyChallengeCalendarRaceLegend')}
         </p>
 
-        {DAILY_CHALLENGE_SCHEDULES.map((schedule) => (
+        {schedules.map((schedule) => (
           <section key={schedule.month} className="daily-challenge-calendar-month">
             <h3 className="daily-challenge-calendar-month-title">
               {formatScheduleMonthLabel(schedule.month, locale)}
@@ -176,6 +200,7 @@ export function DailyChallengeCalendarDialog({
                     isToday={cell.date === todayDate}
                     locale={locale}
                     emptyLabel={t('dailyChallengeCalendarNoData')}
+                    onSelectDay={onSelectDay}
                   />
                 ) : (
                   <div

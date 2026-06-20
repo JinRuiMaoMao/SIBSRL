@@ -2518,6 +2518,18 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   letter-spacing: -0.03em;
 }
 
+.route-completeness-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
 .route-badge {
   font-size: 0.7rem;
   font-weight: 600;

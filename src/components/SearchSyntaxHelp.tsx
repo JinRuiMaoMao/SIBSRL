@@ -20,6 +20,7 @@ export function SearchSyntaxHelp({ stickyRef, visible = true }: SearchSyntaxHelp
     'searchSyntaxLevel',
     'searchSyntaxType',
     'searchSyntaxExclude',
+    'searchSyntaxFromTo',
     'searchSyntaxPattern',
     'searchSyntaxCombine',
   ] as const
