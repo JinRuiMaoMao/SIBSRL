@@ -42,10 +42,11 @@ function CalendarDayCell({
   const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
   const routeCode = day?.routeCode?.trim() || null
   const hasData = Boolean(day?.event)
+  const isRace = Boolean(day?.event && day.race)
 
   return (
     <div
-      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'}`.trim()}
+      className={`daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'} ${isRace ? 'is-race' : ''}`.trim()}
     >
       <span className="daily-challenge-calendar-day-number">{dayNumberFromDate(date)}</span>
       {routeCode ? <span className="daily-challenge-calendar-day-route">{routeCode}</span> : null}
@@ -115,6 +116,10 @@ export function DailyChallengeCalendarDialog({
         </div>
 
         <p className="daily-challenge-calendar-note">{t('dailyChallengeScheduleNote')}</p>
+        <p className="daily-challenge-calendar-legend">
+          <span className="daily-challenge-calendar-legend-swatch is-race" aria-hidden />
+          {t('dailyChallengeCalendarRaceLegend')}
+        </p>
 
         {DAILY_CHALLENGE_SCHEDULES.map((schedule) => (
           <section key={schedule.month} className="daily-challenge-calendar-month">

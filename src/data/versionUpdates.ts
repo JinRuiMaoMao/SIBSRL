@@ -223,6 +223,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '紧凑模式下每日挑战卡片与日历弹窗同步缩小：日历按钮与公里数并排于顶栏，月历格子与字号更密。',
             en: 'Compact mode now tightens the daily challenge card and calendar dialog—calendar button inline with km in the header, denser month grid and type.',
           },
+          {
+            zh: '每日挑战日历中竞速（Race）日期以珊瑚红高亮，并附图例说明。',
+            en: 'Race days in the daily challenge calendar use a coral highlight with a legend.',
+          },
         ],
       },
     ],
