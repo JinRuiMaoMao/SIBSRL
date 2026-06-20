@@ -127,23 +127,29 @@ function dedupeTransferPlansByRouteChain(plans: TransferPlan[]): TransferPlan[] 
   return [...bestByChain.values()]
 }
 
-/** 最少乘车段数的转车方案（BFS）；乘车段数 = 转车次数 + 1 */
+/** 转车方案 BFS：优先少转车，不足 minPlans 条时逐步加深转车次数 */
 export function findTransferPlansBetweenStops(
   from: MatchedStop,
   to: MatchedStop,
   displayRoutes: BusRoute[],
   routeFilter: (route: BusRoute) => boolean,
-  options?: { maxLegs?: number; maxPlans?: number },
+  options?: { minPlans?: number; maxLegs?: number; maxPlans?: number },
 ): TransferPlan[] {
-  const maxLegs = options?.maxLegs ?? 3
-  const maxPlans = options?.maxPlans ?? 8
+  const minPlans = options?.minPlans ?? 6
+  const maxLegs = options?.maxLegs ?? 6
+  const maxPlans = options?.maxPlans ?? 12
   const fromKey = stopKey(from.zh, from.en)
   const toKey = stopKey(to.zh, to.en)
   if (fromKey === toKey) return []
 
   let frontier: SearchState[] = [{ stop: from, legs: [], visited: new Set([fromKey]) }]
-  const results: TransferPlan[] = []
-  let targetLegCount: number | null = null
+  const collected: TransferPlan[] = []
+
+  const sortPlans = (plans: TransferPlan[]) =>
+    plans.sort((a, b) => {
+      if (a.transferCount !== b.transferCount) return a.transferCount - b.transferCount
+      return transferPlanJourneyStopCount(a) - transferPlanJourneyStopCount(b)
+    })
 
   for (let depth = 0; depth < maxLegs && frontier.length > 0; depth++) {
     const nextFrontier: SearchState[] = []
@@ -156,14 +162,11 @@ export function findTransferPlansBetweenStops(
         const nextLegs = [...state.legs, leg]
 
         if (nextKey === toKey) {
-          targetLegCount = targetLegCount ?? nextLegs.length
-          if (nextLegs.length === targetLegCount) {
-            results.push({ legs: nextLegs, transferCount: nextLegs.length - 1 })
+          if (nextLegs.length >= 2) {
+            collected.push({ legs: nextLegs, transferCount: nextLegs.length - 1 })
           }
           continue
         }
-
-        if (targetLegCount != null && nextLegs.length >= targetLegCount) continue
 
         const nextVisited = new Set(state.visited)
         nextVisited.add(nextKey)
@@ -171,14 +174,13 @@ export function findTransferPlansBetweenStops(
       }
     }
 
-    if (targetLegCount != null) break
+    const deduped = sortPlans(dedupeTransferPlansByRouteChain(collected))
+    if (deduped.length >= minPlans) {
+      return deduped.slice(0, maxPlans)
+    }
+
     frontier = nextFrontier
   }
 
-  return dedupeTransferPlansByRouteChain(results)
-    .sort((a, b) => {
-      if (a.transferCount !== b.transferCount) return a.transferCount - b.transferCount
-      return transferPlanJourneyStopCount(a) - transferPlanJourneyStopCount(b)
-    })
-    .slice(0, maxPlans)
+  return sortPlans(dedupeTransferPlansByRouteChain(collected)).slice(0, maxPlans)
 }

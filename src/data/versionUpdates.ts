@@ -306,6 +306,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '两站直达与转车方案同步上述规则：非今日每日挑战线（如 270A）、未到开放期的季节限定不会出现在方案中。',
             en: 'Stop-to-stop direct and transfer plans follow the same rules—daily routes like 270A only when featured today; seasonal routes only when unlocked.',
           },
+          {
+            zh: '转车方案至少展示 6 条（按线路组合去重）：1 次转车不足 6 种时自动纳入 2 次、3 次转车等更深方案。',
+            en: 'Transfer plans show at least six unique route chains—if one-transfer options are fewer, two- and three-transfer plans are included.',
+          },
         ],
       },
       {
