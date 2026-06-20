@@ -1862,7 +1862,6 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 .route-grid-span,
 .daily-challenge-card {
   grid-column: 1 / -1;
-  position: relative;
 }
 
 .daily-challenge-card:hover {
@@ -1921,15 +1920,12 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .daily-challenge-calendar-btn {
-  position: absolute;
-  top: 0.65rem;
-  right: 0.65rem;
-  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
   padding: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -2133,13 +2129,6 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   .daily-challenge-calendar-day-event {
     -webkit-line-clamp: 2;
   }
-}
-
-html[data-list-density='compact'] .daily-challenge-calendar-btn {
-  width: 1.85rem;
-  height: 1.85rem;
-  top: 0.55rem;
-  right: 0.55rem;
 }
 
 .route-display-group-list,
@@ -3539,6 +3528,7 @@ html[data-list-density='compact'] .direction-toggle--compact .direction-toggle-b
 
 html[data-list-density='compact'] .daily-challenge-card {
   padding: 0.7rem 0.8rem;
+  min-height: 5rem;
 }
 
 html[data-list-density='compact'] .daily-challenge-reset-countdown {
@@ -3546,8 +3536,96 @@ html[data-list-density='compact'] .daily-challenge-reset-countdown {
   gap: 0.08rem;
 }
 
+html[data-list-density='compact'] .daily-challenge-reset-countdown-label {
+  font-size: 0.64rem;
+}
+
 html[data-list-density='compact'] .daily-challenge-reset-countdown-time {
   font-size: 1.05rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-reset-countdown-hint {
+  font-size: 0.6rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-btn {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 6px;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-icon {
+  width: 15px;
+  height: 15px;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-root {
+  padding: 0.35rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-panel {
+  padding: 0.75rem 0.8rem 0.9rem;
+  max-height: 94vh;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-title {
+  font-size: 1rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-close {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.15rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-note {
+  margin-bottom: 0.65rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-month + .daily-challenge-calendar-month {
+  margin-top: 0.9rem;
+  padding-top: 0.85rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-month-title {
+  margin-bottom: 0.45rem;
+  font-size: 0.85rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-weekdays,
+html[data-list-density='compact'] .daily-challenge-calendar-grid {
+  gap: 0.22rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-weekdays {
+  margin-bottom: 0.22rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-weekday {
+  font-size: 0.62rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-day {
+  min-height: 4.1rem;
+  padding: 0.22rem 0.2rem 0.24rem;
+  border-radius: 8px;
+  gap: 0.08rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-day-number {
+  font-size: 0.72rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-day-route {
+  font-size: 0.62rem;
+}
+
+html[data-list-density='compact'] .daily-challenge-calendar-day-event {
+  font-size: 0.58rem;
+  line-height: 1.2;
+  -webkit-line-clamp: 2;
 }
 
 /* Compact — Broadcast / Music / Complaints / Updates */

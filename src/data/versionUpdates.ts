@@ -215,6 +215,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '今日每日挑战卡片右上角新增日历按钮，可打开每日挑战日历查看当月日程（目前为 2026 年 6 月社区数据）。',
             en: 'Added a calendar button on today’s daily challenge card to open the monthly schedule (currently June 2026 community data).',
           },
+          {
+            zh: '紧凑模式下每日挑战卡片与日历弹窗同步缩小：日历按钮与公里数并排于顶栏，月历格子与字号更密。',
+            en: 'Compact mode now tightens the daily challenge card and calendar dialog—calendar button inline with km in the header, denser month grid and type.',
+          },
         ],
       },
     ],

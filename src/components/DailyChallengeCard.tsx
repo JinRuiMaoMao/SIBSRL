@@ -65,18 +65,20 @@ export function DailyChallengeCard({
       aria-pressed={selected}
       aria-label={t('dailyChallengeAria')}
     >
-      {onOpenCalendar ? <DailyChallengeCalendarButton onClick={onOpenCalendar} /> : null}
       {showResetCountdown ? <DailyChallengeResetCountdown /> : null}
 
       <div className="route-card-top">
         <div className="route-card-title">
           <span className="route-number">{routeNumber}</span>
         </div>
-        {lengthKm ? (
-          <span className="route-card-km" key={`${routeNumber}-km-${directionIndex}`}>
-            {lengthKm}
-          </span>
-        ) : null}
+        <div className="route-card-top-end">
+          {lengthKm ? (
+            <span className="route-card-km" key={`${routeNumber}-km-${directionIndex}`}>
+              {lengthKm}
+            </span>
+          ) : null}
+          {onOpenCalendar ? <DailyChallengeCalendarButton onClick={onOpenCalendar} /> : null}
+        </div>
       </div>
 
       <p className="route-endpoints">{endpointsLabel ?? eventLabel}</p>
