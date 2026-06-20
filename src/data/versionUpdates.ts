@@ -290,6 +290,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '转车方案改为卡片列表：点击方案可展开途经站序，并标注起点、转车站与终点；线路号可点开详情。',
             en: 'Transfer plans are now cards—tap to expand the full stop sequence with start, transfer, and end tags; route numbers open detail.',
           },
+          {
+            zh: '转车方案详情改为与线路相同的全屏滑入面板，展示完整途经站与转车位置。',
+            en: 'Transfer plan details now open in the same full-screen slide-in sheet as route detail, with full stops and transfer points.',
+          },
         ],
       },
       {

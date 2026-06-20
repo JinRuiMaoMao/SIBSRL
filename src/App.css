@@ -1794,72 +1794,84 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   color: var(--text-muted);
 }
 
-.transfer-plan-card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg-elevated);
-  overflow: hidden;
-}
-
-.transfer-plan-card-trigger {
+.transfer-plan-card-link {
+  display: block;
   width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.75rem 0.85rem;
+  padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
   font: inherit;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.transfer-plan-card-trigger:hover,
-.transfer-plan-card-trigger:focus-visible {
-  background: rgba(148, 163, 184, 0.08);
+.transfer-plan-card-link:hover .transfer-plan-card,
+.transfer-plan-card-link:focus-visible .transfer-plan-card {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(245, 185, 66, 0.15);
 }
 
-.transfer-plan-card-main {
-  flex: 1;
-  min-width: 0;
+.transfer-plan-card {
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.transfer-plan-card-top {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
 }
 
 .transfer-plan-route-chain {
-  font-size: 0.82rem;
+  margin: 0;
+  font-size: 1.05rem;
   color: var(--accent);
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .transfer-plan-card-hint {
   font-size: 0.72rem;
   color: var(--text-muted);
   white-space: nowrap;
+  padding-top: 0.1rem;
 }
 
-.transfer-plan-card-icon {
-  flex-shrink: 0;
+.transfer-plan-detail-summary {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
-  transition: transform 0.2s ease;
 }
 
-.transfer-plan-card.is-expanded .transfer-plan-card-icon {
-  transform: rotate(180deg);
-}
-
-.transfer-plan-detail {
-  padding: 0 0.85rem 0.85rem;
-  border-top: 1px solid var(--border);
+.transfer-plan-journey {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .transfer-plan-segment + .transfer-plan-segment {
   margin-top: 0.75rem;
   padding-top: 0.75rem;
   border-top: 1px dashed var(--border);
+}
+
+.transfer-plan-route-label {
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .transfer-plan-transfer-node {
@@ -1965,53 +1977,12 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   color: var(--text);
 }
 
-.transfer-plan-legs {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-
-.transfer-plan-leg {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.transfer-plan-change {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.transfer-plan-leg-button {
-  width: 100%;
-  text-align: left;
-  padding: 0.45rem 0.55rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.84rem;
-  cursor: pointer;
-}
-
-.transfer-plan-leg-button:hover,
-.transfer-plan-leg-button:focus-visible {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-html[data-list-density='compact'] .transfer-plan-card-trigger {
+html[data-list-density='compact'] .transfer-plan-card {
   padding: 0.55rem 0.65rem;
 }
 
-html[data-list-density='compact'] .transfer-plan-detail {
-  padding: 0 0.65rem 0.65rem;
+html[data-list-density='compact'] .transfer-plan-route-chain {
+  font-size: 0.95rem;
 }
 
 html[data-list-density='compact'] .transfer-plan-stop {

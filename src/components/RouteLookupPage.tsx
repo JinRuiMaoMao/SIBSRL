@@ -63,13 +63,16 @@ import {
   findDirectRoutesBetweenStops,
   resolveStopByQuery,
 } from '../utils/routeBetweenStops'
-import { findTransferPlansBetweenStops } from '../utils/stopTransferPlans'
+import { findTransferPlansBetweenStops, formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
+import { TransferPlanDetail } from './TransferPlanDetail'
 import { TransferPlanList } from './TransferPlanList'
 import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
+import type { MatchedStop } from '../utils/routeStopLookup'
 
 type DetailOverlay =
   | { kind: 'route'; route: BusRoute }
   | { kind: 'daily-challenge'; challenge: DailyChallengeInfo }
+  | { kind: 'transfer-plan'; plan: TransferPlan; planIndex: number; from: MatchedStop; to: MatchedStop }
   | { kind: 'not-found'; routeId: string }
   | null
 
@@ -77,6 +80,9 @@ function overlayKey(overlay: DetailOverlay): string | null {
   if (!overlay) return null
   if (overlay.kind === 'route') return overlay.route.id
   if (overlay.kind === 'not-found') return `not-found-${overlay.routeId}`
+  if (overlay.kind === 'transfer-plan') {
+    return `transfer-plan-${overlay.planIndex}-${formatTransferPlanRouteChain(overlay.plan)}`
+  }
   return `daily-challenge-${overlay.challenge.date}`
 }
 
@@ -791,6 +797,23 @@ export function RouteLookupPage({
     [handleRouteNavigate, setDirectionIndex],
   )
 
+  const handleSelectTransferPlan = useCallback(
+    (plan: TransferPlan, planIndex: number) => {
+      if (!betweenStopLookup?.from || !betweenStopLookup?.to) return
+      setDailyChallengeRouteView(false)
+      clearSelection()
+      clearRouteFromLocation()
+      setDetailOverlay({
+        kind: 'transfer-plan',
+        plan,
+        planIndex,
+        from: betweenStopLookup.from,
+        to: betweenStopLookup.to,
+      })
+    },
+    [betweenStopLookup, clearSelection],
+  )
+
   const stopLookupSummary = useMemo(() => {
     if (matchedStops.length === 0) return ''
     const separator = isChineseLocale(locale) ? '、' : ', '
@@ -888,7 +911,7 @@ export function RouteLookupPage({
                 ) : betweenStopLookup.transferPlans.length > 0 ? (
                   <TransferPlanList
                     plans={betweenStopLookup.transferPlans}
-                    onOpenLeg={handleOpenTransferLeg}
+                    onSelectPlan={handleSelectTransferPlan}
                   />
                 ) : betweenStopLookup.from && betweenStopLookup.to ? (
                   <p className="route-group-empty">{t('betweenStopsNoRoutes')}</p>
@@ -989,6 +1012,15 @@ export function RouteLookupPage({
               <DailyChallengeDetail
                 challenge={detailOverlay.challenge}
                 onClose={handleCloseDetail}
+              />
+            ) : detailOverlay.kind === 'transfer-plan' ? (
+              <TransferPlanDetail
+                plan={detailOverlay.plan}
+                planIndex={detailOverlay.planIndex}
+                from={detailOverlay.from}
+                to={detailOverlay.to}
+                onClose={handleCloseDetail}
+                onOpenLeg={handleOpenTransferLeg}
               />
             ) : detailOverlay.kind === 'not-found' ? (
               <RouteNotFoundDetail
