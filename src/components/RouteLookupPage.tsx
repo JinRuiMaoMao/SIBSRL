@@ -76,6 +76,7 @@ import {
   resolveStopByQuery,
 } from '../utils/routeBetweenStops'
 import { isDirectRouteBetweenStopsFeasible, parseDepartureTimeInput, type TimetableFeasibilityOptions } from '../utils/routeTimetableFeasibility'
+import { getSortedDirectionIndexFromDataIndex } from '../utils/routeDirections'
 import {
   findTransferPlansBetweenStops,
   formatTransferPlanRouteChain,
@@ -868,11 +869,15 @@ export function RouteLookupPage({
     : 0
 
   const handleOpenTransferLeg = useCallback(
-    (routeId: string, directionIndex: number) => {
-      setDirectionIndex(routeId, directionIndex)
+    (routeId: string, directionDataIndex: number) => {
+      const route = findDisplayRoute(routeId)
+      const sortedIndex = route
+        ? getSortedDirectionIndexFromDataIndex(route, directionDataIndex)
+        : directionDataIndex
+      setDirectionIndex(routeId, sortedIndex)
       handleRouteNavigate(routeId)
     },
-    [handleRouteNavigate, setDirectionIndex],
+    [findDisplayRoute, handleRouteNavigate, setDirectionIndex],
   )
 
   const handleSelectTransferPlan = useCallback(

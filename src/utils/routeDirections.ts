@@ -7,6 +7,7 @@ import {
   getRouteDirectionCount,
   getSortedDirectionCount,
   getSortedDirectionDataIndices,
+  getSortedDirectionIndexFromDataIndex,
   routeHasDirectionVariants,
 } from './routeDirectionCore'
 import { resolveServiceTimeForDataIndex } from './routeSchedule'
@@ -23,6 +24,7 @@ export {
   getRouteDirectionCount,
   getSortedDirectionCount,
   getSortedDirectionDataIndices,
+  getSortedDirectionIndexFromDataIndex,
   routeHasDirectionVariants,
 }
 

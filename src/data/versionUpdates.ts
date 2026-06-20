@@ -197,6 +197,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '统一「阳光站」与「阳光铁路站」为同一站点（含 476/N472 站序修正）。',
             en: 'Unified Sunshine Station and Sunshine Rail Station as the same stop (incl. 476/N472 stop lists).',
           },
+          {
+            zh: '两站直达卡片修正方向索引：按实际乘车方向显示（如 476 第七区→阳光站为东行而非西行）。',
+            en: 'Fixed direct stop-pair cards using the correct travel direction (e.g. 476 Zone 7 → Sunshine Station shows eastbound).',
+          },
         ],
       },
       {

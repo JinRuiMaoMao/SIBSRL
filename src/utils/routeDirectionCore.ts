@@ -53,6 +53,13 @@ export function getDirectionDataIndex(route: BusRoute, sortedIndex: number): num
   return sorted[sortedIndex] ?? 0
 }
 
+/** `route.stops` index → UI direction index (sorted). */
+export function getSortedDirectionIndexFromDataIndex(route: BusRoute, dataIndex: number): number {
+  const sorted = getSortedDirectionDataIndices(route)
+  const sortedIndex = sorted.indexOf(dataIndex)
+  return sortedIndex >= 0 ? sortedIndex : clampDirectionIndex(route, dataIndex)
+}
+
 export function getSortedDirectionCount(route: BusRoute): number {
   const sorted = getSortedDirectionDataIndices(route)
   if (sorted.length > 0) return sorted.length

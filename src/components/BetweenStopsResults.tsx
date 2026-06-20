@@ -7,6 +7,7 @@ import type { BusRoute } from '../types/route'
 import type { TransferPlan } from '../types/transferPlan'
 import { getBetweenStopRouteBadgeKeys } from '../utils/betweenStopRouteLabels'
 import type { DirectRouteBetweenStops } from '../utils/routeBetweenStops'
+import { getSortedDirectionIndexFromDataIndex } from '../utils/routeDirections'
 import { buildStopPairShareUrl } from '../utils/routeNavigation'
 import {
   sortTransferPlans,
@@ -138,10 +139,11 @@ export function BetweenStopsResults({
         <section className="between-stops-section">
           <h3 className="between-stops-section-title">{t('betweenStopsDirectHeading')}</h3>
           <div className="route-grid">
-            {routes.map(({ route, directionIndex }) => {
+            {routes.map(({ route, directionIndex: directionDataIndex }) => {
               const badges = getBetweenStopRouteBadgeKeys(route, dailyChallenge)
+              const directionIndex = getSortedDirectionIndexFromDataIndex(route, directionDataIndex)
               return (
-                <div key={`between-${route.id}-${directionIndex}`} className="between-stops-route-wrap">
+                <div key={`between-${route.id}-${directionDataIndex}`} className="between-stops-route-wrap">
                   {badges.length > 0 ? (
                     <div className="between-stops-badges">
                       {badges.map((badge) => (
