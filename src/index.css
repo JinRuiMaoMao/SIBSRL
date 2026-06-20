@@ -28,6 +28,7 @@
   /* 自制滚动条 */
   --scrollbar-size: 8px;
   --scrollbar-track: rgba(26, 37, 64, 0.95);
+  --scrollbar-track-page: transparent;
   --scrollbar-thumb: rgba(245, 185, 66, 0.45);
   --scrollbar-thumb-hover: rgba(245, 185, 66, 0.72);
   --scrollbar-thumb-active: #f5b942;
@@ -57,6 +58,7 @@
     radial-gradient(ellipse 60% 40% at 100% 50%, rgba(10, 138, 96, 0.04), transparent),
     var(--bg-deep);
   --scrollbar-track: rgba(200, 207, 218, 0.95);
+  --scrollbar-track-page: transparent;
   --scrollbar-thumb: rgba(176, 120, 8, 0.35);
   --scrollbar-thumb-hover: rgba(176, 120, 8, 0.5);
   --scrollbar-thumb-active: #b07808;
@@ -71,9 +73,12 @@
 html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+  background: var(--page-background);
+  background-attachment: fixed;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track-page);
 }
 
 html.is-scroll-locked {
@@ -85,7 +90,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-sans);
   color: var(--text);
-  background: var(--page-background);
+  background: transparent;
   line-height: 1.5;
 }
 
@@ -111,21 +116,37 @@ html::-webkit-scrollbar {
   height: var(--scrollbar-size);
 }
 
+html::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-page);
+  border-radius: 999px;
+  margin: 2px;
+}
+
 .sibs-scrollbar::-webkit-scrollbar-track,
 .route-detail::-webkit-scrollbar-track,
 .settings-locale-grid::-webkit-scrollbar-track,
-.safety-broadcast-section::-webkit-scrollbar-track,
-html::-webkit-scrollbar-track {
+.safety-broadcast-section::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
   border-radius: 999px;
   margin: 2px;
 }
 
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--scrollbar-thumb-hover) 0%,
+    var(--scrollbar-thumb) 100%
+  );
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  min-height: 2.5rem;
+}
+
 .sibs-scrollbar::-webkit-scrollbar-thumb,
 .route-detail::-webkit-scrollbar-thumb,
 .settings-locale-grid::-webkit-scrollbar-thumb,
-.safety-broadcast-section::-webkit-scrollbar-thumb,
-html::-webkit-scrollbar-thumb {
+.safety-broadcast-section::-webkit-scrollbar-thumb {
   background: linear-gradient(
     180deg,
     var(--scrollbar-thumb-hover) 0%,
@@ -136,10 +157,6 @@ html::-webkit-scrollbar-thumb {
   min-height: 2.5rem;
 }
 
-.sibs-scrollbar::-webkit-scrollbar-thumb:hover,
-.route-detail::-webkit-scrollbar-thumb:hover,
-.settings-locale-grid::-webkit-scrollbar-thumb:hover,
-.safety-broadcast-section::-webkit-scrollbar-thumb:hover,
 html::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(
     180deg,
@@ -148,11 +165,25 @@ html::-webkit-scrollbar-thumb:hover {
   );
 }
 
+.sibs-scrollbar::-webkit-scrollbar-thumb:hover,
+.route-detail::-webkit-scrollbar-thumb:hover,
+.settings-locale-grid::-webkit-scrollbar-thumb:hover,
+.safety-broadcast-section::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--scrollbar-thumb-active) 0%,
+    var(--scrollbar-thumb-hover) 100%
+  );
+}
+
+html::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+}
+
 .sibs-scrollbar::-webkit-scrollbar-thumb:active,
 .route-detail::-webkit-scrollbar-thumb:active,
 .settings-locale-grid::-webkit-scrollbar-thumb:active,
-.safety-broadcast-section::-webkit-scrollbar-thumb:active,
-html::-webkit-scrollbar-thumb:active {
+.safety-broadcast-section::-webkit-scrollbar-thumb:active {
   background: var(--scrollbar-thumb-active);
 }
 
