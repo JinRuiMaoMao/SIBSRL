@@ -203,6 +203,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '同步 6/20 每日挑战：街灯停电（比赛）41AS。',
             en: 'Synced 6/20 daily challenge: Street light outage (race) on 41AS.',
           },
+          {
+            zh: '当日挑战线路（如 41AS）自动出现在「每日挑战路线」分组，卡片显示完整编号并预选南行/北行等方向，点开详情可看站序。',
+            en: 'Today’s challenge route (e.g. 41AS) now appears under Daily challenge routes with the full code, preset direction, and stop list in detail.',
+          },
         ],
       },
     ],

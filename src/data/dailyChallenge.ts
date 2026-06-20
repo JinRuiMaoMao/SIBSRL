@@ -284,6 +284,14 @@ export function findDailyChallengeDirectionIndex(
   return findDirectionIndexOnRoute(route, directionKey)
 }
 
+/** 当日挑战线路编号（可含方向后缀，如 41AS）；无有效线路时返回 null */
+export function getDailyChallengeListedRouteId(challenge: DailyChallengeInfo): string | null {
+  const code = challenge.routeNumber?.trim()
+  if (!code || !challenge.isAvailable || isPrivateHireChallengeRoute(code)) return null
+  if (!findRouteForDailyChallenge(code)) return null
+  return code
+}
+
 export function isDailyChallengeAvailable(challenge: DailyChallengeInfo): boolean {
   return challenge.isAvailable && !!challenge.event.en
 }

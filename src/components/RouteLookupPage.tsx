@@ -3,6 +3,7 @@ import {
   DAILY_CHALLENGE_CARD_ID,
   findRouteForDailyChallenge,
   findDailyChallengeDirectionIndex,
+  getDailyChallengeListedRouteId,
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
@@ -539,12 +540,17 @@ export function RouteLookupPage({
   )
 
   const groupedSlots = useMemo(() => {
+    const dailyListedId = getDailyChallengeListedRouteId(dailyChallenge)
     const groups = {} as Record<RouteDisplayGroupKey, ReturnType<typeof getGroupDisplaySlots>>
     for (const group of ROUTE_DISPLAY_GROUP_ORDER) {
-      groups[group] = getGroupDisplaySlots(group, filteredRoutes)
+      groups[group] = getGroupDisplaySlots(
+        group,
+        filteredRoutes,
+        group === 'daily' && dailyListedId ? [dailyListedId] : [],
+      )
     }
     return groups
-  }, [filteredRoutes])
+  }, [dailyChallenge, filteredRoutes])
 
   const countVisibleGroupSlots = useCallback(
     (group: RouteDisplayGroupKey) =>
@@ -605,15 +611,24 @@ export function RouteLookupPage({
 
   const renderGroupedRouteCards = (group: RouteDisplayGroupKey) =>
     groupedSlots[group].map((slot) => {
-      const { route } = slot.entry!
+      const { route, listedId, directionKey } = slot.entry!
+      const listedDirectionIndex =
+        directionKey != null ? findDailyChallengeDirectionIndex(route, directionKey) : null
+      const directionIndex = listedDirectionIndex ?? getDirectionIndex(route)
       return (
         <RouteCard
-          key={`${group}-${route.id}`}
+          key={`${group}-${listedId}`}
           route={route}
+          displayNumber={listedId !== route.number ? listedId : undefined}
           selected={selectedRoute?.id === route.id}
-          directionIndex={getDirectionIndex(route)}
+          directionIndex={directionIndex}
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-          onNavigate={handleRouteNavigate}
+          onNavigate={(routeId) => {
+            if (listedDirectionIndex != null) {
+              setDirectionIndex(routeId, listedDirectionIndex)
+            }
+            handleRouteNavigate(routeId)
+          }}
         />
       )
     })

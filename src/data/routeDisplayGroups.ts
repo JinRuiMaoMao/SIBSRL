@@ -140,12 +140,21 @@ export function filterGroupEntriesByRoutes(
 export function getGroupDisplaySlots(
   group: RouteDisplayGroupKey,
   visibleRoutes: BusRoute[],
+  prependListedIds: string[] = [],
 ): GroupedRouteDisplaySlot[] {
   const visibleIds = new Set(visibleRoutes.map((route) => route.id))
   const seenRouteIds = new Set<string>()
+  const seenListedIds = new Set<string>()
   const shown: GroupedRouteDisplaySlot[] = []
 
-  for (const listedId of getRouteDisplayIdsForGroup(group)) {
+  const listedIds = [...prependListedIds, ...getRouteDisplayIdsForGroup(group)].filter((listedId) => {
+    const key = listedId.trim().toLowerCase()
+    if (!key || seenListedIds.has(key)) return false
+    seenListedIds.add(key)
+    return true
+  })
+
+  for (const listedId of listedIds) {
     const entry = resolveGroupedRouteEntry(listedId)
     if (!entry || seenRouteIds.has(entry.route.id)) continue
     if (!visibleIds.has(entry.route.id)) continue
@@ -158,7 +167,7 @@ export function getGroupDisplaySlots(
     })
   }
 
-  shown.sort((a, b) => compareRouteNumber(a.entry!.route.number, b.entry!.route.number))
+  shown.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
 
   return shown
 }
