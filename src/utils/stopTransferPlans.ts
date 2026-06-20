@@ -1,10 +1,16 @@
 import type { BusRoute } from '../types/route'
 import type { RouteLeg, TransferPlan } from '../types/transferPlan'
+import type { Locale } from '../i18n/types'
 import type { MatchedStop } from './routeStopLookup'
 import { stopKey } from './routeBetweenStops'
-import { filterTransferPlansByTimetable } from './routeTimetableFeasibility'
+import { estimateTransferPlanMetrics } from './transferPlanMetrics'
+import {
+  filterTransferPlansByTimetable,
+  type TimetableFeasibilityOptions,
+} from './routeTimetableFeasibility'
 
 export type { RouteLeg, TransferPlan } from '../types/transferPlan'
+export type TransferPlanSortMode = 'transfers' | 'time' | 'distance'
 
 interface StopRoutePosition {
   route: BusRoute
@@ -88,37 +94,36 @@ function expandLegsFromStop(
   const positions = stopRouteIndex.get(currentKey)
   if (!positions?.length) return []
 
-  const legs: RouteLeg[] = []
+  /** 每条线每个方向只保留最近一个枢纽（或终点），避免环线组合爆炸 */
+  const bestByRouteDir = new Map<string, { leg: RouteLeg; distance: number }>()
 
   for (const { route, directionIndex, stopIndex: fromIndex } of positions) {
     const list = route.stops?.[directionIndex]?.list
     if (!list?.length) continue
+
+    const routeDirKey = `${route.id}\0${directionIndex}`
 
     for (let toIndex = fromIndex + 1; toIndex < list.length; toIndex++) {
       const stop = list[toIndex]!
       const nextKey = stopKey(stop.name.zh, stop.name.en)
       if (nextKey !== toKey && !transferHubs.has(nextKey)) continue
 
-      legs.push({
+      const distance = toIndex - fromIndex
+      const leg: RouteLeg = {
         route,
         directionIndex,
         from: current,
         to: { zh: stop.name.zh, en: stop.name.en },
-      })
+      }
+      const existing = bestByRouteDir.get(routeDirKey)
+      if (!existing || distance < existing.distance) {
+        bestByRouteDir.set(routeDirKey, { leg, distance })
+      }
+      if (nextKey === toKey) break
     }
   }
 
-  if (legs.length <= MAX_LEGS_PER_EXPANSION) return legs
-
-  // 枢纽站可组合爆炸：优先保留更短区间与能直达终点的段
-  return legs
-    .sort((a, b) => {
-      const aToDest = stopKey(a.to.zh, a.to.en) === toKey ? 0 : 1
-      const bToDest = stopKey(b.to.zh, b.to.en) === toKey ? 0 : 1
-      if (aToDest !== bToDest) return aToDest - bToDest
-      return a.route.number.localeCompare(b.route.number, undefined, { numeric: true })
-    })
-    .slice(0, MAX_LEGS_PER_EXPANSION)
+  return [...bestByRouteDir.values()].map((entry) => entry.leg)
 }
 
 /** 列出某段乘车区间内经过的站点（含起终点） */
@@ -189,19 +194,41 @@ function dedupeTransferPlansByRouteChain(plans: TransferPlan[]): TransferPlan[] 
   return [...bestByChain.values()]
 }
 
-function sortPlans(plans: TransferPlan[]): TransferPlan[] {
-  return plans.sort((a, b) => {
+export function sortTransferPlans(
+  plans: TransferPlan[],
+  mode: TransferPlanSortMode,
+  locale: Locale = 'zh-Hans',
+): TransferPlan[] {
+  return [...plans].sort((a, b) => {
+    if (mode === 'time') {
+      const ma = estimateTransferPlanMetrics(a, locale)
+      const mb = estimateTransferPlanMetrics(b, locale)
+      if (ma.totalMinutes !== mb.totalMinutes) return ma.totalMinutes - mb.totalMinutes
+    }
+    if (mode === 'distance') {
+      const ma = estimateTransferPlanMetrics(a, locale)
+      const mb = estimateTransferPlanMetrics(b, locale)
+      if (ma.totalKm !== mb.totalKm) return ma.totalKm - mb.totalKm
+    }
     if (a.transferCount !== b.transferCount) return a.transferCount - b.transferCount
-    return transferPlanJourneyStopCount(a) - transferPlanJourneyStopCount(b)
+    const walkA = a.walkToDestination?.minutes ?? 0
+    const walkB = b.walkToDestination?.minutes ?? 0
+    if (walkA !== walkB) return walkA - walkB
+    return a.legs.length - b.legs.length
   })
+}
+
+function sortPlans(plans: TransferPlan[]): TransferPlan[] {
+  return sortTransferPlans(plans, 'transfers')
 }
 
 function finalizePlans(
   collected: TransferPlan[],
   maxPlans: number,
+  timetableOptions?: TimetableFeasibilityOptions,
 ): TransferPlan[] {
   const deduped = sortPlans(dedupeTransferPlansByRouteChain(collected))
-  const filtered = filterTransferPlansByTimetable(deduped)
+  const filtered = filterTransferPlansByTimetable(deduped, timetableOptions)
   if (filtered.length > 0) return filtered.slice(0, maxPlans)
   return deduped.slice(0, maxPlans)
 }
@@ -226,11 +253,17 @@ export function findTransferPlansBetweenStops(
   to: MatchedStop,
   displayRoutes: BusRoute[],
   routeFilter: (route: BusRoute) => boolean,
-  options?: { minPlans?: number; maxLegs?: number; maxPlans?: number },
+  options?: {
+    minPlans?: number
+    maxLegs?: number
+    maxPlans?: number
+    timetable?: TimetableFeasibilityOptions
+  },
 ): TransferPlan[] {
   const minPlans = options?.minPlans ?? DEFAULT_MIN_PLANS
   const maxTransfers = Math.max(1, (options?.maxLegs ?? DEFAULT_MAX_TRANSFERS + 1) - 1)
   const maxPlans = options?.maxPlans ?? DEFAULT_MAX_PLANS
+  const timetableOptions = options?.timetable
   const fromKey = stopKey(from.zh, from.en)
   const toKey = stopKey(to.zh, to.en)
   if (fromKey === toKey) return []
@@ -261,23 +294,27 @@ export function findTransferPlansBetweenStops(
         const nextVisited = new Set(state.visited)
         nextVisited.add(nextKey)
         nextFrontier.push({ stop: leg.to, legs: nextLegs, visited: nextVisited })
-
-        if (nextFrontier.length >= MAX_FRONTIER_STATES) break
       }
-      if (nextFrontier.length >= MAX_FRONTIER_STATES) break
+    }
+
+    if (nextFrontier.length > MAX_FRONTIER_STATES) {
+      nextFrontier.sort((a, b) => {
+        if (a.legs.length !== b.legs.length) return a.legs.length - b.legs.length
+        return a.visited.size - b.visited.size
+      })
+      nextFrontier.length = MAX_FRONTIER_STATES
     }
 
     if (
       seenChains.size >= minPlans ||
       collected.length >= TOPOLOGICAL_COLLECT_TARGET ||
-      collected.length >= MAX_RAW_COLLECTED ||
-      nextFrontier.length >= MAX_FRONTIER_STATES
+      collected.length >= MAX_RAW_COLLECTED
     ) {
-      return finalizePlans(collected, maxPlans)
+      return finalizePlans(collected, maxPlans, timetableOptions)
     }
 
     frontier = nextFrontier
   }
 
-  return finalizePlans(collected, maxPlans)
+  return finalizePlans(collected, maxPlans, timetableOptions)
 }

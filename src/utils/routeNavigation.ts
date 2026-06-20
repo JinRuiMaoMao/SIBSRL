@@ -27,6 +27,9 @@ export function getRoutePageHref(routeId: string): string {
 
 const ROUTE_QUERY_KEY = 'route'
 const DIRECTION_QUERY_KEY = 'dir'
+const FROM_STOP_QUERY_KEY = 'from'
+const TO_STOP_QUERY_KEY = 'to'
+const DEPART_QUERY_KEY = 'depart'
 
 /** 读取 URL 中的线路编号（不做别名转换） */
 export function readRouteQueryFromLocation(): string | null {
@@ -112,6 +115,67 @@ export function buildRouteShareUrl(routeId: string, directionIndex: number): str
     [DIRECTION_QUERY_KEY]: String(directionIndex),
   })
   return `${prefix}${page}?${params.toString()}`
+}
+
+export interface StopPairLocationQuery {
+  from: string
+  to: string
+  depart: string | null
+}
+
+export function readStopPairFromLocation(): StopPairLocationQuery | null {
+  const params = new URLSearchParams(window.location.search)
+  const from = params.get(FROM_STOP_QUERY_KEY)?.trim()
+  const to = params.get(TO_STOP_QUERY_KEY)?.trim()
+  if (!from || !to) return null
+  const depart = params.get(DEPART_QUERY_KEY)?.trim() || null
+  return { from, to, depart }
+}
+
+export function buildStopPairSearchQuery(from: string, to: string): string {
+  return `${from.trim()} -- ${to.trim()}`
+}
+
+export function buildStopPairShareUrl(from: string, to: string, depart?: string | null): string {
+  const path = window.location.pathname.replace(/\\/g, '/')
+  const segments = path.split('/').filter(Boolean)
+  const inRoutesDir = segments[segments.length - 2] === ROUTE_PAGE_DIR
+  const prefix = inRoutesDir ? '../' : './'
+  const page = import.meta.env.DEV ? 'dev.html' : 'index.html'
+  const params = new URLSearchParams({
+    [FROM_STOP_QUERY_KEY]: from.trim(),
+    [TO_STOP_QUERY_KEY]: to.trim(),
+  })
+  if (depart?.trim()) params.set(DEPART_QUERY_KEY, depart.trim())
+  return `${prefix}${page}?${params.toString()}`
+}
+
+export function replaceStopPairInLocation(from: string, to: string, depart?: string | null): void {
+  const url = new URL(window.location.href)
+  url.searchParams.delete(ROUTE_QUERY_KEY)
+  url.searchParams.delete(DIRECTION_QUERY_KEY)
+  url.searchParams.set(FROM_STOP_QUERY_KEY, from.trim())
+  url.searchParams.set(TO_STOP_QUERY_KEY, to.trim())
+  if (depart?.trim()) url.searchParams.set(DEPART_QUERY_KEY, depart.trim())
+  else url.searchParams.delete(DEPART_QUERY_KEY)
+  const qs = url.searchParams.toString()
+  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+}
+
+export function clearStopPairFromLocation(): void {
+  const url = new URL(window.location.href)
+  if (
+    !url.searchParams.has(FROM_STOP_QUERY_KEY) &&
+    !url.searchParams.has(TO_STOP_QUERY_KEY) &&
+    !url.searchParams.has(DEPART_QUERY_KEY)
+  ) {
+    return
+  }
+  url.searchParams.delete(FROM_STOP_QUERY_KEY)
+  url.searchParams.delete(TO_STOP_QUERY_KEY)
+  url.searchParams.delete(DEPART_QUERY_KEY)
+  const qs = url.searchParams.toString()
+  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 /** 构建时写入 routes/*.html 的跳转目标 */

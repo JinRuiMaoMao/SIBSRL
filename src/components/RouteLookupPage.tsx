@@ -53,10 +53,20 @@ import {
   readSearchHistory,
 } from '../storage/routeActivity'
 import { shouldReduceMotion } from '../storage/appPreferences'
-import { buildRouteShareUrl, clearRouteFromLocation, readDirectionQueryFromLocation, readRouteQueryFromLocation, replaceRouteInLocation, setRouteInLocation } from '../utils/routeNavigation'
+import {
+  buildRouteShareUrl,
+  buildStopPairSearchQuery,
+  clearRouteFromLocation,
+  clearStopPairFromLocation,
+  readDirectionQueryFromLocation,
+  readRouteQueryFromLocation,
+  readStopPairFromLocation,
+  replaceRouteInLocation,
+  replaceStopPairInLocation,
+  setRouteInLocation,
+} from '../utils/routeNavigation'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
-import { matchesTripPlanningRoute } from '../utils/randomRoutePool'
 import {
   findStopsMatchingQuery,
   routePassesStopQuery,
@@ -65,11 +75,16 @@ import {
   findDirectRoutesBetweenStops,
   resolveStopByQuery,
 } from '../utils/routeBetweenStops'
-import { isDirectRouteBetweenStopsFeasible } from '../utils/routeTimetableFeasibility'
-import { findTransferPlansBetweenStops, formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
+import { isDirectRouteBetweenStopsFeasible, parseDepartureTimeInput, type TimetableFeasibilityOptions } from '../utils/routeTimetableFeasibility'
+import {
+  findTransferPlansBetweenStops,
+  formatTransferPlanRouteChain,
+  type TransferPlan,
+  type TransferPlanSortMode,
+} from '../utils/stopTransferPlans'
 import { findWalkTransferPlans, mergeTransferAndWalkPlans } from '../utils/walkTransferPlans'
+import { BetweenStopsResults } from './BetweenStopsResults'
 import { TransferPlanDetail } from './TransferPlanDetail'
-import { TransferPlanList } from './TransferPlanList'
 import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
 import type { MatchedStop } from '../utils/routeStopLookup'
 
@@ -144,6 +159,9 @@ export function RouteLookupPage({
   const [betweenStopsSectionOpen, setBetweenStopsSectionOpen] = useState(true)
   /** 两站 `起点--终点` 仅在 Enter / 历史记录选中后执行搜索，避免输入时主线程卡死 */
   const [committedStopPairQuery, setCommittedStopPairQuery] = useState('')
+  const [betweenStopsDepartTime, setBetweenStopsDepartTime] = useState('')
+  const [betweenStopsSortMode, setBetweenStopsSortMode] = useState<TransferPlanSortMode>('transfers')
+  const stopPairFromUrlRef = useRef(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
   const syntaxPanelRef = useRef<HTMLDivElement>(null)
@@ -301,6 +319,11 @@ export function RouteLookupPage({
   const stopPairSearchCommitted =
     committedStopPairQuery.length > 0 && filters.query.trim() === committedStopPairQuery
 
+  const betweenStopsTimetableOptions = useMemo((): TimetableFeasibilityOptions => {
+    const departureMinutes = parseDepartureTimeInput(betweenStopsDepartTime)
+    return departureMinutes != null ? { departureMinutes } : {}
+  }, [betweenStopsDepartTime])
+
   const betweenStopLookup = useMemo(() => {
     if (!stopPairSearchCommitted) return null
 
@@ -317,19 +340,24 @@ export function RouteLookupPage({
         ? findDirectRoutesBetweenStops(from, to, displayRoutes).filter(
             ({ route, directionIndex }) =>
               betweenStopRouteFilter(route) &&
-              isDirectRouteBetweenStopsFeasible(from, to, route, directionIndex),
+              isDirectRouteBetweenStopsFeasible(from, to, route, directionIndex, betweenStopsTimetableOptions),
           )
         : []
     const transferPlans =
-      from && to && routes.length === 0
+      from && to
         ? mergeTransferAndWalkPlans(
-            findTransferPlansBetweenStops(from, to, displayRoutes, betweenStopRouteFilter),
-            findWalkTransferPlans(from, to, displayRoutes, betweenStopRouteFilter),
+            findTransferPlansBetweenStops(from, to, displayRoutes, betweenStopRouteFilter, {
+              timetable: betweenStopsTimetableOptions,
+            }),
+            findWalkTransferPlans(from, to, displayRoutes, betweenStopRouteFilter, {
+              timetable: betweenStopsTimetableOptions,
+            }),
           )
         : []
 
     return { from, to, fromQuery, toQuery, routes, transferPlans }
   }, [
+    betweenStopsTimetableOptions,
     committedStructuredStopPair.from,
     committedStructuredStopPair.to,
     displayRoutes,
@@ -361,6 +389,34 @@ export function RouteLookupPage({
       setBetweenStopsSectionOpen(true)
     }
   }, [betweenStopLookup])
+
+  useEffect(() => {
+    if (stopPairFromUrlRef.current) return
+    const pair = readStopPairFromLocation()
+    if (!pair || readRouteQueryFromLocation()) return
+    stopPairFromUrlRef.current = true
+    const query = buildStopPairSearchQuery(pair.from, pair.to)
+    updateFilter('query', query)
+    setCommittedStopPairQuery(query)
+    if (pair.depart) setBetweenStopsDepartTime(pair.depart)
+    setBetweenStopsSectionOpen(true)
+  }, [updateFilter])
+
+  useEffect(() => {
+    if (!stopPairSearchCommitted || !betweenStopLookup?.from || !betweenStopLookup?.to) return
+    replaceStopPairInLocation(
+      betweenStopLookup.fromQuery,
+      betweenStopLookup.toQuery,
+      betweenStopsDepartTime || null,
+    )
+  }, [
+    betweenStopLookup?.from,
+    betweenStopLookup?.fromQuery,
+    betweenStopLookup?.to,
+    betweenStopLookup?.toQuery,
+    betweenStopsDepartTime,
+    stopPairSearchCommitted,
+  ])
 
   useEffect(() => {
     writeStoredRouteGroupOpen(groupOpen)
@@ -680,7 +736,10 @@ export function RouteLookupPage({
     (q: string) => {
       updateFilter('query', q)
       setGroupOpen(defaultClosedRouteGroups())
-      if (!q.trim()) setCommittedStopPairQuery('')
+      if (!q.trim()) {
+        setCommittedStopPairQuery('')
+        clearStopPairFromLocation()
+      }
     },
     [updateFilter],
   )
@@ -792,21 +851,6 @@ export function RouteLookupPage({
       />
     ))
 
-  const renderBetweenStopRouteCards = () =>
-    betweenStopLookup?.routes.map(({ route, directionIndex }) => (
-      <RouteCard
-        key={`between-${route.id}-${directionIndex}`}
-        route={route}
-        selected={selectedRoute?.id === route.id}
-        directionIndex={directionIndex}
-        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-        onNavigate={(routeId) => {
-          setDirectionIndex(routeId, directionIndex)
-          handleRouteNavigate(routeId)
-        }}
-      />
-    ))
-
   const renderStopRouteCards = () =>
     stopLookupRoutes.map((route) => (
       <RouteCard
@@ -819,18 +863,8 @@ export function RouteLookupPage({
       />
     ))
 
-  const betweenStopSummary = useMemo(() => {
-    if (!betweenStopLookup) return ''
-    const { from, to, fromQuery, toQuery } = betweenStopLookup
-    if (!from) return t('betweenStopsFromUnresolved', { query: fromQuery })
-    if (!to) return t('betweenStopsToUnresolved', { query: toQuery })
-    const fromLabel = getPrimaryText({ zh: from.zh, en: from.en }, locale)
-    const toLabel = getPrimaryText({ zh: to.zh, en: to.en }, locale)
-    return t('betweenStopsSummary', { from: fromLabel, to: toLabel })
-  }, [betweenStopLookup, locale, t])
-
   const betweenStopResultCount = betweenStopLookup
-    ? betweenStopLookup.routes.length || betweenStopLookup.transferPlans.length
+    ? betweenStopLookup.routes.length + betweenStopLookup.transferPlans.length
     : 0
 
   const handleOpenTransferLeg = useCallback(
@@ -953,17 +987,19 @@ export function RouteLookupPage({
                 open={betweenStopsSectionOpen}
                 onOpenChange={setBetweenStopsSectionOpen}
               >
-                <p className="stop-lookup-summary">{betweenStopSummary}</p>
-                {betweenStopLookup.routes.length > 0 ? (
-                  <div className="route-grid">{renderBetweenStopRouteCards()}</div>
-                ) : betweenStopLookup.transferPlans.length > 0 ? (
-                  <TransferPlanList
-                    plans={betweenStopLookup.transferPlans}
-                    onSelectPlan={handleSelectTransferPlan}
-                  />
-                ) : betweenStopLookup.from && betweenStopLookup.to ? (
-                  <p className="route-group-empty">{t('betweenStopsNoRoutes')}</p>
-                ) : null}
+                <BetweenStopsResults
+                  lookup={betweenStopLookup}
+                  dailyChallenge={dailyChallenge}
+                  departTime={betweenStopsDepartTime}
+                  sortMode={betweenStopsSortMode}
+                  onSortModeChange={setBetweenStopsSortMode}
+                  onDepartTimeChange={setBetweenStopsDepartTime}
+                  selectedRouteId={selectedRoute?.id}
+                  getDirectionIndex={getDirectionIndex}
+                  setDirectionIndex={setDirectionIndex}
+                  onRouteNavigate={handleRouteNavigate}
+                  onSelectPlan={handleSelectTransferPlan}
+                />
               </RouteGroupCollapse>
             ) : null}
 

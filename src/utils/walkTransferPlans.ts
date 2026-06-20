@@ -8,7 +8,7 @@ import {
 import {
   findTransferPlansBetweenStops,
 } from './stopTransferPlans'
-import { isDirectRouteBetweenStopsFeasible } from './routeTimetableFeasibility'
+import { isDirectRouteBetweenStopsFeasible, type TimetableFeasibilityOptions } from './routeTimetableFeasibility'
 import { canonicalStopKey, stopsMatch } from './stopIdentity'
 
 const DEFAULT_MAX_WALK_PLANS = 8
@@ -86,7 +86,7 @@ export function findWalkTransferPlans(
   to: MatchedStop,
   displayRoutes: BusRoute[],
   routeFilter: (route: BusRoute) => boolean,
-  options?: { maxPlans?: number },
+  options?: { maxPlans?: number; timetable?: TimetableFeasibilityOptions },
 ): TransferPlan[] {
   const destKey = canonicalStopKey(to.zh, to.en)
   const links = findWalkLinksToDestination(destKey)
@@ -94,6 +94,7 @@ export function findWalkTransferPlans(
 
   const stopIndex = buildStopIndex(displayRoutes)
   const maxPlans = options?.maxPlans ?? DEFAULT_MAX_WALK_PLANS
+  const timetable = options?.timetable
   const collected: TransferPlan[] = []
 
   for (const link of links) {
@@ -102,7 +103,7 @@ export function findWalkTransferPlans(
 
     for (const { route, directionIndex } of findDirectRoutesBetweenStops(from, busEnd, displayRoutes)) {
       if (!routeFilter(route)) continue
-      if (!isDirectRouteBetweenStopsFeasible(from, busEnd, route, directionIndex)) continue
+      if (!isDirectRouteBetweenStopsFeasible(from, busEnd, route, directionIndex, timetable)) continue
 
       const leg: RouteLeg = {
         route,
@@ -117,6 +118,7 @@ export function findWalkTransferPlans(
 
     const busTransfers = findTransferPlansBetweenStops(from, busEnd, displayRoutes, routeFilter, {
       maxPlans: 6,
+      timetable,
     })
     for (const plan of busTransfers) {
       collected.push(attachWalk(plan, busEnd, to, link.minutes))

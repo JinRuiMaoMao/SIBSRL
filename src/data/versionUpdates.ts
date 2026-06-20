@@ -167,6 +167,27 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
     },
     groups: [
       {
+        title: { zh: '两站查询', en: 'Stop-to-stop search' },
+        items: [
+          {
+            zh: '修复换乘搜索在复杂起终点漏方案：每条线只保留最近枢纽段，并优化 BFS frontier 截断。',
+            en: 'Fixed missing transfer plans on complex stop pairs—one hub hop per route and safer BFS frontier trimming.',
+          },
+          {
+            zh: '两站结果分开展示直达、转车/步行接驳；季节限定与非今日挑战线增加标签。',
+            en: 'Stop-to-stop results split direct vs transfer/walk sections; seasonal and off-pool routes show badges.',
+          },
+          {
+            zh: '新增出发时刻筛选、方案排序（少转车/最快/最短）、两站分享链接（?from=&to=&depart=）及站点解析提示。',
+            en: 'Added depart-time filter, plan sorting, shareable ?from=&to=&depart= links, and stop resolution notes.',
+          },
+          {
+            zh: '扩充步行接驳：叶角湾坟场↔叶角湾、叶角湾↔叶角湾邨、东门总站↔东门等。',
+            en: 'Expanded walk links—Leafy Bay Cemetery↔Leafy Bay, East Door Terminus↔East Door, and more.',
+          },
+        ],
+      },
+      {
         title: { zh: '设置', en: 'Settings' },
         items: [
           {

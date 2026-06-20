@@ -9,6 +9,28 @@ import { resolveStructuredLegSchedule } from './structuredRouteTimetable'
 
 export const MIN_TRANSFER_MINUTES = 4
 
+export interface TimetableFeasibilityOptions {
+  weekday?: number
+  /** HKT 当日分钟数 0–1439；设置后按出发时刻校验 */
+  departureMinutes?: number | null
+}
+
+/** 解析 HH:MM 为当日分钟数 */
+export function parseDepartureTimeInput(value: string): number | null {
+  const match = value.trim().match(/^(\d{1,2}):(\d{2})$/)
+  if (!match) return null
+  const hours = Number(match[1])
+  const minutes = Number(match[2])
+  if (hours > 23 || minutes > 59) return null
+  return hours * 60 + minutes
+}
+
+export function formatDepartureTimeInput(minutes: number): string {
+  const h = Math.floor(minutes / 60) % 24
+  const m = minutes % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+}
+
 /** 无法解析班次间隔时的保守最大等车时间（分钟） */
 const DEFAULT_MAX_HEADWAY_MINUTES = 30
 
@@ -201,6 +223,50 @@ export function estimateLegTravelMinutes(leg: RouteLeg): number {
   return Math.max(1, Math.round(segmentStops * MINUTES_PER_STOP_FALLBACK))
 }
 
+function isLegFeasibleFromDeparture(
+  leg: RouteLeg,
+  departureMinutes: number,
+  weekday = getHktWeekday(),
+): boolean {
+  const windows = getLegServiceWindows(leg, weekday)
+  if (!windows.length) return false
+
+  const travel = estimateLegTravelMinutes(leg)
+  const headway = getLegHeadwayMinutes(leg, weekday)
+
+  for (const w of windows) {
+    const latestBoard = w.end - travel
+    if (latestBoard < w.start) continue
+    if (departureMinutes > latestBoard) continue
+    const waitUntil = Math.max(departureMinutes, w.start)
+    if (waitUntil + travel <= w.end + 1) return true
+    if (departureMinutes >= w.start - headway && departureMinutes <= latestBoard) return true
+  }
+
+  return false
+}
+
+function isTransferPlanFeasibleAtDeparture(
+  plan: TransferPlan,
+  departureMinutes: number,
+  weekday = getHktWeekday(),
+): boolean {
+  if (!plan.legs.length) return false
+
+  let cursor = departureMinutes
+  for (let i = 0; i < plan.legs.length; i++) {
+    const leg = plan.legs[i]!
+    if (!isLegFeasibleFromDeparture(leg, cursor, weekday)) return false
+    cursor += estimateLegTravelMinutes(leg)
+    if (i < plan.legs.length - 1) {
+      cursor += MIN_TRANSFER_MINUTES
+      cursor += Math.round(estimateLegHeadwayMinutes(plan.legs[i + 1]!, weekday) / 2)
+    }
+  }
+
+  return true
+}
+
 function canConnectLegs(leg1: RouteLeg, leg2: RouteLeg, weekday = getHktWeekday()): boolean {
   const windows1 = getLegServiceWindows(leg1, weekday)
   const windows2 = getLegServiceWindows(leg2, weekday)
@@ -235,8 +301,9 @@ export function isLegServiceAvailableToday(leg: RouteLeg, weekday = getHktWeekda
 /** 转车方案各段服务时间与换乘候车是否可行（基于服务时间 + 班次间隔 + 行车时间估算） */
 export function isTransferPlanTimetableFeasible(
   plan: TransferPlan,
-  weekday = getHktWeekday(),
+  options: TimetableFeasibilityOptions = {},
 ): boolean {
+  const weekday = options.weekday ?? getHktWeekday()
   if (!plan.legs.length) return false
 
   for (const leg of plan.legs) {
@@ -245,6 +312,10 @@ export function isTransferPlanTimetableFeasible(
 
   for (let i = 0; i < plan.legs.length - 1; i++) {
     if (!canConnectLegs(plan.legs[i]!, plan.legs[i + 1]!, weekday)) return false
+  }
+
+  if (options.departureMinutes != null) {
+    return isTransferPlanFeasibleAtDeparture(plan, options.departureMinutes, weekday)
   }
 
   return true
@@ -256,14 +327,20 @@ export function isDirectRouteBetweenStopsFeasible(
   to: MatchedStop,
   route: BusRoute,
   directionIndex: number,
-  weekday = getHktWeekday(),
+  options: TimetableFeasibilityOptions = {},
 ): boolean {
-  return isLegServiceAvailableToday({ route, directionIndex, from, to }, weekday)
+  const weekday = options.weekday ?? getHktWeekday()
+  const leg: RouteLeg = { route, directionIndex, from, to }
+  if (!isLegServiceAvailableToday(leg, weekday)) return false
+  if (options.departureMinutes != null) {
+    return isLegFeasibleFromDeparture(leg, options.departureMinutes, weekday)
+  }
+  return true
 }
 
 export function filterTransferPlansByTimetable(
   plans: TransferPlan[],
-  weekday = getHktWeekday(),
+  options: TimetableFeasibilityOptions = {},
 ): TransferPlan[] {
-  return plans.filter((plan) => isTransferPlanTimetableFeasible(plan, weekday))
+  return plans.filter((plan) => isTransferPlanTimetableFeasible(plan, options))
 }
