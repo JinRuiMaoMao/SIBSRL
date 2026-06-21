@@ -12,9 +12,15 @@ import type { DailyChallengeScheduleDay } from '../data/dailyChallengeSchedule'
 import {
   getGroupDisplaySlots,
   getRouteDisplayIdsForGroup,
+  resolveGroupedRouteEntry,
   ROUTE_DISPLAY_GROUP_ORDER,
   type RouteDisplayGroupKey,
 } from '../data/routeDisplayGroups'
+import {
+  getSeasonalAvailabilityLabels,
+  getSeasonalRouteActiveWindow,
+  shouldPromoteSeasonalRouteBelowDailyChallenge,
+} from '../data/seasonalRouteAvailability'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { DailyChallengeCalendarDialog } from './DailyChallengeCalendarDialog'
 import { FavoritesFolderBar } from './FavoritesFolderBar'
@@ -702,6 +708,32 @@ export function RouteLookupPage({
     return groups
   }, [dailyChallenge, filteredRoutes])
 
+  const getSeasonalLabelsForRoute = useCallback(
+    (route: BusRoute) => {
+      const window = getSeasonalRouteActiveWindow(route)
+      if (!window) return null
+      return getSeasonalAvailabilityLabels(window, locale, t)
+    },
+    [locale, t],
+  )
+
+  const promotedSeasonalEntries = useMemo(() => {
+    const visibleIds = new Set(filteredRoutes.map((route) => route.id))
+    const seenRouteIds = new Set<string>()
+    const entries: NonNullable<ReturnType<typeof resolveGroupedRouteEntry>>[] = []
+
+    for (const listedId of getRouteDisplayIdsForGroup('seasonal')) {
+      const entry = resolveGroupedRouteEntry(listedId)
+      if (!entry || seenRouteIds.has(entry.route.id)) continue
+      if (!visibleIds.has(entry.route.id)) continue
+      if (!shouldPromoteSeasonalRouteBelowDailyChallenge(entry.route)) continue
+      seenRouteIds.add(entry.route.id)
+      entries.push(entry)
+    }
+
+    return entries
+  }, [filteredRoutes])
+
   const countVisibleGroupSlots = useCallback(
     (group: RouteDisplayGroupKey) =>
       groupedSlots[group].filter((slot) => slot.isVisible && slot.entry).length,
@@ -790,6 +822,7 @@ export function RouteLookupPage({
       const listedDirectionIndex =
         directionKey != null ? findDailyChallengeDirectionIndex(route, directionKey) : null
       const directionIndex = listedDirectionIndex ?? getDirectionIndex(route)
+      const seasonalLabels = getSeasonalLabelsForRoute(route)
       return (
         <RouteCard
           key={`${group}-${listedId}`}
@@ -804,6 +837,28 @@ export function RouteLookupPage({
             }
             handleRouteNavigate(routeId)
           }}
+          availabilityRangeLabel={seasonalLabels?.range}
+          availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
+        />
+      )
+    })
+
+  const renderPromotedSeasonalRouteCards = () =>
+    promotedSeasonalEntries.map((entry) => {
+      const { route, listedId } = entry
+      const seasonalLabels = getSeasonalLabelsForRoute(route)
+      return (
+        <RouteCard
+          key={`promoted-seasonal-${listedId}`}
+          route={route}
+          displayNumber={listedId !== route.number ? listedId : undefined}
+          selected={selectedRoute?.id === route.id}
+          directionIndex={getDirectionIndex(route)}
+          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+          onNavigate={handleRouteNavigate}
+          availabilityRangeLabel={seasonalLabels?.range}
+          availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
+          promotedSeasonal
         />
       )
     })
@@ -980,6 +1035,8 @@ export function RouteLookupPage({
                 challenge={dailyChallenge}
               />
             ) : null}
+
+            {promotedSeasonalEntries.length > 0 ? renderPromotedSeasonalRouteCards() : null}
 
             {betweenStopPairDraft ? (
               <p className="stop-lookup-summary stop-lookup-pending">{t('betweenStopsPressEnter')}</p>

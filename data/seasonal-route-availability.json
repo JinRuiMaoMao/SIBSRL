@@ -1,9 +1,9 @@
 {
-  "_comment": "HKT game-day windows (08:00 reset) when seasonal routes enter the random pool. Keys: route id or listed id (e.g. 73S, N76A).",
+  "_comment": "HKT game-day windows (08:00 reset) when seasonal routes enter the random pool. Keys: route id or listed id (e.g. 73S, N76A). end = last playable game day; unavailable from next day 08:00 HKT.",
   "73S": [],
   "76S": [],
   "376S": [],
   "476S": [],
-  "F469": [],
+  "F469": [{ "start": "2026-06-21", "end": "2026-06-27", "promoteBelowDailyChallenge": true }],
   "N76": []
 }

@@ -1,11 +1,13 @@
 import seasonalAvailabilityJson from '../../data/seasonal-route-availability.json'
 import { getListedRouteIdsForRoute } from './routeDisplayGroups'
 import { todayHktDateString } from './dailyChallenge'
+import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 
-interface SeasonalAvailabilityWindow {
+export interface SeasonalAvailabilityWindow {
   start: string
   end?: string
+  promoteBelowDailyChallenge?: boolean
 }
 
 type SeasonalAvailabilityMap = Record<string, SeasonalAvailabilityWindow[]>
@@ -25,16 +27,79 @@ function isDateInWindow(date: string, window: SeasonalAvailabilityWindow): boole
   return true
 }
 
+function routeAvailabilityKeys(route: BusRoute): string[] {
+  return [route.id, route.number, ...getListedRouteIdsForRoute(route)]
+}
+
 /** 季节限定线路是否已到开放期（HKT 游戏日） */
 export function isSeasonalRouteUnlocked(route: BusRoute, now = new Date()): boolean {
+  return getSeasonalRouteActiveWindow(route, now) != null
+}
+
+/** 当前 HKT 游戏日命中的开放窗口；无 end 表示开放中且尚未公布结束日。 */
+export function getSeasonalRouteActiveWindow(
+  route: BusRoute,
+  now = new Date(),
+): SeasonalAvailabilityWindow | null {
   const date = todayHktDateString(now)
-  const keys = new Set<string>([route.id, route.number, ...getListedRouteIdsForRoute(route)])
+  const keys = new Set<string>(routeAvailabilityKeys(route))
 
   for (const key of keys) {
     const windows = lookupWindows(key)
     if (!windows) continue
-    if (windows.some((window) => isDateInWindow(date, window))) return true
+    const active = windows.find((window) => isDateInWindow(date, window))
+    if (active) return active
   }
 
-  return false
+  return null
+}
+
+function addGameDays(date: string, days: number): string {
+  const base = Date.parse(`${date}T00:00:00+08:00`)
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Hong_Kong' }).format(
+    new Date(base + days * 86_400_000),
+  )
+}
+
+export function formatSeasonalGameDayShort(date: string, _locale: Locale): string {
+  const [, month, day] = date.split('-').map(Number)
+  return `${month}/${day}`
+}
+
+export function getSeasonalUnavailableFromDate(window: SeasonalAvailabilityWindow): string | null {
+  if (!window.end) return null
+  return addGameDays(window.end, 1)
+}
+
+export interface SeasonalAvailabilityLabels {
+  range: string
+  unavailableFrom: string | null
+}
+
+export function getSeasonalAvailabilityLabels(
+  window: SeasonalAvailabilityWindow,
+  locale: Locale,
+  t: (key: 'seasonalAvailabilityRange' | 'seasonalAvailabilityUnavailableFrom', params: Record<string, string>) => string,
+): SeasonalAvailabilityLabels {
+  const start = formatSeasonalGameDayShort(window.start, locale)
+  const end = window.end ? formatSeasonalGameDayShort(window.end, locale) : null
+  const range =
+    end != null
+      ? t('seasonalAvailabilityRange', { start, end })
+      : t('seasonalAvailabilityRange', { start, end: start })
+  const unavailableFromDate = getSeasonalUnavailableFromDate(window)
+  const unavailableFrom = unavailableFromDate
+    ? t('seasonalAvailabilityUnavailableFrom', {
+        date: formatSeasonalGameDayShort(unavailableFromDate, locale),
+      })
+    : null
+  return { range, unavailableFrom }
+}
+
+export function shouldPromoteSeasonalRouteBelowDailyChallenge(
+  route: BusRoute,
+  now = new Date(),
+): boolean {
+  const window = getSeasonalRouteActiveWindow(route, now)
+  return window?.promoteBelowDailyChallenge === true
 }

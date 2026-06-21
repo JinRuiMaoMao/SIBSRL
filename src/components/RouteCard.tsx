@@ -27,6 +27,12 @@ interface RouteCardProps {
   displayNumber?: string
   /** 筛选不匹配等情况下置于列表底部时的弱化样式 */
   muted?: boolean
+  /** 季节限定开放期（显示于线路号旁） */
+  availabilityRangeLabel?: string
+  /** 季节限定结束提示（显示于 meta 行） */
+  availabilityUnavailableLabel?: string
+  /** 置于每日挑战下方的季节推广卡片 */
+  promotedSeasonal?: boolean
 }
 
 export function RouteCard({
@@ -38,6 +44,9 @@ export function RouteCard({
   href,
   displayNumber,
   muted = false,
+  availabilityRangeLabel,
+  availabilityUnavailableLabel,
+  promotedSeasonal = false,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -54,7 +63,7 @@ export function RouteCard({
     <a
       href={href ?? getRoutePageHref(route.id)}
       data-route-id={route.id}
-      className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''}`.trim()}
+      className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''} ${promotedSeasonal ? 'route-card-link--seasonal-promoted' : ''}`.trim()}
       aria-current={selected ? 'page' : undefined}
       onClick={(event) => {
         if ((event.target as Element).closest('.route-favorite-picker')) return
@@ -69,6 +78,9 @@ export function RouteCard({
         <div className="route-card-top">
           <div className="route-card-title">
             <span className="route-number">{cardNumber}</span>
+            {availabilityRangeLabel ? (
+              <span className="route-seasonal-availability">{availabilityRangeLabel}</span>
+            ) : null}
             {hasDirections && (
               <DirectionToggle
                 route={route}
@@ -96,6 +108,10 @@ export function RouteCard({
         <RouteEndpoints route={route} directionIndex={directionIndex} />
 
         {serviceTime && <p className="route-meta">{serviceTime}</p>}
+
+        {availabilityUnavailableLabel ? (
+          <p className="route-meta route-meta--seasonal-unavailable">{availabilityUnavailableLabel}</p>
+        ) : null}
 
         <div className="route-card-bottom">
           <div className="route-card-meta-left">

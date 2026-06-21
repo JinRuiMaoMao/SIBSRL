@@ -204,6 +204,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
       },
       {
+        title: { zh: '季节限定', en: 'Seasonal routes' },
+        items: [
+          {
+            zh: 'F469 今日起开放 7 日（6/21–6/27）；线路号旁显示限时日期，6/28 08:00（HKT）起不可用；每日挑战下方同步展示推广卡片。',
+            en: 'F469 is available for seven game days from today (6/21–6/27)—date range beside the route number, unavailable from 6/28 08:00 HKT; a duplicate card also appears below today’s daily challenge.',
+          },
+        ],
+      },
+      {
         title: { zh: '设置', en: 'Settings' },
         items: [
           {
