@@ -1,6 +1,7 @@
 import type { Locale } from '../i18n/types'
 import { isChineseLocale } from '../i18n/types'
-import scheduleJson from '../../data/daily-challenge-schedule-2026-06.json'
+import scheduleJuneJson from '../../data/daily-challenge-schedule-2026-06.json'
+import scheduleJulyJson from '../../data/daily-challenge-schedule-2026-07.json'
 
 export interface DailyChallengeScheduleDay {
   date: string
@@ -17,7 +18,8 @@ export interface DailyChallengeSchedule {
 }
 
 export const DAILY_CHALLENGE_SCHEDULES: DailyChallengeSchedule[] = [
-  scheduleJson as DailyChallengeSchedule,
+  scheduleJuneJson as DailyChallengeSchedule,
+  scheduleJulyJson as DailyChallengeSchedule,
 ]
 
 const dayByDate = new Map<string, DailyChallengeScheduleDay>()
@@ -76,6 +78,61 @@ export function formatScheduleMonthLabel(month: string, locale: Locale): string 
     year: 'numeric',
     timeZone: 'UTC',
   }).format(new Date(Date.UTC(year, monthNum - 1, 1)))
+}
+
+export function formatScheduleMonthOption(month: string, locale: Locale): string {
+  const [, monthNum] = month.split('-').map(Number)
+  if (!monthNum) return month
+
+  if (isChineseLocale(locale)) {
+    return `${monthNum}月`
+  }
+
+  return new Intl.DateTimeFormat('en', {
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(2020, monthNum - 1, 1)))
+}
+
+export function toScheduleMonthKey(year: number, month: number): string {
+  return `${year}-${String(month).padStart(2, '0')}`
+}
+
+export function parseScheduleMonthKey(monthKey: string): { year: number; month: number } | null {
+  const [year, month] = monthKey.split('-').map(Number)
+  if (!year || !month || month < 1 || month > 12) return null
+  return { year, month }
+}
+
+export function listScheduleYears(schedules: DailyChallengeSchedule[]): number[] {
+  const years = new Set<number>()
+  for (const schedule of schedules) {
+    const parsed = parseScheduleMonthKey(schedule.month)
+    if (parsed) years.add(parsed.year)
+  }
+  return [...years].sort((a, b) => a - b)
+}
+
+export function emptyScheduleForMonth(monthKey: string): DailyChallengeSchedule {
+  const parsed = parseScheduleMonthKey(monthKey)
+  const fallback = DAILY_CHALLENGE_SCHEDULES[0]
+  return {
+    month: monthKey,
+    timezone: fallback?.timezone ?? 'Asia/Hong_Kong',
+    resetHour: fallback?.resetHour ?? 8,
+    days: [],
+  }
+}
+
+export function resolveInitialCalendarMonth(
+  todayDate: string,
+  schedules: DailyChallengeSchedule[],
+): string {
+  const todayMonth = todayDate.slice(0, 7)
+  if (schedules.some((schedule) => schedule.month === todayMonth)) return todayMonth
+
+  const sorted = [...schedules].map((schedule) => schedule.month).sort()
+  return sorted[sorted.length - 1] ?? todayMonth
 }
 
 /** 用 Discord API 历史覆盖同月静态日程（有 event 的 live 条目优先） */

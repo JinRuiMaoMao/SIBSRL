@@ -71,6 +71,25 @@ export function getSeasonalUnavailableFromDate(window: SeasonalAvailabilityWindo
   return addGameDays(window.end, 1)
 }
 
+/** 距季节开放窗口结束（end 日次日 08:00 HKT）的毫秒数 */
+export function getMsUntilSeasonalWindowEnds(
+  window: SeasonalAvailabilityWindow,
+  now = new Date(),
+): number | null {
+  const unavailableFrom = getSeasonalUnavailableFromDate(window)
+  if (!unavailableFrom) return null
+  const endMs = Date.parse(`${unavailableFrom}T08:00:00+08:00`)
+  return Math.max(0, endMs - now.getTime())
+}
+
+export function formatSeasonalAvailabilityCountdown(ms: number): string {
+  if (ms <= 0) return '00d 00h'
+  const totalHours = Math.floor(ms / 3_600_000)
+  const days = Math.floor(totalHours / 24)
+  const hours = totalHours % 24
+  return `${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h`
+}
+
 export interface SeasonalAvailabilityLabels {
   range: string
   unavailableFrom: string | null

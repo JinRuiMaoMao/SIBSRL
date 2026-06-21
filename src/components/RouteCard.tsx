@@ -31,8 +31,6 @@ interface RouteCardProps {
   availabilityRangeLabel?: string
   /** 季节限定结束提示（显示于 meta 行） */
   availabilityUnavailableLabel?: string
-  /** 置于每日挑战下方的季节推广卡片 */
-  promotedSeasonal?: boolean
 }
 
 export function RouteCard({
@@ -46,7 +44,6 @@ export function RouteCard({
   muted = false,
   availabilityRangeLabel,
   availabilityUnavailableLabel,
-  promotedSeasonal = false,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -63,7 +60,7 @@ export function RouteCard({
     <a
       href={href ?? getRoutePageHref(route.id)}
       data-route-id={route.id}
-      className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''} ${promotedSeasonal ? 'route-card-link--seasonal-promoted' : ''}`.trim()}
+      className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''}`.trim()}
       aria-current={selected ? 'page' : undefined}
       onClick={(event) => {
         if ((event.target as Element).closest('.route-favorite-picker')) return

@@ -126,6 +126,7 @@ const EVENT_ZH: Record<string, string> = {
   'Urban Odyssey': '城市漫游',
   'Marathon Shuttle': '马拉松接驳',
   'Bridge Closure': '桥梁封闭',
+  'Grumble Day': '抱怨日',
 }
 
 function toEventLabel(eventEn: string, race: boolean): BilingualText {

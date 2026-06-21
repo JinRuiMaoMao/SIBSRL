@@ -24,6 +24,8 @@ export function applyRoutePageData(base: BusRoute, page: RoutePageData): BusRout
   if (page.serviceTime) patch.serviceTime = page.serviceTime
   if (page.length) patch.length = page.length
   if (page.notes) patch.notes = page.notes
+  if (page.eventTitle) patch.eventTitle = page.eventTitle
+  if (page.eventAbout) patch.eventAbout = page.eventAbout
   if (page.origin) patch.origin = page.origin
   if (page.destination) patch.destination = page.destination
   if (page.via) patch.via = page.via

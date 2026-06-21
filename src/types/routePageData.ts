@@ -41,6 +41,8 @@ export interface RoutePageData {
   serviceTime?: BilingualText
   length?: BilingualText
   notes?: BilingualText
+  eventTitle?: BilingualText
+  eventAbout?: BilingualText
   origin?: BilingualText
   destination?: BilingualText
   via?: BilingualText

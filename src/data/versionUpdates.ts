@@ -210,6 +210,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: 'F469 今日起开放 7 日（6/21–6/27）；线路号旁显示限时日期，6/28 08:00（HKT）起不可用；每日挑战下方同步展示推广卡片。',
             en: 'F469 is available for seven game days from today (6/21–6/27)—date range beside the route number, unavailable from 6/28 08:00 HKT; a duplicate card also appears below today’s daily challenge.',
           },
+          {
+            zh: 'F469 补充「FT周年纪念」活动说明（关于）：车厂天台穿梭经洗车机及停放车辆。',
+            en: 'F469 now includes the FT Anniversary event blurb (About)—depot-roof shuttle via the bus wash and parked vehicles.',
+          },
+          {
+            zh: '每日挑战下方 F469 推广卡改为图示布局：季节限定（限时）、FT 周年纪念、剩余 06d 00h 倒计时、站数与起终点竖线、类型标签。',
+            en: 'F469 promo card below daily challenge now matches the mockup—seasonal label, FT Anniversary, 06d 00h countdown, stop spine, and type tags.',
+          },
         ],
       },
       {
@@ -218,6 +226,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: '移除详情页「经停车站」摘要，避免与下方完整站序重复。',
             en: 'Removed the via-stops summary on route detail—it duplicated the full stop list below.',
+          },
+          {
+            zh: '暂移除站序表「距上站 / From prev.」列；站间距相关展示之后再做。',
+            en: 'Removed the stop table’s “From prev.” column for now; stop-spacing display will come later.',
           },
         ],
       },
@@ -323,6 +335,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: '每日挑战日历可点击有数据的日期，直接打开该日挑战详情或对应线路。',
             en: 'Daily challenge calendar days with data are clickable—opens that day’s challenge detail or matching route.',
+          },
+          {
+            zh: '新增 2026 年 7 月社区日程（~July Daily Challenge~）：竞速日标注 [Race]；7/21 为 Grumble Day（抱怨日）；多数日期活动名与线路待公布。',
+            en: 'Added July 2026 community schedule (~July Daily Challenge~)—race days marked [Race]; 7/21 is Grumble Day; most event names and routes are still TBD.',
+          },
+          {
+            zh: '日历支持仅标注竞速、尚无活动名的日期（显示 [Race]，不可点开详情）。',
+            en: 'Calendar now shows race-only days ([Race] tag) before an event name is published—they are not clickable.',
+          },
+          {
+            zh: '每日挑战日历新增年／月选择与上一月、下一月按钮，每次只显示一个月份（无数据月份会提示）。',
+            en: 'Daily challenge calendar now has year/month pickers and prev/next controls—one month at a time, with a note when no schedule exists.',
           },
           {
             zh: '日历合并 Discord 机器人同步的历史日程，覆盖同日本地数据；有 live 数据时显示提示。',

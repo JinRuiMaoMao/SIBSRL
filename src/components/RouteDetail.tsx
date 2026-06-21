@@ -21,7 +21,6 @@ import { RouteEndpoints } from './RouteEndpoints'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { buildRouteShareUrl } from '../utils/routeNavigation'
-import { getStopDistanceFromPreviousLabel } from '../utils/routeStopDistance'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 
 interface RouteDetailProps {
@@ -197,9 +196,6 @@ export function RouteDetail({
               <span className="stop-table-col-zone" role="columnheader">
                 {t('stopColZone')}
               </span>
-              <span className="stop-table-col-distance" role="columnheader">
-                {t('stopColDistance')}
-              </span>
               <span className="stop-table-col-audio" role="columnheader">
                 {t('stopColAudio')}
               </span>
@@ -214,20 +210,6 @@ export function RouteDetail({
                 const nextName = stopAudio
                   ? getPrimaryText(stopAudio.nextStopLabel, locale)
                   : ''
-                const stopDistance = getStopDistanceFromPreviousLabel(
-                  route,
-                  directionIndex,
-                  i,
-                  locale,
-                )
-                const stopDistanceTitle =
-                  stopDistance?.estimated && stopDistance.sourceLabel
-                    ? t('stopDistanceEstimatedSourceHint', {
-                        source: stopDistance.sourceLabel,
-                      })
-                    : stopDistance?.estimated
-                      ? t('stopDistanceEstimatedHint')
-                      : undefined
 
                 return (
                   <li key={`${stop.name.en}-${i}`} className="stop-table-row" role="row">
@@ -238,20 +220,6 @@ export function RouteDetail({
                     <span className="stop-table-zone">
                       {stop.zone != null ? (
                         <span className="zone-tag zone-tag--table">Z{stop.zone}</span>
-                      ) : (
-                        <span className="stop-table-empty" aria-hidden="true">
-                          —
-                        </span>
-                      )}
-                    </span>
-                    <span className="stop-table-distance">
-                      {stopDistance ? (
-                        <span
-                          className={stopDistance.estimated ? 'stop-distance-estimated' : undefined}
-                          title={stopDistanceTitle}
-                        >
-                          {stopDistance.label}
-                        </span>
                       ) : (
                         <span className="stop-table-empty" aria-hidden="true">
                           —
@@ -282,6 +250,18 @@ export function RouteDetail({
           </div>
         </section>
       )}
+
+      {route.eventTitle ? (
+        <section className="detail-section detail-event">
+          <h3>{getPrimaryText(route.eventTitle, locale)}</h3>
+          {route.eventAbout ? (
+            <>
+              <h4>{t('routeEventAbout')}</h4>
+              <p>{getPrimaryText(route.eventAbout, locale)}</p>
+            </>
+          ) : null}
+        </section>
+      ) : null}
 
       {route.notes && (
         <section className="detail-section detail-notes">

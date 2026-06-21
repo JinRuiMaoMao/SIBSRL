@@ -1,9 +1,14 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { lockPageScroll } from '../utils/pageScrollLock'
 import { buildDailyChallengeFromScheduleDay } from '../data/dailyChallenge'
 import {
   buildMonthCalendarCells,
-  formatScheduleMonthLabel,
+  emptyScheduleForMonth,
+  formatScheduleMonthOption,
+  listScheduleYears,
+  parseScheduleMonthKey,
+  resolveInitialCalendarMonth,
+  toScheduleMonthKey,
   type DailyChallengeScheduleDay,
 } from '../data/dailyChallengeSchedule'
 import { getPrimaryText } from '../i18n/displayText'
@@ -61,9 +66,11 @@ function CalendarDayCell({
     ? getPrimaryText(plainEventChallenge.event, locale)
     : null
   const routeCode = day?.routeCode?.trim() || null
-  const hasData = Boolean(day?.event)
-  const isRace = Boolean(day?.event && day.race)
-  const className = `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data is-clickable' : 'is-empty'}`.trim()
+  const hasEvent = Boolean(day?.event)
+  const isRaceOnly = Boolean(day?.race && !day?.event)
+  const hasData = hasEvent || isRaceOnly
+  const isRace = Boolean(day?.race)
+  const className = `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${hasData ? 'has-data' : 'is-empty'} ${hasEvent && onSelectDay ? 'is-clickable' : ''}`.trim()
 
   const inner = (
     <>
@@ -75,7 +82,7 @@ function CalendarDayCell({
       {hasData ? (
         <>
           {routeCode ? <span className="daily-challenge-calendar-day-route">{routeCode}</span> : null}
-          {eventLabel ? (
+          {hasEvent && eventLabel ? (
             <span className="daily-challenge-calendar-day-event" title={eventLabel}>
               {isRace ? (
                 <>
@@ -86,6 +93,10 @@ function CalendarDayCell({
                 eventLabel
               )}
             </span>
+          ) : isRaceOnly ? (
+            <span className="daily-challenge-calendar-day-event">
+              <RaceTagLabel locale={locale} />
+            </span>
           ) : null}
         </>
       ) : (
@@ -94,7 +105,7 @@ function CalendarDayCell({
     </>
   )
 
-  if (hasData && day && onSelectDay) {
+  if (hasEvent && day && onSelectDay) {
     return (
       <button
         type="button"
@@ -119,6 +130,38 @@ export function DailyChallengeCalendarDialog({
   const { locale, t } = useLocale()
   const { schedules, hasLiveOverlay } = useCalendarSchedules()
   const weekdays = useMemo(() => weekdayLabels(locale), [locale])
+  const years = useMemo(() => listScheduleYears(schedules), [schedules])
+  const [selectedMonthKey, setSelectedMonthKey] = useState(() =>
+    resolveInitialCalendarMonth(todayDate, schedules),
+  )
+
+  const selectedParsed = parseScheduleMonthKey(selectedMonthKey)
+  const selectedYear = selectedParsed?.year ?? years[0] ?? Number(todayDate.slice(0, 4))
+  const selectedMonth = selectedParsed?.month ?? Number(todayDate.slice(5, 7))
+
+  const activeSchedule = schedules.find((schedule) => schedule.month === selectedMonthKey)
+  const displaySchedule = activeSchedule ?? emptyScheduleForMonth(selectedMonthKey)
+  const calendarCells = useMemo(
+    () => buildMonthCalendarCells(displaySchedule),
+    [displaySchedule],
+  )
+
+  const monthOptions = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, index) => {
+        const month = index + 1
+        return {
+          value: month,
+          label: formatScheduleMonthOption(toScheduleMonthKey(selectedYear, month), locale),
+        }
+      }),
+    [locale, selectedYear],
+  )
+
+  useEffect(() => {
+    if (!open) return
+    setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
+  }, [open, schedules, todayDate])
 
   useEffect(() => {
     if (!open) return
@@ -133,6 +176,27 @@ export function DailyChallengeCalendarDialog({
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [open, onClose])
+
+  const shiftMonth = (delta: number) => {
+    setSelectedMonthKey((current) => {
+      const parsed = parseScheduleMonthKey(current)
+      if (!parsed) return current
+      let year = parsed.year
+      let month = parsed.month + delta
+      while (month < 1) {
+        month += 12
+        year -= 1
+      }
+      while (month > 12) {
+        month -= 12
+        year += 1
+      }
+      if (years.length > 0 && !years.includes(year)) {
+        year = delta < 0 ? years[0]! : years[years.length - 1]!
+      }
+      return toScheduleMonthKey(year, month)
+    })
+  }
 
   if (!open) return null
 
@@ -178,41 +242,102 @@ export function DailyChallengeCalendarDialog({
           {t('dailyChallengeCalendarRaceLegend')}
         </p>
 
-        {schedules.map((schedule) => (
-          <section key={schedule.month} className="daily-challenge-calendar-month">
-            <h3 className="daily-challenge-calendar-month-title">
-              {formatScheduleMonthLabel(schedule.month, locale)}
-            </h3>
-            <div className="daily-challenge-calendar-weekdays" aria-hidden>
-              {weekdays.map((label) => (
-                <span key={label} className="daily-challenge-calendar-weekday">
-                  {label}
-                </span>
-              ))}
-            </div>
-            <div className="daily-challenge-calendar-grid">
-              {buildMonthCalendarCells(schedule).map((cell, index) =>
-                cell.date ? (
-                  <CalendarDayCell
-                    key={cell.date}
-                    date={cell.date}
-                    day={cell.day}
-                    isToday={cell.date === todayDate}
-                    locale={locale}
-                    emptyLabel={t('dailyChallengeCalendarNoData')}
-                    onSelectDay={onSelectDay}
-                  />
-                ) : (
-                  <div
-                    key={`pad-${schedule.month}-${index}`}
-                    className="daily-challenge-calendar-day is-pad"
-                    aria-hidden
-                  />
-                ),
-              )}
-            </div>
-          </section>
-        ))}
+        <div className="daily-challenge-calendar-nav">
+          <button
+            type="button"
+            className="daily-challenge-calendar-nav-btn"
+            onClick={() => shiftMonth(-1)}
+            aria-label={t('dailyChallengeCalendarPrevMonth')}
+          >
+            ‹
+          </button>
+
+          <div className="daily-challenge-calendar-nav-selects">
+            <label className="daily-challenge-calendar-nav-field">
+              <span className="daily-challenge-calendar-nav-label">{t('dailyChallengeCalendarYearLabel')}</span>
+              <select
+                className="daily-challenge-calendar-nav-select"
+                value={selectedYear}
+                aria-label={t('dailyChallengeCalendarYearLabel')}
+                onChange={(event) => {
+                  const year = Number(event.target.value)
+                  setSelectedMonthKey(toScheduleMonthKey(year, selectedMonth))
+                }}
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {isChineseLocale(locale) ? `${year}年` : year}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="daily-challenge-calendar-nav-field">
+              <span className="daily-challenge-calendar-nav-label">{t('dailyChallengeCalendarMonthLabel')}</span>
+              <select
+                className="daily-challenge-calendar-nav-select"
+                value={selectedMonth}
+                aria-label={t('dailyChallengeCalendarMonthLabel')}
+                onChange={(event) => {
+                  const month = Number(event.target.value)
+                  setSelectedMonthKey(toScheduleMonthKey(selectedYear, month))
+                }}
+              >
+                {monthOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <button
+            type="button"
+            className="daily-challenge-calendar-nav-btn"
+            onClick={() => shiftMonth(1)}
+            aria-label={t('dailyChallengeCalendarNextMonth')}
+          >
+            ›
+          </button>
+        </div>
+
+        {!activeSchedule ? (
+          <p className="daily-challenge-calendar-note daily-challenge-calendar-note--empty-month">
+            {t('dailyChallengeCalendarNoSchedule')}
+          </p>
+        ) : null}
+
+        <section className="daily-challenge-calendar-month">
+          <div className="daily-challenge-calendar-weekdays" aria-hidden>
+            {weekdays.map((label) => (
+              <span key={label} className="daily-challenge-calendar-weekday">
+                {label}
+              </span>
+            ))}
+          </div>
+          <div className="daily-challenge-calendar-grid">
+            {calendarCells.map((cell, index) =>
+              cell.date ? (
+                <CalendarDayCell
+                  key={cell.date}
+                  date={cell.date}
+                  day={cell.day}
+                  isToday={cell.date === todayDate}
+                  locale={locale}
+                  emptyLabel={t('dailyChallengeCalendarNoData')}
+                  onSelectDay={onSelectDay}
+                />
+              ) : (
+                <div
+                  key={`pad-${selectedMonthKey}-${index}`}
+                  className="daily-challenge-calendar-day is-pad"
+                  aria-hidden
+                />
+              ),
+            )}
+          </div>
+        </section>
       </div>
     </div>
   )

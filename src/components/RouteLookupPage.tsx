@@ -19,7 +19,6 @@ import {
 import {
   getSeasonalAvailabilityLabels,
   getSeasonalRouteActiveWindow,
-  shouldPromoteSeasonalRouteBelowDailyChallenge,
 } from '../data/seasonalRouteAvailability'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { DailyChallengeCalendarDialog } from './DailyChallengeCalendarDialog'
@@ -27,6 +26,7 @@ import { FavoritesFolderBar } from './FavoritesFolderBar'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
+import { SeasonalPromotedRouteCard } from './SeasonalPromotedRouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
@@ -720,15 +720,19 @@ export function RouteLookupPage({
   const promotedSeasonalEntries = useMemo(() => {
     const visibleIds = new Set(filteredRoutes.map((route) => route.id))
     const seenRouteIds = new Set<string>()
-    const entries: NonNullable<ReturnType<typeof resolveGroupedRouteEntry>>[] = []
+    const entries: Array<{
+      entry: NonNullable<ReturnType<typeof resolveGroupedRouteEntry>>
+      window: NonNullable<ReturnType<typeof getSeasonalRouteActiveWindow>>
+    }> = []
 
     for (const listedId of getRouteDisplayIdsForGroup('seasonal')) {
       const entry = resolveGroupedRouteEntry(listedId)
       if (!entry || seenRouteIds.has(entry.route.id)) continue
       if (!visibleIds.has(entry.route.id)) continue
-      if (!shouldPromoteSeasonalRouteBelowDailyChallenge(entry.route)) continue
+      const window = getSeasonalRouteActiveWindow(entry.route)
+      if (!window?.promoteBelowDailyChallenge) continue
       seenRouteIds.add(entry.route.id)
-      entries.push(entry)
+      entries.push({ entry, window })
     }
 
     return entries
@@ -844,21 +848,17 @@ export function RouteLookupPage({
     })
 
   const renderPromotedSeasonalRouteCards = () =>
-    promotedSeasonalEntries.map((entry) => {
+    promotedSeasonalEntries.map(({ entry, window }) => {
       const { route, listedId } = entry
-      const seasonalLabels = getSeasonalLabelsForRoute(route)
       return (
-        <RouteCard
+        <SeasonalPromotedRouteCard
           key={`promoted-seasonal-${listedId}`}
           route={route}
           displayNumber={listedId !== route.number ? listedId : undefined}
+          window={window}
           selected={selectedRoute?.id === route.id}
           directionIndex={getDirectionIndex(route)}
-          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
           onNavigate={handleRouteNavigate}
-          availabilityRangeLabel={seasonalLabels?.range}
-          availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
-          promotedSeasonal
         />
       )
     })

@@ -74,6 +74,10 @@ export interface BusRoute {
     list: RouteStop[]
   }[]
   notes?: BilingualText
+  /** 限时活动标题（如 FT Anniversary） */
+  eventTitle?: BilingualText
+  /** 活动说明正文（详情页「关于」） */
+  eventAbout?: BilingualText
   wikiUrl?: string
   externalUrl?: string
 }
