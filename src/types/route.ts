@@ -36,6 +36,8 @@ export interface BilingualText {
 export interface RouteStop {
   name: BilingualText
   zone?: number
+  /** Distance from the previous stop in this direction. Omit on the first stop. */
+  distanceFromPreviousMeters?: number
 }
 
 export interface BusRoute {

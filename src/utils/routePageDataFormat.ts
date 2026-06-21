@@ -12,14 +12,21 @@ function normalizeStop(stop: RoutePageStop): RouteStop & { audio?: RoutePageStop
     return {
       name: stop.name,
       zone: stop.zone,
+      distanceFromPreviousMeters: stop.distanceFromPreviousMeters,
       audio: stop.audio,
     }
   }
   const { zone, audio, ...name } = stop as BilingualText & {
     zone?: number
+    distanceFromPreviousMeters?: number
     audio?: RoutePageStopAudio
   }
-  return { name: { zh: name.zh, en: name.en }, zone, audio }
+  return {
+    name: { zh: name.zh, en: name.en },
+    zone,
+    distanceFromPreviousMeters: name.distanceFromPreviousMeters,
+    audio,
+  }
 }
 
 function stopToPageStop(
@@ -31,6 +38,9 @@ function stopToPageStop(
     en: stop.name.en,
   }
   if (stop.zone != null) item.zone = stop.zone
+  if (stop.distanceFromPreviousMeters != null) {
+    item.distanceFromPreviousMeters = stop.distanceFromPreviousMeters
+  }
   if (audio) item.audio = audio
   return item
 }
@@ -110,8 +120,11 @@ export function pageDataToNormalizedStops(
     length: group.length,
     list: group.list.map((stop) => {
       const normalized = normalizeStop(stop)
-      const { audio: _audio, ...routeStop } = normalized
-      return routeStop
+      return {
+        name: normalized.name,
+        zone: normalized.zone,
+        distanceFromPreviousMeters: normalized.distanceFromPreviousMeters,
+      }
     }),
   }))
 }

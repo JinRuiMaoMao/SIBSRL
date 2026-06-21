@@ -1,4 +1,4 @@
-import type { BilingualText, BusRoute } from './route'
+import type { BilingualText } from './route'
 
 /** 线路 HTML 内可编辑的分站报站（0 起，对应详情表「在此站上车」行） */
 export interface RoutePageStopAudio {
@@ -11,9 +11,14 @@ export type RoutePageStop =
   | {
       name: BilingualText
       zone?: number
+      distanceFromPreviousMeters?: number
       audio?: RoutePageStopAudio
     }
-  | (BilingualText & { zone?: number; audio?: RoutePageStopAudio })
+  | (BilingualText & {
+      zone?: number
+      distanceFromPreviousMeters?: number
+      audio?: RoutePageStopAudio
+    })
 
 export interface RoutePageStopGroup {
   direction?: BilingualText
