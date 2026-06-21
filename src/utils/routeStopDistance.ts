@@ -6,6 +6,8 @@ import { resolveLengthKmForDataIndex } from './routeLength'
 export interface StopDistanceLabel {
   label: string
   estimated: boolean
+  sourceLabel?: string
+  sourceUrl?: string
 }
 
 function formatMeters(meters: number, estimated: boolean): string {
@@ -24,6 +26,16 @@ function parseKm(text: string | null): number | null {
   if (!match) return null
   const km = Number(match[1])
   return Number.isFinite(km) && km > 0 ? km : null
+}
+
+function getDistanceSource(route: BusRoute): Pick<StopDistanceLabel, 'sourceLabel' | 'sourceUrl'> {
+  if (route.wikiUrl) {
+    return { sourceLabel: 'Fandom Wiki', sourceUrl: route.wikiUrl }
+  }
+  if (route.externalUrl) {
+    return { sourceLabel: 'external route page', sourceUrl: route.externalUrl }
+  }
+  return { sourceLabel: 'route length data' }
 }
 
 export function getStopDistanceFromPreviousLabel(
@@ -53,5 +65,6 @@ export function getStopDistanceFromPreviousLabel(
   return {
     label: formatMeters((totalKm * 1000) / intervals, true),
     estimated: true,
+    ...getDistanceSource(route),
   }
 }

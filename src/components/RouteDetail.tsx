@@ -220,6 +220,14 @@ export function RouteDetail({
                   i,
                   locale,
                 )
+                const stopDistanceTitle =
+                  stopDistance?.estimated && stopDistance.sourceLabel
+                    ? t('stopDistanceEstimatedSourceHint', {
+                        source: stopDistance.sourceLabel,
+                      })
+                    : stopDistance?.estimated
+                      ? t('stopDistanceEstimatedHint')
+                      : undefined
 
                 return (
                   <li key={`${stop.name.en}-${i}`} className="stop-table-row" role="row">
@@ -240,7 +248,7 @@ export function RouteDetail({
                       {stopDistance ? (
                         <span
                           className={stopDistance.estimated ? 'stop-distance-estimated' : undefined}
-                          title={stopDistance.estimated ? t('stopDistanceEstimatedHint') : undefined}
+                          title={stopDistanceTitle}
                         >
                           {stopDistance.label}
                         </span>
