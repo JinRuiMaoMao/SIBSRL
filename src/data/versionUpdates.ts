@@ -213,6 +213,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
       },
       {
+        title: { zh: '线路详情', en: 'Route detail' },
+        items: [
+          {
+            zh: '移除详情页「经停车站」摘要，避免与下方完整站序重复。',
+            en: 'Removed the via-stops summary on route detail—it duplicated the full stop list below.',
+          },
+        ],
+      },
+      {
         title: { zh: '设置', en: 'Settings' },
         items: [
           {

@@ -12,7 +12,6 @@ import {
   getDirectionServiceTime,
   routeHasDirectionVariants,
 } from '../utils/routeDirections'
-import { getDirectionIntermediateStops, getDirectionVia } from '../utils/routeVia'
 import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
 import type { RoutePageData } from '../types/routePageData'
 import { getPageStopAudioAtRow } from '../utils/routePageDataFormat'
@@ -57,8 +56,6 @@ export function RouteDetail({
   const hasDirections = routeHasDirectionVariants(route)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
   const activeStops = route.stops?.[stopDataIndex]
-  const viaStops = getDirectionIntermediateStops(route, stopDataIndex, locale)
-  const viaText = viaStops.length > 0 ? null : getDirectionVia(route, stopDataIndex)
   const serviceTimeText = getDirectionServiceTime(route, directionIndex, locale)
   const lengthKm = getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route)
@@ -124,18 +121,6 @@ export function RouteDetail({
           directionIndex={directionIndex}
           className="detail-route-summary-wrap"
         />
-        {viaStops.length > 0 && (
-          <div className="detail-via-stops">
-            <h4>{t('viaStopsSection')}</h4>
-            <p className="detail-via-stops-list">{viaStops.join('、')}</p>
-          </div>
-        )}
-        {viaText && (
-          <p className="detail-via">
-            {t('viaPrefix')}
-            {getPrimaryText(viaText, locale)}
-          </p>
-        )}
       </section>
 
       <section className="detail-section detail-grid">
