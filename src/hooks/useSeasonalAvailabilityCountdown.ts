@@ -6,29 +6,29 @@ import {
 } from '../data/seasonalRouteAvailability'
 
 export function useSeasonalAvailabilityCountdown(
-  window: SeasonalAvailabilityWindow | null,
+  availabilityWindow: SeasonalAvailabilityWindow | null,
 ): string {
   const [countdown, setCountdown] = useState(() => {
-    if (!window) return '00d 00h'
-    const ms = getMsUntilSeasonalWindowEnds(window)
+    if (!availabilityWindow) return '00d 00h'
+    const ms = getMsUntilSeasonalWindowEnds(availabilityWindow)
     return ms == null ? '00d 00h' : formatSeasonalAvailabilityCountdown(ms)
   })
 
   useEffect(() => {
-    if (!window) {
+    if (!availabilityWindow) {
       setCountdown('00d 00h')
       return
     }
 
     const tick = () => {
-      const ms = getMsUntilSeasonalWindowEnds(window)
+      const ms = getMsUntilSeasonalWindowEnds(availabilityWindow)
       setCountdown(ms == null ? '00d 00h' : formatSeasonalAvailabilityCountdown(ms))
     }
 
     tick()
     const id = window.setInterval(tick, 60_000)
     return () => window.clearInterval(id)
-  }, [window])
+  }, [availabilityWindow])
 
   return countdown
 }
