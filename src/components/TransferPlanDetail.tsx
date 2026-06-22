@@ -60,9 +60,11 @@ export function TransferPlanDetail({
       <p className="transfer-plan-metrics transfer-plan-metrics--detail">
         {formatTransferPlanMetrics(metrics, t)}
       </p>
-      <p className="transfer-plan-metrics-note">{t('transferPlanMetricsNote')}</p>
 
-      <p className="transfer-plan-timetable-note">{t('transferPlanTimetableNote')}</p>
+      <div className="transfer-plan-detail-notes">
+        <p>{t('transferPlanMetricsNote')}</p>
+        <p>{t('transferPlanTimetableNote')}</p>
+      </div>
 
       <TransferPlanJourney plan={plan} onOpenLeg={onOpenLeg} />
     </aside>

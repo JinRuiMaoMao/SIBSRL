@@ -35,7 +35,7 @@ import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
-import { isSearchSyntaxAtScrollTop, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
+import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { getPrimaryText } from '../i18n/displayText'
@@ -129,6 +129,19 @@ function scrollRouteCardIntoView(routeId: string) {
   el.scrollIntoView({ behavior: shouldReduceMotion() ? 'auto' : 'smooth', block: 'center' })
 }
 
+function scrollElementBelowStickyToolbar(el: HTMLElement) {
+  const root = document.documentElement
+  const header =
+    Number.parseFloat(getComputedStyle(root).getPropertyValue('--site-header-sticky-offset')) || 0
+  const toolbar =
+    Number.parseFloat(getComputedStyle(root).getPropertyValue('--route-toolbar-height')) || 0
+  const top = el.getBoundingClientRect().top + window.scrollY - header - toolbar - 12
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: shouldReduceMotion() ? 'auto' : 'smooth',
+  })
+}
+
 function runDetailAnimation(
   el: HTMLElement,
   keyframes: Keyframe[],
@@ -169,6 +182,8 @@ export function RouteLookupPage({
   const [betweenStopsDepartTime, setBetweenStopsDepartTime] = useState('')
   const [betweenStopsSortMode, setBetweenStopsSortMode] = useState<TransferPlanSortMode>('transfers')
   const stopPairFromUrlRef = useRef(false)
+  const betweenStopsSectionRef = useRef<HTMLDivElement>(null)
+  const pendingBetweenStopsScrollRef = useRef(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
   const syntaxPanelRef = useRef<HTMLDivElement>(null)
@@ -248,21 +263,19 @@ export function RouteLookupPage({
     }
     syntaxManualHiddenRef.current = true
     manualHideCanUnlockAtTopRef.current =
-      (window.scrollY || document.documentElement.scrollTop || 0) > 80
+      (window.scrollY || document.documentElement.scrollTop || 0) > SEARCH_SYNTAX_EXPAND_ARM_PX
     setSyntaxManualHidden(true)
   }
 
   useEffect(() => {
-    const SCROLL_TOP_THRESHOLD = 80
-
     const syncManualHideUnlock = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0
-      if (syntaxManualHiddenRef.current && scrollY > SCROLL_TOP_THRESHOLD) {
+      if (syntaxManualHiddenRef.current && scrollY > SEARCH_SYNTAX_EXPAND_ARM_PX) {
         manualHideCanUnlockAtTopRef.current = true
       }
       if (
         syntaxManualHiddenRef.current &&
-        scrollY <= SCROLL_TOP_THRESHOLD &&
+        scrollY <= SEARCH_SYNTAX_EXPAND_TOP_PX &&
         manualHideCanUnlockAtTopRef.current
       ) {
         clearManualSyntaxHide()
@@ -273,7 +286,7 @@ export function RouteLookupPage({
     const onWheel = (event: WheelEvent) => {
       if (event.deltaY >= 0) return
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0
-      if (scrollY > SCROLL_TOP_THRESHOLD) return
+      if (scrollY > SEARCH_SYNTAX_EXPAND_TOP_PX) return
       if (!syntaxManualHiddenRef.current) return
       clearManualSyntaxHide()
       clearSyntaxScrollHidden()
@@ -409,7 +422,20 @@ export function RouteLookupPage({
     setCommittedStopPairQuery(query)
     if (pair.depart) setBetweenStopsDepartTime(pair.depart)
     setBetweenStopsSectionOpen(true)
+    pendingBetweenStopsScrollRef.current = true
   }, [updateFilter])
+
+  useEffect(() => {
+    if (!stopPairSearchCommitted || !betweenStopLookup) return
+    if (!pendingBetweenStopsScrollRef.current) return
+    pendingBetweenStopsScrollRef.current = false
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = betweenStopsSectionRef.current
+        if (el) scrollElementBelowStickyToolbar(el)
+      })
+    })
+  }, [betweenStopLookup, stopPairSearchCommitted])
 
   useEffect(() => {
     if (!stopPairSearchCommitted || !betweenStopLookup?.from || !betweenStopLookup?.to) return
@@ -796,6 +822,7 @@ export function RouteLookupPage({
     const parsed = parseStructuredSearchQuery(q)
     if (parsed.from?.trim() && parsed.to?.trim()) {
       setCommittedStopPairQuery(q)
+      pendingBetweenStopsScrollRef.current = true
     }
 
     const next = defaultClosedRouteGroups()
@@ -815,6 +842,7 @@ export function RouteLookupPage({
       if (parsed.from?.trim() && parsed.to?.trim()) {
         setCommittedStopPairQuery(trimmed)
         setBetweenStopsSectionOpen(true)
+        pendingBetweenStopsScrollRef.current = true
       }
       searchInputRef.current?.focus()
     },
@@ -1057,26 +1085,28 @@ export function RouteLookupPage({
             ) : null}
 
             {betweenStopLookup ? (
-              <RouteGroupCollapse
-                groupId="betweenStops"
-                count={betweenStopResultCount}
-                open={betweenStopsSectionOpen}
-                onOpenChange={setBetweenStopsSectionOpen}
-              >
-                <BetweenStopsResults
-                  lookup={betweenStopLookup}
-                  dailyChallenge={dailyChallenge}
-                  departTime={betweenStopsDepartTime}
-                  sortMode={betweenStopsSortMode}
-                  onSortModeChange={setBetweenStopsSortMode}
-                  onDepartTimeChange={setBetweenStopsDepartTime}
-                  selectedRouteId={selectedRoute?.id}
-                  getDirectionIndex={getDirectionIndex}
-                  setDirectionIndex={setDirectionIndex}
-                  onRouteNavigate={handleRouteNavigate}
-                  onSelectPlan={handleSelectTransferPlan}
-                />
-              </RouteGroupCollapse>
+              <div ref={betweenStopsSectionRef} className="between-stops-section-anchor">
+                <RouteGroupCollapse
+                  groupId="betweenStops"
+                  count={betweenStopResultCount}
+                  open={betweenStopsSectionOpen}
+                  onOpenChange={setBetweenStopsSectionOpen}
+                >
+                  <BetweenStopsResults
+                    lookup={betweenStopLookup}
+                    dailyChallenge={dailyChallenge}
+                    departTime={betweenStopsDepartTime}
+                    sortMode={betweenStopsSortMode}
+                    onSortModeChange={setBetweenStopsSortMode}
+                    onDepartTimeChange={setBetweenStopsDepartTime}
+                    selectedRouteId={selectedRoute?.id}
+                    getDirectionIndex={getDirectionIndex}
+                    setDirectionIndex={setDirectionIndex}
+                    onRouteNavigate={handleRouteNavigate}
+                    onSelectPlan={handleSelectTransferPlan}
+                  />
+                </RouteGroupCollapse>
+              </div>
             ) : null}
 
             {stopLookupRoutes.length > 0 ? (
