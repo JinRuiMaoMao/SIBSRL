@@ -21,6 +21,7 @@ import { compareRouteNumber } from '../utils/routeSort'
  * - 单向或环线只有一个站序时，`stops` 只保留一项（参考 21A）。
  * - 环线编号加 `A` 后缀（如马拉松改道 240A，非 240）；`pattern: 'circular'` 与编号保持一致。
  * - 环线也可分东西（或南北）走向：`stops` 仍按方向拆分，并保留 `pattern: 'circular'` 与 `loop` 类型（参考 246X／游戏内 246XA）。
+ * - 246X 类型标签随视图变化：东行＝半直通+特别班次，西行＝特别班次，环线＝循环（见 `getRouteDisplayTypes`）。
  * - `centralAxis`：游戏内英文 Central Axis；卡片类型显示在 Z 标签旁，各语言均不翻译。
  *
  * 示例见线路 25、41A、42、42A（均为 Central Axis）。
@@ -2527,7 +2528,10 @@ const routesData: BusRoute[] = [
     journeyTime: { zh: '约 31–33 分钟（环线）', en: 'approx. 31–33 mins (loop)' },
     fare: '$11.4',
     levelRequired: 74,
-    length: { zh: '约 19 km（环线）', en: 'approx. 19 km (loop)' },
+    length: {
+      zh: '环线约 19 km / 西行约 6.3 km / 东行约 12.7 km',
+      en: 'Loop approx. 19 km / Westbound approx. 6.3 km / Eastbound approx. 12.7 km',
+    },
     stops: [
       {
         directionKey: 'W',
@@ -2535,6 +2539,7 @@ const routesData: BusRoute[] = [
           zh: '西行（环线 · 东锦葵海傍路 → 时间廊）',
           en: 'Westbound loop (Eastmallow Praya Road → Timelapse Mall)',
         },
+        length: { zh: '约 6.3 km', en: 'approx. 6.3 km' },
         serviceTime: {
           zh: '平日 07:00 – 08:55 / 17:40 – 18:35',
           en: 'Mon–Fri 07:00 – 08:55 / 17:40 – 18:35',
@@ -2561,6 +2566,7 @@ const routesData: BusRoute[] = [
           zh: '东行（环线 · 时间廊 → 东锦葵海傍路）',
           en: 'Eastbound loop (Timelapse Mall → Eastmallow Praya Road)',
         },
+        length: { zh: '约 12.7 km', en: 'approx. 12.7 km' },
         serviceTime: {
           zh: '平日 07:00 – 08:55 / 17:40 – 18:35',
           en: 'Mon–Fri 07:00 – 08:55 / 17:40 – 18:35',

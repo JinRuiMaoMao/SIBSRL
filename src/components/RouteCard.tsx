@@ -53,7 +53,7 @@ export function RouteCard({
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
-  const displayTypes = getRouteDisplayTypes(route)
+  const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
   const lengthKm =
     loopView && routeHasLoopDirectionLayout(route)
       ? getLoopViewLengthKm(route, locale)

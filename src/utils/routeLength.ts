@@ -106,6 +106,8 @@ function scoreSegmentForDirection(
     if (hints.en) score = Math.max(score, tokenMatchScore(hints.en, labelDest))
   }
 
+  score = Math.max(score, directionHeadingMatchesSegment(route, dataIndex, segment))
+
   // 较低权重：与起点匹配（避免误配）
   score = Math.max(score, tokenMatchScore(segment, originPrimary) * 0.5)
 
@@ -113,6 +115,63 @@ function scoreSegmentForDirection(
 }
 
 const MIN_SEGMENT_MATCH_SCORE = 28
+
+function parseKmNumber(kmDisplay: string): number | null {
+  const match = kmDisplay.match(/([\d.]+)\s*km/i)
+  if (!match) return null
+  const value = Number.parseFloat(match[1]!)
+  return Number.isFinite(value) ? value : null
+}
+
+function formatKmDisplayValue(km: number): string {
+  const rounded = Math.round(km * 10) / 10
+  return `${rounded} km`
+}
+
+function directionStopIntervals(route: BusRoute, dataIndex: number): number {
+  const list = route.stops?.[dataIndex]?.list ?? []
+  return Math.max(1, list.length - 1)
+}
+
+/** 环线总分段里程按各走向站数比例拆分（如 246X 西行／东行） */
+function splitTotalKmByDirectionStopWeights(
+  route: BusRoute,
+  totalKmDisplay: string,
+): Map<number, string> {
+  const total = parseKmNumber(totalKmDisplay)
+  const dirCount = getRouteDirectionCount(route)
+  const map = new Map<number, string>()
+  if (total == null || dirCount <= 1) return map
+
+  const weights = Array.from({ length: dirCount }, (_, di) => directionStopIntervals(route, di))
+  const weightSum = weights.reduce((sum, weight) => sum + weight, 0)
+  if (weightSum <= 0) return map
+
+  for (let di = 0; di < dirCount; di++) {
+    map.set(di, formatKmDisplayValue((total * weights[di]!) / weightSum))
+  }
+  return map
+}
+
+function estimateKmFromStopList(listLength: number): string {
+  return formatKmDisplayValue(Math.max(1, listLength - 1) * 0.72)
+}
+
+function directionHeadingMatchesSegment(
+  route: BusRoute,
+  dataIndex: number,
+  segment: string,
+): number {
+  const key = route.stops?.[dataIndex]?.directionKey
+  const text = `${route.stops?.[dataIndex]?.direction.zh ?? ''} ${route.stops?.[dataIndex]?.direction.en ?? ''} ${segment}`
+  const lower = text.toLowerCase()
+  if (key === 'W' && (/西行/.test(segment) || /westbound/i.test(segment))) return 96
+  if (key === 'E' && (/东行/.test(segment) || /eastbound/i.test(segment))) return 96
+  if (key === 'N' && (/北行/.test(segment) || /northbound/i.test(segment))) return 96
+  if (key === 'S' && (/南行/.test(segment) || /southbound/i.test(segment))) return 96
+  if (/环线|loop/i.test(segment) && /环线|loop|circular/i.test(lower)) return 0
+  return 0
+}
 
 /** 拆分路线级里程文案（支持 / 与 ·，并过滤含 km 的片段） */
 export function splitLengthSegments(text: string): string[] {
@@ -231,10 +290,37 @@ export function buildDirectionLengthKmMap(
 
   if (segments.length <= 1) {
     const km = extractKmDisplay(routeLength)
-    if (km) {
-      for (let di = 0; di < dirCount; di++) {
-        if (!map.has(di)) map.set(di, km)
+    if (!km) return map
+
+    if (route.pattern === 'circular' && dirCount > 1) {
+      splitTotalKmByDirectionStopWeights(route, km).forEach((value, dataIndex) => {
+        if (!map.has(dataIndex)) map.set(dataIndex, value)
+      })
+      return map
+    }
+
+    const estimates = new Map<number, string>()
+    for (let di = 0; di < dirCount; di++) {
+      const list = route.stops?.[di]?.list
+      if (!list?.length) continue
+      estimates.set(di, estimateKmFromStopList(list.length))
+    }
+    const numeric = [...estimates.values()]
+      .map((value) => parseKmNumber(value))
+      .filter((value): value is number => value != null)
+    if (numeric.length > 1) {
+      const min = Math.min(...numeric)
+      const max = Math.max(...numeric)
+      if (max - min >= 0.8) {
+        estimates.forEach((value, dataIndex) => {
+          if (!map.has(dataIndex)) map.set(dataIndex, value)
+        })
+        return map
       }
+    }
+
+    for (let di = 0; di < dirCount; di++) {
+      if (!map.has(di)) map.set(di, km)
     }
     return map
   }

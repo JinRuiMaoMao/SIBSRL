@@ -76,7 +76,7 @@ export function RouteDetail({
     loopView && routeHasLoopDirectionLayout(route)
       ? getLoopViewLengthKm(route, locale)
       : getDirectionLengthKm(route, directionIndex, locale)
-  const displayTypes = getRouteDisplayTypes(route)
+  const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
 
   return (
     <aside

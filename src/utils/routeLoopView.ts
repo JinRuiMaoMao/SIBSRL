@@ -2,6 +2,7 @@ import type { Locale } from '../i18n/types'
 import { getOptionalText } from '../i18n/displayText'
 import type { BusRoute, RouteStop } from '../types/route'
 import { extractKmDisplay, formatStopsEndpoints } from './routeDisplay'
+import { splitLengthSegments } from './routeLength'
 import {
   getDirectionDataIndex,
   getSortedDirectionDataIndices,
@@ -71,5 +72,14 @@ export function formatLoopViewEndpoints(route: BusRoute, locale: Locale): string
 export function getLoopViewLengthKm(route: BusRoute, locale: Locale): string | null {
   const text = getOptionalText(route.length, locale)
   if (!text) return null
+  const segments = splitLengthSegments(text)
+  if (segments.length > 1) {
+    for (const segment of segments) {
+      if (/环线|loop/i.test(segment)) {
+        const km = extractKmDisplay(segment)
+        if (km) return km
+      }
+    }
+  }
   return extractKmDisplay(text) ?? text
 }
