@@ -3103,14 +3103,14 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-card-link--selected .route-card {
-  border-color: color-mix(in srgb, var(--accent) 85%, var(--border));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 65%, transparent), 0 8px 24px var(--accent-soft);
+  border-color: var(--route-card-promoted-border-selected);
+  box-shadow: var(--route-card-promoted-shadow-selected);
 }
 
 .route-card-link--muted .route-card {
   border-style: dashed;
-  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
-  background: color-mix(in srgb, var(--bg-surface) 92%, #000 8%);
+  border-color: var(--route-card-promoted-border-muted);
+  background: var(--route-card-promoted-bg-muted);
 }
 
 .route-card-link--muted:hover .route-card,
@@ -3137,8 +3137,9 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .route-card {
   text-align: left;
-  background: color-mix(in srgb, var(--bg-surface) 88%, #000 12%);
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: var(--route-card-promoted-bg);
+  border: var(--route-card-promoted-border-width) solid var(--route-card-promoted-border);
+  box-shadow: var(--route-card-promoted-shadow);
   border-radius: var(--radius);
   padding: 1rem;
   color: var(--text);
@@ -3177,10 +3178,10 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 @media (hover: hover) and (pointer: fine) {
   .route-card-link:hover .route-card {
-    background: color-mix(in srgb, var(--bg-surface) 82%, #000 18%);
-    border-color: color-mix(in srgb, var(--accent) 72%, var(--border));
+    background: var(--route-card-promoted-bg-hover);
+    border-color: var(--route-card-promoted-border-hover);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-soft) 85%, transparent);
+    box-shadow: var(--route-card-promoted-shadow-hover);
   }
 }
 
