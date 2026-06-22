@@ -35,6 +35,8 @@ interface RouteCardProps {
   availabilityRangeLabel?: string
   /** 季节限定结束提示（显示于 meta 行） */
   availabilityUnavailableLabel?: string
+  /** classic：最近查看等，保留原卡片外框与文字起终点 */
+  appearance?: 'promoted' | 'classic'
 }
 
 export function RouteCard({
@@ -50,6 +52,7 @@ export function RouteCard({
   muted = false,
   availabilityRangeLabel,
   availabilityUnavailableLabel,
+  appearance = 'promoted',
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -84,7 +87,7 @@ export function RouteCard({
         onNavigate(route.id)
       }}
     >
-      <article className="route-card">
+      <article className={`route-card${appearance === 'classic' ? ' route-card--classic' : ''}`}>
         <div className="route-card-top">
           <div className="route-card-title">
             <span className="route-number">{cardNumber}</span>
@@ -117,7 +120,12 @@ export function RouteCard({
           </div>
         </div>
 
-        <RouteEndpoints route={route} directionIndex={directionIndex} loopView={loopView} />
+        <RouteEndpoints
+          route={route}
+          directionIndex={directionIndex}
+          loopView={loopView}
+          layout={appearance === 'classic' ? 'text' : 'spine'}
+        />
 
         {serviceTime && <p className="route-meta">{serviceTime}</p>}
 

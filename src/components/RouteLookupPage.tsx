@@ -937,6 +937,7 @@ export function RouteLookupPage({
       <RouteCard
         key={`recent-${route.id}`}
         route={route}
+        appearance="classic"
         selected={selectedRoute?.id === route.id}
         directionIndex={getDirectionIndex(route)}
         loopView={getLoopView(route)}

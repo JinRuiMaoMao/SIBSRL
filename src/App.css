@@ -2319,16 +2319,27 @@ html[data-list-density='compact'] .transfer-plan-stop {
   grid-column: 1 / -1;
 }
 
-.daily-challenge-card:hover {
+/* 每日挑战：保留原卡片外框，不用推广卡金色描边 */
+.route-card.daily-challenge-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.route-card.daily-challenge-card:hover {
   border-color: var(--border-strong);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .daily-challenge-card:hover {
+  .route-card.daily-challenge-card:hover {
     background: var(--bg-elevated);
     transform: translateY(-2px);
     box-shadow: 0 8px 24px var(--accent-soft);
   }
+}
+
+.route-card.daily-challenge-card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);
 }
 
 .daily-challenge-card.selected:hover {
@@ -3138,6 +3149,30 @@ html[data-list-density='compact'] .transfer-plan-stop {
   display: flex;
   flex-direction: column;
   min-height: 7.5rem;
+}
+
+/* 最近查看等：原简洁外框 + 文字起终点 */
+.route-card--classic {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .route-card-link:hover .route-card--classic {
+    background: var(--bg-elevated);
+    border-color: var(--border-strong);
+    box-shadow: 0 8px 24px var(--accent-soft);
+  }
+}
+
+.route-card-link--selected .route-card--classic {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);
+}
+
+.route-card-link--muted .route-card--classic {
+  border-color: color-mix(in srgb, var(--border) 72%, transparent);
+  background: var(--bg-card);
 }
 
 @media (hover: hover) and (pointer: fine) {
