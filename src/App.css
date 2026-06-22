@@ -1109,15 +1109,28 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
 }
 
 .route-syntax-dock {
+  --syntax-dock-duration: 0.42s;
+  --syntax-dock-easing: cubic-bezier(0.32, 0.72, 0, 1);
   grid-column: 1 / -1;
+  display: grid;
+  grid-template-rows: 1fr;
   margin: 0 0 0.85rem;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    grid-template-rows var(--syntax-dock-duration) var(--syntax-dock-easing),
+    opacity calc(var(--syntax-dock-duration) * 0.8) var(--syntax-dock-easing),
+    margin-bottom var(--syntax-dock-duration) var(--syntax-dock-easing);
+}
+
+.route-syntax-dock > .search-syntax-panel {
+  min-height: 0;
 }
 
 .route-syntax-dock.is-collapsed {
-  height: 0;
-  margin: 0;
-  overflow: hidden;
-  visibility: hidden;
+  grid-template-rows: 0fr;
+  margin-bottom: 0;
+  opacity: 0;
   pointer-events: none;
 }
 
@@ -4649,6 +4662,7 @@ html[data-reduce-motion='true'] .daily-challenge-card:hover {
 
 html[data-reduce-motion='true'] .route-group-collapse-panel,
 html[data-reduce-motion='true'] .route-group-collapse-icon,
+html[data-reduce-motion='true'] .route-syntax-dock,
 html[data-reduce-motion='true'] .site-header-shell,
 html[data-reduce-motion='true'] .site-header {
   transition: none !important;
