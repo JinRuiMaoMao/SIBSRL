@@ -36,9 +36,148 @@
     "zh": "13.9 km",
     "en": "13.9 km"
   },
-  "serviceTime": {
-    "zh": "Mon – Fri: 17:30 – 19:00",
-    "en": "Mon – Fri: 17:30 – 19:00"
-  },
+  "stops": [
+    {
+      "directionKey": "W",
+      "direction": {
+        "zh": "西行（東錦葵海傍路 → 彩虹中心）",
+        "en": "Westbound (Eastmallow Praya Road → Rainbow Estate Complex)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri: 17:30 – 19:00",
+        "en": "Mon – Fri: 17:30 – 19:00"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵邨 - 陽葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "The One",
+            "en": "The One"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨商場",
+            "en": "Leafy Bay Estate Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角灣邨",
+            "en": "Leafy Bay Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "葉角醫院",
+            "en": "Leafy Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "中間花園",
+            "en": "Middle Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫商場",
+            "en": "Mo Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫街市",
+            "en": "Mo Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "東門公園",
+            "en": "East Door Park"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "東門邨",
+            "en": "East Door Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "紅豆商場",
+            "en": "Redbean Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          }
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          }
+        }
+      ]
+    }
+  ],
   "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476X"
 }

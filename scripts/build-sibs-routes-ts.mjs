@@ -3,17 +3,11 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { legacyWikiImportBasename, wikiImportBasename, wikiImportPath } from './wiki-import-path.mjs'
 
 /** SIBS类型.txt 中尚无完整 Wiki 站序的线路 */
 const REQUIRED_STUB_IDS = [
   '76S',
-  '476*',
-  '476#',
-  '476#*',
-  '476%',
-  '476P',
-  '476X',
-  'N476',
 ]
 
 const IMPORT_DIR = resolve('data/wiki-import')
@@ -297,14 +291,18 @@ for (const route of routes) {
 const have = new Set(routes.map((r) => r.id))
 const stillMissing = REQUIRED_STUB_IDS.filter((id) => !have.has(id))
 
-function wikiJsonPath(id) {
-  return resolve(IMPORT_DIR, `${id.replace(/[%#*]/g, '_')}.json`)
+function readWikiImportRoute(id) {
+  const path = wikiImportPath(IMPORT_DIR, id)
+  if (existsSync(path)) return JSON.parse(readFileSync(path, 'utf8'))
+  const legacy = resolve(IMPORT_DIR, `${legacyWikiImportBasename(id)}.json`)
+  if (existsSync(legacy)) return JSON.parse(readFileSync(legacy, 'utf8'))
+  return null
 }
 
 function emitStub(id) {
-  const path = wikiJsonPath(id)
-  const meta = existsSync(path)
-    ? cleanRoute(JSON.parse(readFileSync(path, 'utf8')))
+  const raw = readWikiImportRoute(id)
+  const meta = raw
+    ? cleanRoute(raw)
     : {
         id,
         operators: ['FT'],

@@ -6,6 +6,7 @@
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { wikiImportPath } from './wiki-import-path.mjs'
 
 const WIKI = 'https://sunshine-islands-roblox.fandom.com/api.php'
 const OUT_DIR = resolve('data/wiki-import')
@@ -165,28 +166,57 @@ function parseCellsFromRow(rowText) {
   return splitWikiRowCells(flat)
 }
 
+const NOTE_RE =
+  /section fare|near [a-z0-9]|476[#%*]|omit this|trips that|all departures|hill road|moon island|southern central|flyover|tunnel|stratrt/i
+
 function parseStopFromCells(cells) {
   let zone
-  const data = (/^\d+$/.test(cells[0] ?? '') ? cells.slice(1) : cells).filter(
-    (c) => c && !/rowspan/i.test(c) && !/^(No|Place|Street|Note)$/i.test(c),
-  )
-  for (const c of data) {
+  const raw = (/^\d+$/.test(cells[0] ?? '') ? cells.slice(1) : cells)
+    .map(stripWiki)
+    .filter((c) => c && !/rowspan/i.test(c) && !/^(No|Place|Street|Note)$/i.test(c))
+
+  for (const c of raw) {
     if (/^Zone\s*\d/i.test(c)) zone = parseZoneFromPlace(c)
   }
-  const useful = data.filter((c) => !/^Zone\s*\d/i.test(c))
-  const last = useful[useful.length - 1] ?? ''
-  const prev = useful[useful.length - 2] ?? ''
+
+  const candidates = raw.filter(
+    (c) =>
+      !/^Zone\s*\d/i.test(c) &&
+      !/^#?\d+$/.test(c) &&
+      !NOTE_RE.test(c) &&
+      c.length > 1 &&
+      c.length <= 40,
+  )
+
   let zh = ''
   let en = ''
-  if (/[\u4e00-\u9fff]/.test(last) && /[A-Za-z]/.test(prev)) {
-    zh = last
-    en = prev
-  } else {
-    for (const c of useful) {
-      if (/[\u4e00-\u9fff]/.test(c) && c.length <= 24) zh = c
-      else if (/[A-Za-z]/.test(c) && c.length > 2) en = c
+  for (let i = 0; i < candidates.length; i++) {
+    const c = candidates[i]
+    if (/[\u4e00-\u9fff]/.test(c)) {
+      zh = c
+      if (i > 0 && /[A-Za-z]/.test(candidates[i - 1]) && !/[\u4e00-\u9fff]/.test(candidates[i - 1])) {
+        en = candidates[i - 1]
+      }
+    } else if (/[A-Za-z]/.test(c) && c.length >= 3 && !en) {
+      en = c
     }
   }
+
+  if (zh && !en) {
+    const enCand = candidates.find((c) => /[A-Za-z]/.test(c) && !/[\u4e00-\u9fff]/.test(c) && !NOTE_RE.test(c))
+    if (enCand) en = enCand
+  }
+  if (zh && en && /interchange|terminus|station|pier|complex|estate|center|centre|hospital|market|bridge|road|garden|hill|tower|lane|office|university/i.test(en)) {
+    const better = candidates.filter(
+      (c) =>
+        /[A-Za-z]/.test(c) &&
+        !/[\u4e00-\u9fff]/.test(c) &&
+        !NOTE_RE.test(c) &&
+        /interchange|terminus/i.test(c),
+    )
+    if (better.length) en = better[better.length - 1]
+  }
+
   en = stripWiki(en)
   if (!en && zh) en = zh
   if (!zh && en) zh = en
@@ -225,7 +255,7 @@ function parseRoutemapBlock(block) {
 
 function parseStopTables(wt) {
   const directions = []
-  const stopsMatch = wt.match(/==\s*Stops\s*==/i)
+  const stopsMatch = wt.match(/==\s*(?:Stops|Stop\s*List)\s*==/i)
   const stopsIdx = stopsMatch?.index ?? -1
   if (stopsIdx < 0) return directions
 
@@ -314,6 +344,9 @@ function inferDirectionKey(zhLabel, enLabel, index, total) {
   if (t.includes('southbound') || zhLabel.includes('南行')) return 'S'
   if (t.includes('eastbound') || zhLabel.includes('东行')) return 'E'
   if (t.includes('westbound') || zhLabel.includes('西行')) return 'W'
+  if (t.includes('rainbow') && t.includes('eastmallow')) {
+    return t.indexOf('rainbow') < t.indexOf('eastmallow') ? 'E' : 'W'
+  }
   if (total === 2) return index === 0 ? 'N' : 'S'
   return undefined
 }
@@ -637,10 +670,7 @@ async function main() {
         continue
       }
       const route = buildRoute(saveId, wikitext)
-      writeFileSync(
-        resolve(OUT_DIR, `${saveId.replace(/[%#*]/g, '_')}.json`),
-        JSON.stringify(route, null, 2),
-      )
+      writeFileSync(wikiImportPath(OUT_DIR, saveId), JSON.stringify(route, null, 2))
       results.push(route)
     } catch (e) {
       errors.push({ id, error: String(e) })

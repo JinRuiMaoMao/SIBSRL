@@ -37,9 +37,111 @@
     "zh": "14.3 km",
     "en": "14.3 km"
   },
-  "serviceTime": {
-    "zh": "Mon – Fri (School Days): 17:05 – 18:30",
-    "en": "Mon – Fri (School Days): 17:05 – 18:30"
-  },
+  "stops": [
+    {
+      "directionKey": "E",
+      "direction": {
+        "zh": "东行（彩虹中心 → 東錦葵海傍路）",
+        "en": "Eastbound (Rainbow Estate Complex → Eastmallow Praya Road)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri (School Days): 17:05 – 18:30",
+        "en": "Mon – Fri (School Days): 17:05 – 18:30"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角花園",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "葉角大學",
+            "en": "Leafy University"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站",
+            "en": "Axis Road"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "陽光站",
+            "en": "Sunshine Station"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中環醫院",
+            "en": "Central Hospital"
+          }
+        },
+        {
+          "name": {
+            "zh": "南環街市",
+            "en": "Southern Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "強生街市",
+            "en": "Johnson Market"
+          }
+        },
+        {
+          "name": {
+            "zh": "The One",
+            "en": "The One"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "玻璃樓",
+            "en": "Glass Office"
+          }
+        },
+        {
+          "name": {
+            "zh": "楓樹里",
+            "en": "Maple Lane"
+          }
+        },
+        {
+          "name": {
+            "zh": "中環橋",
+            "en": "Central Bridge"
+          }
+        },
+        {
+          "name": {
+            "zh": "東錦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "東錦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          }
+        }
+      ]
+    }
+  ],
   "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476P"
 }

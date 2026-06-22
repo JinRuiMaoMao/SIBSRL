@@ -1,11 +1,11 @@
 {
-  "id": "476",
-  "number": "476",
+  "id": "476#*",
+  "number": "476#*",
   "operators": [
     "HZ",
     "CSB"
   ],
-  "category": "inter",
+  "category": "special",
   "pattern": "bidirectional",
   "zones": [
     4,
@@ -36,6 +36,11 @@
     "zh": "往东锦葵海傍路 15.6 km / 往彩虹中心 16.8 km",
     "en": "To Eastmallow Praya Road 15.6 km / To Rainbow Estate Complex 16.8 km"
   },
+  "serviceTime": {
+    "zh": "05:30 – 00:10 / 05:55 – 23:55",
+    "en": "05:30 – 00:10 / 05:55 – 23:55"
+  },
+  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476#Stop_List",
   "stops": [
     {
       "directionKey": "E",
@@ -92,6 +97,13 @@
             "zh": "勿莫街市",
             "en": "Mo Market"
           }
+        },
+        {
+          "name": {
+            "zh": "安靈台",
+            "en": "Ambling Peak"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -375,6 +387,5 @@
         }
       ]
     }
-  ],
-  "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476#Stop_List"
+  ]
 }

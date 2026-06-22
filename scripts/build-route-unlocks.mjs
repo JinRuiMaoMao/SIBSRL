@@ -3,6 +3,7 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { legacyWikiImportBasename, wikiImportPath } from './wiki-import-path.mjs'
 
 const IMPORT_DIR = resolve('data/wiki-import')
 const OVERRIDES_PATH = resolve('data/route-unlock-overrides.json')
@@ -14,12 +15,11 @@ const IN_GAME_ALIASES = {
   S2: 'S2A',
 }
 
-function wikiJsonPath(id) {
-  return resolve(IMPORT_DIR, `${id.replace(/[%#*]/g, '_')}.json`)
-}
-
 function loadUnlock(id) {
-  const path = wikiJsonPath(id)
+  let path = wikiImportPath(IMPORT_DIR, id)
+  if (!existsSync(path)) {
+    path = resolve(IMPORT_DIR, `${legacyWikiImportBasename(id)}.json`)
+  }
   if (!existsSync(path)) return null
   const route = JSON.parse(readFileSync(path, 'utf8'))
   const levelRequired = route.levelRequired ?? undefined
