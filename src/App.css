@@ -2735,12 +2735,6 @@ html[data-list-density='compact'] .transfer-plan-stop {
   color: var(--text-muted);
 }
 
-.route-card-link--seasonal-promoted .route-card,
-.seasonal-promoted-card {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-  background: color-mix(in srgb, var(--bg-surface) 88%, #000 12%);
-}
-
 .seasonal-promoted-card {
   gap: 0.55rem;
   padding: 0.85rem 0.95rem 0.75rem;
@@ -3098,13 +3092,14 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-card-link--selected .route-card {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 85%, var(--border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 65%, transparent), 0 8px 24px var(--accent-soft);
 }
 
 .route-card-link--muted .route-card {
   border-style: dashed;
-  border-color: color-mix(in srgb, var(--border) 72%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  background: color-mix(in srgb, var(--bg-surface) 92%, #000 8%);
 }
 
 .route-card-link--muted:hover .route-card,
@@ -3131,8 +3126,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .route-card {
   text-align: left;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-surface) 88%, #000 12%);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
   border-radius: var(--radius);
   padding: 1rem;
   color: var(--text);
@@ -3147,10 +3142,10 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 @media (hover: hover) and (pointer: fine) {
   .route-card-link:hover .route-card {
-    background: var(--bg-elevated);
-    border-color: var(--border-strong);
+    background: color-mix(in srgb, var(--bg-surface) 82%, #000 18%);
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--border));
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px var(--accent-soft);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-soft) 85%, transparent);
   }
 }
 
