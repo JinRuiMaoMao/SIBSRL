@@ -3151,6 +3151,30 @@ html[data-list-density='compact'] .transfer-plan-stop {
   display: flex;
   flex-direction: column;
   min-height: 7.5rem;
+  position: relative;
+}
+
+.route-card-hit-area {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  color: transparent;
+  text-decoration: none;
+}
+
+.route-card-surface {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  pointer-events: none;
+}
+
+.route-card-surface > * {
+  pointer-events: auto;
 }
 
 /* 最近查看等：原简洁外框 + 文字起终点 */

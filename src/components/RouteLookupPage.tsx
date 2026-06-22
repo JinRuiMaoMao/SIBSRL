@@ -221,6 +221,7 @@ export function RouteLookupPage({
     dailyChallengeVisible,
     selectedRoute,
     getDirectionIndex,
+    getCardDirectionIndex,
     setDirectionIndex,
     getLoopView,
     setLoopView,
@@ -857,9 +858,7 @@ export function RouteLookupPage({
   const renderGroupedRouteCards = (group: RouteDisplayGroupKey) =>
     groupedSlots[group].map((slot) => {
       const { route, listedId, directionKey } = slot.entry!
-      const listedDirectionIndex =
-        directionKey != null ? findDailyChallengeDirectionIndex(route, directionKey) : null
-      const directionIndex = listedDirectionIndex ?? getDirectionIndex(route)
+      const directionIndex = getCardDirectionIndex(route, directionKey)
       const seasonalLabels = getSeasonalLabelsForRoute(route)
       return (
         <RouteCard
@@ -871,12 +870,7 @@ export function RouteLookupPage({
           loopView={getLoopView(route)}
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
           onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
-          onNavigate={(routeId) => {
-            if (listedDirectionIndex != null) {
-              setDirectionIndex(routeId, listedDirectionIndex)
-            }
-            handleRouteNavigate(routeId)
-          }}
+          onNavigate={handleRouteNavigate}
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
         />

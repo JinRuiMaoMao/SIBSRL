@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { getOptionalText } from '../i18n/displayText'
 import type { BusRoute } from '../types/route'
@@ -72,22 +73,32 @@ export function RouteCard({
     routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route)
   const dataIncomplete = !isRouteStopDataComplete(route)
 
+  const cardHref = href ?? getRoutePageHref(route.id)
+
+  const handleCardNavigate = (event: MouseEvent<HTMLAnchorElement>) => {
+    if ((event.target as Element).closest('.route-favorite-picker')) return
+    if (!onNavigate) return
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+    if (event.button !== 0) return
+    event.preventDefault()
+    onNavigate(route.id)
+  }
+
   return (
-    <a
-      href={href ?? getRoutePageHref(route.id)}
+    <div
       data-route-id={route.id}
       className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''}`.trim()}
-      aria-current={selected ? 'page' : undefined}
-      onClick={(event) => {
-        if ((event.target as Element).closest('.route-favorite-picker')) return
-        if (!onNavigate) return
-        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
-        if (event.button !== 0) return
-        event.preventDefault()
-        onNavigate(route.id)
-      }}
     >
       <article className={`route-card${appearance === 'classic' ? ' route-card--classic' : ''}`}>
+        <a
+          href={cardHref}
+          className="route-card-hit-area"
+          aria-label={cardNumber}
+          aria-current={selected ? 'page' : undefined}
+          tabIndex={-1}
+          onClick={handleCardNavigate}
+        />
+        <div className="route-card-surface">
         <div className="route-card-top">
           <div className="route-card-title">
             <span className="route-number">{cardNumber}</span>
@@ -156,7 +167,8 @@ export function RouteCard({
             </div>
           )}
         </div>
+        </div>
       </article>
-    </a>
+    </div>
   )
 }
