@@ -12,10 +12,16 @@ import {
   getDirectionServiceTime,
   routeHasDirectionVariants,
 } from '../utils/routeDirections'
+import {
+  getLoopViewLengthKm,
+  resolveActiveStopGroup,
+  routeHasLoopDirectionLayout,
+} from '../utils/routeLoopView'
+import { getOptionalText } from '../i18n/displayText'
 import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
 import type { RoutePageData } from '../types/routePageData'
 import { getPageStopAudioAtRow } from '../utils/routePageDataFormat'
-import { DirectionToggle } from './DirectionToggle'
+import { RouteDirectionControls } from './RouteDirectionControls'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
@@ -27,6 +33,8 @@ interface RouteDetailProps {
   route: BusRoute
   directionIndex: number
   onDirectionChange: (index: number) => void
+  loopView?: boolean
+  onLoopViewChange?: (loopView: boolean) => void
   onClose: () => void
   className?: string
   /** 来自 routes/{id}.html 的可编辑数据（优先于 TS 内建报站） */
@@ -43,6 +51,8 @@ export function RouteDetail({
   route,
   directionIndex,
   onDirectionChange,
+  loopView = false,
+  onLoopViewChange,
   onClose,
   className = '',
   pageData = null,
@@ -53,11 +63,19 @@ export function RouteDetail({
   const { locale, t } = useLocale()
   const { alert } = useAppDialog()
   const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
-  const hasDirections = routeHasDirectionVariants(route)
+  const hasDirectionControls =
+    routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
-  const activeStops = route.stops?.[stopDataIndex]
-  const serviceTimeText = getDirectionServiceTime(route, directionIndex, locale)
-  const lengthKm = getDirectionLengthKm(route, directionIndex, locale)
+  const activeStops = resolveActiveStopGroup(route, directionIndex, loopView)
+  const serviceTimeText =
+    loopView && routeHasLoopDirectionLayout(route)
+      ? (getOptionalText(route.serviceTime, locale) ??
+        getDirectionServiceTime(route, directionIndex, locale))
+      : getDirectionServiceTime(route, directionIndex, locale)
+  const lengthKm =
+    loopView && routeHasLoopDirectionLayout(route)
+      ? getLoopViewLengthKm(route, locale)
+      : getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route)
 
   return (
@@ -108,17 +126,20 @@ export function RouteDetail({
       <section className="detail-section">
         <div className="detail-section-head">
           <h3>{t('routeSection')}</h3>
-          {hasDirections && !lockDirection && (
-            <DirectionToggle
+          {hasDirectionControls && !lockDirection ? (
+            <RouteDirectionControls
               route={route}
-              value={directionIndex}
-              onChange={onDirectionChange}
+              directionIndex={directionIndex}
+              onDirectionChange={onDirectionChange}
+              loopView={loopView}
+              onLoopViewChange={onLoopViewChange ?? (() => {})}
             />
-          )}
+          ) : null}
         </div>
         <RouteEndpoints
           route={route}
           directionIndex={directionIndex}
+          loopView={loopView}
           className="detail-route-summary-wrap"
           overrideText={directionEndpoints}
         />
@@ -204,8 +225,10 @@ export function RouteDetail({
               {activeStops.list.map((stop, i) => {
                 const name = getPrimaryText(stop.name, locale)
                 const stopAudio =
-                  getPageStopAudioAtRow(pageData, stopDataIndex, i) ??
-                  getRouteStopAudioAtRow(route.id, i)
+                  loopView && routeHasLoopDirectionLayout(route)
+                    ? null
+                    : (getPageStopAudioAtRow(pageData, stopDataIndex, i) ??
+                      getRouteStopAudioAtRow(route.id, i))
                 const audioId = `${route.id}-at-${i}`
                 const nextName = stopAudio
                   ? getPrimaryText(stopAudio.nextStopLabel, locale)

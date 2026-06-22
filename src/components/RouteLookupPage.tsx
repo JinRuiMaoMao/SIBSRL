@@ -207,6 +207,8 @@ export function RouteLookupPage({
     selectedRoute,
     getDirectionIndex,
     setDirectionIndex,
+    getLoopView,
+    setLoopView,
     selectRoute,
     selectRandomRoute,
     randomEligibleCount,
@@ -672,9 +674,13 @@ export function RouteLookupPage({
           route: routePageDetail?.route ?? detailOverlay.route,
           pageData: routePageDetail?.pageData ?? null,
           directionIndex: getDirectionIndex(detailOverlay.route),
+          loopView: getLoopView(detailOverlay.route),
           onDirectionChange: (index: number) => {
             setDirectionIndex(detailOverlay.route.id, index)
             replaceRouteInLocation(detailOverlay.route.id, index)
+          },
+          onLoopViewChange: (loopView: boolean) => {
+            setLoopView(detailOverlay.route.id, loopView)
           },
           onClose: handleCloseDetail,
           lockDirection: dailyChallengeRouteView,
@@ -834,7 +840,9 @@ export function RouteLookupPage({
           displayNumber={listedId !== route.number ? listedId : undefined}
           selected={selectedRoute?.id === route.id}
           directionIndex={directionIndex}
+          loopView={getLoopView(route)}
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+          onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
           onNavigate={(routeId) => {
             if (listedDirectionIndex != null) {
               setDirectionIndex(routeId, listedDirectionIndex)
@@ -887,7 +895,9 @@ export function RouteLookupPage({
           route={route}
           selected={selectedRoute?.id === route.id}
           directionIndex={getDirectionIndex(route)}
+          loopView={getLoopView(route)}
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+          onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
           onNavigate={handleRouteNavigate}
           muted={!routeMatchesFilters(route, filters)}
         />
@@ -901,7 +911,9 @@ export function RouteLookupPage({
         route={route}
         selected={selectedRoute?.id === route.id}
         directionIndex={getDirectionIndex(route)}
+        loopView={getLoopView(route)}
         onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
         onNavigate={handleRouteNavigate}
         muted={!routeMatchesFilters(route, filters)}
       />
@@ -914,7 +926,9 @@ export function RouteLookupPage({
         route={route}
         selected={selectedRoute?.id === route.id}
         directionIndex={getDirectionIndex(route)}
+        loopView={getLoopView(route)}
         onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+        onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
         onNavigate={handleRouteNavigate}
       />
     ))

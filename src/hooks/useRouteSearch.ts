@@ -29,6 +29,7 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
   const [filters, setFilters] = useState<RouteFilters>(defaultFilters)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [directionByRouteId, setDirectionByRouteId] = useState<Record<string, number>>({})
+  const [loopViewByRouteId, setLoopViewByRouteId] = useState<Record<string, boolean>>({})
 
   const displayRoutes = useMemo(() => mergeRoutesByBaseNumber(routes), [])
 
@@ -85,6 +86,18 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
     [displayRoutes],
   )
 
+  const getLoopView = useCallback(
+    (route: BusRoute) => loopViewByRouteId[route.id] ?? false,
+    [loopViewByRouteId],
+  )
+
+  const setLoopView = useCallback((routeId: string, loopView: boolean) => {
+    setLoopViewByRouteId((prev) => ({
+      ...prev,
+      [routeId]: loopView,
+    }))
+  }, [])
+
   const selectRoute = useCallback(
     (id: string) => {
       const route = findDisplayRouteByQuery(displayRoutes, id)
@@ -136,6 +149,8 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
     selectedRoute,
     getDirectionIndex,
     setDirectionIndex,
+    getLoopView,
+    setLoopView,
     selectRoute,
     selectRandomRoute,
     randomEligibleCount: randomEligibleRoutes.length,
