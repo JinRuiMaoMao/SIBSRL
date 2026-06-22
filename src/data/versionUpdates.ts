@@ -52,7 +52,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-20'
+export const CURRENT_CHANGELOG_DATE = '2026-06-22'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -159,8 +159,74 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
-    id: '2026-06-20-summary',
+    id: '2026-06-22-summary',
     date: CURRENT_CHANGELOG_DATE,
+    title: {
+      zh: '2026-06-22 更新',
+      en: '2026-06-22 updates',
+    },
+    groups: [
+      {
+        title: { zh: '线路数据', en: 'Route data' },
+        items: [
+          {
+            zh: '从 Wiki Stop List 补全 476 系列站序：主线变体（476*、476#、476#*、476%）及 476P、476X、N476；上述线路不再显示「资料不全」。',
+            en: 'Filled 476-family stop lists from the Wiki Stop List—main-line variants (476*, 476#, 476#*, 476%), plus 476P, 476X, and N476; they no longer show the incomplete-data badge.',
+          },
+        ],
+      },
+      {
+        title: { zh: '环线 / 246X', en: 'Loops / 246X' },
+        items: [
+          {
+            zh: '246X 等环线按行车方向分别显示里程；类型标签随视图变化（东行半直通+特班、西行特班、环线循环）。',
+            en: 'Circular routes like 246X show per-direction length; type tags follow the view (eastbound semi-direct + special, westbound special, loop circular).',
+          },
+          {
+            zh: '246X 方向控件合并为一行三选：西行 | 东行 | 环线。',
+            en: '246X direction controls are one row: Westbound | Eastbound | Loop.',
+          },
+        ],
+      },
+      {
+        title: { zh: '线路卡片', en: 'Route cards' },
+        items: [
+          {
+            zh: '修复列表卡片点击方向切换无反应：分组条目（如 41AN）不再锁死默认方向；方向按钮移出整卡链接层，避免浏览器吞掉点击。',
+            en: 'Fixed direction toggles on list cards doing nothing—grouped entries (e.g. 41AN) no longer pin the default direction, and toggle buttons sit above the card link so clicks register.',
+          },
+          {
+            zh: '常规线路卡片采用与 F469 相同的紧凑起终点竖线布局；每日挑战与最近查看保留经典文字样式。',
+            en: 'Regular route cards use the same compact origin/destination spine as F469; daily challenge and recent routes keep the classic text layout.',
+          },
+          {
+            zh: '推广样式卡片统一 F469 式金色描边；浅色模式下描边更鲜明。每日挑战与最近查看除外。',
+            en: 'Promoted-style cards share F469’s gold accent border—vivid in light mode; daily challenge and recent routes are excluded.',
+          },
+        ],
+      },
+      {
+        title: { zh: '搜索', en: 'Search' },
+        items: [
+          {
+            zh: '两站查询（起点--终点）在 Enter 确认后自动滚动到结果区。',
+            en: 'Stop-to-stop queries (start--end) scroll to the results section after you press Enter.',
+          },
+          {
+            zh: '转车方案详情底部两条免责声明改为分行排列，避免重叠。',
+            en: 'Transfer plan footnotes are stacked so the two disclaimer lines no longer overlap.',
+          },
+          {
+            zh: '高级搜索语法面板增加展开/收起动画；修复滚动时与页面抢滚动、折叠后无法展开、展开后立即被滚轮收起等问题。',
+            en: 'Advanced search syntax panel animates open/close; fixed scroll fighting, failed re-expand after collapse, and wheel immediately re-hiding at the top.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '2026-06-20-summary',
+    date: '2026-06-20',
     title: {
       zh: '2026-06-20 更新',
       en: '2026-06-20 updates',
