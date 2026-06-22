@@ -222,6 +222,94 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: { zh: '每日挑战', en: 'Daily challenge' },
+        items: [
+          {
+            zh: '同步 6/22 每日挑战：马拉松封路 248A（Marathon Road Closure）。',
+            en: 'Synced 6/22 daily challenge: Marathon Road Closure on 248A.',
+          },
+          {
+            zh: '新增 2026 年 7 月社区日程与日历年／月切换；F469 限时倒计时改为与每日挑战相同的时:分:秒格式。',
+            en: 'Added July 2026 community schedule with calendar year/month navigation; F469 availability countdown matches daily-challenge HH:MM:SS format.',
+          },
+        ],
+      },
+      {
+        title: { zh: '其他', en: 'Other' },
+        items: [
+          {
+            zh: '更新 246X 站序、日历边界与站点 Logo 路径。',
+            en: 'Updated 246X stops, calendar bounds, and site logo paths.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '2026-06-21-summary',
+    date: '2026-06-21',
+    title: {
+      zh: '2026-06-21 更新',
+      en: '2026-06-21 updates',
+    },
+    groups: [
+      {
+        title: { zh: '线路详情', en: 'Route detail' },
+        items: [
+          {
+            zh: '起终点之间显示站间距估算（基于站序与已知里程）；悬停可查看估算依据说明。',
+            en: 'Origin–destination stop spacing estimates appear on route detail (from stop order and known length); hover for how the estimate is derived.',
+          },
+          {
+            zh: '移除详情页「经停车站」摘要，避免与下方完整站序重复。',
+            en: 'Removed the via-stops summary on route detail—it duplicated the full stop list below.',
+          },
+        ],
+      },
+      {
+        title: { zh: '季节限定', en: 'Seasonal routes' },
+        items: [
+          {
+            zh: 'F469 自 6/21 起开放 7 日（至 6/27）；线路号旁显示限时日期，6/28 08:00（HKT）起不可用；每日挑战下方增加推广卡片。',
+            en: 'F469 is available for seven game days from 6/21 through 6/27—date range beside the route number, unavailable from 6/28 08:00 HKT; a promo card also appears below today’s daily challenge.',
+          },
+        ],
+      },
+      {
+        title: { zh: '每日挑战', en: 'Daily challenge' },
+        items: [
+          {
+            zh: '同步 6/21 每日挑战：142E 竞速（Rush Hour race）。',
+            en: 'Synced 6/21 daily challenge: 142E Rush Hour race.',
+          },
+        ],
+      },
+      {
+        title: { zh: '两站查询', en: 'Stop-to-stop search' },
+        items: [
+          {
+            zh: '两站结果分开展示直达与转车方案；支持出发时刻筛选、方案排序、分享链接（?from=&to=&depart=）及更稳定的换乘搜索。',
+            en: 'Stop-to-stop results split direct and transfer plans; added depart-time filter, plan sorting, share links (?from=&to=&depart=), and more stable transfer search.',
+          },
+          {
+            zh: '合并同线连续乘车段，不再出现 46→46 等假转车；修复同线终点被拆成假换乘导致漏方案。',
+            en: 'Merged consecutive segments on the same route—no more fake transfers like 46→46; fixed missing plans when the destination lies past a hub on one line.',
+          },
+          {
+            zh: '统一「阳光站」与「阳光铁路站」为同一站点（含 476/N472 站序）。',
+            en: 'Unified Sunshine Station and Sunshine Rail Station as the same stop (incl. 476/N472 stop lists).',
+          },
+          {
+            zh: '两站直达卡片按实际乘车方向显示（如 476 第七区→阳光站为东行）。',
+            en: 'Direct stop-pair cards use the correct travel direction (e.g. 476 Zone 7 → Sunshine Station shows eastbound).',
+          },
+          {
+            zh: '转车方案支持复制分享链接与自定义出发时刻选择器。',
+            en: 'Transfer plans support copy-share links and a custom departure-time picker.',
+          },
+        ],
+      },
     ],
   },
   {
