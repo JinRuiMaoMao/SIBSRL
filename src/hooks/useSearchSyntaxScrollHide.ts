@@ -10,7 +10,7 @@ export const SEARCH_SYNTAX_COLLAPSE_SCROLL_PX = 28
 export const SEARCH_SYNTAX_EXPAND_ARM_PX = 80
 /** 折叠后短时间内忽略滚动触发的「顶端展开」，避免布局收拢引起抖动 */
 const COLLAPSE_SUPPRESS_EXPAND_MS = 280
-/** 与 App.css --syntax-dock-duration 一致 */
+/** 与 App.css --syntax-dock-duration 一致；动画期间忽略滚动联动 */
 const SYNTAX_DOCK_ANIM_MS = 420
 /** 固定展开后忽略布局触发的 scroll，再启用滑动关闭 */
 const FORCE_OPEN_GRACE_MS = 320
@@ -18,11 +18,6 @@ const FORCE_OPEN_SCROLL_DELTA_PX = 6
 
 function readScrollY(): number {
   return window.scrollY || document.documentElement.scrollTop || 0
-}
-
-/** 与 CSS cubic-bezier(0.32, 0.72, 0, 1) 视觉接近 */
-function syntaxDockEase(t: number): number {
-  return 1 - (1 - t) ** 3
 }
 
 export function isSearchSyntaxAtScrollTop(): boolean {
@@ -44,20 +39,27 @@ export function useSearchSyntaxScrollHide(
   const forceOpenScrollYRef = useRef(0)
   const skipForceDismissRef = useRef(false)
   const forceOpenGraceTimerRef = useRef<number | null>(null)
-  const compensateRafRef = useRef<number | null>(null)
-  const compensatingRef = useRef(false)
+  const dockAnimatingRef = useRef(false)
+  const dockAnimTimerRef = useRef<number | null>(null)
 
-  const cancelCompensationRaf = useCallback(() => {
-    if (compensateRafRef.current != null) {
-      cancelAnimationFrame(compensateRafRef.current)
-      compensateRafRef.current = null
+  const beginDockAnimation = useCallback(() => {
+    dockAnimatingRef.current = true
+    if (dockAnimTimerRef.current != null) {
+      window.clearTimeout(dockAnimTimerRef.current)
     }
+    dockAnimTimerRef.current = window.setTimeout(() => {
+      dockAnimatingRef.current = false
+      dockAnimTimerRef.current = null
+    }, SYNTAX_DOCK_ANIM_MS + 60)
   }, [])
 
-  const stopCompensation = useCallback(() => {
-    compensatingRef.current = false
-    cancelCompensationRaf()
-  }, [cancelCompensationRaf])
+  const clearDockAnimation = useCallback(() => {
+    dockAnimatingRef.current = false
+    if (dockAnimTimerRef.current != null) {
+      window.clearTimeout(dockAnimTimerRef.current)
+      dockAnimTimerRef.current = null
+    }
+  }, [])
 
   const dismissForceOpen = useCallback(() => {
     forceOpenRef.current = false
@@ -66,7 +68,8 @@ export function useSearchSyntaxScrollHide(
     expandArmedRef.current = false
     collapsedAtRef.current = Date.now()
     setHidden(true)
-  }, [])
+    beginDockAnimation()
+  }, [beginDockAnimation])
 
   const beginForceOpenGrace = useCallback(() => {
     skipForceDismissRef.current = true
@@ -82,7 +85,7 @@ export function useSearchSyntaxScrollHide(
 
   const clearScrollHidden = useCallback(
     (options?: { forceOpen?: boolean }) => {
-      stopCompensation()
+      clearDockAnimation()
       latchedRef.current = false
       expandArmedRef.current = false
       collapsedAtRef.current = 0
@@ -98,85 +101,42 @@ export function useSearchSyntaxScrollHide(
       forceOpenRef.current = false
       setForceOpen(false)
       setHidden(false)
+      beginDockAnimation()
     },
-    [beginForceOpenGrace, stopCompensation],
+    [beginDockAnimation, beginForceOpenGrace, clearDockAnimation],
   )
 
   const releaseForceOpen = useCallback(() => {
     dismissForceOpen()
   }, [dismissForceOpen])
 
-  const startCollapseCompensation = useCallback(
-    (distance: number) => {
-      if (distance <= 0) return
+  const collapseSyntax = useCallback(() => {
+    if (latchedRef.current || forceOpenRef.current || dockAnimatingRef.current) return
 
-      stopCompensation()
-      compensatingRef.current = true
-      const startScrollY = readScrollY()
-      const startTime = performance.now()
+    latchedRef.current = true
+    expandArmedRef.current = false
+    collapsedAtRef.current = Date.now()
+    skipScrollExpandRef.current = true
+    setHidden(true)
+    beginDockAnimation()
 
-      const step = (now: number) => {
-        if (!compensatingRef.current) {
-          compensateRafRef.current = null
-          return
-        }
-
-        const t = Math.min(1, (now - startTime) / SYNTAX_DOCK_ANIM_MS)
-        window.scrollTo(0, Math.max(0, startScrollY + distance * syntaxDockEase(t)))
-
-        if (t < 1) {
-          compensateRafRef.current = requestAnimationFrame(step)
-        } else {
-          compensatingRef.current = false
-          compensateRafRef.current = null
-          expandArmedRef.current = true
-        }
-      }
-
-      compensateRafRef.current = requestAnimationFrame(step)
-    },
-    [stopCompensation],
-  )
-
-  const collapseSyntax = useCallback(
-    (options?: { compensate?: boolean }) => {
-      if (latchedRef.current || forceOpenRef.current || compensatingRef.current) return
-
-      if (options?.compensate) {
-        const dock = syntaxRef.current
-        const startHeight = dock?.offsetHeight ?? 0
-        if (dock && startHeight > 0) {
-          startCollapseCompensation(startHeight)
-        }
-      }
-
-      latchedRef.current = true
-      expandArmedRef.current = false
-      collapsedAtRef.current = Date.now()
-      skipScrollExpandRef.current = true
-      setHidden(true)
-
-      window.setTimeout(() => {
-        skipScrollExpandRef.current = false
-      }, COLLAPSE_SUPPRESS_EXPAND_MS)
-    },
-    [startCollapseCompensation, syntaxRef],
-  )
+    window.setTimeout(() => {
+      skipScrollExpandRef.current = false
+    }, COLLAPSE_SUPPRESS_EXPAND_MS)
+  }, [beginDockAnimation])
 
   const expandSyntaxAtTop = useCallback(
     (notify: () => void) => {
-      stopCompensation()
-      if (readScrollY() > 0) {
-        window.scrollTo(0, 0)
-      }
+      if (!latchedRef.current && !forceOpenRef.current) return
       clearScrollHidden()
       notify()
     },
-    [clearScrollHidden, stopCompensation],
+    [clearScrollHidden],
   )
 
   const tryExpandAtTopFromScroll = useCallback(
     (scrollY: number, notify: () => void) => {
+      if (dockAnimatingRef.current) return
       if (!latchedRef.current || forceOpenRef.current || skipScrollExpandRef.current) return
       if (Date.now() - collapsedAtRef.current < COLLAPSE_SUPPRESS_EXPAND_MS) return
       if (scrollY > SEARCH_SYNTAX_EXPAND_TOP_PX) return
@@ -208,6 +168,11 @@ export function useSearchSyntaxScrollHide(
 
       if (scrollY > SEARCH_SYNTAX_EXPAND_ARM_PX) {
         expandArmedRef.current = true
+      }
+
+      if (dockAnimatingRef.current) {
+        prevScrollY = scrollY
+        return
       }
 
       if (forceOpenRef.current) {
@@ -249,6 +214,8 @@ export function useSearchSyntaxScrollHide(
     }
 
     const onWheel = (event: WheelEvent) => {
+      if (dockAnimatingRef.current) return
+
       const scrollY = readScrollY()
 
       if (forceOpenRef.current) {
@@ -258,18 +225,14 @@ export function useSearchSyntaxScrollHide(
         return
       }
 
-      // 折叠动画中上滑：停止补偿并重新展开
-      if (event.deltaY < 0 && (compensatingRef.current || latchedRef.current)) {
-        if (scrollY <= SEARCH_SYNTAX_WHEEL_ZONE_PX || compensatingRef.current) {
-          event.preventDefault()
-          expandSyntaxAtTop(notifyReturnToTop)
-        }
+      if (event.deltaY < 0 && latchedRef.current && scrollY <= SEARCH_SYNTAX_EXPAND_TOP_PX) {
+        expandSyntaxAtTop(notifyReturnToTop)
         return
       }
 
       if (event.deltaY > 0 && !latchedRef.current && scrollY <= SEARCH_SYNTAX_WHEEL_ZONE_PX) {
         event.preventDefault()
-        collapseSyntax({ compensate: true })
+        collapseSyntax()
       }
     }
 
@@ -287,18 +250,21 @@ export function useSearchSyntaxScrollHide(
       window.removeEventListener('resize', sync)
       window.removeEventListener('wheel', onWheel)
       ro.disconnect()
-      stopCompensation()
+      clearDockAnimation()
       if (forceOpenGraceTimerRef.current != null) {
         window.clearTimeout(forceOpenGraceTimerRef.current)
       }
+      if (dockAnimTimerRef.current != null) {
+        window.clearTimeout(dockAnimTimerRef.current)
+      }
     }
   }, [
+    clearDockAnimation,
     collapseSyntax,
     dismissForceOpen,
     expandSyntaxAtTop,
     options?.onReturnToTop,
     stickyRef,
-    stopCompensation,
     syntaxRef,
     tryExpandAtTopFromScroll,
   ])

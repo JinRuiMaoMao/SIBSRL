@@ -1117,6 +1117,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   margin: 0 0 0.85rem;
   opacity: 1;
   overflow: hidden;
+  overflow-anchor: none;
   transition:
     grid-template-rows var(--syntax-dock-duration) var(--syntax-dock-easing),
     opacity calc(var(--syntax-dock-duration) * 0.8) var(--syntax-dock-easing),
