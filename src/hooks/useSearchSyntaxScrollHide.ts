@@ -37,6 +37,14 @@ export function useSearchSyntaxScrollHide(
   const forceOpenScrollYRef = useRef(0)
   const skipForceDismissRef = useRef(false)
   const forceOpenGraceTimerRef = useRef<number | null>(null)
+  const compensateRafRef = useRef<number | null>(null)
+
+  const cancelCollapseCompensation = useCallback(() => {
+    if (compensateRafRef.current != null) {
+      cancelAnimationFrame(compensateRafRef.current)
+      compensateRafRef.current = null
+    }
+  }, [])
 
   const dismissForceOpen = useCallback(() => {
     forceOpenRef.current = false
@@ -61,6 +69,7 @@ export function useSearchSyntaxScrollHide(
 
   const clearScrollHidden = useCallback(
     (options?: { forceOpen?: boolean }) => {
+      cancelCollapseCompensation()
       latchedRef.current = false
       expandArmedRef.current = false
       collapsedAtRef.current = 0
@@ -76,26 +85,54 @@ export function useSearchSyntaxScrollHide(
       setForceOpen(false)
       setHidden(false)
     },
-    [beginForceOpenGrace],
+    [beginForceOpenGrace, cancelCollapseCompensation],
   )
 
   const releaseForceOpen = useCallback(() => {
     dismissForceOpen()
   }, [dismissForceOpen])
 
-  const collapseSyntax = useCallback(() => {
-    if (latchedRef.current || forceOpenRef.current) return
+  const collapseSyntax = useCallback(
+    (options?: { compensate?: boolean }) => {
+      if (latchedRef.current || forceOpenRef.current) return
 
-    latchedRef.current = true
-    expandArmedRef.current = false
-    collapsedAtRef.current = Date.now()
-    skipUnhideRef.current = true
-    setHidden(true)
+      // 折叠期间让搜索框下方内容保持静止：随面板收起同步下移视口，抵消移除的高度
+      if (options?.compensate) {
+        const dock = syntaxRef.current
+        const startHeight = dock?.offsetHeight ?? 0
+        if (dock && startHeight > 0) {
+          const startScrollY = readScrollY()
+          cancelCollapseCompensation()
+          const step = () => {
+            const current = syntaxRef.current
+            if (!current) {
+              compensateRafRef.current = null
+              return
+            }
+            const currentHeight = current.offsetHeight
+            window.scrollTo(0, Math.max(0, startScrollY + (startHeight - currentHeight)))
+            if (currentHeight > 1) {
+              compensateRafRef.current = requestAnimationFrame(step)
+            } else {
+              compensateRafRef.current = null
+            }
+          }
+          compensateRafRef.current = requestAnimationFrame(step)
+        }
+      }
 
-    window.setTimeout(() => {
-      skipUnhideRef.current = false
-    }, COLLAPSE_SUPPRESS_EXPAND_MS)
-  }, [])
+      latchedRef.current = true
+      expandArmedRef.current = false
+      collapsedAtRef.current = Date.now()
+      skipUnhideRef.current = true
+      setHidden(true)
+
+      window.setTimeout(() => {
+        skipUnhideRef.current = false
+      }, COLLAPSE_SUPPRESS_EXPAND_MS)
+    },
+    [cancelCollapseCompensation, syntaxRef],
+  )
 
   const tryExpandAtTop = useCallback(
     (scrollY: number, notify: () => void) => {
@@ -182,7 +219,9 @@ export function useSearchSyntaxScrollHide(
       }
 
       if (event.deltaY > 0 && !latchedRef.current && scrollY <= SEARCH_SYNTAX_WHEEL_ZONE_PX) {
-        collapseSyntax()
+        // 第一下滚轮只折叠面板，视图保持静止；后续滚动才真正移动页面
+        event.preventDefault()
+        collapseSyntax({ compensate: true })
         return
       }
 
@@ -194,7 +233,7 @@ export function useSearchSyntaxScrollHide(
     sync()
     window.addEventListener('scroll', sync, { passive: true })
     window.addEventListener('resize', sync)
-    window.addEventListener('wheel', onWheel, { passive: true })
+    window.addEventListener('wheel', onWheel, { passive: false })
 
     const ro = new ResizeObserver(sync)
     if (stickyRef.current) ro.observe(stickyRef.current)
@@ -205,11 +244,13 @@ export function useSearchSyntaxScrollHide(
       window.removeEventListener('resize', sync)
       window.removeEventListener('wheel', onWheel)
       ro.disconnect()
+      cancelCollapseCompensation()
       if (forceOpenGraceTimerRef.current != null) {
         window.clearTimeout(forceOpenGraceTimerRef.current)
       }
     }
   }, [
+    cancelCollapseCompensation,
     collapseSyntax,
     dismissForceOpen,
     options?.onReturnToTop,
