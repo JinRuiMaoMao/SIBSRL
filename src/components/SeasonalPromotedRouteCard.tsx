@@ -12,6 +12,7 @@ import { getRoutePageHref } from '../utils/routeNavigation'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
 import { useSeasonalAvailabilityCountdown } from '../hooks/useSeasonalAvailabilityCountdown'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
+import { RouteStopSpine } from './RouteStopSpine'
 import { RouteTypeTags } from './RouteTypeTags'
 
 interface SeasonalPromotedRouteCardProps {
@@ -98,20 +99,13 @@ export function SeasonalPromotedRouteCard({
         </div>
 
         {endpoints && stopCount > 0 ? (
-          <div className="seasonal-promoted-card-stops">
-            <span className="seasonal-promoted-card-stop-count">
-              {t('seasonalPromotedStopCount', { count: stopCount })}
-            </span>
-            <div className="seasonal-promoted-card-spine" aria-hidden="true">
-              <span className="seasonal-promoted-card-spine-dot" />
-              <span className="seasonal-promoted-card-spine-line" />
-              <span className="seasonal-promoted-card-spine-dot" />
-            </div>
-            <div className="seasonal-promoted-card-stop-names">
-              <span>{endpoints.origin}</span>
-              <span>{endpoints.destination}</span>
-            </div>
-          </div>
+          <RouteStopSpine
+            origin={endpoints.origin}
+            destination={endpoints.destination}
+            stopCount={stopCount}
+            size="promoted"
+            className="seasonal-promoted-card-stops"
+          />
         ) : null}
 
         <div className="route-card-bottom seasonal-promoted-card-bottom">

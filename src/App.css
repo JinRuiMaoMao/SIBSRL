@@ -2815,21 +2815,23 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .seasonal-promoted-card-stops {
+  margin-top: 0.15rem;
+}
+
+.route-stop-spine {
   display: grid;
   grid-template-columns: auto auto minmax(0, 1fr);
   align-items: stretch;
   gap: 0.55rem 0.65rem;
-  margin-top: 0.15rem;
 }
 
-.seasonal-promoted-card-stop-count {
+.route-stop-spine-count {
   align-self: center;
-  font-size: 0.88rem;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-.seasonal-promoted-card-spine {
+.route-stop-spine-track {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2837,7 +2839,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   padding: 0.1rem 0;
 }
 
-.seasonal-promoted-card-spine-dot {
+.route-stop-spine-dot {
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 999px;
@@ -2845,7 +2847,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   flex-shrink: 0;
 }
 
-.seasonal-promoted-card-spine-line {
+.route-stop-spine-line {
   flex: 1;
   width: 2px;
   min-height: 1.6rem;
@@ -2853,14 +2855,76 @@ html[data-list-density='compact'] .transfer-plan-stop {
   border-radius: 1px;
 }
 
-.seasonal-promoted-card-stop-names {
+.route-stop-spine-names {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 0.75rem;
   min-width: 0;
-  font-size: 0.92rem;
+  color: var(--text);
   line-height: 1.25;
+}
+
+/* 普通线路卡片：F469 竖线布局缩小版 */
+.route-stop-spine--compact {
+  gap: 0.35rem 0.5rem;
+  margin: 0 0 0.25rem;
+}
+
+.route-stop-spine--compact .route-stop-spine-count {
+  font-size: 0.72rem;
+}
+
+.route-stop-spine--compact .route-stop-spine-track {
+  width: 0.7rem;
+  padding: 0.05rem 0;
+}
+
+.route-stop-spine--compact .route-stop-spine-dot {
+  width: 0.35rem;
+  height: 0.35rem;
+}
+
+.route-stop-spine--compact .route-stop-spine-line {
+  min-height: 1.15rem;
+}
+
+.route-stop-spine--compact .route-stop-spine-names {
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+/* F469 等季节推广卡 */
+.route-stop-spine--promoted .route-stop-spine-count {
+  font-size: 0.88rem;
+}
+
+.route-stop-spine--promoted .route-stop-spine-names {
+  font-size: 0.92rem;
+}
+
+/* 详情侧栏 */
+.route-stop-spine--detail {
+  gap: 0.45rem 0.6rem;
+  margin: 0;
+}
+
+.route-stop-spine--detail .route-stop-spine-count {
+  font-size: 0.82rem;
+}
+
+.route-stop-spine--detail .route-stop-spine-line {
+  min-height: 1.35rem;
+}
+
+.route-stop-spine--detail .route-stop-spine-names {
+  gap: 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.detail-route-summary-wrap .route-stop-spine--detail .route-stop-spine-names {
+  font-weight: 600;
 }
 
 .seasonal-promoted-card-bottom {

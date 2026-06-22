@@ -142,6 +142,8 @@ export function RouteDetail({
           loopView={loopView}
           className="detail-route-summary-wrap"
           overrideText={directionEndpoints}
+          layout={directionEndpoints ? 'text' : 'spine'}
+          size="detail"
         />
       </section>
 
