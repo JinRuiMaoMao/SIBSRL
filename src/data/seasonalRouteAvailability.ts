@@ -83,11 +83,17 @@ export function getMsUntilSeasonalWindowEnds(
 }
 
 export function formatSeasonalAvailabilityCountdown(ms: number): string {
-  if (ms <= 0) return '00d 00h'
-  const totalHours = Math.floor(ms / 3_600_000)
-  const days = Math.floor(totalHours / 24)
-  const hours = totalHours % 24
-  return `${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h`
+  if (ms <= 0) return '00:00:00'
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000))
+  const days = Math.floor(totalSeconds / 86_400)
+  const hours = Math.floor((totalSeconds % 86_400) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  if (days > 0) {
+    return `${String(days).padStart(2, '0')}d ${time}`
+  }
+  return time
 }
 
 export interface SeasonalAvailabilityLabels {

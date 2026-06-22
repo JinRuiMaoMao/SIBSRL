@@ -9,24 +9,24 @@ export function useSeasonalAvailabilityCountdown(
   availabilityWindow: SeasonalAvailabilityWindow | null,
 ): string {
   const [countdown, setCountdown] = useState(() => {
-    if (!availabilityWindow) return '00d 00h'
+    if (!availabilityWindow) return '00:00:00'
     const ms = getMsUntilSeasonalWindowEnds(availabilityWindow)
-    return ms == null ? '00d 00h' : formatSeasonalAvailabilityCountdown(ms)
+    return ms == null ? '00:00:00' : formatSeasonalAvailabilityCountdown(ms)
   })
 
   useEffect(() => {
     if (!availabilityWindow) {
-      setCountdown('00d 00h')
+      setCountdown('00:00:00')
       return
     }
 
     const tick = () => {
       const ms = getMsUntilSeasonalWindowEnds(availabilityWindow)
-      setCountdown(ms == null ? '00d 00h' : formatSeasonalAvailabilityCountdown(ms))
+      setCountdown(ms == null ? '00:00:00' : formatSeasonalAvailabilityCountdown(ms))
     }
 
     tick()
-    const id = window.setInterval(tick, 60_000)
+    const id = window.setInterval(tick, 1000)
     return () => window.clearInterval(id)
   }, [availabilityWindow])
 

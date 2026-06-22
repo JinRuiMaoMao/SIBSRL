@@ -215,8 +215,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'F469 now includes the FT Anniversary event blurb (About)—depot-roof shuttle via the bus wash and parked vehicles.',
           },
           {
-            zh: '每日挑战下方 F469 推广卡改为图示布局：季节限定（限时）、FT 周年纪念、剩余 06d 00h 倒计时、站数与起终点竖线、类型标签。',
-            en: 'F469 promo card below daily challenge now matches the mockup—seasonal label, FT Anniversary, 06d 00h countdown, stop spine, and type tags.',
+            zh: '每日挑战下方 F469 推广卡改为图示布局：季节限定（限时）、FT 周年纪念、剩余倒计时（6d 03:51:22）、站数与起终点竖线、类型标签。',
+            en: 'F469 promo card below daily challenge now matches the mockup—seasonal label, FT Anniversary, countdown (e.g. 6d 03:51:22), stop spine, and type tags.',
+          },
+          {
+            zh: 'F469 限时倒计时改为与每日挑战相同的时:分:秒格式（超过 24 小时显示 Xd HH:MM:SS），每秒刷新。',
+            en: 'F469 availability countdown now uses daily-challenge-style HH:MM:SS (Xd HH:MM:SS when over 24h), updating every second.',
           },
         ],
       },
@@ -300,6 +304,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       {
         title: { zh: '每日挑战', en: 'Daily challenge' },
         items: [
+          {
+            zh: '同步 6/22 每日挑战：马拉松封路 248A（Marathon Road Closure）。',
+            en: 'Synced 6/22 daily challenge: Marathon Road Closure on 248A.',
+          },
           {
             zh: '按 Discord 社区原文更新 6 月日程：6/22、23、26、29 留空；移除此前 PH1 占位。',
             en: 'Updated June schedule from Discord: 6/22, 23, 26, 29 left blank; removed PH1 placeholders.',

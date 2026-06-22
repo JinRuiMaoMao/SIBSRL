@@ -31,7 +31,7 @@
 6/19: Marathon Shuttle (R370)
 6/20: [Race] Street light outage (41AS)
 6/21: [Race] Rush Hour (142E)
-6/22:
+6/22: Marathon Road Closure (248A)
 6/23:
 6/24: [Race] Urban Odyssey (77XA)
 6/25: Rare appearance
