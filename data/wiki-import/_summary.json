@@ -1,82 +1,111 @@
 {
   "results": [
     {
-      "id": "270A",
-      "number": "270A",
+      "id": "246X",
+      "number": "246X",
       "operators": [
+        "FTCC",
         "REBC",
-        "HZ"
+        "FT"
       ],
       "category": "inter",
-      "pattern": "oneway",
+      "pattern": "circular",
       "zones": [
         1,
-        7
+        4
       ],
       "origin": {
-        "zh": "Long Island Ferry Pier",
-        "en": "Long Island Ferry Pier"
+        "zh": "Eastmallow Praya Road",
+        "en": "Eastmallow Praya Road"
       },
       "destination": {
-        "zh": "Senpai Shopping Centre / 長島碼頭",
-        "en": "Senpai Shopping Centre / 長島碼頭"
+        "zh": "Timelapse Mall  / 東錦葵海傍路",
+        "en": "Timelapse Mall  / 東錦葵海傍路"
       },
       "via": {
-        "zh": "Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower",
-        "en": "Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower"
+        "zh": "Northern Interchange, Dove Island, Containers Terminal, Southern, Central",
+        "en": "Northern Interchange, Dove Island, Containers Terminal, Southern, Central"
       },
-      "fare": "$18.2",
+      "interval": {
+        "zh": "7 - 30 min",
+        "en": "7 - 30 min"
+      },
+      "journeyTime": {
+        "zh": "Normal Departure: 31-33 mins / Special Departure 1: 18-19 mins / Special Departure 2 : 10-11 mins",
+        "en": "Normal Departure: 31-33 mins / Special Departure 1: 18-19 mins / Special Departure 2 : 10-11 mins"
+      },
+      "fare": "$11.4",
+      "levelRequired": 74,
       "length": {
-        "zh": "17.8 km",
-        "en": "17.8 km"
+        "zh": "19 km",
+        "en": "19 km"
       },
       "stops": [
         {
           "direction": {
-            "zh": "方向1（長島碼頭 → 仙貝廣場）",
-            "en": "Direction 1 (Long Island Ferry Pier → Senpai Shopping Centre)"
+            "zh": "方向1（東錦葵海傍路 → 東錦葵海傍路）",
+            "en": "Direction 1 (A starts here → Eastmallow Praya Road)"
           },
           "serviceTime": {
-            "zh": "Services provided during Sunshine Marathon Only",
-            "en": "Services provided during Sunshine Marathon Only"
+            "zh": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35",
+            "en": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35"
           },
           "list": [
             {
               "name": {
-                "zh": "長島碼頭",
-                "en": "Long Island Ferry Pier"
+                "zh": "東錦葵海傍路",
+                "en": "A starts here"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵邨 - 陽葵屋",
+                "en": "Eastmallow Estate - Sunny House"
+              }
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環橋",
+                "en": "Central Bridge"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北環中心",
+                "en": "Northern Plaza"
+              }
+            },
+            {
+              "name": {
+                "zh": "西區海底隧道轉車站",
+                "en": "Western Harbour Tunnel Interchange"
+              }
+            },
+            {
+              "name": {
+                "zh": "時間廊",
+                "en": "Returning Point for normal depatures"
               },
               "zone": 1
             },
             {
               "name": {
-                "zh": "文化廣場",
-                "en": "Culture Square"
+                "zh": "銀行大廈",
+                "en": "Bank Tower"
               }
             },
             {
               "name": {
-                "zh": "國際碼頭",
-                "en": "Regional Pier"
-              }
-            },
-            {
-              "name": {
-                "zh": "時間里",
-                "en": "Timelapse Lane"
-              },
-              "zone": 1
-            },
-            {
-              "name": {
-                "zh": "白鴿山",
-                "en": "Dove Hill"
-              }
-            },
-            {
-              "name": {
-                "zh": "白鴿邨",
-                "en": "Dove Estate"
+                "zh": "三哥大廈",
+                "en": "Third Technology Building"
               }
             },
             {
@@ -87,45 +116,66 @@
             },
             {
               "name": {
-                "zh": "鎌塔花園",
-                "en": "Kamaya Garden"
+                "zh": "白鴿消防局",
+                "en": "Dove Fire Station"
+              }
+            },
+            {
+              "name": {
+                "zh": "伊迪城",
+                "en": "Eddie City"
+              }
+            },
+            {
+              "name": {
+                "zh": "貨櫃碼頭",
+                "en": "B omits this stop"
               },
-              "zone": 7
+              "zone": 1
             },
             {
               "name": {
-                "zh": "鎌塔運動場",
-                "en": "Kamaya Sports Field"
+                "zh": "中西轉車站",
+                "en": "Central - Western Interchange"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "南環街市",
+                "en": "Southern Market"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "楓樹里",
+                "en": "B ends here"
               }
             },
             {
               "name": {
-                "zh": "紅石樓",
-                "en": "Redstone House"
+                "zh": "中環橋",
+                "en": "Central Bridge"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
               }
             },
             {
               "name": {
-                "zh": "仙貝酒店",
-                "en": "Senpai Hotel"
-              }
-            },
-            {
-              "name": {
-                "zh": "仙貝圖書館",
-                "en": "Senpai Library"
-              }
-            },
-            {
-              "name": {
-                "zh": "仙貝廣場",
-                "en": "Senpai Shopping Centre"
+                "zh": "東錦葵海傍路",
+                "en": "Eastmallow Praya Road"
               }
             }
           ]
         }
       ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_270A"
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_246X"
     }
   ],
   "errors": []

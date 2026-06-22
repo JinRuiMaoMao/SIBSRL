@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { findSibsAudioRoot } from './lib/sibs-audio-root.mjs'
 import {
   buildRoute21AStopAudioSlots,
   ROUTE_21A_AT_PREFIX,
@@ -16,22 +17,6 @@ import {
 export const ROUTE_BROADCAST_IDS = ['21A', '77XA']
 const ROUTE_21A_ID = '21A'
 const ROUTE_77XA_ID = '77XA'
-
-function findSibsBroadcastRoot() {
-  const candidates = ['E:\\SIBS广播', resolve('..', 'SIBS广播')]
-  for (const p of candidates) {
-    if (existsSync(p)) return p
-  }
-  const eRoot = 'E:\\'
-  if (!existsSync(eRoot)) return null
-  for (const name of readdirSync(eRoot, { withFileTypes: true })) {
-    if (!name.isDirectory() || name.name === 'sibsRouteLookupTool') continue
-    if (!/SIBS/i.test(name.name) || !/广播/.test(name.name)) continue
-    const root = join(eRoot, name.name)
-    if (existsSync(root)) return root
-  }
-  return null
-}
 
 function resolveRouteSourceDir(root, routeId) {
   const candidates = [
@@ -79,14 +64,16 @@ function syncRoute77XA(srcDir, destDir) {
 }
 
 export function syncRouteBroadcastAudio(options = {}) {
-  const root = options.root ?? findSibsBroadcastRoot()
+  const root = options.root ?? findSibsAudioRoot()
   const routeIds = options.routeIds ?? ROUTE_BROADCAST_IDS
   const results = []
 
   if (!root) {
-    console.warn('未找到 SIBS 广播根目录，跳过线路报站音频同步')
+    console.warn('未找到 SIBS 音频根目录（E:\\SIBS资源 等），跳过线路报站音频同步')
     return results
   }
+
+  console.log(`线路报站音频源：${root}`)
 
   for (const routeId of routeIds) {
     const srcDir = resolveRouteSourceDir(root, routeId)

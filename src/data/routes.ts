@@ -20,6 +20,7 @@ import { compareRouteNumber } from '../utils/routeSort'
  * - 卡片/详情起终点取自当前方向的 `list` 首末站；详情只保留一处起终点展示。
  * - 单向或环线只有一个站序时，`stops` 只保留一项（参考 21A）。
  * - 环线编号加 `A` 后缀（如马拉松改道 240A，非 240）；`pattern: 'circular'` 与编号保持一致。
+ * - 环线也可分东西（或南北）走向：`stops` 仍按方向拆分，并保留 `pattern: 'circular'` 与 `loop` 类型（参考 246X／游戏内 246XA）。
  * - `centralAxis`：游戏内英文 Central Axis；卡片类型显示在 Z 标签旁，各语言均不翻译。
  *
  * 示例见线路 25、41A、42、42A（均为 Central Axis）。
@@ -2531,8 +2532,8 @@ const routesData: BusRoute[] = [
       {
         directionKey: 'W',
         direction: {
-          zh: '西行（东锦葵海傍路 → 时间廊）',
-          en: 'Westbound (Eastmallow Praya Road → Timelapse Mall)',
+          zh: '西行（环线 · 东锦葵海傍路 → 时间廊）',
+          en: 'Westbound loop (Eastmallow Praya Road → Timelapse Mall)',
         },
         serviceTime: {
           zh: '平日 07:00 – 08:55 / 17:40 – 18:35',
@@ -2541,7 +2542,7 @@ const routesData: BusRoute[] = [
         list: [
           { name: { zh: '东锦葵海傍路', en: 'Eastmallow Praya Road' }, zone: 4 },
           {
-            name: { zh: '东锦葵邨－阳葵屋', en: 'Eastmallow Estate - Sunny House' },
+            name: { zh: '东锦葵邨 - 阳葵屋', en: 'Eastmallow Estate - Sunny House' },
             zone: 4,
           },
           { name: { zh: '东锦葵大街', en: 'Eastmallow Main Street' }, zone: 4 },
@@ -2557,8 +2558,8 @@ const routesData: BusRoute[] = [
       {
         directionKey: 'E',
         direction: {
-          zh: '东行（时间廊 → 东锦葵海傍路）',
-          en: 'Eastbound (Timelapse Mall → Eastmallow Praya Road)',
+          zh: '东行（环线 · 时间廊 → 东锦葵海傍路）',
+          en: 'Eastbound loop (Timelapse Mall → Eastmallow Praya Road)',
         },
         serviceTime: {
           zh: '平日 07:00 – 08:55 / 17:40 – 18:35',
@@ -2570,11 +2571,11 @@ const routesData: BusRoute[] = [
           { name: { zh: '三哥大厦', en: 'Third Technology Building' }, zone: 1 },
           { name: { zh: '购物廊', en: 'Shopping Corridor' }, zone: 1 },
           { name: { zh: '白鸽消防局', en: 'Dove Fire Station' }, zone: 1 },
-          { name: { zh: '艾迪城', en: 'Addi City' }, zone: 1 },
           { name: { zh: '伊迪城', en: 'Eddie City' }, zone: 1 },
           { name: { zh: '货柜码头', en: 'Containers Terminal' }, zone: 1 },
-          { name: { zh: '中西转车站', en: 'Central-Western Interchange' }, zone: 1 },
+          { name: { zh: '中西转车站', en: 'Central - Western Interchange' }, zone: 1 },
           { name: { zh: '南环街市', en: 'Southern Market' }, zone: 4 },
+          { name: { zh: '枫树里', en: 'Maple Lane' }, zone: 4 },
           { name: { zh: '中环桥', en: 'Central Bridge' }, zone: 4 },
           { name: { zh: '东锦葵大街', en: 'Eastmallow Main Street' }, zone: 4 },
           { name: { zh: '东锦葵海傍路', en: 'Eastmallow Praya Road' }, zone: 4 },
@@ -2582,8 +2583,8 @@ const routesData: BusRoute[] = [
       },
     ],
     notes: {
-      zh: '第 1/4 区繁忙时间环线（REBC · FTCC），东锦葵海傍路 ↺ 时间廊。特开：早高峰东锦葵 → 货柜码头岛；艾迪城 → 枫树里。2024/6 起改经北环中心、不再停北环转车站及中环南。分段：南环街市起至东锦葵 $7.2。',
-      en: 'Zones 1/4 peak-hour loop (REBC · FTCC), Eastmallow Praya Road ↺ Timelapse Mall. Special AM: Eastmallow → Containers Island; Addi City → Maple Lane. Via Northern Plaza from Jun 2024; Northern Interchange and Southern Central removed. Section fare Southern Market → Eastmallow $7.2.',
+      zh: '第 1/4 区繁忙时间环线（REBC · FTCC），东锦葵海傍路 ↺ 时间廊；普通班次游戏内编号 246XA，站序分西行／东行两段（时间廊为折返点）。特开 A：146W（东锦葵 → 货柜码头岛）；特开 B：246PE（艾迪城 → 枫树里，经 The ONE）。2024/6 起改经北环中心、不再停北环转车站及中环南。分段：南环街市起至东锦葵 $7.2。',
+      en: 'Zones 1/4 peak-hour loop (REBC · FTCC), Eastmallow Praya Road ↺ Timelapse Mall; regular trips use in-game code 246XA with westbound/eastbound lists (Timelapse Mall is the returning point). Special A: 146W (Eastmallow → Container\'s Island); Special B: 246PE (Addi City → Maple Lane via The ONE). Via Northern Plaza from Jun 2024; Northern Interchange and Southern Central removed. Section fare Southern Market → Eastmallow $7.2.',
     },
     wikiUrl: 'https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_246X',
     externalUrl: 'https://sites.google.com/view/sunshine-islands/route/246x',

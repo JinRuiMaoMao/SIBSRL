@@ -888,8 +888,25 @@
   transition-delay: var(--header-expand-delay-brand);
 }
 
+.brand-logo {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  transition:
+    width var(--header-stage-dur) var(--header-collapse-easing),
+    height var(--header-stage-dur) var(--header-collapse-easing);
+  transition-delay: var(--header-expand-delay-brand);
+}
+
 .site-header-shell.is-collapsed .brand-icon {
   font-size: 1.35rem;
+  transition-delay: var(--header-collapse-delay-brand);
+}
+
+.site-header-shell.is-collapsed .brand-logo {
+  width: 1.35rem;
+  height: 1.35rem;
   transition-delay: var(--header-collapse-delay-brand);
 }
 
@@ -2513,6 +2530,17 @@ html[data-list-density='compact'] .transfer-plan-stop {
   border-color: var(--border-strong);
   background: var(--accent-soft);
   outline: none;
+}
+
+.daily-challenge-calendar-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.daily-challenge-calendar-nav-btn:disabled:hover,
+.daily-challenge-calendar-nav-btn:disabled:focus-visible {
+  border-color: var(--border);
+  background: var(--bg-elevated);
 }
 
 .daily-challenge-calendar-note--empty-month {

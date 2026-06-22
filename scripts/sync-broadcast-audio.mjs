@@ -1,21 +1,6 @@
 import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
-
-function findSibsBroadcastRoot() {
-  const candidates = ['E:\\SIBS广播', resolve('..', 'SIBS广播')]
-  for (const p of candidates) {
-    if (existsSync(p)) return p
-  }
-  const eRoot = 'E:\\'
-  if (!existsSync(eRoot)) return null
-  for (const name of readdirSync(eRoot, { withFileTypes: true })) {
-    if (!name.isDirectory() || name.name === 'sibsRouteLookupTool') continue
-    if (!/SIBS/i.test(name.name) || !/广播/.test(name.name)) continue
-    const root = join(eRoot, name.name)
-    if (existsSync(root)) return root
-  }
-  return null
-}
+import { findSibsAudioRoot, resolveSourceSubdir } from './lib/sibs-audio-root.mjs'
 
 function broadcastNumberFromFilename(file) {
   const base = file.replace(/\.mp3$/i, '')
@@ -118,19 +103,13 @@ function copyMusicSet(srcDir, destDir) {
   return copied
 }
 
-function resolveSourceSubdir(root, names) {
-  for (const name of names) {
-    const dir = join(root, name)
-    if (existsSync(dir)) return dir
-  }
-  return null
-}
-
-const root = findSibsBroadcastRoot()
+const root = findSibsAudioRoot()
 if (!root) {
-  console.warn('未找到 SIBS 广播根目录，跳过音频同步')
+  console.warn('未找到 SIBS 音频根目录（E:\\SIBS资源 等），跳过音频同步')
   process.exit(0)
 }
+
+console.log(`音频源：${root}`)
 
 const commonSrc =
   resolveSourceSubdir(root, ['通用', 'Common', 'FTCC', 'ftcc']) ?? join(root, 'FTCC')

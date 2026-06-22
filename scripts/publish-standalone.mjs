@@ -11,6 +11,7 @@ import {
   injectThemeBootstrap,
 } from './lib/app-page-html.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
+import { syncBrandAssets } from './sync-brand-assets.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const built = resolve(root, 'dist', 'dev.html')
@@ -82,12 +83,20 @@ export function publishStandalone(options = {}) {
     targets: [resolve(root, 'routes'), resolve(root, 'dist', 'routes')],
   })
 
+  syncBrandAssets()
+
   if (existsSync(distAudio)) {
     cpSync(distAudio, rootAudio, { recursive: true })
     console.log('[publish] 已复制音频到 audio/')
   } else if (existsSync(publicAudio)) {
     cpSync(publicAudio, rootAudio, { recursive: true })
     console.log('[publish] 已复制音频到 audio/')
+  }
+
+  const publicLogo = resolve(root, 'public', 'sibs-logo.png')
+  if (existsSync(publicLogo)) {
+    cpSync(publicLogo, resolve(root, 'sibs-logo.png'))
+    cpSync(publicLogo, resolve(root, 'dist', 'sibs-logo.png'))
   }
 
   console.log(

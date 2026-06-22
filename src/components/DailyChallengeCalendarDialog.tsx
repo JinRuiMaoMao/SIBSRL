@@ -3,9 +3,13 @@ import { lockPageScroll } from '../utils/pageScrollLock'
 import { buildDailyChallengeFromScheduleDay } from '../data/dailyChallenge'
 import {
   buildMonthCalendarCells,
+  CALENDAR_EARLIEST_MONTH,
+  clampScheduleMonthKey,
+  compareScheduleMonthKeys,
   emptyScheduleForMonth,
   formatScheduleMonthOption,
   listScheduleYears,
+  listSelectableMonthsForYear,
   parseScheduleMonthKey,
   resolveInitialCalendarMonth,
   toScheduleMonthKey,
@@ -146,22 +150,30 @@ export function DailyChallengeCalendarDialog({
     [displaySchedule],
   )
 
+  const selectableMonths = useMemo(
+    () => listSelectableMonthsForYear(selectedYear),
+    [selectedYear],
+  )
   const monthOptions = useMemo(
     () =>
-      Array.from({ length: 12 }, (_, index) => {
-        const month = index + 1
-        return {
-          value: month,
-          label: formatScheduleMonthOption(toScheduleMonthKey(selectedYear, month), locale),
-        }
-      }),
-    [locale, selectedYear],
+      selectableMonths.map((month) => ({
+        value: month,
+        label: formatScheduleMonthOption(toScheduleMonthKey(selectedYear, month), locale),
+      })),
+    [locale, selectableMonths, selectedYear],
   )
+  const isAtEarliestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_EARLIEST_MONTH) <= 0
 
   useEffect(() => {
     if (!open) return
     setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
   }, [open, schedules, todayDate])
+
+  useEffect(() => {
+    if (selectableMonths.length === 0) return
+    if (selectableMonths.includes(selectedMonth)) return
+    setSelectedMonthKey(toScheduleMonthKey(selectedYear, selectableMonths[0]!))
+  }, [selectedMonth, selectedYear, selectableMonths])
 
   useEffect(() => {
     if (!open) return
@@ -194,7 +206,7 @@ export function DailyChallengeCalendarDialog({
       if (years.length > 0 && !years.includes(year)) {
         year = delta < 0 ? years[0]! : years[years.length - 1]!
       }
-      return toScheduleMonthKey(year, month)
+      return clampScheduleMonthKey(toScheduleMonthKey(year, month))
     })
   }
 
@@ -248,6 +260,7 @@ export function DailyChallengeCalendarDialog({
             className="daily-challenge-calendar-nav-btn"
             onClick={() => shiftMonth(-1)}
             aria-label={t('dailyChallengeCalendarPrevMonth')}
+            disabled={isAtEarliestMonth}
           >
             ‹
           </button>
@@ -261,7 +274,12 @@ export function DailyChallengeCalendarDialog({
                 aria-label={t('dailyChallengeCalendarYearLabel')}
                 onChange={(event) => {
                   const year = Number(event.target.value)
-                  setSelectedMonthKey(toScheduleMonthKey(year, selectedMonth))
+                  const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
+                  const month =
+                    earliest && year === earliest.year
+                      ? Math.max(selectedMonth, earliest.month)
+                      : selectedMonth
+                  setSelectedMonthKey(clampScheduleMonthKey(toScheduleMonthKey(year, month)))
                 }}
               >
                 {years.map((year) => (

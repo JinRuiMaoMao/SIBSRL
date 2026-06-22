@@ -8,6 +8,7 @@ import type { AppTab } from '../types/appTab'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
+import { SiteLogo } from './SiteLogo'
 
 const LINK_LABEL_KEYS: Record<string, MessageKey> = {
   'https://www.roblox.com/games/1588965415': 'linkOfficialGame',
@@ -80,9 +81,7 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
               onClick={onLogoClick}
               aria-label={t('appTitle')}
             >
-              <span className="brand-icon" aria-hidden>
-                🚌
-              </span>
+              <SiteLogo />
             </button>
             <div>
               <h1>{t('appTitle')}</h1>

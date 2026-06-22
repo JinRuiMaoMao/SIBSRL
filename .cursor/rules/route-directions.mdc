@@ -14,5 +14,6 @@ When a route has more than one travel direction (e.g. southbound / northbound):
 - Per-direction `serviceTime` on each `stops[]` entry (departure point only); never combine both terminuses at route level.
 - Endpoints on card/detail come from the active direction’s first/last stop; detail shows endpoints once only.
 - Single-direction or circular routes: one `stops` entry only (see route 21A).
+- **Loop with east/west (or north/south) legs:** keep `pattern: 'circular'` and add `loop` service type; still use multiple `stops[]` entries with `directionKey` `E`/`W` (see route `246X`, in-game loop code `246XA`).
 
 Follow the worked example: route `25` in `src/data/routes.ts`.

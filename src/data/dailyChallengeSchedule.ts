@@ -104,13 +104,47 @@ export function parseScheduleMonthKey(monthKey: string): { year: number; month: 
   return { year, month }
 }
 
+/** 日历可选的最早月份（与现有日程数据一致） */
+export const CALENDAR_EARLIEST_MONTH =
+  [...DAILY_CHALLENGE_SCHEDULES].map((schedule) => schedule.month).sort()[0] ?? '2026-06'
+
+export function compareScheduleMonthKeys(a: string, b: string): number {
+  const parsedA = parseScheduleMonthKey(a)
+  const parsedB = parseScheduleMonthKey(b)
+  if (!parsedA || !parsedB) return 0
+  if (parsedA.year !== parsedB.year) return parsedA.year - parsedB.year
+  return parsedA.month - parsedB.month
+}
+
+export function clampScheduleMonthKey(
+  monthKey: string,
+  minKey: string = CALENDAR_EARLIEST_MONTH,
+): string {
+  return compareScheduleMonthKeys(monthKey, minKey) < 0 ? minKey : monthKey
+}
+
+export function listSelectableMonthsForYear(
+  year: number,
+  earliestMonth: string = CALENDAR_EARLIEST_MONTH,
+): number[] {
+  const earliest = parseScheduleMonthKey(earliestMonth)
+  if (!earliest) return []
+  const startMonth = year < earliest.year ? 13 : year === earliest.year ? earliest.month : 1
+  if (startMonth > 12) return []
+  return Array.from({ length: 12 - startMonth + 1 }, (_, index) => startMonth + index)
+}
+
 export function listScheduleYears(schedules: DailyChallengeSchedule[]): number[] {
   const years = new Set<number>()
+  const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
   for (const schedule of schedules) {
     const parsed = parseScheduleMonthKey(schedule.month)
     if (parsed) years.add(parsed.year)
   }
-  return [...years].sort((a, b) => a - b)
+  if (earliest) years.add(earliest.year)
+  return [...years]
+    .filter((year) => !earliest || year >= earliest.year)
+    .sort((a, b) => a - b)
 }
 
 export function emptyScheduleForMonth(monthKey: string): DailyChallengeSchedule {
@@ -129,10 +163,12 @@ export function resolveInitialCalendarMonth(
   schedules: DailyChallengeSchedule[],
 ): string {
   const todayMonth = todayDate.slice(0, 7)
-  if (schedules.some((schedule) => schedule.month === todayMonth)) return todayMonth
+  if (schedules.some((schedule) => schedule.month === todayMonth)) {
+    return clampScheduleMonthKey(todayMonth)
+  }
 
   const sorted = [...schedules].map((schedule) => schedule.month).sort()
-  return sorted[sorted.length - 1] ?? todayMonth
+  return clampScheduleMonthKey(sorted[sorted.length - 1] ?? todayMonth)
 }
 
 /** 用 Discord API 历史覆盖同月静态日程（有 event 的 live 条目优先） */

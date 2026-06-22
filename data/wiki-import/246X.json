@@ -1,175 +1,69 @@
 {
   "id": "246X",
   "number": "246X",
-  "operators": [
-    "FTCC",
-    "REBC",
-    "FT"
-  ],
+  "operators": ["FTCC", "REBC"],
   "category": "inter",
   "pattern": "circular",
-  "zones": [
-    1,
-    4
-  ],
-  "origin": {
-    "zh": "Eastmallow Praya Road",
-    "en": "Eastmallow Praya Road"
-  },
-  "destination": {
-    "zh": "Timelapse Mall  / 東錦葵海傍路",
-    "en": "Timelapse Mall  / 東錦葵海傍路"
-  },
+  "zones": [1, 4],
+  "origin": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" },
+  "destination": { "zh": "时间廊 / 东锦葵海傍路", "en": "Timelapse Mall / Eastmallow Praya Road" },
   "via": {
-    "zh": "Northern Interchange, Dove Island, Containers Terminal, Southern, Central",
-    "en": "Northern Interchange, Dove Island, Containers Terminal, Southern, Central"
+    "zh": "北环、白鸽岛、货柜码头、中区",
+    "en": "Northern, Dove Island, Containers Terminal, Central"
   },
-  "interval": {
-    "zh": "7 - 30 min",
-    "en": "7 - 30 min"
-  },
+  "interval": { "zh": "7 - 30 min", "en": "7 - 30 min" },
   "journeyTime": {
-    "zh": "Normal Departure: 31-33 mins / Special Departure 1: 18-19 mins / Special Departure 2 : 10-11 mins",
-    "en": "Normal Departure: 31-33 mins / Special Departure 1: 18-19 mins / Special Departure 2 : 10-11 mins"
+    "zh": "普通班次：31–33 分钟 / 特开 A：18–19 分钟 / 特开 B：10–11 分钟",
+    "en": "Normal: 31–33 mins / Special A: 18–19 mins / Special B: 10–11 mins"
   },
   "fare": "$11.4",
   "levelRequired": 74,
-  "length": {
-    "zh": "19 km",
-    "en": "19 km"
-  },
+  "length": { "zh": "19 km", "en": "19 km" },
   "stops": [
     {
+      "directionKey": "W",
       "direction": {
-        "zh": "方向1（東錦葵海傍路 → 東錦葵海傍路）",
-        "en": "Direction 1 (A starts here → Eastmallow Praya Road)"
+        "zh": "西行（环线 · 东锦葵海傍路 → 时间廊）",
+        "en": "Westbound loop (Eastmallow Praya Road → Timelapse Mall)"
       },
       "serviceTime": {
         "zh": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35",
         "en": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35"
       },
       "list": [
-        {
-          "name": {
-            "zh": "東錦葵海傍路",
-            "en": "A starts here"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "東錦葵邨 - 陽葵屋",
-            "en": "Eastmallow Estate - Sunny House"
-          }
-        },
-        {
-          "name": {
-            "zh": "東錦葵大街",
-            "en": "Eastmallow Main Street"
-          }
-        },
-        {
-          "name": {
-            "zh": "中環橋",
-            "en": "Central Bridge"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "北環中心",
-            "en": "Northern Plaza"
-          }
-        },
-        {
-          "name": {
-            "zh": "西區海底隧道轉車站",
-            "en": "Western Harbour Tunnel Interchange"
-          }
-        },
-        {
-          "name": {
-            "zh": "時間廊",
-            "en": "Returning Point for normal depatures"
-          },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "銀行大廈",
-            "en": "Bank Tower"
-          }
-        },
-        {
-          "name": {
-            "zh": "三哥大廈",
-            "en": "Third Technology Building"
-          }
-        },
-        {
-          "name": {
-            "zh": "購物廊",
-            "en": "Shopping Corridor"
-          }
-        },
-        {
-          "name": {
-            "zh": "白鴿消防局",
-            "en": "Dove Fire Station"
-          }
-        },
-        {
-          "name": {
-            "zh": "伊迪城",
-            "en": "Eddie City"
-          }
-        },
-        {
-          "name": {
-            "zh": "貨櫃碼頭",
-            "en": "B omits this stop"
-          },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "中西轉車站",
-            "en": "Central - Western Interchange"
-          },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "南環街市",
-            "en": "Southern Market"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "楓樹里",
-            "en": "B ends here"
-          }
-        },
-        {
-          "name": {
-            "zh": "中環橋",
-            "en": "Central Bridge"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "東錦葵大街",
-            "en": "Eastmallow Main Street"
-          }
-        },
-        {
-          "name": {
-            "zh": "東錦葵海傍路",
-            "en": "Eastmallow Praya Road"
-          }
-        }
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" }, "zone": 4 },
+        { "name": { "zh": "东锦葵邨 - 阳葵屋", "en": "Eastmallow Estate - Sunny House" }, "zone": 4 },
+        { "name": { "zh": "东锦葵大街", "en": "Eastmallow Main Street" }, "zone": 4 },
+        { "name": { "zh": "中环桥", "en": "Central Bridge" }, "zone": 4 },
+        { "name": { "zh": "北环中心", "en": "Northern Plaza" }, "zone": 4 },
+        { "name": { "zh": "西区海底隧道转车站", "en": "Western Harbour Tunnel Interchange" }, "zone": 4 },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" }, "zone": 1 }
+      ]
+    },
+    {
+      "directionKey": "E",
+      "direction": {
+        "zh": "东行（环线 · 时间廊 → 东锦葵海傍路）",
+        "en": "Eastbound loop (Timelapse Mall → Eastmallow Praya Road)"
+      },
+      "serviceTime": {
+        "zh": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35",
+        "en": "Mon – Fri: 07:00 – 08:55, 17:40 – 18:35"
+      },
+      "list": [
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" }, "zone": 1 },
+        { "name": { "zh": "银行大厦", "en": "Bank Tower" }, "zone": 1 },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" }, "zone": 1 },
+        { "name": { "zh": "购物廊", "en": "Shopping Corridor" }, "zone": 1 },
+        { "name": { "zh": "白鸽消防局", "en": "Dove Fire Station" }, "zone": 1 },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" }, "zone": 1 },
+        { "name": { "zh": "货柜码头", "en": "Containers Terminal" }, "zone": 1 },
+        { "name": { "zh": "中西转车站", "en": "Central - Western Interchange" }, "zone": 1 },
+        { "name": { "zh": "南环街市", "en": "Southern Market" }, "zone": 4 },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" }, "zone": 4 },
+        { "name": { "zh": "中环桥", "en": "Central Bridge" }, "zone": 4 },
+        { "name": { "zh": "东锦葵大街", "en": "Eastmallow Main Street" }, "zone": 4 },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" }, "zone": 4 }
       ]
     }
   ],

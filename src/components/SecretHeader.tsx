@@ -3,6 +3,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import { routesIndexHref } from '../utils/secretAccess'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
+import { SiteLogo } from './SiteLogo'
 
 interface SecretHeaderProps {
   collapsed: boolean
@@ -31,9 +32,7 @@ export function SecretHeader({ collapsed, onToggleCollapse }: SecretHeaderProps)
               onClick={onLogoClick}
               aria-label={t('secretPageTitle')}
             >
-              <span className="brand-icon" aria-hidden>
-                🚌
-              </span>
+              <SiteLogo />
             </button>
             <div>
               <h1>{t('secretPageTitle')}</h1>

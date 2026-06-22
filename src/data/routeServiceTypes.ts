@@ -11,6 +11,8 @@ const SERVICE_TYPE_ALIASES: Record<string, string[]> = {
   '140P': ['141P'],
   '141P': ['140P'],
   '476SA': ['476S'],
+  /** 246XA 为游戏内环线编号，合并展示为 246X */
+  '246X': ['246XA'],
 }
 
 function sortServiceTypes(types: RouteServiceType[]): RouteServiceType[] {
