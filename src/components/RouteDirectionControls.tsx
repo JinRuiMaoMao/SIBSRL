@@ -2,7 +2,7 @@ import type { BusRoute } from '../types/route'
 import { routeHasDirectionVariants } from '../utils/routeDirections'
 import { routeHasLoopDirectionLayout } from '../utils/routeLoopView'
 import { DirectionToggle } from './DirectionToggle'
-import { LoopViewToggle } from './LoopViewToggle'
+import { LoopDirectionViewToggle } from './LoopDirectionViewToggle'
 
 interface RouteDirectionControlsProps {
   route: BusRoute
@@ -28,21 +28,30 @@ export function RouteDirectionControls({
 
   if (!hasDirections && !hasLoopLayout) return null
 
+  if (hasLoopLayout) {
+    return (
+      <LoopDirectionViewToggle
+        route={route}
+        directionIndex={directionIndex}
+        loopView={loopView}
+        onDirectionChange={onDirectionChange}
+        onLoopViewChange={onLoopViewChange}
+        compact={compact}
+        className={className}
+      />
+    )
+  }
+
   return (
     <div
       className={`route-direction-controls ${compact ? 'route-direction-controls--compact' : ''} ${className}`.trim()}
     >
-      {hasDirections && !loopView ? (
-        <DirectionToggle
-          route={route}
-          value={directionIndex}
-          onChange={onDirectionChange}
-          compact={compact}
-        />
-      ) : null}
-      {hasLoopLayout ? (
-        <LoopViewToggle value={loopView} onChange={onLoopViewChange} compact={compact} />
-      ) : null}
+      <DirectionToggle
+        route={route}
+        value={directionIndex}
+        onChange={onDirectionChange}
+        compact={compact}
+      />
     </div>
   )
 }
