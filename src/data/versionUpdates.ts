@@ -223,6 +223,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2025 年 10 月 Daily Challenge 完整日历；已标准化 Rare PH、Free、No Lights、Marathon 240 / 370AEM 等写法。',
             en: 'Added the user-provided full October 2025 Daily Challenge calendar; Rare PH, Free, No Lights, and Marathon 240 / 370AEM shorthand were normalized.',
           },
+          {
+            zh: '加入用户提供的 2025 年 9 月 Daily Challenge 完整日历；已标准化 Slow/Lazy Pax、No Lights、Cash only、Safety、Rare PH 与 Marathon R370/R148 等写法。',
+            en: 'Added the user-provided full September 2025 Daily Challenge calendar; Slow/Lazy Pax, No Lights, Cash only, Safety, Rare PH, and Marathon R370/R148 shorthand were normalized.',
+          },
         ],
       },
     ],
