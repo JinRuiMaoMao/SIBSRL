@@ -172,6 +172,40 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
     },
     groups: [
       {
+        title: { zh: '账号与收藏同步', en: 'Account & cloud sync' },
+        items: [
+          {
+            zh: '新增邮箱账号：注册、登录、验证码邮件与重置密码；顶栏左侧头像进入个人中心（account.html），未登录时直接显示登录/注册表单。',
+            en: 'Added email accounts—register, sign-in, verification email, and password reset; the header avatar opens the account page (account.html), with sign-in/register when logged out.',
+          },
+          {
+            zh: '登录后收藏夹可云端同步：同一账号在不同设备登录可恢复收藏数据，未登录时仍仅存于本机浏览器。',
+            en: 'Signed-in favorites sync to the cloud—the same account restores favorites on other devices; logged-out use still keeps favorites in the local browser only.',
+          },
+          {
+            zh: 'GitHub Pages 静态站配合 Render 用户 API 提供账号服务；验证码邮件经 SendGrid 发送，任意邮箱均可收信注册。',
+            en: 'GitHub Pages pairs with a Render user API for accounts; verification codes are sent via SendGrid so any email address can register.',
+          },
+          {
+            zh: '账号操作增加发送中/失败等状态提示；连接 Render 免费服务时自动延长等待时间，减少冷启动误报超时。',
+            en: 'Account actions now show sending/failure status; requests wait longer when the free Render service is waking up, reducing false timeouts.',
+          },
+        ],
+      },
+      {
+        title: { zh: '界面与多语言', en: 'UI & localization' },
+        items: [
+          {
+            zh: '浏览器标签页图标改为与站点 Logo 一致；切换界面语言时同步更新标签页标题与 html lang 属性。',
+            en: 'Browser tab favicon now matches the site logo; switching UI language also updates the document title and html lang attribute.',
+          },
+          {
+            zh: '个人中心、秘密页等独立栏目的标签页标题与多语言文案已补全（含 12 种扩展语言）。',
+            en: 'Document titles and tab labels for the account page, secret page, and other standalone tabs now include all 12 extended locales.',
+          },
+        ],
+      },
+      {
         title: { zh: '每日挑战', en: 'Daily Challenge' },
         items: [
           {
