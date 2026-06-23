@@ -9,7 +9,7 @@ import { LOCALE_STORAGE_KEY } from '../i18n/types'
 import { APP_PREFERENCES_STORAGE_KEY } from '../storage/appPreferences'
 import { DEFAULT_FAVORITE_FOLDER_ID, FAVORITE_FOLDERS_STORAGE_KEY } from '../storage/favoriteFolders'
 import { DAILY_CHALLENGE_PROMPT_SEEN_KEY } from '../storage/dailyChallengePrompt'
-import { GUIDED_TOUR_SEEN_KEY } from '../storage/guidedTour'
+import { clearGuidedTourSeen, GUIDED_TOUR_SEEN_ENTRIES_KEY, GUIDED_TOUR_SEEN_KEY } from '../storage/guidedTour'
 import { clearSearchHistory, RECENT_ROUTES_STORAGE_KEY } from '../storage/routeActivity'
 import {
   FAVORITE_ROUTES_STORAGE_KEY,
@@ -44,6 +44,7 @@ export function ResetSettingsSection() {
       localStorage.removeItem(RECENT_ROUTES_STORAGE_KEY)
       localStorage.removeItem(DAILY_CHALLENGE_PROMPT_SEEN_KEY)
       localStorage.removeItem(GUIDED_TOUR_SEEN_KEY)
+      localStorage.removeItem(GUIDED_TOUR_SEEN_ENTRIES_KEY)
       clearUpdatesPromptSeen()
       logout()
     } catch {

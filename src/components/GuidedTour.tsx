@@ -223,9 +223,9 @@ export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) 
   onPrepareRef.current = onPrepare
 
   const finish = useCallback(() => {
-    markGuidedTourSeen()
+    markGuidedTourSeen(mode)
     onClose()
-  }, [onClose])
+  }, [mode, onClose])
 
   const remeasure = useCallback(() => {
     setViewportSize(readViewportSize())

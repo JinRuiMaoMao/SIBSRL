@@ -84,7 +84,7 @@ export function SettingsMenu() {
             const opening = !value
             if (opening) {
               cancelAutoStartTimer()
-              if (!tourOpen && canAutoStartGuidedTour()) {
+              if (!tourOpen && canAutoStartGuidedTour('brief')) {
                 openTour({ mode: 'brief' })
               }
             }
