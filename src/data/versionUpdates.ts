@@ -227,6 +227,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2025 年 9 月 Daily Challenge 完整日历；已标准化 Slow/Lazy Pax、No Lights、Cash only、Safety、Rare PH 与 Marathon R370/R148 等写法。',
             en: 'Added the user-provided full September 2025 Daily Challenge calendar; Slow/Lazy Pax, No Lights, Cash only, Safety, Rare PH, and Marathon R370/R148 shorthand were normalized.',
           },
+          {
+            zh: '加入用户提供的 2025 年 8 月 Daily Challenge 完整日历；已标准化 PayHearts、Rushour、Streetlightless、Lazi、yoU47 与多日 Race 范围。',
+            en: 'Added the user-provided full August 2025 Daily Challenge calendar; PayHearts, Rushour, Streetlightless, Lazi, yoU47, and multi-day race ranges were normalized.',
+          },
         ],
       },
     ],
