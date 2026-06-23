@@ -1,5 +1,8 @@
 import type { Locale } from '../i18n/types'
 import { isChineseLocale } from '../i18n/types'
+import schedule2024JuneJson from '../../data/daily-challenge-schedule-2024-06.json'
+import schedule2024JulyJson from '../../data/daily-challenge-schedule-2024-07.json'
+import schedule2024AugustJson from '../../data/daily-challenge-schedule-2024-08.json'
 import scheduleJuneJson from '../../data/daily-challenge-schedule-2026-06.json'
 import scheduleJulyJson from '../../data/daily-challenge-schedule-2026-07.json'
 
@@ -18,6 +21,9 @@ export interface DailyChallengeSchedule {
 }
 
 export const DAILY_CHALLENGE_SCHEDULES: DailyChallengeSchedule[] = [
+  schedule2024JuneJson as DailyChallengeSchedule,
+  schedule2024JulyJson as DailyChallengeSchedule,
+  schedule2024AugustJson as DailyChallengeSchedule,
   scheduleJuneJson as DailyChallengeSchedule,
   scheduleJulyJson as DailyChallengeSchedule,
 ]
@@ -148,7 +154,6 @@ export function listScheduleYears(schedules: DailyChallengeSchedule[]): number[]
 }
 
 export function emptyScheduleForMonth(monthKey: string): DailyChallengeSchedule {
-  const parsed = parseScheduleMonthKey(monthKey)
   const fallback = DAILY_CHALLENGE_SCHEDULES[0]
   return {
     month: monthKey,

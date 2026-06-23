@@ -116,8 +116,15 @@ const EVENT_ZH: Record<string, string> = {
   'Private Hire': '私人租用',
   'Rare Appearance x Private Hire': '罕见外观 × 私人租用',
   'Rare Appearance': '罕见外观',
+  'E-Payment Outage': '电子支付故障',
+  'Friendly Day': '友善日',
+  'Lazy Passengers': '懒惰乘客',
+  'Slow Passengers': '慢速乘客',
+  'Sponsored Route': '赞助线路',
+  'Concert Aftermath': '演唱会散场',
   'Street light outage': '街灯停电',
   'Street Light Outage': '街灯停电',
+  'Street Light Outage x Safety First': '街灯停电 × 安全第一',
   'Marathon Road Closure': '马拉松封路',
   'Marathon Road Closure (N)': '马拉松封路（北行）',
   'Marathon Road Closure at Night': '夜间马拉松封路',
@@ -125,9 +132,11 @@ const EVENT_ZH: Record<string, string> = {
   'Foggy Day': '浓雾天气',
   'Daily Challenge': '每日挑战',
   'Urban Odyssey': '城市漫游',
+  'Safety First x Urban Odyssey': '安全第一 × 城市漫游',
   'Marathon Shuttle': '马拉松接驳',
   'Bridge Closure': '桥梁封闭',
   'Grumble Day': '抱怨日',
+  'Lazy Passengers x Safety First': '懒惰乘客 × 安全第一',
 }
 
 function toEventLabel(eventEn: string, race: boolean): BilingualText {
