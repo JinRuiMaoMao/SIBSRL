@@ -251,6 +251,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '每日挑战日历新增最晚月份上限，已到现有日程最后一月时禁用「下一月」，避免跳到未来空白月份造成混乱。',
             en: 'Daily Challenge calendar now caps navigation at the latest scheduled month and disables “next month” there, preventing confusing future empty months.',
           },
+          {
+            zh: '重新提取并修复 N271 站序资料，移除由 Wiki 路线分隔模板误解析出来的 subject = … 乱码站名。',
+            en: 'Re-extracted and fixed N271 stop data, removing subject = … gibberish caused by Wiki route-break templates being parsed as stop names.',
+          },
         ],
       },
     ],
