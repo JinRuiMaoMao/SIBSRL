@@ -88,6 +88,7 @@ function parseZoneFromPlace(place) {
 
 function isValidStop(en, zh) {
   if (/rowspan/i.test(en) || /rowspan/i.test(zh)) return false
+  if (/^subject\s*=/i.test(en.trim()) || /^subject\s*=/i.test(zh.trim())) return false
   if (/^Zone\s*\d/i.test(en) || /^Zone\s*\d/i.test(zh)) return false
   if ((en?.length ?? 0) < 2 && (zh?.length ?? 0) < 1) return false
   if (/^Near |^Only for|^Weekdays|^Weekends/i.test(en)) return false

@@ -20,6 +20,40 @@ function readRoutePagesManifest(manifestPath) {
   return JSON.parse(readFileSync(manifestPath, 'utf8'))
 }
 
+function hasSubjectTemplateStop(value) {
+  if (typeof value === 'string') {
+    return /(?:^|[\s,])subject\s*=/i.test(value)
+  }
+
+  if (!value || typeof value !== 'object') return false
+
+  if (Array.isArray(value)) {
+    return value.some(hasSubjectTemplateStop)
+  }
+
+  const name = value.name
+  if (name && typeof name === 'object') {
+    for (const text of Object.values(name)) {
+      if (typeof text === 'string' && /^subject\s*=/i.test(text.trim())) return true
+    }
+  }
+
+  return Object.values(value).some(hasSubjectTemplateStop)
+}
+
+function selectRoutePageData(id, preservedData, manifestData) {
+  if (
+    preservedData &&
+    manifestData &&
+    hasSubjectTemplateStop(preservedData) &&
+    !hasSubjectTemplateStop(manifestData)
+  ) {
+    return { ...manifestData, id }
+  }
+
+  return { ...(preservedData ?? manifestData ?? {}), id }
+}
+
 /**
  * 为每条展示线路生成 routes/{id}.html（内嵌可编辑 JSON）
  * @param {{ targets?: string[], manifestPath?: string }} [options]
@@ -59,7 +93,7 @@ export function generateRoutePages(options = {}) {
     mkdirSync(dir, { recursive: true })
 
     for (const id of ids) {
-      const routeData = { ...(preserved.get(id) ?? manifest[id] ?? {}), id }
+      const routeData = selectRoutePageData(id, preserved.get(id), manifest[id])
       const filePath = resolve(dir, `${routeIdToPageFilename(id)}.html`)
       writeFileSync(filePath, renderRoutePageHtml(id, routeData), 'utf8')
     }

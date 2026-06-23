@@ -181,6 +181,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
       },
       {
+        title: { zh: '路线资料', en: 'Route data' },
+        items: [
+          {
+            zh: '补修 N171 / N271 独立路线页，重新使用已清理的站序资料覆盖旧 JSON，避免 Wiki 路线分隔模板显示成 subject = … 伪站名。',
+            en: 'Fixed the standalone N171 / N271 route pages by replacing stale embedded JSON with cleaned stop data, preventing Wiki route-break templates from appearing as subject = ... pseudo-stops.',
+          },
+        ],
+      },
+      {
         title: { zh: '每日挑战日历', en: 'Daily Challenge calendar' },
         items: [
           {
