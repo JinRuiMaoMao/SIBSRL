@@ -177,14 +177,12 @@ function runDetailAnimation(
 interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
-  onRouteDetailOpen?: () => void
   dailyChallenge: DailyChallengeInfo
 }
 
 export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
-  onRouteDetailOpen,
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
@@ -546,11 +544,6 @@ export function RouteLookupPage({
     if (!selectedRoute) return
     setDetailOverlay({ kind: 'route', route: selectedRoute })
   }, [selectedRoute])
-
-  useEffect(() => {
-    if (!detailOverlay) return
-    onRouteDetailOpen?.()
-  }, [detailOverlay, onRouteDetailOpen])
 
   useEffect(() => {
     const sheet = sheetRef.current

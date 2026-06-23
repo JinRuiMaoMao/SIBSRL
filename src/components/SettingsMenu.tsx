@@ -3,21 +3,22 @@ import { DisplayPreferencesSection } from './DisplayPreferencesSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
+import { resolveReplayGuidedTourMode } from '../data/guidedTourSteps'
+import { useAppPreferences } from '../contexts/AppPreferencesContext'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
-import { clearGuidedTourDeferral } from '../storage/guidedTour'
-import { readTabFromLocation } from '../utils/appTabNavigation'
+import { canAutoStartGuidedTour } from '../storage/guidedTour'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
-  const { openTour, deferAutoTour } = useGuidedTourControl()
+  const { guidedTourAutoStart, setGuidedTourAutoStart } = useAppPreferences()
+  const { openTour, cancelAutoStartTimer, closeTour, open: tourOpen } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
-  const onRoutesTab = (readTabFromLocation() ?? 'routes') === 'routes'
 
   useLayoutEffect(() => {
     if (!open) {
@@ -80,8 +81,14 @@ export function SettingsMenu() {
         data-tour="settings"
         onClick={() => {
           setOpen((value) => {
-            if (!value) deferAutoTour()
-            return !value
+            const opening = !value
+            if (opening) {
+              cancelAutoStartTimer()
+              if (!tourOpen && canAutoStartGuidedTour()) {
+                openTour({ mode: 'brief' })
+              }
+            }
+            return opening
           })
         }}
         aria-expanded={open}
@@ -134,21 +141,45 @@ export function SettingsMenu() {
           </section>
 
           <DisplayPreferencesSection />
-          {onRoutesTab ? (
-            <section className="settings-section">
-              <button
-                type="button"
-                className="settings-action-btn"
-                onClick={() => {
-                  setOpen(false)
-                  clearGuidedTourDeferral()
-                  openTour({ manual: true })
-                }}
-              >
-                {t('guidedTourReplay')}
-              </button>
-            </section>
-          ) : null}
+          <section className="settings-section">
+            <p className="settings-panel-title">{t('guidedTourSettingsTitle')}</p>
+            <div className="settings-field">
+              <p className="settings-field-label">{t('guidedTourAutoStart')}</p>
+              <div className="settings-toggle-group" role="group" aria-label={t('guidedTourAutoStart')}>
+                <button
+                  type="button"
+                  className="settings-toggle-btn"
+                  aria-pressed={!guidedTourAutoStart}
+                  onClick={() => {
+                    setGuidedTourAutoStart(false)
+                    cancelAutoStartTimer()
+                    closeTour()
+                  }}
+                >
+                  {t('settingOff')}
+                </button>
+                <button
+                  type="button"
+                  className="settings-toggle-btn"
+                  aria-pressed={guidedTourAutoStart}
+                  onClick={() => setGuidedTourAutoStart(true)}
+                >
+                  {t('settingOn')}
+                </button>
+              </div>
+              <p className="settings-hint">{t('guidedTourAutoStartHint')}</p>
+            </div>
+            <button
+              type="button"
+              className="settings-action-btn"
+              onClick={() => {
+                setOpen(false)
+                openTour({ manual: true, mode: resolveReplayGuidedTourMode() })
+              }}
+            >
+              {t('guidedTourReplay')}
+            </button>
+          </section>
           <section className="settings-section">
             <button
               type="button"

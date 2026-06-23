@@ -5,11 +5,13 @@ export const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'
 export interface AppPreferences {
   reduceMotion: boolean
   listDensity: ListDensity
+  guidedTourAutoStart: boolean
 }
 
 const DEFAULT_APP_PREFERENCES: AppPreferences = {
   reduceMotion: false,
   listDensity: 'comfortable',
+  guidedTourAutoStart: true,
 }
 
 export function readAppPreferences(): AppPreferences {
@@ -19,6 +21,7 @@ export function readAppPreferences(): AppPreferences {
     return {
       reduceMotion: Boolean(stored.reduceMotion),
       listDensity: stored.listDensity === 'compact' ? 'compact' : 'comfortable',
+      guidedTourAutoStart: stored.guidedTourAutoStart !== false,
     }
   } catch {
     return { ...DEFAULT_APP_PREFERENCES }

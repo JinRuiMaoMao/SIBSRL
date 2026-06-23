@@ -5,7 +5,6 @@ import { useSecretLogoClick } from '../hooks/useSecretLogoClick'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
-import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
@@ -33,7 +32,6 @@ interface HeaderProps {
 
 export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) {
   const { t, locale } = useLocale()
-  const { deferAutoTour } = useGuidedTourControl()
   const onLogoClick = useSecretLogoClick(activeTab)
   const tabOrder = useMemo(() => Object.keys(TAB_KEYS) as AppTab[], [])
 
@@ -60,9 +58,6 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
       role="tab"
       aria-selected={activeTab === tab}
       className={`header-tab-link ${activeTab === tab ? 'header-tab-link--active' : ''}`}
-      onClick={() => {
-        if (tab !== activeTab) deferAutoTour()
-      }}
     >
       <span className="header-tab">{t(TAB_KEYS[tab])}</span>
     </a>
