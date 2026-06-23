@@ -90,12 +90,22 @@ function redirect(res, location) {
 }
 
 /** @param {import('node:http').IncomingMessage} req */
+function normalizeCorsOrigin(value) {
+  if (!value || typeof value !== 'string') return ''
+  return value.trim().replace(/\/+$/, '')
+}
+
+/** @param {import('node:http').IncomingMessage} req */
 function resolveCorsOrigin(req) {
   const raw = config.corsOrigin.trim()
   if (!raw || raw === '*') return '*'
-  const allowed = raw.split(',').map((part) => part.trim()).filter(Boolean)
-  const origin = req.headers.origin
-  if (origin && allowed.includes(origin)) return origin
+  const allowed = raw
+    .split(',')
+    .map((part) => normalizeCorsOrigin(part))
+    .filter(Boolean)
+  const originHeader = req.headers.origin
+  const origin = normalizeCorsOrigin(originHeader)
+  if (origin && allowed.includes(origin)) return originHeader
   return allowed[0] ?? '*'
 }
 
