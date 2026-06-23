@@ -20,21 +20,28 @@ function resolveInitialAuthFormState(
   initialEmail?: string,
   initialCode?: string,
 ) {
-  const email = initialEmail ?? readLastAuthEmail() ?? ''
+  let email = initialEmail ?? readLastAuthEmail() ?? ''
   const mode = initialMode
   let password = ''
   let code = initialCode ?? ''
   let codeSent = Boolean(initialCode)
 
   if (mode === 'register' || mode === 'reset') {
-    const draft = readAuthFormDraft(email, mode)
+    const draft = readAuthFormDraft(mode)
     if (draft) {
-      password = draft.password
-      if (!initialCode && draft.code) {
-        code = draft.code
-        codeSent = draft.codeSent
-      } else if (initialCode) {
-        codeSent = true
+      const emailHint = normalizeAuthEmail(initialEmail ?? email)
+      const emailsAlign =
+        !emailHint || normalizeAuthEmail(draft.email) === emailHint
+      if (emailsAlign) {
+        if (emailHint) email = emailHint
+        else email = draft.email
+        password = draft.password
+        if (!initialCode && draft.code) {
+          code = draft.code
+          codeSent = draft.codeSent
+        } else if (initialCode) {
+          codeSent = true
+        }
       }
     }
   }
@@ -69,6 +76,19 @@ export function AccountAuthForm({
   const [busy, setBusy] = useState(false)
   const [codeSent, setCodeSent] = useState(initialState.codeSent)
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (mode === 'login' || password) return
+    const draft = readAuthFormDraft(mode as AuthFormDraftMode)
+    if (!draft?.password) return
+    if (normalizeAuthEmail(draft.email) !== normalizeAuthEmail(email)) return
+    setPassword(draft.password)
+    if (!code && draft.code) {
+      setCode(draft.code)
+      setCodeSent(draft.codeSent)
+    }
+    setStatusMessage(t('authPasswordRestored'))
+  }, [code, email, mode, password, t])
 
   useEffect(() => {
     if (mode === 'login') {
@@ -230,6 +250,16 @@ export function AccountAuthForm({
           autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onBlur={() => {
+            if (mode === 'login' || !email.trim() || !password) return
+            writeAuthFormDraft({
+              mode: mode as AuthFormDraftMode,
+              email,
+              password,
+              code,
+              codeSent,
+            })
+          }}
         />
       </label>
 

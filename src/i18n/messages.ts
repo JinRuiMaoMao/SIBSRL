@@ -48,6 +48,7 @@ const messagesZhHans = {
   authCodeSentInline: '验证码已发送，请查收邮箱（含垃圾箱）。',
   authDeepLinkFilledRegister: '验证码已从邮件填入，请设置密码后点击「注册」。',
   authDeepLinkFilledReset: '验证码已从邮件填入，请设置新密码后点击「重置密码」。',
+  authPasswordRestored: '已恢复您之前输入的密码，请核对后直接注册。',
   authApiUrlHint: 'API 地址：{url}（根路径 / 返回 not_found 是正常的）',
   authChangePasswordTitle: '修改密码',
   authCurrentPassword: '当前密码',
@@ -528,6 +529,7 @@ const messagesEn: Record<MessageKey, string> = {
     'Verification code pre-filled from your email. Set a password and tap Register.',
   authDeepLinkFilledReset:
     'Verification code pre-filled from your email. Set a new password and tap Reset password.',
+  authPasswordRestored: 'Your previously entered password was restored. Review it, then register.',
   authApiUrlHint: 'API: {url} (a not_found response at / is normal)',
   authChangePasswordTitle: 'Change password',
   authCurrentPassword: 'Current password',
