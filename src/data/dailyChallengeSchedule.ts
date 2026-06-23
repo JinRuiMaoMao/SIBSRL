@@ -5,6 +5,7 @@ import schedule2024JulyJson from '../../data/daily-challenge-schedule-2024-07.js
 import schedule2024AugustJson from '../../data/daily-challenge-schedule-2024-08.json'
 import schedule2024SeptemberJson from '../../data/daily-challenge-schedule-2024-09.json'
 import schedule2024DecemberJson from '../../data/daily-challenge-schedule-2024-12.json'
+import scheduleFebruaryJson from '../../data/daily-challenge-schedule-2026-02.json'
 import scheduleMarchJson from '../../data/daily-challenge-schedule-2026-03.json'
 import scheduleAprilJson from '../../data/daily-challenge-schedule-2026-04.json'
 import scheduleMayJson from '../../data/daily-challenge-schedule-2026-05.json'
@@ -31,6 +32,7 @@ export const DAILY_CHALLENGE_SCHEDULES: DailyChallengeSchedule[] = [
   schedule2024AugustJson as DailyChallengeSchedule,
   schedule2024SeptemberJson as DailyChallengeSchedule,
   schedule2024DecemberJson as DailyChallengeSchedule,
+  scheduleFebruaryJson as DailyChallengeSchedule,
   scheduleMarchJson as DailyChallengeSchedule,
   scheduleAprilJson as DailyChallengeSchedule,
   scheduleMayJson as DailyChallengeSchedule,
