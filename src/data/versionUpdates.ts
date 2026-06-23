@@ -215,6 +215,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2025 年 12 月 Daily Challenge 完整日历；已标准化节日备注、Free Ride、E-payment outage、Rare apperance 与 Marathon 等写法。',
             en: 'Added the user-provided full December 2025 Daily Challenge calendar; holiday notes, Free Ride, E-payment outage, Rare apperance, and Marathon shorthand were normalized.',
           },
+          {
+            zh: '加入用户提供的 2025 年 11 月 Daily Challenge 完整日历；已标准化 Friendly、Grumble、Private Hire 与 Marathon / why370 等写法。',
+            en: 'Added the user-provided full November 2025 Daily Challenge calendar; Friendly, Grumble, Private Hire, and Marathon / why370 shorthand were normalized.',
+          },
         ],
       },
     ],
