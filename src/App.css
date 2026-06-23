@@ -5014,7 +5014,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 .app-dialog-root {
   position: fixed;
   inset: 0;
-  z-index: 280;
+  z-index: 1400;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -29,12 +29,14 @@ export function favoriteFoldersContentEqual(
   const left = canonicalizeFolders(a)
   const right = canonicalizeFolders(b)
   if (left.length !== right.length) return false
-  return left.every((folder, index) => {
+  const foldersEqual = left.every((folder, index) => {
     const other = right[index]!
     if (folder.id !== other.id || folder.name !== other.name) return false
     if (folder.routeIds.length !== other.routeIds.length) return false
     return folder.routeIds.every((id, routeIndex) => id === other.routeIds[routeIndex])
   })
+  if (!foldersEqual) return false
+  return a.activeFolderId === b.activeFolderId
 }
 
 export function countFavoriteRoutes(state: FavoriteFoldersState): number {

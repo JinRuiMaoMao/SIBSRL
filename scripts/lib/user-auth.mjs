@@ -23,6 +23,9 @@ function fromBase64Url(input) {
 export function normalizeEmail(email) {
   return String(email ?? '')
     .trim()
+    .replace(/\u3000/g, ' ')
+    .replace(/[\uff01-\uff5e]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+    .trim()
     .toLowerCase()
 }
 

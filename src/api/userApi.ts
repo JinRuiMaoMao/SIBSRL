@@ -19,35 +19,42 @@ async function parseJson(res: Response): Promise<unknown> {
 
 async function request<T>(
   path: string,
-  options: RequestInit & { token?: string | null } = {},
+  options: RequestInit & { token?: string | null; signal?: AbortSignal } = {},
 ): Promise<T> {
   const base = getUserApiBaseUrl()
   if (base === null) {
     throw new UserApiError('user_api_unconfigured', 'User API is not configured')
   }
 
-  const headers = new Headers(options.headers)
-  if (!headers.has('Content-Type') && options.body) {
+  const { token, signal: userSignal, ...fetchOptions } = options
+  const headers = new Headers(fetchOptions.headers)
+  if (!headers.has('Content-Type') && fetchOptions.body) {
     headers.set('Content-Type', 'application/json')
   }
-  if (options.token) {
-    headers.set('Authorization', `Bearer ${options.token}`)
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`)
   }
 
   let res: Response
   try {
     const controller = new AbortController()
     const timeoutId = window.setTimeout(() => controller.abort(), 120_000)
+    const onUserAbort = () => controller.abort()
+    userSignal?.addEventListener('abort', onUserAbort)
     try {
       res = await fetch(`${base}${path}`, {
-        ...options,
+        ...fetchOptions,
         headers,
         signal: controller.signal,
       })
     } finally {
+      userSignal?.removeEventListener('abort', onUserAbort)
       window.clearTimeout(timeoutId)
     }
   } catch (error) {
+    if (userSignal?.aborted) {
+      throw new UserApiError('aborted', 'Request was cancelled')
+    }
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new UserApiError('timeout', 'Account service request timed out')
     }
@@ -92,23 +99,25 @@ export async function resetAccountPassword(email: string, password: string, code
   })
 }
 
-export async function fetchUserData(token: string) {
+export async function fetchUserData(token: string, signal?: AbortSignal) {
   return request<{
     favorites: import('../storage/favoriteFolders').FavoriteFoldersState | null
     updatedAt: number | null
     favoriteCount: number
     profile?: { email: string; oauthOnly: boolean }
-  }>('/api/user/data', { token })
+  }>('/api/user/data', { token, signal })
 }
 
 export async function saveUserData(
   token: string,
   favorites: import('../storage/favoriteFolders').FavoriteFoldersState,
+  signal?: AbortSignal,
 ) {
   return request<{ updatedAt: number }>('/api/user/data', {
     method: 'PUT',
     token,
     body: JSON.stringify({ favorites }),
+    signal,
   })
 }
 

@@ -25,18 +25,22 @@ services:
       - key: ENA_BOT_USER_ID
         sync: false
 
-  # 用户登录 / 收藏同步 API（免费档可 $0；数据在容器内，重新部署会清空，要持久化可改 starter + disk）
+  # 用户登录 / 收藏同步 API（starter + disk 持久化 SQLite，避免重新部署清空收藏）
   - type: web
     name: sibs-user-api
     runtime: docker
-    plan: free
+    plan: starter
     dockerfilePath: ./Dockerfile.user-api
     healthCheckPath: /healthz
+    disk:
+      name: user-api-data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: USER_DB_PATH
-        value: data/users.db
+        value: /var/data/users.db
       - key: USER_API_CORS_ORIGIN
         value: https://jinruimaomao.github.io
       - key: MAIL_FROM
