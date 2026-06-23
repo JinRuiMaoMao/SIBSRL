@@ -207,6 +207,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2026 年 2 月 Daily Challenge 完整日历；已标准化 Rare Apperarance、Lazy Passenger、why370 与 Marathon (148) 等写法。',
             en: 'Added the user-provided full February 2026 Daily Challenge calendar; Rare Apperarance, Lazy Passenger, why370, and Marathon (148) shorthand were normalized.',
           },
+          {
+            zh: '加入用户提供的 2026 年 1 月 Daily Challenge 完整日历；已标准化 PH、Marathon / Marathon Closure、N271(N171WM) 等写法。',
+            en: 'Added the user-provided full January 2026 Daily Challenge calendar; PH, Marathon / Marathon Closure, and N271(N171WM) shorthand were normalized.',
+          },
         ],
       },
     ],
