@@ -102,6 +102,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return 'authErrorMailFailed'
       case 'network_error':
         return 'authErrorNetwork'
+      case 'timeout':
+        return 'authErrorTimeout'
       default:
         return 'authErrorGeneric'
     }

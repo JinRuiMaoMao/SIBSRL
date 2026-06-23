@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getUserApiBaseUrl } from '../api/userApiConfig'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
@@ -21,17 +22,22 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
   const [codeSent, setCodeSent] = useState(false)
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
 
   const showError = async (error: unknown) => {
-    await alert({ message: t(mapAuthError(error)) })
+    const message = t(mapAuthError(error))
+    setStatusMessage(message)
+    await alert({ message })
   }
 
   const handleSendCode = async () => {
     setBusy(true)
+    setStatusMessage(t('authSendingCode'))
     try {
       const purpose = mode === 'reset' ? 'reset' : 'register'
       await sendCode(email, purpose)
       setCodeSent(true)
+      setStatusMessage(t('authCodeSentInline'))
       await alert({ message: t('authCodeSent') })
     } catch (error) {
       await showError(error)
@@ -42,6 +48,7 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
 
   const handleSubmit = async () => {
     setBusy(true)
+    setStatusMessage(null)
     try {
       if (mode === 'login') {
         await login(email, password)
@@ -105,6 +112,16 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
       </div>
 
       <p className="settings-hint">{t('authIntro')}</p>
+      {getUserApiBaseUrl() ? (
+        <p className="settings-hint account-api-hint">
+          {t('authApiUrlHint', { url: getUserApiBaseUrl() ?? '' })}
+        </p>
+      ) : null}
+      {statusMessage ? (
+        <p className="account-status-message" role="status">
+          {statusMessage}
+        </p>
+      ) : null}
 
       <label className="settings-field">
         <span className="settings-field-label">{t('authEmail')}</span>
@@ -148,7 +165,11 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
               disabled={busy || !email.trim()}
               onClick={() => void handleSendCode()}
             >
-              {codeSent ? t('authResendCode') : t('authSendCode')}
+              {busy
+                ? t('authSendingCode')
+                : codeSent
+                  ? t('authResendCode')
+                  : t('authSendCode')}
             </button>
           </div>
         </>

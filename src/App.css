@@ -1532,6 +1532,21 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   word-break: break-all;
 }
 
+.account-status-message {
+  margin: 0 0 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.account-api-hint {
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
 .settings-icon {
   display: block;
 }

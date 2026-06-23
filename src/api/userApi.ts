@@ -36,11 +36,21 @@ async function request<T>(
 
   let res: Response
   try {
-    res = await fetch(`${base}${path}`, {
-      ...options,
-      headers,
-    })
-  } catch {
+    const controller = new AbortController()
+    const timeoutId = window.setTimeout(() => controller.abort(), 90_000)
+    try {
+      res = await fetch(`${base}${path}`, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      })
+    } finally {
+      window.clearTimeout(timeoutId)
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new UserApiError('timeout', 'Account service request timed out')
+    }
     throw new UserApiError('network_error', 'Could not reach account service')
   }
 
