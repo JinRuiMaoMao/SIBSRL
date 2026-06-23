@@ -57,7 +57,7 @@ const NOSCRIPT_GUARD_HTML = `<noscript>
     .noscript-wall p { margin: 0.35rem 0; color: #8b98a5; max-width: 26rem; }
   </style>
   <div class="noscript-wall" id="noscript-wall" role="alert">
-    <p aria-hidden="true">🚌</p>
+    <p><img src="./sibs-logo.png" alt="" width="48" height="48" decoding="async" /></p>
     <h1>请启用 JavaScript</h1>
     <p>阳光群岛线路查询工具需要 JavaScript 才能运行，请在浏览器设置中开启后刷新页面。</p>
     <p lang="en">This site requires JavaScript. Please enable it in your browser settings and reload.</p>
@@ -192,15 +192,31 @@ export function injectLocaleBootstrap(html) {
     .replace('</script>\n    <link rel="icon"', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <link rel="icon"`)
 }
 
-/** @param {string} html */
-export function syncFaviconLink(html) {
-  return html.replace(
-    /<link rel="icon" href="[^"]*" type="image\/png" \/>/,
-    '<link rel="icon" href="./sibs-logo.png" type="image/png" />',
-  ).replace(
-    /<link rel="icon" href="data:image\/svg\+xml[^"]*" \/>/,
-    '<link rel="icon" href="./sibs-logo.png" type="image/png" />',
+/** @param {string} [buildTag] @param {string} [assetPrefix] */
+export function buildFaviconLinks(buildTag = '', assetPrefix = './') {
+  const version = buildTag ? `?v=${encodeURIComponent(buildTag)}` : ''
+  const href = `${assetPrefix}sibs-logo.png${version}`
+  return [
+    `<link rel="icon" href="${href}" type="image/png" sizes="53x53" />`,
+    `<link rel="apple-touch-icon" href="${href}" sizes="180x180" />`,
+    `<link rel="apple-touch-icon-precomposed" href="${href}" />`,
+  ].join('\n    ')
+}
+
+/** @param {string} html @param {string} [buildTag] */
+export function syncFaviconLink(html, buildTag = '') {
+  const withoutIcons = html.replace(
+    /\s*<link rel="(?:icon|apple-touch-icon(?:-precomposed)?)"[^>]*>\s*/gi,
+    '\n',
   )
+  const links = buildFaviconLinks(buildTag)
+  if (withoutIcons.includes('name="app-build"')) {
+    return withoutIcons.replace(
+      /(<meta name="app-build" content="[^"]*" \/>)/,
+      `$1\n    ${links}`,
+    )
+  }
+  return withoutIcons.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    ${links}`)
 }
 
 const SECRET_ACCESS_STORAGE_KEY = 'sibs-secret-unlock'

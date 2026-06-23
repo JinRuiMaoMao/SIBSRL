@@ -68,6 +68,7 @@ export function publishStandalone(options = {}) {
           ),
         ),
       ),
+      buildTag,
     ),
   )
 
@@ -115,6 +116,8 @@ export function publishStandalone(options = {}) {
   if (existsSync(publicLogo)) {
     cpSync(publicLogo, resolve(root, 'sibs-logo.png'))
     cpSync(publicLogo, resolve(root, 'dist', 'sibs-logo.png'))
+    cpSync(publicLogo, resolve(root, 'apple-touch-icon.png'))
+    cpSync(publicLogo, resolve(root, 'dist', 'apple-touch-icon.png'))
   }
 
   const serviceWorker = resolve(root, 'dist', 'sw.js')

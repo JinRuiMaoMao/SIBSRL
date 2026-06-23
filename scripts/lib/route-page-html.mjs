@@ -1,4 +1,4 @@
-import { injectDevToolsBlock, injectNoScriptGuard, injectThemeBootstrap } from './app-page-html.mjs'
+import { injectDevToolsBlock, injectNoScriptGuard, injectThemeBootstrap, buildFaviconLinks } from './app-page-html.mjs'
 import { routeIdToPageFilename, buildRouteLandingUrl } from './route-page-filename.mjs'
 import { ROUTE_DATA_SCRIPT_ID } from './extract-route-page-data.mjs'
 
@@ -17,6 +17,7 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  ${buildFaviconLinks('', '../')}
   <title>${safeTitle} · 阳光群岛线路查询</title>
   <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
@@ -66,6 +67,7 @@ export function renderRoutePageHtml(routeId, routeData) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  ${buildFaviconLinks('', '../')}
   <title>${safeTitle} · 阳光群岛线路查询</title>
   <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
