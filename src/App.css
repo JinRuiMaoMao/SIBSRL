@@ -1096,6 +1096,25 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
+.route-lookup-sticky .route-syntax-dock {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  margin: 0.2rem 0 0;
+  grid-column: unset;
+}
+
+.route-lookup-sticky .route-syntax-dock.is-collapsed {
+  margin-bottom: 0;
+}
+
+.route-lookup-sticky .search-syntax-panel-inner {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--bg-deep) 72%, transparent);
+}
+
 .search-shortcut-hint {
   margin: 0;
   flex: 1 1 auto;

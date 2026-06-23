@@ -30,7 +30,6 @@ import { SeasonalPromotedRouteCard } from './SeasonalPromotedRouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
-import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -259,7 +258,6 @@ export function RouteLookupPage({
     useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef, {
       onReturnToTop: tryUnlockManualSyntaxHideAtTop,
     })
-  const syntaxInFlowVisible = !syntaxScrollHidden && !syntaxManualHidden && !syntaxForceOpen
   const syntaxExpanded = syntaxForceOpen || (!syntaxScrollHidden && !syntaxManualHidden)
 
   const handleSyntaxToggle = () => {
@@ -1074,22 +1072,16 @@ export function RouteLookupPage({
           syntaxVisible={syntaxExpanded}
           onSyntaxToggle={handleSyntaxToggle}
         />
-        {syntaxForceOpen ? (
-          <div className="search-syntax-pinned">
-            <SearchSyntaxHelp stickyRef={stickyToolbarRef} visible />
-          </div>
-        ) : null}
+        <RouteSearchSyntaxDock
+          panelRef={syntaxPanelRef}
+          stickyRef={stickyToolbarRef}
+          visible={syntaxExpanded}
+        />
       </div>
 
       <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>
           <div className="route-display-group-list">
-            <RouteSearchSyntaxDock
-              panelRef={syntaxPanelRef}
-              stickyRef={stickyToolbarRef}
-              visible={syntaxInFlowVisible}
-            />
-
             {dailyChallengeVisible ? (
               <DailyChallengeBanner
                 selected={dailyChallengeSelected}
