@@ -219,6 +219,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2025 年 11 月 Daily Challenge 完整日历；已标准化 Friendly、Grumble、Private Hire 与 Marathon / why370 等写法。',
             en: 'Added the user-provided full November 2025 Daily Challenge calendar; Friendly, Grumble, Private Hire, and Marathon / why370 shorthand were normalized.',
           },
+          {
+            zh: '加入用户提供的 2025 年 10 月 Daily Challenge 完整日历；已标准化 Rare PH、Free、No Lights、Marathon 240 / 370AEM 等写法。',
+            en: 'Added the user-provided full October 2025 Daily Challenge calendar; Rare PH, Free, No Lights, and Marathon 240 / 370AEM shorthand were normalized.',
+          },
         ],
       },
     ],
