@@ -66,6 +66,7 @@ const EXACT_MERGE: Record<string, MergeTarget> = {
   '42AN': { base: '42', directionKey: 'N' },
   '42AS': { base: '42', directionKey: 'S' },
   '471S': { base: '471', directionKey: 'S' },
+  '473N': { base: '473', directionKey: 'N' },
   '75PS': { base: '75P' },
   '141PE': { base: '141P', directionKey: 'E' },
   '141PW': { base: '141P', directionKey: 'W' },
