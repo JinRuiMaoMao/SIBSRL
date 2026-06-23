@@ -3,23 +3,22 @@ import { DisplayPreferencesSection } from './DisplayPreferencesSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
+import { resolveReplayGuidedTourMode } from '../data/guidedTourSteps'
 import { useAppPreferences } from '../contexts/AppPreferencesContext'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
-import { clearGuidedTourDeferral } from '../storage/guidedTour'
-import { readTabFromLocation } from '../utils/appTabNavigation'
+import { canAutoStartGuidedTour } from '../storage/guidedTour'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
   const { guidedTourAutoStart, setGuidedTourAutoStart } = useAppPreferences()
-  const { openTour, deferAutoTour } = useGuidedTourControl()
+  const { openTour, cancelAutoStartTimer, closeTour, open: tourOpen } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
-  const onRoutesTab = (readTabFromLocation() ?? 'routes') === 'routes'
 
   useLayoutEffect(() => {
     if (!open) {
@@ -82,8 +81,14 @@ export function SettingsMenu() {
         data-tour="settings"
         onClick={() => {
           setOpen((value) => {
-            if (!value) deferAutoTour()
-            return !value
+            const opening = !value
+            if (opening) {
+              cancelAutoStartTimer()
+              if (!tourOpen && canAutoStartGuidedTour()) {
+                openTour({ mode: 'brief' })
+              }
+            }
+            return opening
           })
         }}
         aria-expanded={open}
@@ -147,7 +152,8 @@ export function SettingsMenu() {
                   aria-pressed={!guidedTourAutoStart}
                   onClick={() => {
                     setGuidedTourAutoStart(false)
-                    deferAutoTour()
+                    cancelAutoStartTimer()
+                    closeTour()
                   }}
                 >
                   {t('settingOff')}
@@ -163,19 +169,16 @@ export function SettingsMenu() {
               </div>
               <p className="settings-hint">{t('guidedTourAutoStartHint')}</p>
             </div>
-            {onRoutesTab ? (
-              <button
-                type="button"
-                className="settings-action-btn"
-                onClick={() => {
-                  setOpen(false)
-                  clearGuidedTourDeferral()
-                  openTour({ manual: true })
-                }}
-              >
-                {t('guidedTourReplay')}
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className="settings-action-btn"
+              onClick={() => {
+                setOpen(false)
+                openTour({ manual: true, mode: resolveReplayGuidedTourMode() })
+              }}
+            >
+              {t('guidedTourReplay')}
+            </button>
           </section>
           <section className="settings-section">
             <button

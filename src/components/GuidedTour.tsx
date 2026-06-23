@@ -3,11 +3,12 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { GUIDED_TOUR_STEPS, type GuidedTourStep } from '../data/guidedTourSteps'
+import { GUIDED_TOUR_STEPS, getGuidedTourSteps, type GuidedTourMode, type GuidedTourStep } from '../data/guidedTourSteps'
 import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { markGuidedTourSeen } from '../storage/guidedTour'
@@ -32,6 +33,7 @@ interface TooltipPosition {
 
 interface GuidedTourProps {
   open: boolean
+  mode: GuidedTourMode
   onClose: () => void
   onPrepare?: () => void
 }
@@ -89,8 +91,8 @@ function scrollTargetIntoView(selector: string): void {
   })
 }
 
-function resolveActiveSteps(): GuidedTourStep[] {
-  return GUIDED_TOUR_STEPS.filter((step) => {
+function resolveActiveSteps(catalog: GuidedTourStep[]): GuidedTourStep[] {
+  return catalog.filter((step) => {
     if (!step.optional || !step.target) return true
     return Boolean(document.querySelector(step.target))
   })
@@ -198,12 +200,13 @@ function useTargetObserver(
   }, [open, selector])
 }
 
-export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
+export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) {
   const { t } = useLocale()
   const maskId = useId().replace(/:/g, '')
   const panelRef = useRef<HTMLDivElement>(null)
+  const baseSteps = useMemo(() => getGuidedTourSteps(mode), [mode])
   const [stepIndex, setStepIndex] = useState(0)
-  const [activeSteps, setActiveSteps] = useState(GUIDED_TOUR_STEPS)
+  const [activeSteps, setActiveSteps] = useState(baseSteps)
   const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null)
   const [viewportSize, setViewportSize] = useState(readViewportSize)
   const [tooltipPos, setTooltipPos] = useState<TooltipPosition>({
@@ -253,7 +256,7 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
 
   const goToStep = useCallback(
     async (index: number) => {
-      const steps = resolveActiveSteps()
+      const steps = resolveActiveSteps(baseSteps)
       setActiveSteps(steps)
 
       let targetIndex = index
@@ -280,8 +283,14 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
 
       finish()
     },
-    [finish],
+    [baseSteps, finish],
   )
+
+  useEffect(() => {
+    if (!open) return
+    setStepIndex(0)
+    setActiveSteps(getGuidedTourSteps(mode))
+  }, [open, mode])
 
   useEffect(() => {
     if (!open) return
@@ -289,7 +298,7 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
     void goToStep(0)
     // Only restart the tour when it opens — not when parent callbacks change identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
+  }, [open, mode])
 
   useEffect(() => {
     if (open) return

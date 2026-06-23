@@ -14,6 +14,7 @@ import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
+import { detectGuidedTourMode } from './data/guidedTourSteps'
 import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useDocumentMetadata } from './hooks/useDocumentMetadata'
 import { useFavoritesCloudSync } from './hooks/useFavoritesCloudSync'
@@ -21,7 +22,7 @@ import { useGuidedTourControl } from './contexts/GuidedTourContext'
 import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
-import { canAutoStartGuidedTour } from './storage/guidedTour'
+import { canAutoStartGuidedTour, getGuidedTourAutoStartDelayMs } from './storage/guidedTour'
 import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
@@ -47,8 +48,14 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
-  const { open: guidedTourOpen, openTour, closeTour, deferAutoTour, registerAutoStartTimer, cancelAutoStartTimer } =
-    useGuidedTourControl()
+  const {
+    open: guidedTourOpen,
+    tourMode,
+    openTour,
+    closeTour,
+    registerAutoStartTimer,
+    cancelAutoStartTimer,
+  } = useGuidedTourControl()
   useDocumentMetadata(activeTab)
   const favoritesSyncDialog = useFavoritesCloudSync()
   const dailyChallenge = useDailyChallenge()
@@ -65,24 +72,29 @@ function App() {
     setHeaderCollapsed(false)
   }, [])
 
+  const scheduleAutoStartTour = useCallback(() => {
+    if (!canAutoStartGuidedTour()) return
+
+    const mode = detectGuidedTourMode()
+    const timer = window.setTimeout(() => {
+      if (!canAutoStartGuidedTour()) return
+      openTour({ mode })
+    }, getGuidedTourAutoStartDelayMs(mode))
+    registerAutoStartTimer(timer)
+  }, [openTour, registerAutoStartTimer])
+
   const tryOpenGuidedTour = useCallback(() => {
     if (!canAutoStartGuidedTour()) return
-    openTour()
+    openTour({ mode: detectGuidedTourMode() })
   }, [openTour])
 
   useEffect(() => {
-    if (activeTab !== 'routes') {
-      deferAutoTour()
+    if (isAccountPage() || isSecretPage()) return
+    if (activeTab === 'routes' && (initialOverlays.dailyChallenge || initialOverlays.updates)) {
       return
     }
-    if (initialOverlays.dailyChallenge || initialOverlays.updates) return
-    if (!canAutoStartGuidedTour()) return
 
-    const timer = window.setTimeout(() => {
-      if (canAutoStartGuidedTour()) openTour()
-    }, 500)
-    registerAutoStartTimer(timer)
-
+    scheduleAutoStartTour()
     return () => cancelAutoStartTimer()
     // Only evaluate auto-start once on first paint.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,6 +128,16 @@ function App() {
   const handlePendingDailyChallengeDetailConsumed = useCallback(() => {
     setPendingDailyChallengeDetail(0)
   }, [])
+
+  const guidedTourLayer =
+    !isAccountPage() && !isSecretPage() ? (
+      <GuidedTour
+        open={guidedTourOpen}
+        mode={tourMode}
+        onClose={closeTour}
+        onPrepare={prepareGuidedTour}
+      />
+    ) : null
 
   if (isAccountPage()) {
     return (
@@ -188,13 +210,7 @@ function App() {
   return (
     <>
       {favoritesSyncDialog}
-      {activeTab === 'routes' ? (
-        <GuidedTour
-          open={guidedTourOpen}
-          onClose={closeTour}
-          onPrepare={prepareGuidedTour}
-        />
-      ) : null}
+      {guidedTourLayer}
       <div className="app sibs-scrollbar">
       <Header
         activeTab={activeTab}
@@ -223,8 +239,6 @@ function App() {
             <RouteLookupPage
               pendingDailyChallengeDetail={pendingDailyChallengeDetail}
               onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
-              onRouteDetailOpen={deferAutoTour}
-              onUserEngage={deferAutoTour}
               dailyChallenge={dailyChallenge}
             />
           ) : activeTab === 'broadcast' ? (

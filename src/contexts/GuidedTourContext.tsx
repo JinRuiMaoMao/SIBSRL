@@ -1,15 +1,16 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
-import { deferGuidedTourThisSession } from '../storage/guidedTour'
+import { detectGuidedTourMode, type GuidedTourMode } from '../data/guidedTourSteps'
 
 interface OpenTourOptions {
   manual?: boolean
+  mode?: GuidedTourMode
 }
 
 interface GuidedTourContextValue {
   open: boolean
+  tourMode: GuidedTourMode
   openTour: (options?: OpenTourOptions) => void
   closeTour: () => void
-  deferAutoTour: () => void
   registerAutoStartTimer: (timerId: number) => void
   cancelAutoStartTimer: () => void
 }
@@ -18,7 +19,7 @@ const GuidedTourContext = createContext<GuidedTourContextValue | null>(null)
 
 export function GuidedTourProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
-  const manualOpenRef = useRef(false)
+  const [tourMode, setTourMode] = useState<GuidedTourMode>('full')
   const autoStartTimerRef = useRef<number | null>(null)
 
   const cancelAutoStartTimer = useCallback(() => {
@@ -37,32 +38,25 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
   )
 
   const openTour = useCallback((options?: OpenTourOptions) => {
-    manualOpenRef.current = Boolean(options?.manual)
+    const mode = options?.mode ?? detectGuidedTourMode()
+    setTourMode(mode)
     setOpen(true)
   }, [])
 
   const closeTour = useCallback(() => {
-    manualOpenRef.current = false
     setOpen(false)
   }, [])
-
-  const deferAutoTour = useCallback(() => {
-    if (manualOpenRef.current) return
-    cancelAutoStartTimer()
-    deferGuidedTourThisSession()
-    setOpen(false)
-  }, [cancelAutoStartTimer])
 
   const value = useMemo(
     () => ({
       open,
+      tourMode,
       openTour,
       closeTour,
-      deferAutoTour,
       registerAutoStartTimer,
       cancelAutoStartTimer,
     }),
-    [open, openTour, closeTour, deferAutoTour, registerAutoStartTimer, cancelAutoStartTimer],
+    [open, tourMode, openTour, closeTour, registerAutoStartTimer, cancelAutoStartTimer],
   )
 
   return <GuidedTourContext.Provider value={value}>{children}</GuidedTourContext.Provider>

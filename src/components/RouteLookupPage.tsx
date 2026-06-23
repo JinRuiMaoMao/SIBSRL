@@ -177,16 +177,12 @@ function runDetailAnimation(
 interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
-  onRouteDetailOpen?: () => void
-  onUserEngage?: () => void
   dailyChallenge: DailyChallengeInfo
 }
 
 export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
-  onRouteDetailOpen,
-  onUserEngage,
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
@@ -550,11 +546,6 @@ export function RouteLookupPage({
   }, [selectedRoute])
 
   useEffect(() => {
-    if (!detailOverlay) return
-    onRouteDetailOpen?.()
-  }, [detailOverlay, onRouteDetailOpen])
-
-  useEffect(() => {
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
     if (!sheet || !detailOverlay) return
@@ -631,9 +622,8 @@ export function RouteLookupPage({
   )
 
   const handleSelectDailyChallenge = useCallback(() => {
-    onUserEngage?.()
     openDailyChallenge(dailyChallenge)
-  }, [dailyChallenge, onUserEngage, openDailyChallenge])
+  }, [dailyChallenge, openDailyChallenge])
 
   const handleSelectScheduleDay = useCallback(
     (day: DailyChallengeScheduleDay) => {
@@ -645,7 +635,6 @@ export function RouteLookupPage({
 
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
-      onUserEngage?.()
       setDailyChallengeRouteView(false)
       recordRecent(routeId)
       selectRoute(routeId)
@@ -653,7 +642,7 @@ export function RouteLookupPage({
       const directionIndex = route ? getDirectionIndex(route) : 0
       setRouteInLocation(routeId, directionIndex)
     },
-    [findDisplayRoute, getDirectionIndex, onUserEngage, recordRecent, selectRoute],
+    [findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
@@ -671,7 +660,6 @@ export function RouteLookupPage({
   }, [pendingDailyChallengeDetail, onPendingDailyChallengeDetailConsumed])
 
   const handleRandomRoute = () => {
-    onUserEngage?.()
     const id = selectRandomRoute()
     if (!id) return
     recordRecent(id)

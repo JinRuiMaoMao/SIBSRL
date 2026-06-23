@@ -1,9 +1,11 @@
 import { readAppPreferences } from './appPreferences'
-import { isRoutesPage } from '../utils/appTabNavigation'
+import {
+  detectGuidedTourMode,
+  type GuidedTourMode,
+} from '../data/guidedTourSteps'
 import { readRouteQueryFromLocation } from '../utils/routeNavigation'
 
 export const GUIDED_TOUR_SEEN_KEY = 'sibs-guided-tour-seen'
-export const GUIDED_TOUR_DEFERRED_KEY = 'sibs-guided-tour-deferred'
 
 export function hasSeenGuidedTour(): boolean {
   try {
@@ -33,37 +35,13 @@ export function shouldShowGuidedTour(): boolean {
   return !hasSeenGuidedTour()
 }
 
-export function deferGuidedTourThisSession(): void {
-  try {
-    sessionStorage.setItem(GUIDED_TOUR_DEFERRED_KEY, '1')
-  } catch {
-    /* ignore */
-  }
-}
-
-export function clearGuidedTourDeferral(): void {
-  try {
-    sessionStorage.removeItem(GUIDED_TOUR_DEFERRED_KEY)
-  } catch {
-    /* ignore */
-  }
-}
-
-export function isGuidedTourDeferredThisSession(): boolean {
-  try {
-    return sessionStorage.getItem(GUIDED_TOUR_DEFERRED_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-/** 自动弹出新手引导的前置条件（不含每日挑战/更新弹窗等待） */
+/** 自动弹出新手引导的前置条件 */
 export function canAutoStartGuidedTour(): boolean {
-  return (
-    shouldShowGuidedTour() &&
-    readAppPreferences().guidedTourAutoStart &&
-    isRoutesPage() &&
-    !readRouteQueryFromLocation() &&
-    !isGuidedTourDeferredThisSession()
-  )
+  return shouldShowGuidedTour() && readAppPreferences().guidedTourAutoStart
+}
+
+/** 首次进入时等待界面就绪再弹出（路线详情需等面板动画） */
+export function getGuidedTourAutoStartDelayMs(mode: GuidedTourMode = detectGuidedTourMode()): number {
+  if (mode === 'brief' && readRouteQueryFromLocation()) return 900
+  return 500
 }
