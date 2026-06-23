@@ -187,6 +187,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '补修 N171 / N271 独立路线页，重新使用已清理的站序资料覆盖旧 JSON，避免 Wiki 路线分隔模板显示成 subject = … 伪站名。',
             en: 'Fixed the standalone N171 / N271 route pages by replacing stale embedded JSON with cleaned stop data, preventing Wiki route-break templates from appearing as subject = ... pseudo-stops.',
           },
+          {
+            zh: '路线详情读取独立 HTML 时加入构建版本参数，避免浏览器继续使用旧缓存的 N171 / N271 站序。',
+            en: 'Route detail loading now adds the build version to standalone HTML requests, avoiding stale cached N171 / N271 stop data.',
+          },
         ],
       },
       {

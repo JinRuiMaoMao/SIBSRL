@@ -35,5 +35,5 @@ export function applyRoutePageData(base: BusRoute, page: RoutePageData): BusRout
 }
 
 export function getRoutePageHtmlUrl(routeId: string): string {
-  return `./routes/${routeIdToPageFilename(routeId)}.html`
+  return `./routes/${routeIdToPageFilename(routeId)}.html?v=${encodeURIComponent(__APP_BUILD__)}`
 }
