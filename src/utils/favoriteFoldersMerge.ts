@@ -12,6 +12,31 @@ function cloneFolder(folder: FavoriteFolder): FavoriteFolder {
   }
 }
 
+function canonicalizeFolders(state: FavoriteFoldersState) {
+  return state.folders
+    .map((folder) => ({
+      id: folder.id,
+      name: folder.name.trim(),
+      routeIds: [...new Set(folder.routeIds)].sort(),
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id))
+}
+
+export function favoriteFoldersContentEqual(
+  a: FavoriteFoldersState,
+  b: FavoriteFoldersState,
+): boolean {
+  const left = canonicalizeFolders(a)
+  const right = canonicalizeFolders(b)
+  if (left.length !== right.length) return false
+  return left.every((folder, index) => {
+    const other = right[index]!
+    if (folder.id !== other.id || folder.name !== other.name) return false
+    if (folder.routeIds.length !== other.routeIds.length) return false
+    return folder.routeIds.every((id, routeIndex) => id === other.routeIds[routeIndex])
+  })
+}
+
 export function countFavoriteRoutes(state: FavoriteFoldersState): number {
   const seen = new Set<string>()
   for (const folder of state.folders) {

@@ -21,6 +21,7 @@ import {
   readAuthToken,
   writeAuthSession,
 } from '../storage/authToken'
+import { normalizeAuthEmail } from '../utils/authEmail'
 
 interface AuthContextValue {
   enabled: boolean
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (loginEmail: string, password: string) => {
-      const result = await loginAccount(loginEmail, password)
+      const result = await loginAccount(normalizeAuthEmail(loginEmail), password)
       applySession(result.token, result.email)
     },
     [applySession],
@@ -72,18 +73,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = useCallback(
     async (registerEmail: string, password: string, code: string) => {
-      const result = await registerAccount(registerEmail, password, code)
+      const result = await registerAccount(normalizeAuthEmail(registerEmail), password, code)
       applySession(result.token, result.email)
     },
     [applySession],
   )
 
   const resetPassword = useCallback(async (resetEmail: string, password: string, code: string) => {
-    await resetAccountPassword(resetEmail, password, code)
+    await resetAccountPassword(normalizeAuthEmail(resetEmail), password, code)
   }, [])
 
   const sendCode = useCallback(async (targetEmail: string, purpose: 'register' | 'reset') => {
-    await sendVerificationCode(targetEmail, purpose)
+    await sendVerificationCode(normalizeAuthEmail(targetEmail), purpose)
   }, [])
 
   const mapAuthError = useCallback((error: unknown): MessageKey => {
