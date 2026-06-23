@@ -870,7 +870,6 @@ export function RouteLookupPage({
           loopView={getLoopView(route)}
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
           onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
-          onNavigate={handleRouteNavigate}
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
         />
@@ -888,7 +887,6 @@ export function RouteLookupPage({
           window={window}
           selected={selectedRoute?.id === route.id}
           directionIndex={getDirectionIndex(route)}
-          onNavigate={handleRouteNavigate}
         />
       )
     })
@@ -920,7 +918,6 @@ export function RouteLookupPage({
           loopView={getLoopView(route)}
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
           onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
-          onNavigate={handleRouteNavigate}
           muted={!routeMatchesFilters(route, filters)}
         />
       </div>
@@ -937,7 +934,6 @@ export function RouteLookupPage({
         loopView={getLoopView(route)}
         onDirectionChange={(index) => setDirectionIndex(route.id, index)}
         onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
-        onNavigate={handleRouteNavigate}
         muted={!routeMatchesFilters(route, filters)}
       />
     ))
@@ -952,7 +948,6 @@ export function RouteLookupPage({
         loopView={getLoopView(route)}
         onDirectionChange={(index) => setDirectionIndex(route.id, index)}
         onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
-        onNavigate={handleRouteNavigate}
       />
     ))
 
@@ -1095,9 +1090,7 @@ export function RouteLookupPage({
                     onSortModeChange={setBetweenStopsSortMode}
                     onDepartTimeChange={setBetweenStopsDepartTime}
                     selectedRouteId={selectedRoute?.id}
-                    getDirectionIndex={getDirectionIndex}
                     setDirectionIndex={setDirectionIndex}
-                    onRouteNavigate={handleRouteNavigate}
                     onSelectPlan={handleSelectTransferPlan}
                   />
                 </RouteGroupCollapse>

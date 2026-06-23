@@ -1,4 +1,3 @@
-import type { MouseEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { getOptionalText } from '../i18n/displayText'
 import type { BusRoute } from '../types/route'
@@ -26,7 +25,6 @@ interface RouteCardProps {
   onDirectionChange: (index: number) => void
   loopView?: boolean
   onLoopViewChange?: (loopView: boolean) => void
-  onNavigate?: (routeId: string) => void
   href?: string
   /** 分组列表中的展示编号；默认使用合并后的 route.number */
   displayNumber?: string
@@ -47,7 +45,6 @@ export function RouteCard({
   onDirectionChange,
   loopView = false,
   onLoopViewChange,
-  onNavigate,
   href,
   displayNumber,
   muted = false,
@@ -75,15 +72,6 @@ export function RouteCard({
 
   const cardHref = href ?? getRoutePageHref(route.id)
 
-  const handleCardNavigate = (event: MouseEvent<HTMLAnchorElement>) => {
-    if ((event.target as Element).closest('.route-favorite-picker')) return
-    if (!onNavigate) return
-    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
-    if (event.button !== 0) return
-    event.preventDefault()
-    onNavigate(route.id)
-  }
-
   return (
     <div
       data-route-id={route.id}
@@ -96,7 +84,6 @@ export function RouteCard({
           aria-label={cardNumber}
           aria-current={selected ? 'page' : undefined}
           tabIndex={-1}
-          onClick={handleCardNavigate}
         />
         <div className="route-card-surface">
         <div className="route-card-top">

@@ -191,6 +191,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '路线详情读取独立 HTML 时加入构建版本参数，避免浏览器继续使用旧缓存的 N171 / N271 站序。',
             en: 'Route detail loading now adds the build version to standalone HTML requests, avoiding stale cached N171 / N271 stop data.',
           },
+          {
+            zh: '线路卡片普通点击改为直接按链接跳转，避免在首页内等待详情加载时看起来没有反应；右键、新标签页与 iPad 长按行为保持一致。',
+            en: 'Route card primary clicks now follow the link directly, avoiding the page appearing stuck while detail data loads; right-click, new-tab, and iPad long-press behavior stay consistent.',
+          },
         ],
       },
       {

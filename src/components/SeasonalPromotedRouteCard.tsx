@@ -21,7 +21,6 @@ interface SeasonalPromotedRouteCardProps {
   directionIndex: number
   window: SeasonalAvailabilityWindow
   selected: boolean
-  onNavigate?: (routeId: string) => void
   href?: string
 }
 
@@ -31,7 +30,6 @@ export function SeasonalPromotedRouteCard({
   directionIndex,
   window,
   selected,
-  onNavigate,
   href,
 }: SeasonalPromotedRouteCardProps) {
   const { locale, t } = useLocale()
@@ -52,14 +50,6 @@ export function SeasonalPromotedRouteCard({
       data-route-id={route.id}
       className={`route-card-link route-card-link--seasonal-promoted ${selected ? 'route-card-link--selected' : ''}`.trim()}
       aria-current={selected ? 'page' : undefined}
-      onClick={(event) => {
-        if ((event.target as Element).closest('.route-favorite-picker')) return
-        if (!onNavigate) return
-        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
-        if (event.button !== 0) return
-        event.preventDefault()
-        onNavigate(route.id)
-      }}
     >
       <article className="route-card seasonal-promoted-card">
         <p className="seasonal-promoted-card-category">{t('routeGroupSeasonal')}</p>

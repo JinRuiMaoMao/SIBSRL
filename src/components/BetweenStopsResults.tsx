@@ -34,9 +34,7 @@ interface BetweenStopsResultsProps {
   onSortModeChange: (mode: TransferPlanSortMode) => void
   onDepartTimeChange: (value: string) => void
   selectedRouteId: string | undefined
-  getDirectionIndex: (route: BusRoute) => number
   setDirectionIndex: (routeId: string, index: number) => void
-  onRouteNavigate: (routeId: string) => void
   onSelectPlan: (plan: TransferPlan, planIndex: number) => void
 }
 
@@ -48,9 +46,7 @@ export function BetweenStopsResults({
   onSortModeChange,
   onDepartTimeChange,
   selectedRouteId,
-  getDirectionIndex,
   setDirectionIndex,
-  onRouteNavigate,
   onSelectPlan,
 }: BetweenStopsResultsProps) {
   const { alert } = useAppDialog()
@@ -164,10 +160,6 @@ export function BetweenStopsResults({
                     selected={selectedRouteId === route.id}
                     directionIndex={directionIndex}
                     onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-                    onNavigate={(routeId) => {
-                      setDirectionIndex(routeId, directionIndex)
-                      onRouteNavigate(routeId)
-                    }}
                   />
                 </div>
               )
