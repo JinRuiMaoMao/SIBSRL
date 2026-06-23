@@ -15,7 +15,7 @@ export async function loadRoutePageData(
   base: BusRoute,
 ): Promise<LoadedRoutePageData | null> {
   try {
-    const response = await fetch(getRoutePageHtmlUrl(base.id), { cache: 'no-cache' })
+    const response = await fetch(getRoutePageHtmlUrl(base.id), { cache: 'force-cache' })
     if (!response.ok) return null
     const html = await response.text()
     const pageData = parseRoutePageHtml(html)

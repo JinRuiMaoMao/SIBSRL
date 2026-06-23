@@ -1,7 +1,7 @@
 import type { BusRoute } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { pageDataToNormalizedStops } from './routePageDataFormat'
-import { routeIdToPageFilename } from './routeNavigation'
+import { getRoutePageHref } from './routeNavigation'
 
 function patchDefined<T extends object>(base: T, patch: Partial<T>): T {
   const next = { ...base }
@@ -35,5 +35,5 @@ export function applyRoutePageData(base: BusRoute, page: RoutePageData): BusRout
 }
 
 export function getRoutePageHtmlUrl(routeId: string): string {
-  return `./routes/${routeIdToPageFilename(routeId)}.html?v=${encodeURIComponent(__APP_BUILD__)}`
+  return `./${getRoutePageHref(routeId)}`
 }

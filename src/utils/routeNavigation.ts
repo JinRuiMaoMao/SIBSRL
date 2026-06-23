@@ -22,7 +22,7 @@ export function pageFilenameToRouteId(filename: string): string {
 
 /** 从线路列表页点击卡片时的相对链接 */
 export function getRoutePageHref(routeId: string): string {
-  return `${ROUTE_PAGE_DIR}/${routeIdToPageFilename(routeId)}.html`
+  return `${ROUTE_PAGE_DIR}/${routeIdToPageFilename(routeId)}.html?v=${encodeURIComponent(__APP_BUILD__)}`
 }
 
 const ROUTE_QUERY_KEY = 'route'

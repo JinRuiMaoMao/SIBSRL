@@ -17,6 +17,7 @@ import {
 import { clearUpdatesPromptSeen } from '../storage/updatesViewing'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
+import { clearRoutePagePrefetchCache } from '../utils/routePagePrefetch'
 
 export function ResetSettingsSection() {
   const { t } = useLocale()
@@ -44,6 +45,7 @@ export function ResetSettingsSection() {
     } catch {
       /* ignore */
     }
+    await clearRoutePagePrefetchCache()
     clearSearchHistory()
 
     setTheme('system')

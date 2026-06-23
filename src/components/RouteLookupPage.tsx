@@ -71,6 +71,7 @@ import {
   replaceStopPairInLocation,
   setRouteInLocation,
 } from '../utils/routeNavigation'
+import { scheduleRoutePagePrefetch } from '../utils/routePagePrefetch'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import {
@@ -304,6 +305,10 @@ export function RouteLookupPage({
   const { favorites, reorderFavorites, folders } = useFavoriteRoutes()
   const { recentIds, recordRecent } = useRecentRoutes()
   const [draggingFavoriteId, setDraggingFavoriteId] = useState<string | null>(null)
+
+  useEffect(() => {
+    scheduleRoutePagePrefetch(displayRoutes.map((route) => route.id))
+  }, [displayRoutes])
 
   const favoriteRoutes = useMemo(() => {
     const byId = new Map(displayRoutes.map((route) => [route.id, route]))
