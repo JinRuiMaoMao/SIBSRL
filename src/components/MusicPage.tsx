@@ -15,14 +15,14 @@ export function MusicPage() {
     <div className="content content--single">
       <p className="page-intro">{t('musicIntro')}</p>
 
-      <section className="complaints-section" aria-label={t('musicList')}>
+      <section className="complaints-section" aria-label={t('musicList')} data-tour="music-list">
         <h2 className="section-title">{t('musicList')}</h2>
         {tracks.length === 0 ? (
           <p className="empty-state">{t('musicEmpty')}</p>
         ) : (
           <ul className="complaints-list">
-            {tracks.map((item) => (
-              <li key={item.id} className="complaints-card">
+            {tracks.map((item, index) => (
+              <li key={item.id} className="complaints-card" data-tour={index === 0 ? 'music-card' : undefined}>
                 <div className="complaints-head">
                   <h3 className="complaints-title">
                     <span className="complaints-no" aria-hidden="true">
@@ -39,6 +39,7 @@ export function MusicPage() {
                     pauseLabel={t('broadcastPause')}
                     loop={item.loop}
                     compact={compact}
+                    dataTour={index === 0 ? 'music-play' : undefined}
                   />
                 </div>
               </li>

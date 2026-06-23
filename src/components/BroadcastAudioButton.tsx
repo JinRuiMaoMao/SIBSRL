@@ -23,6 +23,7 @@ interface BroadcastAudioButtonProps {
   compact?: boolean
   /** 播放结束后自动循环 */
   loop?: boolean
+  dataTour?: string
 }
 
 function clampPlaybackRate(rate: number): number {
@@ -93,6 +94,7 @@ export function BroadcastAudioButton({
   pauseLabel,
   compact = false,
   loop = false,
+  dataTour,
 }: BroadcastAudioButtonProps) {
   const { t } = useLocale()
   const speedMenuId = useId()
@@ -379,6 +381,7 @@ export function BroadcastAudioButton({
         className={`broadcast-play-btn ${compact ? 'broadcast-play-btn--compact' : ''} ${
           isPlaying ? 'playing' : ''
         }`}
+        data-tour={dataTour}
         onClick={togglePlayPause}
         aria-label={isPlaying ? pauseLabel : playLabel}
         aria-pressed={isPlaying}

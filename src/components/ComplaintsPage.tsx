@@ -19,7 +19,7 @@ export function ComplaintsPage() {
     <div className="content content--single">
       <p className="page-intro">{t('complaintsIntro')}</p>
 
-      <div className="filter-group broadcast-filters">
+      <div className="filter-group broadcast-filters" data-tour="complaints-filters">
         <span className="filter-label">{t('complaintsFilterLabel')}</span>
         <div className="chip-row">
           <button type="button" className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
@@ -45,8 +45,8 @@ export function ComplaintsPage() {
           <p className="empty-state">{t('complaintsEmpty')}</p>
         ) : (
           <ul className="complaints-list">
-            {filteredItems.map((item) => (
-              <li key={item.id} className="complaints-card">
+            {filteredItems.map((item, index) => (
+              <li key={item.id} className="complaints-card" data-tour={index === 0 ? 'complaints-card' : undefined}>
                 <div className="complaints-head">
                   <h3 className="complaints-title">
                     <span className="complaints-no" aria-hidden="true">
@@ -62,6 +62,7 @@ export function ComplaintsPage() {
                     playLabel={t('broadcastPlay')}
                     pauseLabel={t('broadcastPause')}
                     compact={compact}
+                    dataTour={index === 0 ? 'complaints-play' : undefined}
                   />
                 </div>
                 <p className="complaints-detail">{getPrimaryText(item.detail, locale)}</p>

@@ -23,6 +23,7 @@ interface SearchBarProps {
   showShortcutHint?: boolean
   syntaxVisible?: boolean
   onSyntaxToggle?: () => void
+  dataTour?: string
 }
 
 function suggestionLabel(suggestion: string, t: (key: MessageKey, vars?: Record<string, string | number>) => string): string {
@@ -52,6 +53,7 @@ export function SearchBar({
   showShortcutHint = true,
   syntaxVisible = true,
   onSyntaxToggle,
+  dataTour = 'route-search',
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
@@ -60,7 +62,7 @@ export function SearchBar({
 
   return (
     <div className="search-bar-wrap">
-      <div className="search-bar" data-tour="route-search">
+      <div className="search-bar" data-tour={dataTour}>
         <label htmlFor={id} className="sr-only">
           {t(labelKey)}
         </label>

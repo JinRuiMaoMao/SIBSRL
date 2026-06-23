@@ -62,7 +62,7 @@ export function BroadcastPage() {
     <>
       <p className="page-intro">{t('broadcastIntro')}</p>
 
-      <div className="filter-group broadcast-filters">
+      <div className="filter-group broadcast-filters" data-tour="broadcast-filters">
         <span className="filter-label">{t('broadcastSetLabel')}</span>
         <div className="chip-row">
           {SET_ORDER.map((set) => (
@@ -80,6 +80,7 @@ export function BroadcastPage() {
 
       <SearchBar
         id="safety-broadcast-search"
+        dataTour="broadcast-search"
         value={query}
         onChange={setQuery}
         resultCount={filtered.length}
@@ -96,8 +97,8 @@ export function BroadcastPage() {
           <p className="empty-state">{t('broadcastEmptySearch')}</p>
         ) : (
           <ul className="safety-broadcast-list">
-            {filtered.map((item) => (
-              <li key={item.id} className="safety-broadcast-card">
+            {filtered.map((item, index) => (
+              <li key={item.id} className="safety-broadcast-card" data-tour={index === 0 ? 'broadcast-card' : undefined}>
                 <div className="safety-broadcast-card-head">
                   <h2 className="safety-broadcast-title">
                     <span className="safety-broadcast-no" aria-hidden="true">
@@ -115,6 +116,7 @@ export function BroadcastPage() {
                     playLabel={t('broadcastPlay')}
                     pauseLabel={t('broadcastPause')}
                     compact={compact}
+                    dataTour={index === 0 ? 'broadcast-play' : undefined}
                   />
                 </div>
                 {item.note && (

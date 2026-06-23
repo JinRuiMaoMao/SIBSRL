@@ -3,7 +3,26 @@ import { readTabFromLocation } from '../utils/appTabNavigation'
 import { readRouteQueryFromLocation } from '../utils/routeNavigation'
 
 export type GuidedTourPlacement = 'top' | 'bottom' | 'left' | 'right' | 'center'
-export type GuidedTourMode = 'full' | 'brief'
+
+export type GuidedTourContext =
+  | 'routes-list'
+  | 'route-detail'
+  | 'music'
+  | 'broadcast'
+  | 'complaints'
+  | 'updates'
+
+/** @deprecated alias — tour mode equals page context */
+export type GuidedTourMode = GuidedTourContext
+
+export const GUIDED_TOUR_CONTEXTS: GuidedTourContext[] = [
+  'routes-list',
+  'route-detail',
+  'music',
+  'broadcast',
+  'complaints',
+  'updates',
+]
 
 export interface GuidedTourStep {
   id: string
@@ -55,14 +74,11 @@ const ACCOUNT_STEP: GuidedTourStep = {
   optional: true,
 }
 
-const FINISH_STEP: GuidedTourStep = {
-  id: 'finish',
-  titleKey: 'guidedTourFinishTitle',
-  bodyKey: 'guidedTourFinishBody',
-  placement: 'center',
+function finishStep(titleKey: MessageKey, bodyKey: MessageKey): GuidedTourStep {
+  return { id: 'finish', titleKey, bodyKey, placement: 'center' }
 }
 
-export const GUIDED_TOUR_STEPS: GuidedTourStep[] = [
+export const ROUTES_LIST_TOUR_STEPS: GuidedTourStep[] = [
   {
     id: 'welcome',
     titleKey: 'guidedTourWelcomeTitle',
@@ -119,46 +135,241 @@ export const GUIDED_TOUR_STEPS: GuidedTourStep[] = [
   },
   SETTINGS_STEP,
   ACCOUNT_STEP,
-  FINISH_STEP,
+  finishStep('guidedTourFinishTitle', 'guidedTourFinishBody'),
 ]
 
-/** 路线详情、其他标签页、设置等场景使用的精简引导 */
-export const GUIDED_TOUR_BRIEF_STEPS: GuidedTourStep[] = [
+export const ROUTE_DETAIL_TOUR_STEPS: GuidedTourStep[] = [
   {
-    id: 'welcome-brief',
-    titleKey: 'guidedTourBriefWelcomeTitle',
-    bodyKey: 'guidedTourBriefWelcomeBody',
+    id: 'welcome',
+    titleKey: 'guidedTourRouteDetailWelcomeTitle',
+    bodyKey: 'guidedTourRouteDetailWelcomeBody',
     placement: 'center',
   },
-  TABS_STEP,
   {
-    id: 'route-detail',
-    target: '.route-detail-sheet.is-open',
-    titleKey: 'guidedTourRouteDetailTitle',
-    bodyKey: 'guidedTourRouteDetailBody',
+    id: 'direction',
+    target: '[data-tour="route-detail-direction"]',
+    titleKey: 'guidedTourRouteDetailDirectionTitle',
+    bodyKey: 'guidedTourRouteDetailDirectionBody',
+    placement: 'bottom',
+    optional: true,
+  },
+  {
+    id: 'endpoints',
+    target: '[data-tour="route-detail-endpoints"]',
+    titleKey: 'guidedTourRouteDetailEndpointsTitle',
+    bodyKey: 'guidedTourRouteDetailEndpointsBody',
+    placement: 'bottom',
+  },
+  {
+    id: 'info',
+    target: '[data-tour="route-detail-info"]',
+    titleKey: 'guidedTourRouteDetailInfoTitle',
+    bodyKey: 'guidedTourRouteDetailInfoBody',
     placement: 'top',
     optional: true,
   },
-  SETTINGS_STEP,
-  ACCOUNT_STEP,
-  FINISH_STEP,
+  {
+    id: 'stops',
+    target: '[data-tour="route-detail-stops"]',
+    titleKey: 'guidedTourRouteDetailStopsTitle',
+    bodyKey: 'guidedTourRouteDetailStopsBody',
+    placement: 'top',
+    optional: true,
+  },
+  {
+    id: 'actions',
+    target: '[data-tour="route-detail-actions"]',
+    titleKey: 'guidedTourRouteDetailActionsTitle',
+    bodyKey: 'guidedTourRouteDetailActionsBody',
+    placement: 'left',
+  },
+  {
+    id: 'close',
+    target: '[data-tour="route-detail-close"]',
+    titleKey: 'guidedTourRouteDetailCloseTitle',
+    bodyKey: 'guidedTourRouteDetailCloseBody',
+    placement: 'left',
+  },
+  finishStep('guidedTourRouteDetailFinishTitle', 'guidedTourRouteDetailFinishBody'),
 ]
 
-export function getGuidedTourSteps(mode: GuidedTourMode): GuidedTourStep[] {
-  return mode === 'brief' ? GUIDED_TOUR_BRIEF_STEPS : GUIDED_TOUR_STEPS
+export const MUSIC_TOUR_STEPS: GuidedTourStep[] = [
+  {
+    id: 'welcome',
+    titleKey: 'guidedTourMusicWelcomeTitle',
+    bodyKey: 'guidedTourMusicWelcomeBody',
+    placement: 'center',
+  },
+  {
+    id: 'list',
+    target: '[data-tour="music-list"]',
+    titleKey: 'guidedTourMusicListTitle',
+    bodyKey: 'guidedTourMusicListBody',
+    placement: 'top',
+  },
+  {
+    id: 'play',
+    target: '[data-tour="music-play"]',
+    titleKey: 'guidedTourMusicPlayTitle',
+    bodyKey: 'guidedTourMusicPlayBody',
+    placement: 'left',
+    optional: true,
+  },
+  finishStep('guidedTourMusicFinishTitle', 'guidedTourMusicFinishBody'),
+]
+
+export const BROADCAST_TOUR_STEPS: GuidedTourStep[] = [
+  {
+    id: 'welcome',
+    titleKey: 'guidedTourBroadcastWelcomeTitle',
+    bodyKey: 'guidedTourBroadcastWelcomeBody',
+    placement: 'center',
+  },
+  {
+    id: 'filters',
+    target: '[data-tour="broadcast-filters"]',
+    titleKey: 'guidedTourBroadcastFiltersTitle',
+    bodyKey: 'guidedTourBroadcastFiltersBody',
+    placement: 'bottom',
+  },
+  {
+    id: 'search',
+    target: '[data-tour="broadcast-search"]',
+    titleKey: 'guidedTourBroadcastSearchTitle',
+    bodyKey: 'guidedTourBroadcastSearchBody',
+    placement: 'bottom',
+  },
+  {
+    id: 'card',
+    target: '[data-tour="broadcast-card"]',
+    titleKey: 'guidedTourBroadcastCardTitle',
+    bodyKey: 'guidedTourBroadcastCardBody',
+    placement: 'top',
+    optional: true,
+  },
+  {
+    id: 'play',
+    target: '[data-tour="broadcast-play"]',
+    titleKey: 'guidedTourBroadcastPlayTitle',
+    bodyKey: 'guidedTourBroadcastPlayBody',
+    placement: 'left',
+    optional: true,
+  },
+  finishStep('guidedTourBroadcastFinishTitle', 'guidedTourBroadcastFinishBody'),
+]
+
+export const COMPLAINTS_TOUR_STEPS: GuidedTourStep[] = [
+  {
+    id: 'welcome',
+    titleKey: 'guidedTourComplaintsWelcomeTitle',
+    bodyKey: 'guidedTourComplaintsWelcomeBody',
+    placement: 'center',
+  },
+  {
+    id: 'filters',
+    target: '[data-tour="complaints-filters"]',
+    titleKey: 'guidedTourComplaintsFiltersTitle',
+    bodyKey: 'guidedTourComplaintsFiltersBody',
+    placement: 'bottom',
+  },
+  {
+    id: 'card',
+    target: '[data-tour="complaints-card"]',
+    titleKey: 'guidedTourComplaintsCardTitle',
+    bodyKey: 'guidedTourComplaintsCardBody',
+    placement: 'top',
+    optional: true,
+  },
+  {
+    id: 'play',
+    target: '[data-tour="complaints-play"]',
+    titleKey: 'guidedTourComplaintsPlayTitle',
+    bodyKey: 'guidedTourComplaintsPlayBody',
+    placement: 'left',
+    optional: true,
+  },
+  finishStep('guidedTourComplaintsFinishTitle', 'guidedTourComplaintsFinishBody'),
+]
+
+export const UPDATES_TOUR_STEPS: GuidedTourStep[] = [
+  {
+    id: 'welcome',
+    titleKey: 'guidedTourUpdatesWelcomeTitle',
+    bodyKey: 'guidedTourUpdatesWelcomeBody',
+    placement: 'center',
+  },
+  {
+    id: 'head',
+    target: '[data-tour="updates-head"]',
+    titleKey: 'guidedTourUpdatesHeadTitle',
+    bodyKey: 'guidedTourUpdatesHeadBody',
+    placement: 'bottom',
+  },
+  {
+    id: 'entry',
+    target: '[data-tour="updates-entry"]',
+    titleKey: 'guidedTourUpdatesEntryTitle',
+    bodyKey: 'guidedTourUpdatesEntryBody',
+    placement: 'top',
+    optional: true,
+  },
+  finishStep('guidedTourUpdatesFinishTitle', 'guidedTourUpdatesFinishBody'),
+]
+
+const STEPS_BY_CONTEXT: Record<GuidedTourContext, GuidedTourStep[]> = {
+  'routes-list': ROUTES_LIST_TOUR_STEPS,
+  'route-detail': ROUTE_DETAIL_TOUR_STEPS,
+  music: MUSIC_TOUR_STEPS,
+  broadcast: BROADCAST_TOUR_STEPS,
+  complaints: COMPLAINTS_TOUR_STEPS,
+  updates: UPDATES_TOUR_STEPS,
 }
 
-export function entryForGuidedTourMode(mode: GuidedTourMode): 'full' | 'brief' {
-  return mode === 'full' ? 'full' : 'brief'
+/** @deprecated use ROUTES_LIST_TOUR_STEPS */
+export const GUIDED_TOUR_STEPS = ROUTES_LIST_TOUR_STEPS
+
+export function getGuidedTourSteps(context: GuidedTourContext): GuidedTourStep[] {
+  return STEPS_BY_CONTEXT[context]
 }
 
-export function detectGuidedTourMode(): GuidedTourMode {
+export function entryForGuidedTourContext(context: GuidedTourContext): GuidedTourContext {
+  return context
+}
+
+/** @deprecated use entryForGuidedTourContext */
+export function entryForGuidedTourMode(mode: GuidedTourContext): GuidedTourContext {
+  return entryForGuidedTourContext(mode)
+}
+
+export function detectGuidedTourContext(): GuidedTourContext {
+  if (readRouteQueryFromLocation()) return 'route-detail'
+
   const tab = readTabFromLocation() ?? 'routes'
-  if (tab !== 'routes') return 'brief'
-  if (readRouteQueryFromLocation()) return 'brief'
-  return 'full'
+  if (tab === 'routes') return 'routes-list'
+  if (tab === 'music') return 'music'
+  if (tab === 'broadcast') return 'broadcast'
+  if (tab === 'complaints') return 'complaints'
+  if (tab === 'updates') return 'updates'
+  return 'routes-list'
 }
 
-export function resolveReplayGuidedTourMode(): GuidedTourMode {
-  return detectGuidedTourMode() === 'full' ? 'full' : 'brief'
+/** @deprecated use detectGuidedTourContext */
+export function detectGuidedTourMode(): GuidedTourContext {
+  return detectGuidedTourContext()
+}
+
+export function resolveReplayGuidedTourContext(): GuidedTourContext {
+  if (readRouteQueryFromLocation()) return 'route-detail'
+  const tab = readTabFromLocation() ?? 'routes'
+  if (tab === 'routes') {
+    const detailOpen = document.querySelector('.route-detail-sheet.is-open .route-detail')
+    if (detailOpen) return 'route-detail'
+    return 'routes-list'
+  }
+  return detectGuidedTourContext()
+}
+
+/** @deprecated use resolveReplayGuidedTourContext */
+export function resolveReplayGuidedTourMode(): GuidedTourContext {
+  return resolveReplayGuidedTourContext()
 }

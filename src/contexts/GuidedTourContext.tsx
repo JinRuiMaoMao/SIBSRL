@@ -1,14 +1,14 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
-import { detectGuidedTourMode, type GuidedTourMode } from '../data/guidedTourSteps'
+import { detectGuidedTourContext, type GuidedTourContext } from '../data/guidedTourSteps'
 
 interface OpenTourOptions {
   manual?: boolean
-  mode?: GuidedTourMode
+  mode?: GuidedTourContext
 }
 
 interface GuidedTourContextValue {
   open: boolean
-  tourMode: GuidedTourMode
+  tourMode: GuidedTourContext
   openTour: (options?: OpenTourOptions) => void
   closeTour: () => void
   registerAutoStartTimer: (timerId: number) => void
@@ -19,7 +19,7 @@ const GuidedTourContext = createContext<GuidedTourContextValue | null>(null)
 
 export function GuidedTourProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
-  const [tourMode, setTourMode] = useState<GuidedTourMode>('full')
+  const [tourMode, setTourMode] = useState<GuidedTourContext>('routes-list')
   const autoStartTimerRef = useRef<number | null>(null)
 
   const cancelAutoStartTimer = useCallback(() => {
@@ -38,7 +38,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
   )
 
   const openTour = useCallback((options?: OpenTourOptions) => {
-    const mode = options?.mode ?? detectGuidedTourMode()
+    const mode = options?.mode ?? detectGuidedTourContext()
     setTourMode(mode)
     setOpen(true)
   }, [])

@@ -14,7 +14,7 @@ import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
-import { detectGuidedTourMode } from './data/guidedTourSteps'
+import { detectGuidedTourContext } from './data/guidedTourSteps'
 import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useDocumentMetadata } from './hooks/useDocumentMetadata'
 import { useFavoritesCloudSync } from './hooks/useFavoritesCloudSync'
@@ -73,7 +73,8 @@ function App() {
   }, [])
 
   const scheduleAutoStartTour = useCallback(() => {
-    const mode = detectGuidedTourMode()
+    const mode = detectGuidedTourContext()
+    if (mode === 'route-detail') return
     if (!canAutoStartGuidedTour(mode)) return
 
     const timer = window.setTimeout(() => {
@@ -84,7 +85,8 @@ function App() {
   }, [openTour, registerAutoStartTimer])
 
   const tryOpenGuidedTour = useCallback(() => {
-    const mode = detectGuidedTourMode()
+    const mode = detectGuidedTourContext()
+    if (mode === 'route-detail') return
     if (!canAutoStartGuidedTour(mode)) return
     openTour({ mode })
   }, [openTour])
@@ -92,10 +94,10 @@ function App() {
   useEffect(() => {
     if (isAccountPage() || isSecretPage()) return
 
-    const mode = detectGuidedTourMode()
+    const mode = detectGuidedTourContext()
     if (
       activeTab === 'routes' &&
-      mode === 'full' &&
+      mode === 'routes-list' &&
       (initialOverlays.dailyChallenge || initialOverlays.updates)
     ) {
       return

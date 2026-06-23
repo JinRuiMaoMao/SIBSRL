@@ -98,7 +98,7 @@ export function RouteDetail({
           )}
           {displayTypes.length > 0 && <RouteTypeTags types={displayTypes} />}
         </div>
-        <div className="detail-header-actions">
+        <div className="detail-header-actions" data-tour="route-detail-actions">
           <button
             type="button"
             className="detail-share-btn"
@@ -115,7 +115,7 @@ export function RouteDetail({
             {t('shareRoute')}
           </button>
           <RouteFavoriteButton routeId={route.id} className="route-favorite-btn--detail" />
-          <button type="button" className="close-btn" onClick={onClose} aria-label={t('closeDetail')}>
+          <button type="button" className="close-btn" data-tour="route-detail-close" onClick={onClose} aria-label={t('closeDetail')}>
             ×
           </button>
         </div>
@@ -129,16 +129,19 @@ export function RouteDetail({
         <div className="detail-section-head">
           <h3>{t('routeSection')}</h3>
           {hasDirectionControls && !lockDirection ? (
-            <RouteDirectionControls
-              route={route}
-              directionIndex={directionIndex}
-              onDirectionChange={onDirectionChange}
-              loopView={loopView}
-              onLoopViewChange={onLoopViewChange ?? (() => {})}
-            />
+            <div data-tour="route-detail-direction">
+              <RouteDirectionControls
+                route={route}
+                directionIndex={directionIndex}
+                onDirectionChange={onDirectionChange}
+                loopView={loopView}
+                onLoopViewChange={onLoopViewChange ?? (() => {})}
+              />
+            </div>
           ) : null}
         </div>
-        <RouteEndpoints
+        <div data-tour="route-detail-endpoints">
+          <RouteEndpoints
           route={route}
           directionIndex={directionIndex}
           loopView={loopView}
@@ -147,9 +150,10 @@ export function RouteDetail({
           layout={directionEndpoints ? 'text' : 'spine'}
           size="detail"
         />
+        </div>
       </section>
 
-      <section className="detail-section detail-grid">
+      <section className="detail-section detail-grid" data-tour="route-detail-info">
         {route.operators.length > 0 && (
           <div>
             <h4>{t('operator')}</h4>
@@ -208,7 +212,7 @@ export function RouteDetail({
       </section>
 
       {activeStops && (
-        <section className="detail-section">
+        <section className="detail-section" data-tour="route-detail-stops">
           <h3>{t('stopsSection')}</h3>
           <div className="stop-table" role="table">
             <div className="stop-table-row stop-table-head" role="row">

@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { GUIDED_TOUR_STEPS, getGuidedTourSteps, type GuidedTourMode, type GuidedTourStep } from '../data/guidedTourSteps'
+import { GUIDED_TOUR_STEPS, getGuidedTourSteps, type GuidedTourContext, type GuidedTourStep } from '../data/guidedTourSteps'
 import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { markGuidedTourSeen } from '../storage/guidedTour'
@@ -33,7 +33,7 @@ interface TooltipPosition {
 
 interface GuidedTourProps {
   open: boolean
-  mode: GuidedTourMode
+  mode: GuidedTourContext
   onClose: () => void
   onPrepare?: () => void
 }

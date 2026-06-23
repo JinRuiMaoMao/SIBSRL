@@ -6,13 +6,14 @@ import { UpdatesEasterEgg } from './UpdatesEasterEgg'
 interface VersionUpdateEntryProps {
   entry: VersionUpdateEntryData
   className?: string
+  dataTour?: string
 }
 
-export function VersionUpdateEntry({ entry, className }: VersionUpdateEntryProps) {
+export function VersionUpdateEntry({ entry, className, dataTour }: VersionUpdateEntryProps) {
   const { locale } = useLocale()
 
   return (
-    <article className={className}>
+    <article className={className} data-tour={dataTour}>
       <div className="updates-head">
         <h3 className="updates-title">{getPrimaryText(entry.title, locale)}</h3>
         <time className="updates-date">{entry.date}</time>

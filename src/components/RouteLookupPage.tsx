@@ -39,6 +39,7 @@ import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_E
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { getPrimaryText } from '../i18n/displayText'
+import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { isChineseLocale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
@@ -59,6 +60,7 @@ import {
   readSearchHistory,
 } from '../storage/routeActivity'
 import { shouldReduceMotion } from '../storage/appPreferences'
+import { canAutoStartGuidedTour, getGuidedTourAutoStartDelayMs } from '../storage/guidedTour'
 import {
   buildRouteShareUrl,
   buildStopPairSearchQuery,
@@ -186,6 +188,7 @@ export function RouteLookupPage({
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
+  const { openTour, registerAutoStartTimer, cancelAutoStartTimer } = useGuidedTourControl()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
@@ -497,6 +500,22 @@ export function RouteLookupPage({
     clearSelection()
     clearRouteFromLocation()
   }, [clearSelection])
+
+  useEffect(() => {
+    if (detailOverlay?.kind !== 'route') return
+
+    const mode = 'route-detail' as const
+    if (!canAutoStartGuidedTour(mode)) return
+
+    const timer = window.setTimeout(() => {
+      if (!canAutoStartGuidedTour(mode)) return
+      if (!document.querySelector('.route-detail-sheet.is-open .route-detail')) return
+      openTour({ mode })
+    }, getGuidedTourAutoStartDelayMs(mode))
+
+    registerAutoStartTimer(timer)
+    return () => cancelAutoStartTimer()
+  }, [detailOverlay?.kind, cancelAutoStartTimer, openTour, registerAutoStartTimer])
 
   useEffect(() => {
     if (detailOverlay?.kind !== 'route') {

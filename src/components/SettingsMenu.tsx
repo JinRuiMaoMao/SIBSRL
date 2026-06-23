@@ -3,17 +3,16 @@ import { DisplayPreferencesSection } from './DisplayPreferencesSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
-import { resolveReplayGuidedTourMode } from '../data/guidedTourSteps'
+import { resolveReplayGuidedTourContext } from '../data/guidedTourSteps'
 import { useAppPreferences } from '../contexts/AppPreferencesContext'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
-import { canAutoStartGuidedTour } from '../storage/guidedTour'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
   const { guidedTourAutoStart, setGuidedTourAutoStart } = useAppPreferences()
-  const { openTour, cancelAutoStartTimer, closeTour, open: tourOpen } = useGuidedTourControl()
+  const { openTour, cancelAutoStartTimer, closeTour } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -80,16 +79,7 @@ export function SettingsMenu() {
         className="settings-trigger"
         data-tour="settings"
         onClick={() => {
-          setOpen((value) => {
-            const opening = !value
-            if (opening) {
-              cancelAutoStartTimer()
-              if (!tourOpen && canAutoStartGuidedTour('brief')) {
-                openTour({ mode: 'brief' })
-              }
-            }
-            return opening
-          })
+          setOpen((value) => !value)
         }}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -174,7 +164,7 @@ export function SettingsMenu() {
               className="settings-action-btn"
               onClick={() => {
                 setOpen(false)
-                openTour({ manual: true, mode: resolveReplayGuidedTourMode() })
+                openTour({ manual: true, mode: resolveReplayGuidedTourContext() })
               }}
             >
               {t('guidedTourReplay')}
