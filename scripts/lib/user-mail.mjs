@@ -64,12 +64,36 @@ function getSendGridApiKey() {
   const explicit = process.env.SENDGRID_API_KEY?.trim()
   if (explicit) return explicit
 
-  const host = process.env.SMTP_HOST?.trim().toLowerCase() ?? ''
-  const user = process.env.SMTP_USER?.trim().toLowerCase() ?? ''
   const pass = process.env.SMTP_PASS?.trim() ?? ''
-  // SendGrid SMTP on Render often fails over IPv6; use HTTP API when host/user match.
-  if (host.includes('sendgrid') && user === 'apikey' && pass) return pass
+  if (pass.startsWith('SG.')) return pass
+
+  const host = process.env.SMTP_HOST?.trim().toLowerCase() ?? ''
+  if (host.includes('sendgrid') && pass) return pass
   return null
+}
+
+/** @returns {'resend' | 'sendgrid' | 'smtp' | null} */
+export function resolveMailProvider() {
+  const forced = process.env.MAIL_PROVIDER?.trim().toLowerCase()
+  if (forced === 'resend' && process.env.RESEND_API_KEY?.trim()) return 'resend'
+  if (forced === 'sendgrid' && getSendGridApiKey()) return 'sendgrid'
+  if (forced === 'smtp') {
+    try {
+      requireSmtpConfig()
+      return 'smtp'
+    } catch {
+      return null
+    }
+  }
+
+  if (process.env.RESEND_API_KEY?.trim()) return 'resend'
+  if (getSendGridApiKey()) return 'sendgrid'
+  try {
+    requireSmtpConfig()
+    return 'smtp'
+  } catch {
+    return null
+  }
 }
 
 /** @param {{ to: string, subject: string, text: string, html: string, from: string }} params */
@@ -130,16 +154,13 @@ async function sendViaResend({ to, subject, text, html }) {
 }
 
 function assertMailProviderConfigured() {
-  if (process.env.RESEND_API_KEY?.trim()) return 'resend'
-  if (getSendGridApiKey()) return 'sendgrid'
-  try {
-    requireSmtpConfig()
-    return 'smtp'
-  } catch {
+  const provider = resolveMailProvider()
+  if (!provider) {
     throw new Error(
-      'No mail provider configured: set RESEND_API_KEY, SENDGRID_API_KEY (or SendGrid SMTP_*), or SMTP_HOST/SMTP_USER/SMTP_PASS',
+      'No mail provider configured: set SENDGRID_API_KEY (recommended), RESEND_API_KEY, or SMTP_HOST/SMTP_USER/SMTP_PASS',
     )
   }
+  return provider
 }
 
 /** @param {{ to: string, code: string, purpose: 'register' | 'reset' }} params */

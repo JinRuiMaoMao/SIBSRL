@@ -25,7 +25,7 @@ import {
   upsertUserData,
   upsertVerificationCode,
 } from './lib/user-db.mjs'
-import { sendVerificationEmail } from './lib/user-mail.mjs'
+import { resolveMailProvider, sendVerificationEmail } from './lib/user-mail.mjs'
 
 const DEFAULT_PORT = 8788
 
@@ -304,10 +304,15 @@ const server = createServer(async (req, res) => {
         service: 'user-api',
         healthz: '/healthz',
         sendCode: 'POST /api/auth/send-code',
+        mailProvider: resolveMailProvider(),
       })
     }
     if (method === 'GET' && path === '/healthz') {
-      return json(req, res, 200, { ok: true, service: 'user-api' })
+      return json(req, res, 200, {
+        ok: true,
+        service: 'user-api',
+        mailProvider: resolveMailProvider(),
+      })
     }
     if (method === 'POST' && path === '/api/auth/send-code') {
       return await handleSendCode(req, res)
@@ -335,5 +340,7 @@ const server = createServer(async (req, res) => {
 })
 
 server.listen(config.port, () => {
+  const mailProvider = resolveMailProvider()
   console.log(`[user-api] listening on http://localhost:${config.port}`)
+  console.log(`[user-api] mail provider: ${mailProvider ?? 'NOT CONFIGURED'}`)
 })
