@@ -120,6 +120,7 @@ const EVENT_ZH: Record<string, string> = {
   'Street Light Outage': '街灯停电',
   'Marathon Road Closure': '马拉松封路',
   'Marathon Road Closure (N)': '马拉松封路（北行）',
+  'Marathon Road Closure at Night': '夜间马拉松封路',
   'Rush Hour': '繁忙时间',
   'Foggy Day': '浓雾天气',
   'Daily Challenge': '每日挑战',
@@ -199,6 +200,23 @@ function buildIntro(
     }
   }
 
+  if (event.en === 'Marathon Road Closure at Night') {
+    return {
+      body: {
+        zh: '夜间马拉松封路生效，N271 改按封路安排行驶，由彩虹中心开往长岛码头，经中西桥一带。请把游戏时间设为 03:30，并按夜间道路环境小心驾驶。',
+        en: 'Night marathon road closures are in effect. Operate N271 from Rainbow Estate Complex to Long Island Ferry Pier via the Central Western Bridge area. Set the in-game time to 03:30 and drive carefully in overnight conditions.',
+      },
+      objective: {
+        zh: '目标：使用任意 HK Special 巴士、CSB 或 FT 巴士完成 N271 南行挑战，不得跳站。',
+        en: 'Objective: Complete the southbound N271 challenge with any HK Special bus, CSB bus, or FT bus without skipping stops.',
+      },
+      closing: {
+        zh: '🌙 祝你好运，驾驶员。保持准点，安全通过封路区。',
+        en: '🌙 Good luck, driver. Keep time and pass the closure safely.',
+      },
+    }
+  }
+
   return {
     body: {
       zh: `今日挑战：${event.zh}${routeSuffixZh}。`,
@@ -239,6 +257,13 @@ export function buildDailyChallengeFromScheduleDay(
     const linked = findRouteForDailyChallenge(routeNumber)
     if (linked) {
       endpoints = buildEndpointsFromRoute(linked, directionKey)
+    }
+  }
+
+  if (entry.event === 'Marathon Road Closure at Night' && routeNumber?.startsWith('N271')) {
+    endpoints = {
+      zh: '彩虹中心 → 长岛码头',
+      en: 'Rainbow Estate Complex → Long Island Ferry Pier',
     }
   }
 
