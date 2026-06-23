@@ -122,6 +122,7 @@ const EVENT_ZH: Record<string, string> = {
   'Slow Passengers': '慢速乘客',
   'Sponsored Route': '赞助线路',
   'Concert Aftermath': '演唱会散场',
+  'Concert Crowd Dispersal': '演唱会人潮疏散',
   'Sightseeing Launch': '观光线路上线',
   'Street light outage': '街灯停电',
   'Street Light Outage': '街灯停电',

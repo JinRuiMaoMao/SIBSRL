@@ -191,6 +191,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '继续补入公开页面确认的部分历史日期：2024-09-07 R370（9 million visits 纪念竞速）与 2024-12-31 S1 观光线路上线 Daily Challenge。',
             en: 'Added more publicly confirmed partial history: 2024-09-07 R370 (9 million visits race) and 2024-12-31 S1 sightseeing launch Daily Challenge.',
           },
+          {
+            zh: '加入用户提供的 2026 年 5 月 Daily Challenge 完整日历，并清理 Discord emoji / 简写线路码后接入日历选择器。',
+            en: 'Added the user-provided full May 2026 Daily Challenge calendar, with Discord emoji and shorthand route codes cleaned up for the calendar picker.',
+          },
         ],
       },
     ],
