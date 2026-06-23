@@ -15,7 +15,7 @@ interface AccountAuthFormProps {
 }
 
 export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAuthFormProps) {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const { alert } = useAppDialog()
   const { login, register, resetPassword, sendCode, mapAuthError } = useAuth()
 
@@ -42,7 +42,7 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
     }
     try {
       const purpose = mode === 'reset' ? 'reset' : 'register'
-      await sendCode(normalizedEmail, purpose)
+      await sendCode(normalizedEmail, purpose, locale)
       setCodeSent(true)
       setStatusMessage(t('authCodeSentInline'))
       await alert({ message: t('authCodeSent') })

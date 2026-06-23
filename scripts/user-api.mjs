@@ -204,7 +204,12 @@ async function handleSendCode(req, res) {
   })
 
   try {
-    await sendVerificationEmail({ to: email, code, purpose })
+    await sendVerificationEmail({
+      to: email,
+      code,
+      purpose,
+      locale: typeof body.locale === 'string' ? body.locale : undefined,
+    })
   } catch (err) {
     console.error('[user-api] send mail failed:', err)
     return error(req, res, 502, 'mail_failed', 'Failed to send verification email')

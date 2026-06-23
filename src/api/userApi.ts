@@ -71,10 +71,14 @@ async function request<T>(
   return payload as T
 }
 
-export async function sendVerificationCode(email: string, purpose: 'register' | 'reset') {
+export async function sendVerificationCode(
+  email: string,
+  purpose: 'register' | 'reset',
+  locale?: string,
+) {
   return request<{ ok: true }>('/api/auth/send-code', {
     method: 'POST',
-    body: JSON.stringify({ email, purpose }),
+    body: JSON.stringify({ email, purpose, locale }),
   })
 }
 

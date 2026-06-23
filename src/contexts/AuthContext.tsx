@@ -31,7 +31,7 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, code: string) => Promise<void>
   resetPassword: (email: string, password: string, code: string) => Promise<void>
-  sendCode: (email: string, purpose: 'register' | 'reset') => Promise<void>
+  sendCode: (email: string, purpose: 'register' | 'reset', locale?: string) => Promise<void>
   logout: () => void
   completeOAuthSession: (token: string, email: string) => void
   mapAuthError: (error: unknown) => MessageKey
@@ -83,8 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await resetAccountPassword(normalizeAuthEmail(resetEmail), password, code)
   }, [])
 
-  const sendCode = useCallback(async (targetEmail: string, purpose: 'register' | 'reset') => {
-    await sendVerificationCode(normalizeAuthEmail(targetEmail), purpose)
+  const sendCode = useCallback(async (targetEmail: string, purpose: 'register' | 'reset', locale?: string) => {
+    await sendVerificationCode(normalizeAuthEmail(targetEmail), purpose, locale)
   }, [])
 
   const mapAuthError = useCallback((error: unknown): MessageKey => {

@@ -1,5 +1,10 @@
 import dns from 'node:dns'
 import nodemailer from 'nodemailer'
+import {
+  getMailContentPlan,
+  MAIL_LOCALE_LABELS,
+  normalizeMailLocale,
+} from './user-mail-copy.mjs'
 
 const DEFAULT_RESEND_FROM = 'SIBS Route Lookup <onboarding@resend.dev>'
 const DEFAULT_SITE_URL = 'https://jinruimaomao.github.io/SIBSRL/'
@@ -24,60 +29,87 @@ function getSiteUrls() {
   return { siteUrl, accountUrl }
 }
 
-function buildVerificationContent(code, purpose) {
+function buildVerificationContent(code, purpose, locale) {
   const { siteUrl, accountUrl } = getSiteUrls()
   const safeCode = escapeHtml(code)
+  const plan = getMailContentPlan(purpose, locale)
+  const primaryCopy = plan.getCopy(plan.primary)
+  const preheader = `${primaryCopy.preheader} / ${plan.getCopy('en').preheader} ${code}`
 
-  const copy =
-    purpose === 'register'
-      ? {
-          subject: '请完成 SIBS Route Lookup 账号注册',
-          preheader: `您的注册确认码为 ${code}，10 分钟内有效。`,
-          headline: '确认您的账号注册',
-          intro:
-            '您正在使用邮箱注册 SIBS Route Lookup（SIBS 线路查询）账号。请在注册页面输入下方确认码以完成验证。',
-          action: '完成注册',
-        }
-      : {
-          subject: 'SIBS Route Lookup 密码重置请求',
-          preheader: `您的密码重置确认码为 ${code}，10 分钟内有效。`,
-          headline: '确认密码重置',
-          intro:
-            '我们收到了重置您 SIBS Route Lookup（SIBS 线路查询）账号密码的请求。请在重置页面输入下方确认码以继续。',
-          action: '重置密码',
-        }
+  const textSections = plan.full.map((mailLocale) => {
+    const copy = plan.getCopy(mailLocale)
+    return [
+      `${MAIL_LOCALE_LABELS[mailLocale]} / ${mailLocale}`,
+      copy.headline,
+      copy.intro,
+      `${copy.codeLabel}: ${code}`,
+      copy.expiry,
+      copy.security,
+      '',
+    ].join('\n')
+  })
+
+  const summaryLines = plan.summary.map((mailLocale) => {
+    const copy = plan.getCopy(mailLocale)
+    return `${MAIL_LOCALE_LABELS[mailLocale]}: ${copy.summary}`
+  })
 
   const text = [
     'SIBS Route Lookup',
     '',
-    copy.headline,
+    `${plan.getCopy('en').codeLabel}: ${code}`,
     '',
-    copy.intro,
+    ...textSections,
+    plan.otherLanguagesTitle.en,
+    ...summaryLines,
     '',
-    `确认码：${code}`,
+    `${plan.getCopy('en').siteLabel}: ${siteUrl}`,
+    `${plan.getCopy('en').accountLabel}: ${accountUrl}`,
     '',
-    '该确认码 10 分钟内有效。请勿将确认码告知他人。',
-    '',
-    '如非本人操作，请忽略此邮件，您的账号不会因此变更。',
-    '',
-    `访问应用：${siteUrl}`,
-    `账号页面：${accountUrl}`,
-    '',
-    '— SIBS Route Lookup',
-    '此邮件由系统自动发送，请勿直接回复。',
+    plan.getCopy('en').footer,
   ].join('\n')
 
+  const fullHtmlSections = plan.full
+    .map((mailLocale) => {
+      const copy = plan.getCopy(mailLocale)
+      return `<tr>
+            <td style="padding:18px 28px 0;border-top:1px solid #eef2f7;">
+              <p style="margin:0 0 8px;font-size:12px;line-height:1.5;color:#9ca3af;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">${escapeHtml(MAIL_LOCALE_LABELS[mailLocale])}</p>
+              <h2 style="margin:0 0 10px;font-size:18px;line-height:1.4;font-weight:700;color:#111827;">${escapeHtml(copy.headline)}</h2>
+              <p style="margin:0 0 10px;font-size:14px;line-height:1.7;color:#374151;">${escapeHtml(copy.intro)}</p>
+              <p style="margin:0 0 8px;font-size:14px;line-height:1.7;color:#4b5563;">${escapeHtml(copy.expiry)}</p>
+              <p style="margin:0 0 4px;font-size:14px;line-height:1.7;color:#4b5563;">${escapeHtml(copy.security)}</p>
+            </td>
+          </tr>`
+    })
+    .join('')
+
+  const summaryHtml =
+    plan.summary.length > 0
+      ? `<tr>
+            <td style="padding:18px 28px 8px;border-top:1px solid #eef2f7;">
+              <p style="margin:0 0 12px;font-size:12px;line-height:1.5;color:#9ca3af;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">${escapeHtml(plan.otherLanguagesTitle.primary)} · ${escapeHtml(plan.otherLanguagesTitle.en)}</p>
+              ${plan.summary
+                .map((mailLocale) => {
+                  const copy = plan.getCopy(mailLocale)
+                  return `<p style="margin:0 0 10px;font-size:13px;line-height:1.65;color:#4b5563;"><strong style="color:#111827;">${escapeHtml(MAIL_LOCALE_LABELS[mailLocale])}:</strong> ${escapeHtml(copy.summary)}</p>`
+                })
+                .join('')}
+            </td>
+          </tr>`
+      : ''
+
   const html = `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="${escapeHtml(normalizeMailLocale(locale))}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <meta name="supported-color-schemes" content="light" />
-  <title>${escapeHtml(copy.subject)}</title>
+  <title>${escapeHtml(plan.subject)}</title>
 </head>
 <body style="margin:0;padding:0;background-color:#f4f6f8;color:#1f2937;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${escapeHtml(copy.preheader)}</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${escapeHtml(preheader)}</div>
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f4f6f8;padding:24px 12px;">
     <tr>
       <td align="center">
@@ -85,37 +117,39 @@ function buildVerificationContent(code, purpose) {
           <tr>
             <td style="padding:24px 28px 12px;border-bottom:1px solid #eef2f7;">
               <p style="margin:0;font-size:13px;line-height:1.5;color:#6b7280;letter-spacing:0.02em;">SIBS Route Lookup</p>
-              <h1 style="margin:8px 0 0;font-size:22px;line-height:1.35;font-weight:700;color:#111827;">${escapeHtml(copy.headline)}</h1>
+              <h1 style="margin:8px 0 0;font-size:22px;line-height:1.35;font-weight:700;color:#111827;">${escapeHtml(primaryCopy.headline)}</h1>
             </td>
           </tr>
           <tr>
             <td style="padding:20px 28px 8px;">
-              <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#374151;">${escapeHtml(copy.intro)}</p>
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 16px;background-color:#f8fafc;border:1px solid #dbe3ee;border-radius:10px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 8px;background-color:#f8fafc;border:1px solid #dbe3ee;border-radius:10px;">
                 <tr>
                   <td style="padding:18px 20px;text-align:center;">
-                    <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:#6b7280;">您的确认码</p>
+                    <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:#6b7280;">${escapeHtml(primaryCopy.codeLabel)} · ${escapeHtml(plan.getCopy('en').codeLabel)}</p>
                     <p style="margin:0;font-size:32px;line-height:1.2;font-weight:700;letter-spacing:0.28em;color:#111827;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;">${safeCode}</p>
                   </td>
                 </tr>
               </table>
-              <p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#4b5563;">该确认码 <strong style="color:#111827;">10 分钟内有效</strong>。请勿将确认码告知他人。</p>
-              <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#4b5563;">如非本人操作，请忽略此邮件，您的账号不会因此变更。</p>
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="border-radius:8px;background-color:#2563eb;">
-                    <a href="${escapeHtml(accountUrl)}" style="display:inline-block;padding:12px 18px;font-size:14px;line-height:1.4;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(copy.action)}</a>
+                    <a href="${escapeHtml(accountUrl)}" style="display:inline-block;padding:12px 18px;font-size:14px;line-height:1.4;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(primaryCopy.action)}</a>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
+          ${fullHtmlSections}
+          ${summaryHtml}
           <tr>
             <td style="padding:16px 28px 24px;border-top:1px solid #eef2f7;">
               <p style="margin:0 0 8px;font-size:12px;line-height:1.6;color:#6b7280;">
-                应用主页：<a href="${escapeHtml(siteUrl)}" style="color:#2563eb;text-decoration:none;">${escapeHtml(siteUrl)}</a>
+                ${escapeHtml(plan.getCopy('en').siteLabel)}: <a href="${escapeHtml(siteUrl)}" style="color:#2563eb;text-decoration:none;">${escapeHtml(siteUrl)}</a>
               </p>
-              <p style="margin:0;font-size:12px;line-height:1.6;color:#9ca3af;">此邮件由 SIBS Route Lookup 系统自动发送，请勿直接回复。</p>
+              <p style="margin:0 0 8px;font-size:12px;line-height:1.6;color:#6b7280;">
+                ${escapeHtml(plan.getCopy('en').accountLabel)}: <a href="${escapeHtml(accountUrl)}" style="color:#2563eb;text-decoration:none;">${escapeHtml(accountUrl)}</a>
+              </p>
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#9ca3af;">${escapeHtml(plan.getCopy('en').footer)}</p>
             </td>
           </tr>
         </table>
@@ -126,8 +160,8 @@ function buildVerificationContent(code, purpose) {
 </html>`
 
   return {
-    subject: copy.subject,
-    preheader: copy.preheader,
+    subject: plan.subject,
+    preheader,
     text,
     html,
     category: purpose === 'register' ? 'account-register' : 'password-reset',
@@ -296,9 +330,9 @@ function assertMailProviderConfigured() {
   return provider
 }
 
-/** @param {{ to: string, code: string, purpose: 'register' | 'reset' }} params */
-export async function sendVerificationEmail({ to, code, purpose }) {
-  const { subject, text, html, category, preheader } = buildVerificationContent(code, purpose)
+/** @param {{ to: string, code: string, purpose: 'register' | 'reset', locale?: string }} params */
+export async function sendVerificationEmail({ to, code, purpose, locale }) {
+  const { subject, text, html, category, preheader } = buildVerificationContent(code, purpose, locale)
   const provider = assertMailProviderConfigured()
   const from =
     process.env.MAIL_FROM?.trim() ||
