@@ -60,7 +60,7 @@ export function SearchBar({
 
   return (
     <div className="search-bar-wrap">
-      <div className="search-bar">
+      <div className="search-bar" data-tour="route-search">
         <label htmlFor={id} className="sr-only">
           {t(labelKey)}
         </label>
@@ -71,7 +71,6 @@ export function SearchBar({
           ref={inputRef}
           id={id}
           type="search"
-          data-tour="route-search"
           placeholder={t(placeholderKey)}
           value={value}
           onChange={(e) => onChange(e.target.value)}

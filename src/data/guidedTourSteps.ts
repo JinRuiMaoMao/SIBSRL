@@ -28,7 +28,7 @@ export const GUIDED_TOUR_STEPS: GuidedTourStep[] = [
   },
   {
     id: 'tabs',
-    target: '[data-tour="header-tabs"]',
+    target: '.header-tabs-cluster .header-tabs',
     titleKey: 'guidedTourTabsTitle',
     bodyKey: 'guidedTourTabsBody',
     placement: 'bottom',
