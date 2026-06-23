@@ -211,6 +211,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '线路数量统计改用与卡片分组一致的口径，避免底层可查但当前不常驻展示的 77X / 270A 被算进分母。',
             en: 'Route count totals now use the same grouped-card scope, so lookup-only daily routes such as 77X / 270A are not counted in the denominator when not shown as cards.',
           },
+          {
+            zh: '多方向线路卡片初始方向统一默认到切换器左侧（北行 / 西行）；用户手动切换后仍会保留选择。',
+            en: 'Multi-direction route cards now default to the leftmost toggle option (northbound / westbound); manual direction changes are still remembered.',
+          },
         ],
       },
       {

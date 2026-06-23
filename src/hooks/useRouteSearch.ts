@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   dailyChallengeMatchesFilters,
-  findDailyChallengeDirectionIndex,
   getTodaysDailyChallenge,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
@@ -87,15 +86,11 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
     [displayRoutes],
   )
 
-  /** 列表卡片方向：用户切换后尊重选择；否则用分组条目默认方向（如 41AN→北行） */
+  /** 列表卡片方向：用户切换后尊重选择；否则固定使用排序后最左侧方向（北 / 西）。 */
   const getCardDirectionIndex = useCallback(
-    (route: BusRoute, listedDirectionKey?: 'N' | 'S' | 'E' | 'W' | null) => {
+    (route: BusRoute, _listedDirectionKey?: 'N' | 'S' | 'E' | 'W' | null) => {
       if (directionByRouteId[route.id] !== undefined) {
         return clampDirectionIndex(route, directionByRouteId[route.id]!)
-      }
-      if (listedDirectionKey) {
-        const listed = findDailyChallengeDirectionIndex(route, listedDirectionKey)
-        if (listed != null) return listed
       }
       return clampDirectionIndex(route, 0)
     },
