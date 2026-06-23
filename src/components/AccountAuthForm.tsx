@@ -3,31 +3,24 @@ import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
 
-type AuthMode = 'login' | 'register' | 'reset'
+export type AuthMode = 'login' | 'register' | 'reset'
 
-export function AccountSection() {
+interface AccountAuthFormProps {
+  initialMode?: AuthMode
+  onSuccess?: () => void
+}
+
+export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAuthFormProps) {
   const { t } = useLocale()
   const { alert } = useAppDialog()
-  const {
-    enabled,
-    email: loggedInEmail,
-    isLoggedIn,
-    login,
-    register,
-    resetPassword,
-    sendCode,
-    logout,
-    mapAuthError,
-  } = useAuth()
+  const { login, register, resetPassword, sendCode, mapAuthError } = useAuth()
 
-  const [mode, setMode] = useState<AuthMode>('login')
+  const [mode, setMode] = useState<AuthMode>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
   const [codeSent, setCodeSent] = useState(false)
-
-  if (!enabled) return null
 
   const showError = async (error: unknown) => {
     await alert({ message: t(mapAuthError(error)) })
@@ -53,9 +46,11 @@ export function AccountSection() {
       if (mode === 'login') {
         await login(email, password)
         await alert({ message: t('authLoginSuccess') })
+        onSuccess?.()
       } else if (mode === 'register') {
         await register(email, password, code)
         await alert({ message: t('authRegisterSuccess') })
+        onSuccess?.()
       } else {
         await resetPassword(email, password, code)
         await alert({ message: t('authResetSuccess') })
@@ -71,26 +66,8 @@ export function AccountSection() {
     }
   }
 
-  if (isLoggedIn) {
-    return (
-      <section className="settings-section">
-        <p className="settings-panel-title">{t('authAccount')}</p>
-        <p className="settings-hint">{t('authLoggedInAs', { email: loggedInEmail ?? '' })}</p>
-        <p className="settings-hint">{t('authFavoritesSyncHint')}</p>
-        <div className="settings-action-row">
-          <button type="button" className="settings-action-btn" onClick={logout}>
-            {t('authLogout')}
-          </button>
-        </div>
-      </section>
-    )
-  }
-
   return (
-    <section className="settings-section">
-      <p className="settings-panel-title">{t('authAccount')}</p>
-      <p className="settings-hint">{t('authIntro')}</p>
-
+    <div className="account-auth-card">
       <div className="settings-toggle-group auth-mode-toggle">
         <button
           type="button"
@@ -126,6 +103,8 @@ export function AccountSection() {
           {t('authResetPassword')}
         </button>
       </div>
+
+      <p className="settings-hint">{t('authIntro')}</p>
 
       <label className="settings-field">
         <span className="settings-field-label">{t('authEmail')}</span>
@@ -189,6 +168,6 @@ export function AccountSection() {
               : t('authResetPassword')}
         </button>
       </div>
-    </section>
+    </div>
   )
 }

@@ -116,6 +116,16 @@ function devEntryRedirectPlugin(): Plugin {
           }
         }
 
+        if (pathOnly === '/account.html') {
+          const file = resolve(root, 'pages/account.html')
+          if (existsSync(file)) {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'text/html; charset=utf-8')
+            res.end(readFileSync(file, 'utf8'))
+            return
+          }
+        }
+
         next()
       })
     },

@@ -1432,6 +1432,106 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   background: var(--accent-soft);
 }
 
+.account-avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.account-avatar-btn:hover,
+.account-avatar-btn--active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.account-avatar-btn--signed-in {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.account-avatar-btn__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.account-page {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 0.25rem 0 1.5rem;
+}
+
+.account-page-header {
+  margin-bottom: 1rem;
+}
+
+.account-page-header h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+}
+
+.account-page-lead {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.account-page-unavailable {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.account-auth-card,
+.account-profile-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.account-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.account-profile-email {
+  margin: 0 0 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  word-break: break-all;
+}
+
 .settings-icon {
   display: block;
 }

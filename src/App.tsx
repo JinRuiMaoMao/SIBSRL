@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import './App.css'
+import { AccountPage } from './components/AccountPage'
 import { BroadcastPage } from './components/BroadcastPage'
 import { ComplaintsPage } from './components/ComplaintsPage'
 import { DailyChallengePrompt } from './components/DailyChallengePrompt'
@@ -19,7 +20,7 @@ import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markUpdateSeen } from './storage/updatesViewing'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
-import { isSecretPage } from './utils/appPage'
+import { isAccountPage, isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
@@ -78,6 +79,40 @@ function App() {
   const handlePendingDailyChallengeDetailConsumed = useCallback(() => {
     setPendingDailyChallengeDetail(0)
   }, [])
+
+  if (isAccountPage()) {
+    return (
+      <div className="app sibs-scrollbar">
+        <Header
+          activeTab={activeTab}
+          collapsed={headerCollapsed}
+          onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
+        />
+
+        <main className="main">
+          <ErrorBoundary>
+            <AccountPage />
+          </ErrorBoundary>
+        </main>
+
+        <footer className="site-footer">
+          <p>
+            {t('footer')} ·{' '}
+            <a
+              href="https://www.roblox.com/games/1588965415"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t('playGame')}
+            </a>
+          </p>
+          <p className="build-tag" title={t('buildTagHint')}>
+            {t('buildTag', { time: buildLabel })}
+          </p>
+        </footer>
+      </div>
+    )
+  }
 
   if (isSecretPage()) {
     if (!hasSecretAccess()) {

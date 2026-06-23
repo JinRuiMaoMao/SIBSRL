@@ -1,4 +1,5 @@
 import type { RefObject } from 'react'
+import { AccountAvatarButton } from './AccountAvatarButton'
 import { SettingsMenu } from './SettingsMenu'
 
 interface HeaderToolbarProps {
@@ -8,6 +9,7 @@ interface HeaderToolbarProps {
 export function HeaderToolbar({ toolbarRef }: HeaderToolbarProps) {
   return (
     <div className="header-toolbar" ref={toolbarRef}>
+      <AccountAvatarButton />
       <SettingsMenu />
     </div>
   )

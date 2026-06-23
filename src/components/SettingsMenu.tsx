@@ -2,7 +2,6 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
-import { AccountSection } from './AccountSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -122,7 +121,6 @@ export function SettingsMenu() {
           </section>
 
           <DisplayPreferencesSection />
-          <AccountSection />
           <ResetSettingsSection />
         </div>
       )}
