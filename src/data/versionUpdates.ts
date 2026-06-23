@@ -211,6 +211,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2026 年 1 月 Daily Challenge 完整日历；已标准化 PH、Marathon / Marathon Closure、N271(N171WM) 等写法。',
             en: 'Added the user-provided full January 2026 Daily Challenge calendar; PH, Marathon / Marathon Closure, and N271(N171WM) shorthand were normalized.',
           },
+          {
+            zh: '加入用户提供的 2025 年 12 月 Daily Challenge 完整日历；已标准化节日备注、Free Ride、E-payment outage、Rare apperance 与 Marathon 等写法。',
+            en: 'Added the user-provided full December 2025 Daily Challenge calendar; holiday notes, Free Ride, E-payment outage, Rare apperance, and Marathon shorthand were normalized.',
+          },
         ],
       },
     ],
