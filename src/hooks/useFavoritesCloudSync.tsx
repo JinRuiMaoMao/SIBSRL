@@ -18,9 +18,16 @@ function isUnauthorized(error: unknown): boolean {
   return error instanceof UserApiError && error.code === 'unauthorized'
 }
 
+function isAborted(error: unknown): boolean {
+  return error instanceof UserApiError && error.code === 'aborted'
+}
+
 export function useFavoritesCloudSync(): ReactNode {
   const { token, isLoggedIn, logout } = useAuth()
   const { folders, activeFolderId, replaceFoldersState } = useFavoriteRoutes()
+  const tokenRef = useRef(token)
+  tokenRef.current = token
+
   const foldersRef = useRef(folders)
   const activeFolderIdRef = useRef(activeFolderId)
   foldersRef.current = folders
@@ -29,6 +36,7 @@ export function useFavoritesCloudSync(): ReactNode {
   const hydratedRef = useRef(false)
   const uploadTimerRef = useRef<number | null>(null)
   const skipUploadRef = useRef(false)
+  const syncAbortRef = useRef<AbortController | null>(null)
   const [syncReady, setSyncReady] = useState(false)
   const [conflict, setConflict] = useState<{
     local: FavoriteFoldersState
@@ -38,8 +46,9 @@ export function useFavoritesCloudSync(): ReactNode {
   const cancelConflictRef = useRef<(() => void) | null>(null)
 
   const handleUnauthorized = useCallback(
-    (error: unknown) => {
+    (error: unknown, requestToken: string | null) => {
       if (!isUnauthorized(error)) return false
+      if (!requestToken || requestToken !== tokenRef.current) return false
       logout()
       return true
     },
@@ -47,6 +56,8 @@ export function useFavoritesCloudSync(): ReactNode {
   )
 
   useEffect(() => {
+    syncAbortRef.current?.abort()
+    syncAbortRef.current = null
     cancelConflictRef.current?.()
     cancelConflictRef.current = null
     conflictResolverRef.current = null
@@ -63,11 +74,15 @@ export function useFavoritesCloudSync(): ReactNode {
   useEffect(() => {
     if (!isLoggedIn || !token) return
 
+    const syncToken = token
+    const abort = new AbortController()
+    syncAbortRef.current = abort
     let cancelled = false
+
     void (async () => {
       try {
-        const remote = await fetchUserData(token)
-        if (cancelled) return
+        const remote = await fetchUserData(syncToken, abort.signal)
+        if (cancelled || syncToken !== tokenRef.current) return
 
         const localState = readLocalFavoriteState()
         const remoteState = remote.favorites
@@ -92,12 +107,11 @@ export function useFavoritesCloudSync(): ReactNode {
               setConflict({ local: localState, remote: remoteState })
             })
           } catch {
-            if (cancelled) return
             return
           }
           conflictResolverRef.current = null
           cancelConflictRef.current = null
-          if (cancelled) return
+          if (cancelled || syncToken !== tokenRef.current) return
 
           let nextState = localState
           if (choice === 'cloud') {
@@ -107,20 +121,22 @@ export function useFavoritesCloudSync(): ReactNode {
           }
           skipUploadRef.current = true
           replaceFoldersState(nextState)
-          await saveUserData(token, nextState)
+          await saveUserData(syncToken, nextState, abort.signal)
         } else if (remoteState && remoteCount > 0 && localCount === 0) {
           skipUploadRef.current = true
           replaceFoldersState(remoteState)
         } else if (localCount > 0 && remoteCount === 0) {
-          await saveUserData(token, localState)
+          await saveUserData(syncToken, localState, abort.signal)
         }
       } catch (error) {
-        if (handleUnauthorized(error)) return
+        if (cancelled || abort.signal.aborted || isAborted(error)) return
+        if (syncToken !== tokenRef.current) return
+        if (handleUnauthorized(error, syncToken)) return
         if (!(error instanceof UserApiError) || error.code !== 'user_api_unconfigured') {
           console.warn('[favorites-sync] initial pull failed', error)
         }
       } finally {
-        if (!cancelled) {
+        if (!cancelled && syncToken === tokenRef.current) {
           hydratedRef.current = true
           setSyncReady(true)
         }
@@ -129,6 +145,10 @@ export function useFavoritesCloudSync(): ReactNode {
 
     return () => {
       cancelled = true
+      abort.abort()
+      if (syncAbortRef.current === abort) {
+        syncAbortRef.current = null
+      }
     }
     // Only run on login/token change — not on every favorites edit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,11 +162,12 @@ export function useFavoritesCloudSync(): ReactNode {
       return
     }
 
+    const uploadToken = token
     const state = buildState(foldersRef.current, activeFolderIdRef.current)
     if (uploadTimerRef.current) window.clearTimeout(uploadTimerRef.current)
     uploadTimerRef.current = window.setTimeout(() => {
-      void saveUserData(token, state).catch((error) => {
-        if (handleUnauthorized(error)) return
+      void saveUserData(uploadToken, state).catch((error) => {
+        if (handleUnauthorized(error, uploadToken)) return
         console.warn('[favorites-sync] upload failed', error)
       })
     }, 800)

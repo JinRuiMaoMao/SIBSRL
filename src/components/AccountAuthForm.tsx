@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { readLastAuthEmail } from '../storage/authToken'
+import { normalizeAuthEmail } from '../utils/authEmail'
 
 export type AuthMode = 'login' | 'register' | 'reset'
 
@@ -35,9 +36,13 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
   const handleSendCode = async () => {
     setBusy(true)
     setStatusMessage(t('authSendingCode'))
+    const normalizedEmail = normalizeAuthEmail(email)
+    if (normalizedEmail !== email) {
+      setEmail(normalizedEmail)
+    }
     try {
       const purpose = mode === 'reset' ? 'reset' : 'register'
-      await sendCode(email, purpose)
+      await sendCode(normalizedEmail, purpose)
       setCodeSent(true)
       setStatusMessage(t('authCodeSentInline'))
       await alert({ message: t('authCodeSent') })
@@ -51,17 +56,21 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
   const handleSubmit = async () => {
     setBusy(true)
     setStatusMessage(null)
+    const normalizedEmail = normalizeAuthEmail(email)
+    if (normalizedEmail !== email) {
+      setEmail(normalizedEmail)
+    }
     try {
       if (mode === 'login') {
-        await login(email, password)
+        await login(normalizedEmail, password)
         await alert({ message: t('authLoginSuccess') })
         onSuccess?.()
       } else if (mode === 'register') {
-        await register(email, password, code)
+        await register(normalizedEmail, password, code)
         await alert({ message: t('authRegisterSuccess') })
         onSuccess?.()
       } else {
-        await resetPassword(email, password, code)
+        await resetPassword(normalizedEmail, password, code)
         await alert({ message: t('authResetSuccess') })
         setMode('login')
       }
@@ -130,7 +139,8 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
         <input
           className="settings-input"
           type="email"
-          autoComplete="email"
+          autoComplete="username"
+          spellCheck={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />

@@ -58,7 +58,7 @@ export function AccountPage() {
       ) : isLoggedIn ? (
         <AccountProfileView />
       ) : (
-        <AccountAuthForm initialMode="login" />
+        <AccountAuthForm key="signed-out" initialMode="login" />
       )}
     </section>
   )
