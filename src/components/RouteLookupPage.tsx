@@ -177,14 +177,14 @@ function runDetailAnimation(
 interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
-  onRouteCardNavigate?: () => void
+  onRouteDetailOpen?: () => void
   dailyChallenge: DailyChallengeInfo
 }
 
 export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
-  onRouteCardNavigate,
+  onRouteDetailOpen,
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
@@ -548,6 +548,11 @@ export function RouteLookupPage({
   }, [selectedRoute])
 
   useEffect(() => {
+    if (!detailOverlay) return
+    onRouteDetailOpen?.()
+  }, [detailOverlay, onRouteDetailOpen])
+
+  useEffect(() => {
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
     if (!sheet || !detailOverlay) return
@@ -639,13 +644,12 @@ export function RouteLookupPage({
     (routeId: string) => {
       setDailyChallengeRouteView(false)
       recordRecent(routeId)
-      onRouteCardNavigate?.()
       selectRoute(routeId)
       const route = findDisplayRoute(routeId)
       const directionIndex = route ? getDirectionIndex(route) : 0
       setRouteInLocation(routeId, directionIndex)
     },
-    [findDisplayRoute, getDirectionIndex, onRouteCardNavigate, recordRecent, selectRoute],
+    [findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge

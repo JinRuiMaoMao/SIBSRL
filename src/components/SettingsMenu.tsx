@@ -6,11 +6,12 @@ import { ThemeToggle } from './ThemeToggle'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
+import { clearGuidedTourDeferral } from '../storage/guidedTour'
 import { readTabFromLocation } from '../utils/appTabNavigation'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
-  const { openTour } = useGuidedTourControl()
+  const { openTour, deferAutoTour } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -77,7 +78,12 @@ export function SettingsMenu() {
         type="button"
         className="settings-trigger"
         data-tour="settings"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setOpen((value) => {
+            if (!value) deferAutoTour()
+            return !value
+          })
+        }}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-controls={panelId}
@@ -135,7 +141,8 @@ export function SettingsMenu() {
                 className="settings-action-btn"
                 onClick={() => {
                   setOpen(false)
-                  openTour()
+                  clearGuidedTourDeferral()
+                  openTour({ manual: true })
                 }}
               >
                 {t('guidedTourReplay')}

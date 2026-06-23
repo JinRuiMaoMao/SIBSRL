@@ -213,6 +213,13 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
+  useEffect(() => {
+    if (open) return
+    setStepIndex(0)
+    setActiveSteps(GUIDED_TOUR_STEPS)
+    setSpotlight(null)
+  }, [open])
+
   useLayoutEffect(() => {
     if (!open || !step) return
     remeasure()

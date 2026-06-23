@@ -1,22 +1,42 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
+import { deferGuidedTourThisSession } from '../storage/guidedTour'
+
+interface OpenTourOptions {
+  manual?: boolean
+}
 
 interface GuidedTourContextValue {
   open: boolean
-  openTour: () => void
+  openTour: (options?: OpenTourOptions) => void
   closeTour: () => void
+  deferAutoTour: () => void
 }
 
 const GuidedTourContext = createContext<GuidedTourContextValue | null>(null)
 
 export function GuidedTourProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
+  const manualOpenRef = useRef(false)
 
-  const openTour = useCallback(() => setOpen(true), [])
-  const closeTour = useCallback(() => setOpen(false), [])
+  const openTour = useCallback((options?: OpenTourOptions) => {
+    manualOpenRef.current = Boolean(options?.manual)
+    setOpen(true)
+  }, [])
+
+  const closeTour = useCallback(() => {
+    manualOpenRef.current = false
+    setOpen(false)
+  }, [])
+
+  const deferAutoTour = useCallback(() => {
+    if (manualOpenRef.current) return
+    deferGuidedTourThisSession()
+    setOpen(false)
+  }, [])
 
   const value = useMemo(
-    () => ({ open, openTour, closeTour }),
-    [open, openTour, closeTour],
+    () => ({ open, openTour, closeTour, deferAutoTour }),
+    [open, openTour, closeTour, deferAutoTour],
   )
 
   return <GuidedTourContext.Provider value={value}>{children}</GuidedTourContext.Provider>
