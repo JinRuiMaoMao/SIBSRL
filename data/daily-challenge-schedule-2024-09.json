@@ -2,8 +2,187 @@
   "month": "2024-09",
   "timezone": "Asia/Hong_Kong",
   "resetHour": 8,
-  "note": "Partial historical schedule from Fandom Daily Challenges: route R370 was selected on 2024-09-07 to celebrate 9 million visits. Other dates are left blank because no full September calendar was found.",
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
   "days": [
-    { "date": "2024-09-07", "event": "Marathon Shuttle", "routeCode": "R370", "race": true }
+    {
+      "date": "2024-09-01",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2024-09-02",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-09-03",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-09-04",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-09-05",
+      "event": "Concert Aftermath",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-09-06",
+      "event": "Bridge Closure",
+      "routeCode": "25YN",
+      "race": false
+    },
+    {
+      "date": "2024-09-07",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": true
+    },
+    {
+      "date": "2024-09-08",
+      "event": "Rush Hour",
+      "routeCode": "476W",
+      "race": false
+    },
+    {
+      "date": "2024-09-09",
+      "event": "Grumble Day",
+      "routeCode": "46W",
+      "race": false
+    },
+    {
+      "date": "2024-09-10",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-09-11",
+      "event": "Friendly Day",
+      "routeCode": "142E",
+      "race": false
+    },
+    {
+      "date": "2024-09-12",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-09-13",
+      "event": "Marathon Road Closure",
+      "routeCode": "242A",
+      "race": false
+    },
+    {
+      "date": "2024-09-14",
+      "event": "Sponsored Route",
+      "routeCode": "49AS",
+      "race": true
+    },
+    {
+      "date": "2024-09-15",
+      "event": "Rush Hour",
+      "routeCode": "49AN",
+      "race": false
+    },
+    {
+      "date": "2024-09-16",
+      "event": "Rush Hour",
+      "routeCode": "148E",
+      "race": false
+    },
+    {
+      "date": "2024-09-17",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-09-18",
+      "event": "Bridge Closure",
+      "routeCode": "25YS",
+      "race": false
+    },
+    {
+      "date": "2024-09-19",
+      "event": "Marathon Road Closure",
+      "routeCode": "270A",
+      "race": false
+    },
+    {
+      "date": "2024-09-20",
+      "event": "Rush Hour",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2024-09-21",
+      "event": "Bridge Closure",
+      "routeCode": "25YN",
+      "race": true
+    },
+    {
+      "date": "2024-09-22",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2024-09-23",
+      "event": "Rare Appearance",
+      "routeCode": "74AN",
+      "race": false
+    },
+    {
+      "date": "2024-09-24",
+      "event": "Street Light Outage",
+      "routeCode": "148E",
+      "race": false
+    },
+    {
+      "date": "2024-09-25",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-09-26",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-09-27",
+      "event": "Concert Overrun",
+      "routeCode": "N171E",
+      "race": false
+    },
+    {
+      "date": "2024-09-28",
+      "event": "Rare Appearance",
+      "routeCode": "370AE",
+      "race": true
+    },
+    {
+      "date": "2024-09-29",
+      "event": "Rush Hour",
+      "routeCode": "76S",
+      "race": false
+    },
+    {
+      "date": "2024-09-30",
+      "event": "Safety First",
+      "routeCode": "76N",
+      "race": true
+    }
   ]
 }

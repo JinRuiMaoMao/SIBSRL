@@ -1,0 +1,188 @@
+{
+  "month": "2024-11",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
+  "days": [
+    {
+      "date": "2024-11-01",
+      "event": "Marathon Road Closure",
+      "routeCode": "471W",
+      "race": false
+    },
+    {
+      "date": "2024-11-02",
+      "event": "Slow Passengers",
+      "routeCode": "142E",
+      "race": true
+    },
+    {
+      "date": "2024-11-03",
+      "event": "Rush Hour",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2024-11-04",
+      "event": "Foggy Day",
+      "routeCode": "77S",
+      "race": false
+    },
+    {
+      "date": "2024-11-05",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": false
+    },
+    {
+      "date": "2024-11-06",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-11-07",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-11-08",
+      "event": "Friendly Day",
+      "routeCode": "76S",
+      "race": false
+    },
+    {
+      "date": "2024-11-09",
+      "event": "Rare Appearance",
+      "routeCode": "475W",
+      "race": true
+    },
+    {
+      "date": "2024-11-10",
+      "event": "Rush Hour",
+      "routeCode": "472W",
+      "race": false
+    },
+    {
+      "date": "2024-11-11",
+      "event": "Marathon Road Closure",
+      "routeCode": "Y370A",
+      "race": false
+    },
+    {
+      "date": "2024-11-12",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-11-13",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-11-14",
+      "event": "Grumble Day",
+      "routeCode": "140W",
+      "race": false
+    },
+    {
+      "date": "2024-11-15",
+      "event": "Safety First",
+      "routeCode": "42AN",
+      "race": false
+    },
+    {
+      "date": "2024-11-16",
+      "event": "Rush Hour",
+      "routeCode": "370BW",
+      "race": false
+    },
+    {
+      "date": "2024-11-17",
+      "event": "Rare Appearance",
+      "routeCode": "140W",
+      "race": true
+    },
+    {
+      "date": "2024-11-18",
+      "event": "Foggy Day",
+      "routeCode": "76N",
+      "race": false
+    },
+    {
+      "date": "2024-11-19",
+      "event": "Marathon Road Closure",
+      "routeCode": "248A",
+      "race": false
+    },
+    {
+      "date": "2024-11-20",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-11-21",
+      "event": "Sponsored Route",
+      "routeCode": "141PW",
+      "race": false
+    },
+    {
+      "date": "2024-11-22",
+      "event": "Sponsored Route",
+      "routeCode": "171E",
+      "race": false
+    },
+    {
+      "date": "2024-11-23",
+      "event": "Marathon Road Closure",
+      "routeCode": "Y370A",
+      "race": true
+    },
+    {
+      "date": "2024-11-24",
+      "event": "Rush Hour",
+      "routeCode": "25N",
+      "race": false
+    },
+    {
+      "date": "2024-11-25",
+      "event": "Rush Hour",
+      "routeCode": "76N",
+      "race": false
+    },
+    {
+      "date": "2024-11-26",
+      "event": "Sponsored Route",
+      "routeCode": "171E",
+      "race": false
+    },
+    {
+      "date": "2024-11-27",
+      "event": "Foggy Day",
+      "routeCode": "673A",
+      "race": false
+    },
+    {
+      "date": "2024-11-28",
+      "event": "Street Light Outage",
+      "routeCode": "N146W",
+      "race": false
+    },
+    {
+      "date": "2024-11-29",
+      "event": "E-Payment Outage",
+      "routeCode": "246PE",
+      "race": false
+    },
+    {
+      "date": "2024-11-30",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": true
+    }
+  ]
+}

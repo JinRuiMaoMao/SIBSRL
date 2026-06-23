@@ -2,38 +2,193 @@
   "month": "2024-07",
   "timezone": "Asia/Hong_Kong",
   "resetHour": 8,
-  "note": "Historical schedule transcribed from NamuWiki (Sunshine Islands Bus Simulator/Daily Challenge). Machine-translated event labels were normalized to this site's event names.",
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
   "days": [
-    { "date": "2024-07-01", "event": "Street Light Outage", "routeCode": "77", "race": false },
-    { "date": "2024-07-02", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-03", "event": "Friendly Day", "routeCode": "75P", "race": false },
-    { "date": "2024-07-04", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-05", "event": "Concert Aftermath", "routeCode": "140", "race": false },
-    { "date": "2024-07-06", "event": "Sponsored Route", "routeCode": "25", "race": false },
-    { "date": "2024-07-07", "event": "Safety First", "routeCode": "171", "race": false },
-    { "date": "2024-07-08", "event": "Foggy Day", "routeCode": "75P", "race": false },
-    { "date": "2024-07-09", "event": "Street Light Outage", "routeCode": "74A", "race": false },
-    { "date": "2024-07-10", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-11", "event": "Bridge Closure", "routeCode": "25Y", "race": false },
-    { "date": "2024-07-12", "event": "Foggy Day", "routeCode": "N472", "race": false },
-    { "date": "2024-07-13", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-14", "event": "Rush Hour", "routeCode": "473", "race": false },
-    { "date": "2024-07-15", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-16", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
-    { "date": "2024-07-17", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-18", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-19", "event": "Foggy Day", "routeCode": "48A", "race": false },
-    { "date": "2024-07-20", "event": "Marathon Road Closure", "routeCode": "N271", "race": false },
-    { "date": "2024-07-21", "event": "Safety First", "routeCode": "42", "race": false },
-    { "date": "2024-07-22", "event": "Marathon Road Closure", "routeCode": "471", "race": false },
-    { "date": "2024-07-23", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2024-07-24", "event": "Foggy Day", "routeCode": "171", "race": false },
-    { "date": "2024-07-25", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-07-26", "event": "Slow Passengers", "routeCode": "76", "race": false },
-    { "date": "2024-07-27", "event": "Street Light Outage x Safety First", "routeCode": "N472", "race": false },
-    { "date": "2024-07-28", "event": "Urban Odyssey", "routeCode": "77X", "race": false },
-    { "date": "2024-07-29", "event": "Marathon Road Closure", "routeCode": "473A", "race": false },
-    { "date": "2024-07-30", "event": "Grumble Day", "routeCode": "472", "race": false },
-    { "date": "2024-07-31", "event": "Foggy Day", "routeCode": "370B", "race": false }
+    {
+      "date": "2024-07-01",
+      "event": "Street Light Outage",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2024-07-02",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-03",
+      "event": "Friendly Day",
+      "routeCode": "75PS",
+      "race": false
+    },
+    {
+      "date": "2024-07-04",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-05",
+      "event": "Concert Aftermath",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-07-06",
+      "event": "Sponsored Route",
+      "routeCode": "25N",
+      "race": false
+    },
+    {
+      "date": "2024-07-07",
+      "event": "Safety First",
+      "routeCode": "171E",
+      "race": true
+    },
+    {
+      "date": "2024-07-08",
+      "event": "Foggy Day",
+      "routeCode": "75PS",
+      "race": false
+    },
+    {
+      "date": "2024-07-09",
+      "event": "Street Light Outage",
+      "routeCode": "74AN",
+      "race": false
+    },
+    {
+      "date": "2024-07-10",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-11",
+      "event": "Bridge Closure",
+      "routeCode": "25YN",
+      "race": false
+    },
+    {
+      "date": "2024-07-12",
+      "event": "Foggy Day",
+      "routeCode": "N472W",
+      "race": false
+    },
+    {
+      "date": "2024-07-13",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-14",
+      "event": "Rush Hour",
+      "routeCode": "473W",
+      "race": false
+    },
+    {
+      "date": "2024-07-15",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-16",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": false
+    },
+    {
+      "date": "2024-07-17",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-18",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-19",
+      "event": "Foggy Day",
+      "routeCode": "48A",
+      "race": false
+    },
+    {
+      "date": "2024-07-20",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271W",
+      "race": true
+    },
+    {
+      "date": "2024-07-21",
+      "event": "Safety First",
+      "routeCode": "42S",
+      "race": true
+    },
+    {
+      "date": "2024-07-22",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": false
+    },
+    {
+      "date": "2024-07-23",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-07-24",
+      "event": "Foggy Day",
+      "routeCode": "171E",
+      "race": false
+    },
+    {
+      "date": "2024-07-25",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-07-26",
+      "event": "Slow Passengers",
+      "routeCode": "76S",
+      "race": false
+    },
+    {
+      "date": "2024-07-27",
+      "event": "Street Light Outage x Safety First",
+      "routeCode": "N472E",
+      "race": false
+    },
+    {
+      "date": "2024-07-28",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-07-29",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271W",
+      "race": false
+    },
+    {
+      "date": "2024-07-30",
+      "event": "Grumble Day",
+      "routeCode": "472W",
+      "race": false
+    },
+    {
+      "date": "2024-07-31",
+      "event": "Foggy Day",
+      "routeCode": "370BE",
+      "race": false
+    }
   ]
 }

@@ -1,0 +1,194 @@
+{
+  "month": "2024-10",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
+  "days": [
+    {
+      "date": "2024-10-01",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-10-02",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": false
+    },
+    {
+      "date": "2024-10-03",
+      "event": "Street Light Outage",
+      "routeCode": "476W4",
+      "race": false
+    },
+    {
+      "date": "2024-10-04",
+      "event": "Sponsored Route",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2024-10-05",
+      "event": "Rush Hour",
+      "routeCode": "73SS",
+      "race": false
+    },
+    {
+      "date": "2024-10-06",
+      "event": "Foggy Day",
+      "routeCode": "376SE",
+      "race": true
+    },
+    {
+      "date": "2024-10-07",
+      "event": "Street Light Outage",
+      "routeCode": "41AS",
+      "race": false
+    },
+    {
+      "date": "2024-10-08",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-10-09",
+      "event": "Slow Passengers",
+      "routeCode": "171E",
+      "race": false
+    },
+    {
+      "date": "2024-10-10",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271E",
+      "race": false
+    },
+    {
+      "date": "2024-10-11",
+      "event": "Concert Overrun",
+      "routeCode": "N171E",
+      "race": false
+    },
+    {
+      "date": "2024-10-12",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2024-10-13",
+      "event": "Rush Hour",
+      "routeCode": "76SS",
+      "race": false
+    },
+    {
+      "date": "2024-10-14",
+      "event": "Foggy Day",
+      "routeCode": "76N",
+      "race": false
+    },
+    {
+      "date": "2024-10-15",
+      "event": "E-Payment Outage",
+      "routeCode": "476E",
+      "race": false
+    },
+    {
+      "date": "2024-10-16",
+      "event": "Marathon Road Closure",
+      "routeCode": "248A",
+      "race": false
+    },
+    {
+      "date": "2024-10-17",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-10-18",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": false
+    },
+    {
+      "date": "2024-10-19",
+      "event": "Marathon Road Closure",
+      "routeCode": "471W",
+      "race": true
+    },
+    {
+      "date": "2024-10-20",
+      "event": "Safety First",
+      "routeCode": "476SA",
+      "race": false
+    },
+    {
+      "date": "2024-10-21",
+      "event": "E-Payment Outage",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2024-10-22",
+      "event": "Concert Overrun",
+      "routeCode": "N171E",
+      "race": false
+    },
+    {
+      "date": "2024-10-23",
+      "event": "Marathon Road Closure",
+      "routeCode": "Y370A",
+      "race": false
+    },
+    {
+      "date": "2024-10-24",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": false
+    },
+    {
+      "date": "2024-10-25",
+      "event": "Concert Aftermath",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-10-26",
+      "event": "Marathon Road Closure",
+      "routeCode": "471W",
+      "race": true
+    },
+    {
+      "date": "2024-10-27",
+      "event": "Rush Hour",
+      "routeCode": "21A",
+      "race": false
+    },
+    {
+      "date": "2024-10-28",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-10-29",
+      "event": "Bridge Closure",
+      "routeCode": "25YS",
+      "race": false
+    },
+    {
+      "date": "2024-10-30",
+      "event": "Foggy Day",
+      "routeCode": "475W",
+      "race": false
+    },
+    {
+      "date": "2024-10-31",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    }
+  ]
+}

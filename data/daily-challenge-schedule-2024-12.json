@@ -2,8 +2,193 @@
   "month": "2024-12",
   "timezone": "Asia/Hong_Kong",
   "resetHour": 8,
-  "note": "Partial historical schedule from Fandom route S1 / Daily Challenges pages: S1 was available as the Daily Challenge on 2024-12-31 when sightseeing routes S1/S2 launched. Other dates are left blank because no full December calendar was found.",
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
   "days": [
-    { "date": "2024-12-31", "event": "Sightseeing Launch", "routeCode": "S1", "race": false }
+    {
+      "date": "2024-12-01",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-12-02",
+      "event": "Foggy Day",
+      "routeCode": "171W",
+      "race": false
+    },
+    {
+      "date": "2024-12-03",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": false
+    },
+    {
+      "date": "2024-12-04",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-12-05",
+      "event": "Marathon Road Closure",
+      "routeCode": "473A",
+      "race": false
+    },
+    {
+      "date": "2024-12-06",
+      "event": "Grumble Day",
+      "routeCode": "41AN",
+      "race": false
+    },
+    {
+      "date": "2024-12-07",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": true
+    },
+    {
+      "date": "2024-12-08",
+      "event": "Rush Hour",
+      "routeCode": "472W",
+      "race": false
+    },
+    {
+      "date": "2024-12-09",
+      "event": "Foggy Day",
+      "routeCode": "49AN",
+      "race": false
+    },
+    {
+      "date": "2024-12-10",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": false
+    },
+    {
+      "date": "2024-12-11",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": false
+    },
+    {
+      "date": "2024-12-12",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-12-13",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-12-14",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": true
+    },
+    {
+      "date": "2024-12-15",
+      "event": "Rush Hour",
+      "routeCode": "42AN",
+      "race": false
+    },
+    {
+      "date": "2024-12-16",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-12-17",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-12-18",
+      "event": "Slow Passengers",
+      "routeCode": "148W",
+      "race": false
+    },
+    {
+      "date": "2024-12-19",
+      "event": "E-Payment Outage",
+      "routeCode": "370BW",
+      "race": false
+    },
+    {
+      "date": "2024-12-20",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271E",
+      "race": false
+    },
+    {
+      "date": "2024-12-21",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": true
+    },
+    {
+      "date": "2024-12-22",
+      "event": "Rush Hour",
+      "routeCode": "472W",
+      "race": false
+    },
+    {
+      "date": "2024-12-23",
+      "event": "Slow Passengers",
+      "routeCode": "48A",
+      "race": false
+    },
+    {
+      "date": "2024-12-24",
+      "event": "Foggy Day",
+      "routeCode": "148E",
+      "race": false
+    },
+    {
+      "date": "2024-12-25",
+      "event": "Lazy Passengers",
+      "routeCode": "141PW",
+      "race": false
+    },
+    {
+      "date": "2024-12-26",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-12-27",
+      "event": "Safety First",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-12-28",
+      "event": "Sponsored Route",
+      "routeCode": "41AS",
+      "race": true
+    },
+    {
+      "date": "2024-12-29",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-12-30",
+      "event": "Rare Appearance",
+      "routeCode": "475E",
+      "race": false
+    },
+    {
+      "date": "2024-12-31",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": false
+    }
   ]
 }

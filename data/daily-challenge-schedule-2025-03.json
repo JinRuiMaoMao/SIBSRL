@@ -1,0 +1,194 @@
+{
+  "month": "2025-03",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
+  "days": [
+    {
+      "date": "2025-03-01",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2025-03-02",
+      "event": "Rush Hour",
+      "routeCode": "476E",
+      "race": false
+    },
+    {
+      "date": "2025-03-03",
+      "event": "E-Payment Outage",
+      "routeCode": "U47N",
+      "race": false
+    },
+    {
+      "date": "2025-03-04",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": false
+    },
+    {
+      "date": "2025-03-05",
+      "event": "Marathon Road Closure",
+      "routeCode": "471W",
+      "race": false
+    },
+    {
+      "date": "2025-03-06",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-03-07",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-03-08",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": true
+    },
+    {
+      "date": "2025-03-09",
+      "event": "Rush Hour",
+      "routeCode": "47A",
+      "race": false
+    },
+    {
+      "date": "2025-03-10",
+      "event": "Sponsored Route",
+      "routeCode": "25N",
+      "race": false
+    },
+    {
+      "date": "2025-03-11",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271E",
+      "race": false
+    },
+    {
+      "date": "2025-03-12",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-03-13",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": false
+    },
+    {
+      "date": "2025-03-14",
+      "event": "Friendly Day",
+      "routeCode": "246XA",
+      "race": false
+    },
+    {
+      "date": "2025-03-15",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": true
+    },
+    {
+      "date": "2025-03-16",
+      "event": "Grumble Day",
+      "routeCode": "140W",
+      "race": false
+    },
+    {
+      "date": "2025-03-17",
+      "event": "E-Payment Outage",
+      "routeCode": "476W",
+      "race": false
+    },
+    {
+      "date": "2025-03-18",
+      "event": "E-Payment Outage",
+      "routeCode": "42AS",
+      "race": false
+    },
+    {
+      "date": "2025-03-19",
+      "event": "Rush Hour",
+      "routeCode": "75N",
+      "race": false
+    },
+    {
+      "date": "2025-03-20",
+      "event": "Street Light Outage",
+      "routeCode": "N146W",
+      "race": false
+    },
+    {
+      "date": "2025-03-21",
+      "event": "Rush Hour",
+      "routeCode": "171W",
+      "race": false
+    },
+    {
+      "date": "2025-03-22",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2025-03-23",
+      "event": "Rush Hour",
+      "routeCode": "475AW",
+      "race": false
+    },
+    {
+      "date": "2025-03-24",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2025-03-25",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": false
+    },
+    {
+      "date": "2025-03-26",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-03-27",
+      "event": "Grumble Day",
+      "routeCode": "42S",
+      "race": false
+    },
+    {
+      "date": "2025-03-28",
+      "event": "E-Payment Outage",
+      "routeCode": "370BE",
+      "race": false
+    },
+    {
+      "date": "2025-03-29",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": true
+    },
+    {
+      "date": "2025-03-30",
+      "event": "Rush Hour",
+      "routeCode": "246PE",
+      "race": false
+    },
+    {
+      "date": "2025-03-31",
+      "event": "Rush Hour",
+      "routeCode": "75N",
+      "race": false
+    }
+  ]
+}

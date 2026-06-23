@@ -2,38 +2,193 @@
   "month": "2024-08",
   "timezone": "Asia/Hong_Kong",
   "resetHour": 8,
-  "note": "Historical schedule transcribed from NamuWiki (Sunshine Islands Bus Simulator/Daily Challenge). Machine-translated event labels were normalized to this site's event names.",
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
   "days": [
-    { "date": "2024-08-01", "event": "Concert Aftermath", "routeCode": "140", "race": false },
-    { "date": "2024-08-02", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2024-08-03", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-08-04", "event": "Safety First", "routeCode": "472", "race": false },
-    { "date": "2024-08-05", "event": "Rare Appearance", "routeCode": "76S", "race": false },
-    { "date": "2024-08-06", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-08-07", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
-    { "date": "2024-08-08", "event": "Concert Aftermath", "routeCode": "140", "race": false },
-    { "date": "2024-08-09", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2024-08-10", "event": "Lazy Passengers x Safety First", "routeCode": "49A", "race": false },
-    { "date": "2024-08-11", "event": "Rush Hour", "routeCode": "171", "race": false },
-    { "date": "2024-08-12", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-08-13", "event": "Safety First x Urban Odyssey", "routeCode": "77X", "race": false },
-    { "date": "2024-08-14", "event": "Concert Aftermath", "routeCode": "140", "race": false },
-    { "date": "2024-08-15", "event": "E-Payment Outage", "routeCode": "476", "race": false },
-    { "date": "2024-08-16", "event": "Grumble Day", "routeCode": "472", "race": false },
-    { "date": "2024-08-17", "event": "Urban Odyssey", "routeCode": "77X", "race": false },
-    { "date": "2024-08-18", "event": "Rush Hour", "routeCode": "473", "race": false },
-    { "date": "2024-08-19", "event": "Lazy Passengers", "routeCode": "476", "race": false },
-    { "date": "2024-08-20", "event": "Rush Hour", "routeCode": "476", "race": false },
-    { "date": "2024-08-21", "event": "Street Light Outage", "routeCode": "N146", "race": false },
-    { "date": "2024-08-22", "event": "Rush Hour", "routeCode": "46", "race": false },
-    { "date": "2024-08-23", "event": "Rush Hour", "routeCode": "370B", "race": false },
-    { "date": "2024-08-24", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-08-25", "event": "Rush Hour", "routeCode": "76S", "race": false },
-    { "date": "2024-08-26", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-08-27", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2024-08-28", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2024-08-29", "event": "Street Light Outage", "routeCode": "142", "race": false },
-    { "date": "2024-08-30", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2024-08-31", "event": "Marathon Road Closure", "routeCode": "N271", "race": false }
+    {
+      "date": "2024-08-01",
+      "event": "Concert Aftermath",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-08-02",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-08-03",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2024-08-04",
+      "event": "Safety First",
+      "routeCode": "472W",
+      "race": true
+    },
+    {
+      "date": "2024-08-05",
+      "event": "Rare Appearance",
+      "routeCode": "76S2",
+      "race": false
+    },
+    {
+      "date": "2024-08-06",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-08-07",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": false
+    },
+    {
+      "date": "2024-08-08",
+      "event": "Concert Aftermath",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-08-09",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-08-10",
+      "event": "Lazy Passengers x Safety First",
+      "routeCode": "49AS",
+      "race": false
+    },
+    {
+      "date": "2024-08-11",
+      "event": "Rush Hour",
+      "routeCode": "171W",
+      "race": false
+    },
+    {
+      "date": "2024-08-12",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-08-13",
+      "event": "Safety First x Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-08-14",
+      "event": "Concert Aftermath",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2024-08-15",
+      "event": "E-Payment Outage",
+      "routeCode": "476E",
+      "race": false
+    },
+    {
+      "date": "2024-08-16",
+      "event": "Grumble Day",
+      "routeCode": "472E",
+      "race": false
+    },
+    {
+      "date": "2024-08-17",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2024-08-18",
+      "event": "Rush Hour",
+      "routeCode": "473W",
+      "race": false
+    },
+    {
+      "date": "2024-08-19",
+      "event": "Lazy Passengers",
+      "routeCode": "476W",
+      "race": false
+    },
+    {
+      "date": "2024-08-20",
+      "event": "Rush Hour",
+      "routeCode": "476W",
+      "race": false
+    },
+    {
+      "date": "2024-08-21",
+      "event": "Street Light Outage",
+      "routeCode": "N146E",
+      "race": false
+    },
+    {
+      "date": "2024-08-22",
+      "event": "Rush Hour",
+      "routeCode": "46E",
+      "race": false
+    },
+    {
+      "date": "2024-08-23",
+      "event": "Rush Hour",
+      "routeCode": "370BE",
+      "race": false
+    },
+    {
+      "date": "2024-08-24",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2024-08-25",
+      "event": "Rush Hour",
+      "routeCode": "76S2",
+      "race": false
+    },
+    {
+      "date": "2024-08-26",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-08-27",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2024-08-28",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-08-29",
+      "event": "Street Light Outage",
+      "routeCode": "142W",
+      "race": false
+    },
+    {
+      "date": "2024-08-30",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2024-08-31",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271W",
+      "race": true
+    }
   ]
 }

@@ -239,6 +239,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2025 年 6 月 Daily Challenge 日历；已标准化 last seen 备注、Rare PH、R148、473 Loop、N271 to Rainbow 与 N246/N271 双线路等写法。',
             en: 'Added the user-provided June 2025 Daily Challenge calendar; last-seen notes, Rare PH, R148, 473 Loop, N271 to Rainbow, and the N246/N271 dual-route entry were normalized.',
           },
+          {
+            zh: '导入用户提供的 Discord PDF 历史日程，校正并补齐 2024 年 6 月至 2025 年 5 月 Daily Challenge 月历。',
+            en: 'Imported the user-provided Discord PDF history, correcting and filling Daily Challenge calendars from June 2024 through May 2025.',
+          },
         ],
       },
     ],

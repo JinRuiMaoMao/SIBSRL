@@ -1,0 +1,176 @@
+{
+  "month": "2025-02",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
+  "days": [
+    {
+      "date": "2025-02-01",
+      "event": "Friendly Day",
+      "routeCode": "476W",
+      "race": true
+    },
+    {
+      "date": "2025-02-02",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2025-02-03",
+      "event": "Rush Hour",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2025-02-04",
+      "event": "Street Light Outage",
+      "routeCode": "N472W",
+      "race": false
+    },
+    {
+      "date": "2025-02-05",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271E",
+      "race": false
+    },
+    {
+      "date": "2025-02-06",
+      "event": "Marathon Road Closure",
+      "routeCode": "N271E",
+      "race": false
+    },
+    {
+      "date": "2025-02-07",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-02-08",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": true
+    },
+    {
+      "date": "2025-02-09",
+      "event": "Rush Hour",
+      "routeCode": "75N",
+      "race": false
+    },
+    {
+      "date": "2025-02-10",
+      "event": "Marathon Road Closure",
+      "routeCode": "248A",
+      "race": false
+    },
+    {
+      "date": "2025-02-11",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-02-12",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2025-02-13",
+      "event": "Marathon Road Closure",
+      "routeCode": "248A",
+      "race": false
+    },
+    {
+      "date": "2025-02-14",
+      "event": "Grumble Day",
+      "routeCode": "475E",
+      "race": false
+    },
+    {
+      "date": "2025-02-15",
+      "event": "Marathon Shuttle",
+      "routeCode": "R370",
+      "race": true
+    },
+    {
+      "date": "2025-02-16",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2025-02-17",
+      "event": "Slow Passengers",
+      "routeCode": "140E",
+      "race": false
+    },
+    {
+      "date": "2025-02-18",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-02-19",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-02-20",
+      "event": "Foggy Day",
+      "routeCode": "76S",
+      "race": false
+    },
+    {
+      "date": "2025-02-21",
+      "event": "Bridge Closure",
+      "routeCode": "25YS",
+      "race": false
+    },
+    {
+      "date": "2025-02-22",
+      "event": "Rare Appearance",
+      "routeCode": "476W",
+      "race": true
+    },
+    {
+      "date": "2025-02-23",
+      "event": "Rush Hour",
+      "routeCode": "77S",
+      "race": false
+    },
+    {
+      "date": "2025-02-24",
+      "event": "Rush Hour",
+      "routeCode": "142E",
+      "race": false
+    },
+    {
+      "date": "2025-02-25",
+      "event": "Marathon Road Closure",
+      "routeCode": "240A",
+      "race": false
+    },
+    {
+      "date": "2025-02-26",
+      "event": "Grumble Day",
+      "routeCode": "N171E",
+      "race": false
+    },
+    {
+      "date": "2025-02-27",
+      "event": "Marathon Road Closure",
+      "routeCode": "471E",
+      "race": false
+    },
+    {
+      "date": "2025-02-28",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    }
+  ]
+}

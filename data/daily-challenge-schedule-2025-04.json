@@ -1,0 +1,188 @@
+{
+  "month": "2025-04",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Transcribed from Discord PDF daily.pdf (Sunshine Islands daily challenge list in last 12 months). Event labels and shorthand route notes were normalized for this site.",
+  "days": [
+    {
+      "date": "2025-04-01",
+      "event": "Marathon Road Closure",
+      "routeCode": "471W",
+      "race": false
+    },
+    {
+      "date": "2025-04-02",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-04-03",
+      "event": "Lazy Passengers",
+      "routeCode": "42S",
+      "race": false
+    },
+    {
+      "date": "2025-04-04",
+      "event": "Rush Hour",
+      "routeCode": "25S",
+      "race": false
+    },
+    {
+      "date": "2025-04-05",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": true
+    },
+    {
+      "date": "2025-04-06",
+      "event": "Rush Hour",
+      "routeCode": "142W",
+      "race": false
+    },
+    {
+      "date": "2025-04-07",
+      "event": "Sponsored Route",
+      "routeCode": "370BW",
+      "race": false
+    },
+    {
+      "date": "2025-04-08",
+      "event": "Grumble Day",
+      "routeCode": "25N",
+      "race": false
+    },
+    {
+      "date": "2025-04-09",
+      "event": "Street Light Outage",
+      "routeCode": "N146W",
+      "race": false
+    },
+    {
+      "date": "2025-04-10",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-04-11",
+      "event": "Urban Odyssey",
+      "routeCode": "77X",
+      "race": false
+    },
+    {
+      "date": "2025-04-12",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": true
+    },
+    {
+      "date": "2025-04-13",
+      "event": "Rush Hour",
+      "routeCode": "42S",
+      "race": false
+    },
+    {
+      "date": "2025-04-14",
+      "event": "Marathon Road Closure",
+      "routeCode": "471W",
+      "race": false
+    },
+    {
+      "date": "2025-04-15",
+      "event": "Marathon Road Closure",
+      "routeCode": "473A",
+      "race": false
+    },
+    {
+      "date": "2025-04-16",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-04-17",
+      "event": "Grumble Day",
+      "routeCode": "476E",
+      "race": false
+    },
+    {
+      "date": "2025-04-18",
+      "event": "Bridge Closure",
+      "routeCode": "Y370A",
+      "race": false
+    },
+    {
+      "date": "2025-04-19",
+      "event": "Sponsored Route",
+      "routeCode": "U47S",
+      "race": true
+    },
+    {
+      "date": "2025-04-20",
+      "event": "Rush Hour",
+      "routeCode": "171E",
+      "race": false
+    },
+    {
+      "date": "2025-04-21",
+      "event": "Slow Passengers",
+      "routeCode": "370BW",
+      "race": false
+    },
+    {
+      "date": "2025-04-22",
+      "event": "Marathon Shuttle",
+      "routeCode": "R148",
+      "race": false
+    },
+    {
+      "date": "2025-04-23",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-04-24",
+      "event": "Slow Passengers",
+      "routeCode": "46W",
+      "race": false
+    },
+    {
+      "date": "2025-04-25",
+      "event": "Grumble Day",
+      "routeCode": "673A",
+      "race": false
+    },
+    {
+      "date": "2025-04-26",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true
+    },
+    {
+      "date": "2025-04-27",
+      "event": "Rush Hour",
+      "routeCode": "77N",
+      "race": false
+    },
+    {
+      "date": "2025-04-28",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false
+    },
+    {
+      "date": "2025-04-29",
+      "event": "Friendly Day",
+      "routeCode": "N171E",
+      "race": false
+    },
+    {
+      "date": "2025-04-30",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false
+    }
+  ]
+}
