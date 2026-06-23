@@ -199,10 +199,16 @@ GitHub Pages **只能放静态页面**，注册/登录需要单独部署 `sibs-u
 | 变量 | 说明 |
 |------|------|
 | `JWT_SECRET` | 随机长字符串（与本地 `.env` 类似） |
-| `SMTP_USER` | `sibs_rl@outlook.com` |
-| `SMTP_PASS` | Outlook **应用密码**（不是登录密码） |
-| `MAIL_FROM` | 同 `SMTP_USER` |
+| `RESEND_API_KEY` | [Resend](https://resend.com) API Key（Render 上 **不要用 Outlook SMTP**，云端 IP 常被微软拦截） |
+| `MAIL_FROM` | 发件人。未验证域名时用 `SIBS Route Lookup <onboarding@resend.dev>`；验证自有域名后改为 `SIBS Route Lookup <noreply@你的域名>` |
 | `USER_API_CORS_ORIGIN` | 你的 GitHub Pages 来源，默认 `https://jinruimaomao.github.io` |
+
+**邮件说明（Resend）**
+
+- 在 [resend.com](https://resend.com) 注册 → **API Keys** → 创建 Key → 粘贴到 Render 的 `RESEND_API_KEY`。
+- 使用默认 `onboarding@resend.dev` 时，**只能把验证码发到你在 Resend 注册用的那个邮箱**（用于自测）。
+- 要让任意用户收到验证码，请在 Resend **Domains** 添加并验证你的域名，然后把 `MAIL_FROM` 改成该域名下的地址。
+- 本地开发仍可用 Outlook SMTP（见 `.env.example` 的 `SMTP_*`）；未设置 `RESEND_API_KEY` 时 API 会走 SMTP。
 
 4. 部署完成后记下域名，例如：
 

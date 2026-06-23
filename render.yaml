@@ -39,15 +39,9 @@ services:
         value: data/users.db
       - key: USER_API_CORS_ORIGIN
         value: https://jinruimaomao.github.io
-      - key: SMTP_HOST
-        value: smtp-mail.outlook.com
-      - key: SMTP_PORT
-        value: "587"
-      - key: JWT_SECRET
-        sync: false
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
-        sync: false
       - key: MAIL_FROM
+        value: SIBS Route Lookup <onboarding@resend.dev>
+      - key: RESEND_API_KEY
+        sync: false
+      - key: JWT_SECRET
         sync: false
