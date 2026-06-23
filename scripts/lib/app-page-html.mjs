@@ -64,6 +64,16 @@ const NOSCRIPT_GUARD_HTML = `<noscript>
   </div>
 </noscript>`
 
+/** @param {string} html @param {string} [url] */
+export function injectUserApiMeta(html, url = process.env.VITE_USER_API_URL?.trim() || 'https://sibs-user-api.onrender.com') {
+  const normalized = url.replace(/\/$/, '')
+  const meta = `<meta name="user-api-url" content="${normalized}" />`
+  if (html.includes('name="user-api-url"')) {
+    return html.replace(/name="user-api-url" content="[^"]*"/, `name="user-api-url" content="${normalized}"`)
+  }
+  return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    ${meta}`)
+}
+
 /** @param {string} html */
 export function injectNoScriptGuard(html) {
   if (html.includes('id="noscript-wall"')) return html

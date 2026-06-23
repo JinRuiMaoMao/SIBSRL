@@ -60,6 +60,10 @@ function App() {
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
 
+  const prepareGuidedTour = useCallback(() => {
+    setHeaderCollapsed(false)
+  }, [])
+
   const tryOpenGuidedTour = useCallback(() => {
     if (activeTab !== 'routes') return
     if (shouldShowGuidedTour()) openTour()
@@ -181,7 +185,7 @@ function App() {
         <GuidedTour
           open={guidedTourOpen}
           onClose={closeTour}
-          onPrepare={() => setHeaderCollapsed(false)}
+          onPrepare={prepareGuidedTour}
         />
       ) : null}
       <div className="app sibs-scrollbar">

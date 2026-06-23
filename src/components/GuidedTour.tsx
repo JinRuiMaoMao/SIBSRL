@@ -143,6 +143,9 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
   const isFirst = stepIndex === 0
   const isLast = stepIndex >= activeSteps.length - 1
 
+  const onPrepareRef = useRef(onPrepare)
+  onPrepareRef.current = onPrepare
+
   const finish = useCallback(() => {
     markGuidedTourSeen()
     onClose()
@@ -204,19 +207,16 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
 
   useEffect(() => {
     if (!open) return
-    onPrepare?.()
+    onPrepareRef.current?.()
     void goToStep(0)
-  }, [open, goToStep, onPrepare])
+    // Only restart the tour when it opens — not when parent callbacks change identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open || !step) return
     remeasure()
   }, [open, step, stepIndex, remeasure])
-
-  useLayoutEffect(() => {
-    if (!open) return
-    remeasure()
-  })
 
   useEffect(() => {
     if (!open) return

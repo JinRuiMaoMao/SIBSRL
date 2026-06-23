@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sibs-offline-v1'
+const CACHE_VERSION = 'sibs-offline-v2'
 const SHELL_URLS = ['./index.html', './account.html', './sibs-logo.png']
 
 self.addEventListener('install', (event) => {

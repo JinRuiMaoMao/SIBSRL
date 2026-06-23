@@ -12,6 +12,7 @@ import {
   injectSecretPageMeta,
   injectServiceWorkerBootstrap,
   injectThemeBootstrap,
+  injectUserApiMeta,
   syncFaviconLink,
 } from './lib/app-page-html.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
@@ -58,10 +59,12 @@ export function publishStandalone(options = {}) {
 
   const baseHtml = injectServiceWorkerBootstrap(
     syncFaviconLink(
-      injectLocaleBootstrap(
-        injectThemeBootstrap(
-          injectNoScriptGuard(
-            injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+      injectUserApiMeta(
+        injectLocaleBootstrap(
+          injectThemeBootstrap(
+            injectNoScriptGuard(
+              injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+            ),
           ),
         ),
       ),
