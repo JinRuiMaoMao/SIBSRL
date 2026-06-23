@@ -1,4 +1,4 @@
-import { getRoutePageHref } from './routeNavigation'
+import { getRoutePageDataHref } from './routeNavigation'
 
 const ROUTE_PAGE_CACHE_PREFIX = 'sibs-route-pages-'
 const ROUTE_PAGE_CACHE_NAME = `${ROUTE_PAGE_CACHE_PREFIX}${__APP_BUILD__}`
@@ -55,7 +55,7 @@ async function cleanupOldRoutePageCaches(): Promise<void> {
 }
 
 async function cacheRoutePage(routeId: string): Promise<void> {
-  const href = getRoutePageHref(routeId)
+  const href = getRoutePageDataHref(routeId)
   const url = new URL(href, window.location.href).href
   const request = new Request(url, { credentials: 'same-origin' })
 

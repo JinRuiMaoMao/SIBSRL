@@ -2,6 +2,11 @@ import { isRoutesPage } from './appTabNavigation'
 import { hasSeenDailyChallengePrompt } from '../storage/dailyChallengePrompt'
 
 const ROUTE_PAGE_DIR = 'routes'
+const ROUTE_QUERY_KEY = 'route'
+const DIRECTION_QUERY_KEY = 'dir'
+const FROM_STOP_QUERY_KEY = 'from'
+const TO_STOP_QUERY_KEY = 'to'
+const DEPART_QUERY_KEY = 'depart'
 
 /** Windows / URL 安全文件名：非字母数字与连字符一律百分号编码 */
 export function routeIdToPageFilename(routeId: string): string {
@@ -20,16 +25,16 @@ export function pageFilenameToRouteId(filename: string): string {
   )
 }
 
-/** 从线路列表页点击卡片时的相对链接 */
-export function getRoutePageHref(routeId: string): string {
+/** 后台读取 routes/{id}.html 内嵌 JSON 时使用的版本化地址 */
+export function getRoutePageDataHref(routeId: string): string {
   return `${ROUTE_PAGE_DIR}/${routeIdToPageFilename(routeId)}.html?v=${encodeURIComponent(__APP_BUILD__)}`
 }
 
-const ROUTE_QUERY_KEY = 'route'
-const DIRECTION_QUERY_KEY = 'dir'
-const FROM_STOP_QUERY_KEY = 'from'
-const TO_STOP_QUERY_KEY = 'to'
-const DEPART_QUERY_KEY = 'depart'
+/** 从线路列表页点击卡片时的相对链接：直接进 app，避免经过独立 HTML 中转页白闪。 */
+export function getRoutePageHref(routeId: string): string {
+  const params = new URLSearchParams({ [ROUTE_QUERY_KEY]: routeId })
+  return `index.html?${params.toString()}`
+}
 
 /** 读取 URL 中的线路编号（不做别名转换） */
 export function readRouteQueryFromLocation(): string | null {

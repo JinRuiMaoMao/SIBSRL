@@ -20,6 +20,17 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
   <title>${safeTitle} · 阳光群岛线路查询</title>
   <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
+  <style>
+    html,
+    body {
+      min-height: 100%;
+      background: #0c1222;
+      color: #eef2f8;
+      color-scheme: dark;
+    }
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    a { color: #f5b942; }
+  </style>
 </head>
 <body>
   <p>此线路已改为 <a href="${landing}">${displayId}</a>，正在跳转…</p>
@@ -44,8 +55,15 @@ export function renderRoutePageHtml(routeId, routeData) {
   <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
   <style>
+    html,
+    body {
+      min-height: 100%;
+      background: #0c1222;
+      color: #eef2f8;
+      color-scheme: dark;
+    }
     body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
-    a { color: #3b82f6; }
+    a { color: #f5b942; }
     pre { display: none; }
   </style>
 </head>

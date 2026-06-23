@@ -200,8 +200,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Fixed route card content layers blocking the underlying link, so tapping stop names or route info within the card body now navigates immediately.',
           },
           {
-            zh: '线路查询页会在浏览器空闲时预取并本地缓存独立线路 HTML；卡片链接和详情读取共用构建版本号，已访问与未访问线路都能更快打开。',
-            en: 'The route lookup page now prefetches and locally caches standalone route HTML while idle; card links and detail loading share the build-tagged URL so both visited and unvisited routes open faster.',
+            zh: '线路查询页会在浏览器空闲时预取并本地缓存独立线路 HTML；卡片直接打开已带线路参数的首页，避免未缓存线路先经过白色中转页。',
+            en: 'The route lookup page now prefetches and locally caches standalone route HTML while idle; cards open the route-query app page directly, avoiding the white redirect shell for uncached routes.',
           },
         ],
       },
