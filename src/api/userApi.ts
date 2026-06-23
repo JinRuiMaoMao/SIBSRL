@@ -34,10 +34,15 @@ async function request<T>(
     headers.set('Authorization', `Bearer ${options.token}`)
   }
 
-  const res = await fetch(`${base}${path}`, {
-    ...options,
-    headers,
-  })
+  let res: Response
+  try {
+    res = await fetch(`${base}${path}`, {
+      ...options,
+      headers,
+    })
+  } catch {
+    throw new UserApiError('network_error', 'Could not reach account service')
+  }
 
   const payload = (await parseJson(res)) as { error?: string; message?: string } | null
   if (!res.ok) {

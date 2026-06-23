@@ -186,6 +186,58 @@ VITE_DAILY_CHALLENGE_POLL_MS=3000 npm run build:only
 
 如果网站部署在 GitHub Pages，请确保构建后的根目录 `index.html` 已提交并推送到 `master`。
 
+## 用户登录 API（Render + GitHub Pages）
+
+GitHub Pages **只能放静态页面**，注册/登录需要单独部署 `sibs-user-api`（仓库已含 `Dockerfile.user-api` 与 `render.yaml`）。
+
+### 1. 在 Render 部署用户 API
+
+1. Render 控制台 → **New +** → **Blueprint** → 选择本仓库。
+2. Blueprint 会创建 `sibs-user-api`（默认 **Free**，$0；休眠后首次访问需等待唤醒）。
+3. 在 `sibs-user-api` 的环境变量中填写（**Secret**）：
+
+| 变量 | 说明 |
+|------|------|
+| `JWT_SECRET` | 随机长字符串（与本地 `.env` 类似） |
+| `SMTP_USER` | `sibs_rl@outlook.com` |
+| `SMTP_PASS` | Outlook **应用密码**（不是登录密码） |
+| `MAIL_FROM` | 同 `SMTP_USER` |
+| `USER_API_CORS_ORIGIN` | 你的 GitHub Pages 来源，默认 `https://jinruimaomao.github.io` |
+
+4. 部署完成后记下域名，例如：
+
+```text
+https://sibs-user-api.onrender.com
+```
+
+5. 浏览器打开 `https://sibs-user-api.onrender.com/healthz` 应返回 `{"ok":true,"service":"user-api"}`。
+
+> **Free 档说明**：用户数据库在容器内 `data/users.db`，**重新部署可能清空账号**；需要持久化可改为 Starter 并挂载磁盘。
+
+### 2. 重新构建网站并推送
+
+把 Render 域名写进构建（不要带末尾 `/`）：
+
+```bash
+VITE_USER_API_URL="https://sibs-user-api.onrender.com" npm run build:only
+```
+
+然后 `git add` 根目录 `index.html`、`account.html` 等 → `commit` → `push origin master`。
+
+之后 GitHub Pages 上的注册/登录会请求 Render，而不是 `localhost`。
+
+### 3. 本地开发
+
+```bash
+# 终端 1
+npm run user-api
+
+# 终端 2
+npm run dev
+```
+
+`npm run dev` 会把 `/api/*` 代理到 `localhost:8788`，无需在 `.env` 里写 `VITE_USER_API_URL`。
+
 ## GitHub Pages 子路径
 
 若站点地址为 `https://用户名.github.io/仓库名/`，构建前设置环境变量：

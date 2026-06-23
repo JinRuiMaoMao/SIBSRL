@@ -24,3 +24,30 @@ services:
         sync: false
       - key: ENA_BOT_USER_ID
         sync: false
+
+  # 用户登录 / 收藏同步 API（免费档可 $0；数据在容器内，重新部署会清空，要持久化可改 starter + disk）
+  - type: web
+    name: sibs-user-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.user-api
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: USER_DB_PATH
+        value: data/users.db
+      - key: USER_API_CORS_ORIGIN
+        value: https://jinruimaomao.github.io
+      - key: SMTP_HOST
+        value: smtp-mail.outlook.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: JWT_SECRET
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
