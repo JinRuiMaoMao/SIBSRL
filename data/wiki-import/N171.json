@@ -14,12 +14,12 @@
     8
   ],
   "origin": {
-    "zh": "[[Rainbow Estate Complex",
-    "en": "[[Rainbow Estate Complex"
+    "zh": "长岛码头",
+    "en": "Long Island Ferry Pier"
   },
   "destination": {
-    "zh": "[[Rainbow Estate Complex",
-    "en": "[[Rainbow Estate Complex"
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
   },
   "via": {
     "zh": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern, Zone 7 Interchange, YiYan, Leafy Bay Estate, Alexander, North Leafy, East Door, Haisey",
@@ -30,25 +30,25 @@
     "en": "10 - 30 min"
   },
   "journeyTime": {
-    "zh": "To Rainbow: 76 mins / To Long Island: 73 min",
-    "en": "To Rainbow: 76 mins / To Long Island: 73 min"
+    "zh": "往彩虹：76 分钟 / 往长岛：73 分钟",
+    "en": "To Rainbow: 76 mins / To Long Island: 73 mins"
   },
   "fare": "$24.2",
   "levelRequired": 95,
   "length": {
-    "zh": "往彩虹中心 40.4 km / 往长岛码头 40.5 km",
-    "en": "To Rainbow Estate Complex 40.4 km / To Long Island Ferry Pier 40.5 km"
+    "zh": "往彩虹 40.4 km / 往长岛 40.5 km",
+    "en": "To Rainbow 40.4 km / To Long Island 40.5 km"
   },
   "stops": [
     {
       "directionKey": "N",
       "direction": {
-        "zh": "北行（長島碼頭總站 → 彩虹中心總站）",
-        "en": "Northbound (Long Island Ferry Pier Bus Terminus → Rainbow Estate Complex Bus Terminus)"
+        "zh": "北行（长岛码头 → 彩虹中心）",
+        "en": "Northbound (Long Island Ferry Pier → Rainbow Estate Complex)"
       },
       "serviceTime": {
-        "zh": "00:00 – 05:50 / 00:15 – 05:20",
-        "en": "00:00 – 05:50 / 00:15 – 05:20"
+        "zh": "00:00 – 05:50",
+        "en": "00:00 – 05:50"
       },
       "list": [
         {
@@ -62,43 +62,57 @@
           "name": {
             "zh": "文化廣場",
             "en": "Culture Square"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "國際碼頭",
             "en": "Regional Pier"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "百彩新城",
             "en": "N Park"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "長島海濱長廊",
             "en": "Long Island Waterfront Promenade"
-          }
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "陽光殯儀館",
+            "en": "Sunshine Funeral"
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "藝術大廈",
             "en": "Art Building"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "長島東醫院",
             "en": "East Long Island Hospital"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "彩色匯",
             "en": "Rainbow Center"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
@@ -111,31 +125,43 @@
           "name": {
             "zh": "賴得里",
             "en": "Wright Lane"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "三哥大廈",
             "en": "Third Technology Building"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "購物廊",
             "en": "Shopping Corridor"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "白鴿消防局",
             "en": "Dove Fire Station"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "伊迪城",
-            "en": "subject =  Cross Island Highway (Dove Island Bypass),  Western Harbour Tunnel }}"
-          }
+            "en": "Eddie City"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "西區海底隧道轉車站 (S2)",
+            "en": "Western Habour Tunnel Interchange (S2)"
+          },
+          "zone": 4
         },
         {
           "name": {
@@ -148,24 +174,27 @@
           "name": {
             "zh": "北島花園",
             "en": "North Island Estate"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "北島花園商場",
             "en": "NIE Shopping Center"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "望環台",
-            "en": "subject = Rainbow Bridge }}"
-          }
+            "en": "Panorama Heights"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "陽光大學",
-            "en": "subject = University Bridge }}"
+            "en": "Sunshine University"
           },
           "zone": 4
         },
@@ -180,19 +209,22 @@
           "name": {
             "zh": "楓樹里",
             "en": "Maple Lane"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "The ONE",
             "en": "The ONE"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
@@ -205,43 +237,57 @@
           "name": {
             "zh": "南環花園二期",
             "en": "Southern Two"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "陽光碼頭",
             "en": "Sunshine Pier"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "南環運動場",
             "en": "Southern Sports Field"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環醫院",
             "en": "Central Hospital"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "南環文化區公園",
             "en": "Southern Cultural District Park"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中葉隧道行政大樓",
-            "en": "subject =  Leafy - Central Tunnel }}"
-          }
+            "en": "Leafy-Central Tunnel Administration Block"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (E2)",
+            "en": "Zone 7 Interchange (E2)"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -254,31 +300,36 @@
           "name": {
             "zh": "葉欣公園",
             "en": "YiYan Park"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "鑽石交易塔",
             "en": "Diamond Trading Tower"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "際巴車廠",
             "en": "CSB Depot"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "葉欣邨第四座",
             "en": "YiYan Estate Block 4"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "葉欣邨第一座",
-            "en": "subject =  Senpai Bypass,  Leafy Road}}"
-          }
+            "en": "YiYan Estate Block 1"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -291,13 +342,15 @@
           "name": {
             "zh": "葉角灣邨商場",
             "en": "Leafy Bay Estate Shopping Center"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "葉角灣邨",
-            "en": "subject =  Leafy Road}}"
-          }
+            "en": "Leafy Bay Estate"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -310,7 +363,8 @@
           "name": {
             "zh": "葉欣警察局",
             "en": "Leafy Police Station"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -323,25 +377,29 @@
           "name": {
             "zh": "仙貝多層停車場",
             "en": "Senpai Multi-Storey Car Park"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "亞歷山教堂",
             "en": "Alexander Church"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "仙貝山",
             "en": "Senpai Hill"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "葉欣俓",
             "en": "Leafy Walking Trail"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -354,7 +412,8 @@
           "name": {
             "zh": "羅力素花園一期",
             "en": "Laws Garden"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -381,19 +440,22 @@
           "name": {
             "zh": "東門下邨",
             "en": "Lower East Door Estate"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "東門花園",
             "en": "East Door Garden"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "東門總站",
-            "en": "subject = East Door Port Bridge }}"
-          }
+            "en": "East Door Bus Terminus"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -405,8 +467,9 @@
         {
           "name": {
             "zh": "海西邨總站",
-            "en": "subject = Sabow Bridge }}"
-          }
+            "en": "Haisey Estate Bus Terminus"
+          },
+          "zone": 8
         },
         {
           "name": {
@@ -420,18 +483,18 @@
     {
       "directionKey": "S",
       "direction": {
-        "zh": "南行（彩虹中心總站 → 長島碼頭總站）",
-        "en": "Southbound (subject = Sabow Bridge }} → Long Island Ferry Pier Bus Terminus)"
+        "zh": "南行（彩虹中心 → 长岛码头）",
+        "en": "Southbound (Rainbow Estate Complex → Long Island Ferry Pier)"
       },
       "serviceTime": {
-        "zh": "00:00 – 05:50 / 00:15 – 05:20",
-        "en": "00:00 – 05:50 / 00:15 – 05:20"
+        "zh": "00:15 – 05:20",
+        "en": "00:15 – 05:20"
       },
       "list": [
         {
           "name": {
             "zh": "彩虹中心總站",
-            "en": "subject = Sabow Bridge }}"
+            "en": "Rainbow Estate Complex Bus Terminus"
           },
           "zone": 7
         },
@@ -446,7 +509,8 @@
           "name": {
             "zh": "海西角",
             "en": "Haisey Point"
-          }
+          },
+          "zone": 8
         },
         {
           "name": {
@@ -459,19 +523,22 @@
           "name": {
             "zh": "東門花園",
             "en": "East Door Garden"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "東門下邨",
             "en": "Lower East Door Estate"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "東門公園",
             "en": "East Door Park"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -498,7 +565,8 @@
           "name": {
             "zh": "羅力素花園二期",
             "en": "Laws Garden 2"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -511,25 +579,29 @@
           "name": {
             "zh": "仙貝山",
             "en": "Senpai Hill"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "亞歷山教堂",
             "en": "Alexander Church"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "仙貝多層停車場",
             "en": "Senpai Multi-Storey Car Park"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "亞歷山花園",
             "en": "Alexander Garden"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -541,8 +613,9 @@
         {
           "name": {
             "zh": "葉角大學",
-            "en": "subject =  Leafy Road}}"
-          }
+            "en": "Leafy University"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -555,13 +628,15 @@
           "name": {
             "zh": "葉角灣邨",
             "en": "Leafy Bay Estate"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "葉角花園",
-            "en": "subject =  Leafy Road,  Senpai Bypass}}"
-          }
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
         },
         {
           "name": {
@@ -574,42 +649,62 @@
           "name": {
             "zh": "葉欣邨第四座",
             "en": "YiYan Estate Block 4"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "際巴車廠",
             "en": "CSB Depot"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "葉欣海旁道",
             "en": "Praya YiYan Road"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "南洋大廈",
             "en": "Southern Building"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "彩虹廣場",
             "en": "Rainbow Plaza"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
             "zh": "東廠",
             "en": "East Factory"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
-            "zh": "Section fare begins here",
-            "en": "Section fare begins here"
+            "zh": "第七區轉車站（落客站）",
+            "en": "Zone 7 Interchange (Alighting Stop)"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "第七區轉車站 (W4)",
+            "en": "Zone 7 Interchange (W4)"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "M∞",
+            "en": "Museum Infinite"
           },
           "zone": 4
         },
@@ -617,43 +712,50 @@
           "name": {
             "zh": "南環文化區公園",
             "en": "Southern Cultural District Park"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中葉隧道行政大樓",
             "en": "Leafy-Central Tunnel Administration Block"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "陽光碼頭",
             "en": "Sunshine Pier"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "南環運動場",
             "en": "Southern Sports Field"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環醫院",
             "en": "Central Hospital"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "南環坊",
             "en": "Langford Place"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
@@ -666,30 +768,34 @@
           "name": {
             "zh": "新紀元中心",
             "en": "Ping Center"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "楓樹里",
             "en": "Maple Lane"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "中環橋",
-            "en": "subject = University Bridge }}"
-          }
+            "en": "Central Bridge"
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "陽光大學",
-            "en": "subject = Rainbow Bridge }}"
+            "en": "Sunshine University"
           },
           "zone": 4
         },
@@ -704,37 +810,41 @@
           "name": {
             "zh": "北島花園商場",
             "en": "NIE Shopping Center"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "巨石路",
             "en": "Rocky Road"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "北島花園",
             "en": "North Island Estate"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "北頓路",
             "en": "Norton Road"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
             "zh": "西區海底隧道轉車站 (N2)",
-            "en": "subject =  Western Harbour Tunnel,  Cross Island Highway (Dove Island Bypass) }}"
+            "en": "Western Habour Tunnel Interchange (N2)"
           },
           "zone": 4
         },
         {
           "name": {
             "zh": "伊迪城",
-            "en": "Section fare begins here"
+            "en": "Eddie City"
           },
           "zone": 1
         },
@@ -742,67 +852,92 @@
           "name": {
             "zh": "艾迪城",
             "en": "Addi City"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "購物廊",
             "en": "Shopping Corridor"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "三哥大廈",
             "en": "Third Technology Building"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "賴得商場",
             "en": "Wright Shopping Center"
-          }
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "虹尾角站",
+            "en": "Iris Point Station"
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "宜和劇場",
             "en": "Jardine Theater"
-          }
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "藝術大廈",
+            "en": "Art Building"
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "陽光體育館",
             "en": "Sunshine Stadium"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "長島海濱長廊",
             "en": "Long Island Waterfront Promenade"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "百彩新城",
             "en": "N Park"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "國際碼頭",
             "en": "Regional Pier"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "文化廣場",
             "en": "Culture Square"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
             "zh": "長島碼頭總站",
             "en": "Long Island Ferry Pier Bus Terminus"
-          }
+          },
+          "zone": 1
         }
       ]
     }

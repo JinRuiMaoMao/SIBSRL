@@ -255,6 +255,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '重新提取并修复 N271 站序资料，移除由 Wiki 路线分隔模板误解析出来的 subject = … 乱码站名。',
             en: 'Re-extracted and fixed N271 stop data, removing subject = … gibberish caused by Wiki route-break templates being parsed as stop names.',
           },
+          {
+            zh: '重新提取并修复 N171 站序资料，清除同类 subject = … 乱码站名；42A 暂保持原状待后续核对。',
+            en: 'Re-extracted and fixed N171 stop data, clearing the same subject = … gibberish stop names; 42A is left unchanged pending later verification.',
+          },
         ],
       },
     ],
