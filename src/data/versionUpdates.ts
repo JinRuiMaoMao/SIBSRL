@@ -52,7 +52,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-22'
+export const CURRENT_CHANGELOG_DATE = '2026-06-23'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -90,7 +90,12 @@ export function mergeVersionUpdatesByDate(entries: VersionUpdateEntry[]): Versio
 
   for (const entry of entries) {
     if (!byDate.has(entry.date)) order.push(entry.date)
-    byDate.get(entry.date)?.push(entry) ?? byDate.set(entry.date, [entry])
+    const existing = byDate.get(entry.date)
+    if (existing) {
+      existing.push(entry)
+    } else {
+      byDate.set(entry.date, [entry])
+    }
   }
 
   return order.map((date) => {
@@ -105,7 +110,7 @@ export function mergeVersionUpdatesByDate(entries: VersionUpdateEntry[]): Versio
 
     const primary = sameDay[0]!
     let groups = primary.groups ? [...primary.groups.map((g) => ({ ...g, items: [...g.items] }))] : []
-    let items = primary.items ? [...primary.items] : []
+    const items = primary.items ? [...primary.items] : []
     let easterEgg = primary.easterEgg
     let easterEggTitle = primary.easterEggTitle
     let easterEggHex = primary.easterEggHex
@@ -159,8 +164,36 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
-    id: '2026-06-22-summary',
+    id: '2026-06-23-summary',
     date: CURRENT_CHANGELOG_DATE,
+    title: {
+      zh: '2026-06-23 更新',
+      en: '2026-06-23 updates',
+    },
+    groups: [
+      {
+        title: { zh: '每日挑战', en: 'Daily Challenge' },
+        items: [
+          {
+            zh: '更新 6/23 每日挑战：夜间马拉松封路 N271S（彩虹中心 → 长岛码头），并补充 03:30、HK Special / CSB / FT 巴士要求说明。',
+            en: 'Updated the 6/23 Daily Challenge: Marathon Road Closure at Night on N271S (Rainbow Estate Complex → Long Island Ferry Pier), with 03:30 and HK Special / CSB / FT bus requirements noted.',
+          },
+        ],
+      },
+      {
+        title: { zh: '每日挑战日历', en: 'Daily Challenge calendar' },
+        items: [
+          {
+            zh: '加入 NamuWiki 公开资料整理的 2024 年 6–8 月历史 Daily Challenge 月历；用户可在日历中切换年份和月份查看旧日期。',
+            en: 'Added historical June–August 2024 Daily Challenge calendars transcribed from public NamuWiki data; users can switch year/month in the calendar to view older dates.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '2026-06-22-summary',
+    date: '2026-06-22',
     title: {
       zh: '2026-06-22 更新',
       en: '2026-06-22 updates',
