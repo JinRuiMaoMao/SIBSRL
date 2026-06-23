@@ -1650,6 +1650,29 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
+.settings-input {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  box-sizing: border-box;
+}
+
+.settings-input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.auth-mode-toggle {
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
 /* Search */
 .search-bar {
   display: flex;

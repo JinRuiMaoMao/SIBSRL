@@ -13,6 +13,10 @@ dist-ssr
 .cache
 *.local
 data/daily-challenge-live.json
+data/users.db
+data/users.db-wal
+data/users.db-shm
+.env
 
 # Editor directories and files
 .vscode/*

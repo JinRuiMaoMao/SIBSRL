@@ -14,7 +14,7 @@ import {
   ROUTE_FILTERS_STORAGE_KEY,
   ROUTE_GROUP_OPEN_STORAGE_KEY,
 } from '../storage/routePreferences'
-import { clearUpdatesPromptSeen } from '../storage/updatesViewing'
+import { clearAuthSession } from '../storage/authToken'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
 import { clearRoutePagePrefetchCache } from '../utils/routePagePrefetch'
@@ -42,6 +42,7 @@ export function ResetSettingsSection() {
       localStorage.removeItem(RECENT_ROUTES_STORAGE_KEY)
       localStorage.removeItem(DAILY_CHALLENGE_PROMPT_SEEN_KEY)
       clearUpdatesPromptSeen()
+      clearAuthSession()
     } catch {
       /* ignore */
     }

@@ -143,6 +143,10 @@ export default defineConfig(() => {
       port: 5173,
       strictPort: false,
       open: '/dev.html',
+      proxy: {
+        '/api/auth': { target: 'http://localhost:8788', changeOrigin: true },
+        '/api/user': { target: 'http://localhost:8788', changeOrigin: true },
+      },
     },
     preview: {
       port: 4173,
