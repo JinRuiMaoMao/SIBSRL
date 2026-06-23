@@ -203,6 +203,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '线路查询页会在浏览器空闲时预取并本地缓存独立线路 HTML；卡片直接打开已带线路参数的首页，避免未缓存线路先经过白色中转页。',
             en: 'The route lookup page now prefetches and locally caches standalone route HTML while idle; cards open the route-query app page directly, avoiding the white redirect shell for uncached routes.',
           },
+          {
+            zh: '独立线路中转页改为读取已保存的浅色 / 深色主题，直接访问 routes/*.html 时也不会闪出相反主题背景。',
+            en: 'Standalone route redirect pages now follow the saved light / dark theme, avoiding opposite-theme flashes when routes/*.html is opened directly.',
+          },
         ],
       },
       {

@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script id="theme-bootstrap">
+(function () {
+  function resolveSystemAppearance() {
+    try {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch (e) {
+      return 'dark';
+    }
+  }
+
+  try {
+    var pref = localStorage.getItem('sibs-theme');
+    if (pref !== 'light' && pref !== 'dark' && pref !== 'system') pref = 'system';
+    document.documentElement.setAttribute(
+      'data-theme',
+      pref === 'system' ? resolveSystemAppearance() : pref,
+    );
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
     <script id="devtools-block">
 (function () {
   var INDEX = './index.html';
@@ -57,15 +79,30 @@
   <link rel="canonical" href="../index.html?route=476%23*" />
   <meta http-equiv="refresh" content="0;url=../index.html?route=476%23*" />
   <style>
+    :root {
+      color-scheme: dark;
+      --route-shell-bg: #0c1222;
+      --route-shell-text: #eef2f8;
+      --route-shell-muted: #94a3b8;
+      --route-shell-link: #f5b942;
+    }
+    [data-theme='light'] {
+      color-scheme: light;
+      --route-shell-bg: #dce1e9;
+      --route-shell-text: #2a3444;
+      --route-shell-muted: #5f6d80;
+      --route-shell-link: #b07808;
+    }
     html,
     body {
       min-height: 100%;
-      background: #0c1222;
-      color: #eef2f8;
-      color-scheme: dark;
+      background: var(--route-shell-bg);
+      color: var(--route-shell-text);
     }
     body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
-    a { color: #f5b942; }
+    p { color: var(--route-shell-muted); }
+    strong { color: var(--route-shell-text); }
+    a { color: var(--route-shell-link); }
     pre { display: none; }
   </style>
 </head>

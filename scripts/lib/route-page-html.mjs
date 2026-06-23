@@ -1,4 +1,4 @@
-import { injectDevToolsBlock, injectNoScriptGuard } from './app-page-html.mjs'
+import { injectDevToolsBlock, injectNoScriptGuard, injectThemeBootstrap } from './app-page-html.mjs'
 import { routeIdToPageFilename, buildRouteLandingUrl } from './route-page-filename.mjs'
 import { ROUTE_DATA_SCRIPT_ID } from './extract-route-page-data.mjs'
 
@@ -12,7 +12,7 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
   const safeTitle = aliasId.replace(/[<>&"]/g, (ch) =>
     ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[ch] ?? ch,
   )
-  return injectNoScriptGuard(injectDevToolsBlock(`<!DOCTYPE html>
+  return injectNoScriptGuard(injectThemeBootstrap(injectDevToolsBlock(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -21,22 +21,37 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
   <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
   <style>
+    :root {
+      color-scheme: dark;
+      --route-shell-bg: #0c1222;
+      --route-shell-text: #eef2f8;
+      --route-shell-muted: #94a3b8;
+      --route-shell-link: #f5b942;
+    }
+    [data-theme='light'] {
+      color-scheme: light;
+      --route-shell-bg: #dce1e9;
+      --route-shell-text: #2a3444;
+      --route-shell-muted: #5f6d80;
+      --route-shell-link: #b07808;
+    }
     html,
     body {
       min-height: 100%;
-      background: #0c1222;
-      color: #eef2f8;
-      color-scheme: dark;
+      background: var(--route-shell-bg);
+      color: var(--route-shell-text);
     }
     body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
-    a { color: #f5b942; }
+    p { color: var(--route-shell-muted); }
+    strong { color: var(--route-shell-text); }
+    a { color: var(--route-shell-link); }
   </style>
 </head>
 <body>
   <p>此线路已改为 <a href="${landing}">${displayId}</a>，正在跳转…</p>
 </body>
 </html>
-`))
+`)))
 }
 
 export function renderRoutePageHtml(routeId, routeData) {
@@ -46,7 +61,7 @@ export function renderRoutePageHtml(routeId, routeData) {
   )
   const json = JSON.stringify(routeData, null, 2)
 
-  return injectNoScriptGuard(injectDevToolsBlock(`<!DOCTYPE html>
+  return injectNoScriptGuard(injectThemeBootstrap(injectDevToolsBlock(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -55,15 +70,30 @@ export function renderRoutePageHtml(routeId, routeData) {
   <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
   <style>
+    :root {
+      color-scheme: dark;
+      --route-shell-bg: #0c1222;
+      --route-shell-text: #eef2f8;
+      --route-shell-muted: #94a3b8;
+      --route-shell-link: #f5b942;
+    }
+    [data-theme='light'] {
+      color-scheme: light;
+      --route-shell-bg: #dce1e9;
+      --route-shell-text: #2a3444;
+      --route-shell-muted: #5f6d80;
+      --route-shell-link: #b07808;
+    }
     html,
     body {
       min-height: 100%;
-      background: #0c1222;
-      color: #eef2f8;
-      color-scheme: dark;
+      background: var(--route-shell-bg);
+      color: var(--route-shell-text);
     }
     body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
-    a { color: #f5b942; }
+    p { color: var(--route-shell-muted); }
+    strong { color: var(--route-shell-text); }
+    a { color: var(--route-shell-link); }
     pre { display: none; }
   </style>
 </head>
@@ -84,7 +114,7 @@ ${json}
   <p><a href="${landing}">若未自动跳转，请点击此处</a></p>
 </body>
 </html>
-`))
+`)))
 }
 
 export { routeIdToPageFilename }
