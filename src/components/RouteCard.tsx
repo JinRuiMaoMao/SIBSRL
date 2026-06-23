@@ -36,6 +36,7 @@ interface RouteCardProps {
   availabilityUnavailableLabel?: string
   /** classic：最近查看等，保留原卡片外框与文字起终点 */
   appearance?: 'promoted' | 'classic'
+  tourAnchor?: string
 }
 
 export function RouteCard({
@@ -51,6 +52,7 @@ export function RouteCard({
   availabilityRangeLabel,
   availabilityUnavailableLabel,
   appearance = 'promoted',
+  tourAnchor,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -75,6 +77,7 @@ export function RouteCard({
   return (
     <div
       data-route-id={route.id}
+      data-tour={tourAnchor}
       className={`route-card-link ${selected ? 'route-card-link--selected' : ''} ${muted ? 'route-card-link--muted' : ''}`.trim()}
     >
       <article className={`route-card${appearance === 'classic' ? ' route-card--classic' : ''}`}>

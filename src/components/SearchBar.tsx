@@ -71,6 +71,7 @@ export function SearchBar({
           ref={inputRef}
           id={id}
           type="search"
+          data-tour="route-search"
           placeholder={t(placeholderKey)}
           value={value}
           onChange={(e) => onChange(e.target.value)}

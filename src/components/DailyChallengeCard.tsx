@@ -52,6 +52,7 @@ export function DailyChallengeCard({
   return (
     <div
       data-route-id={DAILY_CHALLENGE_CARD_ID}
+      data-tour="daily-challenge"
       role="button"
       tabIndex={0}
       className={`route-card daily-challenge-card ${selected ? 'selected' : ''} ${className}`.trim()}

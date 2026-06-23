@@ -113,6 +113,7 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
               className={`header-tabs-cluster ${singleTabRow ? 'header-tabs-cluster--single-row' : ''}`}
               role="tablist"
               aria-label={t('navMain')}
+              data-tour="header-tabs"
             >
               {rows.map((row, rowIndex) => (
                 <div key={rowIndex} className="header-tabs" role="presentation">

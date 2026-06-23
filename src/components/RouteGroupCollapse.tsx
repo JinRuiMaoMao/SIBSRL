@@ -21,6 +21,7 @@ interface RouteGroupCollapseProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   children: ReactNode
+  dataTour?: string
 }
 
 export function RouteGroupCollapse({
@@ -29,13 +30,14 @@ export function RouteGroupCollapse({
   open,
   onOpenChange,
   children,
+  dataTour,
 }: RouteGroupCollapseProps) {
   const { t } = useLocale()
   const panelId = useId()
   const title = t(GROUP_TITLE_KEYS[groupId])
 
   return (
-    <section className={`route-group-collapse ${open ? 'is-open' : ''}`}>
+    <section className={`route-group-collapse ${open ? 'is-open' : ''}`} data-tour={dataTour}>
       <button
         type="button"
         className="route-group-collapse-trigger"
