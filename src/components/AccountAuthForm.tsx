@@ -4,10 +4,43 @@ import { OAuthSignInButtons } from './OAuthSignInButtons'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
+import {
+  clearAuthFormDraft,
+  readAuthFormDraft,
+  writeAuthFormDraft,
+  type AuthFormDraftMode,
+} from '../storage/authFormDraft'
 import { readLastAuthEmail } from '../storage/authToken'
 import { normalizeAuthEmail } from '../utils/authEmail'
 
 export type AuthMode = 'login' | 'register' | 'reset'
+
+function resolveInitialAuthFormState(
+  initialMode: AuthMode,
+  initialEmail?: string,
+  initialCode?: string,
+) {
+  const email = initialEmail ?? readLastAuthEmail() ?? ''
+  const mode = initialMode
+  let password = ''
+  let code = initialCode ?? ''
+  let codeSent = Boolean(initialCode)
+
+  if (mode === 'register' || mode === 'reset') {
+    const draft = readAuthFormDraft(email, mode)
+    if (draft) {
+      password = draft.password
+      if (!initialCode && draft.code) {
+        code = draft.code
+        codeSent = draft.codeSent
+      } else if (initialCode) {
+        codeSent = true
+      }
+    }
+  }
+
+  return { mode, email, password, code, codeSent }
+}
 
 interface AccountAuthFormProps {
   initialMode?: AuthMode
@@ -26,13 +59,31 @@ export function AccountAuthForm({
   const { alert } = useAppDialog()
   const { login, register, resetPassword, sendCode, mapAuthError } = useAuth()
 
-  const [mode, setMode] = useState<AuthMode>(initialMode)
-  const [email, setEmail] = useState(() => initialEmail ?? readLastAuthEmail() ?? '')
-  const [password, setPassword] = useState('')
-  const [code, setCode] = useState(() => initialCode ?? '')
+  const [initialState] = useState(() =>
+    resolveInitialAuthFormState(initialMode, initialEmail, initialCode),
+  )
+  const [mode, setMode] = useState<AuthMode>(initialState.mode)
+  const [email, setEmail] = useState(initialState.email)
+  const [password, setPassword] = useState(initialState.password)
+  const [code, setCode] = useState(initialState.code)
   const [busy, setBusy] = useState(false)
-  const [codeSent, setCodeSent] = useState(() => Boolean(initialCode))
+  const [codeSent, setCodeSent] = useState(initialState.codeSent)
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (mode === 'login') {
+      clearAuthFormDraft()
+      return
+    }
+    if (!email.trim()) return
+    writeAuthFormDraft({
+      mode: mode as AuthFormDraftMode,
+      email,
+      password,
+      code,
+      codeSent,
+    })
+  }, [mode, email, password, code, codeSent])
 
   useEffect(() => {
     if (!initialCode) return
@@ -53,6 +104,15 @@ export function AccountAuthForm({
     const normalizedEmail = normalizeAuthEmail(email)
     if (normalizedEmail !== email) {
       setEmail(normalizedEmail)
+    }
+    if (mode !== 'login') {
+      writeAuthFormDraft({
+        mode,
+        email: normalizedEmail,
+        password,
+        code,
+        codeSent,
+      })
     }
     try {
       const purpose = mode === 'reset' ? 'reset' : 'register'
@@ -91,6 +151,7 @@ export function AccountAuthForm({
       setPassword('')
       setCode('')
       setCodeSent(false)
+      clearAuthFormDraft()
     } catch (error) {
       await showError(error)
     } finally {
@@ -108,6 +169,7 @@ export function AccountAuthForm({
           onClick={() => {
             setMode('login')
             setCodeSent(false)
+            clearAuthFormDraft()
           }}
         >
           {t('authLogin')}
