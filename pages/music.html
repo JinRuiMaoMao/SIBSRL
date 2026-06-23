@@ -24,9 +24,21 @@
         }
       })();
     </script>
+    <script id="locale-bootstrap">
+      (function () {
+        var key = 'sibs-locale';
+        var langs = { vi:'vi', 'zh-Hans':'zh-Hans', 'zh-Hant':'zh-Hant', da:'da', en:'en', fil:'fil', id:'id', ko:'ko', 'pt-BR':'pt-BR', de:'de', es:'es', fr:'fr', ja:'ja', pl:'pl', sv:'sv' };
+        try {
+          var stored = localStorage.getItem(key);
+          if (stored && Object.prototype.hasOwnProperty.call(langs, stored)) {
+            document.documentElement.lang = langs[stored];
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="app-tab" content="music" />
     <meta name="app-build" content="development" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚌</text></svg>" />
+    <link rel="icon" href="./sibs-logo.png" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />

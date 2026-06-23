@@ -6,6 +6,7 @@ export type MessageKey = keyof typeof messagesZhHans
 
 const messagesZhHans = {
   appTitle: 'SIBS 巴士线路查询',
+  documentTitleSuffix: '阳光群岛线路查询',
   appTagline: 'Sunshine Islands Bus Simulator · 阳光群岛巴士模拟器',
   settings: '设置',
   themeLabel: '外观',
@@ -320,6 +321,7 @@ const messagesZhHans = {
 
 const messagesEn: Record<MessageKey, string> = {
   appTitle: 'SIBS Bus Route Lookup',
+  documentTitleSuffix: 'Sunshine Islands Route Lookup',
   appTagline: 'Sunshine Islands Bus Simulator',
   settings: 'Settings',
   themeLabel: 'Appearance',

@@ -13,6 +13,7 @@ import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
 import { useDailyChallenge } from './hooks/useDailyChallenge'
+import { useDocumentMetadata } from './hooks/useDocumentMetadata'
 import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markUpdateSeen } from './storage/updatesViewing'
@@ -41,6 +42,7 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
+  useDocumentMetadata(activeTab)
   const dailyChallenge = useDailyChallenge()
   const initialOverlays = readInitialOverlayState()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(

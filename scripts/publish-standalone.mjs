@@ -6,9 +6,11 @@ import {
   adjustAppPageTitle,
   injectAppTabMeta,
   injectDevToolsBlock,
+  injectLocaleBootstrap,
   injectNoScriptGuard,
   injectSecretPageMeta,
   injectThemeBootstrap,
+  syncFaviconLink,
 } from './lib/app-page-html.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 import { syncBrandAssets } from './sync-brand-assets.mjs'
@@ -52,9 +54,13 @@ export function publishStandalone(options = {}) {
     throw new Error('未找到 dist/dev.html，请先运行 vite build')
   }
 
-  const baseHtml = injectThemeBootstrap(
-    injectNoScriptGuard(
-      injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+  const baseHtml = syncFaviconLink(
+    injectLocaleBootstrap(
+      injectThemeBootstrap(
+        injectNoScriptGuard(
+          injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+        ),
+      ),
     ),
   )
 

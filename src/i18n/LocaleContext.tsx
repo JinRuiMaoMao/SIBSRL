@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -29,24 +28,6 @@ function readStoredLocale(): Locale {
   return detectBrowserLocale()
 }
 
-const HTML_LANG: Record<Locale, string> = {
-  vi: 'vi',
-  'zh-Hans': 'zh-Hans',
-  'zh-Hant': 'zh-Hant',
-  da: 'da',
-  en: 'en',
-  fil: 'fil',
-  id: 'id',
-  ko: 'ko',
-  'pt-BR': 'pt-BR',
-  de: 'de',
-  es: 'es',
-  fr: 'fr',
-  ja: 'ja',
-  pl: 'pl',
-  sv: 'sv',
-}
-
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(readStoredLocale)
 
@@ -60,10 +41,6 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       /* ignore */
     }
   }, [])
-
-  useEffect(() => {
-    document.documentElement.lang = HTML_LANG[locale]
-  }, [locale])
 
   const t = useCallback(
     (key: MessageKey, vars?: Record<string, string | number>) => {

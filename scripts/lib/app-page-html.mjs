@@ -158,6 +158,41 @@ export function injectThemeBootstrap(html) {
   return html.replace('<head>', `<head>\n    ${THEME_BOOTSTRAP_SCRIPT}`)
 }
 
+const LOCALE_STORAGE_KEY = 'sibs-locale'
+
+const LOCALE_BOOTSTRAP_SCRIPT = `<script id="locale-bootstrap">
+(function () {
+  var key = '${LOCALE_STORAGE_KEY}';
+  var langs = { vi:'vi', 'zh-Hans':'zh-Hans', 'zh-Hant':'zh-Hant', da:'da', en:'en', fil:'fil', id:'id', ko:'ko', 'pt-BR':'pt-BR', de:'de', es:'es', fr:'fr', ja:'ja', pl:'pl', sv:'sv' };
+  try {
+    var stored = localStorage.getItem(key);
+    if (stored && Object.prototype.hasOwnProperty.call(langs, stored)) {
+      document.documentElement.lang = langs[stored];
+    }
+  } catch (e) {}
+})();
+</script>`
+
+/** @param {string} html */
+export function injectLocaleBootstrap(html) {
+  if (html.includes('id="locale-bootstrap"')) return html
+  return html.replace('</script>\n    <meta name="app-tab"', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <meta name="app-tab"`)
+    .replace('</script>\n    <meta name="app-build"', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <meta name="app-build"`)
+    .replace('</script>\n    <!-- 开发入口', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <!-- 开发入口`)
+    .replace('</script>\n    <link rel="icon"', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <link rel="icon"`)
+}
+
+/** @param {string} html */
+export function syncFaviconLink(html) {
+  return html.replace(
+    /<link rel="icon" href="[^"]*" type="image\/png" \/>/,
+    '<link rel="icon" href="./sibs-logo.png" type="image/png" />',
+  ).replace(
+    /<link rel="icon" href="data:image\/svg\+xml[^"]*" \/>/,
+    '<link rel="icon" href="./sibs-logo.png" type="image/png" />',
+  )
+}
+
 const SECRET_ACCESS_STORAGE_KEY = 'sibs-secret-unlock'
 
 const SECRET_ACCESS_GUARD_SCRIPT = `<script id="secret-access-guard">
