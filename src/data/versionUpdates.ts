@@ -207,6 +207,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '独立线路中转页改为读取已保存的浅色 / 深色主题，直接访问 routes/*.html 时也不会闪出相反主题背景。',
             en: 'Standalone route redirect pages now follow the saved light / dark theme, avoiding opposite-theme flashes when routes/*.html is opened directly.',
           },
+          {
+            zh: '线路数量统计改用与卡片分组一致的口径，避免底层可查但当前不常驻展示的 77X / 270A 被算进分母。',
+            en: 'Route count totals now use the same grouped-card scope, so lookup-only daily routes such as 77X / 270A are not counted in the denominator when not shown as cards.',
+          },
         ],
       },
       {

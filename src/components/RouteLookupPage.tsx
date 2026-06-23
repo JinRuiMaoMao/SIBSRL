@@ -130,6 +130,25 @@ function scrollRouteCardIntoView(routeId: string) {
   el.scrollIntoView({ behavior: shouldReduceMotion() ? 'auto' : 'smooth', block: 'center' })
 }
 
+function countUniqueVisibleSlots(
+  groups: RouteDisplayGroupKey[],
+  slotsByGroup: Record<RouteDisplayGroupKey, ReturnType<typeof getGroupDisplaySlots>>,
+): number {
+  const seenRouteIds = new Set<string>()
+  let count = 0
+
+  for (const group of groups) {
+    for (const slot of slotsByGroup[group]) {
+      if (!slot.isVisible || !slot.entry) continue
+      if (seenRouteIds.has(slot.entry.route.id)) continue
+      seenRouteIds.add(slot.entry.route.id)
+      count++
+    }
+  }
+
+  return count
+}
+
 function scrollElementBelowStickyToolbar(el: HTMLElement) {
   const root = document.documentElement
   const header =
@@ -234,7 +253,6 @@ export function RouteLookupPage({
     zones,
     operators,
     types,
-    totalCount,
   } = useRouteSearch(dailyChallenge)
   const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
   const { scrollHidden: syntaxScrollHidden, forceOpen: syntaxForceOpen, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
@@ -733,8 +751,21 @@ export function RouteLookupPage({
     [],
   )
 
+  const dailyListedId = getDailyChallengeListedRouteId(dailyChallenge)
+
+  const groupedTotalSlots = useMemo(() => {
+    const groups = {} as Record<RouteDisplayGroupKey, ReturnType<typeof getGroupDisplaySlots>>
+    for (const group of ROUTE_DISPLAY_GROUP_ORDER) {
+      groups[group] = getGroupDisplaySlots(
+        group,
+        displayRoutes,
+        group === 'daily' && dailyListedId ? [dailyListedId] : [],
+      )
+    }
+    return groups
+  }, [dailyListedId, displayRoutes])
+
   const groupedSlots = useMemo(() => {
-    const dailyListedId = getDailyChallengeListedRouteId(dailyChallenge)
     const groups = {} as Record<RouteDisplayGroupKey, ReturnType<typeof getGroupDisplaySlots>>
     for (const group of ROUTE_DISPLAY_GROUP_ORDER) {
       groups[group] = getGroupDisplaySlots(
@@ -744,7 +775,7 @@ export function RouteLookupPage({
       )
     }
     return groups
-  }, [dailyChallenge, filteredRoutes])
+  }, [dailyListedId, filteredRoutes])
 
   const getSeasonalLabelsForRoute = useCallback(
     (route: BusRoute) => {
@@ -783,18 +814,12 @@ export function RouteLookupPage({
   )
 
   const groupedRouteCount = useMemo(() => {
-    const seenRouteIds = new Set<string>()
-    let count = 0
-    for (const group of visibleDisplayGroups) {
-      for (const slot of groupedSlots[group]) {
-        if (!slot.isVisible || !slot.entry) continue
-        if (seenRouteIds.has(slot.entry.route.id)) continue
-        seenRouteIds.add(slot.entry.route.id)
-        count++
-      }
-    }
-    return count
+    return countUniqueVisibleSlots(visibleDisplayGroups, groupedSlots)
   }, [groupedSlots, visibleDisplayGroups])
+
+  const groupedTotalCount = useMemo(() => {
+    return countUniqueVisibleSlots(visibleDisplayGroups, groupedTotalSlots)
+  }, [groupedTotalSlots, visibleDisplayGroups])
 
   const betweenStopPairDraft =
     Boolean(structuredStopPair.from?.trim() && structuredStopPair.to?.trim()) &&
@@ -1028,7 +1053,7 @@ export function RouteLookupPage({
           onChange={handleSearchQueryChange}
           onSearchCommit={handleSearchCommit}
           resultCount={groupedRouteCount}
-          totalCount={totalCount}
+          totalCount={groupedTotalCount}
           randomEligibleCount={randomEligibleCount}
           onRandom={handleRandomRoute}
           filtersActive={filtersActive}
