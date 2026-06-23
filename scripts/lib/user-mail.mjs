@@ -46,6 +46,54 @@ function getTransporter() {
   return transporter
 }
 
+function parseMailFrom(from) {
+  const trimmed = from.trim()
+  const match = trimmed.match(/^(.+?)\s*<([^>]+)>$/)
+  if (match) {
+    return { name: match[1].trim(), email: match[2].trim() }
+  }
+  return { email: trimmed }
+}
+
+function getSendGridApiKey() {
+  const explicit = process.env.SENDGRID_API_KEY?.trim()
+  if (explicit) return explicit
+
+  const host = process.env.SMTP_HOST?.trim().toLowerCase() ?? ''
+  const pass = process.env.SMTP_PASS?.trim() ?? ''
+  if (host.includes('sendgrid') && pass.startsWith('SG.')) return pass
+  return null
+}
+
+/** @param {{ to: string, subject: string, text: string, html: string, from: string }} params */
+async function sendViaSendGrid({ to, subject, text, html, from }) {
+  const apiKey = getSendGridApiKey()
+  if (!apiKey) return false
+
+  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: to }] }],
+      from: parseMailFrom(from),
+      subject,
+      content: [
+        { type: 'text/plain', value: text },
+        { type: 'text/html', value: html },
+      ],
+    }),
+  })
+
+  if (!res.ok) {
+    const detail = await res.text()
+    throw new Error(`SendGrid failed (${res.status}): ${detail}`)
+  }
+  return true
+}
+
 /** @param {{ to: string, subject: string, text: string, html: string }} params */
 async function sendViaResend({ to, subject, text, html }) {
   const apiKey = process.env.RESEND_API_KEY?.trim()
@@ -76,12 +124,13 @@ async function sendViaResend({ to, subject, text, html }) {
 
 function assertMailProviderConfigured() {
   if (process.env.RESEND_API_KEY?.trim()) return 'resend'
+  if (getSendGridApiKey()) return 'sendgrid'
   try {
     requireSmtpConfig()
     return 'smtp'
   } catch {
     throw new Error(
-      'No mail provider configured: set RESEND_API_KEY (recommended on Render) or SMTP_HOST/SMTP_USER/SMTP_PASS',
+      'No mail provider configured: set RESEND_API_KEY, SENDGRID_API_KEY (or SendGrid SMTP_*), or SMTP_HOST/SMTP_USER/SMTP_PASS',
     )
   }
 }
@@ -90,12 +139,19 @@ function assertMailProviderConfigured() {
 export async function sendVerificationEmail({ to, code, purpose }) {
   const { subject, text, html } = buildVerificationContent(code, purpose)
   const provider = assertMailProviderConfigured()
+  const from =
+    process.env.MAIL_FROM?.trim() ||
+    (provider === 'smtp' ? requireSmtpConfig().from : DEFAULT_RESEND_FROM)
 
   if (provider === 'resend') {
     await sendViaResend({ to, subject, text, html })
     return
   }
 
-  const { from } = requireSmtpConfig()
+  if (provider === 'sendgrid') {
+    await sendViaSendGrid({ to, subject, text, html, from })
+    return
+  }
+
   await getTransporter().sendMail({ from, to, subject, text, html })
 }

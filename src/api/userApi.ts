@@ -37,7 +37,7 @@ async function request<T>(
   let res: Response
   try {
     const controller = new AbortController()
-    const timeoutId = window.setTimeout(() => controller.abort(), 90_000)
+    const timeoutId = window.setTimeout(() => controller.abort(), 120_000)
     try {
       res = await fetch(`${base}${path}`, {
         ...options,
