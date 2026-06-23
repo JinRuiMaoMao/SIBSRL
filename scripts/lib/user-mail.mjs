@@ -29,9 +29,19 @@ function getSiteUrls() {
   return { siteUrl, accountUrl }
 }
 
-function buildVerificationContent(code, purpose, locale) {
+function buildAccountActionUrl(accountUrl, { purpose, email, code }) {
+  const url = new URL(accountUrl)
+  url.searchParams.set('mode', purpose === 'reset' ? 'reset' : 'register')
+  url.searchParams.set('email', email)
+  url.searchParams.set('code', code)
+  return url.toString()
+}
+
+function buildVerificationContent(code, purpose, locale, to) {
   const { siteUrl, accountUrl } = getSiteUrls()
+  const actionUrl = buildAccountActionUrl(accountUrl, { purpose, email: to, code })
   const safeCode = escapeHtml(code)
+  const safeActionUrl = escapeHtml(actionUrl)
   const plan = getMailContentPlan(purpose, locale)
   const primaryCopy = plan.getCopy(plan.primary)
   const preheader = `${primaryCopy.preheader} / ${plan.getCopy('en').preheader} ${code}`
@@ -64,7 +74,8 @@ function buildVerificationContent(code, purpose, locale) {
     ...summaryLines,
     '',
     `${plan.getCopy('en').siteLabel}: ${siteUrl}`,
-    `${plan.getCopy('en').accountLabel}: ${accountUrl}`,
+    `${plan.getCopy('en').accountLabel}: ${actionUrl}`,
+    `${plan.getCopy('en').action}: ${actionUrl}`,
     '',
     plan.getCopy('en').footer,
   ].join('\n')
@@ -133,7 +144,7 @@ function buildVerificationContent(code, purpose, locale) {
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="border-radius:8px;background-color:#2563eb;">
-                    <a href="${escapeHtml(accountUrl)}" style="display:inline-block;padding:12px 18px;font-size:14px;line-height:1.4;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(primaryCopy.action)}</a>
+                    <a href="${safeActionUrl}" style="display:inline-block;padding:12px 18px;font-size:14px;line-height:1.4;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(primaryCopy.action)}</a>
                   </td>
                 </tr>
               </table>
@@ -332,7 +343,12 @@ function assertMailProviderConfigured() {
 
 /** @param {{ to: string, code: string, purpose: 'register' | 'reset', locale?: string }} params */
 export async function sendVerificationEmail({ to, code, purpose, locale }) {
-  const { subject, text, html, category, preheader } = buildVerificationContent(code, purpose, locale)
+  const { subject, text, html, category, preheader } = buildVerificationContent(
+    code,
+    purpose,
+    locale,
+    to,
+  )
   const provider = assertMailProviderConfigured()
   const from =
     process.env.MAIL_FROM?.trim() ||

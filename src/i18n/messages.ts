@@ -46,6 +46,8 @@ const messagesZhHans = {
   authErrorTimeout: '连接超时。Render 免费服务唤醒较慢，请稍等片刻后重试。',
   authSendingCode: '正在连接服务器并发送验证码，首次可能需要等待约 1 分钟…',
   authCodeSentInline: '验证码已发送，请查收邮箱（含垃圾箱）。',
+  authDeepLinkFilledRegister: '验证码已从邮件填入，请设置密码后点击「注册」。',
+  authDeepLinkFilledReset: '验证码已从邮件填入，请设置新密码后点击「重置密码」。',
   authApiUrlHint: 'API 地址：{url}（根路径 / 返回 not_found 是正常的）',
   authChangePasswordTitle: '修改密码',
   authCurrentPassword: '当前密码',
@@ -522,6 +524,10 @@ const messagesEn: Record<MessageKey, string> = {
   authErrorTimeout: 'Request timed out. The free Render service may be waking up — wait a moment and try again.',
   authSendingCode: 'Connecting and sending the code. The first request may take up to a minute…',
   authCodeSentInline: 'Verification code sent. Check your inbox and spam folder.',
+  authDeepLinkFilledRegister:
+    'Verification code pre-filled from your email. Set a password and tap Register.',
+  authDeepLinkFilledReset:
+    'Verification code pre-filled from your email. Set a new password and tap Reset password.',
   authApiUrlHint: 'API: {url} (a not_found response at / is normal)',
   authChangePasswordTitle: 'Change password',
   authCurrentPassword: 'Current password',

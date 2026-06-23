@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getUserApiBaseUrl } from '../api/userApiConfig'
 import { OAuthSignInButtons } from './OAuthSignInButtons'
 import { useAuth } from '../contexts/AuthContext'
@@ -11,21 +11,35 @@ export type AuthMode = 'login' | 'register' | 'reset'
 
 interface AccountAuthFormProps {
   initialMode?: AuthMode
+  initialEmail?: string
+  initialCode?: string
   onSuccess?: () => void
 }
 
-export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAuthFormProps) {
+export function AccountAuthForm({
+  initialMode = 'login',
+  initialEmail,
+  initialCode,
+  onSuccess,
+}: AccountAuthFormProps) {
   const { t, locale } = useLocale()
   const { alert } = useAppDialog()
   const { login, register, resetPassword, sendCode, mapAuthError } = useAuth()
 
   const [mode, setMode] = useState<AuthMode>(initialMode)
-  const [email, setEmail] = useState(() => readLastAuthEmail() ?? '')
+  const [email, setEmail] = useState(() => initialEmail ?? readLastAuthEmail() ?? '')
   const [password, setPassword] = useState('')
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(() => initialCode ?? '')
   const [busy, setBusy] = useState(false)
-  const [codeSent, setCodeSent] = useState(false)
+  const [codeSent, setCodeSent] = useState(() => Boolean(initialCode))
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!initialCode) return
+    setStatusMessage(
+      t(initialMode === 'reset' ? 'authDeepLinkFilledReset' : 'authDeepLinkFilledRegister'),
+    )
+  }, [initialCode, initialMode, t])
 
   const showError = async (error: unknown) => {
     const message = t(mapAuthError(error))

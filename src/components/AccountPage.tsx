@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AccountAuthForm } from './AccountAuthForm'
 import { AccountProfileView } from './AccountProfileView'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
+import { clearAuthDeepLinkFromUrl, readAuthDeepLink } from '../utils/authDeepLink'
 
 function readOAuthHash(): { token?: string; email?: string; error?: string } {
   const hash = window.location.hash.replace(/^#/, '')
@@ -20,6 +21,11 @@ export function AccountPage() {
   const { t } = useLocale()
   const { alert } = useAppDialog()
   const { enabled, isLoggedIn, completeOAuthSession } = useAuth()
+  const [authSeed] = useState(() => {
+    const deepLink = readAuthDeepLink()
+    if (deepLink) clearAuthDeepLinkFromUrl()
+    return deepLink
+  })
 
   useEffect(() => {
     const { token, email, error } = readOAuthHash()
@@ -58,7 +64,12 @@ export function AccountPage() {
       ) : isLoggedIn ? (
         <AccountProfileView />
       ) : (
-        <AccountAuthForm key="signed-out" initialMode="login" />
+        <AccountAuthForm
+          key={authSeed ? `seed-${authSeed.mode}-${authSeed.email}` : 'signed-out'}
+          initialMode={authSeed?.mode ?? 'login'}
+          initialEmail={authSeed?.email}
+          initialCode={authSeed?.code}
+        />
       )}
     </section>
   )
