@@ -236,8 +236,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Added the user-provided full July 2025 Daily Challenge calendar; PayHearts, R370 joke text, whY370, Rushour / Rushout, and 471 to Norton shorthand were normalized.',
           },
           {
-            zh: '加入用户提供的 2025 年 6 月 Daily Challenge 日历；已标准化 last seen 备注、Rare PH、R148、473 Loop、N271 to Rainbow 与 N246/N271 双线路等写法。',
-            en: 'Added the user-provided June 2025 Daily Challenge calendar; last-seen notes, Rare PH, R148, 473 Loop, N271 to Rainbow, and the N246/N271 dual-route entry were normalized.',
+            zh: '加入并补齐用户提供的 2025 年 6 月 Daily Challenge 日历；已标准化 last seen 备注、Rare PH、R148、473 Loop、N171/N146/N271 方向等写法。',
+            en: 'Added and completed the user-provided June 2025 Daily Challenge calendar; last-seen notes, Rare PH, R148, 473 Loop, and N171/N146/N271 direction notes were normalized.',
           },
           {
             zh: '导入用户提供的 Discord PDF 历史日程，校正并补齐 2024 年 6 月至 2025 年 5 月 Daily Challenge 月历。',

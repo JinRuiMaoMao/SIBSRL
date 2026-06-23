@@ -2,7 +2,7 @@
   "month": "2025-06",
   "timezone": "Asia/Hong_Kong",
   "resetHour": 8,
-  "note": "Community-provided June 2025 Daily Challenge list. Discord emoji/custom emoji and last-seen notes were removed; bold/italic ranges were treated as race days. Ambiguous dual-route entry N246/N271 is preserved as text.",
+  "note": "Community-provided June 2025 Daily Challenge list, completed by a later user message. Discord emoji/custom emoji and last-seen notes were removed; bold/italic ranges were treated as race days. Direction notes were normalized to route codes where possible.",
   "days": [
     { "date": "2025-06-01", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
     { "date": "2025-06-02", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
@@ -23,16 +23,16 @@
     { "date": "2025-06-17", "event": "Marathon Road Closure", "routeCode": "471E", "race": false },
     { "date": "2025-06-18", "event": "E-Payment Outage", "routeCode": "75", "race": false },
     { "date": "2025-06-19", "event": "Lazy Passengers", "routeCode": "473N", "race": false },
-    { "date": "2025-06-20", "event": null, "routeCode": null, "race": false },
-    { "date": "2025-06-21", "event": "Marathon Road Closure", "routeCode": "N246/N271", "race": true },
+    { "date": "2025-06-20", "event": "Lazy Passengers", "routeCode": "N171E", "race": false },
+    { "date": "2025-06-21", "event": "Marathon Road Closure", "routeCode": "N271S", "race": true },
     { "date": "2025-06-22", "event": "Safety First", "routeCode": "F469", "race": true },
-    { "date": "2025-06-23", "event": null, "routeCode": null, "race": false },
-    { "date": "2025-06-24", "event": null, "routeCode": null, "race": false },
-    { "date": "2025-06-25", "event": null, "routeCode": null, "race": false },
+    { "date": "2025-06-23", "event": "Lazy Passengers", "routeCode": "N146W", "race": false },
+    { "date": "2025-06-24", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
+    { "date": "2025-06-25", "event": "Street Light Outage", "routeCode": "41AS", "race": false },
     { "date": "2025-06-26", "event": "Grumble Day", "routeCode": null, "race": true },
-    { "date": "2025-06-27", "event": null, "routeCode": null, "race": false },
+    { "date": "2025-06-27", "event": "Foggy Day", "routeCode": "N146E", "race": false },
     { "date": "2025-06-28", "event": "Free Ride Day", "routeCode": null, "race": true },
     { "date": "2025-06-29", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
-    { "date": "2025-06-30", "event": null, "routeCode": null, "race": false }
+    { "date": "2025-06-30", "event": "Foggy Day", "routeCode": "140W", "race": false }
   ]
 }

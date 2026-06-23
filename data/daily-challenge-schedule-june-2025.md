@@ -16,7 +16,9 @@
 > - `N271 to Rainbow, No St. Light` → `Street Light Outage (N271N)`。
 > - `471 to REC` → `471E`。
 > - `473 to Leafy Bay` → `473N`.
-> - `N246/N271` 保留为双线路文本，避免错误丢掉其中一条。
+> - `N271 to LIFP` → `N271S`。
+> - `N171 to Rainbow` → `N171E`。
+> - `N146 to Containers` → `N146W`；`N146 to Eastmallow` → `N146E`。
 
 ## 原文（已去除 emoji / Markdown）
 
@@ -41,15 +43,15 @@ SIBS 2025 JUNE DAILY CHALLENGES
 6/17: Marathon Road Closure (471E to REC)
 6/18: E-Payment Outage (75)
 6/19: Lazy Passengers (473N to Leafy Bay)
-6/20:
-6/21: (Race) Marathon Road Closure (N246/N271)
+6/20: Lazy Passengers (N171E to Rainbow)
+6/21: (Race) Marathon Road Closure (N271S to LIFP)
 6/22: (Race) Safety First (F469)
-6/23:
-6/24:
-6/25:
+6/23: Lazy Passengers (N146W to Containers)
+6/24: Concert Overrun (N171E)
+6/25: Street Light Outage (41AS to Sunshine Pier)
 6/26: (Race) Grumble Day
-6/27:
+6/27: Foggy Day (N146E to Eastmallow)
 6/28: (Race) Free Ride Day
 6/29: (Race) Urban Odyssey (77X)
-6/30:
+6/30: Foggy Day (140W to LIFP)
 ```
