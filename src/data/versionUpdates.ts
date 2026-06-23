@@ -195,6 +195,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2026 年 5 月 Daily Challenge 完整日历，并清理 Discord emoji / 简写线路码后接入日历选择器。',
             en: 'Added the user-provided full May 2026 Daily Challenge calendar, with Discord emoji and shorthand route codes cleaned up for the calendar picker.',
           },
+          {
+            zh: '加入用户提供的 2026 年 4 月 Daily Challenge 完整日历；已移除 Discord emoji，并将 Marathon Shuttle (148) 标准化为 R148。',
+            en: 'Added the user-provided full April 2026 Daily Challenge calendar; Discord emoji were removed and Marathon Shuttle (148) was normalized to R148.',
+          },
         ],
       },
     ],
