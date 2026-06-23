@@ -97,6 +97,7 @@ export async function fetchUserData(token: string) {
     favorites: import('../storage/favoriteFolders').FavoriteFoldersState | null
     updatedAt: number | null
     favoriteCount: number
+    profile?: { email: string; oauthOnly: boolean }
   }>('/api/user/data', { token })
 }
 
@@ -109,4 +110,46 @@ export async function saveUserData(
     token,
     body: JSON.stringify({ favorites }),
   })
+}
+
+export async function changeAccountPassword(
+  token: string,
+  currentPassword: string,
+  newPassword: string,
+) {
+  return request<{ ok: true }>('/api/auth/change-password', {
+    method: 'POST',
+    token,
+    body: JSON.stringify({ currentPassword, newPassword }),
+  })
+}
+
+export async function deleteAccount(token: string, currentPassword?: string) {
+  return request<{ ok: true }>('/api/user/account', {
+    method: 'DELETE',
+    token,
+    body: JSON.stringify({ currentPassword: currentPassword ?? '' }),
+  })
+}
+
+export async function submitRouteFeedback(payload: {
+  routeId?: string | null
+  category: string
+  message: string
+  contactEmail?: string
+}) {
+  return request<{ ok: true }>('/api/feedback/route', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function fetchOAuthProviders() {
+  return request<{ github: boolean; google: boolean }>('/api/auth/oauth/providers')
+}
+
+export function getOAuthStartUrl(provider: 'github' | 'google'): string | null {
+  const base = getUserApiBaseUrl()
+  if (!base) return null
+  return `${base}/api/auth/oauth/${provider}/start`
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { getUserApiBaseUrl } from '../api/userApiConfig'
+import { OAuthSignInButtons } from './OAuthSignInButtons'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
@@ -189,6 +190,8 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
               : t('authResetPassword')}
         </button>
       </div>
+
+      {mode === 'login' ? <OAuthSignInButtons /> : null}
     </div>
   )
 }

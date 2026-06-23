@@ -14,6 +14,7 @@ import {
   UserApiError,
 } from '../api/userApi'
 import { isUserApiConfigured } from '../api/userApiConfig'
+import type { MessageKey } from '../i18n/messages'
 import {
   clearAuthSession,
   readAuthEmail,
@@ -31,7 +32,8 @@ interface AuthContextValue {
   resetPassword: (email: string, password: string, code: string) => Promise<void>
   sendCode: (email: string, purpose: 'register' | 'reset') => Promise<void>
   logout: () => void
-  mapAuthError: (error: unknown) => string
+  completeOAuthSession: (token: string, email: string) => void
+  mapAuthError: (error: unknown) => MessageKey
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -52,6 +54,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null)
     setEmail(null)
   }, [])
+
+  const completeOAuthSession = useCallback(
+    (nextToken: string, nextEmail: string) => {
+      applySession(nextToken, nextEmail)
+    },
+    [applySession],
+  )
 
   const login = useCallback(
     async (loginEmail: string, password: string) => {
@@ -77,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendVerificationCode(targetEmail, purpose)
   }, [])
 
-  const mapAuthError = useCallback((error: unknown) => {
+  const mapAuthError = useCallback((error: unknown): MessageKey => {
     if (!(error instanceof UserApiError)) return 'authErrorGeneric'
     switch (error.code) {
       case 'user_api_unconfigured':
@@ -104,6 +113,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return 'authErrorNetwork'
       case 'timeout':
         return 'authErrorTimeout'
+      case 'oauth_only_account':
+        return 'authErrorOAuthOnly'
+      case 'invalid_message':
+        return 'feedbackSubmitFailed'
       default:
         return 'authErrorGeneric'
     }
@@ -120,9 +133,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       resetPassword,
       sendCode,
       logout,
+      completeOAuthSession,
       mapAuthError,
     }),
-    [enabled, token, email, login, register, resetPassword, sendCode, logout, mapAuthError],
+    [enabled, token, email, login, register, resetPassword, sendCode, logout, completeOAuthSession, mapAuthError],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

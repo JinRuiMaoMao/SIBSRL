@@ -16,15 +16,32 @@ import {
 } from './lib/user-auth.mjs'
 import {
   createUser,
+  deleteUser,
   deleteVerificationCode,
   findUserByEmail,
+  findUserById,
+  findUserByOAuth,
   getUserData,
   getVerificationCode,
+  insertRouteFeedback,
+  isOAuthOnlyUser,
+  linkOAuthIdentity,
   openUserDatabase,
   updateUserPassword,
   upsertUserData,
   upsertVerificationCode,
 } from './lib/user-db.mjs'
+import {
+  buildGitHubAuthorizeUrl,
+  buildGoogleAuthorizeUrl,
+  buildOAuthFailureRedirect,
+  buildOAuthSuccessRedirect,
+  consumeOAuthState,
+  exchangeOAuthCode,
+  getApiPublicBaseUrl,
+  isGitHubOAuthConfigured,
+  isGoogleOAuthConfigured,
+} from './lib/user-oauth.mjs'
 import { resolveMailProvider, sendVerificationEmail } from './lib/user-mail.mjs'
 
 const DEFAULT_PORT = 8788
@@ -44,6 +61,34 @@ const config = {
 
 const db = openUserDatabase()
 
+/** @type {Map<string, { count: number, resetAt: number }>} */
+const feedbackRateByIp = new Map()
+
+function readClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for']
+  if (typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',')[0]?.trim() ?? 'unknown'
+  }
+  return req.socket?.remoteAddress ?? 'unknown'
+}
+
+function canSubmitFeedback(ip) {
+  const now = Date.now()
+  const entry = feedbackRateByIp.get(ip)
+  if (!entry || now > entry.resetAt) {
+    feedbackRateByIp.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 })
+    return true
+  }
+  if (entry.count >= 8) return false
+  entry.count += 1
+  return true
+}
+
+function redirect(res, location) {
+  res.writeHead(302, { Location: location })
+  res.end()
+}
+
 /** @param {import('node:http').IncomingMessage} req */
 function resolveCorsOrigin(req) {
   const raw = config.corsOrigin.trim()
@@ -62,7 +107,7 @@ function json(req, res, status, body) {
     'Content-Length': Buffer.byteLength(payload),
     'Access-Control-Allow-Origin': resolveCorsOrigin(req),
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   })
   res.end(payload)
 }
@@ -205,7 +250,7 @@ async function handleLogin(req, res) {
   if (!isValidEmail(email)) return error(req, res, 400, 'invalid_email', 'Invalid email address')
 
   const user = findUserByEmail(db, email)
-  if (!user || !(await verifyPassword(password, user.password_hash))) {
+  if (!user || isOAuthOnlyUser(user) || !(await verifyPassword(password, user.password_hash))) {
     return error(req, res, 401, 'invalid_credentials', 'Invalid email or password')
   }
 
@@ -245,6 +290,7 @@ function handleGetUserData(req, res) {
   const session = requireAuth(req, res)
   if (!session) return
 
+  const user = findUserById(db, session.userId)
   const row = getUserData(db, session.userId)
   let favorites = null
   if (row?.favorites_json) {
@@ -259,6 +305,10 @@ function handleGetUserData(req, res) {
     favorites,
     updatedAt: row?.updated_at ?? null,
     favoriteCount: favorites ? countFavoriteRoutes(favorites) : 0,
+    profile: {
+      email: session.email,
+      oauthOnly: user ? isOAuthOnlyUser(user) : false,
+    },
   })
 }
 
@@ -282,6 +332,175 @@ async function handlePutUserData(req, res) {
   json(req, res, 200, { updatedAt })
 }
 
+async function handleChangePassword(req, res) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  let body
+  try {
+    body = await readJson(req)
+  } catch {
+    return error(req, res, 400, 'invalid_json', 'Invalid JSON body')
+  }
+
+  const user = findUserByEmail(db, session.email)
+  if (!user) return error(req, res, 404, 'email_not_found', 'Email is not registered')
+  if (isOAuthOnlyUser(user)) {
+    return error(req, res, 400, 'oauth_only_account', 'This account uses third-party sign-in')
+  }
+
+  const currentPassword = String(body.currentPassword ?? '')
+  const newPassword = String(body.newPassword ?? '')
+  if (!(await verifyPassword(currentPassword, user.password_hash))) {
+    return error(req, res, 401, 'invalid_credentials', 'Current password is incorrect')
+  }
+
+  const passwordError = validatePassword(newPassword)
+  if (passwordError) return error(req, res, 400, passwordError, 'Invalid password')
+
+  await updateUserPassword(db, session.email, await hashPassword(newPassword))
+  json(req, res, 200, { ok: true })
+}
+
+async function handleDeleteAccount(req, res) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  let body = {}
+  try {
+    body = await readJson(req)
+  } catch {
+    body = {}
+  }
+
+  const user = findUserByEmail(db, session.email)
+  if (!user) return error(req, res, 404, 'email_not_found', 'Email is not registered')
+
+  if (!isOAuthOnlyUser(user)) {
+    const currentPassword = String(body.currentPassword ?? '')
+    if (!(await verifyPassword(currentPassword, user.password_hash))) {
+      return error(req, res, 401, 'invalid_credentials', 'Current password is incorrect')
+    }
+  }
+
+  deleteUser(db, session.userId)
+  json(req, res, 200, { ok: true })
+}
+
+async function handleRouteFeedback(req, res) {
+  let body
+  try {
+    body = await readJson(req)
+  } catch {
+    return error(req, res, 400, 'invalid_json', 'Invalid JSON body')
+  }
+
+  const ip = readClientIp(req)
+  if (!canSubmitFeedback(ip)) {
+    return error(req, res, 429, 'rate_limited', 'Please wait before submitting more feedback')
+  }
+
+  const category = String(body.category ?? 'other').trim().slice(0, 40) || 'other'
+  const message = String(body.message ?? '').trim()
+  const routeId = body.routeId == null ? null : String(body.routeId).trim().slice(0, 80) || null
+  const contactEmailRaw = body.contactEmail == null ? '' : String(body.contactEmail).trim()
+  const contactEmail = contactEmailRaw && isValidEmail(contactEmailRaw) ? normalizeEmail(contactEmailRaw) : null
+
+  if (message.length < 8) {
+    return error(req, res, 400, 'invalid_message', 'Feedback message is too short')
+  }
+  if (message.length > 4000) {
+    return error(req, res, 400, 'invalid_message', 'Feedback message is too long')
+  }
+
+  insertRouteFeedback(db, {
+    id: randomUserId(),
+    routeId,
+    category,
+    message,
+    contactEmail,
+    clientIp: ip,
+    createdAt: Date.now(),
+  })
+
+  json(req, res, 201, { ok: true })
+}
+
+async function resolveOAuthLogin(req, identity) {
+  const existingOAuth = findUserByOAuth(db, identity.provider, identity.providerUserId)
+  if (existingOAuth) {
+    return { userId: existingOAuth.id, email: existingOAuth.email }
+  }
+
+  const existingEmail = findUserByEmail(db, identity.email)
+  if (existingEmail) {
+    linkOAuthIdentity(db, {
+      provider: identity.provider,
+      providerUserId: identity.providerUserId,
+      userId: existingEmail.id,
+      email: identity.email,
+      createdAt: Date.now(),
+    })
+    return { userId: existingEmail.id, email: existingEmail.email }
+  }
+
+  const userId = randomUserId()
+  createUser(db, { id: userId, email: identity.email, passwordHash: '', createdAt: Date.now() })
+  linkOAuthIdentity(db, {
+    provider: identity.provider,
+    providerUserId: identity.providerUserId,
+    userId,
+    email: identity.email,
+    createdAt: Date.now(),
+  })
+  return { userId, email: identity.email }
+}
+
+async function handleOAuthStart(req, res, provider) {
+  try {
+    const url =
+      provider === 'github'
+        ? buildGitHubAuthorizeUrl(req)
+        : provider === 'google'
+          ? buildGoogleAuthorizeUrl(req)
+          : null
+    if (!url) return error(req, res, 404, 'not_found', 'Unsupported OAuth provider')
+    return redirect(res, url)
+  } catch (err) {
+    console.error('[user-api] oauth start failed:', err)
+    return error(req, res, 503, 'oauth_unconfigured', 'OAuth provider is not configured')
+  }
+}
+
+async function handleOAuthCallback(req, res, provider) {
+  const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`)
+  const code = url.searchParams.get('code')
+  const state = url.searchParams.get('state')
+  const oauthError = url.searchParams.get('error')
+
+  if (oauthError || !code || !state || !consumeOAuthState(state, provider)) {
+    return redirect(res, buildOAuthFailureRedirect('oauth_denied'))
+  }
+
+  try {
+    const identity = await exchangeOAuthCode(req, provider, code)
+    const session = await resolveOAuthLogin(req, identity)
+    const token = signToken(session.userId, session.email)
+    return redirect(res, buildOAuthSuccessRedirect({ token, email: session.email }))
+  } catch (err) {
+    console.error('[user-api] oauth callback failed:', err)
+    return redirect(res, buildOAuthFailureRedirect('oauth_failed'))
+  }
+}
+
+function handleOAuthProviders(req, res) {
+  json(req, res, 200, {
+    github: isGitHubOAuthConfigured(),
+    google: isGoogleOAuthConfigured(),
+    frontendRedirect: getApiPublicBaseUrl(req),
+  })
+}
+
 const server = createServer(async (req, res) => {
   const method = req.method ?? 'GET'
   const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`)
@@ -291,7 +510,7 @@ const server = createServer(async (req, res) => {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': resolveCorsOrigin(req),
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     })
     res.end()
     return
@@ -331,6 +550,30 @@ const server = createServer(async (req, res) => {
     }
     if (method === 'PUT' && path === '/api/user/data') {
       return await handlePutUserData(req, res)
+    }
+    if (method === 'GET' && path === '/api/auth/oauth/providers') {
+      return handleOAuthProviders(req, res)
+    }
+    if (method === 'GET' && path === '/api/auth/oauth/github/start') {
+      return await handleOAuthStart(req, res, 'github')
+    }
+    if (method === 'GET' && path === '/api/auth/oauth/google/start') {
+      return await handleOAuthStart(req, res, 'google')
+    }
+    if (method === 'GET' && path === '/api/auth/oauth/github/callback') {
+      return await handleOAuthCallback(req, res, 'github')
+    }
+    if (method === 'GET' && path === '/api/auth/oauth/google/callback') {
+      return await handleOAuthCallback(req, res, 'google')
+    }
+    if (method === 'POST' && path === '/api/auth/change-password') {
+      return await handleChangePassword(req, res)
+    }
+    if (method === 'DELETE' && path === '/api/user/account') {
+      return await handleDeleteAccount(req, res)
+    }
+    if (method === 'POST' && path === '/api/feedback/route') {
+      return await handleRouteFeedback(req, res)
     }
     return error(req, res, 404, 'not_found', 'Not found')
   } catch (err) {

@@ -248,3 +248,17 @@ export function injectAccountPageMeta(html) {
   }
   return out
 }
+
+const SERVICE_WORKER_BOOTSTRAP_SCRIPT = `<script id="sw-register">
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {});
+  });
+}
+</script>`
+
+/** @param {string} html */
+export function injectServiceWorkerBootstrap(html) {
+  if (html.includes('id="sw-register"')) return html
+  return html.replace('</head>', `    ${SERVICE_WORKER_BOOTSTRAP_SCRIPT}\n  </head>`)
+}

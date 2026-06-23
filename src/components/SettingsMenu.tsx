@@ -3,11 +3,13 @@ import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
+import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
   const [open, setOpen] = useState(false)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
@@ -121,9 +123,23 @@ export function SettingsMenu() {
           </section>
 
           <DisplayPreferencesSection />
+          <section className="settings-section">
+            <button
+              type="button"
+              className="settings-action-btn"
+              onClick={() => {
+                setFeedbackOpen(true)
+                setOpen(false)
+              }}
+            >
+              {t('feedbackOpen')}
+            </button>
+          </section>
           <ResetSettingsSection />
         </div>
       )}
+
+      <RouteDataFeedbackDialog open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </div>
   )
 }

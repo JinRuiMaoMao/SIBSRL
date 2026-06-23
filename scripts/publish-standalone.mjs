@@ -10,6 +10,7 @@ import {
   injectAccountPageMeta,
   injectNoScriptGuard,
   injectSecretPageMeta,
+  injectServiceWorkerBootstrap,
   injectThemeBootstrap,
   syncFaviconLink,
 } from './lib/app-page-html.mjs'
@@ -55,11 +56,13 @@ export function publishStandalone(options = {}) {
     throw new Error('未找到 dist/dev.html，请先运行 vite build')
   }
 
-  const baseHtml = syncFaviconLink(
-    injectLocaleBootstrap(
-      injectThemeBootstrap(
-        injectNoScriptGuard(
-          injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+  const baseHtml = injectServiceWorkerBootstrap(
+    syncFaviconLink(
+      injectLocaleBootstrap(
+        injectThemeBootstrap(
+          injectNoScriptGuard(
+            injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+          ),
         ),
       ),
     ),
@@ -109,6 +112,14 @@ export function publishStandalone(options = {}) {
   if (existsSync(publicLogo)) {
     cpSync(publicLogo, resolve(root, 'sibs-logo.png'))
     cpSync(publicLogo, resolve(root, 'dist', 'sibs-logo.png'))
+  }
+
+  const serviceWorker = resolve(root, 'dist', 'sw.js')
+  if (existsSync(serviceWorker)) {
+    cpSync(serviceWorker, resolve(root, 'sw.js'))
+  } else {
+    const publicSw = resolve(root, 'public', 'sw.js')
+    if (existsSync(publicSw)) cpSync(publicSw, resolve(root, 'sw.js'))
   }
 
   console.log(

@@ -45,6 +45,16 @@ services:
         value: sendgrid
       - key: SENDGRID_API_KEY
         sync: false
+      - key: OAUTH_FRONTEND_URL
+        value: https://jinruimaomao.github.io/SIBSRL/account.html
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: JWT_SECRET

@@ -190,6 +190,22 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '账号操作增加发送中/失败等状态提示；连接 Render 免费服务时自动延长等待时间，减少冷启动误报超时。',
             en: 'Account actions now show sending/failure status; requests wait longer when the free Render service is waking up, reducing false timeouts.',
           },
+          {
+            zh: '个人中心新增修改密码、注销账号；登录页支持 GitHub / Google 第三方登录（需在 Render 配置 OAuth 密钥）。',
+            en: 'Account page adds change-password and delete-account; sign-in supports GitHub / Google OAuth when keys are configured on Render.',
+          },
+          {
+            zh: '本机与云端都有收藏时，登录会弹出冲突处理：使用云端、使用本机或合并两边收藏夹。',
+            en: 'When both device and cloud have favorites, sign-in offers cloud, local, or merged resolution.',
+          },
+          {
+            zh: '线路详情与设置菜单新增「反馈线路资料问题」，可提交站序、车费等勘误（存入用户 API 数据库）。',
+            en: 'Route detail and Settings now include route data feedback for stops, fare, and related corrections (stored in the user API database).',
+          },
+          {
+            zh: '新增 Service Worker 离线缓存：访问过的线路 HTML 与页面资源在弱网下可继续查看。',
+            en: 'Added a service worker offline cache so visited route HTML and shell assets remain available on weak networks.',
+          },
         ],
       },
       {
