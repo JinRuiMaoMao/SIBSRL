@@ -1,0 +1,9 @@
+{
+  "month": "2024-09",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Partial historical schedule from Fandom Daily Challenges: route R370 was selected on 2024-09-07 to celebrate 9 million visits. Other dates are left blank because no full September calendar was found.",
+  "days": [
+    { "date": "2024-09-07", "event": "Marathon Shuttle", "routeCode": "R370", "race": true }
+  ]
+}

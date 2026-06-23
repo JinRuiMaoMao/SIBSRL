@@ -1,0 +1,9 @@
+{
+  "month": "2024-12",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Partial historical schedule from Fandom route S1 / Daily Challenges pages: S1 was available as the Daily Challenge on 2024-12-31 when sightseeing routes S1/S2 launched. Other dates are left blank because no full December calendar was found.",
+  "days": [
+    { "date": "2024-12-31", "event": "Sightseeing Launch", "routeCode": "S1", "race": false }
+  ]
+}

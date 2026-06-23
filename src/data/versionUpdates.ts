@@ -187,6 +187,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入 NamuWiki 公开资料整理的 2024 年 6–8 月历史 Daily Challenge 月历；用户可在日历中切换年份和月份查看旧日期。',
             en: 'Added historical June–August 2024 Daily Challenge calendars transcribed from public NamuWiki data; users can switch year/month in the calendar to view older dates.',
           },
+          {
+            zh: '继续补入公开页面确认的部分历史日期：2024-09-07 R370（9 million visits 纪念竞速）与 2024-12-31 S1 观光线路上线 Daily Challenge。',
+            en: 'Added more publicly confirmed partial history: 2024-09-07 R370 (9 million visits race) and 2024-12-31 S1 sightseeing launch Daily Challenge.',
+          },
         ],
       },
     ],
