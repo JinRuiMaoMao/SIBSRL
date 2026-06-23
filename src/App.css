@@ -5370,3 +5370,140 @@ html[data-reduce-motion='true'] .site-header-shell {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* Guided tour spotlight */
+.guided-tour-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.guided-tour-mask {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.guided-tour-spotlight-ring {
+  position: fixed;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 24px color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
+  animation: guided-tour-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes guided-tour-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 0 16px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.2),
+      0 0 28px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+}
+
+.guided-tour-panel {
+  position: fixed;
+  z-index: 2;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: 1rem 1.1rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: 0 16px 48px var(--shadow-overlay);
+  pointer-events: auto;
+}
+
+.guided-tour-panel--center {
+  width: min(24rem, calc(100vw - 2rem));
+}
+
+.guided-tour-progress {
+  margin: 0 0 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.guided-tour-title {
+  margin: 0 0 0.45rem;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.guided-tour-body {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.guided-tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.guided-tour-actions-main {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.guided-tour-btn {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.guided-tour-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.guided-tour-btn--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.guided-tour-btn--ghost:hover {
+  color: var(--text);
+  border-color: transparent;
+  background: var(--bg-elevated);
+}
+
+.guided-tour-btn--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.guided-tour-btn--primary:hover {
+  filter: brightness(1.05);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guided-tour-spotlight-ring {
+    animation: none;
+  }
+}

@@ -25,6 +25,7 @@ export function FilterMenu({ active, children }: FilterMenuProps) {
       <button
         type="button"
         className={`filter-menu-trigger ${active ? 'filter-menu-trigger--active' : ''}`}
+        data-tour="filters"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="dialog"

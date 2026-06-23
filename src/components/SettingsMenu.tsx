@@ -1,18 +1,22 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { useLocale } from '../i18n/LocaleContext'
-import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
+import { useGuidedTourControl } from '../contexts/GuidedTourContext'
+import { useLocale } from '../i18n/LocaleContext'
+import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
+import { readTabFromLocation } from '../utils/appTabNavigation'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
+  const { openTour } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
+  const onRoutesTab = (readTabFromLocation() ?? 'routes') === 'routes'
 
   useLayoutEffect(() => {
     if (!open) {
@@ -72,6 +76,7 @@ export function SettingsMenu() {
         ref={triggerRef}
         type="button"
         className="settings-trigger"
+        data-tour="settings"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -123,6 +128,20 @@ export function SettingsMenu() {
           </section>
 
           <DisplayPreferencesSection />
+          {onRoutesTab ? (
+            <section className="settings-section">
+              <button
+                type="button"
+                className="settings-action-btn"
+                onClick={() => {
+                  setOpen(false)
+                  openTour()
+                }}
+              >
+                {t('guidedTourReplay')}
+              </button>
+            </section>
+          ) : null}
           <section className="settings-section">
             <button
               type="button"

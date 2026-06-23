@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { GuidedTourProvider } from './contexts/GuidedTourContext.tsx'
 import { AppDialogProvider } from './contexts/AppDialogContext.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
 import { AppPreferencesProvider } from './contexts/AppPreferencesContext.tsx'
@@ -29,16 +30,18 @@ createRoot(rootEl).render(
     <ThemeProvider>
       <LocaleProvider>
         <AuthProvider>
-          <AppDialogProvider>
-            <AppPreferencesProvider>
-              <FavoriteRoutesProvider>
-                <RecentRoutesProvider>
-                  <App />
-                  <CustomContextMenu />
-                </RecentRoutesProvider>
-              </FavoriteRoutesProvider>
-            </AppPreferencesProvider>
-          </AppDialogProvider>
+          <GuidedTourProvider>
+            <AppDialogProvider>
+              <AppPreferencesProvider>
+                <FavoriteRoutesProvider>
+                  <RecentRoutesProvider>
+                    <App />
+                    <CustomContextMenu />
+                  </RecentRoutesProvider>
+                </FavoriteRoutesProvider>
+              </AppPreferencesProvider>
+            </AppDialogProvider>
+          </GuidedTourProvider>
         </AuthProvider>
       </LocaleProvider>
     </ThemeProvider>

@@ -80,6 +80,7 @@ export function SearchToolbar({
         <button
           type="button"
           className="random-route-btn"
+          data-tour="random-route"
           onClick={onRandom}
           disabled={randomEligibleCount === 0}
           aria-label={t('randomRouteAria')}

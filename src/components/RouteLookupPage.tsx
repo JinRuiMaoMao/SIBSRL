@@ -886,7 +886,7 @@ export function RouteLookupPage({
   }, [])
 
   const renderGroupedRouteCards = (group: RouteDisplayGroupKey) =>
-    groupedSlots[group].map((slot) => {
+    groupedSlots[group].map((slot, index) => {
       const { route, listedId, directionKey } = slot.entry!
       const directionIndex = getCardDirectionIndex(route, directionKey)
       const seasonalLabels = getSeasonalLabelsForRoute(route)
@@ -902,6 +902,7 @@ export function RouteLookupPage({
           onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
+          tourAnchor={group === 'normal' && index === 0 ? 'route-card' : undefined}
         />
       )
     })
@@ -1144,6 +1145,7 @@ export function RouteLookupPage({
                 {group === 'normal' && showFavoritesSection ? (
                   <RouteGroupCollapse
                     groupId="favorites"
+                    dataTour="favorites"
                     count={favoriteRoutes.length}
                     open={groupOpen.favorites}
                     onOpenChange={(open) =>
@@ -1177,6 +1179,7 @@ export function RouteLookupPage({
 
                 <RouteGroupCollapse
                   groupId={group}
+                  dataTour={group === 'normal' ? 'route-group-normal' : undefined}
                   count={countVisibleGroupSlots(group)}
                   open={groupOpen[group]}
                   onOpenChange={(open) =>

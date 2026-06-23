@@ -20,6 +20,7 @@ export function AccountAvatarButton() {
     <a
       href={getAccountPageHref()}
       className={`account-avatar-btn ${onAccountPage ? 'account-avatar-btn--active' : ''} ${isLoggedIn ? 'account-avatar-btn--signed-in' : ''}`}
+      data-tour="account"
       aria-current={onAccountPage ? 'page' : undefined}
       title={isLoggedIn ? t('authLoggedInAs', { email: email ?? '' }) : t('authAvatarLabel')}
       aria-label={t('authAvatarLabel')}

@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 import { AccountPage } from './components/AccountPage'
 import { BroadcastPage } from './components/BroadcastPage'
 import { ComplaintsPage } from './components/ComplaintsPage'
 import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
 import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
@@ -16,10 +17,12 @@ import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/daily
 import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useDocumentMetadata } from './hooks/useDocumentMetadata'
 import { useFavoritesCloudSync } from './hooks/useFavoritesCloudSync'
+import { useGuidedTourControl } from './contexts/GuidedTourContext'
 import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
-import { markUpdateSeen } from './storage/updatesViewing'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
+import { shouldShowGuidedTour } from './storage/guidedTour'
+import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation } from './utils/appTabNavigation'
@@ -44,6 +47,7 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
+  const { open: guidedTourOpen, openTour, closeTour } = useGuidedTourControl()
   useDocumentMetadata(activeTab)
   const favoritesSyncDialog = useFavoritesCloudSync()
   const dailyChallenge = useDailyChallenge()
@@ -56,6 +60,23 @@ function App() {
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
 
+  const tryOpenGuidedTour = useCallback(() => {
+    if (activeTab !== 'routes') return
+    if (shouldShowGuidedTour()) openTour()
+  }, [activeTab, openTour])
+
+  useEffect(() => {
+    if (
+      activeTab === 'routes' &&
+      !initialOverlays.dailyChallenge &&
+      !initialOverlays.updates
+    ) {
+      tryOpenGuidedTour()
+    }
+    // Only evaluate auto-start once on first paint.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const openUpdatesPrompt = useCallback(() => {
     if (!shouldShowUpdatesPrompt()) return
     setUpdatesPromptOpen(true)
@@ -65,12 +86,17 @@ function App() {
     const latestPromptKey = getLatestUpdatePromptKey()
     if (latestPromptKey) markUpdateSeen(latestPromptKey)
     setUpdatesPromptOpen(false)
-  }, [])
+    tryOpenGuidedTour()
+  }, [tryOpenGuidedTour])
 
   const closeDailyChallengePrompt = useCallback(() => {
     setDailyChallengePromptOpen(false)
-    openUpdatesPrompt()
-  }, [openUpdatesPrompt])
+    if (shouldShowUpdatesPrompt()) {
+      openUpdatesPrompt()
+      return
+    }
+    tryOpenGuidedTour()
+  }, [openUpdatesPrompt, tryOpenGuidedTour])
 
   const handleDailyChallengePromptOpenDetail = () => {
     setPendingDailyChallengeDetail((count) => count + 1)
@@ -151,6 +177,13 @@ function App() {
   return (
     <>
       {favoritesSyncDialog}
+      {activeTab === 'routes' ? (
+        <GuidedTour
+          open={guidedTourOpen}
+          onClose={closeTour}
+          onPrepare={() => setHeaderCollapsed(false)}
+        />
+      ) : null}
       <div className="app sibs-scrollbar">
       <Header
         activeTab={activeTab}
