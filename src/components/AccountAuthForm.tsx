@@ -4,6 +4,7 @@ import { OAuthSignInButtons } from './OAuthSignInButtons'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
+import { readLastAuthEmail } from '../storage/authToken'
 
 export type AuthMode = 'login' | 'register' | 'reset'
 
@@ -18,7 +19,7 @@ export function AccountAuthForm({ initialMode = 'login', onSuccess }: AccountAut
   const { login, register, resetPassword, sendCode, mapAuthError } = useAuth()
 
   const [mode, setMode] = useState<AuthMode>(initialMode)
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(() => readLastAuthEmail() ?? '')
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)

@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useAppPreferences } from '../contexts/AppPreferencesContext'
+import { useAuth } from '../contexts/AuthContext'
 import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
 import { useRecentRoutes } from '../contexts/RecentRoutesContext'
 import { useLocale } from '../i18n/LocaleContext'
@@ -14,7 +15,6 @@ import {
   ROUTE_FILTERS_STORAGE_KEY,
   ROUTE_GROUP_OPEN_STORAGE_KEY,
 } from '../storage/routePreferences'
-import { clearAuthSession } from '../storage/authToken'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
 import { clearRoutePagePrefetchCache } from '../utils/routePagePrefetch'
@@ -22,6 +22,7 @@ import { clearRoutePagePrefetchCache } from '../utils/routePagePrefetch'
 export function ResetSettingsSection() {
   const { t } = useLocale()
   const { alert, confirm } = useAppDialog()
+  const { logout } = useAuth()
   const { setTheme } = useTheme()
   const { replaceFoldersState } = useFavoriteRoutes()
   const { clearRecent } = useRecentRoutes()
@@ -42,7 +43,7 @@ export function ResetSettingsSection() {
       localStorage.removeItem(RECENT_ROUTES_STORAGE_KEY)
       localStorage.removeItem(DAILY_CHALLENGE_PROMPT_SEEN_KEY)
       clearUpdatesPromptSeen()
-      clearAuthSession()
+      logout()
     } catch {
       /* ignore */
     }

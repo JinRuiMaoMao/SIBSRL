@@ -4,7 +4,7 @@ import { FavoritesSyncConflictDialog, type FavoritesSyncChoice } from '../compon
 import { useAuth } from '../contexts/AuthContext'
 import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
 import { allFavoriteRouteIds, type FavoriteFoldersState } from '../storage/favoriteFolders'
-import { mergeFavoriteFolders } from '../utils/favoriteFoldersMerge'
+import { favoriteFoldersContentEqual, mergeFavoriteFolders } from '../utils/favoriteFoldersMerge'
 
 function buildState(folders: FavoriteFoldersState['folders'], activeFolderId: string): FavoriteFoldersState {
   return { version: 2, folders, activeFolderId }
@@ -25,8 +25,16 @@ export function useFavoritesCloudSync(): ReactNode {
     remote: FavoriteFoldersState
   } | null>(null)
   const conflictResolverRef = useRef<((choice: FavoritesSyncChoice) => void) | null>(null)
+  const cancelConflictRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
+    cancelConflictRef.current?.()
+    cancelConflictRef.current = null
+    conflictResolverRef.current = null
+    if (uploadTimerRef.current) {
+      window.clearTimeout(uploadTimerRef.current)
+      uploadTimerRef.current = null
+    }
     hydratedRef.current = false
     skipUploadRef.current = false
     setConflict(null)
@@ -46,11 +54,29 @@ export function useFavoritesCloudSync(): ReactNode {
         const remoteCount = remote.favoriteCount
         const localCount = localFavoriteCount(localState)
 
-        if (remoteState && remoteCount > 0 && localCount > 0) {
-          const choice = await new Promise<FavoritesSyncChoice>((resolve) => {
-            conflictResolverRef.current = resolve
-            setConflict({ local: localState, remote: remoteState })
-          })
+        if (
+          remoteState &&
+          remoteCount > 0 &&
+          localCount > 0 &&
+          !favoriteFoldersContentEqual(localState, remoteState)
+        ) {
+          let choice: FavoritesSyncChoice
+          try {
+            choice = await new Promise<FavoritesSyncChoice>((resolve, reject) => {
+              conflictResolverRef.current = resolve
+              cancelConflictRef.current = () => {
+                conflictResolverRef.current = null
+                cancelConflictRef.current = null
+                reject(new Error('favorites-sync-cancelled'))
+              }
+              setConflict({ local: localState, remote: remoteState })
+            })
+          } catch {
+            if (cancelled) return
+            return
+          }
+          conflictResolverRef.current = null
+          cancelConflictRef.current = null
           if (cancelled) return
 
           let nextState = localState
@@ -62,10 +88,10 @@ export function useFavoritesCloudSync(): ReactNode {
           skipUploadRef.current = true
           replaceFoldersState(nextState)
           await saveUserData(token, nextState)
-        } else if (remoteState && remoteCount > 0) {
+        } else if (remoteState && remoteCount > 0 && localCount === 0) {
           skipUploadRef.current = true
           replaceFoldersState(remoteState)
-        } else if (localCount > 0) {
+        } else if (localCount > 0 && remoteCount === 0) {
           await saveUserData(token, localState)
         }
       } catch (error) {
@@ -112,6 +138,7 @@ export function useFavoritesCloudSync(): ReactNode {
       local={conflict.local}
       remote={conflict.remote}
       onChoose={(choice) => {
+        cancelConflictRef.current = null
         conflictResolverRef.current?.(choice)
         conflictResolverRef.current = null
         setConflict(null)

@@ -58,7 +58,8 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
 }
 
 export function isOAuthOnlyUser(user) {
-  return !user?.password_hash
+  const hash = user?.password_hash
+  return typeof hash !== 'string' || hash.length === 0
 }
 
 /** @param {import('better-sqlite3').Database} db */

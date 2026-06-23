@@ -250,7 +250,13 @@ async function handleLogin(req, res) {
   if (!isValidEmail(email)) return error(req, res, 400, 'invalid_email', 'Invalid email address')
 
   const user = findUserByEmail(db, email)
-  if (!user || isOAuthOnlyUser(user) || !(await verifyPassword(password, user.password_hash))) {
+  if (!user) {
+    return error(req, res, 401, 'invalid_credentials', 'Invalid email or password')
+  }
+  if (isOAuthOnlyUser(user)) {
+    return error(req, res, 401, 'oauth_only_account', 'This account uses third-party sign-in')
+  }
+  if (!(await verifyPassword(password, user.password_hash))) {
     return error(req, res, 401, 'invalid_credentials', 'Invalid email or password')
   }
 
