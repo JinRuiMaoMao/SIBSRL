@@ -73,24 +73,31 @@ function App() {
   }, [])
 
   const scheduleAutoStartTour = useCallback(() => {
-    if (!canAutoStartGuidedTour()) return
-
     const mode = detectGuidedTourMode()
+    if (!canAutoStartGuidedTour(mode)) return
+
     const timer = window.setTimeout(() => {
-      if (!canAutoStartGuidedTour()) return
+      if (!canAutoStartGuidedTour(mode)) return
       openTour({ mode })
     }, getGuidedTourAutoStartDelayMs(mode))
     registerAutoStartTimer(timer)
   }, [openTour, registerAutoStartTimer])
 
   const tryOpenGuidedTour = useCallback(() => {
-    if (!canAutoStartGuidedTour()) return
-    openTour({ mode: detectGuidedTourMode() })
+    const mode = detectGuidedTourMode()
+    if (!canAutoStartGuidedTour(mode)) return
+    openTour({ mode })
   }, [openTour])
 
   useEffect(() => {
     if (isAccountPage() || isSecretPage()) return
-    if (activeTab === 'routes' && (initialOverlays.dailyChallenge || initialOverlays.updates)) {
+
+    const mode = detectGuidedTourMode()
+    if (
+      activeTab === 'routes' &&
+      mode === 'full' &&
+      (initialOverlays.dailyChallenge || initialOverlays.updates)
+    ) {
       return
     }
 

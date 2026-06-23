@@ -148,6 +148,10 @@ export function getGuidedTourSteps(mode: GuidedTourMode): GuidedTourStep[] {
   return mode === 'brief' ? GUIDED_TOUR_BRIEF_STEPS : GUIDED_TOUR_STEPS
 }
 
+export function entryForGuidedTourMode(mode: GuidedTourMode): 'full' | 'brief' {
+  return mode === 'full' ? 'full' : 'brief'
+}
+
 export function detectGuidedTourMode(): GuidedTourMode {
   const tab = readTabFromLocation() ?? 'routes'
   if (tab !== 'routes') return 'brief'
