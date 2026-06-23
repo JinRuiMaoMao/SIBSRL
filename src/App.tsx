@@ -14,6 +14,7 @@ import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
 import { useDailyChallenge } from './hooks/useDailyChallenge'
 import { useDocumentMetadata } from './hooks/useDocumentMetadata'
+import { useFavoritesCloudSync } from './hooks/useFavoritesCloudSync'
 import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markUpdateSeen } from './storage/updatesViewing'
@@ -43,6 +44,7 @@ function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
   useDocumentMetadata(activeTab)
+  useFavoritesCloudSync()
   const dailyChallenge = useDailyChallenge()
   const initialOverlays = readInitialOverlayState()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
