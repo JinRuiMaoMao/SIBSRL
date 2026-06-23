@@ -40,7 +40,9 @@ services:
       - key: USER_API_CORS_ORIGIN
         value: https://jinruimaomao.github.io
       - key: MAIL_FROM
-        value: SIBS Route Lookup <onboarding@resend.dev>
+        value: SIBS Route Lookup <sibs_rl@outlook.com>
+      - key: SENDGRID_API_KEY
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: JWT_SECRET

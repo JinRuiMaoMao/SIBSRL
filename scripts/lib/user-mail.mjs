@@ -1,3 +1,4 @@
+import dns from 'node:dns'
 import nodemailer from 'nodemailer'
 
 const DEFAULT_RESEND_FROM = 'SIBS Route Lookup <onboarding@resend.dev>'
@@ -41,6 +42,10 @@ function getTransporter() {
       connectionTimeout: 12_000,
       greetingTimeout: 12_000,
       socketTimeout: 15_000,
+      family: 4,
+      lookup: (hostname, _options, callback) => {
+        dns.lookup(hostname, { family: 4 }, callback)
+      },
     })
   }
   return transporter
@@ -60,8 +65,10 @@ function getSendGridApiKey() {
   if (explicit) return explicit
 
   const host = process.env.SMTP_HOST?.trim().toLowerCase() ?? ''
+  const user = process.env.SMTP_USER?.trim().toLowerCase() ?? ''
   const pass = process.env.SMTP_PASS?.trim() ?? ''
-  if (host.includes('sendgrid') && pass.startsWith('SG.')) return pass
+  // SendGrid SMTP on Render often fails over IPv6; use HTTP API when host/user match.
+  if (host.includes('sendgrid') && user === 'apikey' && pass) return pass
   return null
 }
 
@@ -149,9 +156,11 @@ export async function sendVerificationEmail({ to, code, purpose }) {
   }
 
   if (provider === 'sendgrid') {
+    console.info('[user-mail] sending via SendGrid HTTP API')
     await sendViaSendGrid({ to, subject, text, html, from })
     return
   }
 
+  console.info('[user-mail] sending via SMTP')
   await getTransporter().sendMail({ from, to, subject, text, html })
 }
