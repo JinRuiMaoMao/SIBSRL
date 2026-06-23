@@ -231,6 +231,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '加入用户提供的 2025 年 8 月 Daily Challenge 完整日历；已标准化 PayHearts、Rushour、Streetlightless、Lazi、yoU47 与多日 Race 范围。',
             en: 'Added the user-provided full August 2025 Daily Challenge calendar; PayHearts, Rushour, Streetlightless, Lazi, yoU47, and multi-day race ranges were normalized.',
           },
+          {
+            zh: '加入用户提供的 2025 年 7 月 Daily Challenge 完整日历；已标准化 PayHearts、R370 吐槽写法、whY370、Rushour / Rushout 与 471 to Norton 等写法。',
+            en: 'Added the user-provided full July 2025 Daily Challenge calendar; PayHearts, R370 joke text, whY370, Rushour / Rushout, and 471 to Norton shorthand were normalized.',
+          },
         ],
       },
     ],
