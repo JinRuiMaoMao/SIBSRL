@@ -33,8 +33,32 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
       updated_at INTEGER NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS oauth_identities (
+      provider TEXT NOT NULL,
+      provider_user_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      email TEXT,
+      created_at INTEGER NOT NULL,
+      PRIMARY KEY (provider, provider_user_id),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS route_feedback (
+      id TEXT PRIMARY KEY,
+      route_id TEXT,
+      category TEXT NOT NULL,
+      message TEXT NOT NULL,
+      contact_email TEXT,
+      client_ip TEXT,
+      created_at INTEGER NOT NULL
+    );
   `)
   return db
+}
+
+export function isOAuthOnlyUser(user) {
+  return !user?.password_hash
 }
 
 /** @param {import('better-sqlite3').Database} db */
@@ -52,7 +76,7 @@ export function createUser(db, { id, email, passwordHash, createdAt }) {
   db.prepare('INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)').run(
     id,
     email,
-    passwordHash,
+    passwordHash ?? '',
     createdAt,
   )
 }
@@ -102,4 +126,41 @@ export function upsertUserData(db, userId, favoritesJson, updatedAt) {
       favorites_json = excluded.favorites_json,
       updated_at = excluded.updated_at
   `).run(userId, favoritesJson, updatedAt)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function findUserByOAuth(db, provider, providerUserId) {
+  const row = db
+    .prepare(
+      `SELECT u.id, u.email, u.password_hash, u.created_at
+       FROM oauth_identities o
+       JOIN users u ON u.id = o.user_id
+       WHERE o.provider = ? AND o.provider_user_id = ?`,
+    )
+    .get(provider, providerUserId)
+  return row ?? null
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function linkOAuthIdentity(db, { provider, providerUserId, userId, email, createdAt }) {
+  db.prepare(`
+    INSERT INTO oauth_identities (provider, provider_user_id, user_id, email, created_at)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(provider, provider_user_id) DO UPDATE SET
+      user_id = excluded.user_id,
+      email = excluded.email
+  `).run(provider, providerUserId, userId, email, createdAt)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function deleteUser(db, userId) {
+  db.prepare('DELETE FROM users WHERE id = ?').run(userId)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function insertRouteFeedback(db, { id, routeId, category, message, contactEmail, clientIp, createdAt }) {
+  db.prepare(`
+    INSERT INTO route_feedback (id, route_id, category, message, contact_email, client_ip, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(id, routeId ?? null, category, message, contactEmail ?? null, clientIp ?? null, createdAt)
 }

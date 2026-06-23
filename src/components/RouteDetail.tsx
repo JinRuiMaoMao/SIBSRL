@@ -28,6 +28,7 @@ import { BroadcastAudioButton } from './BroadcastAudioButton'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { buildRouteShareUrl } from '../utils/routeNavigation'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
+import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 
 interface RouteDetailProps {
   route: BusRoute
@@ -63,6 +64,7 @@ export function RouteDetail({
   const { locale, t } = useLocale()
   const { alert } = useAppDialog()
   const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
   const hasDirectionControls =
     routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
@@ -295,6 +297,9 @@ export function RouteDetail({
       )}
 
       <div className="detail-links">
+        <button type="button" className="detail-feedback-btn" onClick={() => setFeedbackOpen(true)}>
+          {t('feedbackOpen')}
+        </button>
         {route.externalUrl && (
           <a href={route.externalUrl} target="_blank" rel="noreferrer">
             {t('linkCommunity')}
@@ -306,6 +311,12 @@ export function RouteDetail({
           </a>
         )}
       </div>
+
+      <RouteDataFeedbackDialog
+        open={feedbackOpen}
+        routeId={route.id}
+        onClose={() => setFeedbackOpen(false)}
+      />
     </aside>
   )
 }

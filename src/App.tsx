@@ -45,7 +45,7 @@ function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
   useDocumentMetadata(activeTab)
-  useFavoritesCloudSync()
+  const favoritesSyncDialog = useFavoritesCloudSync()
   const dailyChallenge = useDailyChallenge()
   const initialOverlays = readInitialOverlayState()
   const [dailyChallengePromptOpen, setDailyChallengePromptOpen] = useState(
@@ -82,7 +82,9 @@ function App() {
 
   if (isAccountPage()) {
     return (
-      <div className="app sibs-scrollbar">
+      <>
+        {favoritesSyncDialog}
+        <div className="app sibs-scrollbar">
         <Header
           activeTab={activeTab}
           collapsed={headerCollapsed}
@@ -110,7 +112,8 @@ function App() {
             {t('buildTag', { time: buildLabel })}
           </p>
         </footer>
-      </div>
+        </div>
+      </>
     )
   }
 
@@ -121,8 +124,10 @@ function App() {
     }
 
     return (
-      <div className="app sibs-scrollbar">
-        <SecretHeader
+      <>
+        {favoritesSyncDialog}
+        <div className="app sibs-scrollbar">
+          <SecretHeader
           collapsed={headerCollapsed}
           onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
         />
@@ -138,12 +143,15 @@ function App() {
             {t('buildTag', { time: buildLabel })}
           </p>
         </footer>
-      </div>
+        </div>
+      </>
     )
   }
 
   return (
-    <div className="app sibs-scrollbar">
+    <>
+      {favoritesSyncDialog}
+      <div className="app sibs-scrollbar">
       <Header
         activeTab={activeTab}
         collapsed={headerCollapsed}
@@ -201,7 +209,8 @@ function App() {
           {t('buildTag', { time: buildLabel })}
         </p>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }
 
