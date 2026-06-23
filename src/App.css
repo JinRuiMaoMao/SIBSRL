@@ -3173,7 +3173,11 @@ html[data-list-density='compact'] .transfer-plan-stop {
   pointer-events: none;
 }
 
-.route-card-surface > * {
+.route-card-surface :is(
+  .route-favorite-picker,
+  .route-direction-controls,
+  .direction-toggle
+) {
   pointer-events: auto;
 }
 

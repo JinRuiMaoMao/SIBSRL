@@ -195,6 +195,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '线路卡片普通点击改为直接按链接跳转，避免在首页内等待详情加载时看起来没有反应；右键、新标签页与 iPad 长按行为保持一致。',
             en: 'Route card primary clicks now follow the link directly, avoiding the page appearing stuck while detail data loads; right-click, new-tab, and iPad long-press behavior stay consistent.',
           },
+          {
+            zh: '修正线路卡片内容层挡住底层链接的问题，现在点击站名、线路资料等卡片主体区域也会立即跳转。',
+            en: 'Fixed route card content layers blocking the underlying link, so tapping stop names or route info within the card body now navigates immediately.',
+          },
         ],
       },
       {
