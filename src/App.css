@@ -5372,6 +5372,14 @@ html[data-reduce-motion='true'] .site-header-shell {
 }
 
 /* Guided tour spotlight */
+:root {
+  --guided-tour-mask-fill: rgba(8, 12, 22, 0.78);
+}
+
+[data-theme='light'] {
+  --guided-tour-mask-fill: rgba(24, 32, 44, 0.58);
+}
+
 .guided-tour-root {
   position: fixed;
   inset: 0;
@@ -5381,6 +5389,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 .guided-tour-mask {
   position: fixed;
   inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   pointer-events: auto;
@@ -5388,10 +5397,11 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 .guided-tour-spotlight-ring {
   position: fixed;
+  box-sizing: border-box;
   border: 2px solid var(--accent);
   border-radius: 12px;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 0 1px color-mix(in srgb, var(--text) 10%, transparent),
     0 0 24px color-mix(in srgb, var(--accent) 45%, transparent);
   pointer-events: none;
   animation: guided-tour-pulse 1.8s ease-in-out infinite;
@@ -5401,13 +5411,13 @@ html[data-reduce-motion='true'] .site-header-shell {
   0%,
   100% {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 0 0 1px color-mix(in srgb, var(--text) 10%, transparent),
       0 0 16px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
   50% {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.2),
+      0 0 0 1px color-mix(in srgb, var(--text) 14%, transparent),
       0 0 28px color-mix(in srgb, var(--accent) 55%, transparent);
   }
 }

@@ -21,7 +21,7 @@ import { useGuidedTourControl } from './contexts/GuidedTourContext'
 import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
-import { shouldShowGuidedTour } from './storage/guidedTour'
+import { canAutoStartGuidedTour } from './storage/guidedTour'
 import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isSecretPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
@@ -47,7 +47,7 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
-  const { open: guidedTourOpen, openTour, closeTour } = useGuidedTourControl()
+  const { open: guidedTourOpen, openTour, closeTour, deferAutoTour } = useGuidedTourControl()
   useDocumentMetadata(activeTab)
   const favoritesSyncDialog = useFavoritesCloudSync()
   const dailyChallenge = useDailyChallenge()
@@ -65,18 +65,23 @@ function App() {
   }, [])
 
   const tryOpenGuidedTour = useCallback(() => {
-    if (activeTab !== 'routes') return
-    if (shouldShowGuidedTour()) openTour()
-  }, [activeTab, openTour])
+    if (!canAutoStartGuidedTour()) return
+    openTour()
+  }, [openTour])
 
   useEffect(() => {
-    if (
-      activeTab === 'routes' &&
-      !initialOverlays.dailyChallenge &&
-      !initialOverlays.updates
-    ) {
-      tryOpenGuidedTour()
+    if (activeTab !== 'routes') {
+      deferAutoTour()
+      return
     }
+    if (initialOverlays.dailyChallenge || initialOverlays.updates) return
+    if (!canAutoStartGuidedTour()) return
+
+    const timer = window.setTimeout(() => {
+      if (canAutoStartGuidedTour()) openTour()
+    }, 500)
+
+    return () => window.clearTimeout(timer)
     // Only evaluate auto-start once on first paint.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -216,7 +221,7 @@ function App() {
             <RouteLookupPage
               pendingDailyChallengeDetail={pendingDailyChallengeDetail}
               onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
-              onRouteCardNavigate={closeDailyChallengePrompt}
+              onRouteDetailOpen={deferAutoTour}
               dailyChallenge={dailyChallenge}
             />
           ) : activeTab === 'broadcast' ? (

@@ -1,11 +1,19 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
+import { createPortal } from 'react-dom'
 import { GUIDED_TOUR_STEPS, type GuidedTourStep } from '../data/guidedTourSteps'
 import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { markGuidedTourSeen } from '../storage/guidedTour'
 import { lockPageScroll } from '../utils/pageScrollLock'
 
-const SPOTLIGHT_PADDING = 10
+const SPOTLIGHT_PADDING = 12
 const SPOTLIGHT_RADIUS = 12
 const TOUR_Z_INDEX = 1300
 
@@ -32,6 +40,26 @@ function isCenterStep(step: GuidedTourStep): boolean {
   return !step.target || step.placement === 'center'
 }
 
+function roundPx(value: number): number {
+  const dpr = window.devicePixelRatio || 1
+  return Math.round(value * dpr) / dpr
+}
+
+function readViewportSize(): { width: number; height: number } {
+  return {
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight,
+  }
+}
+
+function readViewportOffset(): { left: number; top: number } {
+  const viewport = window.visualViewport
+  return {
+    left: viewport?.offsetLeft ?? 0,
+    top: viewport?.offsetTop ?? 0,
+  }
+}
+
 function measureTarget(selector: string): SpotlightRect | null {
   const element = document.querySelector(selector)
   if (!element) return null
@@ -39,11 +67,15 @@ function measureTarget(selector: string): SpotlightRect | null {
   const rect = element.getBoundingClientRect()
   if (rect.width <= 0 || rect.height <= 0) return null
 
+  const offset = readViewportOffset()
+  const x = rect.left - offset.left - SPOTLIGHT_PADDING
+  const y = rect.top - offset.top - SPOTLIGHT_PADDING
+
   return {
-    x: Math.max(0, rect.left - SPOTLIGHT_PADDING),
-    y: Math.max(0, rect.top - SPOTLIGHT_PADDING),
-    width: rect.width + SPOTLIGHT_PADDING * 2,
-    height: rect.height + SPOTLIGHT_PADDING * 2,
+    x: roundPx(Math.max(0, x)),
+    y: roundPx(Math.max(0, y)),
+    width: roundPx(rect.width + SPOTLIGHT_PADDING * 2),
+    height: roundPx(rect.height + SPOTLIGHT_PADDING * 2),
   }
 }
 
@@ -53,7 +85,7 @@ function scrollTargetIntoView(selector: string): void {
   element.scrollIntoView({
     block: 'center',
     inline: 'nearest',
-    behavior: shouldReduceMotion() ? 'auto' : 'smooth',
+    behavior: 'auto',
   })
 }
 
@@ -70,8 +102,7 @@ function computeTooltipPosition(
   preferred: GuidedTourStep['placement'],
 ): TooltipPosition {
   const margin = 14
-  const viewportW = window.innerWidth
-  const viewportH = window.innerHeight
+  const { width: viewportW, height: viewportH } = readViewportSize()
 
   if (!rect || preferred === 'center') {
     return {
@@ -126,6 +157,47 @@ function computeTooltipPosition(
   }
 }
 
+function scheduleRemeasure(callback: () => void): () => void {
+  let frame1 = 0
+  let frame2 = 0
+  frame1 = window.requestAnimationFrame(() => {
+    frame2 = window.requestAnimationFrame(callback)
+  })
+  return () => {
+    window.cancelAnimationFrame(frame1)
+    window.cancelAnimationFrame(frame2)
+  }
+}
+
+function useTargetObserver(
+  open: boolean,
+  selector: string | undefined,
+  onChange: () => void,
+): void {
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+
+  useEffect(() => {
+    if (!open || !selector) return
+
+    const element = document.querySelector(selector)
+    if (!element) return
+
+    const observer = new ResizeObserver(() => onChangeRef.current())
+    observer.observe(element)
+
+    let parent: Element | null = element.parentElement
+    let depth = 0
+    while (parent && depth < 4) {
+      observer.observe(parent)
+      parent = parent.parentElement
+      depth += 1
+    }
+
+    return () => observer.disconnect()
+  }, [open, selector])
+}
+
 export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
   const { t } = useLocale()
   const maskId = useId().replace(/:/g, '')
@@ -133,6 +205,7 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
   const [stepIndex, setStepIndex] = useState(0)
   const [activeSteps, setActiveSteps] = useState(GUIDED_TOUR_STEPS)
   const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null)
+  const [viewportSize, setViewportSize] = useState(readViewportSize)
   const [tooltipPos, setTooltipPos] = useState<TooltipPosition>({
     top: 0,
     left: 0,
@@ -152,6 +225,8 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
   }, [onClose])
 
   const remeasure = useCallback(() => {
+    setViewportSize(readViewportSize())
+
     if (!step) return
 
     if (isCenterStep(step)) {
@@ -173,6 +248,9 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
     setTooltipPos(computeTooltipPosition(rect, panelSize, step.placement))
   }, [step])
 
+  const remeasureRef = useRef(remeasure)
+  remeasureRef.current = remeasure
+
   const goToStep = useCallback(
     async (index: number) => {
       const steps = resolveActiveSteps()
@@ -186,7 +264,7 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
         if (nextStep.target) {
           scrollTargetIntoView(nextStep.target)
           await new Promise((resolve) =>
-            window.setTimeout(resolve, shouldReduceMotion() ? 0 : 280),
+            window.setTimeout(resolve, shouldReduceMotion() ? 0 : 120),
           )
           if (!document.querySelector(nextStep.target)) {
             if (nextStep.optional) {
@@ -213,10 +291,19 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
+  useEffect(() => {
+    if (open) return
+    setStepIndex(0)
+    setActiveSteps(GUIDED_TOUR_STEPS)
+    setSpotlight(null)
+  }, [open])
+
   useLayoutEffect(() => {
     if (!open || !step) return
-    remeasure()
-  }, [open, step, stepIndex, remeasure])
+    return scheduleRemeasure(() => remeasureRef.current())
+  }, [open, step, stepIndex])
+
+  useTargetObserver(open, step?.target, remeasure)
 
   useEffect(() => {
     if (!open) return
@@ -230,16 +317,23 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
       if (event.key === 'Escape') finish()
     }
 
-    const onLayoutChange = () => remeasure()
+    const onLayoutChange = () => scheduleRemeasure(() => remeasureRef.current())
+    const viewport = window.visualViewport
+
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('resize', onLayoutChange)
     window.addEventListener('scroll', onLayoutChange, true)
+    viewport?.addEventListener('resize', onLayoutChange)
+    viewport?.addEventListener('scroll', onLayoutChange)
+
     return () => {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('resize', onLayoutChange)
       window.removeEventListener('scroll', onLayoutChange, true)
+      viewport?.removeEventListener('resize', onLayoutChange)
+      viewport?.removeEventListener('scroll', onLayoutChange)
     }
-  }, [open, finish, remeasure])
+  }, [open, finish])
 
   if (!open || !step) return null
 
@@ -256,16 +350,14 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
     void goToStep(stepIndex - 1)
   }
 
-  const viewportW = window.innerWidth
-  const viewportH = window.innerHeight
+  const { width: viewportW, height: viewportH } = viewportSize
 
-  return (
+  return createPortal(
     <div className="guided-tour-root" style={{ zIndex: TOUR_Z_INDEX }}>
       <svg
         className="guided-tour-mask"
-        width={viewportW}
-        height={viewportH}
         viewBox={`0 0 ${viewportW} ${viewportH}`}
+        preserveAspectRatio="none"
         aria-hidden
       >
         <defs>
@@ -289,7 +381,7 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
           y="0"
           width={viewportW}
           height={viewportH}
-          fill="rgba(8, 12, 22, 0.78)"
+          fill="var(--guided-tour-mask-fill, rgba(8, 12, 22, 0.78))"
           mask={`url(#${maskId})`}
         />
       </svg>
@@ -342,6 +434,7 @@ export function GuidedTour({ open, onClose, onPrepare }: GuidedTourProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
