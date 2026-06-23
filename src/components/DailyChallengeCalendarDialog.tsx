@@ -166,13 +166,25 @@ export function DailyChallengeCalendarDialog({
 
   useEffect(() => {
     if (!open) return
-    setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
+    let cancelled = false
+    queueMicrotask(() => {
+      if (!cancelled) setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
+    })
+    return () => {
+      cancelled = true
+    }
   }, [open, schedules, todayDate])
 
   useEffect(() => {
     if (selectableMonths.length === 0) return
     if (selectableMonths.includes(selectedMonth)) return
-    setSelectedMonthKey(toScheduleMonthKey(selectedYear, selectableMonths[0]!))
+    let cancelled = false
+    queueMicrotask(() => {
+      if (!cancelled) setSelectedMonthKey(toScheduleMonthKey(selectedYear, selectableMonths[0]!))
+    })
+    return () => {
+      cancelled = true
+    }
   }, [selectedMonth, selectedYear, selectableMonths])
 
   useEffect(() => {
@@ -343,7 +355,11 @@ export function DailyChallengeCalendarDialog({
                   day={cell.day}
                   isToday={cell.date === todayDate}
                   locale={locale}
-                  emptyLabel={t('dailyChallengeCalendarNoData')}
+                  emptyLabel={
+                    cell.date < todayDate
+                      ? t('dailyChallengeCalendarMissingData')
+                      : t('dailyChallengeCalendarNoData')
+                  }
                   onSelectDay={onSelectDay}
                 />
               ) : (

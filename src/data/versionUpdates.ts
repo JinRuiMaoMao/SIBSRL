@@ -243,6 +243,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '导入用户提供的 Discord PDF 历史日程，校正并补齐 2024 年 6 月至 2025 年 5 月 Daily Challenge 月历。',
             en: 'Imported the user-provided Discord PDF history, correcting and filling Daily Challenge calendars from June 2024 through May 2025.',
           },
+          {
+            zh: '每日挑战日历空白状态现在区分历史与未来：过去缺失显示「资料缺失」，今天及未来继续显示「等待游戏内更新」。',
+            en: 'Daily Challenge calendar empty states now distinguish history from future dates: past gaps show “Data missing”, while today/future gaps still wait for in-game updates.',
+          },
         ],
       },
     ],
