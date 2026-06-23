@@ -247,6 +247,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '每日挑战日历空白状态现在区分历史与未来：过去缺失显示「资料缺失」，今天及未来继续显示「等待游戏内更新」。',
             en: 'Daily Challenge calendar empty states now distinguish history from future dates: past gaps show “Data missing”, while today/future gaps still wait for in-game updates.',
           },
+          {
+            zh: '每日挑战日历新增最晚月份上限，已到现有日程最后一月时禁用「下一月」，避免跳到未来空白月份造成混乱。',
+            en: 'Daily Challenge calendar now caps navigation at the latest scheduled month and disables “next month” there, preventing confusing future empty months.',
+          },
         ],
       },
     ],

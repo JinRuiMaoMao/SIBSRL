@@ -156,6 +156,10 @@ export function parseScheduleMonthKey(monthKey: string): { year: number; month: 
 export const CALENDAR_EARLIEST_MONTH =
   [...DAILY_CHALLENGE_SCHEDULES].map((schedule) => schedule.month).sort()[0] ?? '2026-06'
 
+/** 日历可选的最晚月份（避免进入无数据的未来月份）。 */
+export const CALENDAR_LATEST_MONTH =
+  [...DAILY_CHALLENGE_SCHEDULES].map((schedule) => schedule.month).sort().at(-1) ?? '2026-06'
+
 export function compareScheduleMonthKeys(a: string, b: string): number {
   const parsedA = parseScheduleMonthKey(a)
   const parsedB = parseScheduleMonthKey(b)
@@ -167,31 +171,39 @@ export function compareScheduleMonthKeys(a: string, b: string): number {
 export function clampScheduleMonthKey(
   monthKey: string,
   minKey: string = CALENDAR_EARLIEST_MONTH,
+  maxKey: string = CALENDAR_LATEST_MONTH,
 ): string {
-  return compareScheduleMonthKeys(monthKey, minKey) < 0 ? minKey : monthKey
+  if (compareScheduleMonthKeys(monthKey, minKey) < 0) return minKey
+  if (compareScheduleMonthKeys(monthKey, maxKey) > 0) return maxKey
+  return monthKey
 }
 
 export function listSelectableMonthsForYear(
   year: number,
   earliestMonth: string = CALENDAR_EARLIEST_MONTH,
+  latestMonth: string = CALENDAR_LATEST_MONTH,
 ): number[] {
   const earliest = parseScheduleMonthKey(earliestMonth)
-  if (!earliest) return []
+  const latest = parseScheduleMonthKey(latestMonth)
+  if (!earliest || !latest || year < earliest.year || year > latest.year) return []
   const startMonth = year < earliest.year ? 13 : year === earliest.year ? earliest.month : 1
-  if (startMonth > 12) return []
-  return Array.from({ length: 12 - startMonth + 1 }, (_, index) => startMonth + index)
+  const endMonth = year > latest.year ? 0 : year === latest.year ? latest.month : 12
+  if (startMonth > endMonth) return []
+  return Array.from({ length: endMonth - startMonth + 1 }, (_, index) => startMonth + index)
 }
 
 export function listScheduleYears(schedules: DailyChallengeSchedule[]): number[] {
   const years = new Set<number>()
   const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
+  const latest = parseScheduleMonthKey(CALENDAR_LATEST_MONTH)
   for (const schedule of schedules) {
     const parsed = parseScheduleMonthKey(schedule.month)
     if (parsed) years.add(parsed.year)
   }
   if (earliest) years.add(earliest.year)
+  if (latest) years.add(latest.year)
   return [...years]
-    .filter((year) => !earliest || year >= earliest.year)
+    .filter((year) => (!earliest || year >= earliest.year) && (!latest || year <= latest.year))
     .sort((a, b) => a - b)
 }
 

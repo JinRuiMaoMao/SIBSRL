@@ -4,6 +4,7 @@ import { buildDailyChallengeFromScheduleDay } from '../data/dailyChallenge'
 import {
   buildMonthCalendarCells,
   CALENDAR_EARLIEST_MONTH,
+  CALENDAR_LATEST_MONTH,
   clampScheduleMonthKey,
   compareScheduleMonthKeys,
   emptyScheduleForMonth,
@@ -163,6 +164,7 @@ export function DailyChallengeCalendarDialog({
     [locale, selectableMonths, selectedYear],
   )
   const isAtEarliestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_EARLIEST_MONTH) <= 0
+  const isAtLatestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_LATEST_MONTH) >= 0
 
   useEffect(() => {
     if (!open) return
@@ -287,9 +289,12 @@ export function DailyChallengeCalendarDialog({
                 onChange={(event) => {
                   const year = Number(event.target.value)
                   const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
+                  const latest = parseScheduleMonthKey(CALENDAR_LATEST_MONTH)
                   const month =
                     earliest && year === earliest.year
                       ? Math.max(selectedMonth, earliest.month)
+                      : latest && year === latest.year
+                        ? Math.min(selectedMonth, latest.month)
                       : selectedMonth
                   setSelectedMonthKey(clampScheduleMonthKey(toScheduleMonthKey(year, month)))
                 }}
@@ -327,6 +332,7 @@ export function DailyChallengeCalendarDialog({
             className="daily-challenge-calendar-nav-btn"
             onClick={() => shiftMonth(1)}
             aria-label={t('dailyChallengeCalendarNextMonth')}
+            disabled={isAtLatestMonth}
           >
             ›
           </button>
