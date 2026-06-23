@@ -1,9 +1,10 @@
 :root {
   color-scheme: dark;
-  --bg-deep: #0c1222;
-  --bg-surface: #141c2e;
-  --bg-elevated: #1a2540;
-  --bg-card: #1e2d4a;
+  --panel-fill: 25%;
+  --bg-deep: color-mix(in srgb, #0c1222 var(--panel-fill), transparent);
+  --bg-surface: color-mix(in srgb, #141c2e var(--panel-fill), transparent);
+  --bg-elevated: color-mix(in srgb, #1a2540 var(--panel-fill), transparent);
+  --bg-card: color-mix(in srgb, #1e2d4a var(--panel-fill), transparent);
   --border: rgba(255, 200, 80, 0.15);
   --border-strong: rgba(255, 200, 80, 0.35);
   --text: #eef2f8;
@@ -15,7 +16,7 @@
   --race-soft: rgba(255, 107, 82, 0.16);
   --race-day: #a78bfa;
   --bus-green: #2dd4a0;
-  --header-shell-bg: rgba(20, 28, 46, 0.85);
+  --header-shell-bg: color-mix(in srgb, #141c2e calc(var(--panel-fill) + 35%), transparent);
   --shadow-overlay: rgba(0, 0, 0, 0.45);
   --radius: 12px;
   --radius-lg: 16px;
@@ -57,10 +58,11 @@
 
 [data-theme='light'] {
   color-scheme: light;
-  --bg-deep: #dce1e9;
-  --bg-surface: #e4e9f0;
-  --bg-elevated: #d5dbe5;
-  --bg-card: #c9d1dc;
+  --panel-fill: 25%;
+  --bg-deep: color-mix(in srgb, #dce1e9 var(--panel-fill), transparent);
+  --bg-surface: color-mix(in srgb, #e4e9f0 var(--panel-fill), transparent);
+  --bg-elevated: color-mix(in srgb, #d5dbe5 var(--panel-fill), transparent);
+  --bg-card: color-mix(in srgb, #c9d1dc var(--panel-fill), transparent);
   --border: rgba(140, 100, 40, 0.14);
   --border-strong: rgba(140, 100, 40, 0.28);
   --text: #2a3444;
@@ -72,7 +74,7 @@
   --race-soft: rgba(217, 69, 50, 0.12);
   --race-day: #7c3aed;
   --bus-green: #0a8a60;
-  --header-shell-bg: rgba(216, 222, 232, 0.94);
+  --header-shell-bg: color-mix(in srgb, #e4e9f0 calc(var(--panel-fill) + 45%), transparent);
   --shadow-overlay: rgba(20, 28, 40, 0.12);
   --page-background:
     radial-gradient(ellipse 95% 75% at 6% -6%, rgba(176, 120, 8, 0.13), transparent 56%),
