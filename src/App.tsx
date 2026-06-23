@@ -47,7 +47,8 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const activeTab = readTabFromLocation() ?? 'routes'
-  const { open: guidedTourOpen, openTour, closeTour, deferAutoTour } = useGuidedTourControl()
+  const { open: guidedTourOpen, openTour, closeTour, deferAutoTour, registerAutoStartTimer, cancelAutoStartTimer } =
+    useGuidedTourControl()
   useDocumentMetadata(activeTab)
   const favoritesSyncDialog = useFavoritesCloudSync()
   const dailyChallenge = useDailyChallenge()
@@ -80,8 +81,9 @@ function App() {
     const timer = window.setTimeout(() => {
       if (canAutoStartGuidedTour()) openTour()
     }, 500)
+    registerAutoStartTimer(timer)
 
-    return () => window.clearTimeout(timer)
+    return () => cancelAutoStartTimer()
     // Only evaluate auto-start once on first paint.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -222,6 +224,7 @@ function App() {
               pendingDailyChallengeDetail={pendingDailyChallengeDetail}
               onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
               onRouteDetailOpen={deferAutoTour}
+              onUserEngage={deferAutoTour}
               dailyChallenge={dailyChallenge}
             />
           ) : activeTab === 'broadcast' ? (

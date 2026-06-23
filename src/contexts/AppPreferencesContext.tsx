@@ -18,6 +18,7 @@ import {
 interface AppPreferencesContextValue extends AppPreferences {
   setReduceMotion: (value: boolean) => void
   setListDensity: (value: ListDensity) => void
+  setGuidedTourAutoStart: (value: boolean) => void
 }
 
 const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(null)
@@ -42,10 +43,18 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
     () => ({
       reduceMotion: preferences.reduceMotion,
       listDensity: preferences.listDensity,
+      guidedTourAutoStart: preferences.guidedTourAutoStart,
       setReduceMotion: (reduceMotion: boolean) => updatePreferences({ reduceMotion }),
       setListDensity: (listDensity: ListDensity) => updatePreferences({ listDensity }),
+      setGuidedTourAutoStart: (guidedTourAutoStart: boolean) =>
+        updatePreferences({ guidedTourAutoStart }),
     }),
-    [preferences.listDensity, preferences.reduceMotion, updatePreferences],
+    [
+      preferences.guidedTourAutoStart,
+      preferences.listDensity,
+      preferences.reduceMotion,
+      updatePreferences,
+    ],
   )
 
   return (

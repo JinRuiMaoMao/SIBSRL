@@ -178,6 +178,7 @@ interface RouteLookupPageProps {
   pendingDailyChallengeDetail?: number
   onPendingDailyChallengeDetailConsumed?: () => void
   onRouteDetailOpen?: () => void
+  onUserEngage?: () => void
   dailyChallenge: DailyChallengeInfo
 }
 
@@ -185,6 +186,7 @@ export function RouteLookupPage({
   pendingDailyChallengeDetail = 0,
   onPendingDailyChallengeDetailConsumed,
   onRouteDetailOpen,
+  onUserEngage,
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
@@ -629,8 +631,9 @@ export function RouteLookupPage({
   )
 
   const handleSelectDailyChallenge = useCallback(() => {
+    onUserEngage?.()
     openDailyChallenge(dailyChallenge)
-  }, [dailyChallenge, openDailyChallenge])
+  }, [dailyChallenge, onUserEngage, openDailyChallenge])
 
   const handleSelectScheduleDay = useCallback(
     (day: DailyChallengeScheduleDay) => {
@@ -642,6 +645,7 @@ export function RouteLookupPage({
 
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
+      onUserEngage?.()
       setDailyChallengeRouteView(false)
       recordRecent(routeId)
       selectRoute(routeId)
@@ -649,7 +653,7 @@ export function RouteLookupPage({
       const directionIndex = route ? getDirectionIndex(route) : 0
       setRouteInLocation(routeId, directionIndex)
     },
-    [findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
+    [findDisplayRoute, getDirectionIndex, onUserEngage, recordRecent, selectRoute],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
@@ -667,6 +671,7 @@ export function RouteLookupPage({
   }, [pendingDailyChallengeDetail, onPendingDailyChallengeDetailConsumed])
 
   const handleRandomRoute = () => {
+    onUserEngage?.()
     const id = selectRandomRoute()
     if (!id) return
     recordRecent(id)

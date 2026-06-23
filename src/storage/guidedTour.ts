@@ -1,3 +1,4 @@
+import { readAppPreferences } from './appPreferences'
 import { isRoutesPage } from '../utils/appTabNavigation'
 import { readRouteQueryFromLocation } from '../utils/routeNavigation'
 
@@ -60,6 +61,7 @@ export function isGuidedTourDeferredThisSession(): boolean {
 export function canAutoStartGuidedTour(): boolean {
   return (
     shouldShowGuidedTour() &&
+    readAppPreferences().guidedTourAutoStart &&
     isRoutesPage() &&
     !readRouteQueryFromLocation() &&
     !isGuidedTourDeferredThisSession()
