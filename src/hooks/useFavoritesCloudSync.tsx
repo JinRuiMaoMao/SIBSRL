@@ -1,31 +1,50 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { fetchUserData, saveUserData, UserApiError } from '../api/userApi'
 import { FavoritesSyncConflictDialog, type FavoritesSyncChoice } from '../components/FavoritesSyncConflictDialog'
 import { useAuth } from '../contexts/AuthContext'
 import { useFavoriteRoutes } from '../contexts/FavoriteRoutesContext'
-import { allFavoriteRouteIds, type FavoriteFoldersState } from '../storage/favoriteFolders'
-import { favoriteFoldersContentEqual, mergeFavoriteFolders } from '../utils/favoriteFoldersMerge'
+import { readFavoriteFoldersState, type FavoriteFoldersState } from '../storage/favoriteFolders'
+import { countFavoriteRoutes, favoriteFoldersContentEqual, mergeFavoriteFolders } from '../utils/favoriteFoldersMerge'
 
 function buildState(folders: FavoriteFoldersState['folders'], activeFolderId: string): FavoriteFoldersState {
   return { version: 2, folders, activeFolderId }
 }
 
-function localFavoriteCount(state: FavoriteFoldersState): number {
-  return allFavoriteRouteIds(state).length
+function readLocalFavoriteState(): FavoriteFoldersState {
+  return readFavoriteFoldersState()
+}
+
+function isUnauthorized(error: unknown): boolean {
+  return error instanceof UserApiError && error.code === 'unauthorized'
 }
 
 export function useFavoritesCloudSync(): ReactNode {
-  const { token, isLoggedIn } = useAuth()
+  const { token, isLoggedIn, logout } = useAuth()
   const { folders, activeFolderId, replaceFoldersState } = useFavoriteRoutes()
+  const foldersRef = useRef(folders)
+  const activeFolderIdRef = useRef(activeFolderId)
+  foldersRef.current = folders
+  activeFolderIdRef.current = activeFolderId
+
   const hydratedRef = useRef(false)
   const uploadTimerRef = useRef<number | null>(null)
   const skipUploadRef = useRef(false)
+  const [syncReady, setSyncReady] = useState(false)
   const [conflict, setConflict] = useState<{
     local: FavoriteFoldersState
     remote: FavoriteFoldersState
   } | null>(null)
   const conflictResolverRef = useRef<((choice: FavoritesSyncChoice) => void) | null>(null)
   const cancelConflictRef = useRef<(() => void) | null>(null)
+
+  const handleUnauthorized = useCallback(
+    (error: unknown) => {
+      if (!isUnauthorized(error)) return false
+      logout()
+      return true
+    },
+    [logout],
+  )
 
   useEffect(() => {
     cancelConflictRef.current?.()
@@ -37,6 +56,7 @@ export function useFavoritesCloudSync(): ReactNode {
     }
     hydratedRef.current = false
     skipUploadRef.current = false
+    setSyncReady(false)
     setConflict(null)
   }, [token])
 
@@ -49,10 +69,10 @@ export function useFavoritesCloudSync(): ReactNode {
         const remote = await fetchUserData(token)
         if (cancelled) return
 
-        const localState = buildState(folders, activeFolderId)
+        const localState = readLocalFavoriteState()
         const remoteState = remote.favorites
         const remoteCount = remote.favoriteCount
-        const localCount = localFavoriteCount(localState)
+        const localCount = countFavoriteRoutes(localState)
 
         if (
           remoteState &&
@@ -95,11 +115,15 @@ export function useFavoritesCloudSync(): ReactNode {
           await saveUserData(token, localState)
         }
       } catch (error) {
+        if (handleUnauthorized(error)) return
         if (!(error instanceof UserApiError) || error.code !== 'user_api_unconfigured') {
           console.warn('[favorites-sync] initial pull failed', error)
         }
       } finally {
-        if (!cancelled) hydratedRef.current = true
+        if (!cancelled) {
+          hydratedRef.current = true
+          setSyncReady(true)
+        }
       }
     })()
 
@@ -111,17 +135,18 @@ export function useFavoritesCloudSync(): ReactNode {
   }, [isLoggedIn, token])
 
   useEffect(() => {
-    if (!isLoggedIn || !token || !hydratedRef.current) return
+    if (!isLoggedIn || !token || !syncReady || !hydratedRef.current) return
 
     if (skipUploadRef.current) {
       skipUploadRef.current = false
       return
     }
 
-    const state = buildState(folders, activeFolderId)
+    const state = buildState(foldersRef.current, activeFolderIdRef.current)
     if (uploadTimerRef.current) window.clearTimeout(uploadTimerRef.current)
     uploadTimerRef.current = window.setTimeout(() => {
       void saveUserData(token, state).catch((error) => {
+        if (handleUnauthorized(error)) return
         console.warn('[favorites-sync] upload failed', error)
       })
     }, 800)
@@ -129,7 +154,7 @@ export function useFavoritesCloudSync(): ReactNode {
     return () => {
       if (uploadTimerRef.current) window.clearTimeout(uploadTimerRef.current)
     }
-  }, [folders, activeFolderId, isLoggedIn, token])
+  }, [folders, activeFolderId, isLoggedIn, token, syncReady, handleUnauthorized])
 
   if (!conflict) return null
 
