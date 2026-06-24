@@ -10,13 +10,11 @@
   top: auto;
   width: 100%;
   z-index: 180;
-  padding: 0 0 env(safe-area-inset-bottom, 0px);
+  padding: 0;
   pointer-events: none;
   background: transparent;
   border: none;
   box-shadow: none;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
 }
 
 .app-tab-bar--liquid {
@@ -101,10 +99,11 @@
 
 .app-tab-bar--liquid.app-tab-bar--mobile {
   min-height: 3.35rem;
-  margin: 0 0.7rem 0.72rem;
+  margin: 0 0.7rem calc(0.72rem + env(safe-area-inset-bottom, 0px));
   pointer-events: auto;
   transform: none;
   opacity: 1;
+  isolation: auto;
 }
 
 .app-tab-bar--liquid.app-tab-bar--desktop {
@@ -151,4 +150,22 @@ html.has-compact-tab-nav .app {
 html[data-reduce-motion='true'] .app-tab-bar--liquid .app-tab-bar-item,
 html[data-reduce-motion='true'] .app-tab-bar--liquid.app-tab-bar--desktop {
   transition: color 0.2s ease;
+}
+
+/* iOS / 触屏：backdrop-filter 会导致 fixed 底栏随页面滚动，改用实心浮层 */
+@media (hover: none) {
+  .app-tab-bar-shell--mobile .app-tab-bar-liquid-surface::before,
+  .app-tab-bar-shell--mobile .app-tab-bar-liquid-indicator {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    filter: none;
+  }
+
+  .app-tab-bar-shell--mobile .app-tab-bar-liquid-surface::before {
+    background: var(--bg-float, var(--bg-elevated));
+  }
+
+  .app-tab-bar-shell--mobile .app-tab-bar-liquid-indicator {
+    background: color-mix(in srgb, var(--accent-soft) 72%, var(--bg-float, var(--bg-elevated)));
+  }
 }
