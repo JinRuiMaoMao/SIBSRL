@@ -2662,7 +2662,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 0.75rem;
-  align-items: stretch;
+  align-items: start;
 }
 
 .route-grid-span,
@@ -3262,6 +3262,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
 .route-stop-spine--compact .route-stop-spine-names {
   gap: 0.5rem;
   font-size: 0.82rem;
+  overflow-wrap: anywhere;
 }
 
 /* F469 等季节推广卡 */
@@ -3406,6 +3407,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .route-group-collapse.is-open .route-group-collapse-panel-inner {
   padding: 0.85rem;
+  overflow: visible;
 }
 
 .route-group-collapse-panel-inner .route-grid {
@@ -3449,7 +3451,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
 .route-card-link {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  min-height: 0;
+  height: 100%;
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius);
@@ -3596,9 +3599,10 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .route-card-top {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem 0.75rem;
   margin-bottom: 0.5rem;
 }
 
@@ -3607,6 +3611,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   align-items: flex-start;
   gap: 0.2rem;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .route-favorite-btn {
@@ -3676,9 +3681,9 @@ html[data-list-density='compact'] .transfer-plan-stop {
   align-items: center;
   align-content: flex-start;
   gap: 0.5rem;
-  flex: 0 1 auto;
+  flex: 1 1 12rem;
   min-width: 0;
-  max-width: calc(100% - 3.5rem);
+  max-width: 100%;
 }
 
 .route-number {
@@ -3790,9 +3795,9 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .route-card-bottom {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
   margin-top: auto;
   padding-top: 0.35rem;
 }
@@ -3802,19 +3807,20 @@ html[data-list-density='compact'] .transfer-plan-stop {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
-  flex: 1;
+  width: 100%;
   min-width: 0;
 }
 
 .route-card-meta-left .route-type-tags {
-  width: auto;
+  width: 100%;
 }
 
 .route-card-foot {
   flex-shrink: 0;
-  margin-left: auto;
-  max-width: 48%;
-  text-align: right;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  text-align: left;
 }
 
 .route-card-operators {
@@ -3822,7 +3828,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.02em;
-  line-height: 1.3;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .route-zones {
@@ -3871,8 +3878,9 @@ html[data-list-density='compact'] .transfer-plan-stop {
   background: rgba(100, 149, 237, 0.12);
   color: #8eb4ff;
   border: 1px solid rgba(100, 149, 237, 0.28);
-  white-space: nowrap;
-  flex-shrink: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  flex-shrink: 1;
 }
 
 .route-type-tag.tag-central-axis {
@@ -4726,7 +4734,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 html[data-list-density='compact'] .route-card {
   padding: 0.55rem 0.65rem;
-  min-height: 5.25rem;
+  min-height: 6.5rem;
 }
 
 html[data-list-density='compact'] .route-card-top {
