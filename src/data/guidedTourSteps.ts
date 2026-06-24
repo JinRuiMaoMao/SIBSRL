@@ -50,7 +50,6 @@ function expandHeaderIfCollapsed(): void {
 
 function revealBottomTabBarForTour(): void {
   document.querySelector('.app-tab-bar-shell--desktop')?.classList.add('is-tour-visible')
-  window.dispatchEvent(new CustomEvent('sibs-reveal-tab-bar'))
 }
 
 const TABS_STEP: GuidedTourStep = {
