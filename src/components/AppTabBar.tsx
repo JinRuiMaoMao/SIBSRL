@@ -1,4 +1,5 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useCompactTabNav } from '../hooks/useCompactTabNav'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
@@ -17,6 +18,11 @@ const TAB_KEYS: Record<AppTab, MessageKey> = {
 
 interface AppTabBarProps {
   activeTab: AppTab | null
+}
+
+function renderTabBarPortal(node: ReactNode): ReactNode {
+  if (typeof document === 'undefined') return node
+  return createPortal(node, document.body)
 }
 
 export function AppTabBar({ activeTab }: AppTabBarProps) {
@@ -87,17 +93,17 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
   )
 
   if (compact) {
-    return (
+    return renderTabBarPortal(
       <div className="app-tab-bar-shell app-tab-bar-shell--mobile" data-tour="app-tab-bar">
         {liquidNav}
-      </div>
+      </div>,
     )
   }
 
-  return (
+  return renderTabBarPortal(
     <div className="app-tab-bar-shell app-tab-bar-shell--desktop" data-tour="app-tab-bar">
       <div className="app-tab-bar-reveal-zone" aria-hidden />
       {liquidNav}
-    </div>
+    </div>,
   )
 }

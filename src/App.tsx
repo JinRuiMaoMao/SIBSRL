@@ -184,8 +184,8 @@ function App() {
             {t('buildTag', { time: buildLabel })}
           </p>
         </footer>
-        <AppTabBar activeTab={tabFromLocation} />
         </div>
+        <AppTabBar activeTab={tabFromLocation} />
       </>
     )
   }
@@ -284,8 +284,8 @@ function App() {
           {t('buildTag', { time: buildLabel })}
         </p>
       </footer>
-      <AppTabBar activeTab={tabFromLocation} />
       </div>
+      <AppTabBar activeTab={tabFromLocation} />
     </>
   )
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-const COMPACT_TAB_NAV_QUERY = '(max-width: 900px), (hover: none) and (pointer: coarse)'
+const COMPACT_TAB_NAV_QUERY = '(max-width: 900px), (hover: none)'
 
-/** 手机 / iPad 等触屏或窄屏：使用 iOS 风格常驻底栏。 */
+/** 手机 / iPad 等触屏或窄屏：使用 iOS 风格常驻底栏（iPad 无 hover，避免误用桌面悬停 Dock）。 */
 export function useCompactTabNav(): boolean {
   const [compact, setCompact] = useState(() => {
     if (typeof window === 'undefined') return false
