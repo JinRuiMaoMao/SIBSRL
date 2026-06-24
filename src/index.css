@@ -44,6 +44,11 @@ html:not([data-panel-style='classic']) {
   --bg-float: color-mix(in srgb, var(--panel-base-deep) 85%, transparent);
 }
 
+html:not([data-panel-style='classic'])[data-theme='light'] {
+  /* 浅色：与 transparent 混色几乎看不见，改与白色混出不透明浮层（≥75% 实感） */
+  --bg-float: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
+}
+
 [data-theme='light'] {
   color-scheme: light;
   --text: #2a3444;

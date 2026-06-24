@@ -5376,10 +5376,12 @@ html[data-reduce-motion='true'] .site-header-shell {
 /* Guided tour spotlight */
 :root {
   --guided-tour-mask-fill: rgba(8, 12, 22, 0.78);
+  --guided-tour-panel-bg: var(--bg-float, var(--bg-surface));
 }
 
 [data-theme='light'] {
   --guided-tour-mask-fill: rgba(24, 32, 44, 0.58);
+  --guided-tour-panel-bg: var(--bg-float, color-mix(in srgb, #eef2f7 88%, #ffffff));
 }
 
 .guided-tour-root {
@@ -5431,7 +5433,7 @@ html[data-reduce-motion='true'] .site-header-shell {
   padding: 1rem 1.1rem 0.95rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--bg-float, var(--bg-surface));
+  background: var(--guided-tour-panel-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 16px 48px var(--shadow-overlay);
