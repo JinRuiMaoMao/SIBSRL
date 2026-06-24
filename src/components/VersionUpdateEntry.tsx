@@ -2,9 +2,11 @@ import type { VersionUpdateEntry as VersionUpdateEntryData } from '../data/versi
 import {
   CHANGELOG_ADDITIONS_TITLE,
   CHANGELOG_FIXES_TITLE,
+  countChangelogEntry,
 } from '../data/changelogStructure'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
+import { UpdatesChangelogTotals } from './UpdatesChangelogTotals'
 import { UpdatesEasterEgg } from './UpdatesEasterEgg'
 
 interface VersionUpdateEntryProps {
@@ -35,6 +37,7 @@ function UpdateItemList({
 
 export function VersionUpdateEntry({ entry, className, dataTour }: VersionUpdateEntryProps) {
   const { locale } = useLocale()
+  const entryTotals = countChangelogEntry(entry)
 
   return (
     <article className={className} data-tour={dataTour}>
@@ -116,6 +119,7 @@ export function VersionUpdateEntry({ entry, className, dataTour }: VersionUpdate
           ))}
         </ul>
       )}
+      <UpdatesChangelogTotals counts={entryTotals} variant="entry" />
     </article>
   )
 }

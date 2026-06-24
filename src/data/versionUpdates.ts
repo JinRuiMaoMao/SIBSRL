@@ -243,6 +243,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "更新日志页面改为「标题 → 小标题 → 新增 / Bug 修复」分层展示；全部历史条目已按此结构重建。",
             en: "The change log now uses a Title → section → New / Bug fixes layout, and all historical entries have been rebuilt in this structure.",
           },
+                    {
+            zh: "更新列表顶部显示累计新增与 Bug 修复条数；每条日期更新卡片底部显示当日合计。",
+            en: "The updates list header shows all-time new and bug-fix counts; each dated entry shows that day’s totals at the bottom.",
+          },
         ],
       },
     ],

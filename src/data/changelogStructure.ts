@@ -23,6 +23,60 @@ export interface VersionUpdateEntry {
 export const CHANGELOG_ADDITIONS_TITLE: BilingualText = { zh: '新增', en: 'New' }
 export const CHANGELOG_FIXES_TITLE: BilingualText = { zh: 'Bug 修复', en: 'Bug fixes' }
 
+export interface ChangelogItemCounts {
+  additions: number
+  fixes: number
+}
+
+function addItemCounts(
+  target: ChangelogItemCounts,
+  items: BilingualText[] | undefined,
+  bucket?: 'additions' | 'fixes',
+): void {
+  if (!items?.length) return
+  if (bucket) {
+    target[bucket] += items.length
+    return
+  }
+  for (const item of items) {
+    target[classifyChangelogItem(item)] += 1
+  }
+}
+
+export function countChangelogGroup(group: VersionUpdateGroup): ChangelogItemCounts {
+  const counts: ChangelogItemCounts = { additions: 0, fixes: 0 }
+  addItemCounts(counts, group.additions, 'additions')
+  addItemCounts(counts, group.fixes, 'fixes')
+  addItemCounts(counts, group.items)
+  return counts
+}
+
+export function countChangelogEntry(entry: VersionUpdateEntry): ChangelogItemCounts {
+  const counts: ChangelogItemCounts = { additions: 0, fixes: 0 }
+  if (entry.groups?.length) {
+    for (const group of entry.groups) {
+      const groupCounts = countChangelogGroup(group)
+      counts.additions += groupCounts.additions
+      counts.fixes += groupCounts.fixes
+    }
+    return counts
+  }
+  addItemCounts(counts, entry.items)
+  return counts
+}
+
+export function countChangelogEntries(entries: VersionUpdateEntry[]): ChangelogItemCounts {
+  return entries.reduce<ChangelogItemCounts>(
+    (totals, entry) => {
+      const entryCounts = countChangelogEntry(entry)
+      totals.additions += entryCounts.additions
+      totals.fixes += entryCounts.fixes
+      return totals
+    },
+    { additions: 0, fixes: 0 },
+  )
+}
+
 /** 将旧版扁平条目自动归入「新增」或「Bug 修复」。 */
 export function classifyChangelogItem(item: BilingualText): 'additions' | 'fixes' {
   const zh = item.zh.trim()

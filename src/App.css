@@ -843,6 +843,30 @@
   margin-top: 0;
 }
 
+.updates-changelog-totals {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.updates-changelog-totals--all {
+  margin: 0 0 0.85rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+  color: var(--text);
+}
+
+.updates-changelog-totals--entry {
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border);
+  text-align: right;
+}
+
 .complaints-section {
   margin-top: 0.25rem;
 }
@@ -4467,6 +4491,12 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .updates-card--prompt .updates-section-title {
   font-size: 0.78rem;
+}
+
+.updates-card--prompt .updates-changelog-totals--entry {
+  margin-top: 0.55rem;
+  padding-top: 0.5rem;
+  font-size: 0.76rem;
 }
 
 .updates-card--prompt .updates-items {
