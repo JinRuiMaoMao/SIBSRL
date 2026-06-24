@@ -314,11 +314,31 @@
   gap: 0.85rem;
 }
 
+.safety-broadcast-card,
+.complaints-card,
+.updates-card {
+  border: var(--route-card-promoted-border-width) solid var(--route-card-promoted-border);
+  box-shadow: var(--route-card-promoted-shadow);
+  background: var(--route-card-promoted-bg);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
 .safety-broadcast-card {
   padding: 1rem 1.15rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+}
+
+@media (hover: hover) {
+  .safety-broadcast-card:hover,
+  .complaints-card:hover,
+  .updates-card:hover {
+    border-color: var(--route-card-promoted-border-hover);
+    box-shadow: var(--route-card-promoted-shadow-hover);
+    background: var(--route-card-promoted-bg-hover);
+  }
 }
 
 .safety-broadcast-card-head {
@@ -694,8 +714,6 @@
 .updates-card {
   padding: 1rem 1.15rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--bg-card);
 }
 
 .updates-easter-egg-section {
@@ -786,8 +804,6 @@
 .complaints-card {
   padding: 1rem 1.15rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--bg-card);
 }
 
 .complaints-head {
