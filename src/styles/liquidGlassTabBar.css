@@ -1,4 +1,4 @@
-/* iOS 26 Liquid Glass — mobile bottom tab bar */
+/* iOS 26 Liquid Glass — bottom tab bar (mobile + desktop) */
 
 :root {
   --lg-tab-tint: color-mix(in srgb, #ffffff 14%, transparent);
@@ -6,7 +6,7 @@
   --lg-tab-border: color-mix(in srgb, #ffffff 42%, transparent);
   --lg-tab-shine: color-mix(in srgb, #ffffff 55%, transparent);
   --lg-tab-shadow: rgba(0, 0, 0, 0.22);
-  --lg-tab-blur: 26px;
+  --lg-tab-blur: 28px;
 }
 
 html[data-theme='light'] {
@@ -15,7 +15,7 @@ html[data-theme='light'] {
   --lg-tab-border: color-mix(in srgb, #ffffff 88%, transparent);
   --lg-tab-shine: color-mix(in srgb, #ffffff 92%, transparent);
   --lg-tab-shadow: rgba(20, 28, 40, 0.14);
-  --lg-tab-blur: 22px;
+  --lg-tab-blur: 24px;
 }
 
 .liquid-glass-defs {
@@ -47,11 +47,10 @@ html[data-theme='light'] {
   display: grid;
   grid-template-columns: repeat(var(--active-tab-count), minmax(0, 1fr));
   align-items: stretch;
-  min-height: 3.35rem;
-  margin: 0 0.7rem 0.72rem;
   padding: 0.3rem;
   border-radius: 2.35rem;
-  pointer-events: auto;
+  border: none;
+  background: transparent;
   box-shadow:
     0 0.5px 0 var(--lg-tab-shine) inset,
     0 1px 1px color-mix(in srgb, var(--lg-tab-shine) 35%, transparent) inset,
@@ -78,8 +77,8 @@ html[data-theme='light'] {
   inset: 0;
   border-radius: inherit;
   background: var(--lg-tab-tint);
-  backdrop-filter: blur(var(--lg-tab-blur)) saturate(195%) brightness(1.06);
-  -webkit-backdrop-filter: blur(var(--lg-tab-blur)) saturate(195%) brightness(1.06);
+  backdrop-filter: blur(var(--lg-tab-blur)) saturate(200%) brightness(1.08);
+  -webkit-backdrop-filter: blur(var(--lg-tab-blur)) saturate(200%) brightness(1.08);
   filter: url('#sibs-liquid-glass-refract');
 }
 
@@ -107,9 +106,9 @@ html[data-theme='light'] {
   width: calc((100% - 0.6rem) / var(--active-tab-count));
   left: calc(0.3rem + var(--active-tab-index) * ((100% - 0.6rem) / var(--active-tab-count)));
   border-radius: 1.55rem;
-  background: color-mix(in srgb, var(--accent) 16%, var(--lg-tab-tint-strong));
-  backdrop-filter: blur(14px) saturate(210%) brightness(1.14);
-  -webkit-backdrop-filter: blur(14px) saturate(210%) brightness(1.14);
+  background: color-mix(in srgb, var(--accent) 18%, var(--lg-tab-tint-strong));
+  backdrop-filter: blur(16px) saturate(220%) brightness(1.16);
+  -webkit-backdrop-filter: blur(16px) saturate(220%) brightness(1.16);
   border: 0.5px solid color-mix(in srgb, var(--lg-tab-border) 88%, var(--accent) 12%);
   box-shadow:
     0 1px 0 color-mix(in srgb, var(--lg-tab-shine) 75%, transparent) inset,
@@ -130,6 +129,7 @@ html[data-theme='light'] {
   gap: 0.1rem;
   color: color-mix(in srgb, var(--text-muted) 90%, var(--text));
   background: transparent;
+  box-shadow: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   transition:
@@ -177,6 +177,51 @@ html[data-theme='light'] {
   box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--lg-tab-tint-strong) 80%, var(--bg-elevated));
 }
 
+/* Mobile: floating dock */
+.app-tab-bar--liquid.app-tab-bar--mobile {
+  min-height: 3.35rem;
+  margin: 0 0.7rem 0.72rem;
+  pointer-events: auto;
+}
+
+/* Desktop: hover-reveal dock */
+.app-tab-bar--liquid.app-tab-bar--desktop {
+  pointer-events: auto;
+  min-height: 3.55rem;
+  min-width: min(calc(100vw - 2rem), 36rem);
+  margin: 0 auto 0.85rem;
+  padding: 0.32rem;
+  transform: translateY(calc(100% + 1.25rem));
+  opacity: 0;
+  transition:
+    transform 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.22s ease;
+}
+
+.app-tab-bar-shell--desktop:hover .app-tab-bar--liquid.app-tab-bar--desktop,
+.app-tab-bar-shell--desktop:focus-within .app-tab-bar--liquid.app-tab-bar--desktop,
+.app-tab-bar-shell--desktop.is-tour-visible .app-tab-bar--liquid.app-tab-bar--desktop {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.app-tab-bar--liquid.app-tab-bar--desktop .app-tab-bar-item {
+  padding: 0.38rem 0.35rem 0.3rem;
+  gap: 0.12rem;
+}
+
+.app-tab-bar--liquid.app-tab-bar--desktop .app-tab-bar-label {
+  font-size: 0.72rem;
+}
+
+.app-tab-bar--liquid.app-tab-bar--desktop .app-tab-bar-liquid-indicator {
+  top: 0.32rem;
+  bottom: 0.32rem;
+  width: calc((100% - 0.64rem) / var(--active-tab-count));
+  left: calc(0.32rem + var(--active-tab-index) * ((100% - 0.64rem) / var(--active-tab-count)));
+  border-radius: 1.65rem;
+}
+
 html.has-compact-tab-nav .app {
   padding-bottom: calc(4.65rem + env(safe-area-inset-bottom, 0px));
 }
@@ -185,7 +230,8 @@ html[data-reduce-motion='true'] .app-tab-bar-liquid-indicator {
   transition: none;
 }
 
-html[data-reduce-motion='true'] .app-tab-bar--liquid .app-tab-bar-item {
+html[data-reduce-motion='true'] .app-tab-bar--liquid .app-tab-bar-item,
+html[data-reduce-motion='true'] .app-tab-bar--liquid.app-tab-bar--desktop {
   transition: color 0.2s ease;
 }
 

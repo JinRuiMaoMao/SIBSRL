@@ -1,4 +1,4 @@
-/** SVG displacement filters for Liquid Glass surfaces (mobile tab bar). */
+/** SVG displacement filters for Liquid Glass tab bar surfaces. */
 export function LiquidGlassDefs() {
   return (
     <svg className="liquid-glass-defs" aria-hidden width="0" height="0">
@@ -22,7 +22,7 @@ export function LiquidGlassDefs() {
           <feDisplacementMap
             in="SourceGraphic"
             in2="softNoise"
-            scale="5"
+            scale="7"
             xChannelSelector="R"
             yChannelSelector="G"
           />

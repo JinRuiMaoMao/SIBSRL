@@ -74,20 +74,24 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
     )
   }
 
+  const liquidNav = (
+    <nav
+      className={`app-tab-bar app-tab-bar--liquid ${compact ? 'app-tab-bar--mobile' : 'app-tab-bar--desktop'}`}
+      role="tablist"
+      aria-label={t('navMain')}
+      style={{ '--active-tab-index': activeTabIndex } as CSSProperties}
+    >
+      <LiquidGlassDefs />
+      <span className="app-tab-bar-liquid-surface" aria-hidden />
+      <span className="app-tab-bar-liquid-indicator" aria-hidden />
+      {APP_TABS.map((tab) => renderTabLink(tab))}
+    </nav>
+  )
+
   if (compact) {
     return (
       <div className="app-tab-bar-shell app-tab-bar-shell--mobile" data-tour="app-tab-bar">
-        <nav
-          className="app-tab-bar app-tab-bar--mobile app-tab-bar--liquid"
-          role="tablist"
-          aria-label={t('navMain')}
-          style={{ '--active-tab-index': activeTabIndex } as CSSProperties}
-        >
-          <LiquidGlassDefs />
-          <span className="app-tab-bar-liquid-surface" aria-hidden />
-          <span className="app-tab-bar-liquid-indicator" aria-hidden />
-          {APP_TABS.map((tab) => renderTabLink(tab))}
-        </nav>
+        {liquidNav}
       </div>
     )
   }
@@ -95,9 +99,7 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
   return (
     <div className="app-tab-bar-shell app-tab-bar-shell--desktop" data-tour="app-tab-bar">
       <div className="app-tab-bar-reveal-zone" aria-hidden />
-      <nav className="app-tab-bar app-tab-bar--desktop" role="tablist" aria-label={t('navMain')}>
-        {APP_TABS.map((tab) => renderTabLink(tab))}
-      </nav>
+      {liquidNav}
     </div>
   )
 }
