@@ -163,12 +163,27 @@ const THEME_BOOTSTRAP_SCRIPT = `<script id="theme-bootstrap">
 </script>`
 
 /** @param {string} html */
+export function injectAppSurfaceBootstrap(html) {
+  if (html.includes('id="app-surface-bootstrap"')) return html
+  return html.replace('</head>', `    ${APP_SURFACE_BOOTSTRAP_SCRIPT}\n  </head>`)
+}
+
+/** @param {string} html */
 export function injectThemeBootstrap(html) {
   if (html.includes('id="theme-bootstrap"')) return html
   return html.replace('<head>', `<head>\n    ${THEME_BOOTSTRAP_SCRIPT}`)
 }
 
 const LOCALE_STORAGE_KEY = 'sibs-locale'
+
+const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
+(function () {
+  var tab = document.querySelector('meta[name="app-tab"]');
+  if (tab && tab.content) document.documentElement.setAttribute('data-app-tab', tab.content.trim());
+  var page = document.querySelector('meta[name="app-page"]');
+  if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
+})();
+</script>`
 
 const LOCALE_BOOTSTRAP_SCRIPT = `<script id="locale-bootstrap">
 (function () {

@@ -5174,7 +5174,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 .favorites-folder-tab.active {
   border-color: var(--accent);
   color: var(--accent);
-  background: var(--accent-soft);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .favorites-folder-tab-label {

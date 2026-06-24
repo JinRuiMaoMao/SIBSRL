@@ -12,6 +12,7 @@ import {
   injectSecretPageMeta,
   injectServiceWorkerBootstrap,
   injectThemeBootstrap,
+  injectAppSurfaceBootstrap,
   injectUserApiMeta,
   syncFaviconLink,
 } from './lib/app-page-html.mjs'
@@ -58,17 +59,19 @@ export function publishStandalone(options = {}) {
   }
 
   const baseHtml = injectServiceWorkerBootstrap(
-    syncFaviconLink(
-      injectUserApiMeta(
-        injectLocaleBootstrap(
-          injectThemeBootstrap(
-            injectNoScriptGuard(
-              injectDevToolsBlock(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+    injectAppSurfaceBootstrap(
+      syncFaviconLink(
+        injectUserApiMeta(
+          injectLocaleBootstrap(
+            injectThemeBootstrap(
+              injectDevToolsBlock(
+                injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+              ),
             ),
           ),
         ),
+        buildTag,
       ),
-      buildTag,
     ),
   )
 
