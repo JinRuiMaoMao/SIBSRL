@@ -254,8 +254,16 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'The Updates tab shows a red “!” badge when the changelog is unread; it clears after opening the updates page or viewing via the update dialog. Header layout now measures control buttons to prevent overlap with tabs.',
           },
           {
-            zh: '五个栏目导航移至页面底部：电脑端鼠标移到底部边缘时滑出；手机 / iPad 为底部圆形图标，点击展开五个栏目图标菜单。',
-            en: 'The five section tabs moved to a bottom dock: on desktop they slide up when the pointer nears the bottom edge; on phones and iPads a bottom icon expands into the five-tab menu.',
+            zh: '五个栏目导航移至页面底部：电脑端鼠标移近底边时滑出 Liquid Glass 风格 Dock；手机 / iPad 为常驻底栏（图标 + 文字），与设置、日历浮层共用同一套玻璃材质。',
+            en: 'The five section tabs moved to a bottom dock: on desktop a Liquid Glass–style bar slides up near the bottom edge; on phones and iPads a persistent icon-and-label tab bar shares the same glass styling as settings and the calendar.',
+          },
+          {
+            zh: '修复 iPad 触屏上底部导航随页面滚动、以及打开设置时挡住「恢复默认设置」按钮的问题。',
+            en: 'Fixed the bottom tab bar drifting while scrolling on iPad touch devices, and the bar covering the Settings “Reset all settings” button.',
+          },
+          {
+            zh: '紧凑网格下线路卡类型标签不再挤出卡片；运营商（CSB / REBC 等）固定显示在卡片右下角。',
+            en: 'Route type tags no longer overflow route cards in the compact grid; operator labels (CSB / REBC, etc.) stay anchored at the bottom-right of each card.',
           },
         ],
       },
