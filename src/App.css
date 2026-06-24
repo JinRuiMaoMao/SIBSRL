@@ -1058,7 +1058,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 1.35rem;
+  /* 桌面 Dock：扩大底部感应区，避免必须贴底边才能唤出 */
+  height: clamp(3.75rem, 14vh, 6.5rem);
   pointer-events: auto;
 }
 

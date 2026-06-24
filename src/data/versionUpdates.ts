@@ -285,6 +285,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复桌面端线路列表上滑时搜索栏底部蒙版未生效、与卡片文字重叠的问题。',
             en: 'Fixed the desktop-only bug where the search bar bottom scrim did not activate and route text overlapped while scrolling.',
           },
+          {
+            zh: '扩大桌面端底部导航的鼠标感应区，无需贴屏幕底边即可唤出六个栏目按钮。',
+            en: 'Enlarged the desktop bottom tab bar hover zone so the six section buttons appear without hugging the screen edge.',
+          },
         ],
       },
     ],

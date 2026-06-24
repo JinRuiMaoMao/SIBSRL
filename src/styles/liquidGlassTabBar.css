@@ -112,7 +112,7 @@
   min-width: min(calc(100vw - 2rem), 36rem);
   margin: 0 auto 0.85rem;
   padding: 0.32rem;
-  transform: translateY(calc(100% + 1.25rem));
+  transform: translateY(calc(100% + 0.65rem));
   opacity: 0;
   transition:
     transform 0.28s cubic-bezier(0.32, 0.72, 0, 1),
