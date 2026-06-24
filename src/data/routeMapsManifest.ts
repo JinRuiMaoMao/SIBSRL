@@ -10,7 +10,7 @@ export const ROUTE_MAP_ROUTE_ALIASES: Record<string, string> = {
 export type RouteMapViewKind = 'path' | 'height'
 
 export const ROUTE_MAPS_BY_CANONICAL_ID: Record<string, readonly RouteMapViewKind[]> = {
-  '21': ['path'],
+  '21': ['path', 'height'],
   '77X': ['path', 'height'],
 }
 
