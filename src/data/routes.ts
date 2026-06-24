@@ -91,7 +91,7 @@ const routesData: BusRoute[] = [
           { name: { zh: '白鸽消防局', en: 'Dove Fire Station' }, zone: 1 },
           { name: { zh: '伊迪城', en: 'Eddie City' }, zone: 1 },
           { name: { zh: '', en: 'Basketball Court' }, zone: 1 },
-          { name: { zh: '阿周电视转折点', en: 'Roblox TV' }, zone: 1 },
+          { name: { zh: '阿周电视', en: 'Roblox TV' }, turningPoint: true, zone: 1 },
           { name: { zh: '西区医院', en: 'Western Hospital' }, zone: 1 },
           { name: { zh: '艾迪城', en: 'Addi City' }, zone: 1 },
           { name: { zh: '白鸽消防局', en: 'Dove Fire Station' }, zone: 1 },

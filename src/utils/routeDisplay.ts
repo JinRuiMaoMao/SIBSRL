@@ -1,7 +1,8 @@
-import type { BilingualText, BusRoute, RoutePattern } from '../types/route'
+import { stripTurningPointSuffix } from './stopTurningPoint'
 import { getPrimaryText, localizeChinese } from '../i18n/displayText'
 import type { Locale } from '../i18n/types'
 import { isChineseLocale } from '../i18n/types'
+import type { BilingualText, BusRoute, RoutePattern } from '../types/route'
 
 type StopGroup = NonNullable<BusRoute['stops']>[number]
 
@@ -33,7 +34,8 @@ function extractLoopTurnLabel(direction: BilingualText, locale: Locale): string 
   const text = directionTextForLocale(direction, locale)
   const m = text.match(/↺\s*([^）)\n]+)/)
   const label = m?.[1]?.trim()
-  return label && label.length <= 48 ? label : null
+  if (!label || label.length > 48) return null
+  return stripTurningPointSuffix(label).main || null
 }
 
 function pickLoopTurnFromStops(group: StopGroup, locale: Locale, hub: string): string | null {

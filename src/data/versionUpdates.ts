@@ -321,6 +321,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '补全 21 线环线 20 站站序，括号内副站名（巴士车厂、炫光集等）在详情以小字显示；第 12 站改为阿周电视转折点。',
             en: 'Completed route 21 circular stop list (20 stops); parenthetical aliases (Bus Depot, Neon Center, etc.) show as subtitles; stop 12 renamed to Roblox TV turning point.',
           },
+          {
+            zh: '全站「转折点」改为醒目框标记（不算站名）：站序表、起终点与途经文案中的转折点字样均统一显示。',
+            en: '“Turning point” is now a vivid boxed badge (not part of the stop name) across stop tables, endpoints, and route copy.',
+          },
         ],
       },
     ],

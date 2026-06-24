@@ -37,6 +37,8 @@ export interface RouteStop {
   name: BilingualText
   /** 括号内副站名（详情站序表以小字显示） */
   nameSub?: BilingualText
+  /** 该站为线路折返 / 转折点（站名旁显示醒目标记，不算入站名） */
+  turningPoint?: boolean
   zone?: number
   /** Distance from the previous stop in this direction. Omit on the first stop. */
   distanceFromPreviousMeters?: number

@@ -11,12 +11,14 @@ export type RoutePageStop =
   | {
       name: BilingualText
       nameSub?: BilingualText
+      turningPoint?: boolean
       zone?: number
       distanceFromPreviousMeters?: number
       audio?: RoutePageStopAudio
     }
   | (BilingualText & {
       nameSub?: BilingualText
+      turningPoint?: boolean
       zone?: number
       distanceFromPreviousMeters?: number
       audio?: RoutePageStopAudio

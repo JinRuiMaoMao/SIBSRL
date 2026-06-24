@@ -30,6 +30,8 @@ import { buildRouteShareUrl } from '../utils/routeNavigation'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
+import { StopNameDisplay } from './StopNameDisplay'
+import { TextWithTurningPointMarkers } from './TextWithTurningPointMarkers'
 
 interface RouteDetailProps {
   route: BusRoute
@@ -233,8 +235,6 @@ export function RouteDetail({
             </div>
             <ol className="stop-table-body">
               {activeStops.list.map((stop, i) => {
-                const name = getPrimaryText(stop.name, locale)
-                const nameSub = stop.nameSub ? getPrimaryText(stop.nameSub, locale) : null
                 const stopAudio =
                   loopView && routeHasLoopDirectionLayout(route)
                     ? null
@@ -248,10 +248,7 @@ export function RouteDetail({
                 return (
                   <li key={`${stop.name.en}-${i}`} className="stop-table-row" role="row">
                     <span className="stop-index stop-table-num">{i + 1}</span>
-                    <span className="stop-table-name stop-name">
-                      <span className="stop-name-zh">{name}</span>
-                      {nameSub ? <span className="stop-name-sub">{nameSub}</span> : null}
-                    </span>
+                    <StopNameDisplay stop={stop} className="stop-table-name" />
                     <span className="stop-table-zone">
                       {stop.zone != null ? (
                         <span className="zone-tag zone-tag--table">Z{stop.zone}</span>

@@ -1,17 +1,29 @@
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import { formatTransferPlanRouteChain, getStopsOnLeg, type TransferPlan } from '../utils/stopTransferPlans'
+import { resolveMatchedStopDisplay } from '../utils/stopTurningPoint'
+import { StopTurningPointBadge } from './StopTurningPointBadge'
 
 interface TransferPlanJourneyProps {
   plan: TransferPlan
   onOpenLeg?: (routeId: string, directionIndex: number) => void
 }
 
+function StopJourneyLabel({ stop, locale }: { stop: { zh: string; en: string }; locale: ReturnType<typeof useLocale>['locale'] }) {
+  const display = resolveMatchedStopDisplay(stop)
+  return (
+    <span className="transfer-plan-stop-name">
+      <span>{display.label}</span>
+      {display.turningPoint ? <StopTurningPointBadge /> : null}
+    </span>
+  )
+}
+
 function stopLabel(
   stop: { zh: string; en: string },
   locale: ReturnType<typeof useLocale>['locale'],
 ): string {
-  return getPrimaryText({ zh: stop.zh, en: stop.en }, locale)
+  return resolveMatchedStopDisplay(stop).label
 }
 
 export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProps) {
@@ -85,7 +97,7 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
                       .filter(Boolean)
                       .join(' ')}
                   >
-                    <span className="transfer-plan-stop-name">{stopLabel(stop, locale)}</span>
+                    <StopJourneyLabel stop={stop} locale={locale} />
                     {isOrigin ? (
                       <span className="transfer-plan-stop-tag">{t('transferPlanOriginTag')}</span>
                     ) : null}

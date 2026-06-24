@@ -7,7 +7,9 @@ import {
 } from '../utils/routeDirections'
 import { formatLoopViewEndpoints, resolveActiveStopGroup, routeHasLoopDirectionLayout } from '../utils/routeLoopView'
 import { formatRouteEndpoints } from '../utils/routeDisplay'
+import { resolveStopDisplay } from '../utils/stopTurningPoint'
 import { RouteStopSpine, type RouteStopSpineSize } from './RouteStopSpine'
+import { TextWithTurningPointMarkers } from './TextWithTurningPointMarkers'
 
 interface RouteEndpointsProps {
   route: BusRoute
@@ -42,21 +44,27 @@ export function RouteEndpoints({
   if (overrideText || layout === 'text') {
     return (
       <div className={`route-endpoints-wrap ${className}`.trim()}>
-        <p className="route-endpoints">{text}</p>
+        <p className="route-endpoints">
+          <TextWithTurningPointMarkers text={text} />
+        </p>
       </div>
     )
   }
 
   const stopGroup = resolveActiveStopGroup(route, directionIndex, loopView)
   if (stopGroup?.list.length) {
-    const origin = getPrimaryText(stopGroup.list[0]!.name, locale)
-    const destination = getPrimaryText(stopGroup.list[stopGroup.list.length - 1]!.name, locale)
+    const originStop = resolveStopDisplay(stopGroup.list[0]!)
+    const destinationStop = resolveStopDisplay(stopGroup.list[stopGroup.list.length - 1]!)
+    const origin = getPrimaryText(originStop.name, locale)
+    const destination = getPrimaryText(destinationStop.name, locale)
 
     return (
       <div className={`route-endpoints-wrap ${className}`.trim()}>
         <RouteStopSpine
           origin={origin}
           destination={destination}
+          originTurningPoint={originStop.turningPoint}
+          destinationTurningPoint={destinationStop.turningPoint}
           stopCount={stopGroup.list.length}
           size={size}
         />
@@ -66,7 +74,9 @@ export function RouteEndpoints({
 
   return (
     <div className={`route-endpoints-wrap ${className}`.trim()}>
-      <p className="route-endpoints">{text}</p>
+      <p className="route-endpoints">
+        <TextWithTurningPointMarkers text={text} />
+      </p>
     </div>
   )
 }

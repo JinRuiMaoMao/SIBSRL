@@ -4643,9 +4643,52 @@ html[data-list-density='compact'] .transfer-plan-stop {
   gap: 0.1rem;
 }
 
-.stop-name-zh {
-  font-size: 0.9rem;
-  color: var(--text);
+.stop-name-main {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.stop-turning-point-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.08rem 0.42rem;
+  border-radius: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: #fff8ef;
+  background: linear-gradient(135deg, #ff5c1a 0%, #ffb020 100%);
+  border: 1.5px solid rgba(255, 140, 30, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 220, 120, 0.35),
+    0 2px 8px rgba(255, 92, 26, 0.28);
+}
+
+html[data-theme='light'] .stop-turning-point-badge {
+  color: #5a2200;
+  background: linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%);
+  border-color: rgba(220, 110, 0, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(255, 200, 80, 0.5),
+    0 1px 4px rgba(200, 90, 0, 0.18);
+}
+
+.route-stop-spine-name {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.transfer-plan-stop-name {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
 }
 
 .stop-name-sub {
@@ -4653,6 +4696,11 @@ html[data-list-density='compact'] .transfer-plan-stop {
   line-height: 1.25;
   color: var(--text-muted);
   font-weight: 500;
+}
+
+.stop-name-zh {
+  font-size: 0.9rem;
+  color: var(--text);
 }
 
 .stop-name .detail-en {
