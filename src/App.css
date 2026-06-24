@@ -5431,7 +5431,9 @@ html[data-reduce-motion='true'] .site-header-shell {
   padding: 1rem 1.1rem 0.95rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--bg-surface);
+  background: var(--bg-float, var(--bg-surface));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 16px 48px var(--shadow-overlay);
   pointer-events: auto;
 }
