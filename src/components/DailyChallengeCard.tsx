@@ -68,18 +68,21 @@ export function DailyChallengeCard({
     >
       {showResetCountdown ? <DailyChallengeResetCountdown /> : null}
 
+      {lengthKm ? (
+        <span className="route-card-km route-card-km--corner" key={`${routeNumber}-km-${directionIndex}`}>
+          {lengthKm}
+        </span>
+      ) : null}
+
       <div className="route-card-top">
         <div className="route-card-title">
           <span className="route-number">{routeNumber}</span>
         </div>
-        <div className="route-card-top-end">
-          {lengthKm ? (
-            <span className="route-card-km" key={`${routeNumber}-km-${directionIndex}`}>
-              {lengthKm}
-            </span>
-          ) : null}
-          {onOpenCalendar ? <DailyChallengeCalendarButton onClick={onOpenCalendar} /> : null}
-        </div>
+        {onOpenCalendar ? (
+          <div className="route-card-top-actions">
+            <DailyChallengeCalendarButton onClick={onOpenCalendar} />
+          </div>
+        ) : null}
       </div>
 
       <p className="route-endpoints">{endpointsLabel ?? eventLabel}</p>

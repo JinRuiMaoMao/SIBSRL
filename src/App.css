@@ -3541,7 +3541,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
 .route-card-surface :is(
   .route-favorite-picker,
   .route-direction-controls,
-  .direction-toggle
+  .direction-toggle,
+  .route-card-favorite-slot
 ) {
   pointer-events: auto;
 }
@@ -3602,6 +3603,14 @@ html[data-list-density='compact'] .transfer-plan-stop {
   justify-content: space-between;
   gap: 0.5rem 0.75rem;
   margin-bottom: 0.5rem;
+}
+
+.route-card-top-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .route-card-top-end {
@@ -3671,6 +3680,24 @@ html[data-list-density='compact'] .transfer-plan-stop {
   letter-spacing: 0.02em;
   white-space: nowrap;
   padding-top: 0.35rem;
+}
+
+.route-card-km--corner {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  z-index: 2;
+  padding-top: 0;
+  pointer-events: none;
+}
+
+.route-card:has(.route-card-km--corner) .route-card-title {
+  padding-right: 2.85rem;
+}
+
+.route-card-favorite-slot {
+  flex: 0 0 auto;
+  align-self: flex-end;
 }
 
 .route-card-title {
@@ -3792,11 +3819,11 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-card-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.35rem 0.5rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: 0.45rem;
+  row-gap: 0.35rem;
   margin-top: auto;
   padding-top: 0.35rem;
 }
@@ -3806,7 +3833,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
-  flex: 1 1 9rem;
+  grid-column: 2;
   min-width: 0;
 }
 
@@ -3815,8 +3842,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-card-foot {
+  grid-column: 3;
   flex: 0 1 auto;
-  margin-left: auto;
   max-width: min(48%, 100%);
   text-align: right;
   align-self: flex-end;
@@ -4750,6 +4777,21 @@ html[data-list-density='compact'] .route-card {
 html[data-list-density='compact'] .route-card-top {
   gap: 0.35rem;
   margin-bottom: 0.25rem;
+}
+
+html[data-list-density='compact'] .route-card-km--corner {
+  top: 0.55rem;
+  right: 0.65rem;
+  font-size: 0.66rem;
+}
+
+html[data-list-density='compact'] .route-card:has(.route-card-km--corner) .route-card-title {
+  padding-right: 2.35rem;
+}
+
+html[data-list-density='compact'] .route-card-bottom {
+  column-gap: 0.35rem;
+  padding-top: 0.25rem;
 }
 
 html[data-list-density='compact'] .route-number {

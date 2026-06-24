@@ -52,6 +52,11 @@ export function SeasonalPromotedRouteCard({
       aria-current={selected ? 'page' : undefined}
     >
       <article className="route-card seasonal-promoted-card">
+        {lengthKm ? (
+          <span className="route-card-km route-card-km--corner" key={`${route.id}-km-${directionIndex}`}>
+            {lengthKm}
+          </span>
+        ) : null}
         <p className="seasonal-promoted-card-category">{t('routeGroupSeasonal')}</p>
 
         <div className="seasonal-promoted-card-event-row">
@@ -78,14 +83,6 @@ export function SeasonalPromotedRouteCard({
             </span>
             <span className="route-number seasonal-promoted-card-number">{cardNumber}</span>
           </div>
-          <div className="seasonal-promoted-card-route-end">
-            {lengthKm ? (
-              <span className="route-card-km" key={`${route.id}-km-${directionIndex}`}>
-                {lengthKm}
-              </span>
-            ) : null}
-            <RouteFavoriteButton routeId={route.id} />
-          </div>
         </div>
 
         {endpoints && stopCount > 0 ? (
@@ -99,6 +96,9 @@ export function SeasonalPromotedRouteCard({
         ) : null}
 
         <div className="route-card-bottom seasonal-promoted-card-bottom">
+          <div className="route-card-favorite-slot">
+            <RouteFavoriteButton routeId={route.id} />
+          </div>
           <div className="route-card-meta-left">
             {displayTypes.length > 0 ? <RouteTypeTags types={displayTypes} compact /> : null}
           </div>

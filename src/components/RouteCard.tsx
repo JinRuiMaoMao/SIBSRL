@@ -88,6 +88,11 @@ export function RouteCard({
           aria-current={selected ? 'page' : undefined}
           tabIndex={-1}
         />
+        {lengthKm ? (
+          <span className="route-card-km route-card-km--corner" key={`${route.id}-km-${directionIndex}`}>
+            {lengthKm}
+          </span>
+        ) : null}
         <div className="route-card-surface">
         <div className="route-card-top">
           <div className="route-card-title">
@@ -111,14 +116,6 @@ export function RouteCard({
               </span>
             ) : null}
           </div>
-          <div className="route-card-top-end">
-            {lengthKm && (
-              <span className="route-card-km" key={`${route.id}-km-${directionIndex}`}>
-                {lengthKm}
-              </span>
-            )}
-            <RouteFavoriteButton routeId={route.id} />
-          </div>
         </div>
 
         <RouteEndpoints
@@ -135,6 +132,9 @@ export function RouteCard({
         ) : null}
 
         <div className="route-card-bottom">
+          <div className="route-card-favorite-slot">
+            <RouteFavoriteButton routeId={route.id} />
+          </div>
           <div className="route-card-meta-left">
             {displayTypes.length > 0 && (
               <RouteTypeTags types={displayTypes} compact />

@@ -273,6 +273,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '新增「你知道吗」栏目，收录游戏里程碑与冷知识（百万访问、最高同时在线、点赞破万、地图规模等）。',
             en: 'Added a “Did you know?” tab with game milestones and trivia (1M visits, peak concurrent players, 10K likes, map size, and more).',
           },
+          {
+            zh: '线路卡片右上角固定显示里程；收藏星标移至卡片底部左侧，与里程分开。',
+            en: 'Route cards now pin length (km) to the top-right corner; the favorite star sits separately at the bottom-left.',
+          },
         ],
       },
     ],
