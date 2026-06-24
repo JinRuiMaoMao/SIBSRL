@@ -96,7 +96,7 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
           "nameSub": {
@@ -150,8 +150,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "第七區轉車站 (西行)"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -209,7 +209,7 @@
         },
         {
           "name": {
-            "zh": "中環南總站",
+            "zh": "中环南总站",
             "en": "Southern Central Bus Terminus"
           },
           "zone": 4,
@@ -220,8 +220,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -280,7 +280,7 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
           "zone": 7,

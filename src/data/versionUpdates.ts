@@ -337,6 +337,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '补全 N171 南行 63 站站序（彩虹中心 → 长岛码头）；合并第七区转车站为单站，并新增叶角大学北门、钻石交易塔、北岛学校村、虹尾角站/宜和剧场等南行副站名，已同步全站同名站点。',
             en: 'Completed N171 southbound stop list (63 stops, Rainbow Estate Complex → Long Island Ferry Pier); merged Zone 7 Interchange into one stop and added southbound-only subtitles (Leafy University North Entrance, Diamond Trading Tower, North Island School Village, Iris Point/Jardine Theater pairs), synced site-wide.',
           },
+          {
+            zh: '副站名规则现会统一主站名（去掉站台后缀）并合并连续重复的第七区转车站；N271 等线路的南行双站已合并为单站。',
+            en: 'Subtitle rules now canonicalize main stop names (drop platform suffixes) and merge consecutive duplicate Zone 7 Interchange stops; southbound double stops on N271 and similar routes are now one.',
+          },
+          {
+            zh: '修复搜索框按 Enter 确认后无法用 Backspace 逐字删除的问题（URL ?q= 不再在每次按键时覆盖输入）。',
+            en: 'Fixed Backspace not deleting one character at a time in the search box after pressing Enter (?q= no longer overwrites the field on every keystroke).',
+          },
         ],
       },
     ],

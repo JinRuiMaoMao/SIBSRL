@@ -72,8 +72,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -102,7 +102,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "nameSub": {
@@ -112,8 +112,8 @@
         },
         {
           "name": {
-            "zh": "The One",
-            "en": "The One"
+            "zh": "The ONE",
+            "en": "The ONE"
           },
           "zone": 4,
           "nameSub": {
@@ -123,7 +123,7 @@
         },
         {
           "name": {
-            "zh": "玻璃樓",
+            "zh": "玻璃楼",
             "en": "Glass Office"
           },
           "nameSub": {

@@ -62,9 +62,12 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
     return displayRoutes.find((r) => r.id === selectedId) ?? null
   }, [displayRoutes, selectedId])
 
-  const updateFilter = <K extends keyof RouteFilters>(key: K, value: RouteFilters[K]) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
+  const updateFilter = useCallback(
+    <K extends keyof RouteFilters>(key: K, value: RouteFilters[K]) => {
+      setFilters((prev) => ({ ...prev, [key]: value }))
+    },
+    [],
+  )
 
   const getDirectionIndex = useCallback(
     (route: BusRoute) => {

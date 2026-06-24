@@ -95,8 +95,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "第七區轉車站 (西行)"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -277,8 +277,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {

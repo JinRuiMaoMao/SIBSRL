@@ -65,7 +65,7 @@
         },
         {
           "name": {
-            "zh": "中環南總站",
+            "zh": "中环南总站",
             "en": "Southern Central Bus Terminus"
           },
           "zone": 4,
@@ -96,7 +96,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "nameSub": {
@@ -150,7 +150,7 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
           "nameSub": {
@@ -180,7 +180,7 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
           "zone": 7,
@@ -235,7 +235,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "nameSub": {
@@ -245,8 +245,8 @@
         },
         {
           "name": {
-            "zh": "仙貝多層停車場",
-            "en": "Senpai Multi-Storey Carpark"
+            "zh": "仙贝多层停车场",
+            "en": "Senpai Multi-Storey Car Park"
           },
           "nameSub": {
             "zh": "仙贝站",
@@ -274,8 +274,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {

@@ -1,5 +1,5 @@
 import { convertToSimplified } from '../i18n/convert'
-import { applyStopNameSubToStop } from '../data/stopNameSubs'
+import { applyStopNameSubToStop, mergeConsecutiveZone7InterchangeStops } from '../data/stopNameSubs'
 import type { BilingualText, BusRoute } from '../types/route'
 import {
   isPlaceholderEndpoint,
@@ -237,12 +237,14 @@ function normalizeStopGroup(group: StopGroup): StopGroup {
       ),
   )
 
+  const mergedList = mergeConsecutiveZone7InterchangeStops(list)
+
   return {
     ...group,
     direction: cleanBilingual(group.direction),
     serviceTime: group.serviceTime ? cleanServiceTime(group.serviceTime) : undefined,
     length: group.length ? cleanBilingual(group.length) : undefined,
-    list,
+    list: mergedList,
   }
 }
 

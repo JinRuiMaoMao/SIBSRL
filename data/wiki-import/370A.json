@@ -83,7 +83,7 @@
         },
         {
           "name": {
-            "zh": "三哥大廈",
+            "zh": "三哥大厦",
             "en": "Third Technology Building"
           },
           "nameSub": {
@@ -131,8 +131,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -249,8 +249,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "第七區轉車站 (西行)"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -299,7 +299,7 @@
         },
         {
           "name": {
-            "zh": "三哥大廈",
+            "zh": "三哥大厦",
             "en": "Third Technology Building"
           },
           "nameSub": {
@@ -315,7 +315,7 @@
         },
         {
           "name": {
-            "zh": "彩色匯",
+            "zh": "彩色汇",
             "en": "Rainbow Center"
           },
           "zone": 1,

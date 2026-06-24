@@ -50,7 +50,7 @@
       "list": [
         {
           "name": {
-            "zh": "葉欣海旁路",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
           },
           "zone": 7,
@@ -61,7 +61,7 @@
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
           "nameSub": {
@@ -134,7 +134,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "nameSub": {
@@ -144,8 +144,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -246,8 +246,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -264,7 +264,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "nameSub": {
@@ -331,7 +331,7 @@
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
           "nameSub": {
@@ -341,7 +341,7 @@
         },
         {
           "name": {
-            "zh": "葉欣海旁路",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
           },
           "nameSub": {

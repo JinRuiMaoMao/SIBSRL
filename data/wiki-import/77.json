@@ -119,7 +119,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "nameSub": {
@@ -129,7 +129,7 @@
         },
         {
           "name": {
-            "zh": "仙貝多層停車場",
+            "zh": "仙贝多层停车场",
             "en": "Senpai Multi-Storey Car Park"
           },
           "nameSub": {
@@ -177,7 +177,7 @@
         },
         {
           "name": {
-            "zh": "葉欣海旁道",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
           },
           "nameSub": {
@@ -200,7 +200,7 @@
       "list": [
         {
           "name": {
-            "zh": "葉欣海旁道",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
           },
           "zone": 7,
@@ -249,8 +249,8 @@
         },
         {
           "name": {
-            "zh": "仙貝多層停車場",
-            "en": "Senpai Multi-Storey Carpark"
+            "zh": "仙贝多层停车场",
+            "en": "Senpai Multi-Storey Car Park"
           },
           "nameSub": {
             "zh": "仙贝站",
@@ -259,7 +259,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "nameSub": {

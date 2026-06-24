@@ -87,7 +87,7 @@
         },
         {
           "name": {
-            "zh": "陽光殯儀館",
+            "zh": "阳光殡仪馆",
             "en": "Sunshine Funeral"
           },
           "zone": 1,
@@ -105,7 +105,7 @@
         },
         {
           "name": {
-            "zh": "宜和劇場",
+            "zh": "宜和剧场",
             "en": "Jardine Theater"
           },
           "zone": 1,
@@ -116,7 +116,7 @@
         },
         {
           "name": {
-            "zh": "彩色匯",
+            "zh": "彩色汇",
             "en": "Rainbow Center"
           },
           "zone": 1,
@@ -134,7 +134,7 @@
         },
         {
           "name": {
-            "zh": "賴得里",
+            "zh": "赖得里",
             "en": "Wright Lane"
           },
           "zone": 1,
@@ -145,7 +145,7 @@
         },
         {
           "name": {
-            "zh": "三哥大廈",
+            "zh": "三哥大厦",
             "en": "Third Technology Building"
           },
           "zone": 1,
@@ -163,8 +163,8 @@
         },
         {
           "name": {
-            "zh": "西區海底隧道轉車站 (S2)",
-            "en": "Western Habour Tunnel Interchange (S2)"
+            "zh": "西区海底隧道转车站",
+            "en": "Western Habour Tunnel Interchange"
           },
           "zone": 4,
           "nameSub": {
@@ -223,7 +223,7 @@
         },
         {
           "name": {
-            "zh": "玻璃樓",
+            "zh": "玻璃楼",
             "en": "Glass Office"
           },
           "zone": 4,
@@ -245,7 +245,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "zone": 4,
@@ -284,7 +284,7 @@
         },
         {
           "name": {
-            "zh": "中環南總站",
+            "zh": "中环南总站",
             "en": "Southern Central Bus Terminus"
           },
           "zone": 4,
@@ -309,8 +309,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (E2)",
-            "en": "Zone 7 Interchange (E2)"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -355,7 +355,7 @@
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
           "zone": 7,
@@ -408,7 +408,7 @@
         },
         {
           "name": {
-            "zh": "仙貝多層停車場",
+            "zh": "仙贝多层停车场",
             "en": "Senpai Multi-Storey Car Park"
           },
           "zone": 7,
@@ -419,7 +419,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "zone": 7,
@@ -493,7 +493,7 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
           "zone": 7,
@@ -559,7 +559,7 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
           "zone": 7,
@@ -633,7 +633,7 @@
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
           "zone": 7,
@@ -644,7 +644,7 @@
         },
         {
           "name": {
-            "zh": "仙貝多層停車場",
+            "zh": "仙贝多层停车场",
             "en": "Senpai Multi-Storey Car Park"
           },
           "zone": 7,
@@ -697,7 +697,7 @@
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
           "zone": 7,
@@ -722,7 +722,7 @@
         },
         {
           "name": {
-            "zh": "葉欣海旁道",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
           },
           "zone": 7,
@@ -754,19 +754,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站（落客站）",
-            "en": "Zone 7 Interchange (Alighting Stop)"
-          },
-          "zone": 7,
-          "nameSub": {
-            "zh": "千叶站",
-            "en": "Thousand Leaf Station"
-          }
-        },
-        {
-          "name": {
-            "zh": "第七區轉車站 (W4)",
-            "en": "Zone 7 Interchange (W4)"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -797,7 +786,7 @@
         },
         {
           "name": {
-            "zh": "中環南總站",
+            "zh": "中环南总站",
             "en": "Southern Central Bus Terminus"
           },
           "zone": 4,
@@ -836,7 +825,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "zone": 4,
@@ -854,7 +843,7 @@
         },
         {
           "name": {
-            "zh": "玻璃樓",
+            "zh": "玻璃楼",
             "en": "Glass Office"
           },
           "zone": 4,
@@ -939,7 +928,7 @@
         },
         {
           "name": {
-            "zh": "三哥大廈",
+            "zh": "三哥大厦",
             "en": "Third Technology Building"
           },
           "zone": 1,
@@ -968,7 +957,7 @@
         },
         {
           "name": {
-            "zh": "宜和劇場",
+            "zh": "宜和剧场",
             "en": "Jardine Theater"
           },
           "zone": 1,

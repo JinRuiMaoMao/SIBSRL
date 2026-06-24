@@ -9,19 +9,23 @@ function loadRulesFromSource() {
   const source = readFileSync(rulesPath, 'utf8')
   const rules = []
   const blockRe =
-    /\{\s*matchEn:\s*\[([^\]]+)\](?:,\s*matchZh:\s*\[([^\]]+)\])?,\s*nameSub:\s*\{\s*zh:\s*'((?:\\'|[^'])*)',\s*en:\s*'((?:\\'|[^'])*)'\s*\}\s*,?\s*\}/g
+    /\{\s*canonicalName:\s*\{\s*zh:\s*'((?:\\'|[^'])*)',\s*en:\s*'((?:\\'|[^'])*)'\s*\},\s*matchEn:\s*\[([^\]]+)\](?:,\s*matchZh:\s*\[([^\]]+)\])?,\s*nameSub:\s*\{\s*zh:\s*'((?:\\'|[^'])*)',\s*en:\s*'((?:\\'|[^'])*)'\s*\}\s*,?\s*\}/g
 
   for (const match of source.matchAll(blockRe)) {
-    const matchEn = [...match[1].matchAll(/'((?:\\'|[^'])*)'/g)].map((m) => m[1].replace(/\\'/g, "'"))
-    const matchZh = match[2]
-      ? [...match[2].matchAll(/'((?:\\'|[^'])*)'/g)].map((m) => m[1].replace(/\\'/g, "'"))
+    const matchEn = [...match[3].matchAll(/'((?:\\'|[^'])*)'/g)].map((m) => m[1].replace(/\\'/g, "'"))
+    const matchZh = match[4]
+      ? [...match[4].matchAll(/'((?:\\'|[^'])*)'/g)].map((m) => m[1].replace(/\\'/g, "'"))
       : []
     rules.push({
+      canonicalName: {
+        zh: match[1].replace(/\\'/g, "'"),
+        en: match[2].replace(/\\'/g, "'"),
+      },
       matchEn,
       matchZh,
       nameSub: {
-        zh: match[3].replace(/\\'/g, "'"),
-        en: match[4].replace(/\\'/g, "'"),
+        zh: match[5].replace(/\\'/g, "'"),
+        en: match[6].replace(/\\'/g, "'"),
       },
     })
   }
@@ -34,6 +38,7 @@ function loadRulesFromSource() {
 }
 
 const RULES = loadRulesFromSource()
+const ZONE7_CANONICAL_EN = 'Zone 7 Interchange'
 
 function stripParentheticalSuffix(text) {
   return text.replace(/\s*[（(][^）)]*[）)]\s*$/, '').trim()
@@ -47,17 +52,17 @@ function normalizeZhKey(zh) {
   return stripParentheticalSuffix(zh)
 }
 
-export function lookupStopNameSub(name) {
+export function lookupStopNameSubRule(name) {
   if (!name?.en) return undefined
   const enKey = normalizeEnKey(name.en)
   const zhKey = normalizeZhKey(name.zh ?? '')
 
   for (const rule of RULES) {
     if (rule.matchEn.some((candidate) => normalizeEnKey(candidate) === enKey)) {
-      return rule.nameSub
+      return rule
     }
     if (rule.matchZh?.some((candidate) => normalizeZhKey(candidate) === zhKey)) {
-      return rule.nameSub
+      return rule
     }
   }
 
@@ -65,10 +70,34 @@ export function lookupStopNameSub(name) {
 }
 
 export function applyStopNameSubToStop(stop) {
-  if (!stop?.name || stop.turningPoint || stop.nameSub) return stop
-  const nameSub = lookupStopNameSub(stop.name)
-  if (!nameSub) return stop
-  return { ...stop, nameSub }
+  if (!stop?.name || stop.turningPoint) return stop
+  const rule = lookupStopNameSubRule(stop.name)
+  if (!rule) return stop
+  return {
+    ...stop,
+    name: { ...rule.canonicalName },
+    nameSub: stop.nameSub ?? rule.nameSub,
+  }
+}
+
+function isZone7InterchangeStop(name) {
+  const rule = lookupStopNameSubRule(name)
+  return rule?.canonicalName.en === ZONE7_CANONICAL_EN
+}
+
+export function mergeConsecutiveZone7InterchangeStops(list) {
+  const merged = []
+
+  for (const stop of list) {
+    const prev = merged[merged.length - 1]
+    if (prev && isZone7InterchangeStop(prev.name) && isZone7InterchangeStop(stop.name)) {
+      merged[merged.length - 1] = applyStopNameSubToStop(prev)
+      continue
+    }
+    merged.push(stop)
+  }
+
+  return merged
 }
 
 export function applyStopNameSubsToRoute(route) {
@@ -77,7 +106,9 @@ export function applyStopNameSubsToRoute(route) {
     ...route,
     stops: route.stops.map((group) => ({
       ...group,
-      list: group.list.map(applyStopNameSubToStop),
+      list: mergeConsecutiveZone7InterchangeStops(
+        group.list.map(applyStopNameSubToStop),
+      ),
     })),
   }
 }

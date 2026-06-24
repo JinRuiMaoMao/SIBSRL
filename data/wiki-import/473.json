@@ -72,7 +72,7 @@
         },
         {
           "name": {
-            "zh": "玻璃樓",
+            "zh": "玻璃楼",
             "en": "Glass Office"
           },
           "nameSub": {
@@ -92,7 +92,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "zone": 4,
@@ -109,8 +109,8 @@
         },
         {
           "name": {
-            "zh": "中環南總站",
-            "en": "Southern Central Terminal"
+            "zh": "中环南总站",
+            "en": "Southern Central Bus Terminus"
           },
           "nameSub": {
             "zh": "南环花园一期",
@@ -119,8 +119,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Section fare begins here"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -161,7 +161,7 @@
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
           "nameSub": {
@@ -224,7 +224,7 @@
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
           "zone": 7,
@@ -247,7 +247,7 @@
         },
         {
           "name": {
-            "zh": "葉欣海旁道",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
           },
           "nameSub": {
@@ -275,8 +275,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -286,8 +286,8 @@
         },
         {
           "name": {
-            "zh": "中環南總站",
-            "en": "Section fare begins here"
+            "zh": "中环南总站",
+            "en": "Southern Central Bus Terminus"
           },
           "zone": 4,
           "nameSub": {
@@ -303,7 +303,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "nameSub": {

@@ -82,7 +82,7 @@
         },
         {
           "name": {
-            "zh": "玻璃樓",
+            "zh": "玻璃楼",
             "en": "Glass Office"
           },
           "nameSub": {
@@ -92,8 +92,8 @@
         },
         {
           "name": {
-            "zh": "The One",
-            "en": "The One"
+            "zh": "The ONE",
+            "en": "The ONE"
           },
           "nameSub": {
             "zh": "警察总部, 新纪元中心",
@@ -102,7 +102,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "zone": 4,

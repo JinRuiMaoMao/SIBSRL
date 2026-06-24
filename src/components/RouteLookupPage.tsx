@@ -456,7 +456,9 @@ export function RouteLookupPage({
 
     const searchQuery = readSearchQueryFromLocation()
     if (searchQuery) updateFilter('query', searchQuery)
-  }, [updateFilter])
+    // 仅挂载时从 URL 恢复搜索词；勿依赖 updateFilter，否则每次输入都会把 ?q= 写回输入框
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!stopPairSearchCommitted || !betweenStopLookup) return
@@ -905,6 +907,12 @@ export function RouteLookupPage({
         setCommittedStopPairQuery('')
         clearStopPairFromLocation()
         clearSearchFromLocation()
+        return
+      }
+
+      const urlQuery = readSearchQueryFromLocation()
+      if (urlQuery != null && urlQuery !== q.trim()) {
+        replaceSearchInLocation(q)
       }
     },
     [updateFilter],

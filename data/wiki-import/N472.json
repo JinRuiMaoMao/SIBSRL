@@ -133,8 +133,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "Two-way section fare ends here / Near Thousand Leaf Station"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -294,8 +294,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (東行)",
-            "en": "Section fare begins here / Near Thousand Leaf Station"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {

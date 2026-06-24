@@ -68,8 +68,8 @@
         },
         {
           "name": {
-            "zh": "東門總站",
-            "en": "East Door Road"
+            "zh": "东门总站",
+            "en": "East Door Bus Terminus"
           },
           "nameSub": {
             "zh": "东门中心",
@@ -90,8 +90,8 @@
         },
         {
           "name": {
-            "zh": "第七區轉車站 (西行)",
-            "en": "Axis Road"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
           "zone": 7,
           "nameSub": {
@@ -107,7 +107,7 @@
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
           "nameSub": {
