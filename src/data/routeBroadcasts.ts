@@ -47,6 +47,7 @@ function getNextStopNamePoolAudio(
     dataId,
     nextStop.name,
     passIndexForNextStop(list, nextIndex),
+    nextIndex,
   )
   const match = findStopNameAudio(nextStop.name, passIndex)
   if (!match) return undefined

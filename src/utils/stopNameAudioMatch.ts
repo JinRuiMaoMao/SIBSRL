@@ -20,17 +20,21 @@ export const STOP_NAME_ALIASES: Record<string, string[]> = {
   'Bank Tower': ['银行大厦'],
 }
 
-/** 21/21A 以外：下一站为白鸽山时固定用 21路白鸽山2.mp3（passIndex 1 → 后缀 2） */
+/** 21/21A 以外：下一站为白鸽山时默认用白鸽山2；若白鸽山为第 2 站（index 1）则用白鸽山1 */
 export function passIndexForStopNamePool(
   routeId: string,
   nextStop: BilingualText,
   passIndex: number,
+  nextStopIndex?: number,
 ): number {
   if (routeId === '21A' || routeId === '21') return passIndex
 
   const zh = nextStop.zh?.trim() ?? ''
   const en = nextStop.en?.trim() ?? ''
-  if (zh === '白鸽山' || en === 'Dove Hill') return 1
+  if (zh === '白鸽山' || en === 'Dove Hill') {
+    if (nextStopIndex === 1) return 0
+    return 1
+  }
 
   return passIndex
 }
