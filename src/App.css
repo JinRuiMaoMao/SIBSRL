@@ -71,6 +71,11 @@
   pointer-events: auto;
 }
 
+.header-settings-wrap {
+  display: flex;
+  align-items: center;
+}
+
 .header-collapse-toggle {
   display: inline-flex;
   align-items: center;
@@ -252,10 +257,36 @@
 
 .header-tab-link {
   display: inline-flex;
+  position: relative;
   text-decoration: none;
   color: inherit;
   border-radius: 8px;
   flex-shrink: 0;
+}
+
+.header-tab-link--has-badge {
+  padding-right: 0.15rem;
+}
+
+.header-tab-badge {
+  position: absolute;
+  top: -0.28rem;
+  right: -0.22rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.95rem;
+  height: 0.95rem;
+  padding: 0 0.2rem;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 0 0 1.5px var(--bg-elevated);
+  pointer-events: none;
 }
 
 .header-tab-link:hover,

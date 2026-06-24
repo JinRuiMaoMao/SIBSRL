@@ -1,11 +1,13 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { EXTERNAL_LINKS } from '../data/routes'
+import { useHeaderControlsReserve } from '../hooks/useHeaderControlsReserve'
 import { useHeaderTabRows, useMeasureTabRefs } from '../hooks/useHeaderTabRows'
 import { useSecretLogoClick } from '../hooks/useSecretLogoClick'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
 import { getTabPageHref } from '../utils/appTabNavigation'
+import { hasUnreadUpdates } from '../utils/updatesPrompt'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
 import { SiteLogo } from './SiteLogo'
@@ -34,11 +36,16 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
   const { t, locale } = useLocale()
   const onLogoClick = useSecretLogoClick(activeTab)
   const tabOrder = useMemo(() => Object.keys(TAB_KEYS) as AppTab[], [])
+  const [updatesUnread, setUpdatesUnread] = useState(() => hasUnreadUpdates())
 
+  const shellRef = useRef<HTMLDivElement>(null)
+  const controlsRef = useRef<HTMLDivElement>(null)
   const actionsRef = useRef<HTMLDivElement>(null)
   const settingsRef = useRef<HTMLDivElement>(null)
   const measureBoxRef = useRef<HTMLDivElement>(null)
   const measureTabRefs = useMeasureTabRefs()
+
+  useHeaderControlsReserve(shellRef, controlsRef)
 
   const rows = useHeaderTabRows(
     tabOrder,
@@ -46,26 +53,51 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
     settingsRef,
     measureBoxRef,
     measureTabRefs,
+    controlsRef,
     [locale, t],
   )
 
+  useEffect(() => {
+    const syncUnread = () => setUpdatesUnread(hasUnreadUpdates())
+    syncUnread()
+    window.addEventListener('storage', syncUnread)
+    window.addEventListener('focus', syncUnread)
+    return () => {
+      window.removeEventListener('storage', syncUnread)
+      window.removeEventListener('focus', syncUnread)
+    }
+  }, [])
+
+  const showUpdatesBadge = updatesUnread && activeTab !== 'updates'
   const singleTabRow = rows.length === 1
 
-  const renderTabLink = (tab: AppTab) => (
-    <a
-      key={tab}
-      href={getTabPageHref(tab)}
-      role="tab"
-      aria-selected={activeTab === tab}
-      className={`header-tab-link ${activeTab === tab ? 'header-tab-link--active' : ''}`}
-    >
-      <span className="header-tab">{t(TAB_KEYS[tab])}</span>
-    </a>
-  )
+  const renderTabLink = (tab: AppTab) => {
+    const showBadge = tab === 'updates' && showUpdatesBadge
+    const label = t(TAB_KEYS[tab])
+    return (
+      <a
+        key={tab}
+        href={getTabPageHref(tab)}
+        role="tab"
+        aria-selected={activeTab === tab}
+        data-app-header-tab={tab}
+        className={`header-tab-link ${activeTab === tab ? 'header-tab-link--active' : ''} ${showBadge ? 'header-tab-link--has-badge' : ''}`.trim()}
+        title={showBadge ? `${label} (${t('updatesTabBadgeHint')})` : undefined}
+        aria-label={showBadge ? `${label} (${t('updatesTabBadgeHint')})` : label}
+      >
+        <span className="header-tab">{label}</span>
+        {showBadge ? (
+          <span className="header-tab-badge" aria-hidden>
+            !
+          </span>
+        ) : null}
+      </a>
+    )
+  }
 
   return (
-    <div className={`site-header-shell ${collapsed ? 'is-collapsed' : ''}`}>
-      <div className="header-shell-controls">
+    <div ref={shellRef} className={`site-header-shell ${collapsed ? 'is-collapsed' : ''}`}>
+      <div ref={controlsRef} className="header-shell-controls">
         <div className="header-settings-wrap" ref={settingsRef}>
           <HeaderToolbar />
         </div>

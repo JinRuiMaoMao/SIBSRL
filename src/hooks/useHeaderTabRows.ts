@@ -5,6 +5,20 @@ function rowsEqual(a: string[][], b: string[][]): boolean {
   return a.every((row, i) => row.length === b[i]!.length && row.every((tab, j) => tab === b[i]![j]))
 }
 
+
+function tabRowOverlapsControls(
+  actions: HTMLElement,
+  controls: HTMLElement,
+  row: string[],
+  margin = 8,
+): boolean {
+  const lastTab = row[row.length - 1]
+  if (!lastTab) return false
+  const tabEl = actions.querySelector<HTMLElement>(`[data-app-header-tab="${lastTab}"]`)
+  if (!tabEl) return false
+  return tabEl.getBoundingClientRect().right > controls.getBoundingClientRect().left - margin
+}
+
 /**
  * Split header tabs into multiple rows only when a single row cannot fit.
  */
@@ -14,6 +28,7 @@ export function useHeaderTabRows(
   settingsRef: RefObject<HTMLElement | null>,
   measureBoxRef: RefObject<HTMLElement | null>,
   measureTabRefs: RefObject<Map<string, HTMLButtonElement>>,
+  controlsRef: RefObject<HTMLElement | null>,
   deps: unknown[] = [],
 ) {
   const [rows, setRows] = useState<string[][]>(() => [tabs])
@@ -35,10 +50,14 @@ export function useHeaderTabRows(
 
     const availableWidth = actions.clientWidth
     const totalWidth = rowOuterWidth(widths)
+    const controls = controlsRef.current
 
     if (totalWidth <= availableWidth) {
-      setRows((prev) => (rowsEqual(prev, [tabs]) ? prev : [tabs]))
-      return
+      const singleRow = [tabs]
+      if (!controls || !tabRowOverlapsControls(actions, controls, tabs)) {
+        setRows((prev) => (rowsEqual(prev, singleRow) ? prev : singleRow))
+        return
+      }
     }
 
     const settingsInTabRow = Boolean(
@@ -74,7 +93,7 @@ export function useHeaderTabRows(
     if (current.length > 0) nextRows.push(current)
 
     setRows((prev) => (rowsEqual(prev, nextRows) ? prev : nextRows))
-  }, [tabs, actionsRef, settingsRef, measureBoxRef, measureTabRefs])
+  }, [tabs, actionsRef, settingsRef, measureBoxRef, measureTabRefs, controlsRef])
 
   useLayoutEffect(() => {
     recompute()
@@ -85,13 +104,14 @@ export function useHeaderTabRows(
     const observer = new ResizeObserver(recompute)
     observer.observe(actions)
     if (settingsRef.current) observer.observe(settingsRef.current)
+    if (controlsRef.current) observer.observe(controlsRef.current)
 
     window.addEventListener('resize', recompute)
     return () => {
       observer.disconnect()
       window.removeEventListener('resize', recompute)
     }
-  }, [recompute, ...deps])
+  }, [recompute, controlsRef, ...deps])
 
   return rows
 }

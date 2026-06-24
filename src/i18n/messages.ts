@@ -460,6 +460,7 @@ const messagesZhHans = {
   updatesPromptTitle: '近期更新',
   updatesPromptViewAll: '查看全部更新',
   updatesPromptDismiss: '关闭',
+  updatesTabBadgeHint: '有新更新',
   updatesEasterEggHint: 'Hex⁻¹ → Reverse⁻¹ → Base64⁻¹',
   updatesEmpty: '暂无更新记录。',
   broadcastIntro:
@@ -952,6 +953,7 @@ const messagesEn: Record<MessageKey, string> = {
   updatesPromptTitle: 'Recent updates',
   updatesPromptViewAll: 'View full change log',
   updatesPromptDismiss: 'Close',
+  updatesTabBadgeHint: 'New updates',
   updatesEasterEggHint: 'Hex⁻¹ → Reverse⁻¹ → Base64⁻¹',
   updatesEmpty: 'No update records yet.',
   broadcastIntro:

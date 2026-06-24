@@ -249,6 +249,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复 iPad 主屏幕添加到书签后仍显示巴士 emoji 的问题：补充 apple-touch-icon 并为图标链接增加构建版本参数。',
             en: 'Fixed iPad home-screen bookmarks still showing a bus emoji—added apple-touch-icon and cache-busting on icon URLs.',
           },
+          {
+            zh: '顶栏「更新」标签在有未读日志时显示红色「!」角标；进入更新页或通过更新弹窗查看后消失。动态测量登录/设置按钮宽度，避免与「更新」标签重叠。',
+            en: 'The Updates tab shows a red “!” badge when the changelog is unread; it clears after opening the updates page or viewing via the update dialog. Header layout now measures control buttons to prevent overlap with tabs.',
+          },
         ],
       },
     ],

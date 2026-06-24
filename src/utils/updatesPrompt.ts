@@ -13,6 +13,11 @@ export function shouldShowUpdatesPrompt(): boolean {
   if (!isRoutesPage()) return false
   if (readRouteQueryFromLocation()) return false
 
+  return hasUnreadUpdates()
+}
+
+/** 是否有尚未查看的最新更新（用于顶栏「!」角标）。 */
+export function hasUnreadUpdates(): boolean {
   const latestPromptKey = getLatestUpdatePromptKey()
   if (!latestPromptKey) return false
 
