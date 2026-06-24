@@ -8,6 +8,7 @@
     "start": "vite",
     "sync:audio": "node scripts/sync-broadcast-audio.mjs",
     "sync:route-audio": "node scripts/sync-route-broadcast-audio.mjs",
+    "sync:route-maps": "node scripts/sync-route-map-images.mjs",
     "sync:brand": "node scripts/sync-brand-assets.mjs",
     "gen:service-types": "node scripts/generate-route-service-types.mjs",
     "gen:stop-aliases": "node scripts/generate-stop-aliases.mjs",

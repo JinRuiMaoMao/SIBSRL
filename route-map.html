@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>线路图 · 阳光群岛线路查询</title>
+    <script id="theme-bootstrap">
+      (function () {
+        function resolveSystemAppearance() {
+          try {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          } catch (e) {
+            return 'dark';
+          }
+        }
+        try {
+          var pref = localStorage.getItem('sibs-theme');
+          if (pref !== 'light' && pref !== 'dark' && pref !== 'system') pref = 'system';
+          document.documentElement.setAttribute(
+            'data-theme',
+            pref === 'system' ? resolveSystemAppearance() : pref,
+          );
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #0b1220;
+        --text: #e8edf7;
+        --muted: #94a3b8;
+        --accent: #f5b942;
+        --border: rgba(148, 163, 184, 0.22);
+      }
+      html[data-theme='light'] {
+        --bg: #f4f7fb;
+        --text: #0f172a;
+        --muted: #64748b;
+        --accent: #c07000;
+        --border: rgba(15, 23, 42, 0.12);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      .route-map-page {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 1rem 1rem 2rem;
+      }
+      .route-map-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.65rem 1rem;
+        margin-bottom: 1rem;
+      }
+      .route-map-back {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.92rem;
+      }
+      .route-map-back:hover {
+        color: var(--accent);
+      }
+      .route-map-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+      .route-map-frame {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 12rem;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+      html[data-theme='light'] .route-map-frame {
+        background: rgba(255, 255, 255, 0.72);
+      }
+      .route-map-image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+      .route-map-missing {
+        margin: 0;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.55;
+        max-width: 28rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="route-map-page">
+      <div class="route-map-toolbar">
+        <a class="route-map-back" id="back-link" href="./index.html">← 返回线路查询</a>
+        <h1 class="route-map-title" id="page-title">线路图</h1>
+      </div>
+      <div class="route-map-frame">
+        <img class="route-map-image" id="map-image" alt="" hidden />
+        <p class="route-map-missing" id="map-missing" hidden></p>
+      </div>
+    </main>
+    <script>
+      (function () {
+        var VIEW_LABELS = {
+          path: { zh: '走向', en: 'Path' },
+          height: { zh: '高度', en: 'Elevation' },
+        };
+        var EXTENSIONS = ['png', 'webp', 'jpg', 'jpeg'];
+
+        function readLocale() {
+          try {
+            var stored = localStorage.getItem('sibs-locale');
+            if (stored === 'en') return 'en';
+          } catch (e) {}
+          return 'zh';
+        }
+
+        function routeIdToPageFilename(routeId) {
+          return Array.from(routeId)
+            .map(function (ch) {
+              return /[A-Za-z0-9-]/.test(ch)
+                ? ch
+                : '%' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
+            })
+            .join('');
+        }
+
+        function assetPrefix() {
+          return /\/routes\//.test(location.pathname.replace(/\\/g, '/')) ? '../' : './';
+        }
+
+        function backHref() {
+          var params = new URLSearchParams(location.search);
+          var route = params.get('route');
+          if (!route) return assetPrefix() + 'index.html';
+          return assetPrefix() + 'index.html?route=' + encodeURIComponent(route);
+        }
+
+        var locale = readLocale();
+        var params = new URLSearchParams(location.search);
+        var routeId = (params.get('route') || '').trim();
+        var view = params.get('view') === 'height' ? 'height' : 'path';
+        var labels = VIEW_LABELS[view];
+        var label = locale === 'en' ? labels.en : labels.zh;
+        var title = routeId ? routeId + ' · ' + label : label;
+
+        document.getElementById('page-title').textContent = title;
+        document.title = title + ' · 阳光群岛线路查询';
+        document.getElementById('back-link').href = backHref();
+        document.getElementById('back-link').textContent =
+          locale === 'en' ? '← Back to routes' : '← 返回线路查询';
+
+        var image = document.getElementById('map-image');
+        var missing = document.getElementById('map-missing');
+        image.alt = title;
+
+        if (!routeId) {
+          missing.hidden = false;
+          missing.textContent =
+            locale === 'en' ? 'Missing route id in the URL.' : '链接缺少线路编号。';
+          return;
+        }
+
+        var base =
+          assetPrefix() +
+          'route-maps/' +
+          routeIdToPageFilename(routeId) +
+          '/' +
+          (view === 'height' ? 'height' : 'path') +
+          '.';
+        var attempt = 0;
+
+        function tryNext() {
+          if (attempt >= EXTENSIONS.length) {
+            missing.hidden = false;
+            missing.textContent =
+              locale === 'en'
+                ? 'No ' + labels.en.toLowerCase() + ' image for route ' + routeId + ' yet.'
+                : '暂无线路 ' + routeId + ' 的' + labels.zh + '图。';
+            image.hidden = true;
+            return;
+          }
+          image.src = base + EXTENSIONS[attempt++];
+        }
+
+        image.addEventListener('load', function () {
+          image.hidden = false;
+          missing.hidden = true;
+        });
+        image.addEventListener('error', tryNext);
+        tryNext();
+      })();
+    </script>
+  </body>
+</html>

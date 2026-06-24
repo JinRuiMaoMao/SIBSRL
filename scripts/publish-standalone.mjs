@@ -115,6 +115,23 @@ export function publishStandalone(options = {}) {
     console.log('[publish] 已复制音频到 audio/')
   }
 
+  const publicRouteMaps = resolve(root, 'public', 'route-maps')
+  const distRouteMaps = resolve(root, 'dist', 'route-maps')
+  const rootRouteMaps = resolve(root, 'route-maps')
+  if (existsSync(distRouteMaps)) {
+    cpSync(distRouteMaps, rootRouteMaps, { recursive: true })
+    console.log('[publish] 已复制线路图到 route-maps/')
+  } else if (existsSync(publicRouteMaps)) {
+    cpSync(publicRouteMaps, rootRouteMaps, { recursive: true })
+    console.log('[publish] 已复制线路图到 route-maps/')
+  }
+
+  const routeMapPage = resolve(root, 'pages', 'route-map.html')
+  if (existsSync(routeMapPage)) {
+    cpSync(routeMapPage, resolve(root, 'route-map.html'))
+    cpSync(routeMapPage, resolve(root, 'dist', 'route-map.html'))
+  }
+
   const publicLogo = resolve(root, 'public', 'sibs-logo.png')
   if (existsSync(publicLogo)) {
     cpSync(publicLogo, resolve(root, 'sibs-logo.png'))

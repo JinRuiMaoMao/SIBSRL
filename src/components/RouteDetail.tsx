@@ -28,6 +28,7 @@ import { BroadcastAudioButton } from './BroadcastAudioButton'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { buildRouteShareUrl } from '../utils/routeNavigation'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
+import { RouteMapViewButtons } from './RouteMapViewButtons'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 
 interface RouteDetailProps {
@@ -151,6 +152,7 @@ export function RouteDetail({
           size="detail"
         />
         </div>
+        <RouteMapViewButtons routeId={route.id} routeNumber={route.number} />
       </section>
 
       <section className="detail-section detail-grid" data-tour="route-detail-info">

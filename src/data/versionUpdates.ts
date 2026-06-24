@@ -297,6 +297,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '线路卡片收藏星标移至起终点右侧空白处；底部运营商名称不再被截断省略。',
             en: 'Moved the favorite star to the open area beside route endpoints; operator names at the card bottom no longer truncate with ellipsis.',
           },
+          {
+            zh: '线路详情新增「走向」「高度」按钮，跳转查看对应线路图（图片放在 route-maps/ 目录，可用 npm run sync:route-maps 从 SIBS 资源同步）。',
+            en: 'Route details now include Path and Elevation buttons that open the corresponding route map images (stored under route-maps/; sync from SIBS assets with npm run sync:route-maps).',
+          },
         ],
       },
     ],
