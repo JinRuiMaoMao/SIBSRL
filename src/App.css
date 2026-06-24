@@ -4664,29 +4664,21 @@ html[data-list-density='compact'] .transfer-plan-stop {
 .stop-name-sub {
   font-size: 0.72em;
   line-height: 1.3;
-  font-weight: 500;
-  color: var(--stop-name-sub, var(--text-muted));
+  font-weight: 600;
+  color: var(--stop-name-sub);
   letter-spacing: 0.01em;
 }
 
 .stop-name-sub::before {
   content: '(';
   margin-right: 0.04em;
-  opacity: 0.72;
+  opacity: 0.82;
 }
 
 .stop-name-sub::after {
   content: ')';
   margin-left: 0.04em;
-  opacity: 0.72;
-}
-
-html[data-theme='light'] .stop-name-sub {
-  color: var(--stop-name-sub, #64748b);
-}
-
-html[data-theme='dark'] .stop-name-sub {
-  color: var(--stop-name-sub, #8ba3c7);
+  opacity: 0.82;
 }
 
 .stop-turning-point-badge {

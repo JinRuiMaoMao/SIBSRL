@@ -203,6 +203,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Stop subtitles (parenthetical aliases) now render smaller in a distinct color; route cards, stop tables, and transfer plans share the same main/sub styling.',
           },
           {
+            zh: '副站名颜色按深浅主题分别调校（浅色为深青绿混强调色、深色为浅青混强调色），提升在渐变背景上的可读性。',
+            en: 'Stop subtitle colors are tuned per light/dark theme (deep teal-green with accent in light, pale cyan with accent in dark) for better readability on gradient backgrounds.',
+          },
+          {
             zh: '秘密页线路加载时同样套用全站副站名规则（含站序表与卡片起终点展示）。',
             en: 'Secret-page routes now use the same site-wide stop subtitle rules in stop tables and card endpoints.',
           },

@@ -21,6 +21,8 @@
   --scrollbar-thumb: rgba(245, 185, 66, 0.45);
   --scrollbar-thumb-hover: rgba(245, 185, 66, 0.72);
   --scrollbar-thumb-active: #f5b942;
+  /* 副站名：强调色 + 冷色混色，与主站名、次要文案区分 */
+  --stop-name-sub: color-mix(in srgb, var(--accent) 42%, #9fd4f7);
 }
 
 html:not([data-panel-style='classic']) {
@@ -67,6 +69,7 @@ html:not([data-panel-style='classic'])[data-theme='light'] {
   --scrollbar-thumb: rgba(176, 120, 8, 0.35);
   --scrollbar-thumb-hover: rgba(176, 120, 8, 0.5);
   --scrollbar-thumb-active: #b07808;
+  --stop-name-sub: color-mix(in srgb, var(--accent) 62%, #0a5f52);
 }
 
 html:not([data-panel-style='classic'])[data-theme='light'] {
