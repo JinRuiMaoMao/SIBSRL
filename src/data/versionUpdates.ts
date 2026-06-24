@@ -265,6 +265,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '紧凑网格下线路卡类型标签不再挤出卡片；运营商（CSB / REBC 等）固定显示在卡片右下角。',
             en: 'Route type tags no longer overflow route cards in the compact grid; operator labels (CSB / REBC, etc.) stay anchored at the bottom-right of each card.',
           },
+          {
+            zh: '透明渐变模式下线路详情页背景改为约 92% 不透明，站序与票价等内容不再过度透出底层渐变。',
+            en: 'In transparent-gradient mode, the route detail sheet now uses ~92% opaque panels so stops and fare text no longer bleed through the page gradient.',
+          },
         ],
       },
     ],

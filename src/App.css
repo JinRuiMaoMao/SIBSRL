@@ -3945,7 +3945,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--bg-deep);
+  background: var(--route-detail-bg, var(--bg-deep));
   transform: translate3d(0, 100%, 0);
   pointer-events: auto;
   visibility: visible;
@@ -3974,11 +3974,11 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-detail-sheet--wide .route-detail {
-  background: var(--bg-deep);
+  background: var(--route-detail-bg, var(--bg-deep));
 }
 
 .route-detail {
-  background: var(--bg-surface);
+  background: var(--route-detail-surface, var(--bg-surface));
   padding: 1.25rem;
 }
 

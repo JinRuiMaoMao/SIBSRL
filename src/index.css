@@ -28,6 +28,9 @@ html:not([data-panel-style='classic']) {
   --bg-surface: color-mix(in srgb, var(--panel-base-surface) var(--panel-fill), transparent);
   --bg-elevated: color-mix(in srgb, var(--panel-base-elevated) var(--panel-fill), transparent);
   --bg-card: color-mix(in srgb, var(--panel-base-card) var(--panel-fill), transparent);
+  /* 全屏详情页需更不透明，避免站序等内容透出底层渐变 */
+  --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 92%, transparent);
+  --route-detail-surface: color-mix(in srgb, var(--panel-base-surface) 92%, transparent);
   --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 35%), transparent);
   --route-card-promoted-bg: var(--bg-card);
   --route-card-promoted-border: color-mix(in srgb, var(--accent) 55%, var(--border));
@@ -47,6 +50,8 @@ html:not([data-panel-style='classic']) {
 html:not([data-panel-style='classic'])[data-theme='light'] {
   /* 浅色：与 transparent 混色几乎看不见，改与白色混出不透明浮层（≥75% 实感） */
   --bg-float: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
+  --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 94%, #ffffff);
+  --route-detail-surface: color-mix(in srgb, var(--panel-base-surface) 94%, #ffffff);
 }
 
 [data-theme='light'] {
