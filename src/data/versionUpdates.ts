@@ -52,7 +52,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-24'
+export const CURRENT_CHANGELOG_DATE = '2026-06-25'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -164,8 +164,64 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
-    id: '2026-06-24-summary',
+    id: '2026-06-25-summary',
     date: CURRENT_CHANGELOG_DATE,
+    title: {
+      zh: '2026-06-25 更新',
+      en: '2026-06-25 updates',
+    },
+    groups: [
+      {
+        title: { zh: '站序与副站名', en: 'Stops & subtitles' },
+        items: [
+          {
+            zh: '补全 21 线环线 20 站站序，括号内副站名（巴士车厂、炫光集等）在详情以小字显示；第 12 站改为阿周电视转折点。',
+            en: 'Completed route 21 circular stop list (20 stops); parenthetical aliases (Bus Depot, Neon Center, etc.) show as subtitles; stop 12 renamed to Roblox TV turning point.',
+          },
+          {
+            zh: '全站「转折点」改为醒目框标记（不算站名）：站序表、起终点与途经文案中的转折点字样均统一显示。',
+            en: '“Turning point” is now a vivid boxed badge (not part of the stop name) across stop tables, endpoints, and route copy.',
+          },
+          {
+            zh: '补全 N171 北行 61 站站序（长岛码头 → 彩虹中心），括号内副站名（阳光体育馆、月亮湾站、千叶站等）在详情以小字同行显示；修正中叶隧道与南环文化区公园先后次序。',
+            en: 'Completed N171 northbound stop list (61 stops, Long Island Ferry Pier → Rainbow Estate Complex); parenthetical aliases (Sunshine Stadium, Lunar Bay Station, Thousand Leaf Station, etc.) show inline as subtitles; fixed Leafy-Central Tunnel vs Southern Cultural District Park order.',
+          },
+          {
+            zh: 'N171 等线路的 14 组副站名（阳光体育馆、炫光集、月亮湾站、千叶站等）已同步到全站同名站点；折返点站不受影响。',
+            en: 'Fourteen subtitle aliases from N171 (Sunshine Stadium, Neon Center, Lunar Bay Station, Thousand Leaf Station, etc.) now apply site-wide to matching stop names; turning-point stops are excluded.',
+          },
+          {
+            zh: '补全 N171 南行 63 站站序（彩虹中心 → 长岛码头）；合并第七区转车站为单站，并新增叶角大学北门、钻石交易塔、北岛学校村、虹尾角站/宜和剧场等南行副站名，已同步全站同名站点。',
+            en: 'Completed N171 southbound stop list (63 stops, Rainbow Estate Complex → Long Island Ferry Pier); merged Zone 7 Interchange into one stop and added southbound-only subtitles (Leafy University North Entrance, Diamond Trading Tower, North Island School Village, Iris Point/Jardine Theater pairs), synced site-wide.',
+          },
+          {
+            zh: '副站名规则现会统一主站名（去掉站台后缀）并合并连续重复的第七区转车站；N271 等线路的南行双站已合并为单站。',
+            en: 'Subtitle rules now canonicalize main stop names (drop platform suffixes) and merge consecutive duplicate Zone 7 Interchange stops; southbound double stops on N271 and similar routes are now one.',
+          },
+          {
+            zh: '站名副标题（括号内小字）现以更小字号与区分色显示；线路卡片起终点、站序表与转车方案均统一主副站名样式。',
+            en: 'Stop subtitles (parenthetical aliases) now render smaller in a distinct color; route cards, stop tables, and transfer plans share the same main/sub styling.',
+          },
+          {
+            zh: '秘密页线路加载时同样套用全站副站名规则（含站序表与卡片起终点展示）。',
+            en: 'Secret-page routes now use the same site-wide stop subtitle rules in stop tables and card endpoints.',
+          },
+        ],
+      },
+      {
+        title: { zh: '界面与主题', en: 'UI & themes' },
+        items: [
+          {
+            zh: '透明渐变模式下更新弹窗背景改为约 85%～92% 不透明，更新内容不再过度透出底层页面渐变。',
+            en: 'In transparent-gradient mode, the update prompt now uses ~85–92% opaque panels so changelog text no longer bleeds through the page gradient.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '2026-06-24-summary',
+    date: '2026-06-24',
     title: {
       zh: '2026-06-24 更新',
       en: '2026-06-24 updates',
@@ -316,42 +372,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: '秘密页新增未授权台风特别安排 Y475（仙贝广场 ↺ 北顿市中心环线，CSB 走线；站序来自 Wiki 台风特别交通安排）。',
             en: 'Secret page adds unauthorized typhoon route Y475 (Senpai Shopping Center ↺ Norton Town Center loop, CSB alignment; stops from Wiki special traffic arrangements).',
-          },
-          {
-            zh: '补全 21 线环线 20 站站序，括号内副站名（巴士车厂、炫光集等）在详情以小字显示；第 12 站改为阿周电视转折点。',
-            en: 'Completed route 21 circular stop list (20 stops); parenthetical aliases (Bus Depot, Neon Center, etc.) show as subtitles; stop 12 renamed to Roblox TV turning point.',
-          },
-          {
-            zh: '全站「转折点」改为醒目框标记（不算站名）：站序表、起终点与途经文案中的转折点字样均统一显示。',
-            en: '“Turning point” is now a vivid boxed badge (not part of the stop name) across stop tables, endpoints, and route copy.',
-          },
-          {
-            zh: '补全 N171 北行 61 站站序（长岛码头 → 彩虹中心），括号内副站名（阳光体育馆、月亮湾站、千叶站等）在详情以小字同行显示；修正中叶隧道与南环文化区公园先后次序。',
-            en: 'Completed N171 northbound stop list (61 stops, Long Island Ferry Pier → Rainbow Estate Complex); parenthetical aliases (Sunshine Stadium, Lunar Bay Station, Thousand Leaf Station, etc.) show inline as subtitles; fixed Leafy-Central Tunnel vs Southern Cultural District Park order.',
-          },
-          {
-            zh: 'N171 等线路的 14 组副站名（阳光体育馆、炫光集、月亮湾站、千叶站等）已同步到全站同名站点；折返点站不受影响。',
-            en: 'Fourteen subtitle aliases from N171 (Sunshine Stadium, Neon Center, Lunar Bay Station, Thousand Leaf Station, etc.) now apply site-wide to matching stop names; turning-point stops are excluded.',
-          },
-          {
-            zh: '补全 N171 南行 63 站站序（彩虹中心 → 长岛码头）；合并第七区转车站为单站，并新增叶角大学北门、钻石交易塔、北岛学校村、虹尾角站/宜和剧场等南行副站名，已同步全站同名站点。',
-            en: 'Completed N171 southbound stop list (63 stops, Rainbow Estate Complex → Long Island Ferry Pier); merged Zone 7 Interchange into one stop and added southbound-only subtitles (Leafy University North Entrance, Diamond Trading Tower, North Island School Village, Iris Point/Jardine Theater pairs), synced site-wide.',
-          },
-          {
-            zh: '副站名规则现会统一主站名（去掉站台后缀）并合并连续重复的第七区转车站；N271 等线路的南行双站已合并为单站。',
-            en: 'Subtitle rules now canonicalize main stop names (drop platform suffixes) and merge consecutive duplicate Zone 7 Interchange stops; southbound double stops on N271 and similar routes are now one.',
-          },
-          {
-            zh: '站名副标题（括号内小字）现以更小字号与区分色显示；线路卡片起终点、站序表与转车方案均统一主副站名样式。',
-            en: 'Stop subtitles (parenthetical aliases) now render smaller in a distinct color; route cards, stop tables, and transfer plans share the same main/sub styling.',
-          },
-          {
-            zh: '秘密页线路加载时同样套用全站副站名规则（含站序表与卡片起终点展示）。',
-            en: 'Secret-page routes now use the same site-wide stop subtitle rules in stop tables and card endpoints.',
-          },
-          {
-            zh: '透明渐变模式下更新弹窗背景改为约 85%～92% 不透明，更新内容不再过度透出底层页面渐变。',
-            en: 'In transparent-gradient mode, the update prompt now uses ~85–92% opaque panels so changelog text no longer bleeds through the page gradient.',
           },
         ],
       },
