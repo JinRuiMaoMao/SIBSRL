@@ -3,7 +3,7 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { findSibsAudioRoot } from './lib/sibs-audio-root.mjs'
 import { routeIdToPageFilename } from './lib/route-page-filename-decode.mjs'
-import { ROUTE_MAP_CANONICAL_IDS } from './build-route-maps-manifest.mjs'
+import { ROUTE_MAP_CANONICAL_IDS, ROUTE_MAP_ROUTE_ALIASES } from './build-route-maps-manifest.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const destRoot = resolve(root, 'public', 'route-maps')
@@ -55,6 +55,30 @@ function collectRouteDirs(baseDir) {
   return readdirSync(baseDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => ({ routeId: entry.name, dir: join(baseDir, entry.name) }))
+}
+
+function resolveCanonicalRouteMapId(folderName) {
+  if (ROUTE_MAP_CANONICAL_IDS.includes(folderName)) return folderName
+  const aliased = ROUTE_MAP_ROUTE_ALIASES[folderName]
+  if (aliased && ROUTE_MAP_CANONICAL_IDS.includes(aliased)) return aliased
+  return null
+}
+
+/** E:\\SIBS资源\\77XA、21A 等与广播资源同级的线路目录 */
+function syncPerRouteFoldersUnderRoot(sibsRoot) {
+  let copied = 0
+  let routes = 0
+  for (const entry of readdirSync(sibsRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue
+    const canonicalId = resolveCanonicalRouteMapId(entry.name)
+    if (!canonicalId) continue
+    const count = syncRouteFromDir(canonicalId, join(sibsRoot, entry.name))
+    if (count > 0) {
+      copied += count
+      routes += 1
+    }
+  }
+  return { copied, routes }
 }
 
 function collectFlatFiles(baseDir) {
@@ -127,6 +151,10 @@ export function syncRouteMapImages(options = {}) {
       }
     }
   }
+
+  const fromRouteDirs = syncPerRouteFoldersUnderRoot(sibsRoot)
+  copied += fromRouteDirs.copied
+  routes += fromRouteDirs.routes
 
   if (copied > 0) {
     console.log(`[route-maps] 已同步 ${copied} 张图（${routes} 条线路）→ public/route-maps/`)
