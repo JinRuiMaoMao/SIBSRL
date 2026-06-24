@@ -170,6 +170,8 @@ export function getStopsOnLeg(leg: RouteLeg): MatchedStop[] {
   return list.slice(fromIndex, toIndex + 1).map((stop) => ({
     zh: stop.name.zh,
     en: stop.name.en,
+    ...(stop.nameSub ? { nameSub: stop.nameSub } : {}),
+    ...(stop.turningPoint ? { turningPoint: stop.turningPoint } : {}),
   }))
 }
 

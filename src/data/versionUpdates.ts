@@ -342,8 +342,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Subtitle rules now canonicalize main stop names (drop platform suffixes) and merge consecutive duplicate Zone 7 Interchange stops; southbound double stops on N271 and similar routes are now one.',
           },
           {
-            zh: '修复搜索框按 Enter 确认后无法用 Backspace 逐字删除的问题（URL ?q= 不再在每次按键时覆盖输入）。',
-            en: 'Fixed Backspace not deleting one character at a time in the search box after pressing Enter (?q= no longer overwrites the field on every keystroke).',
+            zh: '站名副标题（括号内小字）现以更小字号与区分色显示；线路卡片起终点、站序表与转车方案均统一主副站名样式。',
+            en: 'Stop subtitles (parenthetical aliases) now render smaller in a distinct color; route cards, stop tables, and transfer plans share the same main/sub styling.',
           },
         ],
       },

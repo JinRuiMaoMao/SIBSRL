@@ -5,12 +5,12 @@ import type { SeasonalAvailabilityWindow } from '../data/seasonalRouteAvailabili
 import type { BusRoute } from '../types/route'
 import {
   getDirectionDataIndex,
-  getDirectionEndpointNames,
   getDirectionLengthKm,
 } from '../utils/routeDirections'
 import { formatRouteOperators } from '../utils/routeDisplay'
 import { getRoutePageHref } from '../utils/routeNavigation'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
+import { resolveStopDisplay } from '../utils/stopTurningPoint'
 import { useSeasonalAvailabilityCountdown } from '../hooks/useSeasonalAvailabilityCountdown'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteStopSpine } from './RouteStopSpine'
@@ -44,7 +44,10 @@ export function SeasonalPromotedRouteCard({
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
   const stopGroup = route.stops?.[stopDataIndex]
   const stopCount = stopGroup?.list.length ?? 0
-  const endpoints = getDirectionEndpointNames(route, directionIndex, locale)
+  const originStop = stopGroup?.list[0] ? resolveStopDisplay(stopGroup.list[0]) : null
+  const destinationStop = stopGroup?.list.length
+    ? resolveStopDisplay(stopGroup.list[stopGroup.list.length - 1]!)
+    : null
   const eventTitle = route.eventTitle ? getPrimaryText(route.eventTitle, locale) : null
   const cardHref = href ?? getRoutePageHref(route.id)
 
@@ -98,11 +101,11 @@ export function SeasonalPromotedRouteCard({
           </div>
         </div>
 
-        {endpoints && stopCount > 0 ? (
+        {originStop && destinationStop && stopCount > 0 ? (
           <div className="route-card-endpoints-row">
             <RouteStopSpine
-              origin={endpoints.origin}
-              destination={endpoints.destination}
+              originStop={originStop}
+              destinationStop={destinationStop}
               stopCount={stopCount}
               size="promoted"
               className="seasonal-promoted-card-stops"

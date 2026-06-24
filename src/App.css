@@ -4647,7 +4647,43 @@ html[data-list-density='compact'] .transfer-plan-stop {
   display: inline-flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 0.3rem;
+  gap: 0.12rem;
+  line-height: 1.35;
+  min-width: 0;
+}
+
+.stop-name-zh {
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.stop-name-sub {
+  font-size: 0.72em;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--stop-name-sub, var(--text-muted));
+  letter-spacing: 0.01em;
+}
+
+.stop-name-sub::before {
+  content: '(';
+  margin-right: 0.04em;
+  opacity: 0.72;
+}
+
+.stop-name-sub::after {
+  content: ')';
+  margin-left: 0.04em;
+  opacity: 0.72;
+}
+
+html[data-theme='light'] .stop-name-sub {
+  color: var(--stop-name-sub, #64748b);
+}
+
+html[data-theme='dark'] .stop-name-sub {
+  color: var(--stop-name-sub, #8ba3c7);
 }
 
 .stop-turning-point-badge {
@@ -4677,38 +4713,9 @@ html[data-theme='light'] .stop-turning-point-badge {
     0 1px 4px rgba(200, 90, 0, 0.18);
 }
 
-.route-stop-spine-name {
+.route-stop-spine-name.stop-name {
   display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.transfer-plan-stop-name {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.stop-name-sub {
-  font-size: 0.76rem;
-  line-height: 1.25;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.stop-name-sub::before {
-  content: '(';
-}
-
-.stop-name-sub::after {
-  content: ')';
-}
-
-.stop-name-zh {
-  font-size: 0.9rem;
-  color: var(--text);
+  min-width: 0;
 }
 
 .stop-name .detail-en {

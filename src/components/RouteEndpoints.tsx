@@ -55,16 +55,12 @@ export function RouteEndpoints({
   if (stopGroup?.list.length) {
     const originStop = resolveStopDisplay(stopGroup.list[0]!)
     const destinationStop = resolveStopDisplay(stopGroup.list[stopGroup.list.length - 1]!)
-    const origin = getPrimaryText(originStop.name, locale)
-    const destination = getPrimaryText(destinationStop.name, locale)
 
     return (
       <div className={`route-endpoints-wrap ${className}`.trim()}>
         <RouteStopSpine
-          origin={origin}
-          destination={destination}
-          originTurningPoint={originStop.turningPoint}
-          destinationTurningPoint={destinationStop.turningPoint}
+          originStop={originStop}
+          destinationStop={destinationStop}
           stopCount={stopGroup.list.length}
           size={size}
         />

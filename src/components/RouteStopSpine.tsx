@@ -1,43 +1,34 @@
+import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
-import { StopTurningPointBadge } from './StopTurningPointBadge'
+import type { RouteStop } from '../types/route'
+import { StopNameDisplay } from './StopNameDisplay'
 
 export type RouteStopSpineSize = 'compact' | 'promoted' | 'detail'
 
 interface RouteStopSpineProps {
-  origin: string
-  destination: string
-  originTurningPoint?: boolean
-  destinationTurningPoint?: boolean
+  originStop: Pick<RouteStop, 'name' | 'nameSub' | 'turningPoint'>
+  destinationStop: Pick<RouteStop, 'name' | 'nameSub' | 'turningPoint'>
   stopCount: number
   size?: RouteStopSpineSize
   className?: string
 }
 
-function SpineStopName({ name, turningPoint }: { name: string; turningPoint?: boolean }) {
-  return (
-    <span className="route-stop-spine-name">
-      <span>{name}</span>
-      {turningPoint ? <StopTurningPointBadge /> : null}
-    </span>
-  )
-}
-
 /** 起终点竖线站序（F469 推广卡同款，支持紧凑卡片尺寸） */
 export function RouteStopSpine({
-  origin,
-  destination,
-  originTurningPoint = false,
-  destinationTurningPoint = false,
+  originStop,
+  destinationStop,
   stopCount,
   size = 'compact',
   className = '',
 }: RouteStopSpineProps) {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
+  const originLabel = getPrimaryText(originStop.name, locale)
+  const destinationLabel = getPrimaryText(destinationStop.name, locale)
 
   return (
     <div
       className={`route-stop-spine route-stop-spine--${size} ${className}`.trim()}
-      aria-label={`${origin} — ${destination}`}
+      aria-label={`${originLabel} — ${destinationLabel}`}
     >
       <span className="route-stop-spine-count">
         {t('seasonalPromotedStopCount', { count: stopCount })}
@@ -48,8 +39,8 @@ export function RouteStopSpine({
         <span className="route-stop-spine-dot" />
       </div>
       <div className="route-stop-spine-names">
-        <SpineStopName name={origin} turningPoint={originTurningPoint} />
-        <SpineStopName name={destination} turningPoint={destinationTurningPoint} />
+        <StopNameDisplay stop={originStop} className="route-stop-spine-name" />
+        <StopNameDisplay stop={destinationStop} className="route-stop-spine-name" />
       </div>
     </div>
   )

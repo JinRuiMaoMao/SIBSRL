@@ -1,4 +1,4 @@
-import type { BusRoute } from '../types/route'
+import type { BilingualText, BusRoute } from '../types/route'
 import { routes } from '../data/routes'
 import { mergeRoutesByBaseNumber } from './routeMerge'
 import { canonicalStopKey } from './stopIdentity'
@@ -6,6 +6,8 @@ import { canonicalStopKey } from './stopIdentity'
 export interface MatchedStop {
   zh: string
   en: string
+  nameSub?: BilingualText
+  turningPoint?: boolean
 }
 
 export interface CanonicalStopEntry {
@@ -25,6 +27,9 @@ function pickRepresentative(
   variants: Map<string, { stop: MatchedStop; routeCount: number }>,
 ): MatchedStop {
   const ranked = [...variants.values()].sort((a, b) => {
+    const aHasSub = a.stop.nameSub ? 1 : 0
+    const bHasSub = b.stop.nameSub ? 1 : 0
+    if (bHasSub !== aHasSub) return bHasSub - aHasSub
     if (b.routeCount !== a.routeCount) return b.routeCount - a.routeCount
     if (a.stop.zh.length !== b.stop.zh.length) return a.stop.zh.length - b.stop.zh.length
     return a.stop.zh.localeCompare(b.stop.zh, 'zh-Hans')
@@ -41,7 +46,12 @@ function buildCanonicalStopIndex(): Map<string, CanonicalStopEntry> {
     for (const group of route.stops ?? []) {
       for (const stop of group.list) {
         const key = canonicalStopKey(stop.name.zh, stop.name.en)
-        const matched: MatchedStop = { zh: stop.name.zh, en: stop.name.en }
+        const matched: MatchedStop = {
+          zh: stop.name.zh,
+          en: stop.name.en,
+          ...(stop.nameSub ? { nameSub: stop.nameSub } : {}),
+          ...(stop.turningPoint ? { turningPoint: stop.turningPoint } : {}),
+        }
         const literal = literalKey(matched)
 
         let entry = map.get(key)

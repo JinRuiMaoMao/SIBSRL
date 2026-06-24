@@ -1,29 +1,30 @@
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
-import { formatTransferPlanRouteChain, getStopsOnLeg, type TransferPlan } from '../utils/stopTransferPlans'
-import { resolveMatchedStopDisplay } from '../utils/stopTurningPoint'
-import { StopTurningPointBadge } from './StopTurningPointBadge'
+import type { MatchedStop } from '../utils/stopCanonicalIndex'
+import { getStopsOnLeg, type TransferPlan } from '../utils/stopTransferPlans'
+import { StopNameDisplay } from './StopNameDisplay'
 
 interface TransferPlanJourneyProps {
   plan: TransferPlan
   onOpenLeg?: (routeId: string, directionIndex: number) => void
 }
 
-function StopJourneyLabel({ stop, locale }: { stop: { zh: string; en: string }; locale: ReturnType<typeof useLocale>['locale'] }) {
-  const display = resolveMatchedStopDisplay(stop)
-  return (
-    <span className="transfer-plan-stop-name">
-      <span>{display.label}</span>
-      {display.turningPoint ? <StopTurningPointBadge /> : null}
-    </span>
-  )
+function matchedStopToDisplay(stop: MatchedStop) {
+  return {
+    name: { zh: stop.zh, en: stop.en },
+    nameSub: stop.nameSub,
+    turningPoint: stop.turningPoint,
+  }
 }
 
 function stopLabel(
-  stop: { zh: string; en: string },
+  stop: MatchedStop,
   locale: ReturnType<typeof useLocale>['locale'],
 ): string {
-  return resolveMatchedStopDisplay(stop).label
+  const display = matchedStopToDisplay(stop)
+  const main = getPrimaryText(display.name, locale)
+  const sub = display.nameSub ? getPrimaryText(display.nameSub, locale) : null
+  return sub ? `${main} (${sub})` : main
 }
 
 export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProps) {
@@ -97,7 +98,10 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
                       .filter(Boolean)
                       .join(' ')}
                   >
-                    <StopJourneyLabel stop={stop} locale={locale} />
+                    <StopNameDisplay
+                      stop={matchedStopToDisplay(stop)}
+                      className="transfer-plan-stop-name"
+                    />
                     {isOrigin ? (
                       <span className="transfer-plan-stop-tag">{t('transferPlanOriginTag')}</span>
                     ) : null}
@@ -128,9 +132,10 @@ export function TransferPlanJourney({ plan, onOpenLeg }: TransferPlanJourneyProp
             })}
           </p>
           <p className="transfer-plan-stop transfer-plan-stop is-destination transfer-plan-walk-end">
-            <span className="transfer-plan-stop-name">
-              {stopLabel(plan.walkToDestination.to, locale)}
-            </span>
+            <StopNameDisplay
+              stop={matchedStopToDisplay(plan.walkToDestination.to)}
+              className="transfer-plan-stop-name"
+            />
             <span className="transfer-plan-stop-tag">{t('transferPlanDestinationTag')}</span>
           </p>
         </section>
