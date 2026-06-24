@@ -48,7 +48,7 @@ export function ComplaintsPage() {
                 <div className="complaints-head">
                   <h3 className="complaints-title">
                     <span className="complaints-no" aria-hidden="true">
-                      {item.number}
+                      {filter === 'all' ? index + 1 : item.number}
                     </span>
                     <span>{getPrimaryText(item.title, locale)}</span>
                   </h3>
