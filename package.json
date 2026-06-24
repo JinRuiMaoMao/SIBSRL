@@ -12,7 +12,7 @@
     "sync:npc": "node scripts/sync-npc-audio.mjs",
     "gen:route-maps": "node scripts/build-route-maps-manifest.mjs",
     "sync:brand": "node scripts/sync-brand-assets.mjs",
-    "gen:changelog": "node --experimental-strip-types scripts/materialize-changelog.mjs",
+    "gen:changelog": "npx vite-node scripts/materialize-changelog.mjs",
     "gen:stop-aliases": "node scripts/generate-stop-aliases.mjs",
     "import:routes": "node scripts/import-route-from-wiki.mjs --all && node scripts/compose-476-from-wiki.mjs && node scripts/build-route-unlocks.mjs && node scripts/build-sibs-routes-ts.mjs",
     "build:sibs-routes": "node scripts/compose-476-from-wiki.mjs && node scripts/build-route-unlocks.mjs && node scripts/build-sibs-routes-ts.mjs",
