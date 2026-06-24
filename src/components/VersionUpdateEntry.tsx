@@ -2,7 +2,7 @@ import type { VersionUpdateEntry as VersionUpdateEntryData } from '../data/versi
 import {
   CHANGELOG_ADDITIONS_TITLE,
   CHANGELOG_FIXES_TITLE,
-} from '../data/versionUpdates'
+} from '../data/changelogStructure'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
 import { UpdatesEasterEgg } from './UpdatesEasterEgg'
