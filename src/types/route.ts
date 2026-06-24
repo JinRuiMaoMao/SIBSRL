@@ -35,6 +35,8 @@ export interface BilingualText {
 
 export interface RouteStop {
   name: BilingualText
+  /** 括号内副站名（详情站序表以小字显示） */
+  nameSub?: BilingualText
   zone?: number
   /** Distance from the previous stop in this direction. Omit on the first stop. */
   distanceFromPreviousMeters?: number

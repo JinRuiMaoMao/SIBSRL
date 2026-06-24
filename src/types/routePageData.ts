@@ -10,11 +10,13 @@ export interface RoutePageStopAudio {
 export type RoutePageStop =
   | {
       name: BilingualText
+      nameSub?: BilingualText
       zone?: number
       distanceFromPreviousMeters?: number
       audio?: RoutePageStopAudio
     }
   | (BilingualText & {
+      nameSub?: BilingualText
       zone?: number
       distanceFromPreviousMeters?: number
       audio?: RoutePageStopAudio

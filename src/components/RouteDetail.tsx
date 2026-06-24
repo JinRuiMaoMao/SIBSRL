@@ -234,6 +234,7 @@ export function RouteDetail({
             <ol className="stop-table-body">
               {activeStops.list.map((stop, i) => {
                 const name = getPrimaryText(stop.name, locale)
+                const nameSub = stop.nameSub ? getPrimaryText(stop.nameSub, locale) : null
                 const stopAudio =
                   loopView && routeHasLoopDirectionLayout(route)
                     ? null
@@ -249,6 +250,7 @@ export function RouteDetail({
                     <span className="stop-index stop-table-num">{i + 1}</span>
                     <span className="stop-table-name stop-name">
                       <span className="stop-name-zh">{name}</span>
+                      {nameSub ? <span className="stop-name-sub">{nameSub}</span> : null}
                     </span>
                     <span className="stop-table-zone">
                       {stop.zone != null ? (
