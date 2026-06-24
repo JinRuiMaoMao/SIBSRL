@@ -52,7 +52,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-23'
+export const CURRENT_CHANGELOG_DATE = '2026-06-24'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -164,8 +164,98 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
-    id: '2026-06-23-summary',
+    id: '2026-06-24-summary',
     date: CURRENT_CHANGELOG_DATE,
+    title: {
+      zh: '2026-06-24 更新',
+      en: '2026-06-24 updates',
+    },
+    groups: [
+      {
+        title: { zh: '账号与登录', en: 'Account & sign-in' },
+        items: [
+          {
+            zh: '修复退出后重登、跨设备登录失败等问题；登录态与本地收藏读取更稳定。',
+            en: 'Fixed sign-in failures after logout and across devices; session handling and local favorite reads are more reliable.',
+          },
+          {
+            zh: '修复收藏云端同步竞态：登录后不再因状态未就绪而误用旧数据；401 时正确退回本机模式；冲突对话框层级提高，避免被遮挡。',
+            en: 'Fixed favorites cloud-sync races—sign-in no longer applies stale state before hydration; 401 correctly falls back to local mode; conflict dialogs sit above other overlays.',
+          },
+          {
+            zh: '修复 Render API 的 CORS 配置在末尾带斜杠时无法匹配 GitHub Pages 来源的问题。',
+            en: 'Fixed CORS when USER_API_CORS_ORIGIN had a trailing slash and did not match the GitHub Pages origin.',
+          },
+          {
+            zh: '用户 API 在 Render 上启用持久磁盘，减少免费实例重启后账号数据丢失的风险。',
+            en: 'User API on Render now uses persistent disk, reducing account data loss risk after free-tier instance restarts.',
+          },
+        ],
+      },
+      {
+        title: { zh: '验证邮件', en: 'Verification email' },
+        items: [
+          {
+            zh: '优化注册/重置验证码邮件版式与发信配置，降低被判定为垃圾邮件的概率。',
+            en: 'Improved verification email layout and sending headers to reduce spam-folder classification.',
+          },
+          {
+            zh: '验证码邮件支持 15 种界面语言；发信语言跟随用户在站点内选择的语言。',
+            en: 'Verification emails support 15 UI languages, following the language selected in the site.',
+          },
+          {
+            zh: '邮件内按钮改为打开账号页并预填邮箱与验证码；从邮件跳转后注册/重置表单中的密码也会保留（新标签页或邮件 App 返回均有效）。',
+            en: 'Email buttons open the account page with email and code pre-filled; register/reset passwords are preserved when returning from mail in a new tab or mail app.',
+          },
+        ],
+      },
+      {
+        title: { zh: '新手引导', en: 'Guided tour' },
+        items: [
+          {
+            zh: '新增分栏目新手引导：线路列表、线路详情、广播、音乐、抱怨、更新等页面各自介绍本页控件；设置内可开关自动弹出、手动重播。',
+            en: 'Added per-tab guided tours for route list, route detail, broadcast, music, complaints, updates, and more; Settings can disable auto-start or replay the tour.',
+          },
+          {
+            zh: '修复浅色主题下聚光灯框错位、线路详情页误闪引导、以及引导循环导致空白页等问题。',
+            en: 'Fixed spotlight misalignment in light theme, unwanted tour flashes on route detail, and blank-page loops in the tour flow.',
+          },
+          {
+            zh: '提高设置面板与新手引导说明框的不透明度；浅色模式下浮层改为与白色混色，避免背后文字穿透重叠。',
+            en: 'Raised opacity for the settings dropdown and tour tooltips; light-theme floats blend with white so underlying text no longer shows through.',
+          },
+        ],
+      },
+      {
+        title: { zh: '界面与主题', en: 'UI & themes' },
+        items: [
+          {
+            zh: '页面背景改为多层渐变；透明渐变模式下各栏目（线路、广播、音乐、抱怨、更新、账号、秘密页）使用互不重复的独立配色。',
+            en: 'Page backgrounds use multi-layer gradients; transparent-gradient mode gives each tab (routes, broadcast, music, complaints, updates, account, secret) a distinct palette.',
+          },
+          {
+            zh: '线路卡片、收藏分类夹与内容区面板改为 25% 透明，可透出底层渐变；设置内可切换「透明渐变」与「经典实心」全站金色主题。',
+            en: 'Route cards, favorite folder tabs, and content panels are 25% transparent over the gradient; Settings toggles transparent gradient vs classic solid gold sitewide theme.',
+          },
+          {
+            zh: '浅色主题下广播（橙）、抱怨（红）、更新（蓝）等栏目的渐变与强调色重新调校，避免过艳或发脏。',
+            en: 'Retuned light-theme gradients and accents for broadcast (orange), complaints (red), updates (blue), and related tabs to avoid harsh or muddy colors.',
+          },
+          {
+            zh: '广播、音乐、抱怨、更新列表卡片采用与线路卡相同的加粗强调色外框与悬停高亮。',
+            en: 'Broadcast, music, complaints, and updates list cards now share the bold accent border and hover highlight used on route cards.',
+          },
+          {
+            zh: '修复 iPad 主屏幕添加到书签后仍显示巴士 emoji 的问题：补充 apple-touch-icon 并为图标链接增加构建版本参数。',
+            en: 'Fixed iPad home-screen bookmarks still showing a bus emoji—added apple-touch-icon and cache-busting on icon URLs.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '2026-06-23-summary',
+    date: '2026-06-23',
     title: {
       zh: '2026-06-23 更新',
       en: '2026-06-23 updates',
