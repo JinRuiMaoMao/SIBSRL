@@ -63,6 +63,31 @@ function syncRoute77XA(srcDir, destDir) {
   return { copied, slots, sourceCount: sourceFiles.length }
 }
 
+const ALIGHTING_REMINDER_SOURCE_HINTS = ['21路下车提醒', '下车提醒']
+const ALIGHTING_REMINDER_DEST = resolve('public', 'audio', 'routes', 'common', 'alighting-reminder.mp3')
+
+function syncAlightingReminder(root) {
+  const srcDir = resolveRouteSourceDir(root, ROUTE_21A_ID)
+  if (!srcDir) {
+    console.warn('通用下车提醒：未找到 21A 源目录')
+    return false
+  }
+
+  const source = readdirSync(srcDir)
+    .filter((f) => f.toLowerCase().endsWith('.mp3'))
+    .find((f) => ALIGHTING_REMINDER_SOURCE_HINTS.some((hint) => f.includes(hint)))
+
+  if (!source) {
+    console.warn(`通用下车提醒：未在 ${srcDir} 找到 21路下车提醒.mp3`)
+    return false
+  }
+
+  mkdirSync(resolve(ALIGHTING_REMINDER_DEST, '..'), { recursive: true })
+  copyFileSync(join(srcDir, source), ALIGHTING_REMINDER_DEST)
+  console.log(`通用下车提醒：${source} → ${ALIGHTING_REMINDER_DEST}`)
+  return true
+}
+
 export function syncRouteBroadcastAudio(options = {}) {
   const root = options.root ?? findSibsAudioRoot()
   const routeIds = options.routeIds ?? ROUTE_BROADCAST_IDS
@@ -74,6 +99,8 @@ export function syncRouteBroadcastAudio(options = {}) {
   }
 
   console.log(`线路报站音频源：${root}`)
+
+  syncAlightingReminder(root)
 
   for (const routeId of routeIds) {
     const srcDir = resolveRouteSourceDir(root, routeId)

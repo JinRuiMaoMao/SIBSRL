@@ -1,8 +1,22 @@
+import { routes } from './routes'
+import {
+  ALIGHTING_REMINDER_AUDIO_URL,
+  ALIGHTING_REMINDER_LABEL,
+} from './routeAlightingReminder'
 import { getRoute21AStopAudioByAtIndex, ROUTE_21A_ID } from './routeStopAudio21A'
 import type { RouteStopAudioAtRow } from './routeStopAudio21A'
 import { getRoute77XAStopAudioByAtIndex, ROUTE_77XA_ID } from './routeStopAudio77XA'
 
-export function getRouteStopAudioAtRow(
+const ROUTE_ID_ALIASES: Record<string, string> = {
+  '21': ROUTE_21A_ID,
+  '77X': ROUTE_77XA_ID,
+}
+
+function resolveRouteDataId(routeId: string): string {
+  return ROUTE_ID_ALIASES[routeId] ?? routeId
+}
+
+function getRouteSpecificStopAudio(
   routeId: string,
   atStopIndex: number,
 ): RouteStopAudioAtRow | undefined {
@@ -15,14 +29,30 @@ export function getRouteStopAudioAtRow(
   return undefined
 }
 
+export function getRouteStopAudioAtRow(
+  routeId: string,
+  atStopIndex: number,
+  directionGroupIndex = 0,
+  stopListLength?: number,
+): RouteStopAudioAtRow | undefined {
+  const length = stopListLength ?? 0
+  if (length > 0 && atStopIndex === length - 1) {
+    return {
+      atStopIndex,
+      nextStopLabel: ALIGHTING_REMINDER_LABEL,
+      audioUrl: ALIGHTING_REMINDER_AUDIO_URL,
+    }
+  }
+
+  return getRouteSpecificStopAudio(routeId, atStopIndex)
+}
+
 export function routeHasStopAudio(routeId: string): boolean {
-  if (routeId === ROUTE_21A_ID || routeId === '21') {
-    const map = getRoute21AStopAudioByAtIndex()
-    return map != null && map.size > 0
-  }
-  if (routeId === ROUTE_77XA_ID || routeId === '77X') {
-    const map = getRoute77XAStopAudioByAtIndex()
-    return map != null && map.size > 0
-  }
-  return false
+  const dataId = resolveRouteDataId(routeId)
+  const route = routes.find((r) => r.id === dataId)
+  if (!route?.stops?.length) return false
+
+  if (getRouteSpecificStopAudio(routeId, 0)) return true
+
+  return route.stops.some((group) => group.list.length > 0)
 }

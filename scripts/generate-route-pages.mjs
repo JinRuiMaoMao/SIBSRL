@@ -48,10 +48,44 @@ function selectRoutePageData(id, preservedData, manifestData) {
     hasSubjectTemplateStop(preservedData) &&
     !hasSubjectTemplateStop(manifestData)
   ) {
-    return { ...manifestData, id }
+    return mergeStopAudioFromManifest(manifestData, { ...manifestData, id })
   }
 
-  return { ...(preservedData ?? manifestData ?? {}), id }
+  return mergeStopAudioFromManifest(
+    manifestData,
+    { ...(preservedData ?? manifestData ?? {}), id },
+  )
+}
+
+/** 构建产出的报站音频（如通用末站下车提醒）覆盖/补入已发布页面 JSON */
+function mergeStopAudioFromManifest(manifestData, pageData) {
+  if (!manifestData?.stops?.length || !pageData?.stops?.length) {
+    if (manifestData?.stopAudio?.length) {
+      return { ...pageData, stopAudio: manifestData.stopAudio }
+    }
+    return pageData
+  }
+
+  const stops = pageData.stops.map((group, groupIndex) => {
+    const manifestGroup = manifestData.stops[groupIndex]
+    if (!manifestGroup?.list?.length || !group.list?.length) return group
+
+    const manifestLast = manifestGroup.list[manifestGroup.list.length - 1]
+    if (!manifestLast?.audio) return group
+
+    const list = group.list.map((stop, stopIndex) => {
+      if (stopIndex !== group.list.length - 1) return stop
+      return { ...stop, audio: manifestLast.audio }
+    })
+
+    return { ...group, list }
+  })
+
+  const next = { ...pageData, stops }
+  if (manifestData.stopAudio?.length) {
+    next.stopAudio = manifestData.stopAudio
+  }
+  return next
 }
 
 /**

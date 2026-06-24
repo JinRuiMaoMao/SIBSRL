@@ -46,12 +46,12 @@ function stopToPageStop(
 }
 
 function collectStopAudio(route: BusRoute): RoutePageData['stopAudio'] {
-  const groups = route.stops ?? []
-  const maxRows = Math.max(0, ...groups.map((g) => g.list.length))
+  const list = route.stops?.[0]?.list
+  if (!list?.length) return undefined
   const items: NonNullable<RoutePageData['stopAudio']> = []
 
-  for (let i = 0; i < maxRows; i += 1) {
-    const row = getRouteStopAudioAtRow(route.id, i)
+  for (let i = 0; i < list.length; i += 1) {
+    const row = getRouteStopAudioAtRow(route.id, i, 0, list.length)
     if (!row) continue
     items.push({
       atStopIndex: i,
@@ -83,9 +83,9 @@ export function busRouteToPageData(route: BusRoute): RoutePageData {
   if (route.via) data.via = route.via
 
   if (route.stops?.length) {
-    data.stops = route.stops.map((group): RoutePageStopGroup => {
+    data.stops = route.stops.map((group, groupIndex): RoutePageStopGroup => {
       const list = group.list.map((stop, index) => {
-        const audioRow = getRouteStopAudioAtRow(route.id, index)
+        const audioRow = getRouteStopAudioAtRow(route.id, index, groupIndex, group.list.length)
         const audio = audioRow
           ? {
               audioUrl: audioRow.audioUrl,

@@ -238,7 +238,7 @@ export function RouteDetail({
                   loopView && routeHasLoopDirectionLayout(route)
                     ? null
                     : (getPageStopAudioAtRow(pageData, stopDataIndex, i) ??
-                      getRouteStopAudioAtRow(route.id, i))
+                      getRouteStopAudioAtRow(route.id, i, stopDataIndex, activeStops.list.length))
                 const audioId = `${route.id}-at-${i}`
                 const nextName = stopAudio
                   ? getPrimaryText(stopAudio.nextStopLabel, locale)
