@@ -345,6 +345,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '站名副标题（括号内小字）现以更小字号与区分色显示；线路卡片起终点、站序表与转车方案均统一主副站名样式。',
             en: 'Stop subtitles (parenthetical aliases) now render smaller in a distinct color; route cards, stop tables, and transfer plans share the same main/sub styling.',
           },
+          {
+            zh: '秘密页线路加载时同样套用全站副站名规则（含站序表与卡片起终点展示）。',
+            en: 'Secret-page routes now use the same site-wide stop subtitle rules in stop tables and card endpoints.',
+          },
         ],
       },
     ],

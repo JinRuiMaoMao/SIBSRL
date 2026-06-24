@@ -1,5 +1,13 @@
 import type { BusRoute } from '../types/route'
+import { normalizeRouteData } from '../utils/normalizeRouteData'
 import secretRoutesJson from '../../data/secret-routes.json'
+
+type SecretRouteStop = {
+  name: { zh: string; en: string }
+  nameSub?: { zh: string; en: string }
+  turningPoint?: boolean
+  zone?: number
+}
 
 type SecretRouteJson = {
   id: string
@@ -18,7 +26,7 @@ type SecretRouteJson = {
   stops?: {
     direction: { zh: string; en: string }
     directionKey?: 'N' | 'S' | 'E' | 'W'
-    list: { name: { zh: string; en: string }; zone?: number }[]
+    list: SecretRouteStop[]
   }[]
 }
 
@@ -62,7 +70,9 @@ function toBusRoute(raw: SecretRouteJson): BusRoute {
   }
 }
 
-export const secretRoutes: BusRoute[] = (secretRoutesJson as SecretRouteJson[]).map(toBusRoute)
+export const secretRoutes: BusRoute[] = (secretRoutesJson as SecretRouteJson[]).map((raw) =>
+  normalizeRouteData(toBusRoute(raw)),
+)
 
 export function findSecretRoute(routeId: string): BusRoute | undefined {
   const normalized = routeId.trim()
