@@ -1163,28 +1163,41 @@ html[data-reduce-motion='true'] .app-tab-bar--liquid.app-tab-bar--desktop {
   height: 2rem;
   transform: translateY(100%);
   pointer-events: none;
+  z-index: 2;
   opacity: 0;
   transition: opacity 0.22s ease;
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--bg-deep) 82%, transparent),
+    color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 82%, transparent),
     transparent
   );
 }
 
 .route-lookup-sticky--fade {
+  --route-sticky-scrim-top: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 94%, transparent);
+  --route-sticky-scrim-mid: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 88%, transparent);
+  --route-sticky-scrim-bottom: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 68%, transparent);
+  --route-sticky-mask-edge: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 84%, transparent);
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--bg-deep) 96%, transparent) 0%,
-    color-mix(in srgb, var(--bg-deep) 90%, transparent) 72%,
-    color-mix(in srgb, var(--bg-deep) 62%, transparent) 100%
+    var(--route-sticky-scrim-top) 0%,
+    var(--route-sticky-scrim-mid) 72%,
+    var(--route-sticky-scrim-bottom) 100%
   );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
+html[data-theme='light']:not([data-panel-style='classic']) .route-lookup-sticky--fade {
+  --route-sticky-scrim-top: color-mix(in srgb, var(--panel-base-surface) 94%, #ffffff);
+  --route-sticky-scrim-mid: color-mix(in srgb, var(--panel-base-surface) 90%, #ffffff);
+  --route-sticky-scrim-bottom: color-mix(in srgb, var(--panel-base-surface) 76%, #ffffff);
+  --route-sticky-mask-edge: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
+}
+
 .route-lookup-sticky--fade::after {
   opacity: 1;
+  background: linear-gradient(to bottom, var(--route-sticky-mask-edge), transparent);
 }
 
 html[data-reduce-motion='true'] .route-lookup-sticky::after {

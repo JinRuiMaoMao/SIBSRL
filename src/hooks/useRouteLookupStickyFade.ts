@@ -1,26 +1,18 @@
-import { isDailyChallengeCountdownUnderSticky } from '../utils/dailyChallengeStickyOverlap'
+import { isRouteListUnderStickyToolbar } from '../utils/dailyChallengeStickyOverlap'
 import { useEffect, useState, type RefObject } from 'react'
 
 /**
- * 列表上滑、每日挑战倒计时进入置顶搜索栏区域时，为搜索栏启用底部渐变蒙版。
+ * 列表内容上滑进入置顶搜索栏区域时，为搜索栏启用底部渐变蒙版。
  */
-export function useRouteLookupStickyFade(
-  stickyRef: RefObject<HTMLElement | null>,
-  enabled: boolean,
-): boolean {
+export function useRouteLookupStickyFade(stickyRef: RefObject<HTMLElement | null>): boolean {
   const [fade, setFade] = useState(false)
 
   useEffect(() => {
-    if (!enabled) {
-      setFade(false)
-      return
-    }
-
     const sticky = stickyRef.current
     if (!sticky) return
 
     const sync = () => {
-      setFade(isDailyChallengeCountdownUnderSticky(sticky))
+      setFade(isRouteListUnderStickyToolbar(sticky))
     }
 
     sync()
@@ -29,15 +21,17 @@ export function useRouteLookupStickyFade(
 
     const ro = new ResizeObserver(sync)
     ro.observe(sticky)
-    const countdown = document.querySelector<HTMLElement>('.daily-challenge-reset-countdown')
-    if (countdown) ro.observe(countdown)
+
+    const page = sticky.closest('.route-lookup-page')
+    const list = page?.querySelector('.route-list-section')
+    if (list) ro.observe(list)
 
     return () => {
       window.removeEventListener('scroll', sync)
       window.removeEventListener('resize', sync)
       ro.disconnect()
     }
-  }, [enabled, stickyRef])
+  }, [stickyRef])
 
   return fade
 }

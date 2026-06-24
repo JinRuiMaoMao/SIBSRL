@@ -281,6 +281,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '个人中心支持自定义显示名称与头像，保存后同步至云端并在顶栏头像处显示。',
             en: 'The account page now supports a custom display name and avatar, synced to the cloud and shown in the header.',
           },
+          {
+            zh: '修复桌面端线路列表上滑时搜索栏底部蒙版未生效、与卡片文字重叠的问题。',
+            en: 'Fixed the desktop-only bug where the search bar bottom scrim did not activate and route text overlapped while scrolling.',
+          },
         ],
       },
     ],

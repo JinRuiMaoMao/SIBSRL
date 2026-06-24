@@ -255,7 +255,7 @@ export function RouteLookupPage({
     operators,
     types,
   } = useRouteSearch(dailyChallenge)
-  const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef, dailyChallengeVisible)
+  const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef)
   const { scrollHidden: syntaxScrollHidden, forceOpen: syntaxForceOpen, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
     useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef, {
       onReturnToTop: tryUnlockManualSyntaxHideAtTop,
