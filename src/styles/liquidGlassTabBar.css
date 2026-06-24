@@ -144,7 +144,21 @@
 }
 
 html.has-compact-tab-nav .app {
-  padding-bottom: calc(4.65rem + env(safe-area-inset-bottom, 0px));
+  --app-tab-bar-reserve: calc(4.65rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: var(--app-tab-bar-reserve);
+}
+
+html.settings-panel-open .app-tab-bar-shell--mobile,
+html.settings-panel-open .app-tab-bar-shell--desktop {
+  z-index: 90;
+}
+
+html.has-compact-tab-nav .settings-panel {
+  max-height: calc(
+    100dvh - var(--settings-panel-top, 3.5rem) - 0.35rem - var(--app-tab-bar-reserve, 0px)
+  );
+  scroll-padding-bottom: 1rem;
+  padding-bottom: calc(0.75rem + var(--app-tab-bar-reserve, 0px));
 }
 
 html[data-reduce-motion='true'] .app-tab-bar--liquid .app-tab-bar-item,

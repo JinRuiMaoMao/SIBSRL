@@ -4620,6 +4620,13 @@ html[data-list-density='compact'] .transfer-plan-stop {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 
+  html.has-compact-tab-nav .settings-panel {
+    max-height: calc(
+      100dvh - var(--settings-panel-top, 4rem) - 0.5rem - var(--app-tab-bar-reserve, 0px)
+    );
+    padding-bottom: calc(max(0.75rem, env(safe-area-inset-bottom, 0px)) + var(--app-tab-bar-reserve, 0px));
+  }
+
   .settings-locale-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

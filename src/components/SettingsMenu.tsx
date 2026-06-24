@@ -49,6 +49,11 @@ export function SettingsMenu() {
   }, [open])
 
   useEffect(() => {
+    document.documentElement.classList.toggle('settings-panel-open', open)
+    return () => document.documentElement.classList.remove('settings-panel-open')
+  }, [open])
+
+  useEffect(() => {
     if (!open) return
     const onPointerDown = (e: PointerEvent) => {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
