@@ -240,6 +240,7 @@ export function DailyChallengeCalendarDialog({
         aria-modal="true"
         aria-labelledby="daily-challenge-calendar-title"
       >
+        <span className="sibs-liquid-glass-surface" aria-hidden />
         <div className="daily-challenge-calendar-header">
           <h2 id="daily-challenge-calendar-title" className="daily-challenge-calendar-title">
             {t('dailyChallengeCalendarTitle')}

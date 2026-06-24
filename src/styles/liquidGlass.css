@@ -1,0 +1,100 @@
+/* Shared Apple-style Liquid Glass — settings, calendar, bottom tab bar */
+
+:root {
+  --lg-blur: 14px;
+  --lg-tint: var(--bg-float, var(--bg-elevated));
+  --lg-tint-strong: color-mix(in srgb, var(--bg-float, var(--bg-elevated)) 82%, var(--accent-soft));
+  --lg-border: var(--border);
+  --lg-shine-top: color-mix(in srgb, var(--accent-glow) 42%, transparent);
+  --lg-shine-mid: color-mix(in srgb, var(--accent-soft) 28%, transparent);
+  --lg-shadow: var(--shadow-overlay);
+}
+
+.liquid-glass-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sibs-liquid-glass-surface,
+.app-tab-bar-liquid-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sibs-liquid-glass-surface::before,
+.app-tab-bar-liquid-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--lg-tint);
+  backdrop-filter: blur(var(--lg-blur)) saturate(165%);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(165%);
+  filter: url('#sibs-liquid-glass-refract');
+}
+
+.sibs-liquid-glass-surface::after,
+.app-tab-bar-liquid-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--lg-border);
+  background: linear-gradient(
+    165deg,
+    var(--lg-shine-top) 0%,
+    transparent 38%,
+    transparent 58%,
+    var(--lg-shine-mid) 100%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.sibs-liquid-glass-indicator,
+.app-tab-bar-liquid-indicator {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 999px;
+  background: var(--lg-tint-strong);
+  backdrop-filter: blur(10px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(180%) brightness(1.05);
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--lg-border));
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--accent-glow) 55%, transparent) inset,
+    0 4px 14px color-mix(in srgb, var(--accent-soft) 75%, transparent);
+  transition:
+    left 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+    background 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sibs-liquid-glass-surface::before,
+  .app-tab-bar-liquid-surface::before {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    filter: none;
+    background: var(--bg-float, var(--bg-elevated));
+  }
+
+  .sibs-liquid-glass-indicator,
+  .app-tab-bar-liquid-indicator {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--accent-soft);
+  }
+}
+
+html[data-reduce-motion='true'] .sibs-liquid-glass-indicator,
+html[data-reduce-motion='true'] .app-tab-bar-liquid-indicator {
+  transition: none;
+}

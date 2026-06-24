@@ -2777,7 +2777,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
   inset: 0;
   border: none;
   background: color-mix(in srgb, var(--bg) 20%, transparent);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   cursor: pointer;
 }
 
@@ -2788,10 +2789,16 @@ html[data-list-density='compact'] .transfer-plan-stop {
   max-height: min(88vh, 920px);
   overflow: auto;
   padding: 1rem 1.1rem 1.25rem;
-  border: 1px solid var(--border);
+  border: none;
   border-radius: var(--radius-lg);
-  background: var(--bg-surface);
+  background: transparent;
   box-shadow: 0 16px 48px var(--shadow-overlay);
+  isolation: isolate;
+}
+
+.daily-challenge-calendar-panel > :not(.sibs-liquid-glass-surface) {
+  position: relative;
+  z-index: 1;
 }
 
 .daily-challenge-calendar-header {
@@ -2875,14 +2882,18 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .daily-challenge-calendar-nav-select {
+  position: relative;
   min-width: 5.5rem;
   padding: 0.35rem 0.55rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-elevated);
+  border-radius: 10px;
+  background: var(--lg-tint, var(--bg-float, var(--bg-elevated)));
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
   color: var(--text);
   font: inherit;
   font-size: 0.88rem;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent-glow) 25%, transparent) inset;
 }
 
 .daily-challenge-calendar-nav-select:focus-visible {
@@ -2894,12 +2905,15 @@ html[data-list-density='compact'] .transfer-plan-stop {
   width: 2.25rem;
   height: 2.25rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-elevated);
+  border-radius: 10px;
+  background: var(--lg-tint, var(--bg-float, var(--bg-elevated)));
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
   color: var(--text);
   font-size: 1.35rem;
   line-height: 1;
   cursor: pointer;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent-glow) 25%, transparent) inset;
 }
 
 .daily-challenge-calendar-nav-btn:hover,

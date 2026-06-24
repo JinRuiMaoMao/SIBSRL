@@ -6,7 +6,6 @@ import type { AppTab } from '../types/appTab'
 import { APP_TABS, getTabPageHref } from '../utils/appTabNavigation'
 import { hasUnreadUpdates } from '../utils/updatesPrompt'
 import { AppTabIcon } from './AppTabIcons'
-import { LiquidGlassDefs } from './LiquidGlassDefs'
 
 const TAB_KEYS: Record<AppTab, MessageKey> = {
   routes: 'tabRoutes',
@@ -81,9 +80,8 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
       aria-label={t('navMain')}
       style={{ '--active-tab-index': activeTabIndex } as CSSProperties}
     >
-      <LiquidGlassDefs />
-      <span className="app-tab-bar-liquid-surface" aria-hidden />
-      <span className="app-tab-bar-liquid-indicator" aria-hidden />
+      <span className="sibs-liquid-glass-surface app-tab-bar-liquid-surface" aria-hidden />
+      <span className="sibs-liquid-glass-indicator app-tab-bar-liquid-indicator" aria-hidden />
       {APP_TABS.map((tab) => renderTabLink(tab))}
     </nav>
   )

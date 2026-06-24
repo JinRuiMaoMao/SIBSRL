@@ -1,4 +1,4 @@
-/** SVG displacement filters for Liquid Glass tab bar surfaces. */
+/** SVG displacement filters for shared Liquid Glass surfaces. */
 export function LiquidGlassDefs() {
   return (
     <svg className="liquid-glass-defs" aria-hidden width="0" height="0">

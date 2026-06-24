@@ -8,6 +8,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
 import { AppTabBar } from './components/AppTabBar'
+import { LiquidGlassDefs } from './components/LiquidGlassDefs'
 import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
@@ -153,6 +154,7 @@ function App() {
   if (isAccountPage()) {
     return (
       <>
+        <LiquidGlassDefs />
         {favoritesSyncDialog}
         <div className="app sibs-scrollbar">
         <Header
@@ -196,6 +198,7 @@ function App() {
 
     return (
       <>
+        <LiquidGlassDefs />
         {favoritesSyncDialog}
         <div className="app sibs-scrollbar">
           <SecretHeader
@@ -221,6 +224,7 @@ function App() {
 
   return (
     <>
+      <LiquidGlassDefs />
       {favoritesSyncDialog}
       {guidedTourLayer}
       <div className="app sibs-scrollbar">
