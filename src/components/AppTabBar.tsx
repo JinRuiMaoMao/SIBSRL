@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { useCompactTabNav } from '../hooks/useCompactTabNav'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
@@ -6,6 +6,7 @@ import type { AppTab } from '../types/appTab'
 import { APP_TABS, getTabPageHref } from '../utils/appTabNavigation'
 import { hasUnreadUpdates } from '../utils/updatesPrompt'
 import { AppTabIcon } from './AppTabIcons'
+import { LiquidGlassDefs } from './LiquidGlassDefs'
 
 const TAB_KEYS: Record<AppTab, MessageKey> = {
   routes: 'tabRoutes',
@@ -24,6 +25,8 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
   const compact = useCompactTabNav()
   const [updatesUnread, setUpdatesUnread] = useState(() => hasUnreadUpdates())
 
+  const resolvedActive = activeTab ?? 'routes'
+  const activeTabIndex = Math.max(0, APP_TABS.indexOf(resolvedActive))
   const showUpdatesBadge = updatesUnread && activeTab !== 'updates'
 
   useEffect(() => {
@@ -74,7 +77,15 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
   if (compact) {
     return (
       <div className="app-tab-bar-shell app-tab-bar-shell--mobile" data-tour="app-tab-bar">
-        <nav className="app-tab-bar app-tab-bar--mobile" role="tablist" aria-label={t('navMain')}>
+        <nav
+          className="app-tab-bar app-tab-bar--mobile app-tab-bar--liquid"
+          role="tablist"
+          aria-label={t('navMain')}
+          style={{ '--active-tab-index': activeTabIndex } as CSSProperties}
+        >
+          <LiquidGlassDefs />
+          <span className="app-tab-bar-liquid-surface" aria-hidden />
+          <span className="app-tab-bar-liquid-indicator" aria-hidden />
           {APP_TABS.map((tab) => renderTabLink(tab))}
         </nav>
       </div>
