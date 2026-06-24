@@ -213,8 +213,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         title: { zh: '新手引导', en: 'Guided tour' },
         items: [
           {
-            zh: '新增分栏目新手引导：线路列表、线路详情、广播、音乐、抱怨、更新等页面各自介绍本页控件；设置内可开关自动弹出、手动重播。',
-            en: 'Added per-tab guided tours for route list, route detail, broadcast, music, complaints, updates, and more; Settings can disable auto-start or replay the tour.',
+            zh: '新增分栏目新手引导：线路列表、线路详情、广播、音乐、NPC、更新等页面各自介绍本页控件；设置内可开关自动弹出、手动重播。',
+            en: 'Added per-tab guided tours for route list, route detail, broadcast, music, NPC, updates, and more; Settings can disable auto-start or replay the tour.',
           },
           {
             zh: '修复浅色主题下聚光灯框错位、线路详情页误闪引导、以及引导循环导致空白页等问题。',
@@ -230,20 +230,20 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         title: { zh: '界面与主题', en: 'UI & themes' },
         items: [
           {
-            zh: '页面背景改为多层渐变；透明渐变模式下各栏目（线路、广播、音乐、抱怨、更新、账号、秘密页）使用互不重复的独立配色。',
-            en: 'Page backgrounds use multi-layer gradients; transparent-gradient mode gives each tab (routes, broadcast, music, complaints, updates, account, secret) a distinct palette.',
+            zh: '页面背景改为多层渐变；透明渐变模式下各栏目（线路、广播、音乐、NPC、更新、账号、秘密页）使用互不重复的独立配色。',
+            en: 'Page backgrounds use multi-layer gradients; transparent-gradient mode gives each tab (routes, broadcast, music, NPC, updates, account, secret) a distinct palette.',
           },
           {
             zh: '线路卡片、收藏分类夹与内容区面板改为 25% 透明，可透出底层渐变；设置内可切换「透明渐变」与「经典实心」全站金色主题。',
             en: 'Route cards, favorite folder tabs, and content panels are 25% transparent over the gradient; Settings toggles transparent gradient vs classic solid gold sitewide theme.',
           },
           {
-            zh: '浅色主题下广播（橙）、抱怨（红）、更新（蓝）等栏目的渐变与强调色重新调校，避免过艳或发脏。',
-            en: 'Retuned light-theme gradients and accents for broadcast (orange), complaints (red), updates (blue), and related tabs to avoid harsh or muddy colors.',
+            zh: '浅色主题下广播（橙）、NPC（红）、更新（蓝）等栏目的渐变与强调色重新调校，避免过艳或发脏。',
+            en: 'Retuned light-theme gradients and accents for broadcast (orange), NPC (red), updates (blue), and related tabs to avoid harsh or muddy colors.',
           },
           {
-            zh: '广播、音乐、抱怨、更新列表卡片采用与线路卡相同的加粗强调色外框与悬停高亮。',
-            en: 'Broadcast, music, complaints, and updates list cards now share the bold accent border and hover highlight used on route cards.',
+            zh: '广播、音乐、NPC、更新列表卡片采用与线路卡相同的加粗强调色外框与悬停高亮。',
+            en: 'Broadcast, music, NPC, and updates list cards now share the bold accent border and hover highlight used on route cards.',
           },
           {
             zh: '修复 iPad 主屏幕添加到书签后仍显示巴士 emoji 的问题：补充 apple-touch-icon 并为图标链接增加构建版本参数。',
@@ -727,6 +727,31 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '暂移除站序表「距上站 / From prev.」列；站间距相关展示之后再做。',
             en: 'Removed the stop table’s “From prev.” column for now; stop-spacing display will come later.',
           },
+          {
+            zh: '走向/高度图改在本页打开，不再跳转新标签页。',
+            en: 'Path and elevation maps now open in the same page instead of a new tab.',
+          },
+          {
+            zh: '21A 已补全高度图（与 21 线路共用走向/高度入口）。',
+            en: 'Added the 21A elevation map (shared Path/Elevation entry with route 21).',
+          },
+        ],
+      },
+      {
+        title: { zh: '报站与音频', en: 'PA & audio' },
+        items: [
+          {
+            zh: '全部线路终点站统一接入下车提醒音频（可从 SIBS 资源同步至 audio/routes/common/）。',
+            en: 'All routes now share a last-stop alighting reminder clip (syncable from SIBS assets to audio/routes/common/).',
+          },
+          {
+            zh: '新增站名音频池：下一停靠站名与 SIBS 资源文件夹内 MP3 文件名匹配时自动选用（npm run sync:stop-names）。',
+            en: 'Added a stop-name audio pool—when the next stop matches an MP3 filename in SIBS assets, that clip is used automatically (npm run sync:stop-names).',
+          },
+          {
+            zh: '白鸽山站名音频：21/21A 仍按经停次序区分；其他线路默认「白鸽山 2」，若第 2 站为白鸽山则用「白鸽山 1」。',
+            en: 'Baige Mountain stop audio: 21/21A still follow pass order; other routes default to Baige Mountain 2, switching to Baige Mountain 1 when stop #2 is Baige Mountain.',
+          },
         ],
       },
       {
@@ -775,21 +800,33 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Fixed empty space beside wrapped direction toggles in compact English—toggle bar fits content and uses short North/South labels.',
           },
           {
-            zh: '紧凑列表密度现同步作用于广播、音乐、乘客抱怨与版本更新页：缩小间距与字号，广播/音乐/抱怨卡片改为多列网格，播放按钮同步缩小。',
-            en: 'Compact list density now applies to Broadcast, Music, Complaints, and Updates—tighter spacing and type, multi-column grids for audio lists, and smaller play buttons.',
+            zh: '紧凑列表密度现同步作用于广播、音乐、NPC 与版本更新页：缩小间距与字号，广播/音乐/NPC 卡片改为多列网格，播放按钮同步缩小。',
+            en: 'Compact list density now applies to Broadcast, Music, NPC, and Updates—tighter spacing and type, multi-column grids for audio lists, and smaller play buttons.',
           },
           {
-            zh: '紧凑模式下广播/音乐/抱怨卡片将播放控件移至标题下方，留出分隔空隙，避免长标题与侧边按钮重叠。',
-            en: 'In compact mode, audio controls on Broadcast/Music/Complaints cards sit below the title with a divider gap so long labels no longer collide with side buttons.',
+            zh: '紧凑模式下广播/音乐/NPC 卡片将播放控件移至标题下方，留出分隔空隙，避免长标题与侧边按钮重叠。',
+            en: 'In compact mode, audio controls on Broadcast/Music/NPC cards sit below the title with a divider gap so long labels no longer collide with side buttons.',
           },
         ],
       },
       {
-        title: { zh: '乘客抱怨', en: 'Complaints' },
+        title: { zh: 'NPC', en: 'NPC' },
         items: [
           {
-            zh: '行车抱怨 8 标题去掉括号及「日文不会念」备注。',
-            en: 'Removed the parenthetical note from driving complaint 8’s title.',
+            zh: '导航栏「抱怨」栏目更名为「NPC」，音频改从 E:\\SIBS资源\\NPC 按文件夹名分类同步（npm run sync:npc）。',
+            en: 'Renamed the Complaints tab to NPC; audio now syncs from E:\\SIBS资源\\NPC grouped by folder name (npm run sync:npc).',
+          },
+          {
+            zh: '分类顺序为行车 / 下车 / 服务 / 感谢；「没上车」「目的地错误」暂未纳入。',
+            en: 'Categories appear as Driving / Alighting / Service / Thanks; Not aboard and Wrong destination are not included yet.',
+          },
+          {
+            zh: '「全部」列表序号连续编号；各分类筛选仍按分类内 1、2、3… 编号。',
+            en: 'The All view uses continuous numbering; each category filter keeps its own 1, 2, 3… sequence.',
+          },
+          {
+            zh: '条目名称去掉文件名中的「抱怨」前缀与数字，并补充中英文标题；分类标签与副标题同步去掉「抱怨」。',
+            en: 'Item titles strip 抱怨 prefixes and numeric suffixes from filenames, with zh/en labels; category chips and subtitles drop 抱怨 as well.',
           },
         ],
       },
