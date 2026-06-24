@@ -349,6 +349,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '秘密页线路加载时同样套用全站副站名规则（含站序表与卡片起终点展示）。',
             en: 'Secret-page routes now use the same site-wide stop subtitle rules in stop tables and card endpoints.',
           },
+          {
+            zh: '透明渐变模式下更新弹窗背景改为约 85%～92% 不透明，更新内容不再过度透出底层页面渐变。',
+            en: 'In transparent-gradient mode, the update prompt now uses ~85–92% opaque panels so changelog text no longer bleeds through the page gradient.',
+          },
         ],
       },
     ],

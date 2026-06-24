@@ -4414,6 +4414,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
   max-height: min(88vh, 40rem);
   display: flex;
   flex-direction: column;
+  /* 透明渐变模式下 --bg-surface 仅 25% 不透明，弹窗需与详情页同级实感 */
+  background: var(--route-detail-surface, var(--bg-float, var(--bg-surface)));
 }
 
 .updates-prompt-body {
@@ -4426,6 +4428,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .updates-card--prompt {
   padding: 0.85rem 0.95rem;
+  background: var(--bg-float, var(--route-card-promoted-bg-muted, var(--route-card-promoted-bg)));
 }
 
 .updates-card--prompt .updates-head {
