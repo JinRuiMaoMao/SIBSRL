@@ -12,6 +12,10 @@ import {
   ROUTE_77XA_AT_PREFIX,
   ROUTE_77XA_STOPS,
 } from './lib/route77xa-audio-map.mjs'
+import {
+  buildStopNameAudioManifest,
+  STOP_NAME_AUDIO_PUBLIC,
+} from './build-stop-name-audio-manifest.mjs'
 
 /** 已录入线路报站音频的 routeId */
 export const ROUTE_BROADCAST_IDS = ['21A', '77XA']
@@ -66,6 +70,19 @@ function syncRoute77XA(srcDir, destDir) {
 const ALIGHTING_REMINDER_SOURCE_HINTS = ['21路下车提醒', '下车提醒']
 const ALIGHTING_REMINDER_DEST = resolve('public', 'audio', 'routes', 'common', 'alighting-reminder.mp3')
 
+function syncStopNameAudioPool(srcDir) {
+  const sourceFiles = readdirSync(srcDir).filter((f) => f.toLowerCase().endsWith('.mp3'))
+  mkdirSync(STOP_NAME_AUDIO_PUBLIC, { recursive: true })
+
+  let copied = 0
+  for (const file of sourceFiles) {
+    if (/下车提醒|落[车車]提示/i.test(file)) continue
+    copyFileSync(join(srcDir, file), join(STOP_NAME_AUDIO_PUBLIC, file))
+    copied++
+  }
+  return copied
+}
+
 function syncAlightingReminder(root) {
   const srcDir = resolveRouteSourceDir(root, ROUTE_21A_ID)
   if (!srcDir) {
@@ -101,6 +118,15 @@ export function syncRouteBroadcastAudio(options = {}) {
   console.log(`线路报站音频源：${root}`)
 
   syncAlightingReminder(root)
+
+  const poolSrcDir = resolveRouteSourceDir(root, ROUTE_21A_ID)
+  if (poolSrcDir) {
+    const poolCount = syncStopNameAudioPool(poolSrcDir)
+    console.log(`站名报站池：${poolCount} 个（21A 目录，按下一站名匹配）→ ${STOP_NAME_AUDIO_PUBLIC}`)
+    buildStopNameAudioManifest()
+  } else {
+    console.warn('站名报站池：未找到 21A 源目录，跳过')
+  }
 
   for (const routeId of routeIds) {
     const srcDir = resolveRouteSourceDir(root, routeId)

@@ -3,12 +3,15 @@ import {
   ALIGHTING_REMINDER_AUDIO_URL,
   ALIGHTING_REMINDER_LABEL,
 } from './routeAlightingReminder'
-import { getRoute21AStopAudioByAtIndex, ROUTE_21A_ID } from './routeStopAudio21A'
+import {
+  findStopNameAudio,
+  passIndexForNextStop,
+} from './stopNameAudioManifest'
 import type { RouteStopAudioAtRow } from './routeStopAudio21A'
 import { getRoute77XAStopAudioByAtIndex, ROUTE_77XA_ID } from './routeStopAudio77XA'
 
 const ROUTE_ID_ALIASES: Record<string, string> = {
-  '21': ROUTE_21A_ID,
+  '21': '21A',
   '77X': ROUTE_77XA_ID,
 }
 
@@ -16,17 +19,37 @@ function resolveRouteDataId(routeId: string): string {
   return ROUTE_ID_ALIASES[routeId] ?? routeId
 }
 
-function getRouteSpecificStopAudio(
-  routeId: string,
-  atStopIndex: number,
-): RouteStopAudioAtRow | undefined {
-  if (routeId === ROUTE_21A_ID || routeId === '21') {
-    return getRoute21AStopAudioByAtIndex()?.get(atStopIndex)
-  }
+function getRoute77XAStopAudio(routeId: string, atStopIndex: number): RouteStopAudioAtRow | undefined {
   if (routeId === ROUTE_77XA_ID || routeId === '77X') {
     return getRoute77XAStopAudioByAtIndex()?.get(atStopIndex)
   }
   return undefined
+}
+
+function getNextStopNamePoolAudio(
+  routeId: string,
+  atStopIndex: number,
+  directionGroupIndex: number,
+  stopListLength: number,
+): RouteStopAudioAtRow | undefined {
+  if (stopListLength > 0 && atStopIndex >= stopListLength - 1) return undefined
+
+  const dataId = resolveRouteDataId(routeId)
+  const list = routes.find((r) => r.id === dataId)?.stops?.[directionGroupIndex]?.list
+  if (!list?.length) return undefined
+
+  const nextIndex = atStopIndex + 1
+  const nextStop = list[nextIndex]
+  if (!nextStop) return undefined
+
+  const match = findStopNameAudio(nextStop.name, passIndexForNextStop(list, nextIndex))
+  if (!match) return undefined
+
+  return {
+    atStopIndex,
+    nextStopLabel: nextStop.name,
+    audioUrl: match.audioUrl,
+  }
 }
 
 export function getRouteStopAudioAtRow(
@@ -44,7 +67,10 @@ export function getRouteStopAudioAtRow(
     }
   }
 
-  return getRouteSpecificStopAudio(routeId, atStopIndex)
+  return (
+    getRoute77XAStopAudio(routeId, atStopIndex) ??
+    getNextStopNamePoolAudio(routeId, atStopIndex, directionGroupIndex, length)
+  )
 }
 
 export function routeHasStopAudio(routeId: string): boolean {
@@ -52,7 +78,9 @@ export function routeHasStopAudio(routeId: string): boolean {
   const route = routes.find((r) => r.id === dataId)
   if (!route?.stops?.length) return false
 
-  if (getRouteSpecificStopAudio(routeId, 0)) return true
+  if (getRoute77XAStopAudio(routeId, 0)) return true
 
   return route.stops.some((group) => group.list.length > 0)
 }
+
+export type { RouteStopAudioAtRow }

@@ -14,6 +14,8 @@ import { pageFilenameToRouteId } from './scripts/lib/route-page-filename-decode.
 import { APP_PAGES } from './scripts/lib/app-page-html.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { buildRouteMapsManifest } from './scripts/build-route-maps-manifest.mjs'
+// @ts-expect-error build helper is plain .mjs without types
+import { buildStopNameAudioManifest } from './scripts/build-stop-name-audio-manifest.mjs'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
 const routePagesCacheFile = resolve(root, '.cache/route-pages-data.json')
@@ -32,6 +34,26 @@ async function writeRoutePagesManifest(outFile: string) {
   mkdirSync(dirname(outFile), { recursive: true })
   writeFileSync(outFile, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
   return manifest
+}
+
+function stopNameAudioManifestPlugin(): Plugin {
+  return {
+    name: 'stop-name-audio-manifest',
+    apply: 'build',
+    buildStart() {
+      buildStopNameAudioManifest()
+    },
+  }
+}
+
+function stopNameAudioManifestDevPlugin(): Plugin {
+  return {
+    name: 'stop-name-audio-manifest-dev',
+    apply: 'serve',
+    configureServer() {
+      buildStopNameAudioManifest()
+    },
+  }
 }
 
 function routeMapsManifestPlugin(): Plugin {
@@ -174,6 +196,8 @@ export default defineConfig(() => {
       viteSingleFile({ useRecommendedBuildConfig: true }),
       routeMapsManifestPlugin(),
       routeMapsManifestDevPlugin(),
+      stopNameAudioManifestPlugin(),
+      stopNameAudioManifestDevPlugin(),
       routePagesDataPlugin(),
       routePagesDataDevPlugin(),
       devEntryRedirectPlugin(),
