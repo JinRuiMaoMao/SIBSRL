@@ -1,19 +1,18 @@
 import { useState } from 'react'
-import { passengerComplaints } from '../data/passengerComplaints'
+import { NPC_CATEGORIES, npcAudioItems, type NpcAudioFilter } from '../data/npcAudio'
 import { useListDensityCompact } from '../hooks/useListDensityCompact'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
-import type { ComplaintFilter } from '../types/passengerComplaint'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
 
 export function ComplaintsPage() {
   const { locale, t } = useLocale()
   const compact = useListDensityCompact()
   const [playingId, setPlayingId] = useState<string | null>(null)
-  const [filter, setFilter] = useState<ComplaintFilter>('all')
+  const [filter, setFilter] = useState<NpcAudioFilter>('all')
 
-  const allItems = [...passengerComplaints].sort((a, b) => a.number - b.number)
-  const filteredItems = filter === 'all' ? allItems : allItems.filter((item) => item.category === filter)
+  const filteredItems =
+    filter === 'all' ? [...npcAudioItems] : npcAudioItems.filter((item) => item.category === filter)
 
   return (
     <div className="content content--single">
@@ -25,24 +24,23 @@ export function ComplaintsPage() {
           <button type="button" className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
             {t('complaintsFilterAll')}
           </button>
-          <button type="button" className={`chip ${filter === 'driving' ? 'active' : ''}`} onClick={() => setFilter('driving')}>
-            {t('complaintsFilterDriving')}
-          </button>
-          <button type="button" className={`chip ${filter === 'alight' ? 'active' : ''}`} onClick={() => setFilter('alight')}>
-            {t('complaintsFilterAlight')}
-          </button>
-          <button type="button" className={`chip ${filter === 'service' ? 'active' : ''}`} onClick={() => setFilter('service')}>
-            {t('complaintsFilterService')}
-          </button>
+          {NPC_CATEGORIES.map((category) => (
+            <button
+              key={category}
+              type="button"
+              className={`chip ${filter === category ? 'active' : ''}`}
+              onClick={() => setFilter(category)}
+            >
+              {category}
+            </button>
+          ))}
         </div>
       </div>
 
       <section className="complaints-section" aria-label={t('complaintsList')}>
         <h2 className="section-title">{t('complaintsList')}</h2>
-        {filter === 'service' ? (
-          <p className="empty-state">{t('complaintsServiceNoAudio')}</p>
-        ) : filteredItems.length === 0 ? (
-          <p className="empty-state">{t('complaintsEmpty')}</p>
+        {filteredItems.length === 0 ? (
+          <p className="empty-state">{filter === 'all' ? t('complaintsEmpty') : t('npcCategoryEmpty')}</p>
         ) : (
           <ul className="complaints-list">
             {filteredItems.map((item, index) => (

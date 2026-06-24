@@ -16,6 +16,8 @@ import { APP_PAGES } from './scripts/lib/app-page-html.mjs'
 import { buildRouteMapsManifest } from './scripts/build-route-maps-manifest.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { buildStopNameAudioManifest } from './scripts/build-stop-name-audio-manifest.mjs'
+// @ts-expect-error build helper is plain .mjs without types
+import { buildNpcManifest } from './scripts/build-npc-manifest.mjs'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
 const routePagesCacheFile = resolve(root, '.cache/route-pages-data.json')
@@ -34,6 +36,26 @@ async function writeRoutePagesManifest(outFile: string) {
   mkdirSync(dirname(outFile), { recursive: true })
   writeFileSync(outFile, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
   return manifest
+}
+
+function npcManifestPlugin(): Plugin {
+  return {
+    name: 'npc-manifest',
+    apply: 'build',
+    buildStart() {
+      buildNpcManifest()
+    },
+  }
+}
+
+function npcManifestDevPlugin(): Plugin {
+  return {
+    name: 'npc-manifest-dev',
+    apply: 'serve',
+    configureServer() {
+      buildNpcManifest()
+    },
+  }
 }
 
 function stopNameAudioManifestPlugin(): Plugin {
@@ -198,6 +220,8 @@ export default defineConfig(() => {
       routeMapsManifestDevPlugin(),
       stopNameAudioManifestPlugin(),
       stopNameAudioManifestDevPlugin(),
+      npcManifestPlugin(),
+      npcManifestDevPlugin(),
       routePagesDataPlugin(),
       routePagesDataDevPlugin(),
       devEntryRedirectPlugin(),

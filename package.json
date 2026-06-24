@@ -9,6 +9,7 @@
     "sync:audio": "node scripts/sync-broadcast-audio.mjs",
     "sync:route-audio": "node scripts/sync-route-broadcast-audio.mjs",
     "sync:route-maps": "node scripts/sync-route-map-images.mjs",
+    "sync:npc": "node scripts/sync-npc-audio.mjs",
     "gen:route-maps": "node scripts/build-route-maps-manifest.mjs",
     "sync:brand": "node scripts/sync-brand-assets.mjs",
     "gen:service-types": "node scripts/generate-route-service-types.mjs",

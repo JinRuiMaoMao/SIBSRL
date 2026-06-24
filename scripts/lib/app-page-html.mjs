@@ -5,7 +5,7 @@ export const APP_PAGES = [
   { tab: 'routes', devFile: 'dev.html', publishFile: 'index.html', titleZh: '线路查询' },
   { tab: 'broadcast', devFile: 'pages/ann.html', publishFile: 'ann.html', titleZh: '广播' },
   { tab: 'music', devFile: 'pages/music.html', publishFile: 'music.html', titleZh: '音乐' },
-  { tab: 'complaints', devFile: 'pages/complaints.html', publishFile: 'complaints.html', titleZh: '抱怨' },
+  { tab: 'complaints', devFile: 'pages/complaints.html', publishFile: 'complaints.html', titleZh: 'NPC' },
   { tab: 'trivia', devFile: 'pages/trivia.html', publishFile: 'trivia.html', titleZh: '你知道吗' },
   { tab: 'updates', devFile: 'pages/updates.html', publishFile: 'updates.html', titleZh: '版本更新' },
 ]
