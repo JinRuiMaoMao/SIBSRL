@@ -61,6 +61,9 @@ const config = {
   corsOrigin: process.env.USER_API_CORS_ORIGIN ?? '*',
 }
 
+const CORS_ALLOW_HEADERS = 'Content-Type, Authorization'
+const CORS_ALLOW_METHODS = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+
 const db = openUserDatabase()
 
 /** @type {Map<string, { count: number, resetAt: number }>} */
@@ -118,8 +121,8 @@ function json(req, res, status, body) {
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(payload),
     'Access-Control-Allow-Origin': resolveCorsOrigin(req),
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': CORS_ALLOW_HEADERS,
+    'Access-Control-Allow-Methods': CORS_ALLOW_METHODS,
   })
   res.end(payload)
 }
@@ -594,8 +597,8 @@ const server = createServer(async (req, res) => {
   if (method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': resolveCorsOrigin(req),
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': CORS_ALLOW_HEADERS,
+      'Access-Control-Allow-Methods': CORS_ALLOW_METHODS,
     })
     res.end()
     return

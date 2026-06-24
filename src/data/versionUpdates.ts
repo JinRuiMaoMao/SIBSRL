@@ -289,6 +289,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '扩大桌面端底部导航的鼠标感应区，无需贴屏幕底边即可唤出六个栏目按钮。',
             en: 'Enlarged the desktop bottom tab bar hover zone so the six section buttons appear without hugging the screen edge.',
           },
+          {
+            zh: '修复用户 API 的 CORS 未允许 PATCH，导致个人中心头像与昵称无法保存的问题（需重新部署 Render 用户 API）。',
+            en: 'Fixed user API CORS not allowing PATCH, which blocked saving profile avatars and display names (redeploy the Render user API).',
+          },
         ],
       },
     ],
