@@ -118,12 +118,17 @@ export function RouteCard({
           </div>
         </div>
 
-        <RouteEndpoints
-          route={route}
-          directionIndex={directionIndex}
-          loopView={loopView}
-          layout={appearance === 'classic' ? 'text' : 'spine'}
-        />
+        <div className="route-card-endpoints-row">
+          <RouteEndpoints
+            route={route}
+            directionIndex={directionIndex}
+            loopView={loopView}
+            layout={appearance === 'classic' ? 'text' : 'spine'}
+          />
+          <div className="route-card-favorite-slot">
+            <RouteFavoriteButton routeId={route.id} />
+          </div>
+        </div>
 
         {serviceTime && <p className="route-meta">{serviceTime}</p>}
 
@@ -132,9 +137,6 @@ export function RouteCard({
         ) : null}
 
         <div className="route-card-bottom">
-          <div className="route-card-favorite-slot">
-            <RouteFavoriteButton routeId={route.id} />
-          </div>
           <div className="route-card-meta-left">
             {displayTypes.length > 0 && (
               <RouteTypeTags types={displayTypes} compact />

@@ -3749,7 +3749,29 @@ html[data-list-density='compact'] .transfer-plan-stop {
 
 .route-card-favorite-slot {
   flex: 0 0 auto;
-  align-self: flex-end;
+  align-self: center;
+}
+
+.route-card-endpoints-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.35rem;
+  margin: 0 0 0.15rem;
+}
+
+.route-card-endpoints-row .route-endpoints-wrap,
+.route-card-endpoints-row .route-stop-spine {
+  min-width: 0;
+}
+
+.route-card-endpoints-row--favorite-only {
+  grid-template-columns: 1fr;
+  justify-items: end;
+}
+
+.route-card-endpoints-row--favorite-only .route-card-favorite-slot {
+  align-self: auto;
 }
 
 .route-card-title {
@@ -3871,11 +3893,10 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-card-bottom {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: end;
-  column-gap: 0.45rem;
-  row-gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
   margin-top: auto;
   padding-top: 0.35rem;
 }
@@ -3885,7 +3906,6 @@ html[data-list-density='compact'] .transfer-plan-stop {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
-  grid-column: 2;
   min-width: 0;
 }
 
@@ -3894,11 +3914,9 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .route-card-foot {
-  grid-column: 3;
-  flex: 0 1 auto;
-  max-width: min(48%, 100%);
-  text-align: right;
   align-self: flex-end;
+  max-width: 100%;
+  text-align: right;
 }
 
 .route-card-operators {
@@ -3907,11 +3925,8 @@ html[data-list-density='compact'] .transfer-plan-stop {
   color: var(--text-muted);
   letter-spacing: 0.02em;
   line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  display: inline-block;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .route-zones {
@@ -4842,7 +4857,7 @@ html[data-list-density='compact'] .route-card:has(.route-card-km--corner) .route
 }
 
 html[data-list-density='compact'] .route-card-bottom {
-  column-gap: 0.35rem;
+  gap: 0.25rem;
   padding-top: 0.25rem;
 }
 

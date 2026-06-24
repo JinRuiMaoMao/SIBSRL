@@ -293,6 +293,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复用户 API 的 CORS 未允许 PATCH，导致个人中心头像与昵称无法保存的问题（需重新部署 Render 用户 API）。',
             en: 'Fixed user API CORS not allowing PATCH, which blocked saving profile avatars and display names (redeploy the Render user API).',
           },
+          {
+            zh: '线路卡片收藏星标移至起终点右侧空白处；底部运营商名称不再被截断省略。',
+            en: 'Moved the favorite star to the open area beside route endpoints; operator names at the card bottom no longer truncate with ellipsis.',
+          },
         ],
       },
     ],

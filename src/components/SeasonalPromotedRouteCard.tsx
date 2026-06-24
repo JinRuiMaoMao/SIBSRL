@@ -86,19 +86,27 @@ export function SeasonalPromotedRouteCard({
         </div>
 
         {endpoints && stopCount > 0 ? (
-          <RouteStopSpine
-            origin={endpoints.origin}
-            destination={endpoints.destination}
-            stopCount={stopCount}
-            size="promoted"
-            className="seasonal-promoted-card-stops"
-          />
-        ) : null}
+          <div className="route-card-endpoints-row">
+            <RouteStopSpine
+              origin={endpoints.origin}
+              destination={endpoints.destination}
+              stopCount={stopCount}
+              size="promoted"
+              className="seasonal-promoted-card-stops"
+            />
+            <div className="route-card-favorite-slot">
+              <RouteFavoriteButton routeId={route.id} />
+            </div>
+          </div>
+        ) : (
+          <div className="route-card-endpoints-row route-card-endpoints-row--favorite-only">
+            <div className="route-card-favorite-slot">
+              <RouteFavoriteButton routeId={route.id} />
+            </div>
+          </div>
+        )}
 
         <div className="route-card-bottom seasonal-promoted-card-bottom">
-          <div className="route-card-favorite-slot">
-            <RouteFavoriteButton routeId={route.id} />
-          </div>
           <div className="route-card-meta-left">
             {displayTypes.length > 0 ? <RouteTypeTags types={displayTypes} compact /> : null}
           </div>
