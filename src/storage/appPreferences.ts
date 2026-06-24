@@ -1,17 +1,21 @@
 export type ListDensity = 'comfortable' | 'compact'
 
+export type PanelStyle = 'gradient' | 'classic'
+
 export const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'
 
 export interface AppPreferences {
   reduceMotion: boolean
   listDensity: ListDensity
   guidedTourAutoStart: boolean
+  panelStyle: PanelStyle
 }
 
 const DEFAULT_APP_PREFERENCES: AppPreferences = {
   reduceMotion: false,
   listDensity: 'comfortable',
   guidedTourAutoStart: true,
+  panelStyle: 'gradient',
 }
 
 export function readAppPreferences(): AppPreferences {
@@ -22,6 +26,7 @@ export function readAppPreferences(): AppPreferences {
       reduceMotion: Boolean(stored.reduceMotion),
       listDensity: stored.listDensity === 'compact' ? 'compact' : 'comfortable',
       guidedTourAutoStart: stored.guidedTourAutoStart !== false,
+      panelStyle: stored.panelStyle === 'classic' ? 'classic' : 'gradient',
     }
   } catch {
     return { ...DEFAULT_APP_PREFERENCES }
@@ -42,6 +47,7 @@ export function applyAppPreferences(preferences: AppPreferences): void {
     preferences.reduceMotion ? 'true' : 'false',
   )
   document.documentElement.setAttribute('data-list-density', preferences.listDensity)
+  document.documentElement.setAttribute('data-panel-style', preferences.panelStyle)
 }
 
 export function shouldReduceMotion(): boolean {

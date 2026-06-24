@@ -1,0 +1,50 @@
+/* 经典实心主题：全站统一金色配色，不透明面板（与透明渐变改版前一致） */
+
+html[data-panel-style='classic'] {
+  --border: rgba(255, 200, 80, 0.15);
+  --border-strong: rgba(255, 200, 80, 0.35);
+  --accent: #f5b942;
+  --accent-soft: rgba(245, 185, 66, 0.15);
+  --accent-glow: rgba(245, 185, 66, 0.4);
+  --bg-deep: #0c1222;
+  --bg-surface: #141c2e;
+  --bg-elevated: #1a2540;
+  --bg-card: #1e2d4a;
+  --header-shell-bg: rgba(20, 28, 46, 0.85);
+  --page-background:
+    radial-gradient(ellipse 100% 80% at 12% -8%, rgba(245, 185, 66, 0.22), transparent 58%),
+    radial-gradient(ellipse 85% 70% at 100% 12%, rgba(45, 212, 160, 0.14), transparent 54%),
+    radial-gradient(ellipse 78% 58% at 48% 108%, rgba(96, 132, 220, 0.16), transparent 60%),
+    linear-gradient(160deg, #070b14 0%, #101829 30%, #0d1524 55%, #14102a 80%, #0a101c 100%);
+  --route-card-promoted-bg: color-mix(in srgb, var(--bg-surface) 88%, #000 12%);
+  --route-card-promoted-bg-hover: color-mix(in srgb, var(--bg-surface) 82%, #000 18%);
+  --route-card-promoted-bg-muted: color-mix(in srgb, var(--bg-surface) 92%, #000 8%);
+}
+
+html[data-panel-style='classic'][data-theme='light'] {
+  --border: rgba(140, 100, 40, 0.14);
+  --border-strong: rgba(140, 100, 40, 0.28);
+  --accent: #b07808;
+  --accent-soft: rgba(176, 120, 8, 0.14);
+  --accent-glow: rgba(176, 120, 8, 0.22);
+  --bg-deep: #dce1e9;
+  --bg-surface: #e4e9f0;
+  --bg-elevated: #d5dbe5;
+  --bg-card: #c9d1dc;
+  --header-shell-bg: rgba(216, 222, 232, 0.94);
+  --page-background:
+    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(176, 120, 8, 0.13), transparent 56%),
+    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(10, 138, 96, 0.11), transparent 54%),
+    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(124, 58, 237, 0.09), transparent 58%),
+    linear-gradient(160deg, #edf1f8 0%, #e4eaf4 28%, #d9e3ef 54%, #e8edf6 78%, #dee6f2 100%);
+  --route-card-promoted-bg: color-mix(in srgb, #fff 58%, var(--bg-card) 42%);
+  --route-card-promoted-border: color-mix(in srgb, var(--accent) 88%, #c8920a 12%);
+  --route-card-promoted-bg-hover: color-mix(in srgb, #fff 72%, var(--bg-elevated) 28%);
+  --route-card-promoted-border-hover: color-mix(in srgb, var(--accent) 96%, #e8a820 4%);
+  --route-card-promoted-border-selected: color-mix(in srgb, var(--accent) 100%, #c07000 0%);
+  --route-card-promoted-bg-muted: color-mix(in srgb, #fff 45%, var(--bg-card) 55%);
+}
+
+html[data-panel-style='classic'] .favorites-folder-tab.active {
+  background: var(--accent-soft);
+}

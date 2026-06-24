@@ -11,7 +11,7 @@ import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
-  const { guidedTourAutoStart, setGuidedTourAutoStart } = useAppPreferences()
+  const { guidedTourAutoStart, setGuidedTourAutoStart, panelStyle, setPanelStyle } = useAppPreferences()
   const { openTour, cancelAutoStartTimer, closeTour } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
@@ -111,6 +111,28 @@ export function SettingsMenu() {
           <section className="settings-section">
             <p className="settings-panel-title">{t('themeLabel')}</p>
             <ThemeToggle className="settings-theme-toggle" />
+            <div className="settings-field">
+              <p className="settings-field-label">{t('panelStyle')}</p>
+              <div className="settings-toggle-group" role="group" aria-label={t('panelStyle')}>
+                <button
+                  type="button"
+                  className="settings-toggle-btn"
+                  aria-pressed={panelStyle === 'gradient'}
+                  onClick={() => setPanelStyle('gradient')}
+                >
+                  {t('panelStyleGradient')}
+                </button>
+                <button
+                  type="button"
+                  className="settings-toggle-btn"
+                  aria-pressed={panelStyle === 'classic'}
+                  onClick={() => setPanelStyle('classic')}
+                >
+                  {t('panelStyleClassic')}
+                </button>
+              </div>
+              <p className="settings-hint">{t('panelStyleHint')}</p>
+            </div>
           </section>
 
           <section className="settings-section">

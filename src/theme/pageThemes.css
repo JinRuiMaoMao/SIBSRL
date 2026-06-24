@@ -1,8 +1,8 @@
 /* 各栏目独立配色：背景渐变 + 面板基色 + 强调色（深浅色分开） */
 
 /* —— 线路查询 routes（金/青/蓝） —— */
-html,
-html[data-app-tab='routes'] {
+html:not([data-panel-style='classic']),
+html:not([data-panel-style='classic'])[data-app-tab='routes'] {
   --accent: #f5b942;
   --accent-soft: rgba(245, 185, 66, 0.15);
   --accent-glow: rgba(245, 185, 66, 0.4);
@@ -20,7 +20,7 @@ html[data-app-tab='routes'] {
 }
 
 /* —— 广播 broadcast（橙/珊瑚） —— */
-html[data-app-tab='broadcast'] {
+html:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
   --accent: #ff9f43;
   --accent-soft: rgba(255, 159, 67, 0.16);
   --accent-glow: rgba(255, 120, 60, 0.38);
@@ -38,7 +38,7 @@ html[data-app-tab='broadcast'] {
 }
 
 /* —— 音乐 music（紫/粉） —— */
-html[data-app-tab='music'] {
+html:not([data-panel-style='classic'])[data-app-tab='music'] {
   --accent: #c084fc;
   --accent-soft: rgba(192, 132, 252, 0.16);
   --accent-glow: rgba(167, 139, 250, 0.38);
@@ -56,7 +56,7 @@ html[data-app-tab='music'] {
 }
 
 /* —— 抱怨 complaints（玫红/酒红） —— */
-html[data-app-tab='complaints'] {
+html:not([data-panel-style='classic'])[data-app-tab='complaints'] {
   --accent: #fb7185;
   --accent-soft: rgba(251, 113, 133, 0.16);
   --accent-glow: rgba(244, 63, 94, 0.34);
@@ -74,7 +74,7 @@ html[data-app-tab='complaints'] {
 }
 
 /* —— 版本更新 updates（青/蓝） —— */
-html[data-app-tab='updates'] {
+html:not([data-panel-style='classic'])[data-app-tab='updates'] {
   --accent: #38bdf8;
   --accent-soft: rgba(56, 189, 248, 0.16);
   --accent-glow: rgba(14, 165, 233, 0.36);
@@ -92,7 +92,7 @@ html[data-app-tab='updates'] {
 }
 
 /* —— 个人中心 account（翠绿） —— */
-html[data-app-page='account'] {
+html:not([data-panel-style='classic'])[data-app-page='account'] {
   --accent: #34d399;
   --accent-soft: rgba(52, 211, 153, 0.16);
   --accent-glow: rgba(16, 185, 129, 0.36);
@@ -110,7 +110,7 @@ html[data-app-page='account'] {
 }
 
 /* —— 秘密页 secret（靛蓝/紫） —— */
-html[data-app-page='secret'] {
+html:not([data-panel-style='classic'])[data-app-page='secret'] {
   --accent: #818cf8;
   --accent-soft: rgba(129, 140, 248, 0.16);
   --accent-glow: rgba(99, 102, 241, 0.38);
@@ -128,8 +128,8 @@ html[data-app-page='secret'] {
 }
 
 /* —— 浅色主题：各栏目独立浅色系 —— */
-html[data-theme='light'],
-html[data-theme='light'][data-app-tab='routes'] {
+html[data-theme='light']:not([data-panel-style='classic']),
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='routes'] {
   --accent: #b07808;
   --accent-soft: rgba(176, 120, 8, 0.14);
   --accent-glow: rgba(176, 120, 8, 0.22);
@@ -146,7 +146,7 @@ html[data-theme='light'][data-app-tab='routes'] {
     linear-gradient(160deg, #edf1f8 0%, #e4eaf4 28%, #d9e3ef 54%, #e8edf6 78%, #dee6f2 100%);
 }
 
-html[data-theme='light'][data-app-tab='broadcast'] {
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
   --accent: #ea580c;
   --accent-soft: rgba(234, 88, 12, 0.14);
   --accent-glow: rgba(234, 88, 12, 0.2);
@@ -161,7 +161,7 @@ html[data-theme='light'][data-app-tab='broadcast'] {
     linear-gradient(160deg, #faf0e6 0%, #f5e8da 28%, #eddcc8 54%, #f7efe4 78%, #efe4d4 100%);
 }
 
-html[data-theme='light'][data-app-tab='music'] {
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='music'] {
   --accent: #9333ea;
   --accent-soft: rgba(147, 51, 234, 0.14);
   --accent-glow: rgba(147, 51, 234, 0.2);
@@ -176,7 +176,7 @@ html[data-theme='light'][data-app-tab='music'] {
     linear-gradient(160deg, #f3eef8 0%, #ebe2f4 28%, #e0d4ee 54%, #f0eaf8 78%, #e6dcf0 100%);
 }
 
-html[data-theme='light'][data-app-tab='complaints'] {
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='complaints'] {
   --accent: #e11d48;
   --accent-soft: rgba(225, 29, 72, 0.12);
   --accent-glow: rgba(225, 29, 72, 0.18);
@@ -191,7 +191,7 @@ html[data-theme='light'][data-app-tab='complaints'] {
     linear-gradient(160deg, #faf0f2 0%, #f5e6ea 28%, #edd8de 54%, #f7eef0 78%, #efe4e8 100%);
 }
 
-html[data-theme='light'][data-app-tab='updates'] {
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='updates'] {
   --accent: #0284c7;
   --accent-soft: rgba(2, 132, 199, 0.14);
   --accent-glow: rgba(2, 132, 199, 0.2);
@@ -206,7 +206,7 @@ html[data-theme='light'][data-app-tab='updates'] {
     linear-gradient(160deg, #eef6fa 0%, #e4f0f8 28%, #d6e8f2 54%, #ecf4fa 78%, #e0eef6 100%);
 }
 
-html[data-theme='light'][data-app-page='account'] {
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='account'] {
   --accent: #059669;
   --accent-soft: rgba(5, 150, 105, 0.14);
   --accent-glow: rgba(5, 150, 105, 0.2);
@@ -221,7 +221,7 @@ html[data-theme='light'][data-app-page='account'] {
     linear-gradient(160deg, #eef8f2 0%, #e4f4ea 28%, #d6ece2 54%, #ecf6f0 78%, #e0f0e8 100%);
 }
 
-html[data-theme='light'][data-app-page='secret'] {
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='secret'] {
   --accent: #4f46e5;
   --accent-soft: rgba(79, 70, 229, 0.14);
   --accent-glow: rgba(79, 70, 229, 0.2);

@@ -1,4 +1,5 @@
 @import './theme/pageThemes.css';
+@import './theme/classicSurface.css';
 
 :root {
   color-scheme: dark;
@@ -22,7 +23,7 @@
   --scrollbar-thumb-active: #f5b942;
 }
 
-html {
+html:not([data-panel-style='classic']) {
   --bg-deep: color-mix(in srgb, var(--panel-base-deep) var(--panel-fill), transparent);
   --bg-surface: color-mix(in srgb, var(--panel-base-surface) var(--panel-fill), transparent);
   --bg-elevated: color-mix(in srgb, var(--panel-base-elevated) var(--panel-fill), transparent);
@@ -55,6 +56,9 @@ html {
   --scrollbar-thumb: rgba(176, 120, 8, 0.35);
   --scrollbar-thumb-hover: rgba(176, 120, 8, 0.5);
   --scrollbar-thumb-active: #b07808;
+}
+
+html:not([data-panel-style='classic'])[data-theme='light'] {
   --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 45%), transparent);
   --route-card-promoted-border-width: 1.5px;
   --route-card-promoted-shadow:

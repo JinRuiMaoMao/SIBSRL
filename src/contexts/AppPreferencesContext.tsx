@@ -19,6 +19,7 @@ interface AppPreferencesContextValue extends AppPreferences {
   setReduceMotion: (value: boolean) => void
   setListDensity: (value: ListDensity) => void
   setGuidedTourAutoStart: (value: boolean) => void
+  setPanelStyle: (value: AppPreferences['panelStyle']) => void
 }
 
 const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(null)
@@ -44,14 +45,17 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
       reduceMotion: preferences.reduceMotion,
       listDensity: preferences.listDensity,
       guidedTourAutoStart: preferences.guidedTourAutoStart,
+      panelStyle: preferences.panelStyle,
       setReduceMotion: (reduceMotion: boolean) => updatePreferences({ reduceMotion }),
       setListDensity: (listDensity: ListDensity) => updatePreferences({ listDensity }),
       setGuidedTourAutoStart: (guidedTourAutoStart: boolean) =>
         updatePreferences({ guidedTourAutoStart }),
+      setPanelStyle: (panelStyle: AppPreferences['panelStyle']) => updatePreferences({ panelStyle }),
     }),
     [
       preferences.guidedTourAutoStart,
       preferences.listDensity,
+      preferences.panelStyle,
       preferences.reduceMotion,
       updatePreferences,
     ],

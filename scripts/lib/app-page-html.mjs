@@ -176,12 +176,23 @@ export function injectThemeBootstrap(html) {
 
 const LOCALE_STORAGE_KEY = 'sibs-locale'
 
+const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'
+
 const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
   if (tab && tab.content) document.documentElement.setAttribute('data-app-tab', tab.content.trim());
   var page = document.querySelector('meta[name="app-page"]');
   if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
+  try {
+    var prefs = JSON.parse(localStorage.getItem('${APP_PREFERENCES_STORAGE_KEY}') || 'null');
+    document.documentElement.setAttribute(
+      'data-panel-style',
+      prefs && prefs.panelStyle === 'classic' ? 'classic' : 'gradient',
+    );
+  } catch (e) {
+    document.documentElement.setAttribute('data-panel-style', 'gradient');
+  }
 })();
 </script>`
 
