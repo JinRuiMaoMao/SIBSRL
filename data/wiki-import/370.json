@@ -137,7 +137,11 @@
             "zh": "第七區轉車站 (東行)",
             "en": "Section fare begins here / Near Thousand Leaf Station"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {

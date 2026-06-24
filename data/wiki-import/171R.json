@@ -1,12 +1,26 @@
 {
   "id": "171R",
   "number": "171R",
-  "operators": ["FT", "CSB", "FTCC"],
+  "operators": [
+    "FT",
+    "CSB",
+    "FTCC"
+  ],
   "category": "special",
   "pattern": "oneway",
-  "zones": [1, 4, 7],
-  "origin": { "zh": "阳光体育馆", "en": "Sunshine Stadium" },
-  "destination": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" },
+  "zones": [
+    1,
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "阳光体育馆",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "叶欣海旁道",
+    "en": "Praya YiYan Road"
+  },
   "via": {
     "zh": "北环转车站、中环、第七区转车站、亚历山大、叶角湾、叶欣",
     "en": "Northern Interchange, Central, Zone 7 Interchange, Alexander, Leafy Bay, YiYan"
@@ -15,9 +29,15 @@
     "zh": "按活动安排（见运营商/体育馆活动资讯）",
     "en": "Per event (see operator / stadium announcements)"
   },
-  "journeyTime": { "zh": "约 25 分钟", "en": "approx. 25 mins" },
+  "journeyTime": {
+    "zh": "约 25 分钟",
+    "en": "approx. 25 mins"
+  },
   "fare": "$27.3",
-  "length": { "zh": "21.1 km", "en": "21.1 km" },
+  "length": {
+    "zh": "21.1 km",
+    "en": "21.1 km"
+  },
   "serviceTime": {
     "zh": "仅体育馆有演出/活动日开行；散场后约 15 分钟起至少一班，班次视情况调整",
     "en": "Event days only; first departure ~15 min after show ends; extra trips as needed"
@@ -37,31 +57,197 @@
         "en": "Event days only; first bus ~15 min after show ends"
       },
       "list": [
-        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" }, "zone": 1 },
-        { "name": { "zh": "北环转车站 (南行)", "en": "Northern Interchange (Southbound)" }, "zone": 4 },
-        { "name": { "zh": "雀鸟桥", "en": "Bird Bridge" }, "zone": 4 },
-        { "name": { "zh": "亚特路", "en": "Arctan Road" }, "zone": 4 },
-        { "name": { "zh": "中环消防局", "en": "Central Fire Station" }, "zone": 4 },
-        { "name": { "zh": "强生街市", "en": "Johnson Market" }, "zone": 4 },
-        { "name": { "zh": "南环花园二期", "en": "Southern Two" }, "zone": 4 },
-        { "name": { "zh": "第七区转车站", "en": "Zone 7 Interchange" }, "zone": 7 },
-        { "name": { "zh": "叶欣警察局", "en": "Leafy Police Station" }, "zone": 7 },
-        { "name": { "zh": "亚历山大花园", "en": "Alexander Garden" }, "zone": 7 },
-        { "name": { "zh": "仙贝多层停车场", "en": "Senpai Multi-Storey Car Park" }, "zone": 7 },
-        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" }, "zone": 7 },
-        { "name": { "zh": "仙贝山", "en": "Senpai Hill" }, "zone": 7 },
-        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" }, "zone": 7 },
-        { "name": { "zh": "罗力素花园二期", "en": "Laws Garden 2" }, "zone": 7 },
-        { "name": { "zh": "勿莫商场", "en": "Mo Shopping Center" }, "zone": 7 },
-        { "name": { "zh": "中间花园", "en": "Middle Garden" }, "zone": 7 },
-        { "name": { "zh": "叶角医院", "en": "Leafy Hospital" }, "zone": 7 },
-        { "name": { "zh": "叶角湾邨", "en": "Leafy Bay Estate" }, "zone": 7 },
-        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" }, "zone": 7 },
-        { "name": { "zh": "叶角花园", "en": "Leafy Bay Garden" }, "zone": 7 },
-        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" }, "zone": 7 },
-        { "name": { "zh": "叶欣邨第四座", "en": "YiYan Estate Block 4" }, "zone": 7 },
-        { "name": { "zh": "际巴车厂", "en": "CSB Depot" }, "zone": 7 },
-        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" }, "zone": 7 }
+        {
+          "name": {
+            "zh": "阳光体育馆",
+            "en": "Sunshine Stadium"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "北环转车站 (南行)",
+            "en": "Northern Interchange (Southbound)"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "雀鸟桥",
+            "en": "Bird Bridge"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "亚特路",
+            "en": "Arctan Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "中环消防局",
+            "en": "Central Fire Station"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "强生街市",
+            "en": "Johnson Market"
+          },
+          "zone": 4,
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
+          }
+        },
+        {
+          "name": {
+            "zh": "南环花园二期",
+            "en": "Southern Two"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
+          },
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "叶欣警察局",
+            "en": "Leafy Police Station"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "亚历山大花园",
+            "en": "Alexander Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝多层停车场",
+            "en": "Senpai Multi-Storey Car Park"
+          },
+          "zone": 7,
+          "nameSub": {
+            "zh": "仙贝站",
+            "en": "Senpai Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "亚历山大教堂",
+            "en": "Alexander Church"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝山",
+            "en": "Senpai Hill"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣径",
+            "en": "Leafy Walking Trail"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "罗力素花园二期",
+            "en": "Laws Garden 2"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "勿莫商场",
+            "en": "Mo Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "中间花园",
+            "en": "Middle Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶角医院",
+            "en": "Leafy Hospital"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶角湾邨",
+            "en": "Leafy Bay Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶角湾邨商场",
+            "en": "Leafy Bay Estate Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶角花园",
+            "en": "Leafy Bay Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          },
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
+          }
+        },
+        {
+          "name": {
+            "zh": "叶欣邨第四座",
+            "en": "YiYan Estate Block 4"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "际巴车厂",
+            "en": "CSB Depot"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "叶欣海旁道",
+            "en": "Praya YiYan Road"
+          },
+          "zone": 7
+        }
       ]
     }
   ],

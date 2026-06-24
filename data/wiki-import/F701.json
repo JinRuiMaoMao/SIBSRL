@@ -59,6 +59,10 @@
           "name": {
             "zh": "葉欣邨第一座",
             "en": "YiYan Estate Block 1"
+          },
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
           }
         },
         {
@@ -135,7 +139,11 @@
             "zh": "第七區轉車站",
             "en": "Axis Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -233,7 +241,11 @@
             "zh": "第七區轉車站",
             "en": "Axis Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -309,6 +321,10 @@
           "name": {
             "zh": "葉欣邨第一座",
             "en": "YiYan Estate Block 1"
+          },
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
           }
         },
         {

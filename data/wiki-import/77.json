@@ -127,6 +127,10 @@
           "name": {
             "zh": "仙貝多層停車場",
             "en": "Senpai Multi-Storey Car Park"
+          },
+          "nameSub": {
+            "zh": "仙贝站",
+            "en": "Senpai Station"
           }
         },
         {
@@ -235,6 +239,10 @@
           "name": {
             "zh": "仙貝多層停車場",
             "en": "Senpai Multi-Storey Carpark"
+          },
+          "nameSub": {
+            "zh": "仙贝站",
+            "en": "Senpai Station"
           }
         },
         {

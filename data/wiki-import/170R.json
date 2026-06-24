@@ -1,12 +1,26 @@
 {
   "id": "170R",
   "number": "170R",
-  "operators": ["HZ", "CSB", "REBC"],
+  "operators": [
+    "HZ",
+    "CSB",
+    "REBC"
+  ],
   "category": "special",
   "pattern": "oneway",
-  "zones": [1, 7, 8],
-  "origin": { "zh": "阳光体育馆", "en": "Sunshine Stadium" },
-  "destination": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" },
+  "zones": [
+    1,
+    7,
+    8
+  ],
+  "origin": {
+    "zh": "阳光体育馆",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "彩虹中心",
+    "en": "Rainbow Estate Complex"
+  },
   "via": {
     "zh": "第七区转车站、镰塔、仙贝、东门、海西、彩虹",
     "en": "Zone 7 Interchange, Kamaya, Senpai, East Door, Haisey, Rainbow"
@@ -15,9 +29,15 @@
     "zh": "按活动安排（见运营商/体育馆活动资讯）",
     "en": "Per event (see operator / stadium announcements)"
   },
-  "journeyTime": { "zh": "约 23 分钟", "en": "approx. 23 mins" },
+  "journeyTime": {
+    "zh": "约 23 分钟",
+    "en": "approx. 23 mins"
+  },
   "fare": "$27.3",
-  "length": { "zh": "20.6 km", "en": "20.6 km" },
+  "length": {
+    "zh": "20.6 km",
+    "en": "20.6 km"
+  },
   "serviceTime": {
     "zh": "仅体育馆有演出/活动日开行；散场后约 15 分钟起至少一班，班次视情况调整",
     "en": "Event days only; first departure ~15 min after show ends; extra trips as needed"
@@ -37,27 +57,161 @@
         "en": "Event days only; first bus ~15 min after show ends"
       },
       "list": [
-        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" }, "zone": 1 },
-        { "name": { "zh": "第七区转车站", "en": "Zone 7 Interchange" }, "zone": 7 },
-        { "name": { "zh": "镰塔花园", "en": "Kamaya Garden" }, "zone": 7 },
-        { "name": { "zh": "镰塔运动场", "en": "Kamaya Sports Field" }, "zone": 7 },
-        { "name": { "zh": "国际塔", "en": "International Tower" }, "zone": 7 },
-        { "name": { "zh": "仙贝纪念碑花园", "en": "The Stone of Memory" }, "zone": 7 },
-        { "name": { "zh": "红石楼", "en": "Redstone House" }, "zone": 7 },
-        { "name": { "zh": "仙贝酒店", "en": "Senpai Hotel" }, "zone": 7 },
-        { "name": { "zh": "仙贝图书馆", "en": "Senpai Library" }, "zone": 7 },
-        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" }, "zone": 7 },
-        { "name": { "zh": "仙贝", "en": "Senpai" }, "zone": 7 },
-        { "name": { "zh": "东门码头", "en": "East Door Pier" }, "zone": 7 },
-        { "name": { "zh": "海西角", "en": "Haisey Point" }, "zone": 8 },
-        { "name": { "zh": "海西邨总站", "en": "Haisey Estate Bus Terminus" }, "zone": 8 },
-        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" }, "zone": 7 },
-        { "name": { "zh": "东门花园", "en": "East Door Garden" }, "zone": 7 },
-        { "name": { "zh": "东门下邨", "en": "Lower East Door Estate" }, "zone": 7 },
-        { "name": { "zh": "东门邨", "en": "East Door Estate" }, "zone": 7 },
-        { "name": { "zh": "红豆中心", "en": "Redbean Center" }, "zone": 7 },
-        { "name": { "zh": "彩虹邨", "en": "Rainbow Estate" }, "zone": 7 },
-        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" }, "zone": 7 }
+        {
+          "name": {
+            "zh": "阳光体育馆",
+            "en": "Sunshine Stadium"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
+          },
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "镰塔花园",
+            "en": "Kamaya Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "镰塔运动场",
+            "en": "Kamaya Sports Field"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "国际塔",
+            "en": "International Tower"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝纪念碑花园",
+            "en": "The Stone of Memory"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "红石楼",
+            "en": "Redstone House"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝酒店",
+            "en": "Senpai Hotel"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝图书馆",
+            "en": "Senpai Library"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝广场",
+            "en": "Senpai Shopping Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "仙贝",
+            "en": "Senpai"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "东门码头",
+            "en": "East Door Pier"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "海西邨总站",
+            "en": "Haisey Estate Bus Terminus"
+          },
+          "zone": 8
+        },
+        {
+          "name": {
+            "zh": "东门总站",
+            "en": "East Door Bus Terminus"
+          },
+          "zone": 7,
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
+          }
+        },
+        {
+          "name": {
+            "zh": "东门花园",
+            "en": "East Door Garden"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "东门下邨",
+            "en": "Lower East Door Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "东门邨",
+            "en": "East Door Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "红豆中心",
+            "en": "Redbean Center"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹邨",
+            "en": "Rainbow Estate"
+          },
+          "zone": 7
+        },
+        {
+          "name": {
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
+          },
+          "zone": 7
+        }
       ]
     }
   ],

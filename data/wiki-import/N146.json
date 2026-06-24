@@ -123,6 +123,10 @@
           "name": {
             "zh": "三哥大廈",
             "en": "Third Technology Building"
+          },
+          "nameSub": {
+            "zh": "炫光集",
+            "en": "Neon Center"
           }
         },
         {
@@ -142,7 +146,11 @@
             "zh": "西區海底隧道轉車站",
             "en": "Western Harbour Tunnel Interchange"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "月亮湾站",
+            "en": "Lunar Bay Station"
+          }
         },
         {
           "name": {
@@ -245,6 +253,10 @@
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {
@@ -276,6 +288,10 @@
           "name": {
             "zh": "西區海底隧道轉車站",
             "en": "Western Harbour Tunnel Interchange"
+          },
+          "nameSub": {
+            "zh": "月亮湾站",
+            "en": "Lunar Bay Station"
           }
         },
         {
@@ -295,6 +311,10 @@
           "name": {
             "zh": "三哥大廈",
             "en": "Third Technology Building"
+          },
+          "nameSub": {
+            "zh": "炫光集",
+            "en": "Neon Center"
           }
         },
         {

@@ -4,6 +4,7 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { legacyWikiImportBasename, wikiImportBasename, wikiImportPath } from './wiki-import-path.mjs'
+import { applyStopNameSubsToRoute } from './lib/stop-name-subs.mjs'
 
 /** SIBS类型.txt 中尚无完整 Wiki 站序的线路 */
 const REQUIRED_STUB_IDS = [
@@ -175,7 +176,7 @@ function cleanRoute(route) {
   }
   if (r.via?.en) r.via.en = r.via.en.replace(/\[\[/g, '').replace(/\]\]/g, '')
   if (r.via?.zh) r.via.zh = r.via.zh.replace(/\[\[/g, '').replace(/\]\]/g, '')
-  return r
+  return applyStopNameSubsToRoute(r)
 }
 
 function isGoodRoute(route) {

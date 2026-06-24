@@ -127,12 +127,20 @@
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {
           "name": {
             "zh": "The ONE",
             "en": "The ONE"
+          },
+          "nameSub": {
+            "zh": "警察总部, 新纪元中心",
+            "en": "Police Headquarters, Ping Center"
           }
         },
         {
@@ -140,7 +148,11 @@
             "zh": "強生街市",
             "en": "Johnson Market"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
+          }
         },
         {
           "name": {
@@ -208,6 +220,10 @@
           "name": {
             "zh": "強生街市",
             "en": "Johnson Market"
+          },
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
           }
         },
         {
@@ -215,12 +231,20 @@
             "zh": "The ONE",
             "en": "The ONE"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "警察总部, 新纪元中心",
+            "en": "Police Headquarters, Ping Center"
+          }
         },
         {
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {

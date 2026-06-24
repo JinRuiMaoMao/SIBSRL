@@ -103,6 +103,10 @@
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {
@@ -116,7 +120,11 @@
             "zh": "強生街市",
             "en": "Johnson Market"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
+          }
         },
         {
           "name": {
@@ -184,6 +192,10 @@
           "name": {
             "zh": "強生街市",
             "en": "Johnson Market"
+          },
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
           }
         },
         {
@@ -197,6 +209,10 @@
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {

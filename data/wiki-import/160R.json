@@ -1,12 +1,26 @@
 {
   "id": "160R",
   "number": "160R",
-  "operators": ["HZ", "FTCC", "FT"],
+  "operators": [
+    "HZ",
+    "FTCC",
+    "FT"
+  ],
   "category": "special",
   "pattern": "oneway",
-  "zones": [1, 4, 7],
-  "origin": { "zh": "阳光体育馆", "en": "Sunshine Stadium" },
-  "destination": { "zh": "第七区转车站", "en": "Zone 7 Interchange" },
+  "zones": [
+    1,
+    4,
+    7
+  ],
+  "origin": {
+    "zh": "阳光体育馆",
+    "en": "Sunshine Stadium"
+  },
+  "destination": {
+    "zh": "第七区转车站",
+    "en": "Zone 7 Interchange"
+  },
   "via": {
     "zh": "西区海底隧道转车站、北顿、北岛花园、阳光大学、东锦葵",
     "en": "Western Harbour Tunnel Interchange, Norton, North Island Estate, Sunshine University, Eastmallow"
@@ -15,9 +29,15 @@
     "zh": "按活动安排（见永巴/体育馆活动资讯）",
     "en": "Per event (see HZ / stadium announcements)"
   },
-  "journeyTime": { "zh": "约 16 分钟", "en": "approx. 16 mins" },
+  "journeyTime": {
+    "zh": "约 16 分钟",
+    "en": "approx. 16 mins"
+  },
   "fare": "$27.3",
-  "length": { "zh": "15.8 km", "en": "15.8 km" },
+  "length": {
+    "zh": "15.8 km",
+    "en": "15.8 km"
+  },
   "serviceTime": {
     "zh": "仅体育馆有演出/活动日开行；散场后约 15 分钟起至少一班，班次视情况调整",
     "en": "Event days only; first departure ~15 min after show ends; extra trips as needed"
@@ -37,21 +57,119 @@
         "en": "Event days only; first bus ~15 min after show ends"
       },
       "list": [
-        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" }, "zone": 1 },
-        { "name": { "zh": "西区海底隧道转车站", "en": "Western Harbour Tunnel Interchange" }, "zone": 1 },
-        { "name": { "zh": "北顿路", "en": "Norton Road" }, "zone": 4 },
-        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" }, "zone": 4 },
-        { "name": { "zh": "北顿花园", "en": "Norton Garden" }, "zone": 4 },
-        { "name": { "zh": "北顿邨", "en": "Norton Estate" }, "zone": 4 },
-        { "name": { "zh": "北顿市中心", "en": "Norton Town Center" }, "zone": 4 },
-        { "name": { "zh": "绿宝石中心", "en": "Emerald Plaza" }, "zone": 4 },
-        { "name": { "zh": "北岛花园", "en": "North Island Estate" }, "zone": 4 },
-        { "name": { "zh": "望环台", "en": "Panorama Heights" }, "zone": 4 },
-        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" }, "zone": 4 },
-        { "name": { "zh": "阳光大学", "en": "Sunshine University" }, "zone": 4 },
-        { "name": { "zh": "东锦葵大街", "en": "Eastmallow Main Street" }, "zone": 4 },
-        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" }, "zone": 4 },
-        { "name": { "zh": "第七区转车站", "en": "Zone 7 Interchange" }, "zone": 7 }
+        {
+          "name": {
+            "zh": "阳光体育馆",
+            "en": "Sunshine Stadium"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "西区海底隧道转车站",
+            "en": "Western Harbour Tunnel Interchange"
+          },
+          "zone": 1,
+          "nameSub": {
+            "zh": "月亮湾站",
+            "en": "Lunar Bay Station"
+          }
+        },
+        {
+          "name": {
+            "zh": "北顿路",
+            "en": "Norton Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北顿码头",
+            "en": "Norton Ferry Pier"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北顿花园",
+            "en": "Norton Garden"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北顿邨",
+            "en": "Norton Estate"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北顿市中心",
+            "en": "Norton Town Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "绿宝石中心",
+            "en": "Emerald Plaza"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北岛花园",
+            "en": "North Island Estate"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "望环台",
+            "en": "Panorama Heights"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "北岛花园商场",
+            "en": "NIE Shopping Center"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "阳光大学",
+            "en": "Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "东锦葵海傍路",
+            "en": "Eastmallow Praya Road"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
+          },
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
+        }
       ]
     }
   ],

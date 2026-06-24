@@ -52,7 +52,11 @@
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
+          }
         },
         {
           "name": {
@@ -101,7 +105,11 @@
             "zh": "強生街市",
             "en": "Johnson Market"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
+          }
         },
         {
           "name": {

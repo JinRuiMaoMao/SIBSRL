@@ -74,12 +74,20 @@
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {
           "name": {
             "zh": "The ONE",
             "en": "The ONE"
+          },
+          "nameSub": {
+            "zh": "警察总部, 新纪元中心",
+            "en": "Police Headquarters, Ping Center"
           }
         },
         {
@@ -87,7 +95,11 @@
             "zh": "強生街市",
             "en": "Johnson Market"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
+          }
         },
         {
           "name": {
@@ -99,6 +111,10 @@
           "name": {
             "zh": "中環南總站",
             "en": "Southern Central Terminal"
+          },
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
           }
         },
         {
@@ -106,7 +122,11 @@
             "zh": "第七區轉車站 (東行)",
             "en": "Section fare begins here"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -143,6 +163,10 @@
           "name": {
             "zh": "葉欣邨第一座",
             "en": "YiYan Estate Block 1"
+          },
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
           }
         },
         {
@@ -203,7 +227,11 @@
             "zh": "葉欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
+          }
         },
         {
           "name": {
@@ -246,14 +274,22 @@
             "zh": "第七區轉車站 (西行)",
             "en": "Axis Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
             "zh": "中環南總站",
             "en": "Section fare begins here"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
+          }
         },
         {
           "name": {
@@ -265,6 +301,10 @@
           "name": {
             "zh": "強生街市",
             "en": "Johnson Market"
+          },
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
           }
         },
         {

@@ -64,7 +64,11 @@
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
+          }
         },
         {
           "name": {
@@ -192,7 +196,11 @@
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
+          }
         },
         {
           "name": {

@@ -70,6 +70,10 @@
           "name": {
             "zh": "東門總站",
             "en": "East Door Road"
+          },
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
           }
         },
         {
@@ -89,7 +93,11 @@
             "zh": "第七區轉車站 (西行)",
             "en": "Axis Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -101,6 +109,10 @@
           "name": {
             "zh": "強生街市",
             "en": "Johnson Market"
+          },
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
           }
         },
         {

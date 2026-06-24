@@ -74,6 +74,10 @@
           "name": {
             "zh": "陽光殯儀館",
             "en": "Sunshine Funeral"
+          },
+          "nameSub": {
+            "zh": "阳光体育馆",
+            "en": "Sunshine Stadium"
           }
         },
         {
@@ -86,12 +90,20 @@
           "name": {
             "zh": "長島東醫院",
             "en": "East Long Island Hospital"
+          },
+          "nameSub": {
+            "zh": "宜和剧场",
+            "en": "Jardine Theater"
           }
         },
         {
           "name": {
             "zh": "彩色匯",
             "en": "Rainbow Center"
+          },
+          "nameSub": {
+            "zh": "虹尾角站, 智家坊",
+            "en": "Iris Point Station, I Home"
           }
         },
         {
@@ -105,12 +117,20 @@
           "name": {
             "zh": "賴得里",
             "en": "Wright Lane"
+          },
+          "nameSub": {
+            "zh": "赖得站",
+            "en": "Wright Station"
           }
         },
         {
           "name": {
             "zh": "三哥大廈",
             "en": "Third Technology Building"
+          },
+          "nameSub": {
+            "zh": "炫光集",
+            "en": "Neon Center"
           }
         },
         {
@@ -248,6 +268,10 @@
           "name": {
             "zh": "三哥大廈",
             "en": "Third Technology Building"
+          },
+          "nameSub": {
+            "zh": "炫光集",
+            "en": "Neon Center"
           }
         },
         {

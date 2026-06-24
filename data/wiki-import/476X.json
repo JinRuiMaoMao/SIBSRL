@@ -84,12 +84,20 @@
           "name": {
             "zh": "玻璃樓",
             "en": "Glass Office"
+          },
+          "nameSub": {
+            "zh": "冰淇路",
+            "en": "Pinky Road"
           }
         },
         {
           "name": {
             "zh": "The One",
             "en": "The One"
+          },
+          "nameSub": {
+            "zh": "警察总部, 新纪元中心",
+            "en": "Police Headquarters, Ping Center"
           }
         },
         {
@@ -97,7 +105,11 @@
             "zh": "強生街市",
             "en": "Johnson Market"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "A05, 阳光大学南环校园",
+            "en": "A05, Sunshine University Southern Campus"
+          }
         },
         {
           "name": {

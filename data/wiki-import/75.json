@@ -90,6 +90,10 @@
           "name": {
             "zh": "東門總站",
             "en": "East Door Bus Terminus"
+          },
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
           }
         },
         {
@@ -160,7 +164,11 @@
             "zh": "葉欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
+          }
         },
         {
           "name": {
@@ -222,6 +230,10 @@
           "name": {
             "zh": "葉欣邨第一座",
             "en": "YiYan Estate Block 1"
+          },
+          "nameSub": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
           }
         },
         {
@@ -292,6 +304,10 @@
           "name": {
             "zh": "東門總站",
             "en": "East Door Bus Terminus"
+          },
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
           }
         },
         {

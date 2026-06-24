@@ -1,4 +1,5 @@
 import { convertToSimplified } from '../i18n/convert'
+import { applyStopNameSubToStop } from '../data/stopNameSubs'
 import type { BilingualText, BusRoute } from '../types/route'
 import {
   isPlaceholderEndpoint,
@@ -228,10 +229,12 @@ function normalizeStopGroup(group: StopGroup): StopGroup {
   const list = fillStopZones(
     repairStopList(group.list, group.direction)
       .filter((s) => !isBrokenText(s.name.en) && !isBrokenText(s.name.zh))
-      .map((s) => ({
-        ...s,
-        name: cleanBilingual(s.name),
-      })),
+      .map((s) =>
+        applyStopNameSubToStop({
+          ...s,
+          name: cleanBilingual(s.name),
+        }),
+      ),
   )
 
   return {

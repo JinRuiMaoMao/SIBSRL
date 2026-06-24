@@ -98,6 +98,10 @@
           "name": {
             "zh": "東門總站",
             "en": "East Door Bus Terminus"
+          },
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
           }
         },
         {
@@ -149,7 +153,11 @@
             "zh": "第七區轉車站 (西行)",
             "en": "第七區轉車站 (西行)"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -204,14 +212,22 @@
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
+          }
         },
         {
           "name": {
             "zh": "第七區轉車站 (東行)",
             "en": "Axis Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -267,7 +283,11 @@
             "zh": "東門總站",
             "en": "East Door Bus Terminus"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
+          }
         },
         {
           "name": {

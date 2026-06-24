@@ -329,6 +329,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '补全 N171 北行 61 站站序（长岛码头 → 彩虹中心），括号内副站名（阳光体育馆、月亮湾站、千叶站等）在详情以小字同行显示；修正中叶隧道与南环文化区公园先后次序。',
             en: 'Completed N171 northbound stop list (61 stops, Long Island Ferry Pier → Rainbow Estate Complex); parenthetical aliases (Sunshine Stadium, Lunar Bay Station, Thousand Leaf Station, etc.) show inline as subtitles; fixed Leafy-Central Tunnel vs Southern Cultural District Park order.',
           },
+          {
+            zh: 'N171 等线路的 14 组副站名（阳光体育馆、炫光集、月亮湾站、千叶站等）已同步到全站同名站点；折返点站不受影响。',
+            en: 'Fourteen subtitle aliases from N171 (Sunshine Stadium, Neon Center, Lunar Bay Station, Thousand Leaf Station, etc.) now apply site-wide to matching stop names; turning-point stops are excluded.',
+          },
         ],
       },
     ],

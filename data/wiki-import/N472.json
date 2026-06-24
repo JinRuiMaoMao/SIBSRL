@@ -136,7 +136,11 @@
             "zh": "第七區轉車站 (西行)",
             "en": "Two-way section fare ends here / Near Thousand Leaf Station"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -270,6 +274,10 @@
           "name": {
             "zh": "The ONE",
             "en": "The ONE"
+          },
+          "nameSub": {
+            "zh": "警察总部, 新纪元中心",
+            "en": "Police Headquarters, Ping Center"
           }
         },
         {
@@ -289,7 +297,11 @@
             "zh": "第七區轉車站 (東行)",
             "en": "Section fare begins here / Near Thousand Leaf Station"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {

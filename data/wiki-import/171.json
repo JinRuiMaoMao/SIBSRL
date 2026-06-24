@@ -73,12 +73,20 @@
           "name": {
             "zh": "長島東醫院",
             "en": "East Long Island Hospital"
+          },
+          "nameSub": {
+            "zh": "宜和剧场",
+            "en": "Jardine Theater"
           }
         },
         {
           "name": {
             "zh": "彩色匯",
             "en": "Rainbow Center"
+          },
+          "nameSub": {
+            "zh": "虹尾角站, 智家坊",
+            "en": "Iris Point Station, I Home"
           }
         },
         {
@@ -92,6 +100,10 @@
           "name": {
             "zh": "賴得里",
             "en": "Wright Lane"
+          },
+          "nameSub": {
+            "zh": "赖得站",
+            "en": "Wright Station"
           }
         },
         {
@@ -105,7 +117,11 @@
             "zh": "西區海底隧道轉車站",
             "en": "Western Harbour Tunnel Interchange"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "月亮湾站",
+            "en": "Lunar Bay Station"
+          }
         },
         {
           "name": {
@@ -119,7 +135,11 @@
             "zh": "中環南總站",
             "en": "Southern Central Bus Terminus"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "南环花园一期",
+            "en": "Southern One"
+          }
         },
         {
           "name": {
@@ -195,6 +215,10 @@
           "name": {
             "zh": "東門總站",
             "en": "East Door Bus Terminus"
+          },
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
           }
         }
       ]
@@ -265,6 +289,10 @@
           "name": {
             "zh": "仙貝多層停車場",
             "en": "Senpai Multi-Storey Carpark"
+          },
+          "nameSub": {
+            "zh": "仙贝站",
+            "en": "Senpai Station"
           }
         },
         {
@@ -291,7 +319,11 @@
             "zh": "第七區轉車站",
             "en": "Axis Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          }
         },
         {
           "name": {
@@ -318,6 +350,10 @@
           "name": {
             "zh": "西區海底隧道轉車站",
             "en": "Western Harbour Tunnel Interchange"
+          },
+          "nameSub": {
+            "zh": "月亮湾站",
+            "en": "Lunar Bay Station"
           }
         },
         {
