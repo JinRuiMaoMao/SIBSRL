@@ -7,6 +7,7 @@ const DIRECTION_QUERY_KEY = 'dir'
 const FROM_STOP_QUERY_KEY = 'from'
 const TO_STOP_QUERY_KEY = 'to'
 const DEPART_QUERY_KEY = 'depart'
+const SEARCH_QUERY_KEY = 'q'
 
 /** Windows / URL 安全文件名：非字母数字与连字符一律百分号编码 */
 export function routeIdToPageFilename(routeId: string): string {
@@ -30,10 +31,18 @@ export function getRoutePageDataHref(routeId: string): string {
   return `${ROUTE_PAGE_DIR}/${routeIdToPageFilename(routeId)}.html?v=${encodeURIComponent(__APP_BUILD__)}`
 }
 
-/** 从线路列表页点击卡片时的相对链接：直接进 app，避免经过独立 HTML 中转页白闪。 */
-export function getRoutePageHref(routeId: string): string {
-  const params = new URLSearchParams({ [ROUTE_QUERY_KEY]: routeId })
-  return `index.html?${params.toString()}`
+/** 从线路列表页点击卡片时的相对链接：保留当前搜索参数，并带上 route。 */
+export function getRoutePageHref(routeId: string, directionIndex?: number): string {
+  const params = new URLSearchParams(window.location.search)
+  params.set(ROUTE_QUERY_KEY, routeId)
+  if (directionIndex != null && directionIndex >= 0) {
+    params.set(DIRECTION_QUERY_KEY, String(directionIndex))
+  } else {
+    params.delete(DIRECTION_QUERY_KEY)
+  }
+  const page = import.meta.env.DEV ? 'dev.html' : 'index.html'
+  const qs = params.toString()
+  return qs ? `${page}?${qs}` : page
 }
 
 /** 读取 URL 中的线路编号（不做别名转换） */
@@ -135,6 +144,29 @@ export function readStopPairFromLocation(): StopPairLocationQuery | null {
   if (!from || !to) return null
   const depart = params.get(DEPART_QUERY_KEY)?.trim() || null
   return { from, to, depart }
+}
+
+/** 读取 URL 中的自由文本搜索（?q=） */
+export function readSearchQueryFromLocation(): string | null {
+  const q = new URLSearchParams(window.location.search).get(SEARCH_QUERY_KEY)?.trim()
+  return q || null
+}
+
+export function replaceSearchInLocation(query: string): void {
+  const url = new URL(window.location.href)
+  const trimmed = query.trim()
+  if (trimmed) url.searchParams.set(SEARCH_QUERY_KEY, trimmed)
+  else url.searchParams.delete(SEARCH_QUERY_KEY)
+  const qs = url.searchParams.toString()
+  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+}
+
+export function clearSearchFromLocation(): void {
+  const url = new URL(window.location.href)
+  if (!url.searchParams.has(SEARCH_QUERY_KEY)) return
+  url.searchParams.delete(SEARCH_QUERY_KEY)
+  const qs = url.searchParams.toString()
+  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 export function buildStopPairSearchQuery(from: string, to: string): string {

@@ -65,11 +65,14 @@ import {
   buildRouteShareUrl,
   buildStopPairSearchQuery,
   clearRouteFromLocation,
+  clearSearchFromLocation,
   clearStopPairFromLocation,
   readDirectionQueryFromLocation,
   readRouteQueryFromLocation,
+  readSearchQueryFromLocation,
   readStopPairFromLocation,
   replaceRouteInLocation,
+  replaceSearchInLocation,
   replaceStopPairInLocation,
   setRouteInLocation,
 } from '../utils/routeNavigation'
@@ -440,14 +443,19 @@ export function RouteLookupPage({
   useEffect(() => {
     if (stopPairFromUrlRef.current) return
     const pair = readStopPairFromLocation()
-    if (!pair || readRouteQueryFromLocation()) return
-    stopPairFromUrlRef.current = true
-    const query = buildStopPairSearchQuery(pair.from, pair.to)
-    updateFilter('query', query)
-    setCommittedStopPairQuery(query)
-    if (pair.depart) setBetweenStopsDepartTime(pair.depart)
-    setBetweenStopsSectionOpen(true)
-    pendingBetweenStopsScrollRef.current = true
+    if (pair) {
+      stopPairFromUrlRef.current = true
+      const query = buildStopPairSearchQuery(pair.from, pair.to)
+      updateFilter('query', query)
+      setCommittedStopPairQuery(query)
+      if (pair.depart) setBetweenStopsDepartTime(pair.depart)
+      setBetweenStopsSectionOpen(true)
+      pendingBetweenStopsScrollRef.current = true
+      return
+    }
+
+    const searchQuery = readSearchQueryFromLocation()
+    if (searchQuery) updateFilter('query', searchQuery)
   }, [updateFilter])
 
   useEffect(() => {
@@ -560,6 +568,42 @@ export function RouteLookupPage({
   }, [clearSelection, findDisplayRoute, recordRecent, selectRoute, setDirectionIndex])
 
   useEffect(() => {
+    const syncRouteOverlayFromLocation = () => {
+      const routeId = readRouteQueryFromLocation()
+      if (routeId) {
+        const route = findDisplayRoute(routeId)
+        if (route) {
+          setDailyChallengeRouteView(false)
+          recordRecent(route.id)
+          selectRoute(routeId)
+          const directionIndex = readDirectionQueryFromLocation()
+          if (directionIndex != null) {
+            setDirectionIndex(route.id, directionIndex)
+          }
+          return
+        }
+        clearSelection()
+        setDetailOverlay({ kind: 'not-found', routeId })
+        return
+      }
+
+      setDetailOverlay((prev) =>
+        prev?.kind === 'route' || prev?.kind === 'not-found' ? null : prev,
+      )
+      setRoutePageDetail(null)
+      setDailyChallengeRouteView(false)
+      clearSelection()
+    }
+
+    const onPopState = () => {
+      syncRouteOverlayFromLocation()
+    }
+
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [clearSelection, findDisplayRoute, recordRecent, selectRoute, setDirectionIndex])
+
+  useEffect(() => {
     if (!selectedRoute) return
     setDetailOverlay({ kind: 'route', route: selectedRoute })
   }, [selectedRoute])
@@ -654,6 +698,11 @@ export function RouteLookupPage({
 
   const handleRouteNavigate = useCallback(
     (routeId: string) => {
+      const q = filters.query.trim()
+      const parsed = parseStructuredSearchQuery(q)
+      if (q && (!parsed.from?.trim() || !parsed.to?.trim())) {
+        replaceSearchInLocation(q)
+      }
       setDailyChallengeRouteView(false)
       recordRecent(routeId)
       selectRoute(routeId)
@@ -661,7 +710,7 @@ export function RouteLookupPage({
       const directionIndex = route ? getDirectionIndex(route) : 0
       setRouteInLocation(routeId, directionIndex)
     },
-    [findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
+    [filters.query, findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
@@ -855,6 +904,7 @@ export function RouteLookupPage({
       if (!q.trim()) {
         setCommittedStopPairQuery('')
         clearStopPairFromLocation()
+        clearSearchFromLocation()
       }
     },
     [updateFilter],
@@ -870,6 +920,10 @@ export function RouteLookupPage({
     if (parsed.from?.trim() && parsed.to?.trim()) {
       setCommittedStopPairQuery(q)
       pendingBetweenStopsScrollRef.current = true
+    } else {
+      setCommittedStopPairQuery('')
+      replaceSearchInLocation(q)
+      clearStopPairFromLocation()
     }
 
     const next = defaultClosedRouteGroups()
@@ -919,6 +973,7 @@ export function RouteLookupPage({
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
           tourAnchor={group === 'normal' && index === 0 ? 'route-card' : undefined}
+          onNavigate={handleRouteNavigate}
         />
       )
     })
@@ -934,6 +989,7 @@ export function RouteLookupPage({
           window={window}
           selected={selectedRoute?.id === route.id}
           directionIndex={getDirectionIndex(route)}
+          onNavigate={handleRouteNavigate}
         />
       )
     })
@@ -966,6 +1022,7 @@ export function RouteLookupPage({
           onDirectionChange={(index) => setDirectionIndex(route.id, index)}
           onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
           muted={!routeMatchesFilters(route, filters)}
+          onNavigate={handleRouteNavigate}
         />
       </div>
     ))
@@ -982,6 +1039,7 @@ export function RouteLookupPage({
         onDirectionChange={(index) => setDirectionIndex(route.id, index)}
         onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
         muted={!routeMatchesFilters(route, filters)}
+        onNavigate={handleRouteNavigate}
       />
     ))
 
@@ -995,6 +1053,7 @@ export function RouteLookupPage({
         loopView={getLoopView(route)}
         onDirectionChange={(index) => setDirectionIndex(route.id, index)}
         onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
+        onNavigate={handleRouteNavigate}
       />
     ))
 
@@ -1139,6 +1198,7 @@ export function RouteLookupPage({
                     selectedRouteId={selectedRoute?.id}
                     setDirectionIndex={setDirectionIndex}
                     onSelectPlan={handleSelectTransferPlan}
+                    onRouteNavigate={handleRouteNavigate}
                   />
                 </RouteGroupCollapse>
               </div>

@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { getOptionalText } from '../i18n/displayText'
 import type { BusRoute } from '../types/route'
@@ -37,6 +38,8 @@ interface RouteCardProps {
   /** classic：最近查看等，保留原卡片外框与文字起终点 */
   appearance?: 'promoted' | 'classic'
   tourAnchor?: string
+  /** 站内打开线路详情（保留搜索状态）；未提供时仍走 href 整页跳转 */
+  onNavigate?: (routeId: string) => void
 }
 
 export function RouteCard({
@@ -53,6 +56,7 @@ export function RouteCard({
   availabilityUnavailableLabel,
   appearance = 'promoted',
   tourAnchor,
+  onNavigate,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -74,6 +78,14 @@ export function RouteCard({
 
   const cardHref = href ?? getRoutePageHref(route.id)
 
+  const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!onNavigate) return
+    if (event.button !== 0) return
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    onNavigate(route.id)
+  }
+
   return (
     <div
       data-route-id={route.id}
@@ -87,6 +99,7 @@ export function RouteCard({
           aria-label={cardNumber}
           aria-current={selected ? 'page' : undefined}
           tabIndex={-1}
+          onClick={handleCardClick}
         />
         {lengthKm ? (
           <span className="route-card-km route-card-km--corner" key={`${route.id}-km-${directionIndex}`}>

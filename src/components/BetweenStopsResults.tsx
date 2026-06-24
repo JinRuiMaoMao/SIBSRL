@@ -41,6 +41,7 @@ interface BetweenStopsResultsProps {
   selectedRouteId: string | undefined
   setDirectionIndex: (routeId: string, index: number) => void
   onSelectPlan: (plan: TransferPlan, planIndex: number) => void
+  onRouteNavigate?: (routeId: string) => void
 }
 
 export function BetweenStopsResults({
@@ -53,6 +54,7 @@ export function BetweenStopsResults({
   selectedRouteId,
   setDirectionIndex,
   onSelectPlan,
+  onRouteNavigate,
 }: BetweenStopsResultsProps) {
   const { alert } = useAppDialog()
   const { locale, t } = useLocale()
@@ -177,6 +179,7 @@ export function BetweenStopsResults({
                     selected={selectedRouteId === route.id}
                     directionIndex={directionIndex}
                     onDirectionChange={(index) => setDirectionIndex(route.id, index)}
+                    onNavigate={onRouteNavigate}
                   />
                   {metrics ? <TransferPlanMetricsSummary metrics={metrics} /> : null}
                 </div>

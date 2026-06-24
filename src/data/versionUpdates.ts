@@ -309,6 +309,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '站间导航（起点--终点）的直达与转车方案现显示距离、时间与票价；票价为各乘车段全票相加的估算。',
             en: 'Stop-to-stop navigation (start--end) now shows distance, time, and fare on direct and transfer plans; fare sums full-route fares per leg as an estimate.',
           },
+          {
+            zh: '修复搜索后点进线路详情再返回时搜索词与结果消失的问题：卡片改为站内打开详情并保留 URL 搜索参数，浏览器后退可正确关闭详情。',
+            en: 'Fixed losing search text and results after opening route detail—cards now open in-app while preserving URL search params; browser Back closes detail and keeps the list.',
+          },
         ],
       },
     ],

@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
 import type { SeasonalAvailabilityWindow } from '../data/seasonalRouteAvailability'
@@ -22,6 +23,7 @@ interface SeasonalPromotedRouteCardProps {
   window: SeasonalAvailabilityWindow
   selected: boolean
   href?: string
+  onNavigate?: (routeId: string) => void
 }
 
 export function SeasonalPromotedRouteCard({
@@ -31,6 +33,7 @@ export function SeasonalPromotedRouteCard({
   window,
   selected,
   href,
+  onNavigate,
 }: SeasonalPromotedRouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -43,13 +46,23 @@ export function SeasonalPromotedRouteCard({
   const stopCount = stopGroup?.list.length ?? 0
   const endpoints = getDirectionEndpointNames(route, directionIndex, locale)
   const eventTitle = route.eventTitle ? getPrimaryText(route.eventTitle, locale) : null
+  const cardHref = href ?? getRoutePageHref(route.id)
+
+  const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!onNavigate) return
+    if (event.button !== 0) return
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    onNavigate(route.id)
+  }
 
   return (
     <a
-      href={href ?? getRoutePageHref(route.id)}
+      href={cardHref}
       data-route-id={route.id}
       className={`route-card-link route-card-link--seasonal-promoted ${selected ? 'route-card-link--selected' : ''}`.trim()}
       aria-current={selected ? 'page' : undefined}
+      onClick={handleCardClick}
     >
       <article className="route-card seasonal-promoted-card">
         {lengthKm ? (
