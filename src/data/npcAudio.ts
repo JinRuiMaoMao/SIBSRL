@@ -14,21 +14,17 @@ export interface NpcAudioItem {
 }
 
 export const NPC_CATEGORIES: readonly string[] = [
-  "打招呼，感谢",
-  "服务抱怨",
-  "下车抱怨",
   "行车抱怨",
+  "下车抱怨",
+  "服务抱怨",
+  "打招呼，感谢",
 ]
 
+export const NPC_CATEGORY_LABELS: Readonly<Record<string, string>> = {
+  "打招呼，感谢": "感谢",
+}
+
 export const npcAudioItems: readonly NpcAudioItem[] = [
-  { id: "npc-%E4%B8%8B%E8%BD%A6%E6%8A%B1%E6%80%A8-1", category: "下车抱怨", number: 1, title: { zh: "WhatsWrong", en: "WhatsWrong" }, detail: { zh: "下车抱怨", en: "下车抱怨" }, audioUrl: "./audio/npc/%E4%B8%8B%E8%BD%A6%E6%8A%B1%E6%80%A8/WhatsWrong.mp3" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-1", category: "打招呼，感谢", number: 1, title: { zh: "感谢：ThankYou", en: "感谢：ThankYou" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E6%84%9F%E8%B0%A2%EF%BC%9AThankYou.ogg" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-2", category: "打招呼，感谢", number: 2, title: { zh: "男hello", en: "男hello" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E7%94%B7hello.ogg" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-3", category: "打招呼，感谢", number: 3, title: { zh: "男hi", en: "男hi" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E7%94%B7hi.ogg" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-4", category: "打招呼，感谢", number: 4, title: { zh: "女hello", en: "女hello" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E5%A5%B3hello.ogg" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-5", category: "打招呼，感谢", number: 5, title: { zh: "女hi", en: "女hi" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E5%A5%B3hi.ogg" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-6", category: "打招呼，感谢", number: 6, title: { zh: "谢谢你", en: "谢谢你" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E8%B0%A2%E8%B0%A2%E4%BD%A0.ogg" },
-  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-7", category: "打招呼，感谢", number: 7, title: { zh: "byebye", en: "byebye" }, detail: { zh: "打招呼，感谢", en: "打招呼，感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/byebye.ogg" },
   { id: "npc-%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8-1", category: "行车抱怨", number: 1, title: { zh: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊", en: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊" }, detail: { zh: "行车抱怨", en: "行车抱怨" }, audioUrl: "./audio/npc/%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8/%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A%E5%95%8A.ogg" },
   { id: "npc-%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8-2", category: "行车抱怨", number: 2, title: { zh: "抱怨1OMG", en: "抱怨1OMG" }, detail: { zh: "行车抱怨", en: "行车抱怨" }, audioUrl: "./audio/npc/%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8/%E6%8A%B1%E6%80%A81OMG.ogg" },
   { id: "npc-%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8-3", category: "行车抱怨", number: 3, title: { zh: "抱怨3IsThisBus", en: "抱怨3IsThisBus" }, detail: { zh: "行车抱怨", en: "行车抱怨" }, audioUrl: "./audio/npc/%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8/%E6%8A%B1%E6%80%A83IsThisBus.mp3" },
@@ -41,4 +37,12 @@ export const npcAudioItems: readonly NpcAudioItem[] = [
   { id: "npc-%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8-10", category: "行车抱怨", number: 10, title: { zh: "AHHHHHHHHHHHH", en: "AHHHHHHHHHHHH" }, detail: { zh: "行车抱怨", en: "行车抱怨" }, audioUrl: "./audio/npc/%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8/AHHHHHHHHHHHH.ogg" },
   { id: "npc-%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8-11", category: "行车抱怨", number: 11, title: { zh: "what r u doing", en: "what r u doing" }, detail: { zh: "行车抱怨", en: "行车抱怨" }, audioUrl: "./audio/npc/%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8/what%20r%20u%20doing.ogg" },
   { id: "npc-%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8-12", category: "行车抱怨", number: 12, title: { zh: "why did u do this to me", en: "why did u do this to me" }, detail: { zh: "行车抱怨", en: "行车抱怨" }, audioUrl: "./audio/npc/%E8%A1%8C%E8%BD%A6%E6%8A%B1%E6%80%A8/why%20did%20u%20do%20this%20to%20me.ogg" },
+  { id: "npc-%E4%B8%8B%E8%BD%A6%E6%8A%B1%E6%80%A8-1", category: "下车抱怨", number: 1, title: { zh: "WhatsWrong", en: "WhatsWrong" }, detail: { zh: "下车抱怨", en: "下车抱怨" }, audioUrl: "./audio/npc/%E4%B8%8B%E8%BD%A6%E6%8A%B1%E6%80%A8/WhatsWrong.mp3" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-1", category: "打招呼，感谢", number: 1, title: { zh: "感谢：ThankYou", en: "感谢：ThankYou" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E6%84%9F%E8%B0%A2%EF%BC%9AThankYou.ogg" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-2", category: "打招呼，感谢", number: 2, title: { zh: "男hello", en: "男hello" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E7%94%B7hello.ogg" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-3", category: "打招呼，感谢", number: 3, title: { zh: "男hi", en: "男hi" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E7%94%B7hi.ogg" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-4", category: "打招呼，感谢", number: 4, title: { zh: "女hello", en: "女hello" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E5%A5%B3hello.ogg" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-5", category: "打招呼，感谢", number: 5, title: { zh: "女hi", en: "女hi" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E5%A5%B3hi.ogg" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-6", category: "打招呼，感谢", number: 6, title: { zh: "谢谢你", en: "谢谢你" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/%E8%B0%A2%E8%B0%A2%E4%BD%A0.ogg" },
+  { id: "npc-%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2-7", category: "打招呼，感谢", number: 7, title: { zh: "byebye", en: "byebye" }, detail: { zh: "感谢", en: "感谢" }, audioUrl: "./audio/npc/%E6%89%93%E6%8B%9B%E5%91%BC%EF%BC%8C%E6%84%9F%E8%B0%A2/byebye.ogg" },
 ]
