@@ -1,5 +1,7 @@
 /** Shared with scripts/lib/stop-name-audio-match.mjs — keep aliases in sync. */
 
+import type { BilingualText } from '../types/route'
+
 export const STOP_NAME_ALIASES: Record<string, string[]> = {
   'Dove Estate': ['白鸽邨'],
   'Dove Hill': ['白鸽山'],
@@ -16,4 +18,19 @@ export const STOP_NAME_ALIASES: Record<string, string[]> = {
   'Roblox TV': ['RBX TV', '阿周电视'],
   'Western Hospital': ['西区医院'],
   'Bank Tower': ['银行大厦'],
+}
+
+/** 21/21A 以外：下一站为白鸽山时固定用 21路白鸽山2.mp3（passIndex 1 → 后缀 2） */
+export function passIndexForStopNamePool(
+  routeId: string,
+  nextStop: BilingualText,
+  passIndex: number,
+): number {
+  if (routeId === '21A' || routeId === '21') return passIndex
+
+  const zh = nextStop.zh?.trim() ?? ''
+  const en = nextStop.en?.trim() ?? ''
+  if (zh === '白鸽山' || en === 'Dove Hill') return 1
+
+  return passIndex
 }

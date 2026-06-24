@@ -9,6 +9,7 @@ import {
 } from './stopNameAudioManifest'
 import type { RouteStopAudioAtRow } from './routeStopAudio21A'
 import { getRoute77XAStopAudioByAtIndex, ROUTE_77XA_ID } from './routeStopAudio77XA'
+import { passIndexForStopNamePool } from '../utils/stopNameAudioMatch'
 
 const ROUTE_ID_ALIASES: Record<string, string> = {
   '21': '21A',
@@ -42,7 +43,12 @@ function getNextStopNamePoolAudio(
   const nextStop = list[nextIndex]
   if (!nextStop) return undefined
 
-  const match = findStopNameAudio(nextStop.name, passIndexForNextStop(list, nextIndex))
+  const passIndex = passIndexForStopNamePool(
+    dataId,
+    nextStop.name,
+    passIndexForNextStop(list, nextIndex),
+  )
+  const match = findStopNameAudio(nextStop.name, passIndex)
   if (!match) return undefined
 
   return {
