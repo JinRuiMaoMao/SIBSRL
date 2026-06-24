@@ -23,7 +23,7 @@ import { useDocumentMetadata } from './hooks/useDocumentMetadata'
 import { useFavoritesCloudSync } from './hooks/useFavoritesCloudSync'
 import { useGuidedTourControl } from './contexts/GuidedTourContext'
 import { useLocale } from './i18n/LocaleContext'
-import { getLatestUpdatePromptKey } from './data/versionUpdates'
+import { getLatestUpdateId } from './data/versionUpdates'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
 import { canAutoStartGuidedTour, getGuidedTourAutoStartDelayMs } from './storage/guidedTour'
 import { markUpdateSeen } from './storage/updatesViewing'
@@ -42,9 +42,16 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
     markDailyChallengePromptSeen()
   }
 
+  const showUpdates = !showDailyChallenge && shouldShowUpdatesPrompt()
+
+  if (showUpdates) {
+    const latestUpdateId = getLatestUpdateId()
+    if (latestUpdateId) markUpdateSeen(latestUpdateId)
+  }
+
   return {
     dailyChallenge: showDailyChallenge,
-    updates: !showDailyChallenge && shouldShowUpdatesPrompt(),
+    updates: showUpdates,
   }
 }
 
@@ -116,12 +123,14 @@ function App() {
 
   const openUpdatesPrompt = useCallback(() => {
     if (!shouldShowUpdatesPrompt()) return
+    const latestUpdateId = getLatestUpdateId()
+    if (latestUpdateId) markUpdateSeen(latestUpdateId)
     setUpdatesPromptOpen(true)
   }, [])
 
   const closeUpdatesPrompt = useCallback(() => {
-    const latestPromptKey = getLatestUpdatePromptKey()
-    if (latestPromptKey) markUpdateSeen(latestPromptKey)
+    const latestUpdateId = getLatestUpdateId()
+    if (latestUpdateId) markUpdateSeen(latestUpdateId)
     setUpdatesPromptOpen(false)
     tryOpenGuidedTour()
   }, [tryOpenGuidedTour])

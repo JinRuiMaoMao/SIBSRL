@@ -17,38 +17,9 @@ export function getLatestUpdateId(): string | undefined {
   return versionUpdates[0]?.id
 }
 
-function hashUpdatePromptContent(value: string): string {
-  let hash = 0
-  for (let i = 0; i < value.length; i++) {
-    hash = (Math.imul(31, hash) + value.charCodeAt(i)) | 0
-  }
-  return (hash >>> 0).toString(36)
-}
-
-function collectUpdateEntryPromptContent(entry: VersionUpdateEntry): string {
-  const parts: string[] = []
-  if (entry.items?.length) {
-    for (const item of entry.items) {
-      parts.push(item.zh, item.en)
-    }
-  }
-  if (entry.groups?.length) {
-    for (const group of entry.groups) {
-      parts.push(group.title.zh, group.title.en)
-      for (const item of group.items) {
-        parts.push(item.zh, item.en)
-      }
-    }
-  }
-  if (entry.easterEggHex) parts.push(entry.easterEggHex)
-  return parts.join('\0')
-}
-
-/** 弹窗已读标记：同日追加条目时 id 不变，但内容指纹会变。 */
+/** 弹窗 / 角标已读标记：以最新更新条目 id 为准，同日追加内容不再重复弹出。 */
 export function getLatestUpdatePromptKey(): string | undefined {
-  const entry = versionUpdates[0]
-  if (!entry) return undefined
-  return `${entry.id}#${hashUpdatePromptContent(collectUpdateEntryPromptContent(entry))}`
+  return getLatestUpdateId()
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
@@ -218,6 +189,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: '透明渐变模式下更新弹窗背景改为约 85%～92% 不透明，更新内容不再过度透出底层页面渐变。',
             en: 'In transparent-gradient mode, the update prompt now uses ~85–92% opaque panels so changelog text no longer bleeds through the page gradient.',
+          },
+          {
+            zh: '更新弹窗与底栏「!」角标改为按最新日志条目记已读：每条更新只自动弹出一次，关闭弹窗或进入更新页后即消失，直至下一次新条目。',
+            en: 'The update prompt and tab “!” badge now track the latest changelog entry id—auto-show once per release, then clear after dismissing the dialog or opening the updates page until the next entry.',
           },
         ],
       },

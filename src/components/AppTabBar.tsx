@@ -6,6 +6,7 @@ import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
 import { APP_TABS, getTabPageHref } from '../utils/appTabNavigation'
 import { hasUnreadUpdates } from '../utils/updatesPrompt'
+import { UPDATES_VIEWING_CHANGED_EVENT } from '../storage/updatesViewing'
 import { AppTabIcon } from './AppTabIcons'
 
 const TAB_KEYS: Record<AppTab, MessageKey> = {
@@ -40,9 +41,11 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
     syncUnread()
     window.addEventListener('storage', syncUnread)
     window.addEventListener('focus', syncUnread)
+    window.addEventListener(UPDATES_VIEWING_CHANGED_EVENT, syncUnread)
     return () => {
       window.removeEventListener('storage', syncUnread)
       window.removeEventListener('focus', syncUnread)
+      window.removeEventListener(UPDATES_VIEWING_CHANGED_EVENT, syncUnread)
     }
   }, [])
 
