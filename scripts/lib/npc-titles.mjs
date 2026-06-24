@@ -25,8 +25,14 @@ export function npcCategoryText(category) {
 const NPC_TITLE_OVERRIDES = {
   '行车抱怨/啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊.ogg': { zh: '啊啊啊……', en: 'Screaming' },
   '行车抱怨/抱怨1OMG.ogg': { zh: '我的天', en: 'OMG' },
-  '行车抱怨/抱怨3IsThisBus.mp3': { zh: '这是这班车吗', en: 'Is this the bus?' },
-  '行车抱怨/抱怨4SpendMoreTime.mp3': { zh: '多花点时间', en: 'Spend more time' },
+  '行车抱怨/抱怨3IsThisBus.mp3': {
+    zh: '这巴士是在试镜好莱坞动作片吗？',
+    en: 'Is this bus auditioning for a Hollywood action movie?',
+  },
+  '行车抱怨/抱怨4SpendMoreTime.mp3': {
+    zh: '我的天，我觉得你应该多上点驾驶课',
+    en: 'OMG, I think u should spend more time in driving lessons',
+  },
   '行车抱怨/抱怨5Stop right there.ogg': { zh: '站住', en: 'Stop right there' },
   '行车抱怨/抱怨6i am reporting u right now.ogg': { zh: '我要举报你', en: "I'm reporting you right now" },
   '行车抱怨/抱怨8.mp3': { zh: '不满', en: 'Dissatisfied' },
