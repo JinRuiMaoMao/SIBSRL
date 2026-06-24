@@ -78,6 +78,31 @@ export const STOP_NAME_SUB_RULES: StopNameSubRule[] = [
     matchZh: ['东门总站', '東門總站'],
     nameSub: { zh: '东门中心', en: 'East Door Complex' },
   },
+  {
+    matchEn: ['Alexander Church'],
+    matchZh: ['亚历山大教堂', '亞歷山教堂'],
+    nameSub: { zh: '叶角大学北门', en: 'Leafy University North Entrance' },
+  },
+  {
+    matchEn: ['Praya YiYan Road'],
+    matchZh: ['叶欣海旁道', '葉欣海旁道'],
+    nameSub: { zh: '钻石交易塔', en: 'Diamond Trading Tower' },
+  },
+  {
+    matchEn: ['Rocky Road'],
+    matchZh: ['巨石路'],
+    nameSub: { zh: '北岛学校村', en: 'North Island School Village' },
+  },
+  {
+    matchEn: ['Iris Point Station'],
+    matchZh: ['虹尾角站'],
+    nameSub: { zh: '智家坊, 彩色汇', en: 'I Home, Rainbow Center' },
+  },
+  {
+    matchEn: ['Jardine Theater'],
+    matchZh: ['宜和剧场', '宜和劇場'],
+    nameSub: { zh: '长岛东医院', en: 'East Long Island Hospital' },
+  },
 ]
 
 function stripParentheticalSuffix(text: string): string {

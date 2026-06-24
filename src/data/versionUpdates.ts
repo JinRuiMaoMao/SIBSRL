@@ -333,6 +333,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: 'N171 等线路的 14 组副站名（阳光体育馆、炫光集、月亮湾站、千叶站等）已同步到全站同名站点；折返点站不受影响。',
             en: 'Fourteen subtitle aliases from N171 (Sunshine Stadium, Neon Center, Lunar Bay Station, Thousand Leaf Station, etc.) now apply site-wide to matching stop names; turning-point stops are excluded.',
           },
+          {
+            zh: '补全 N171 南行 63 站站序（彩虹中心 → 长岛码头）；合并第七区转车站为单站，并新增叶角大学北门、钻石交易塔、北岛学校村、虹尾角站/宜和剧场等南行副站名，已同步全站同名站点。',
+            en: 'Completed N171 southbound stop list (63 stops, Rainbow Estate Complex → Long Island Ferry Pier); merged Zone 7 Interchange into one stop and added southbound-only subtitles (Leafy University North Entrance, Diamond Trading Tower, North Island School Village, Iris Point/Jardine Theater pairs), synced site-wide.',
+          },
         ],
       },
     ],

@@ -223,7 +223,11 @@
             "zh": "葉欣海旁路",
             "en": "Praya YiYan Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "钻石交易塔",
+            "en": "Diamond Trading Tower"
+          }
         },
         {
           "name": {
@@ -298,7 +302,11 @@
             "zh": "虹尾角站",
             "en": "Iris Point Station"
           },
-          "zone": 1
+          "zone": 1,
+          "nameSub": {
+            "zh": "智家坊, 彩色汇",
+            "en": "I Home, Rainbow Center"
+          }
         },
         {
           "name": {
@@ -310,6 +318,10 @@
           "name": {
             "zh": "宜和劇場",
             "en": "Jardine Theater"
+          },
+          "nameSub": {
+            "zh": "长岛东医院",
+            "en": "East Long Island Hospital"
           }
         },
         {

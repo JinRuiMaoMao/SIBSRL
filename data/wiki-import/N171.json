@@ -437,7 +437,11 @@
             "zh": "亚历山大教堂",
             "en": "Alexander Church"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶角大学北门",
+            "en": "Leafy University North Entrance"
+          }
         },
         {
           "name": {
@@ -549,15 +553,15 @@
       "list": [
         {
           "name": {
-            "zh": "彩虹中心總站",
-            "en": "Rainbow Estate Complex Bus Terminus"
+            "zh": "彩虹中心",
+            "en": "Rainbow Estate Complex"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "海西邨總站",
-            "en": "Haisey Estate Bus Terminus"
+            "zh": "海西邨",
+            "en": "Haisey Estate"
           },
           "zone": 8
         },
@@ -570,212 +574,209 @@
         },
         {
           "name": {
-            "zh": "東門總站",
+            "zh": "东门总站",
             "en": "East Door Bus Terminus"
           },
-          "zone": 7,
           "nameSub": {
             "zh": "东门中心",
             "en": "East Door Complex"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
-            "zh": "東門花園",
+            "zh": "东门花园",
             "en": "East Door Garden"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "東門下邨",
+            "zh": "东门下邨",
             "en": "Lower East Door Estate"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "東門公園",
+            "zh": "东门公园",
             "en": "East Door Park"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "勿莫商場",
+            "zh": "勿莫商场",
             "en": "Mo Shopping Center"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "北葉花園",
+            "zh": "北叶花园",
             "en": "North Leafy Garden"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "羅力素花園一期",
-            "en": "Laws Garden"
+            "zh": "罗力素花园一期",
+            "en": "Laws Garden 1"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "羅力素花園二期",
+            "zh": "罗力素花园二期",
             "en": "Laws Garden 2"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉欣俓",
+            "zh": "叶欣俓",
             "en": "Leafy Walking Trail"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "仙貝山",
+            "zh": "仙贝山",
             "en": "Senpai Hill"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "亞歷山教堂",
+            "zh": "亚历山大教堂",
             "en": "Alexander Church"
+          },
+          "nameSub": {
+            "zh": "叶角大学北门",
+            "en": "Leafy University North Entrance"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "仙貝多層停車場",
+            "zh": "仙贝多层停车场",
             "en": "Senpai Multi-Storey Car Park"
           },
-          "zone": 7,
           "nameSub": {
             "zh": "仙贝站",
             "en": "Senpai Station"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
-            "zh": "亞歷山花園",
+            "zh": "亚历山大花园",
             "en": "Alexander Garden"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉欣警察局",
+            "zh": "叶欣警察局",
             "en": "Leafy Police Station"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角大學",
+            "zh": "叶角大学",
             "en": "Leafy University"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角灣邨商場",
+            "zh": "叶角湾邨商场",
             "en": "Leafy Bay Estate Shopping Center"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角灣邨",
+            "zh": "叶角湾邨",
             "en": "Leafy Bay Estate"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉角花園",
+            "zh": "叶角花园",
             "en": "Leafy Bay Garden"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉欣邨第一座",
+            "zh": "叶欣邨第一座",
             "en": "YiYan Estate Block 1"
           },
-          "zone": 7,
           "nameSub": {
             "zh": "叶欣邨第二座",
             "en": "YiYan Estate Block 2"
-          }
+          },
+          "zone": 7
         },
         {
           "name": {
-            "zh": "葉欣邨第四座",
+            "zh": "叶欣邨第四座",
             "en": "YiYan Estate Block 4"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "際巴車廠",
+            "zh": "际巴车厂",
             "en": "CSB Depot"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "葉欣海旁道",
+            "zh": "叶欣海旁道",
             "en": "Praya YiYan Road"
+          },
+          "nameSub": {
+            "zh": "钻石交易塔",
+            "en": "Diamond Trading Tower"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "南洋大廈",
+            "zh": "南洋大厦",
             "en": "Southern Building"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "彩虹廣場",
+            "zh": "彩虹广场",
             "en": "Rainbow Plaza"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "東廠",
+            "zh": "东厂",
             "en": "East Factory"
           },
           "zone": 7
         },
         {
           "name": {
-            "zh": "第七區轉車站（落客站）",
-            "en": "Zone 7 Interchange (Alighting Stop)"
+            "zh": "第七区转车站",
+            "en": "Zone 7 Interchange"
           },
-          "zone": 7,
           "nameSub": {
             "zh": "千叶站",
             "en": "Thousand Leaf Station"
-          }
-        },
-        {
-          "name": {
-            "zh": "第七區轉車站 (W4)",
-            "en": "Zone 7 Interchange (W4)"
           },
-          "zone": 7,
-          "nameSub": {
-            "zh": "千叶站",
-            "en": "Thousand Leaf Station"
-          }
+          "zone": 7
         },
         {
           "name": {
@@ -786,117 +787,117 @@
         },
         {
           "name": {
-            "zh": "南環文化區公園",
+            "zh": "南环文化区公园",
             "en": "Southern Cultural District Park"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "中葉隧道行政大樓",
+            "zh": "中叶隧道行政大楼",
             "en": "Leafy-Central Tunnel Administration Block"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "中環南總站",
+            "zh": "中环南总站",
             "en": "Southern Central Bus Terminus"
           },
-          "zone": 4,
           "nameSub": {
             "zh": "南环花园一期",
             "en": "Southern One"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
-            "zh": "陽光碼頭",
+            "zh": "阳光码头",
             "en": "Sunshine Pier"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "南環運動場",
+            "zh": "南环运动场",
             "en": "Southern Sports Field"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "中環醫院",
+            "zh": "中环医院",
             "en": "Central Hospital"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "南環坊",
+            "zh": "南环坊",
             "en": "Langford Place"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "強生街市",
+            "zh": "强生街市",
             "en": "Johnson Market"
           },
-          "zone": 4,
           "nameSub": {
             "zh": "A05, 阳光大学南环校园",
             "en": "A05, Sunshine University Southern Campus"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
-            "zh": "新紀元中心",
+            "zh": "新纪元中心",
             "en": "Ping Center"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "玻璃樓",
+            "zh": "玻璃楼",
             "en": "Glass Office"
           },
-          "zone": 4,
           "nameSub": {
             "zh": "冰淇路",
             "en": "Pinky Road"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
-            "zh": "楓樹里",
+            "zh": "枫树里",
             "en": "Maple Lane"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "中環橋",
+            "zh": "中环桥",
             "en": "Central Bridge"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "陽光大學",
+            "zh": "阳光大学",
             "en": "Sunshine University"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "望環台",
+            "zh": "望环台",
             "en": "Panorama Heights"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "北島花園商場",
+            "zh": "北岛花园商场",
             "en": "NIE Shopping Center"
           },
           "zone": 4
@@ -906,32 +907,36 @@
             "zh": "巨石路",
             "en": "Rocky Road"
           },
+          "nameSub": {
+            "zh": "北岛学校村",
+            "en": "North Island School Village"
+          },
           "zone": 4
         },
         {
           "name": {
-            "zh": "北島花園",
+            "zh": "北岛花园",
             "en": "North Island Estate"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "北頓路",
+            "zh": "北顿路",
             "en": "Norton Road"
           },
           "zone": 4
         },
         {
           "name": {
-            "zh": "西區海底隧道轉車站 (N2)",
-            "en": "Western Habour Tunnel Interchange (N2)"
+            "zh": "西区海底隧道转车站",
+            "en": "Western Habour Tunnel Interchange"
           },
-          "zone": 4,
           "nameSub": {
             "zh": "月亮湾站",
             "en": "Lunar Bay Station"
-          }
+          },
+          "zone": 4
         },
         {
           "name": {
@@ -949,25 +954,25 @@
         },
         {
           "name": {
-            "zh": "購物廊",
+            "zh": "购物廊",
             "en": "Shopping Corridor"
           },
           "zone": 1
         },
         {
           "name": {
-            "zh": "三哥大廈",
+            "zh": "三哥大厦",
             "en": "Third Technology Building"
           },
-          "zone": 1,
           "nameSub": {
             "zh": "炫光集",
             "en": "Neon Center"
-          }
+          },
+          "zone": 1
         },
         {
           "name": {
-            "zh": "賴得商場",
+            "zh": "赖得商场",
             "en": "Wright Shopping Center"
           },
           "zone": 1
@@ -977,32 +982,40 @@
             "zh": "虹尾角站",
             "en": "Iris Point Station"
           },
-          "zone": 1
-        },
-        {
-          "name": {
-            "zh": "宜和劇場",
-            "en": "Jardine Theater"
+          "nameSub": {
+            "zh": "智家坊, 彩色汇",
+            "en": "I Home, Rainbow Center"
           },
           "zone": 1
         },
         {
           "name": {
-            "zh": "藝術大廈",
+            "zh": "宜和剧场",
+            "en": "Jardine Theater"
+          },
+          "nameSub": {
+            "zh": "长岛东医院",
+            "en": "East Long Island Hospital"
+          },
+          "zone": 1
+        },
+        {
+          "name": {
+            "zh": "艺术大厦",
             "en": "Art Building"
           },
           "zone": 1
         },
         {
           "name": {
-            "zh": "陽光體育館",
+            "zh": "阳光体育馆",
             "en": "Sunshine Stadium"
           },
           "zone": 1
         },
         {
           "name": {
-            "zh": "長島海濱長廊",
+            "zh": "长岛海滨长廊",
             "en": "Long Island Waterfront Promenade"
           },
           "zone": 1
@@ -1016,22 +1029,22 @@
         },
         {
           "name": {
-            "zh": "國際碼頭",
+            "zh": "国际码头",
             "en": "Regional Pier"
           },
           "zone": 1
         },
         {
           "name": {
-            "zh": "文化廣場",
+            "zh": "文化广场",
             "en": "Culture Square"
           },
           "zone": 1
         },
         {
           "name": {
-            "zh": "長島碼頭總站",
-            "en": "Long Island Ferry Pier Bus Terminus"
+            "zh": "长岛码头",
+            "en": "Long Island Ferry Pier"
           },
           "zone": 1
         }

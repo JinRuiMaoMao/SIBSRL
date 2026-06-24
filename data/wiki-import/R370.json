@@ -53,7 +53,11 @@
             "zh": "葉欣海旁道",
             "en": "Praya YiYan Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "钻石交易塔",
+            "en": "Diamond Trading Tower"
+          }
         },
         {
           "name": {

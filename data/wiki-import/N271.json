@@ -108,7 +108,11 @@
             "zh": "宜和劇場",
             "en": "Jardine Theater"
           },
-          "zone": 1
+          "zone": 1,
+          "nameSub": {
+            "zh": "长岛东医院",
+            "en": "East Long Island Hospital"
+          }
         },
         {
           "name": {
@@ -418,7 +422,11 @@
             "zh": "亞歷山教堂",
             "en": "Alexander Church"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶角大学北门",
+            "en": "Leafy University North Entrance"
+          }
         },
         {
           "name": {
@@ -628,7 +636,11 @@
             "zh": "亞歷山教堂",
             "en": "Alexander Church"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶角大学北门",
+            "en": "Leafy University North Entrance"
+          }
         },
         {
           "name": {
@@ -713,7 +725,11 @@
             "zh": "葉欣海旁道",
             "en": "Praya YiYan Road"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "钻石交易塔",
+            "en": "Diamond Trading Tower"
+          }
         },
         {
           "name": {
@@ -887,7 +903,11 @@
             "zh": "巨石路",
             "en": "Rocky Road"
           },
-          "zone": 4
+          "zone": 4,
+          "nameSub": {
+            "zh": "北岛学校村",
+            "en": "North Island School Village"
+          }
         },
         {
           "name": {
@@ -940,14 +960,22 @@
             "zh": "虹尾角站",
             "en": "Iris Point Station"
           },
-          "zone": 1
+          "zone": 1,
+          "nameSub": {
+            "zh": "智家坊, 彩色汇",
+            "en": "I Home, Rainbow Center"
+          }
         },
         {
           "name": {
             "zh": "宜和劇場",
             "en": "Jardine Theater"
           },
-          "zone": 1
+          "zone": 1,
+          "nameSub": {
+            "zh": "长岛东医院",
+            "en": "East Long Island Hospital"
+          }
         },
         {
           "name": {

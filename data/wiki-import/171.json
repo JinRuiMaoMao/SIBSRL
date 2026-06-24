@@ -165,6 +165,10 @@
           "name": {
             "zh": "亞歷山教堂",
             "en": "Alexander Church"
+          },
+          "nameSub": {
+            "zh": "叶角大学北门",
+            "en": "Leafy University North Entrance"
           }
         },
         {
@@ -374,12 +378,20 @@
             "zh": "虹尾角站",
             "en": "Iris Point Station"
           },
-          "zone": 1
+          "zone": 1,
+          "nameSub": {
+            "zh": "智家坊, 彩色汇",
+            "en": "I Home, Rainbow Center"
+          }
         },
         {
           "name": {
             "zh": "宜和劇場",
             "en": "Jardine Theater"
+          },
+          "nameSub": {
+            "zh": "长岛东医院",
+            "en": "East Long Island Hospital"
           }
         },
         {

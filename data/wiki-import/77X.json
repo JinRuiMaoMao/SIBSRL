@@ -71,7 +71,11 @@
             "zh": "亞歷山教堂",
             "en": "Circular Point Here"
           },
-          "zone": 7
+          "zone": 7,
+          "nameSub": {
+            "zh": "叶角大学北门",
+            "en": "Leafy University North Entrance"
+          }
         },
         {
           "name": {

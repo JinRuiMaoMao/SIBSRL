@@ -52,6 +52,10 @@
           "name": {
             "zh": "巨石路",
             "en": "Rocky Road"
+          },
+          "nameSub": {
+            "zh": "北岛学校村",
+            "en": "North Island School Village"
           }
         },
         {
@@ -251,6 +255,10 @@
           "name": {
             "zh": "巨石路",
             "en": "Rocky Road"
+          },
+          "nameSub": {
+            "zh": "北岛学校村",
+            "en": "North Island School Village"
           }
         }
       ]
