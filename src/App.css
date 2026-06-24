@@ -799,6 +799,17 @@
   font-size: 0.78rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.updates-head-aside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.35rem 0.75rem;
+  flex-shrink: 0;
+  text-align: right;
 }
 
 .updates-items {
@@ -861,10 +872,12 @@
 }
 
 .updates-changelog-totals--entry {
-  margin-top: 0.75rem;
-  padding-top: 0.65rem;
-  border-top: 1px dashed var(--border);
-  text-align: right;
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .complaints-section {
@@ -4493,10 +4506,12 @@ html[data-list-density='compact'] .transfer-plan-stop {
   font-size: 0.78rem;
 }
 
+.updates-card--prompt .updates-head-aside {
+  gap: 0.25rem 0.55rem;
+}
+
 .updates-card--prompt .updates-changelog-totals--entry {
-  margin-top: 0.55rem;
-  padding-top: 0.5rem;
-  font-size: 0.76rem;
+  font-size: 0.68rem;
 }
 
 .updates-card--prompt .updates-items {

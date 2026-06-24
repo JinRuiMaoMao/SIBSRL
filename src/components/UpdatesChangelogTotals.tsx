@@ -22,14 +22,16 @@ export function UpdatesChangelogTotals({
 
   if (counts.additions === 0 && counts.fixes === 0) return null
 
+  const Tag = variant === 'entry' ? 'span' : 'p'
+
   return (
-    <p
+    <Tag
       className={`updates-changelog-totals updates-changelog-totals--${variant} ${className}`.trim()}
     >
       {t(MESSAGE_KEYS[variant], {
         additions: counts.additions,
         fixes: counts.fixes,
       })}
-    </p>
+    </Tag>
   )
 }
