@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { UserProfileProvider } from './contexts/UserProfileContext.tsx'
 import { GuidedTourProvider } from './contexts/GuidedTourContext.tsx'
 import { AppDialogProvider } from './contexts/AppDialogContext.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
@@ -30,6 +31,7 @@ createRoot(rootEl).render(
     <ThemeProvider>
       <LocaleProvider>
         <AuthProvider>
+          <UserProfileProvider>
           <GuidedTourProvider>
             <AppDialogProvider>
               <AppPreferencesProvider>
@@ -42,6 +44,7 @@ createRoot(rootEl).render(
               </AppPreferencesProvider>
             </AppDialogProvider>
           </GuidedTourProvider>
+          </UserProfileProvider>
         </AuthProvider>
       </LocaleProvider>
     </ThemeProvider>

@@ -27,7 +27,9 @@ import {
   isOAuthOnlyUser,
   linkOAuthIdentity,
   openUserDatabase,
+  parseUserProfileJson,
   updateUserPassword,
+  updateUserProfile,
   upsertUserData,
   upsertVerificationCode,
 } from './lib/user-db.mjs'
@@ -329,6 +331,7 @@ function handleGetUserData(req, res) {
     profile: {
       email: session.email,
       oauthOnly: user ? isOAuthOnlyUser(user) : false,
+      ...parseUserProfileJson(row?.profile_json),
     },
   })
 }
@@ -351,6 +354,61 @@ async function handlePutUserData(req, res) {
   const updatedAt = Date.now()
   upsertUserData(db, session.userId, JSON.stringify(body.favorites), updatedAt)
   json(req, res, 200, { updatedAt })
+}
+
+async function handlePatchUserProfile(req, res) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  let body
+  try {
+    body = await readJson(req)
+  } catch {
+    return error(req, res, 400, 'invalid_json', 'Invalid JSON body')
+  }
+
+  const user = findUserById(db, session.userId)
+  const row = getUserData(db, session.userId)
+  const current = parseUserProfileJson(row?.profile_json)
+
+  let displayName = current.displayName
+  if (Object.prototype.hasOwnProperty.call(body, 'displayName')) {
+    const raw = String(body.displayName ?? '').trim()
+    if (raw.length > 32) {
+      return error(req, res, 400, 'invalid_display_name', 'Display name is too long')
+    }
+    displayName = raw || null
+  }
+
+  let avatarDataUrl = current.avatarDataUrl
+  if (Object.prototype.hasOwnProperty.call(body, 'avatarDataUrl')) {
+    const raw = body.avatarDataUrl
+    if (raw === null || raw === '') {
+      avatarDataUrl = null
+    } else if (typeof raw === 'string') {
+      if (!/^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/i.test(raw)) {
+        return error(req, res, 400, 'invalid_avatar', 'Avatar must be a JPEG, PNG, WebP, or GIF image')
+      }
+      if (raw.length > 200_000) {
+        return error(req, res, 400, 'avatar_too_large', 'Avatar image is too large')
+      }
+      avatarDataUrl = raw
+    } else {
+      return error(req, res, 400, 'invalid_avatar', 'Avatar must be a JPEG, PNG, WebP, or GIF image')
+    }
+  }
+
+  const updatedAt = updateUserProfile(db, session.userId, { displayName, avatarDataUrl })
+  json(req, res, 200, {
+    ok: true,
+    updatedAt,
+    profile: {
+      email: session.email,
+      oauthOnly: user ? isOAuthOnlyUser(user) : false,
+      displayName,
+      avatarDataUrl,
+    },
+  })
 }
 
 async function handleChangePassword(req, res) {
@@ -474,6 +532,12 @@ async function resolveOAuthLogin(req, identity) {
     email: identity.email,
     createdAt: Date.now(),
   })
+  if (identity.displayName) {
+    updateUserProfile(db, userId, {
+      displayName: String(identity.displayName).trim().slice(0, 32),
+      avatarDataUrl: null,
+    })
+  }
   return { userId, email: identity.email }
 }
 
@@ -571,6 +635,9 @@ const server = createServer(async (req, res) => {
     }
     if (method === 'PUT' && path === '/api/user/data') {
       return await handlePutUserData(req, res)
+    }
+    if (method === 'PATCH' && path === '/api/user/profile') {
+      return await handlePatchUserProfile(req, res)
     }
     if (method === 'GET' && path === '/api/auth/oauth/providers') {
       return handleOAuthProviders(req, res)

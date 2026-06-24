@@ -277,6 +277,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '线路卡片右上角固定显示里程；收藏星标移至卡片底部左侧，与里程分开。',
             en: 'Route cards now pin length (km) to the top-right corner; the favorite star sits separately at the bottom-left.',
           },
+          {
+            zh: '个人中心支持自定义显示名称与头像，保存后同步至云端并在顶栏头像处显示。',
+            en: 'The account page now supports a custom display name and avatar, synced to the cloud and shown in the header.',
+          },
         ],
       },
     ],

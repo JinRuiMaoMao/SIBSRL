@@ -30,6 +30,7 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
     CREATE TABLE IF NOT EXISTS user_data (
       user_id TEXT PRIMARY KEY,
       favorites_json TEXT,
+      profile_json TEXT,
       updated_at INTEGER NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
@@ -54,7 +55,41 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
       created_at INTEGER NOT NULL
     );
   `)
+
+  const userDataColumns = db.prepare('PRAGMA table_info(user_data)').all()
+  if (!userDataColumns.some((column) => column.name === 'profile_json')) {
+    db.exec('ALTER TABLE user_data ADD COLUMN profile_json TEXT')
+  }
+
   return db
+}
+
+/** @param {string | null | undefined} profileJson */
+export function parseUserProfileJson(profileJson) {
+  if (!profileJson) return { displayName: null, avatarDataUrl: null }
+  try {
+    const parsed = JSON.parse(profileJson)
+    const displayName =
+      typeof parsed.displayName === 'string' ? parsed.displayName.trim().slice(0, 32) : null
+    const avatarDataUrl =
+      typeof parsed.avatarDataUrl === 'string' && parsed.avatarDataUrl.startsWith('data:image/')
+        ? parsed.avatarDataUrl
+        : null
+    return {
+      displayName: displayName || null,
+      avatarDataUrl,
+    }
+  } catch {
+    return { displayName: null, avatarDataUrl: null }
+  }
+}
+
+/** @param {{ displayName?: string | null, avatarDataUrl?: string | null }} profile */
+export function buildUserProfileJson(profile) {
+  const payload = {}
+  if (profile.displayName) payload.displayName = profile.displayName
+  if (profile.avatarDataUrl) payload.avatarDataUrl = profile.avatarDataUrl
+  return Object.keys(payload).length > 0 ? JSON.stringify(payload) : null
 }
 
 export function isOAuthOnlyUser(user) {
@@ -115,18 +150,41 @@ export function deleteVerificationCode(db, email, purpose) {
 
 /** @param {import('better-sqlite3').Database} db */
 export function getUserData(db, userId) {
-  return db.prepare('SELECT user_id, favorites_json, updated_at FROM user_data WHERE user_id = ?').get(userId)
+  return db
+    .prepare('SELECT user_id, favorites_json, profile_json, updated_at FROM user_data WHERE user_id = ?')
+    .get(userId)
 }
 
 /** @param {import('better-sqlite3').Database} db */
 export function upsertUserData(db, userId, favoritesJson, updatedAt) {
+  const existing = getUserData(db, userId)
+  const profileJson = existing?.profile_json ?? null
   db.prepare(`
-    INSERT INTO user_data (user_id, favorites_json, updated_at)
-    VALUES (?, ?, ?)
+    INSERT INTO user_data (user_id, favorites_json, profile_json, updated_at)
+    VALUES (?, ?, ?, ?)
     ON CONFLICT(user_id) DO UPDATE SET
       favorites_json = excluded.favorites_json,
       updated_at = excluded.updated_at
-  `).run(userId, favoritesJson, updatedAt)
+  `).run(userId, favoritesJson, profileJson, updatedAt)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function updateUserProfile(db, userId, profile) {
+  const row = getUserData(db, userId)
+  const profileJson = buildUserProfileJson(profile)
+  const updatedAt = Date.now()
+  if (row) {
+    db.prepare('UPDATE user_data SET profile_json = ?, updated_at = ? WHERE user_id = ?').run(
+      profileJson,
+      updatedAt,
+      userId,
+    )
+  } else {
+    db.prepare(
+      'INSERT INTO user_data (user_id, favorites_json, profile_json, updated_at) VALUES (?, ?, ?, ?)',
+    ).run(userId, null, profileJson, updatedAt)
+  }
+  return updatedAt
 }
 
 /** @param {import('better-sqlite3').Database} db */

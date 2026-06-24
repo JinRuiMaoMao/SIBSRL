@@ -118,6 +118,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return 'authErrorOAuthOnly'
       case 'invalid_message':
         return 'feedbackSubmitFailed'
+      case 'invalid_display_name':
+        return 'authErrorInvalidDisplayName'
+      case 'invalid_avatar':
+        return 'authErrorInvalidAvatar'
+      case 'avatar_too_large':
+        return 'authErrorAvatarTooLarge'
       default:
         return 'authErrorGeneric'
     }

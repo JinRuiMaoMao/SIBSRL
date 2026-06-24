@@ -103,13 +103,31 @@ export async function resetAccountPassword(email: string, password: string, code
   })
 }
 
+export interface UserProfilePayload {
+  email: string
+  oauthOnly: boolean
+  displayName: string | null
+  avatarDataUrl: string | null
+}
+
 export async function fetchUserData(token: string, signal?: AbortSignal) {
   return request<{
     favorites: import('../storage/favoriteFolders').FavoriteFoldersState | null
     updatedAt: number | null
     favoriteCount: number
-    profile?: { email: string; oauthOnly: boolean }
+    profile?: UserProfilePayload
   }>('/api/user/data', { token, signal })
+}
+
+export async function updateUserProfile(
+  token: string,
+  patch: { displayName?: string | null; avatarDataUrl?: string | null },
+) {
+  return request<{ ok: true; updatedAt: number; profile: UserProfilePayload }>('/api/user/profile', {
+    method: 'PATCH',
+    token,
+    body: JSON.stringify(patch),
+  })
 }
 
 export async function saveUserData(
