@@ -1,6 +1,6 @@
-/* 各栏目独立配色：背景渐变 + 面板基色 + 强调色（深浅色分开） */
+/* 各栏目独立配色：多层渐变 + 面板基色 + 强调色（深浅色分开调优） */
 
-/* —— 线路查询 routes（金/青/蓝） —— */
+/* —— 线路查询 routes（金/青/蓝/紫） —— */
 html:not([data-panel-style='classic']),
 html:not([data-panel-style='classic'])[data-app-tab='routes'] {
   --accent: #f5b942;
@@ -13,13 +13,15 @@ html:not([data-panel-style='classic'])[data-app-tab='routes'] {
   --panel-base-elevated: #1a2540;
   --panel-base-card: #1e2d4a;
   --page-background:
-    radial-gradient(ellipse 100% 80% at 12% -8%, rgba(245, 185, 66, 0.22), transparent 58%),
-    radial-gradient(ellipse 85% 70% at 100% 12%, rgba(45, 212, 160, 0.14), transparent 54%),
-    radial-gradient(ellipse 78% 58% at 48% 108%, rgba(96, 132, 220, 0.16), transparent 60%),
-    linear-gradient(160deg, #070b14 0%, #101829 30%, #0d1524 55%, #14102a 80%, #0a101c 100%);
+    radial-gradient(ellipse 100% 80% at 12% -8%, rgba(245, 185, 66, 0.24), transparent 58%),
+    radial-gradient(ellipse 85% 70% at 100% 12%, rgba(45, 212, 160, 0.16), transparent 54%),
+    radial-gradient(ellipse 78% 58% at 48% 108%, rgba(96, 132, 220, 0.18), transparent 60%),
+    radial-gradient(ellipse 65% 50% at 72% 42%, rgba(167, 139, 250, 0.1), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 8% 72%, rgba(251, 146, 60, 0.08), transparent 52%),
+    linear-gradient(160deg, #070b14 0%, #101829 24%, #0d1524 48%, #14102a 72%, #0a101c 100%);
 }
 
-/* —— 广播 broadcast（橙/珊瑚） —— */
+/* —— 广播 broadcast（橙/珊瑚/琥珀/玫瑰） —— */
 html:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
   --accent: #ff9f43;
   --accent-soft: rgba(255, 159, 67, 0.16);
@@ -31,13 +33,15 @@ html:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
   --panel-base-elevated: #2a1c10;
   --panel-base-card: #322214;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 8% -5%, rgba(255, 159, 67, 0.24), transparent 56%),
-    radial-gradient(ellipse 80% 65% at 100% 18%, rgba(255, 90, 70, 0.16), transparent 52%),
-    radial-gradient(ellipse 75% 55% at 42% 110%, rgba(255, 200, 120, 0.12), transparent 58%),
-    linear-gradient(160deg, #140c06 0%, #1f140a 32%, #1a1008 58%, #24160c 82%, #120a06 100%);
+    radial-gradient(ellipse 95% 75% at 8% -5%, rgba(255, 159, 67, 0.26), transparent 56%),
+    radial-gradient(ellipse 80% 65% at 100% 18%, rgba(255, 90, 70, 0.18), transparent 52%),
+    radial-gradient(ellipse 75% 55% at 42% 110%, rgba(255, 200, 120, 0.14), transparent 58%),
+    radial-gradient(ellipse 68% 52% at 78% 38%, rgba(251, 113, 133, 0.1), transparent 54%),
+    radial-gradient(ellipse 62% 48% at 18% 58%, rgba(245, 158, 11, 0.12), transparent 50%),
+    linear-gradient(160deg, #140c06 0%, #1f140a 26%, #1a1008 52%, #24160c 76%, #120a06 100%);
 }
 
-/* —— 音乐 music（紫/粉） —— */
+/* —— 音乐 music（紫/粉/靛/蓝） —— */
 html:not([data-panel-style='classic'])[data-app-tab='music'] {
   --accent: #c084fc;
   --accent-soft: rgba(192, 132, 252, 0.16);
@@ -49,13 +53,15 @@ html:not([data-panel-style='classic'])[data-app-tab='music'] {
   --panel-base-elevated: #1f1630;
   --panel-base-card: #261a3a;
   --page-background:
-    radial-gradient(ellipse 95% 78% at 10% -6%, rgba(192, 132, 252, 0.22), transparent 55%),
-    radial-gradient(ellipse 82% 68% at 92% 14%, rgba(236, 72, 153, 0.14), transparent 53%),
-    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(129, 140, 248, 0.14), transparent 58%),
-    linear-gradient(160deg, #0e0a14 0%, #161022 30%, #120d18 56%, #1a1230 80%, #0c0812 100%);
+    radial-gradient(ellipse 95% 78% at 10% -6%, rgba(192, 132, 252, 0.24), transparent 55%),
+    radial-gradient(ellipse 82% 68% at 92% 14%, rgba(236, 72, 153, 0.16), transparent 53%),
+    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(129, 140, 248, 0.16), transparent 58%),
+    radial-gradient(ellipse 70% 52% at 68% 48%, rgba(244, 114, 182, 0.1), transparent 54%),
+    radial-gradient(ellipse 64% 46% at 12% 68%, rgba(99, 102, 241, 0.12), transparent 50%),
+    linear-gradient(160deg, #0e0a14 0%, #161022 26%, #120d18 52%, #1a1230 76%, #0c0812 100%);
 }
 
-/* —— 抱怨 complaints（玫红/酒红） —— */
+/* —— 抱怨 complaints（玫红/酒红/紫/暖棕） —— */
 html:not([data-panel-style='classic'])[data-app-tab='complaints'] {
   --accent: #fb7185;
   --accent-soft: rgba(251, 113, 133, 0.16);
@@ -67,13 +73,15 @@ html:not([data-panel-style='classic'])[data-app-tab='complaints'] {
   --panel-base-elevated: #2a1720;
   --panel-base-card: #321c28;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -4%, rgba(251, 113, 133, 0.22), transparent 56%),
-    radial-gradient(ellipse 82% 66% at 96% 12%, rgba(225, 80, 100, 0.14), transparent 54%),
-    radial-gradient(ellipse 76% 58% at 48% 110%, rgba(190, 60, 90, 0.12), transparent 58%),
-    linear-gradient(160deg, #14080c 0%, #1f1016 32%, #1a0d12 58%, #28141e 82%, #10060a 100%);
+    radial-gradient(ellipse 95% 75% at 6% -4%, rgba(251, 113, 133, 0.24), transparent 56%),
+    radial-gradient(ellipse 82% 66% at 96% 12%, rgba(225, 80, 100, 0.16), transparent 54%),
+    radial-gradient(ellipse 76% 58% at 48% 110%, rgba(190, 60, 90, 0.14), transparent 58%),
+    radial-gradient(ellipse 70% 52% at 72% 40%, rgba(167, 139, 250, 0.1), transparent 54%),
+    radial-gradient(ellipse 64% 48% at 14% 62%, rgba(180, 83, 9, 0.08), transparent 50%),
+    linear-gradient(160deg, #14080c 0%, #1f1016 26%, #1a0d12 52%, #28141e 76%, #10060a 100%);
 }
 
-/* —— 版本更新 updates（青/蓝） —— */
+/* —— 版本更新 updates（青/蓝/靛/薄荷） —— */
 html:not([data-panel-style='classic'])[data-app-tab='updates'] {
   --accent: #38bdf8;
   --accent-soft: rgba(56, 189, 248, 0.16);
@@ -85,13 +93,15 @@ html:not([data-panel-style='classic'])[data-app-tab='updates'] {
   --panel-base-elevated: #13202c;
   --panel-base-card: #172836;
   --page-background:
-    radial-gradient(ellipse 95% 76% at 8% -6%, rgba(56, 189, 248, 0.22), transparent 55%),
-    radial-gradient(ellipse 84% 68% at 94% 10%, rgba(34, 211, 238, 0.14), transparent 53%),
-    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(59, 130, 246, 0.14), transparent 58%),
-    linear-gradient(160deg, #060e14 0%, #0c1620 30%, #09141c 56%, #102030 80%, #060c12 100%);
+    radial-gradient(ellipse 95% 76% at 8% -6%, rgba(56, 189, 248, 0.24), transparent 55%),
+    radial-gradient(ellipse 84% 68% at 94% 10%, rgba(34, 211, 238, 0.16), transparent 53%),
+    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(59, 130, 246, 0.16), transparent 58%),
+    radial-gradient(ellipse 70% 52% at 70% 44%, rgba(129, 140, 248, 0.12), transparent 54%),
+    radial-gradient(ellipse 64% 46% at 16% 66%, rgba(45, 212, 160, 0.1), transparent 50%),
+    linear-gradient(160deg, #060e14 0%, #0c1620 26%, #09141c 52%, #102030 76%, #060c12 100%);
 }
 
-/* —— 个人中心 account（翠绿） —— */
+/* —— 个人中心 account（翠绿/青/金） —— */
 html:not([data-panel-style='classic'])[data-app-page='account'] {
   --accent: #34d399;
   --accent-soft: rgba(52, 211, 153, 0.16);
@@ -103,13 +113,15 @@ html:not([data-panel-style='classic'])[data-app-page='account'] {
   --panel-base-elevated: #132018;
   --panel-base-card: #17261c;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 10% -5%, rgba(52, 211, 153, 0.22), transparent 56%),
-    radial-gradient(ellipse 82% 66% at 92% 14%, rgba(45, 212, 160, 0.14), transparent 54%),
-    radial-gradient(ellipse 76% 58% at 48% 108%, rgba(20, 160, 120, 0.12), transparent 58%),
-    linear-gradient(160deg, #060f0a 0%, #0c1812 32%, #091410 58%, #102018 82%, #060c08 100%);
+    radial-gradient(ellipse 95% 75% at 10% -5%, rgba(52, 211, 153, 0.24), transparent 56%),
+    radial-gradient(ellipse 82% 66% at 92% 14%, rgba(45, 212, 160, 0.16), transparent 54%),
+    radial-gradient(ellipse 76% 58% at 48% 108%, rgba(20, 160, 120, 0.14), transparent 58%),
+    radial-gradient(ellipse 70% 52% at 74% 42%, rgba(56, 189, 248, 0.1), transparent 54%),
+    radial-gradient(ellipse 64% 46% at 12% 64%, rgba(245, 185, 66, 0.08), transparent 50%),
+    linear-gradient(160deg, #060f0a 0%, #0c1812 26%, #091410 52%, #102018 76%, #060c08 100%);
 }
 
-/* —— 秘密页 secret（靛蓝/紫） —— */
+/* —— 秘密页 secret（靛蓝/紫/粉） —— */
 html:not([data-panel-style='classic'])[data-app-page='secret'] {
   --accent: #818cf8;
   --accent-soft: rgba(129, 140, 248, 0.16);
@@ -121,117 +133,145 @@ html:not([data-panel-style='classic'])[data-app-page='secret'] {
   --panel-base-elevated: #1a1630;
   --panel-base-card: #201c3a;
   --page-background:
-    radial-gradient(ellipse 95% 76% at 8% -6%, rgba(129, 140, 248, 0.22), transparent 55%),
-    radial-gradient(ellipse 82% 68% at 96% 12%, rgba(167, 139, 250, 0.14), transparent 53%),
-    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(76, 29, 149, 0.16), transparent 58%),
-    linear-gradient(160deg, #0a0612 0%, #120e1e 30%, #0e0a18 56%, #18122e 80%, #080510 100%);
+    radial-gradient(ellipse 95% 76% at 8% -6%, rgba(129, 140, 248, 0.24), transparent 55%),
+    radial-gradient(ellipse 82% 68% at 96% 12%, rgba(167, 139, 250, 0.16), transparent 53%),
+    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(76, 29, 149, 0.18), transparent 58%),
+    radial-gradient(ellipse 70% 52% at 68% 40%, rgba(192, 132, 252, 0.12), transparent 54%),
+    radial-gradient(ellipse 64% 46% at 14% 62%, rgba(56, 189, 248, 0.08), transparent 50%),
+    linear-gradient(160deg, #0a0612 0%, #120e1e 26%, #0e0a18 52%, #18122e 76%, #080510 100%);
 }
 
-/* —— 浅色主题：各栏目独立浅色系 —— */
+/* —— 浅色主题：低饱和强调色 + 中性面板 + 柔和多层渐变 —— */
 html[data-theme='light']:not([data-panel-style='classic']),
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='routes'] {
-  --accent: #b07808;
-  --accent-soft: rgba(176, 120, 8, 0.14);
-  --accent-glow: rgba(176, 120, 8, 0.22);
-  --border: color-mix(in srgb, var(--accent) 16%, transparent);
-  --border-strong: color-mix(in srgb, var(--accent) 30%, transparent);
-  --panel-base-deep: #dce1e9;
-  --panel-base-surface: #e4e9f0;
-  --panel-base-elevated: #d5dbe5;
-  --panel-base-card: #c9d1dc;
+  --accent: #9a6700;
+  --accent-soft: rgba(154, 103, 0, 0.1);
+  --accent-glow: rgba(154, 103, 0, 0.16);
+  --border: color-mix(in srgb, var(--accent) 14%, #c8cdd6);
+  --border-strong: color-mix(in srgb, var(--accent) 26%, #b8bec8);
+  --panel-base-deep: #e4e8ef;
+  --panel-base-surface: #eaedf3;
+  --panel-base-elevated: #dfe3eb;
+  --panel-base-card: #d4dae4;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(176, 120, 8, 0.13), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(10, 138, 96, 0.11), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(124, 58, 237, 0.09), transparent 58%),
-    linear-gradient(160deg, #edf1f8 0%, #e4eaf4 28%, #d9e3ef 54%, #e8edf6 78%, #dee6f2 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(217, 168, 46, 0.2), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(16, 138, 100, 0.14), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(99, 102, 241, 0.1), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(244, 114, 82, 0.08), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 18% 72%, rgba(56, 189, 248, 0.07), transparent 48%),
+    linear-gradient(165deg, #f4f6fa 0%, #eef2f7 22%, #e8edf4 46%, #f0f3f8 70%, #e6ebf2 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
-  --accent: #ea580c;
-  --accent-soft: rgba(234, 88, 12, 0.14);
-  --accent-glow: rgba(234, 88, 12, 0.2);
-  --panel-base-deep: #f0e4d8;
-  --panel-base-surface: #f5ebe0;
-  --panel-base-elevated: #e8d8c8;
-  --panel-base-card: #deccb8;
+  --accent: #a04e12;
+  --accent-soft: rgba(160, 78, 18, 0.1);
+  --accent-glow: rgba(160, 78, 18, 0.15);
+  --border: color-mix(in srgb, var(--accent) 12%, #d0ccc6);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #c0bab2);
+  --panel-base-deep: #ebe8e4;
+  --panel-base-surface: #f0eeea;
+  --panel-base-elevated: #e4e0da;
+  --panel-base-card: #d8d4cc;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(234, 88, 12, 0.14), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(251, 146, 60, 0.12), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(220, 100, 70, 0.1), transparent 58%),
-    linear-gradient(160deg, #faf0e6 0%, #f5e8da 28%, #eddcc8 54%, #f7efe4 78%, #efe4d4 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(234, 170, 80, 0.22), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(220, 130, 90, 0.14), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(251, 191, 36, 0.12), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 72% 42%, rgba(244, 114, 82, 0.09), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 14% 68%, rgba(253, 230, 200, 0.45), transparent 52%),
+    linear-gradient(165deg, #faf7f2 0%, #f5f0e8 22%, #efe8de 46%, #f7f3ec 70%, #ebe5dc 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='music'] {
-  --accent: #9333ea;
-  --accent-soft: rgba(147, 51, 234, 0.14);
-  --accent-glow: rgba(147, 51, 234, 0.2);
-  --panel-base-deep: #e8e0f0;
-  --panel-base-surface: #efe8f5;
-  --panel-base-elevated: #ddd0eb;
-  --panel-base-card: #d0c0e4;
+  --accent: #7c3aad;
+  --accent-soft: rgba(124, 58, 173, 0.1);
+  --accent-glow: rgba(124, 58, 173, 0.16);
+  --border: color-mix(in srgb, var(--accent) 12%, #ccc8d4);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #bcb6c6);
+  --panel-base-deep: #eae6f0;
+  --panel-base-surface: #f0ecf4;
+  --panel-base-elevated: #e2dce8;
+  --panel-base-card: #d6cede;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(147, 51, 234, 0.12), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(219, 39, 119, 0.1), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(99, 102, 241, 0.1), transparent 58%),
-    linear-gradient(160deg, #f3eef8 0%, #ebe2f4 28%, #e0d4ee 54%, #f0eaf8 78%, #e6dcf0 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(167, 139, 250, 0.18), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(192, 132, 252, 0.12), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(219, 39, 119, 0.09), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(99, 102, 241, 0.1), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 16% 70%, rgba(237, 220, 248, 0.5), transparent 52%),
+    linear-gradient(165deg, #f6f3f9 0%, #f0ebf6 22%, #e8e0f2 46%, #f3eff8 70%, #ebe4f2 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='complaints'] {
-  --accent: #e11d48;
-  --accent-soft: rgba(225, 29, 72, 0.12);
-  --accent-glow: rgba(225, 29, 72, 0.18);
-  --panel-base-deep: #f0e4e8;
-  --panel-base-surface: #f5eaee;
-  --panel-base-elevated: #e8d8de;
-  --panel-base-card: #deccd4;
+  --accent: #9a3d52;
+  --accent-soft: rgba(154, 61, 82, 0.1);
+  --accent-glow: rgba(154, 61, 82, 0.14);
+  --border: color-mix(in srgb, var(--accent) 12%, #d0c8cc);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #c0b4ba);
+  --panel-base-deep: #ebe6e8;
+  --panel-base-surface: #f0ecee;
+  --panel-base-elevated: #e4dcde;
+  --panel-base-card: #d8d0d4;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(225, 29, 72, 0.11), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(251, 113, 133, 0.1), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(190, 80, 100, 0.09), transparent 58%),
-    linear-gradient(160deg, #faf0f2 0%, #f5e6ea 28%, #edd8de 54%, #f7eef0 78%, #efe4e8 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(210, 140, 155, 0.2), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(186, 120, 140, 0.13), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(167, 139, 250, 0.09), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 72% 42%, rgba(244, 180, 190, 0.12), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 14% 68%, rgba(248, 228, 232, 0.55), transparent 52%),
+    linear-gradient(165deg, #faf6f7 0%, #f5eef0 22%, #ede4e8 46%, #f7f2f4 70%, #ebe4e8 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='updates'] {
-  --accent: #0284c7;
-  --accent-soft: rgba(2, 132, 199, 0.14);
-  --accent-glow: rgba(2, 132, 199, 0.2);
-  --panel-base-deep: #dce8f0;
-  --panel-base-surface: #e4eef5;
-  --panel-base-elevated: #d0e0eb;
-  --panel-base-card: #c4d6e4;
+  --accent: #1e5f8f;
+  --accent-soft: rgba(30, 95, 143, 0.1);
+  --accent-glow: rgba(30, 95, 143, 0.15);
+  --border: color-mix(in srgb, var(--accent) 12%, #c4ced8);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #b4c0cc);
+  --panel-base-deep: #e4eaf0;
+  --panel-base-surface: #eaeff4;
+  --panel-base-elevated: #dce4ec;
+  --panel-base-card: #d0dae4;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(2, 132, 199, 0.12), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(34, 211, 238, 0.1), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(59, 130, 246, 0.1), transparent 58%),
-    linear-gradient(160deg, #eef6fa 0%, #e4f0f8 28%, #d6e8f2 54%, #ecf4fa 78%, #e0eef6 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(100, 150, 200, 0.18), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(120, 170, 210, 0.12), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(99, 130, 190, 0.1), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(45, 170, 150, 0.08), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 16% 70%, rgba(220, 234, 246, 0.55), transparent 52%),
+    linear-gradient(165deg, #f2f6fa 0%, #eaf0f6 22%, #e0e8f2 46%, #eef4fa 70%, #e4ecf4 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='account'] {
-  --accent: #059669;
-  --accent-soft: rgba(5, 150, 105, 0.14);
-  --accent-glow: rgba(5, 150, 105, 0.2);
-  --panel-base-deep: #dce8e2;
-  --panel-base-surface: #e4f0ea;
-  --panel-base-elevated: #d0e4d8;
-  --panel-base-card: #c4dcd0;
+  --accent: #0f7a56;
+  --accent-soft: rgba(15, 122, 86, 0.1);
+  --accent-glow: rgba(15, 122, 86, 0.15);
+  --border: color-mix(in srgb, var(--accent) 12%, #c4d0c8);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #b4c4ba);
+  --panel-base-deep: #e4ebe6;
+  --panel-base-surface: #eaf0ec;
+  --panel-base-elevated: #dce6e0;
+  --panel-base-card: #d0dcd4;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(5, 150, 105, 0.12), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(52, 211, 153, 0.1), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(20, 160, 120, 0.09), transparent 58%),
-    linear-gradient(160deg, #eef8f2 0%, #e4f4ea 28%, #d6ece2 54%, #ecf6f0 78%, #e0f0e8 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(52, 180, 130, 0.16), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(80, 190, 150, 0.11), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(16, 130, 100, 0.09), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(56, 170, 200, 0.07), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 14% 68%, rgba(220, 242, 232, 0.5), transparent 52%),
+    linear-gradient(165deg, #f2f8f4 0%, #eaf4ee 22%, #e0ece4 46%, #eef6f0 70%, #e4f0ea 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='secret'] {
-  --accent: #4f46e5;
-  --accent-soft: rgba(79, 70, 229, 0.14);
-  --accent-glow: rgba(79, 70, 229, 0.2);
-  --panel-base-deep: #e4e0f0;
-  --panel-base-surface: #ebe8f5;
-  --panel-base-elevated: #d8d0eb;
-  --panel-base-card: #ccc4e0;
+  --accent: #4a46b8;
+  --accent-soft: rgba(74, 70, 184, 0.1);
+  --accent-glow: rgba(74, 70, 184, 0.16);
+  --border: color-mix(in srgb, var(--accent) 12%, #c8c6d8);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #b8b4ca);
+  --panel-base-deep: #e8e6f0;
+  --panel-base-surface: #eeecf4;
+  --panel-base-elevated: #e0dce8;
+  --panel-base-card: #d4cede;
   --page-background:
-    radial-gradient(ellipse 95% 75% at 6% -6%, rgba(79, 70, 229, 0.12), transparent 56%),
-    radial-gradient(ellipse 82% 68% at 94% 10%, rgba(129, 140, 248, 0.1), transparent 54%),
-    radial-gradient(ellipse 88% 62% at 50% 108%, rgba(76, 29, 149, 0.1), transparent 58%),
-    linear-gradient(160deg, #f0eef8 0%, #e8e4f4 28%, #dcd4ee 54%, #f2f0fa 78%, #e6e0f0 100%);
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(129, 140, 248, 0.16), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(167, 139, 250, 0.11), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(99, 80, 180, 0.1), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(56, 150, 200, 0.07), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 14% 68%, rgba(232, 228, 248, 0.5), transparent 52%),
+    linear-gradient(165deg, #f4f2f8 0%, #eeeaf4 22%, #e4e0ee 46%, #f2f0f8 70%, #e8e4f0 100%);
 }
