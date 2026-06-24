@@ -313,6 +313,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '修复搜索后点进线路详情再返回时搜索词与结果消失的问题：卡片改为站内打开详情并保留 URL 搜索参数，浏览器后退可正确关闭详情。',
             en: 'Fixed losing search text and results after opening route detail—cards now open in-app while preserving URL search params; browser Back closes detail and keeps the list.',
           },
+          {
+            zh: '秘密页新增未授权台风特别安排 Y475（仙贝广场 ↺ 北顿市中心环线，CSB 走线；站序来自 Wiki 台风特别交通安排）。',
+            en: 'Secret page adds unauthorized typhoon route Y475 (Senpai Shopping Center ↺ Norton Town Center loop, CSB alignment; stops from Wiki special traffic arrangements).',
+          },
         ],
       },
     ],
