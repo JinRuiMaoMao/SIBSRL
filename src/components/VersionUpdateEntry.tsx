@@ -43,12 +43,10 @@ export function VersionUpdateEntry({ entry, className, dataTour }: VersionUpdate
     <article className={className} data-tour={dataTour}>
       <div className="updates-head">
         <h3 className="updates-title">{getPrimaryText(entry.title, locale)}</h3>
-        <div className="updates-head-aside">
-          <time className="updates-date" dateTime={entry.date}>
-            {entry.date}
-          </time>
-          <UpdatesChangelogTotals counts={entryTotals} variant="entry" />
-        </div>
+        <UpdatesChangelogTotals counts={entryTotals} variant="entry" />
+        <time className="sr-only" dateTime={entry.date}>
+          {entry.date}
+        </time>
       </div>
       {entry.groups?.length ? (
         <div className="updates-groups">

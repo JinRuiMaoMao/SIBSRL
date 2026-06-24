@@ -248,8 +248,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "The updates list header shows all-time new and bug-fix counts; each dated entry shows that day’s totals at the bottom.",
           },
                     {
-            zh: "当日新增与修复条数改显示在日期右侧（年/月/日与统计同一行）。",
-            en: "Per-day new and fix counts now sit to the right of the date on the same line.",
+            zh: "当日新增与修复条数改显示在日期大标题右侧，格式为「本日新增 N 条 · Bug修复 N 条」。",
+            en: "Per-day new and fix counts now sit to the right of the dated entry title as “Today: N new · N bug fixes”.",
           },
         ],
       },
