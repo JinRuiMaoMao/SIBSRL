@@ -3,11 +3,12 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 /** 仅这些 canonical 线路 ID 可提供走向/高度图（勿为其他线路添加按钮或资源）。 */
-export const ROUTE_MAP_CANONICAL_IDS = ['77X']
+export const ROUTE_MAP_CANONICAL_IDS = ['77X', '21']
 
 /** 详情/卡片 route id → 图片目录 canonical id */
 export const ROUTE_MAP_ROUTE_ALIASES = {
   '77XA': '77X',
+  '21A': '21',
 }
 
 const MAP_KINDS = ['path', 'height']
