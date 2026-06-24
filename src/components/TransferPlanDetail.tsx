@@ -3,10 +3,8 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MatchedStop } from '../utils/routeStopLookup'
 import { formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
 import { TransferPlanJourney } from './TransferPlanJourney'
-import {
-  estimateTransferPlanMetrics,
-  formatTransferPlanMetrics,
-} from '../utils/transferPlanMetrics'
+import { estimateTransferPlanMetrics } from '../utils/transferPlanMetrics'
+import { TransferPlanMetricsSummary } from './TransferPlanMetricsSummary'
 
 interface TransferPlanDetailProps {
   plan: TransferPlan
@@ -57,9 +55,10 @@ export function TransferPlanDetail({
         {t('betweenStopsSummary', { from: fromLabel, to: toLabel })}
       </p>
 
-      <p className="transfer-plan-metrics transfer-plan-metrics--detail">
-        {formatTransferPlanMetrics(metrics, t)}
-      </p>
+      <TransferPlanMetricsSummary
+        metrics={metrics}
+        className="transfer-plan-metrics--detail"
+      />
 
       <div className="transfer-plan-detail-notes">
         <p>{t('transferPlanMetricsNote')}</p>

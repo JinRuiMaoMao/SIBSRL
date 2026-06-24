@@ -259,7 +259,12 @@ const messagesZhHans = {
   transferPlanTitleWithWalk: '方案 {index}（含步行）',
   transferPlanMetrics: '约 {minutes} 分钟 · {distance}',
   transferPlanMetricsEstimated: '（含估算）',
-  transferPlanMetricsNote: '时间为候车、乘车、转车与步行的估算总和；里程按各线 Wiki 里程或站距比例折算。',
+  transferPlanMetricDistance: '距离',
+  transferPlanMetricTime: '时间',
+  transferPlanMetricFare: '票价',
+  transferPlanMetricMinutes: '约 {minutes} 分钟',
+  transferPlanMetricFareUnknown: '未知',
+  transferPlanMetricsNote: '时间为候车、乘车、转车与步行的估算总和；里程按各线 Wiki 里程或站距比例折算；票价为各乘车段全票相加（分段收费未折算）。',
   transferPlanTimetableNote:
     '方案已按班次时刻表（data/route-timetables.json）或各线服务时间/班次间隔估算过滤；每日挑战等 custom 日程仍可能无法验证。',
   routeDataIncomplete: '资料不全',
@@ -763,8 +768,13 @@ const messagesEn: Record<MessageKey, string> = {
   transferPlanTitleWithWalk: 'Option {index} (incl. walk)',
   transferPlanMetrics: '~{minutes} min · {distance}',
   transferPlanMetricsEstimated: ' (est.)',
+  transferPlanMetricDistance: 'Distance',
+  transferPlanMetricTime: 'Time',
+  transferPlanMetricFare: 'Fare',
+  transferPlanMetricMinutes: '~{minutes} min',
+  transferPlanMetricFareUnknown: 'Unknown',
   transferPlanMetricsNote:
-    'Time covers estimated waiting, riding, transfers, and walking; distance uses route km or stop-ratio fallback.',
+    'Time covers estimated waiting, riding, transfers, and walking; distance uses route km or stop-ratio fallback; fare sums full-route fares per leg (section fares not prorated).',
   transferPlanTimetableNote:
     'Options use shift timetables (data/route-timetables.json) or service hours/headway estimates; custom schedules (e.g. daily challenge) may still be unverified.',
   routeDataIncomplete: 'Incomplete data',

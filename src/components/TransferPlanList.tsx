@@ -1,9 +1,7 @@
 import { useLocale } from '../i18n/LocaleContext'
 import { formatTransferPlanRouteChain, type TransferPlan } from '../utils/stopTransferPlans'
-import {
-  estimateTransferPlanMetrics,
-  formatTransferPlanMetrics,
-} from '../utils/transferPlanMetrics'
+import { estimateTransferPlanMetrics } from '../utils/transferPlanMetrics'
+import { TransferPlanMetricsSummary } from './TransferPlanMetricsSummary'
 
 interface TransferPlanListProps {
   plans: TransferPlan[]
@@ -43,7 +41,7 @@ export function TransferPlanList({ plans, onSelectPlan }: TransferPlanListProps)
                 <span className="transfer-plan-card-hint">{t('transferPlanExpand')}</span>
               </div>
               <p className="transfer-plan-route-chain">{chainLabel}</p>
-              <p className="transfer-plan-metrics">{formatTransferPlanMetrics(metrics, t)}</p>
+              <TransferPlanMetricsSummary metrics={metrics} />
             </article>
           </button>
         )

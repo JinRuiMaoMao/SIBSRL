@@ -2436,10 +2436,58 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   color: var(--text-muted);
 }
 
+.transfer-plan-metrics-row {
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.9rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.transfer-plan-metric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.transfer-plan-metric-label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.transfer-plan-metric-value {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.transfer-plan-metric-estimated {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
 .transfer-plan-metrics--detail {
   margin-top: 0.5rem;
   font-size: 0.95rem;
   color: var(--text);
+}
+
+.transfer-plan-metrics--detail .transfer-plan-metric-label {
+  color: var(--text-muted);
+}
+
+.transfer-plan-metrics--detail .transfer-plan-metric-value {
+  color: var(--text);
+}
+
+.between-stops-route-wrap .transfer-plan-metrics-row {
+  margin-top: 0.45rem;
+  padding: 0 0.15rem 0.2rem;
 }
 
 .transfer-plan-metrics-note {

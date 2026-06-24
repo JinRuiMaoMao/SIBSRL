@@ -305,6 +305,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '走向/高度图目前仅配置 77X（77XA 详情同用）与 21（21A 详情同用，可先只放走向图）；其他线路不显示按钮。',
             en: 'Path/elevation maps are enabled for 77X (shared with 77XA) and 21 (shared with 21A; path-only is fine)—other routes hide the buttons.',
           },
+          {
+            zh: '站间导航（起点--终点）的直达与转车方案现显示距离、时间与票价；票价为各乘车段全票相加的估算。',
+            en: 'Stop-to-stop navigation (start--end) now shows distance, time, and fare on direct and transfer plans; fare sums full-route fares per leg as an estimate.',
+          },
         ],
       },
     ],

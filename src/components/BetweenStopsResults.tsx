@@ -13,9 +13,14 @@ import {
   sortTransferPlans,
   type TransferPlanSortMode,
 } from '../utils/stopTransferPlans'
+import {
+  buildDirectRouteTransferPlan,
+  estimateTransferPlanMetrics,
+} from '../utils/transferPlanMetrics'
 import { DepartureTimeInput } from './DepartureTimeInput'
 import { RouteCard } from './RouteCard'
 import { TransferPlanList } from './TransferPlanList'
+import { TransferPlanMetricsSummary } from './TransferPlanMetricsSummary'
 
 export interface BetweenStopLookupResult {
   from: { zh: string; en: string } | null
@@ -57,6 +62,16 @@ export function BetweenStopsResults({
     () => sortTransferPlans(transferPlans, sortMode, locale),
     [transferPlans, sortMode, locale],
   )
+
+  const directRouteMetrics = useMemo(() => {
+    if (!from || !to) return new Map<string, ReturnType<typeof estimateTransferPlanMetrics>>()
+    const map = new Map<string, ReturnType<typeof estimateTransferPlanMetrics>>()
+    for (const { route, directionIndex } of routes) {
+      const plan = buildDirectRouteTransferPlan(from, to, route, directionIndex)
+      map.set(`${route.id}-${directionIndex}`, estimateTransferPlanMetrics(plan, locale))
+    }
+    return map
+  }, [routes, from, to, locale])
 
   const summary = useMemo(() => {
     if (!from) return t('betweenStopsFromUnresolved', { query: fromQuery })
@@ -138,6 +153,8 @@ export function BetweenStopsResults({
             {routes.map(({ route, directionIndex: directionDataIndex }) => {
               const badges = getBetweenStopRouteBadgeKeys(route, dailyChallenge)
               const directionIndex = getSortedDirectionIndexFromDataIndex(route, directionDataIndex)
+              const metricsKey = `${route.id}-${directionDataIndex}`
+              const metrics = directRouteMetrics.get(metricsKey)
               return (
                 <div key={`between-${route.id}-${directionDataIndex}`} className="between-stops-route-wrap">
                   {badges.length > 0 ? (
@@ -161,6 +178,7 @@ export function BetweenStopsResults({
                     directionIndex={directionIndex}
                     onDirectionChange={(index) => setDirectionIndex(route.id, index)}
                   />
+                  {metrics ? <TransferPlanMetricsSummary metrics={metrics} /> : null}
                 </div>
               )
             })}
