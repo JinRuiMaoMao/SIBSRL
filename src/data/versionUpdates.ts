@@ -301,6 +301,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '线路详情新增「走向」「高度」按钮，跳转查看对应线路图（图片放在 route-maps/ 目录，可用 npm run sync:route-maps 从 SIBS 资源同步）。',
             en: 'Route details now include Path and Elevation buttons that open the corresponding route map images (stored under route-maps/; sync from SIBS assets with npm run sync:route-maps).',
           },
+          {
+            zh: '走向/高度图目前仅配置 77X（77XA 详情同用）；其他线路不显示按钮，图片请放在 public/route-maps/77X/ 下。',
+            en: 'Path and elevation maps are enabled for route 77X only (77XA detail shares them); other routes hide the buttons—place images under public/route-maps/77X/.',
+          },
         ],
       },
     ],

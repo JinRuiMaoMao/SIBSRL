@@ -12,6 +12,8 @@ import { renderRoutePageHtml } from './scripts/lib/route-page-html.mjs'
 import { pageFilenameToRouteId } from './scripts/lib/route-page-filename-decode.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { APP_PAGES } from './scripts/lib/app-page-html.mjs'
+// @ts-expect-error build helper is plain .mjs without types
+import { buildRouteMapsManifest } from './scripts/build-route-maps-manifest.mjs'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
 const routePagesCacheFile = resolve(root, '.cache/route-pages-data.json')
@@ -30,6 +32,26 @@ async function writeRoutePagesManifest(outFile: string) {
   mkdirSync(dirname(outFile), { recursive: true })
   writeFileSync(outFile, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
   return manifest
+}
+
+function routeMapsManifestPlugin(): Plugin {
+  return {
+    name: 'route-maps-manifest',
+    apply: 'build',
+    buildStart() {
+      buildRouteMapsManifest()
+    },
+  }
+}
+
+function routeMapsManifestDevPlugin(): Plugin {
+  return {
+    name: 'route-maps-manifest-dev',
+    apply: 'serve',
+    configureServer() {
+      buildRouteMapsManifest()
+    },
+  }
 }
 
 function routePagesDataPlugin(): Plugin {
@@ -150,6 +172,8 @@ export default defineConfig(() => {
     plugins: [
       react(),
       viteSingleFile({ useRecommendedBuildConfig: true }),
+      routeMapsManifestPlugin(),
+      routeMapsManifestDevPlugin(),
       routePagesDataPlugin(),
       routePagesDataDevPlugin(),
       devEntryRedirectPlugin(),

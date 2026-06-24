@@ -1,6 +1,7 @@
 import { routeIdToPageFilename } from './routeNavigation'
+import { listRouteMapKinds, resolveRouteMapRouteId, type RouteMapViewKind } from '../data/routeMapsManifest'
 
-export type RouteMapViewKind = 'path' | 'height'
+export type { RouteMapViewKind }
 
 const ROUTE_MAPS_DIR = 'route-maps'
 
@@ -25,8 +26,9 @@ export function getRouteMapImageUrl(
   fromRoutesDir = false,
   extension = 'png',
 ): string {
+  const canonicalId = resolveRouteMapRouteId(routeId) ?? routeId
   const prefix = resolveRouteAssetPrefix(fromRoutesDir)
-  const dir = routeIdToPageFilename(routeId)
+  const dir = routeIdToPageFilename(canonicalId)
   return `${prefix}${ROUTE_MAPS_DIR}/${dir}/${routeMapImageBasename(kind)}.${extension}`
 }
 
@@ -36,9 +38,10 @@ export function buildRouteMapViewerUrl(
   kind: RouteMapViewKind,
   fromRoutesDir = false,
 ): string {
+  const canonicalId = resolveRouteMapRouteId(routeId) ?? routeId
   const prefix = resolveRouteAssetPrefix(fromRoutesDir)
   const params = new URLSearchParams({
-    route: routeId,
+    route: canonicalId,
     view: kind,
   })
   return `${prefix}route-map.html?${params.toString()}`

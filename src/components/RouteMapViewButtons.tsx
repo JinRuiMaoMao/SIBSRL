@@ -1,5 +1,6 @@
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
+import { listRouteMapKinds } from '../data/routeMapsManifest'
 import { buildRouteMapViewerUrl, type RouteMapViewKind } from '../utils/routeMapImages'
 
 const VIEW_ORDER: RouteMapViewKind[] = ['path', 'height']
@@ -16,10 +17,12 @@ interface RouteMapViewButtonsProps {
 
 export function RouteMapViewButtons({ routeId, routeNumber }: RouteMapViewButtonsProps) {
   const { t } = useLocale()
+  const availableKinds = listRouteMapKinds(routeId)
+  if (availableKinds.length === 0) return null
 
   return (
     <div className="route-map-view-actions" data-tour="route-detail-map-views">
-      {VIEW_ORDER.map((kind) => {
+      {VIEW_ORDER.filter((kind) => availableKinds.includes(kind)).map((kind) => {
         const label = t(LABEL_KEYS[kind])
         return (
           <a

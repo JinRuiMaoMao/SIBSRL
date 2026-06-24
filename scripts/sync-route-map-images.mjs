@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { findSibsAudioRoot } from './lib/sibs-audio-root.mjs'
 import { routeIdToPageFilename } from './lib/route-page-filename-decode.mjs'
+import { ROUTE_MAP_CANONICAL_IDS } from './build-route-maps-manifest.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const destRoot = resolve(root, 'public', 'route-maps')
@@ -101,6 +102,7 @@ export function syncRouteMapImages(options = {}) {
     const perRouteDirs = collectRouteDirs(baseDir)
     if (perRouteDirs.length > 0) {
       for (const { routeId, dir } of perRouteDirs) {
+        if (!ROUTE_MAP_CANONICAL_IDS.includes(routeId)) continue
         const count = syncRouteFromDir(routeId, dir)
         if (count > 0) {
           copied += count
@@ -112,6 +114,7 @@ export function syncRouteMapImages(options = {}) {
 
     if (!statSync(baseDir).isDirectory()) continue
     for (const entry of collectFlatFiles(baseDir)) {
+      if (!ROUTE_MAP_CANONICAL_IDS.includes(entry.routeId)) continue
       const destDir = join(destRoot, routeIdToPageFilename(entry.routeId))
       let count = 0
       for (const [kind, src] of Object.entries(entry.files)) {
