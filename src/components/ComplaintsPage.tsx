@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NPC_CATEGORIES, NPC_CATEGORY_LABELS, npcAudioItems, type NpcAudioFilter } from '../data/npcAudio'
+import { NPC_CATEGORIES, NPC_CATEGORY_TEXTS, npcAudioItems, type NpcAudioFilter } from '../data/npcAudio'
 import { useListDensityCompact } from '../hooks/useListDensityCompact'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
@@ -31,7 +31,7 @@ export function ComplaintsPage() {
               className={`chip ${filter === category ? 'active' : ''}`}
               onClick={() => setFilter(category)}
             >
-              {NPC_CATEGORY_LABELS[category] ?? category}
+              {getPrimaryText(NPC_CATEGORY_TEXTS[category] ?? { zh: category, en: category }, locale)}
             </button>
           ))}
         </div>

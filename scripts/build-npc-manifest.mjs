@@ -6,9 +6,9 @@ import {
   EXCLUDED_NPC_CATEGORIES,
   NPC_CATEGORY_ORDER,
   npcAudioRelativeUrl,
-  npcCategoryLabel,
   sortNpcCategories,
 } from './lib/npc-audio-path.mjs'
+import { npcCategoryText, npcItemTitle } from './lib/npc-titles.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 export const NPC_AUDIO_PUBLIC = resolve(root, 'public', 'audio', 'npc')
@@ -18,9 +18,8 @@ function isAudioFile(name) {
   return /\.(mp3|ogg)$/i.test(name)
 }
 
-function titleFromFilename(filename) {
-  const stem = filename.replace(/\.(mp3|ogg)$/i, '')
-  return stem.replace(/[_-]+/g, ' ').trim() || stem
+function titleFromFilename(category, filename) {
+  return npcItemTitle(category, filename)
 }
 
 function slugifyCategory(category) {
@@ -45,13 +44,13 @@ export function buildNpcManifest(options = {}) {
         .sort((a, b) => a.localeCompare(b, 'zh-Hans'))
 
       files.forEach((file, index) => {
-        const title = titleFromFilename(file)
+        const title = titleFromFilename(entry.name, file)
         items.push({
           id: `npc-${slugifyCategory(entry.name)}-${index + 1}`,
           category: entry.name,
           number: index + 1,
-          titleZh: title,
-          titleEn: title,
+          titleZh: title.zh,
+          titleEn: title.en,
           audioUrl: npcAudioRelativeUrl(entry.name, file),
         })
       })
@@ -72,8 +71,8 @@ export function buildNpcManifest(options = {}) {
   const categoryLines = sortedCategories.map((c) => `  ${JSON.stringify(c)},`).join('\n')
   const itemLines = items
     .map((item) => {
-      const label = npcCategoryLabel(item.category)
-      return `  { id: ${JSON.stringify(item.id)}, category: ${JSON.stringify(item.category)}, number: ${item.number}, title: { zh: ${JSON.stringify(item.titleZh)}, en: ${JSON.stringify(item.titleEn)} }, detail: { zh: ${JSON.stringify(label)}, en: ${JSON.stringify(label)} }, audioUrl: ${JSON.stringify(item.audioUrl)} },`
+      const categoryText = npcCategoryText(item.category)
+      return `  { id: ${JSON.stringify(item.id)}, category: ${JSON.stringify(item.category)}, number: ${item.number}, title: { zh: ${JSON.stringify(item.titleZh)}, en: ${JSON.stringify(item.titleEn)} }, detail: { zh: ${JSON.stringify(categoryText.zh)}, en: ${JSON.stringify(categoryText.en)} }, audioUrl: ${JSON.stringify(item.audioUrl)} },`
     })
     .join('\n')
 
@@ -96,15 +95,12 @@ export const NPC_CATEGORIES: readonly string[] = [
 ${categoryLines}
 ]
 
-export const NPC_CATEGORY_LABELS: Readonly<Record<string, string>> = {
-${Object.entries(
-  sortedCategories.reduce((acc, category) => {
-    const label = npcCategoryLabel(category)
-    if (label !== category) acc[category] = label
-    return acc
-  }, {}),
-)
-  .map(([key, value]) => `  ${JSON.stringify(key)}: ${JSON.stringify(value)},`)
+export const NPC_CATEGORY_TEXTS: Readonly<Record<string, BilingualText>> = {
+${sortedCategories
+  .map((category) => {
+    const text = npcCategoryText(category)
+    return `  ${JSON.stringify(category)}: { zh: ${JSON.stringify(text.zh)}, en: ${JSON.stringify(text.en)} },`
+  })
   .join('\n')}
 }
 

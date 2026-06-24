@@ -20,9 +20,9 @@ export const NPC_CATEGORY_LABELS = {
   '打招呼，感谢': '感谢',
 }
 
-/** @param {string} category */
+/** @deprecated Use npcCategoryText from npc-titles.mjs */
 export function npcCategoryLabel(category) {
-  return NPC_CATEGORY_LABELS[category] ?? category
+  return NPC_CATEGORY_LABELS[category] ?? category.replace(/抱怨/g, '')
 }
 
 /** @param {string[]} discovered */
