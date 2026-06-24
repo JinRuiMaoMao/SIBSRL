@@ -48,13 +48,21 @@ function expandHeaderIfCollapsed(): void {
   if (toggle instanceof HTMLButtonElement) toggle.click()
 }
 
+function revealBottomTabBarForTour(): void {
+  document.querySelector('.app-tab-bar-shell--desktop')?.classList.add('is-tour-visible')
+  window.dispatchEvent(new CustomEvent('sibs-reveal-tab-bar'))
+}
+
 const TABS_STEP: GuidedTourStep = {
   id: 'tabs',
-  target: '.header-tabs-cluster .header-tabs',
+  target: '[data-tour="app-tab-bar"]',
   titleKey: 'guidedTourTabsTitle',
   bodyKey: 'guidedTourTabsBody',
-  placement: 'bottom',
-  beforeShow: expandHeaderIfCollapsed,
+  placement: 'top',
+  beforeShow: () => {
+    expandHeaderIfCollapsed()
+    revealBottomTabBarForTour()
+  },
 }
 
 const SETTINGS_STEP: GuidedTourStep = {

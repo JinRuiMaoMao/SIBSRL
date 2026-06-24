@@ -253,6 +253,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '顶栏「更新」标签在有未读日志时显示红色「!」角标；进入更新页或通过更新弹窗查看后消失。动态测量登录/设置按钮宽度，避免与「更新」标签重叠。',
             en: 'The Updates tab shows a red “!” badge when the changelog is unread; it clears after opening the updates page or viewing via the update dialog. Header layout now measures control buttons to prevent overlap with tabs.',
           },
+          {
+            zh: '五个栏目导航移至页面底部：电脑端鼠标移到底部边缘时滑出；手机 / iPad 为底部圆形图标，点击展开五个栏目图标菜单。',
+            en: 'The five section tabs moved to a bottom dock: on desktop they slide up when the pointer nears the bottom edge; on phones and iPads a bottom icon expands into the five-tab menu.',
+          },
         ],
       },
     ],

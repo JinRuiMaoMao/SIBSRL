@@ -461,6 +461,8 @@ const messagesZhHans = {
   updatesPromptViewAll: '查看全部更新',
   updatesPromptDismiss: '关闭',
   updatesTabBadgeHint: '有新更新',
+  appTabBarExpand: '展开栏目导航',
+  appTabBarCollapse: '收起栏目导航',
   updatesEasterEggHint: 'Hex⁻¹ → Reverse⁻¹ → Base64⁻¹',
   updatesEmpty: '暂无更新记录。',
   broadcastIntro:
@@ -954,6 +956,8 @@ const messagesEn: Record<MessageKey, string> = {
   updatesPromptViewAll: 'View full change log',
   updatesPromptDismiss: 'Close',
   updatesTabBadgeHint: 'New updates',
+  appTabBarExpand: 'Expand section navigation',
+  appTabBarCollapse: 'Collapse section navigation',
   updatesEasterEggHint: 'Hex⁻¹ → Reverse⁻¹ → Base64⁻¹',
   updatesEmpty: 'No update records yet.',
   broadcastIntro:

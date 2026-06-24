@@ -7,6 +7,7 @@ import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
+import { AppTabBar } from './components/AppTabBar'
 import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
@@ -47,7 +48,8 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 
 function App() {
   const { t, locale } = useLocale()
-  const activeTab = readTabFromLocation() ?? 'routes'
+  const tabFromLocation = readTabFromLocation()
+  const activeTab = tabFromLocation ?? 'routes'
   const {
     open: guidedTourOpen,
     tourMode,
@@ -180,6 +182,7 @@ function App() {
             {t('buildTag', { time: buildLabel })}
           </p>
         </footer>
+        <AppTabBar activeTab={tabFromLocation} />
         </div>
       </>
     )
@@ -277,6 +280,7 @@ function App() {
           {t('buildTag', { time: buildLabel })}
         </p>
       </footer>
+      <AppTabBar activeTab={tabFromLocation} />
       </div>
     </>
   )
