@@ -325,6 +325,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '全站「转折点」改为醒目框标记（不算站名）：站序表、起终点与途经文案中的转折点字样均统一显示。',
             en: '“Turning point” is now a vivid boxed badge (not part of the stop name) across stop tables, endpoints, and route copy.',
           },
+          {
+            zh: '补全 N171 北行 61 站站序（长岛码头 → 彩虹中心），括号内副站名（阳光体育馆、月亮湾站、千叶站等）在详情以小字同行显示；修正中叶隧道与南环文化区公园先后次序。',
+            en: 'Completed N171 northbound stop list (61 stops, Long Island Ferry Pier → Rainbow Estate Complex); parenthetical aliases (Sunshine Stadium, Lunar Bay Station, Thousand Leaf Station, etc.) show inline as subtitles; fixed Leafy-Central Tunnel vs Southern Cultural District Park order.',
+          },
         ],
       },
     ],

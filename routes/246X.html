@@ -163,12 +163,12 @@
     "en": "approx. 31–33 mins (loop)"
   },
   "length": {
-    "zh": "约 19 km（环线）",
-    "en": "approx. 19 km (loop)"
+    "zh": "环线约 19 km / 西行约 6.3 km / 东行约 12.7 km",
+    "en": "Loop approx. 19 km / Westbound approx. 6.3 km / Eastbound approx. 12.7 km"
   },
   "notes": {
-    "zh": "第 1/4 区繁忙时间环线（REBC · FTCC），东锦葵海傍路 ↺ 时间廊。特开：早高峰东锦葵 → 货柜码头岛；艾迪城 → 枫树里。2024/6 起改经北环中心、不再停北环转车站及中环南。分段：南环街市起至东锦葵 $7.2。",
-    "en": "Zones 1/4 peak-hour loop (REBC · FTCC), Eastmallow Praya Road ↺ Timelapse Mall. Special AM: Eastmallow → Containers Island; Addi City → Maple Lane. Via Northern Plaza from Jun 2024; Northern Interchange and Southern Central removed. Section fare Southern Market → Eastmallow $7.2."
+    "zh": "第 1/4 区繁忙时间环线（REBC · FTCC），东锦葵海傍路 ↺ 时间廊；普通班次游戏内编号 246XA，站序分西行／东行两段（时间廊为折返点）。特开 A：146W（东锦葵 → 货柜码头岛）；特开 B：246PE（艾迪城 → 枫树里，经 The ONE）。2024/6 起改经北环中心、不再停北环转车站及中环南。分段：南环街市起至东锦葵 $7.2。",
+    "en": "Zones 1/4 peak-hour loop (REBC · FTCC), Eastmallow Praya Road ↺ Timelapse Mall; regular trips use in-game code 246XA with westbound/eastbound lists (Timelapse Mall is the returning point). Special A: 146W (Eastmallow → Container's Island); Special B: 246PE (Addi City → Maple Lane via The ONE). Via Northern Plaza from Jun 2024; Northern Interchange and Southern Central removed. Section fare Southern Market → Eastmallow $7.2."
   },
   "origin": {
     "zh": "东锦葵海傍路",
@@ -179,14 +179,14 @@
     "en": "Timelapse Mall"
   },
   "via": {
-    "zh": "银行大厦、三哥大厦、购物廊、白鸽消防局、艾迪城、伊迪城、货柜码头、中西转车站、南环街市、中环桥、东锦葵大街",
-    "en": "Bank Tower, Third Technology Building, Shopping Corridor, Dove Fire Station, Addi City, Eddie City, Containers Terminal, Central-Western Interchange, Southern Market, Central Bridge, Eastmallow Main Street"
+    "zh": "银行大厦、三哥大厦、购物廊、白鸽消防局、艾迪城、货柜码头、中西转车站、南环街市、枫树里、中环桥、东锦葵大街",
+    "en": "Bank Tower, Third Technology Building, Shopping Corridor, Dove Fire Station, Eddie City, Containers Terminal, Central - Western Interchange, Southern Market, Maple Lane, Central Bridge, Eastmallow Main Street"
   },
   "stops": [
     {
       "direction": {
-        "zh": "西行（东锦葵海傍路 → 时间廊）",
-        "en": "Westbound (Eastmallow Praya Road → Timelapse Mall)"
+        "zh": "西行（环线 · 东锦葵海傍路 → 时间廊）",
+        "en": "Westbound loop (Eastmallow Praya Road → Timelapse Mall)"
       },
       "directionKey": "W",
       "serviceTime": {
@@ -194,8 +194,8 @@
         "en": "Mon–Fri 07:00 – 08:55 / 17:40 – 18:35"
       },
       "length": {
-        "zh": "19 km",
-        "en": "19 km"
+        "zh": "6.3 km",
+        "en": "6.3 km"
       },
       "list": [
         {
@@ -204,7 +204,7 @@
           "zone": 4
         },
         {
-          "zh": "东锦葵邨－阳葵屋",
+          "zh": "东锦葵邨 - 阳葵屋",
           "en": "Eastmallow Estate - Sunny House",
           "zone": 4
         },
@@ -226,7 +226,14 @@
         {
           "zh": "西区海底隧道转车站",
           "en": "Western Harbour Tunnel Interchange",
-          "zone": 4
+          "zone": 4,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E6%97%B6%E9%97%B4%E5%BB%8A1.mp3",
+            "nextStop": {
+              "zh": "时间廊",
+              "en": "Timelapse Mall"
+            }
+          }
         },
         {
           "zh": "时间廊",
@@ -244,8 +251,8 @@
     },
     {
       "direction": {
-        "zh": "东行（时间廊 → 东锦葵海傍路）",
-        "en": "Eastbound (Timelapse Mall → Eastmallow Praya Road)"
+        "zh": "东行（环线 · 时间廊 → 东锦葵海傍路）",
+        "en": "Eastbound loop (Timelapse Mall → Eastmallow Praya Road)"
       },
       "directionKey": "E",
       "serviceTime": {
@@ -253,19 +260,33 @@
         "en": "Mon–Fri 07:00 – 08:55 / 17:40 – 18:35"
       },
       "length": {
-        "zh": "19 km",
-        "en": "19 km"
+        "zh": "12.7 km",
+        "en": "12.7 km"
       },
       "list": [
         {
           "zh": "时间廊",
           "en": "Timelapse Mall",
-          "zone": 1
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E9%93%B6%E8%A1%8C%E5%A4%A7%E5%8E%A61.mp3",
+            "nextStop": {
+              "zh": "银行大厦",
+              "en": "Bank Tower"
+            }
+          }
         },
         {
           "zh": "银行大厦",
           "en": "Bank Tower",
-          "zone": 1
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E4%B8%89%E5%93%A5%E5%A4%A7%E5%8E%A61.mp3",
+            "nextStop": {
+              "zh": "三哥大厦",
+              "en": "Third Technology Building"
+            }
+          }
         },
         {
           "zh": "三哥大厦",
@@ -275,20 +296,29 @@
         {
           "zh": "购物廊",
           "en": "Shopping Corridor",
-          "zone": 1
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E7%99%BD%E9%B8%BD%E6%B6%88%E9%98%B2%E5%B1%801.mp3",
+            "nextStop": {
+              "zh": "白鸽消防局",
+              "en": "Dove Fire Station"
+            }
+          }
         },
         {
           "zh": "白鸽消防局",
           "en": "Dove Fire Station",
-          "zone": 1
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E4%BC%8A%E8%BF%AA%E5%9F%8E1.mp3",
+            "nextStop": {
+              "zh": "艾迪城",
+              "en": "Eddie City"
+            }
+          }
         },
         {
           "zh": "艾迪城",
-          "en": "Addi City",
-          "zone": 1
-        },
-        {
-          "zh": "伊迪城",
           "en": "Eddie City",
           "zone": 1
         },
@@ -299,12 +329,17 @@
         },
         {
           "zh": "中西转车站",
-          "en": "Central-Western Interchange",
+          "en": "Central - Western Interchange",
           "zone": 1
         },
         {
           "zh": "南环街市",
           "en": "Southern Market",
+          "zone": 4
+        },
+        {
+          "zh": "枫树里",
+          "en": "Maple Lane",
           "zone": 4
         },
         {

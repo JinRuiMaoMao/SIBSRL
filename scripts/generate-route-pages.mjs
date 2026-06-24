@@ -41,22 +41,6 @@ function hasSubjectTemplateStop(value) {
   return Object.values(value).some(hasSubjectTemplateStop)
 }
 
-function selectRoutePageData(id, preservedData, manifestData) {
-  if (
-    preservedData &&
-    manifestData &&
-    hasSubjectTemplateStop(preservedData) &&
-    !hasSubjectTemplateStop(manifestData)
-  ) {
-    return mergeStopAudioFromManifest(manifestData, { ...manifestData, id })
-  }
-
-  return mergeStopAudioFromManifest(
-    manifestData,
-    { ...(preservedData ?? manifestData ?? {}), id },
-  )
-}
-
 /** 构建产出的报站音频（如通用末站下车提醒）覆盖/补入已发布页面 JSON */
 function mergeStopAudioFromManifest(manifestData, pageData) {
   if (!manifestData?.stops?.length || !pageData?.stops?.length) {
@@ -86,6 +70,59 @@ function mergeStopAudioFromManifest(manifestData, pageData) {
     next.stopAudio = manifestData.stopAudio
   }
   return next
+}
+
+/** 以构建清单站序为准，按站序位置合并已发布页中的报站音频 */
+function mergeStopFieldsFromPreserved(preservedData, manifestPageData) {
+  if (!preservedData?.stops?.length) {
+    return mergeStopAudioFromManifest(manifestPageData, manifestPageData)
+  }
+
+  const stops = manifestPageData.stops.map((group, groupIndex) => {
+    const preservedGroup = preservedData.stops[groupIndex]
+    if (!preservedGroup?.list?.length || !group.list?.length) return group
+
+    const list = group.list.map((stop, stopIndex) => {
+      const preservedStop = preservedGroup.list[stopIndex]
+      if (!preservedStop?.audio || stop.audio) return stop
+      return { ...stop, audio: preservedStop.audio }
+    })
+
+    return { ...group, list }
+  })
+
+  const next = { ...manifestPageData, stops }
+  if (manifestPageData.stopAudio?.length) {
+    next.stopAudio = manifestPageData.stopAudio
+  } else if (preservedData.stopAudio?.length) {
+    next.stopAudio = preservedData.stopAudio
+  }
+  return next
+}
+
+function selectRoutePageData(id, preservedData, manifestData) {
+  if (!manifestData) {
+    return { ...(preservedData ?? { id }), id }
+  }
+
+  const manifestClean = !hasSubjectTemplateStop(manifestData)
+
+  if (
+    preservedData &&
+    hasSubjectTemplateStop(preservedData) &&
+    manifestClean
+  ) {
+    return mergeStopAudioFromManifest(manifestData, { ...manifestData, id })
+  }
+
+  if (manifestClean) {
+    return mergeStopFieldsFromPreserved(preservedData, { ...manifestData, id })
+  }
+
+  return mergeStopAudioFromManifest(
+    manifestData,
+    { ...(preservedData ?? manifestData ?? {}), id },
+  )
 }
 
 /**

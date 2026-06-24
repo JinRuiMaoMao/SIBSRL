@@ -240,8 +240,10 @@ function emitRoute(route, indent = '  ') {
       lines.push(`${indent}      list: [`)
       for (const s of d.list) {
         const zone = s.zone != null ? `, zone: ${s.zone}` : ''
+        const nameSub = s.nameSub ? `, nameSub: ${bilingual(s.nameSub, indent + '          ')}` : ''
+        const turningPoint = s.turningPoint ? ', turningPoint: true' : ''
         lines.push(
-          `${indent}        { name: ${bilingual(s.name, indent + '          ')}${zone} },`,
+          `${indent}        { name: ${bilingual(s.name, indent + '          ')}${nameSub}${turningPoint}${zone} },`,
         )
       }
       lines.push(`${indent}      ],`)
