@@ -1668,7 +1668,9 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
     100dvh - var(--settings-panel-top, 3.5rem) - 0.35rem - max(0.75rem, env(safe-area-inset-bottom, 0px))
   );
   padding: 0.75rem;
-  background: var(--bg-deep);
+  background: var(--bg-float, var(--bg-deep));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 40px var(--shadow-overlay);

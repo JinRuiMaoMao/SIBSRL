@@ -41,6 +41,7 @@ html:not([data-panel-style='classic']) {
     0 0 0 1px color-mix(in srgb, var(--accent) 65%, transparent), 0 8px 24px var(--accent-soft);
   --route-card-promoted-border-muted: color-mix(in srgb, var(--accent) 28%, var(--border));
   --route-card-promoted-bg-muted: color-mix(in srgb, var(--bg-card) 60%, transparent);
+  --bg-float: color-mix(in srgb, var(--panel-base-deep) 85%, transparent);
 }
 
 [data-theme='light'] {
