@@ -1,4 +1,4 @@
-/** @typedef {'routes' | 'broadcast' | 'music' | 'complaints' | 'updates'} AppTabId */
+/** @typedef {'routes' | 'broadcast' | 'music' | 'complaints' | 'trivia' | 'updates'} AppTabId */
 
 /** @type {Array<{ tab: AppTabId, devFile: string, publishFile: string, titleZh: string }>} */
 export const APP_PAGES = [
@@ -6,6 +6,7 @@ export const APP_PAGES = [
   { tab: 'broadcast', devFile: 'pages/ann.html', publishFile: 'ann.html', titleZh: '广播' },
   { tab: 'music', devFile: 'pages/music.html', publishFile: 'music.html', titleZh: '音乐' },
   { tab: 'complaints', devFile: 'pages/complaints.html', publishFile: 'complaints.html', titleZh: '抱怨' },
+  { tab: 'trivia', devFile: 'pages/trivia.html', publishFile: 'trivia.html', titleZh: '你知道吗' },
   { tab: 'updates', devFile: 'pages/updates.html', publishFile: 'updates.html', titleZh: '版本更新' },
 ]
 

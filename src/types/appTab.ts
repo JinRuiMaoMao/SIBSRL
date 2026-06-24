@@ -1,1 +1,1 @@
-export type AppTab = 'routes' | 'broadcast' | 'music' | 'complaints' | 'updates'
+export type AppTab = 'routes' | 'broadcast' | 'music' | 'complaints' | 'trivia' | 'updates'

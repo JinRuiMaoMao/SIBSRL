@@ -269,6 +269,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: '透明渐变模式下线路详情页背景改为约 92% 不透明，站序与票价等内容不再过度透出底层渐变。',
             en: 'In transparent-gradient mode, the route detail sheet now uses ~92% opaque panels so stops and fare text no longer bleed through the page gradient.',
           },
+          {
+            zh: '新增「你知道吗」栏目，收录游戏里程碑与冷知识（百万访问、最高同时在线、点赞破万、地图规模等）。',
+            en: 'Added a “Did you know?” tab with game milestones and trivia (1M visits, peak concurrent players, 10K likes, map size, and more).',
+          },
         ],
       },
     ],

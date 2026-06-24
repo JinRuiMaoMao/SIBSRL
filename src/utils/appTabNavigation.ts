@@ -1,6 +1,6 @@
 import type { AppTab } from '../types/appTab'
 
-export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'updates']
+export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates']
 
 /** 各栏目对应的根目录 HTML（开发时线路查询用 dev.html） */
 const TAB_PAGE_HREF: Record<AppTab, string> = {
@@ -8,6 +8,7 @@ const TAB_PAGE_HREF: Record<AppTab, string> = {
   broadcast: 'ann.html',
   music: 'music.html',
   complaints: 'complaints.html',
+  trivia: 'trivia.html',
   updates: 'updates.html',
 }
 
@@ -17,6 +18,7 @@ const FILENAME_TO_TAB: Record<string, AppTab> = {
   'ann.html': 'broadcast',
   'music.html': 'music',
   'complaints.html': 'complaints',
+  'trivia.html': 'trivia',
   'updates.html': 'updates',
 }
 

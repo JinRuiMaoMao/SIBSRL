@@ -13,6 +13,7 @@ const TAB_KEYS: Record<AppTab, MessageKey> = {
   broadcast: 'tabBroadcast',
   music: 'tabMusic',
   complaints: 'tabComplaints',
+  trivia: 'tabTrivia',
   updates: 'tabUpdates',
 }
 

@@ -81,6 +81,26 @@ html:not([data-panel-style='classic'])[data-app-tab='complaints'] {
     linear-gradient(160deg, #14080c 0%, #1f1016 26%, #1a0d12 52%, #28141e 76%, #10060a 100%);
 }
 
+/* —— 你知道吗 trivia（青柠/薄荷/琥珀） —— */
+html:not([data-panel-style='classic'])[data-app-tab='trivia'] {
+  --accent: #a3e635;
+  --accent-soft: rgba(163, 230, 53, 0.16);
+  --accent-glow: rgba(132, 204, 22, 0.36);
+  --border: color-mix(in srgb, var(--accent) 18%, transparent);
+  --border-strong: color-mix(in srgb, var(--accent) 38%, transparent);
+  --panel-base-deep: #101408;
+  --panel-base-surface: #161c0c;
+  --panel-base-elevated: #1c2410;
+  --panel-base-card: #222c14;
+  --page-background:
+    radial-gradient(ellipse 95% 76% at 8% -6%, rgba(163, 230, 53, 0.24), transparent 55%),
+    radial-gradient(ellipse 84% 68% at 94% 10%, rgba(45, 212, 160, 0.16), transparent 53%),
+    radial-gradient(ellipse 78% 58% at 50% 108%, rgba(250, 204, 21, 0.14), transparent 58%),
+    radial-gradient(ellipse 70% 52% at 70% 44%, rgba(56, 189, 248, 0.1), transparent 54%),
+    radial-gradient(ellipse 64% 46% at 16% 66%, rgba(132, 204, 22, 0.1), transparent 50%),
+    linear-gradient(160deg, #0a1006 0%, #121a0a 26%, #0e1408 52%, #182010 76%, #080c04 100%);
+}
+
 /* —— 版本更新 updates（青/蓝/靛/薄荷） —— */
 html:not([data-panel-style='classic'])[data-app-tab='updates'] {
   --accent: #38bdf8;
@@ -217,6 +237,25 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='complai
     radial-gradient(ellipse 68% 52% at 72% 42%, rgba(244, 180, 190, 0.12), transparent 50%),
     radial-gradient(ellipse 64% 48% at 14% 68%, rgba(248, 228, 232, 0.55), transparent 52%),
     linear-gradient(165deg, #faf6f7 0%, #f5eef0 22%, #ede4e8 46%, #f7f2f4 70%, #ebe4e8 100%);
+}
+
+html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='trivia'] {
+  --accent: #5a7a12;
+  --accent-soft: rgba(90, 122, 18, 0.1);
+  --accent-glow: rgba(90, 122, 18, 0.15);
+  --border: color-mix(in srgb, var(--accent) 12%, #c8d0bc);
+  --border-strong: color-mix(in srgb, var(--accent) 22%, #b8c4ac);
+  --panel-base-deep: #e8ece4;
+  --panel-base-surface: #eef2ea;
+  --panel-base-elevated: #e0e8d8;
+  --panel-base-card: #d4dcc8;
+  --page-background:
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(163, 200, 80, 0.2), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(45, 170, 130, 0.12), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(200, 170, 60, 0.1), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 72% 42%, rgba(100, 150, 200, 0.08), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 14% 68%, rgba(232, 242, 220, 0.55), transparent 52%),
+    linear-gradient(165deg, #f6faf2 0%, #f0f6ea 22%, #e6f0de 46%, #f2f8ee 70%, #eaf2e4 100%);
 }
 
 html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='updates'] {

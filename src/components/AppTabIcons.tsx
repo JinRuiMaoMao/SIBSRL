@@ -73,6 +73,22 @@ export function AppTabIcon({ tab, active = false }: AppTabIconProps) {
           />
         </svg>
       )
+    case 'trivia':
+      return active ? (
+        <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden>
+          <path
+            fill="currentColor"
+            d="M9.5 2A6.5 6.5 0 0 0 3 8.5c0 2.4 1.3 4.5 3.2 5.6V16a1 1 0 0 0 1 1h1.8a1 1 0 0 0 1-1v-.9h2a1 1 0 0 0 1-1v-.9h2a1 1 0 0 0 1-1v-1.9A6.5 6.5 0 0 0 9.5 2Zm0 2A4.5 4.5 0 0 1 14 8.5c0 .9-.27 1.74-.73 2.44l-.42.58a1 1 0 0 0-.25.64V13h-1.6v-.84a1 1 0 0 0-.25-.64l-.42-.58A4.48 4.48 0 0 1 5.5 8.5 4.5 4.5 0 0 1 9.5 4ZM10 18.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+          />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden>
+          <path
+            fill="currentColor"
+            d="M9.5 2A6.5 6.5 0 0 0 3 8.5c0 2.4 1.3 4.5 3.2 5.6V16a1 1 0 0 0 1 1h1.8a1 1 0 0 0 1-1v-.9h2a1 1 0 0 0 1-1v-.9h2a1 1 0 0 0 1-1v-1.9A6.5 6.5 0 0 0 9.5 2Zm0 2A4.5 4.5 0 0 1 14 8.5c0 .9-.27 1.74-.73 2.44l-.42.58a1 1 0 0 0-.25.64V13h-1.6v-.84a1 1 0 0 0-.25-.64l-.42-.58A4.48 4.48 0 0 1 5.5 8.5 4.5 4.5 0 0 1 9.5 4ZM10 18.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+          />
+        </svg>
+      )
     case 'updates':
       return active ? (
         <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden>

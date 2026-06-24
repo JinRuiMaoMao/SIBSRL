@@ -10,6 +10,7 @@ export const TAB_TITLE_KEYS: Record<AppTab, MessageKey> = {
   broadcast: 'tabBroadcast',
   music: 'tabMusic',
   complaints: 'tabComplaints',
+  trivia: 'tabTrivia',
   updates: 'tabUpdates',
 }
 

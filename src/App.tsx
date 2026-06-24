@@ -11,6 +11,7 @@ import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
 import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
+import { TriviaPage } from './components/TriviaPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
@@ -96,6 +97,7 @@ function App() {
 
   useEffect(() => {
     if (isAccountPage() || isSecretPage()) return
+    if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const mode = detectGuidedTourContext()
     if (
@@ -263,6 +265,8 @@ function App() {
             <MusicPage />
           ) : activeTab === 'complaints' ? (
             <ComplaintsPage />
+          ) : activeTab === 'trivia' ? (
+            <TriviaPage />
           ) : (
             <VersionUpdatesPage />
           )}
