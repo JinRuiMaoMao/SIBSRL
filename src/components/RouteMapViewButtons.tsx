@@ -29,8 +29,6 @@ export function RouteMapViewButtons({ routeId, routeNumber }: RouteMapViewButton
             key={kind}
             className="route-map-view-btn"
             href={buildRouteMapViewerUrl(routeId, kind)}
-            target="_blank"
-            rel="noreferrer"
             aria-label={t('routeMapViewAria', { number: routeNumber, label })}
           >
             {label}
