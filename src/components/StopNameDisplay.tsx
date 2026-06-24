@@ -19,9 +19,9 @@ export function StopNameDisplay({ stop, className = '' }: StopNameDisplayProps) 
     <span className={`stop-name ${className}`.trim()}>
       <span className="stop-name-main">
         <span className="stop-name-zh">{name}</span>
+        {nameSub ? <span className="stop-name-sub">{nameSub}</span> : null}
         {display.turningPoint ? <StopTurningPointBadge /> : null}
       </span>
-      {nameSub ? <span className="stop-name-sub">{nameSub}</span> : null}
     </span>
   )
 }
