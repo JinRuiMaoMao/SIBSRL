@@ -1,17 +1,29 @@
 import type { BilingualText } from '../types/route'
 
+/** 单日更新下的小标题分组；其内再分「新增」与「Bug 修复」。 */
+export interface VersionUpdateGroup {
+  title: BilingualText
+  additions?: BilingualText[]
+  fixes?: BilingualText[]
+  /** @deprecated 旧版扁平列表（无新增/修复分层时仍可读） */
+  items?: BilingualText[]
+}
+
 export interface VersionUpdateEntry {
   id: string
   date: string
   title: BilingualText
   items?: BilingualText[]
   /** 合并条目时可保留多个小节标题 */
-  groups?: { title: BilingualText; items: BilingualText[] }[]
+  groups?: VersionUpdateGroup[]
   /** 条目底部彩蛋（密文 + 解码提示） */
   easterEgg?: boolean
   easterEggTitle?: BilingualText
   easterEggHex?: string
 }
+
+export const CHANGELOG_ADDITIONS_TITLE: BilingualText = { zh: '新增', en: 'New' }
+export const CHANGELOG_FIXES_TITLE: BilingualText = { zh: 'Bug 修复', en: 'Bug fixes' }
 
 export function getLatestUpdateId(): string | undefined {
   return versionUpdates[0]?.id
@@ -37,14 +49,32 @@ function mergeGroupLists(
   a: NonNullable<VersionUpdateEntry['groups']>,
   b: NonNullable<VersionUpdateEntry['groups']>,
 ): NonNullable<VersionUpdateEntry['groups']> {
-  const merged = a.map((group) => ({ title: group.title, items: [...group.items] }))
+  const merged = a.map((group) => ({
+    title: group.title,
+    items: group.items ? [...group.items] : undefined,
+    additions: group.additions ? [...group.additions] : undefined,
+    fixes: group.fixes ? [...group.fixes] : undefined,
+  }))
   for (const group of b) {
     const key = groupKey(group.title)
     const existing = merged.find((item) => groupKey(item.title) === key)
     if (existing) {
-      existing.items.push(...group.items)
+      if (group.items?.length) {
+        existing.items = [...(existing.items ?? []), ...group.items]
+      }
+      if (group.additions?.length) {
+        existing.additions = [...(existing.additions ?? []), ...group.additions]
+      }
+      if (group.fixes?.length) {
+        existing.fixes = [...(existing.fixes ?? []), ...group.fixes]
+      }
     } else {
-      merged.push({ title: group.title, items: [...group.items] })
+      merged.push({
+        title: group.title,
+        items: group.items ? [...group.items] : undefined,
+        additions: group.additions ? [...group.additions] : undefined,
+        fixes: group.fixes ? [...group.fixes] : undefined,
+      })
     }
   }
   return merged
@@ -129,7 +159,12 @@ export function mergeVersionUpdatesByDate(entries: VersionUpdateEntry[]): Versio
 function entryHasContent(entry: VersionUpdateEntry): boolean {
   if (entry.easterEggHex) return true
   if (entry.items?.length) return true
-  return !!entry.groups?.some((group) => group.items.length > 0)
+  return !!entry.groups?.some(
+    (group) =>
+      (group.items?.length ?? 0) > 0 ||
+      (group.additions?.length ?? 0) > 0 ||
+      (group.fixes?.length ?? 0) > 0,
+  )
 }
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
@@ -144,7 +179,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
     groups: [
       {
         title: { zh: '站序与副站名', en: 'Stops & subtitles' },
-        items: [
+        additions: [
           {
             zh: '补全 21 线环线 20 站站序，括号内副站名（巴士车厂、炫光集等）在详情以小字显示；第 12 站改为阿周电视转折点。',
             en: 'Completed route 21 circular stop list (20 stops); parenthetical aliases (Bus Depot, Neon Center, etc.) show as subtitles; stop 12 renamed to Roblox TV turning point.',
@@ -154,8 +189,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: '“Turning point” is now a vivid boxed badge (not part of the stop name) across stop tables, endpoints, and route copy.',
           },
           {
-            zh: '补全 N171 北行 61 站站序（长岛码头 → 彩虹中心），括号内副站名（阳光体育馆、月亮湾站、千叶站等）在详情以小字同行显示；修正中叶隧道与南环文化区公园先后次序。',
-            en: 'Completed N171 northbound stop list (61 stops, Long Island Ferry Pier → Rainbow Estate Complex); parenthetical aliases (Sunshine Stadium, Lunar Bay Station, Thousand Leaf Station, etc.) show inline as subtitles; fixed Leafy-Central Tunnel vs Southern Cultural District Park order.',
+            zh: '补全 N171 北行 61 站站序（长岛码头 → 彩虹中心），括号内副站名（阳光体育馆、月亮湾站、千叶站等）在详情以小字同行显示。',
+            en: 'Completed N171 northbound stop list (61 stops, Long Island Ferry Pier → Rainbow Estate Complex); parenthetical aliases (Sunshine Stadium, Lunar Bay Station, Thousand Leaf Station, etc.) show inline as subtitles.',
           },
           {
             zh: 'N171 等线路的 14 组副站名（阳光体育馆、炫光集、月亮湾站、千叶站等）已同步到全站同名站点；折返点站不受影响。',
@@ -182,10 +217,16 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: 'Secret-page routes now use the same site-wide stop subtitle rules in stop tables and card endpoints.',
           },
         ],
+        fixes: [
+          {
+            zh: '修正 N171 北行站序中叶隧道与南环文化区公园的先后次序。',
+            en: 'Fixed N171 northbound stop order: Leafy-Central Tunnel now comes before Southern Cultural District Park.',
+          },
+        ],
       },
       {
         title: { zh: '界面与主题', en: 'UI & themes' },
-        items: [
+        additions: [
           {
             zh: '透明渐变模式下更新弹窗背景改为约 85%～92% 不透明，更新内容不再过度透出底层页面渐变。',
             en: 'In transparent-gradient mode, the update prompt now uses ~85–92% opaque panels so changelog text no longer bleeds through the page gradient.',
@@ -193,6 +234,15 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: '更新弹窗与底栏「!」角标改为按最新日志条目记已读：每条更新只自动弹出一次，关闭弹窗或进入更新页后即消失，直至下一次新条目。',
             en: 'The update prompt and tab “!” badge now track the latest changelog entry id—auto-show once per release, then clear after dismissing the dialog or opening the updates page until the next entry.',
+          },
+        ],
+      },
+      {
+        title: { zh: '更新日志', en: 'Change log' },
+        additions: [
+          {
+            zh: '更新日志页面改为「标题 → 小标题 → 新增 / Bug 修复」分层展示，便于区分功能与修复项。',
+            en: 'The change log now uses a Title → section → New / Bug fixes layout so features and fixes are easier to scan.',
           },
         ],
       },

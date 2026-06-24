@@ -821,6 +821,28 @@
   color: var(--text-muted);
 }
 
+.updates-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.updates-section-title {
+  margin: 0 0 0.2rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+.updates-section-title--fixes {
+  color: var(--race);
+}
+
+.updates-section .updates-items {
+  margin-top: 0;
+}
+
 .complaints-section {
   margin-top: 0.25rem;
 }
@@ -4443,6 +4465,10 @@ html[data-list-density='compact'] .transfer-plan-stop {
   font-size: 0.85rem;
 }
 
+.updates-card--prompt .updates-section-title {
+  font-size: 0.78rem;
+}
+
 .updates-card--prompt .updates-items {
   font-size: 0.88rem;
 }
@@ -5347,6 +5373,10 @@ html[data-list-density='compact'] .updates-groups {
 html[data-list-density='compact'] .updates-group-title {
   margin-bottom: 0.25rem;
   font-size: 0.82rem;
+}
+
+html[data-list-density='compact'] .updates-section-title {
+  font-size: 0.74rem;
 }
 
 html[data-list-density='compact'] .updates-items {
