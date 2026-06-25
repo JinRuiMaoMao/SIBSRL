@@ -13,7 +13,7 @@ import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
 import { TriviaPage } from './components/TriviaPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
-import { SecretRoutesPage } from './components/SecretRoutesPage'
+import { SettingsPage } from './components/SettingsPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
@@ -27,7 +27,7 @@ import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
 import { canAutoStartGuidedTour, getGuidedTourAutoStartDelayMs } from './storage/guidedTour'
 import { markUpdateSeen } from './storage/updatesViewing'
-import { isAccountPage, isSecretPage } from './utils/appPage'
+import { isAccountPage, isSecretPage, isSettingsPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
@@ -103,7 +103,7 @@ function App() {
   }, [openTour])
 
   useEffect(() => {
-    if (isAccountPage() || isSecretPage()) return
+    if (isAccountPage() || isSecretPage() || isSettingsPage()) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const mode = detectGuidedTourContext()
@@ -153,7 +153,7 @@ function App() {
   }, [])
 
   const guidedTourLayer =
-    !isAccountPage() && !isSecretPage() ? (
+    !isAccountPage() && !isSecretPage() && !isSettingsPage() ? (
       <GuidedTour
         open={guidedTourOpen}
         mode={tourMode}
@@ -161,6 +161,45 @@ function App() {
         onPrepare={prepareGuidedTour}
       />
     ) : null
+
+  if (isSettingsPage()) {
+    return (
+      <>
+        <LiquidGlassDefs />
+        {favoritesSyncDialog}
+        <div className="app sibs-scrollbar">
+          <Header
+            activeTab={activeTab}
+            collapsed={headerCollapsed}
+            onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
+          />
+
+          <main className="main">
+            <ErrorBoundary>
+              <SettingsPage />
+            </ErrorBoundary>
+          </main>
+
+          <footer className="site-footer">
+            <p>
+              {t('footer')} ·{' '}
+              <a
+                href="https://www.roblox.com/games/1588965415"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t('playGame')}
+              </a>
+            </p>
+            <p className="build-tag" title={t('buildTagHint')}>
+              {t('buildTag', { time: buildLabel })}
+            </p>
+          </footer>
+        </div>
+        <AppTabBar activeTab={tabFromLocation} />
+      </>
+    )
+  }
 
   if (isAccountPage()) {
     return (

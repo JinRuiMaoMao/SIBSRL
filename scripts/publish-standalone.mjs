@@ -8,6 +8,7 @@ import {
   injectDevToolsBlock,
   injectLocaleBootstrap,
   injectAccountPageMeta,
+  injectSettingsPageMeta,
   injectNoScriptGuard,
   injectSecretPageMeta,
   injectServiceWorkerBootstrap,
@@ -97,6 +98,11 @@ export function publishStandalone(options = {}) {
   accountHtml = adjustAppPageTitle(accountHtml, '个人中心')
   writeFileSync(resolve(root, 'account.html'), accountHtml)
   writeFileSync(resolve(root, 'dist', 'account.html'), accountHtml)
+
+  let settingsHtml = injectSettingsPageMeta(baseHtml)
+  settingsHtml = adjustAppPageTitle(settingsHtml, '设置')
+  writeFileSync(resolve(root, 'settings.html'), settingsHtml)
+  writeFileSync(resolve(root, 'dist', 'settings.html'), settingsHtml)
 
   rmSync(resolve(root, 'tabs'), { recursive: true, force: true })
   rmSync(resolve(root, 'dist', 'tabs'), { recursive: true, force: true })

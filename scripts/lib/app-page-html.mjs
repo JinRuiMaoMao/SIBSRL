@@ -291,6 +291,24 @@ export function injectSecretPageMeta(html) {
 }
 
 /** @param {string} html */
+export function injectSettingsPageMeta(html) {
+  let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')
+  const head = out.split('</head>')[0] ?? out
+  if (/<meta name="app-page"[^>]*>/i.test(head)) {
+    out = out.replace(
+      /(<meta name="app-page" content=")[^"]*(")/i,
+      `$1settings$2`,
+    )
+  } else {
+    out = out.replace(
+      '<meta charset="UTF-8" />',
+      `<meta charset="UTF-8" />\n    <meta name="app-page" content="settings" />`,
+    )
+  }
+  return out
+}
+
+/** @param {string} html */
 export function injectAccountPageMeta(html) {
   let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')
   const head = out.split('</head>')[0] ?? out

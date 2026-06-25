@@ -16,11 +16,12 @@ import {
   ROUTE_FILTERS_STORAGE_KEY,
   ROUTE_GROUP_OPEN_STORAGE_KEY,
 } from '../storage/routePreferences'
+import { clearUpdatesPromptSeen } from '../storage/updatesViewing'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
 import { clearRoutePagePrefetchCache } from '../utils/routePagePrefetch'
 
-export function ResetSettingsSection() {
+export function ResetSettingsSection({ layout = 'menu' }: { layout?: 'menu' | 'page' }) {
   const { t } = useLocale()
   const { alert, confirm } = useAppDialog()
   const { logout } = useAuth()
@@ -67,15 +68,25 @@ export function ResetSettingsSection() {
     window.location.reload()
   }, [alert, clearRecent, confirm, replaceFoldersState, setListDensity, setReduceMotion, setTheme, t])
 
-  return (
-    <section className="settings-section">
-      <p className="settings-panel-title">{t('resetSettings')}</p>
+  const content = (
+    <>
       <p className="settings-hint">{t('resetSettingsHint')}</p>
       <div className="settings-action-row">
         <button type="button" className="settings-action-btn danger" onClick={() => void resetAll()}>
           {t('resetSettingsAction')}
         </button>
       </div>
+    </>
+  )
+
+  if (layout === 'page') {
+    return <div className="settings-page-fields">{content}</div>
+  }
+
+  return (
+    <section className="settings-section">
+      <p className="settings-panel-title">{t('resetSettings')}</p>
+      {content}
     </section>
   )
 }

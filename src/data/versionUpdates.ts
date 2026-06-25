@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "新增 settings.html 设置页：点击顶栏齿轮进入，左侧分类、右侧具体选项；原下拉设置面板已移除。",
+            en: "Added settings.html: click the header gear to open a dedicated page with categories on the left and options on the right; the old dropdown panel is removed.",
+          },
+                    {
             zh: "面板样式滑块下方新增「无填充」开关：开启后除弹窗与页面背景外，全站面板透明无底色，仅保留边框；关闭后恢复滑块不透明度。",
             en: "Added a No fill switch below the panel style slider—when on, all panels except popups and the page background become transparent with borders kept; off restores slider opacity.",
           },

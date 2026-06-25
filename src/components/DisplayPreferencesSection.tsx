@@ -30,7 +30,7 @@ function SettingsToggleGroup<T extends string>({
   )
 }
 
-export function DisplayPreferencesSection() {
+export function DisplayPreferencesSection({ layout = 'menu' }: { layout?: 'menu' | 'page' }) {
   const { t } = useLocale()
   const { reduceMotion, listDensity, setReduceMotion, setListDensity } = useAppPreferences()
 
@@ -39,10 +39,8 @@ export function DisplayPreferencesSection() {
     { id: 'compact', label: t('listDensityCompact') },
   ]
 
-  return (
-    <section className="settings-section">
-      <p className="settings-panel-title">{t('displayPreferences')}</p>
-
+  const fields = (
+    <>
       <div className="settings-field">
         <p className="settings-field-label">{t('reduceMotion')}</p>
         <SettingsToggleGroup
@@ -65,6 +63,17 @@ export function DisplayPreferencesSection() {
           onChange={setListDensity}
         />
       </div>
+    </>
+  )
+
+  if (layout === 'page') {
+    return <div className="settings-page-fields">{fields}</div>
+  }
+
+  return (
+    <section className="settings-section">
+      <p className="settings-panel-title">{t('displayPreferences')}</p>
+      {fields}
     </section>
   )
 }
