@@ -670,6 +670,13 @@ export function RouteLookupPage({
     return lockPageScroll()
   }, [detailOverlay])
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('route-detail-open', Boolean(detailOverlay))
+    return () => {
+      document.documentElement.classList.remove('route-detail-open')
+    }
+  }, [detailOverlay])
+
   const openDailyChallenge = useCallback(
     (challenge: DailyChallengeInfo) => {
       const routeNumber = challenge.routeNumber

@@ -4480,6 +4480,20 @@ html[data-panel-no-fill] .route-card .direction-toggle-btn.active {
   background: rgba(60, 180, 120, 0.12);
 }
 
+/* Route detail open — index keeps only the page background visible */
+html.route-detail-open .site-header-shell,
+html.route-detail-open .site-footer,
+html.route-detail-open .route-lookup-sticky,
+html.route-detail-open .content-layout,
+html.route-detail-open .app-tab-bar-shell {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+html.route-detail-open .route-detail-backdrop {
+  background: transparent;
+}
+
 /* Route detail — fullscreen overlay */
 .route-detail-backdrop {
   position: fixed;
