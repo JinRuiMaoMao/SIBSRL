@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页外链改为一行横排，主按钮与链接字号、点击区域加大；窄屏可横向滑动浏览全部链接。",
+            en: "Start page community links now sit in a single horizontal row with larger buttons and type; narrow screens can scroll sideways to reach every link.",
+          },
+                    {
             zh: "开始页 Wiki 链接按语言切换：繁体中文指向 Roblox 中文 Wiki（Sunshine Islands 陽光群島），其余语言指向英文 Fandom Wiki；社区站链接改为 sites.google.com/view/sunshine-islands。",
             en: "Start page Wiki link now follows locale—Traditional Chinese opens the Roblox zh wiki (Sunshine Islands 陽光群島), all other languages the English Fandom wiki; community site URL updated to sites.google.com/view/sunshine-islands.",
           },
