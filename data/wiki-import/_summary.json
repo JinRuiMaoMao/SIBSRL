@@ -1,585 +1,238 @@
 {
   "results": [
     {
-      "id": "476P",
-      "number": "476P",
+      "id": "673",
+      "number": "673",
       "operators": [
         "HZ",
         "CSB"
       ],
-      "category": "special",
-      "pattern": "oneway",
+      "category": "inner",
+      "pattern": "circular",
       "zones": [
-        4,
-        7
+        6,
+        7,
+        8
       ],
       "origin": {
-        "zh": "Rainbow Estate Complex",
-        "en": "Rainbow Estate Complex"
+        "zh": "East Factory",
+        "en": "East Factory"
       },
       "destination": {
-        "zh": "Eastmallow Praya Road / 彩虹中心",
-        "en": "Eastmallow Praya Road / 彩虹中心"
+        "zh": "East Door Bus Terminus / 東廠",
+        "en": "East Door Bus Terminus / 東廠"
       },
       "via": {
-        "zh": "[[Leafy University (Leafy University Street)",
-        "en": "[[Leafy University (Leafy University Street)"
+        "zh": "Leafy Hospital, Leafy Bay, Praya YiYan Road, Haisey (→Zone 8)",
+        "en": "Leafy Hospital, Leafy Bay, Praya YiYan Road, Haisey (→Zone 8)"
       },
       "interval": {
-        "zh": "10 min",
-        "en": "10 min"
+        "zh": "30 - 90 mins",
+        "en": "30 - 90 mins"
       },
       "journeyTime": {
-        "zh": "37 mins",
-        "en": "37 mins"
+        "zh": "20 mins",
+        "en": "20 mins"
       },
-      "fare": "$12.1",
-      "sunshardsRequired": 900,
+      "fare": "$9.4",
+      "levelRequired": 72,
       "length": {
-        "zh": "14.3 km",
-        "en": "14.3 km"
+        "zh": "15.7 km",
+        "en": "15.7 km"
       },
       "stops": [
         {
-          "directionKey": "E",
           "direction": {
-            "zh": "东行（彩虹中心 → 東錦葵海傍路）",
-            "en": "Eastbound (Rainbow Estate Complex → Eastmallow Praya Road)"
+            "zh": "方向1（海怡車廠 → 海怡車廠）",
+            "en": "Direction 1 (Horizon Depot → Horizon Depot)"
           },
           "serviceTime": {
-            "zh": "Mon – Fri (School Days): 17:05 – 18:30",
-            "en": "Mon – Fri (School Days): 17:05 – 18:30"
+            "zh": "Mon – Fri: 07:20 – 18:00 / Sat, Sun and PH: 09:00 – 18:00",
+            "en": "Mon – Fri: 07:20 – 18:00 / Sat, Sun and PH: 09:00 – 18:00"
           },
           "list": [
             {
               "name": {
-                "zh": "彩虹中心",
-                "en": "Rainbow Estate Complex"
+                "zh": "海怡車廠",
+                "en": "Horizon Depot"
               },
-              "zone": 7
+              "zone": 6
             },
             {
               "name": {
-                "zh": "葉角花園",
-                "en": "Leafy Bay Garden"
-              },
-              "zone": 7
+                "zh": "海怡西",
+                "en": "West Horizon"
+              }
             },
             {
               "name": {
-                "zh": "葉角大學",
-                "en": "Leafy University"
-              },
-              "zone": 7
+                "zh": "海怡摩天大廈",
+                "en": "Horizon Tower"
+              }
+            },
+            {
+              "name": {
+                "zh": "海怡沙灘",
+                "en": "Horizon Beach"
+              }
             },
             {
               "name": {
                 "zh": "第七區轉車站",
-                "en": "Axis Road"
+                "en": "Senpai Bypass"
               },
               "zone": 7
             },
             {
               "name": {
-                "zh": "陽光站",
-                "en": "Sunshine Station"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "中環醫院",
-                "en": "Central Hospital"
-              }
-            },
-            {
-              "name": {
-                "zh": "南環街市",
-                "en": "Southern Market"
-              }
-            },
-            {
-              "name": {
-                "zh": "強生街市",
-                "en": "Johnson Market"
-              }
-            },
-            {
-              "name": {
-                "zh": "The One",
-                "en": "The One"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "玻璃樓",
-                "en": "Glass Office"
-              }
-            },
-            {
-              "name": {
-                "zh": "楓樹里",
-                "en": "Maple Lane"
-              }
-            },
-            {
-              "name": {
-                "zh": "中環橋",
-                "en": "Central Bridge"
-              }
-            },
-            {
-              "name": {
-                "zh": "東錦葵大街",
-                "en": "Eastmallow Main Street"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "東錦葵海傍路",
-                "en": "Eastmallow Praya Road"
-              }
-            }
-          ]
-        }
-      ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476P"
-    },
-    {
-      "id": "476X",
-      "number": "476X",
-      "operators": [
-        "HZ",
-        "CSB"
-      ],
-      "category": "inter",
-      "pattern": "oneway",
-      "zones": [
-        4,
-        7
-      ],
-      "origin": {
-        "zh": "Eastmallow Praya Road",
-        "en": "Eastmallow Praya Road"
-      },
-      "destination": {
-        "zh": "Rainbow Estate Complex / 東錦葵海傍路",
-        "en": "Rainbow Estate Complex / 東錦葵海傍路"
-      },
-      "via": {
-        "zh": "Central, Leafy Bay Estate, Normal Gap",
-        "en": "Central, Leafy Bay Estate, Normal Gap"
-      },
-      "interval": {
-        "zh": "5 - 7 min",
-        "en": "5 - 7 min"
-      },
-      "journeyTime": {
-        "zh": "33 mins",
-        "en": "33 mins"
-      },
-      "fare": "$12.1",
-      "length": {
-        "zh": "13.9 km",
-        "en": "13.9 km"
-      },
-      "stops": [
-        {
-          "directionKey": "W",
-          "direction": {
-            "zh": "西行（東錦葵海傍路 → 彩虹中心）",
-            "en": "Westbound (Eastmallow Praya Road → Rainbow Estate Complex)"
-          },
-          "serviceTime": {
-            "zh": "Mon – Fri: 17:30 – 19:00",
-            "en": "Mon – Fri: 17:30 – 19:00"
-          },
-          "list": [
-            {
-              "name": {
-                "zh": "東錦葵海傍路",
-                "en": "Eastmallow Praya Road"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "東錦葵邨 - 陽葵屋",
-                "en": "Eastmallow Estate - Sunny House"
-              }
-            },
-            {
-              "name": {
-                "zh": "東錦葵大街",
-                "en": "Eastmallow Main Street"
-              }
-            },
-            {
-              "name": {
-                "zh": "中環橋",
-                "en": "Central Bridge"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "楓樹里",
-                "en": "Maple Lane"
-              }
-            },
-            {
-              "name": {
-                "zh": "玻璃樓",
-                "en": "Glass Office"
-              }
-            },
-            {
-              "name": {
-                "zh": "The One",
-                "en": "The One"
-              }
-            },
-            {
-              "name": {
-                "zh": "強生街市",
-                "en": "Johnson Market"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "葉角花園",
-                "en": "Leafy Bay Garden"
+                "zh": "東廠",
+                "en": "East Factory"
               },
               "zone": 7
             },
             {
               "name": {
-                "zh": "葉角灣邨商場",
-                "en": "Leafy Bay Estate Shopping Center"
+                "zh": "葉欣公園",
+                "en": "YiYan Park"
               }
             },
             {
               "name": {
-                "zh": "葉角灣邨",
-                "en": "Leafy Bay Estate"
+                "zh": "鑽石交易塔",
+                "en": "Diamond Trading Tower"
+              }
+            },
+            {
+              "name": {
+                "zh": "新地花園",
+                "en": "Sindy Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角灣",
+                "en": "Leafy Bay"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉角灣墳場",
+                "en": "Leafy Bay Cemetery"
               }
             },
             {
               "name": {
                 "zh": "葉角醫院",
                 "en": "Leafy Hospital"
-              }
-            },
-            {
-              "name": {
-                "zh": "中間花園",
-                "en": "Middle Garden"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "勿莫商場",
-                "en": "Mo Shopping Center"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "勿莫街市",
-                "en": "Mo Market"
-              }
-            },
-            {
-              "name": {
-                "zh": "東門公園",
-                "en": "East Door Park"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "東門邨",
-                "en": "East Door Estate"
-              }
-            },
-            {
-              "name": {
-                "zh": "紅豆商場",
-                "en": "Redbean Center"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "彩虹邨",
-                "en": "Rainbow Estate"
-              }
-            },
-            {
-              "name": {
-                "zh": "彩虹中心",
-                "en": "Rainbow Estate Complex"
-              }
-            }
-          ]
-        }
-      ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476X"
-    },
-    {
-      "id": "N476",
-      "number": "N476",
-      "operators": [
-        "HZ",
-        "CSB"
-      ],
-      "category": "night",
-      "pattern": "oneway",
-      "zones": [
-        4,
-        7
-      ],
-      "origin": {
-        "zh": "Norton Town Center",
-        "en": "Norton Town Center"
-      },
-      "destination": {
-        "zh": "Rainbow Estate Complex / 北頓市中心",
-        "en": "Rainbow Estate Complex / 北頓市中心"
-      },
-      "via": {
-        "zh": "North Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Leafy Bay Estate, Normal Gap, East Door",
-        "en": "North Island, Northern, Central, Southern, Zone 7 Interchange, Leafy University, Leafy Bay Estate, Normal Gap, East Door"
-      },
-      "interval": {
-        "zh": "15 - 30 min",
-        "en": "15 - 30 min"
-      },
-      "journeyTime": {
-        "zh": "55 mins",
-        "en": "55 mins"
-      },
-      "fare": "$16.1",
-      "sunshardsRequired": 900,
-      "length": {
-        "zh": "20.2 km",
-        "en": "20.2 km"
-      },
-      "stops": [
-        {
-          "direction": {
-            "zh": "方向1（北頓市中心 → 彩虹中心）",
-            "en": "Direction 1 (Norton Town Center → Rainbow Estate Complex)"
-          },
-          "serviceTime": {
-            "zh": "00:00 – 02:30",
-            "en": "00:00 – 02:30"
-          },
-          "list": [
-            {
-              "name": {
-                "zh": "北頓市中心",
-                "en": "Norton Town Center"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "北頓邨",
-                "en": "Norton Estate"
-              }
-            },
-            {
-              "name": {
-                "zh": "北頓花園",
-                "en": "Norton Garden"
-              }
-            },
-            {
-              "name": {
-                "zh": "綠寶石中心",
-                "en": "Emerald Plaza"
-              }
-            },
-            {
-              "name": {
-                "zh": "北頓路",
-                "en": "Norton Road"
-              }
-            },
-            {
-              "name": {
-                "zh": "北環轉車站",
-                "en": "Northern Interchange"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "紅地磚",
-                "en": "Red Wall Road"
-              }
-            },
-            {
-              "name": {
-                "zh": "楓樹里",
-                "en": "Maple Lane"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "玻璃樓",
-                "en": "Glass Office"
-              }
-            },
-            {
-              "name": {
-                "zh": "The ONE",
-                "en": "The ONE"
-              }
-            },
-            {
-              "name": {
-                "zh": "強生街市",
-                "en": "Johnson Market"
-              },
-              "zone": 4
-            },
-            {
-              "name": {
-                "zh": "南環中心",
-                "en": "The Southern"
-              }
-            },
-            {
-              "name": {
-                "zh": "中環醫院",
-                "en": "Central Hospital"
-              }
-            },
-            {
-              "name": {
-                "zh": "陽光站",
-                "en": "Sunshine Station"
-              }
-            },
-            {
-              "name": {
-                "zh": "第七區轉車站",
-                "en": "Axis Road"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "葉角大學",
-                "en": "Leafy University"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "葉角花園",
-                "en": "Leafy Bay Garden"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "葉角灣邨商場",
-                "en": "Leafy Bay Estate Shopping Center"
-              }
-            },
-            {
-              "name": {
-                "zh": "葉角灣邨",
-                "en": "Leafy Bay Estate"
-              }
-            },
-            {
-              "name": {
-                "zh": "葉角醫院",
-                "en": "Leafy Hospital"
-              }
-            },
-            {
-              "name": {
-                "zh": "中間花園",
-                "en": "Middle Garden"
-              }
-            },
-            {
-              "name": {
-                "zh": "勿莫商場",
-                "en": "Mo Shopping Center"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "勿莫街市",
-                "en": "Mo Market"
-              }
-            },
-            {
-              "name": {
-                "zh": "東門公園",
-                "en": "East Door Park"
-              },
-              "zone": 7
-            },
-            {
-              "name": {
-                "zh": "東門下邨",
-                "en": "Lower East Door Estate"
-              }
-            },
-            {
-              "name": {
-                "zh": "東門花園",
-                "en": "East Door Garden"
               }
             },
             {
               "name": {
                 "zh": "東門總站",
                 "en": "East Door Bus Terminus"
-              }
-            },
-            {
-              "name": {
-                "zh": "東門邨",
-                "en": "East Door Estate"
-              }
-            },
-            {
-              "name": {
-                "zh": "紅豆商場",
-                "en": "Redbean Center"
               },
               "zone": 7
             },
             {
               "name": {
-                "zh": "彩虹邨",
-                "en": "Rainbow Estate"
+                "zh": "海西角",
+                "en": "Haisey Point"
+              },
+              "zone": 8
+            },
+            {
+              "name": {
+                "zh": "海西邨",
+                "en": "Haisey Estate"
               }
             },
             {
               "name": {
-                "zh": "彩虹中心",
-                "en": "Rainbow Estate Complex"
+                "zh": "葉角醫院",
+                "en": "Leafy Hospital"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉角灣墳場",
+                "en": "Leafy Bay Cemetery"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角灣",
+                "en": "Leafy Bay"
+              }
+            },
+            {
+              "name": {
+                "zh": "新地花園",
+                "en": "Sindy Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉欣海旁道",
+                "en": "Praya YiYan Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "南洋大廈",
+                "en": "Southern Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "彩虹廣場",
+                "en": "Rainbow Plaza"
+              }
+            },
+            {
+              "name": {
+                "zh": "山道",
+                "en": "YiYan Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "第七區轉車站",
+                "en": "Axis Road"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "海怡沙灘",
+                "en": "Horizon Beach"
+              },
+              "zone": 6
+            },
+            {
+              "name": {
+                "zh": "海怡摩天大廈",
+                "en": "Horizon Tower"
+              }
+            },
+            {
+              "name": {
+                "zh": "海怡西",
+                "en": "West Horizon"
+              }
+            },
+            {
+              "name": {
+                "zh": "海怡車廠",
+                "en": "Horizon Depot"
               }
             }
           ]
         }
       ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N476"
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_673"
     }
   ],
   "errors": []
