@@ -222,6 +222,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "个人中心上传头像后不再撑满卡片宽度，头像固定为小圆形容器（约 3rem）显示。",
+            en: "Uploaded avatars on the account page no longer stretch to full card width—they stay in a small circular frame (~3rem).",
+          },
+                    {
             zh: "全站弹窗（确认框、更新/每日挑战提示、设置与筛选菜单、日历、引导教程等）面板与遮罩统一为 ≥75% 不透明，透明渐变模式下不再过度透出底层页面。",
             en: "All popups (confirm dialogs, update/daily-challenge prompts, settings & filter menus, calendar, guided tour, etc.) now use ≥75% opaque panels and backdrops so the page gradient no longer bleeds through in transparent-gradient mode.",
           },
