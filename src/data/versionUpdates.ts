@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "修复「无填充」未生效的问题，并强化线路卡片在无填充模式下为 0% 不透明（全透明底色）；开启无填充时隐藏面板透明度滑块。",
+            en: "Fixed No fill not applying correctly—route cards now use 0% opaque (fully transparent) fills in that mode, and the panel opacity slider hides while No fill is on.",
+          },
+                    {
             zh: "新增 settings.html 设置页：点击顶栏齿轮进入，左侧分类、右侧具体选项；原下拉设置面板已移除。",
             en: "Added settings.html: click the header gear to open a dedicated page with categories on the left and options on the right; the old dropdown panel is removed.",
           },

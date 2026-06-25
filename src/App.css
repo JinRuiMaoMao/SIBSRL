@@ -4045,6 +4045,26 @@ html[data-list-density='compact'] .transfer-plan-stop {
   outline-offset: 2px;
 }
 
+html[data-panel-no-fill] :is(.route-card, .route-card--classic, .seasonal-promoted-card) {
+  background-color: transparent !important;
+}
+
+html[data-panel-no-fill] .route-card-link:hover .route-card,
+html[data-panel-no-fill] .route-card-link:active .route-card,
+html[data-panel-no-fill] .route-card-link--muted .route-card,
+html[data-panel-no-fill] .route-card-link--muted:hover .route-card,
+html[data-panel-no-fill] .route-card-link--muted:focus-visible .route-card,
+html[data-panel-no-fill] .route-card-link:hover .route-card--classic,
+html[data-panel-no-fill] .route-card.selected {
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+html[data-panel-no-fill] .route-card-link--selected .route-card,
+html[data-panel-no-fill] .route-card-link--selected .route-card--classic {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 65%, var(--border));
+}
+
 .route-card.selected {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);

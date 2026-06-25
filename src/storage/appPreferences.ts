@@ -65,8 +65,15 @@ export function applyAppPreferences(preferences: AppPreferences): void {
     preferences.reduceMotion ? 'true' : 'false',
   )
   document.documentElement.setAttribute('data-list-density', preferences.listDensity)
-  document.documentElement.style.setProperty('--panel-fill', `${clampPanelFill(preferences.panelFill)}%`)
-  document.documentElement.toggleAttribute('data-panel-no-fill', preferences.panelNoFill)
+  document.documentElement.style.setProperty(
+    '--panel-fill',
+    preferences.panelNoFill ? '0%' : `${clampPanelFill(preferences.panelFill)}%`,
+  )
+  if (preferences.panelNoFill) {
+    document.documentElement.setAttribute('data-panel-no-fill', 'true')
+  } else {
+    document.documentElement.removeAttribute('data-panel-no-fill')
+  }
   document.documentElement.removeAttribute('data-panel-style')
 }
 

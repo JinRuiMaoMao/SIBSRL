@@ -99,7 +99,8 @@ html[data-theme='light'] {
 }
 
 /* 无填充：除弹窗与页面背景外，面板底色全透明，边框保留 */
-html[data-panel-no-fill='true'] {
+html[data-panel-no-fill] {
+  --panel-fill: 0%;
   --bg-deep: transparent;
   --bg-surface: transparent;
   --bg-elevated: transparent;
@@ -110,6 +111,9 @@ html[data-panel-no-fill='true'] {
   --route-card-promoted-bg: transparent;
   --route-card-promoted-bg-hover: transparent;
   --route-card-promoted-bg-muted: transparent;
+  --route-card-promoted-shadow: none;
+  --route-card-promoted-shadow-hover: none;
+  --route-card-promoted-shadow-selected: 0 0 0 1px color-mix(in srgb, var(--accent) 65%, var(--border));
   --bg-float: transparent;
   --lg-tint: transparent;
   --lg-tint-strong: transparent;
@@ -117,26 +121,26 @@ html[data-panel-no-fill='true'] {
   --race-soft: transparent;
 }
 
-html[data-panel-no-fill='true'] code {
+html[data-panel-no-fill] code {
   background: transparent;
 }
 
-html[data-panel-no-fill='true'] .route-lookup-sticky--fade {
+html[data-panel-no-fill] .route-lookup-sticky--fade {
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-html[data-panel-no-fill='true'] .route-lookup-sticky::after,
-html[data-panel-no-fill='true'] .route-lookup-sticky--fade::after {
+html[data-panel-no-fill] .route-lookup-sticky::after,
+html[data-panel-no-fill] .route-lookup-sticky--fade::after {
   background: transparent;
 }
 
-html[data-panel-no-fill='true'] .favorites-folder-tab.active {
+html[data-panel-no-fill] .favorites-folder-tab.active {
   background: transparent;
 }
 
-html[data-panel-no-fill='true'] :where(
+html[data-panel-no-fill] :where(
   .badge-inner,
   .badge-inter,
   .badge-express,

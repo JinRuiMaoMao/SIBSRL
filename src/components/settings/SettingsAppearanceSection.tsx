@@ -16,9 +16,13 @@ export function SettingsAppearanceSection() {
       </div>
       <div className="settings-field">
         <p className="settings-field-label">{t('panelStyle')}</p>
-        <PanelFillSlider value={panelFill} onChange={setPanelFill} />
+        {!panelNoFill ? (
+          <>
+            <PanelFillSlider value={panelFill} onChange={setPanelFill} />
+            <p className="settings-hint">{t('panelStyleHint')}</p>
+          </>
+        ) : null}
         <PanelNoFillSwitch checked={panelNoFill} onChange={setPanelNoFill} />
-        <p className="settings-hint">{t('panelStyleHint')}</p>
       </div>
     </div>
   )
