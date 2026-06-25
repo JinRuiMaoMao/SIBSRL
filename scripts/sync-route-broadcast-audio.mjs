@@ -186,14 +186,14 @@ export function syncRouteBroadcastAudio(options = {}) {
       if (sourceCount === 0) {
         console.warn(`${routeId} 报站：源目录为空（${srcDir}），请先放入 MP3`)
       } else {
-        console.log(`${routeId} 报站：${copied} 个（文件名=下一站，挂载当前站）→ ${destDir}`)
+        console.log(`${routeId} 报站：${copied} 个（文件名=当前站，内容报下一站）→ ${destDir}`)
         for (const s of slots) {
           const group = groups.find((g) => g.directionGroupIndex === s.directionGroupIndex)
           const atStop = group?.list[s.atStopIndex]
           const atName = atStop?.name.zh || atStop?.name.en || `#${s.atStopIndex + 1}`
           const nextName = s.nextStopLabel?.zh || s.nextStopLabel?.en || '?'
           console.log(
-            `  [${s.directionKey.toUpperCase()} ${s.atStopIndex + 1}] ${atName} ← ${s.sourceFile} (→ ${nextName})`,
+            `  [${s.directionKey.toUpperCase()} ${s.atStopIndex + 1}] ${atName} ← ${s.sourceFile} (报→ ${nextName})`,
           )
         }
       }

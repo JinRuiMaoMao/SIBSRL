@@ -1,4 +1,4 @@
-/** 文件名 / 站名别名，用于「下一站 ↔ MP3」自动匹配 */
+/** 文件名 / 站名别名，用于站名 ↔ MP3 自动匹配（21A 池：文件名=下一站；N171 等：文件名=当前站） */
 
 export const STOP_NAME_ALIASES = {
   'Dove Estate': ['白鸽邨'],
@@ -122,17 +122,17 @@ export function stopNameMatchesHint(stopName, hint) {
 }
 
 /**
- * @param {{ name: { zh?: string, en?: string } }} nextStop
- * @param {number} passIndex 同名「下一站」在站序中第几次出现（0 起）
+ * @param {{ name: { zh?: string, en?: string } }} stop
+ * @param {number} passIndex 同名站在站序中第几次出现（0 起）
  * @param {string[]} sourceFileNames
  */
-export function matchNextStopMp3(nextStop, passIndex, sourceFileNames) {
+export function matchStopNameMp3(stop, passIndex, sourceFileNames) {
   const candidates = []
 
   for (const file of sourceFileNames) {
     const parsed = parseMp3StopHint(file)
     if (!parsed || parsed.kind === 'alight') continue
-    if (!stopNameMatchesHint(nextStop.name, parsed.hint)) continue
+    if (!stopNameMatchesHint(stop.name, parsed.hint)) continue
     candidates.push({ file, passSuffix: parsed.passSuffix })
   }
 
@@ -149,6 +149,29 @@ export function matchNextStopMp3(nextStop, passIndex, sourceFileNames) {
 
   const fallback = candidates.find((c) => c.passSuffix === 1) ?? candidates[0]
   return fallback?.file ?? null
+}
+
+/** @deprecated Use matchStopNameMp3 */
+export function matchNextStopMp3(nextStop, passIndex, sourceFileNames) {
+  return matchStopNameMp3(nextStop, passIndex, sourceFileNames)
+}
+
+/**
+ * @param {{ name: { zh?: string, en?: string } }[]} stopList
+ * @param {number} atIndex
+ */
+export function passIndexForStopAtRow(stopList, atIndex) {
+  const current = stopList[atIndex]
+  if (!current) return 0
+  const currentZh = current.name.zh
+  const currentEn = current.name.en
+  let pass = 0
+  for (let i = 0; i < atIndex; i++) {
+    const s = stopList[i]
+    if (currentZh && s.name.zh === currentZh) pass++
+    else if (currentEn && s.name.en === currentEn) pass++
+  }
+  return pass
 }
 
 /**
@@ -182,7 +205,34 @@ export function buildNextStopAudioSlots(stopList, sourceFileNames) {
     if (!nextStop) continue
 
     const pass = passIndexForNextStop(stopList, nextIndex)
-    const source = matchNextStopMp3(nextStop, pass, sourceFileNames)
+    const source = matchStopNameMp3(nextStop, pass, sourceFileNames)
+    if (!source) continue
+
+    slots.push({
+      atStopIndex: at,
+      nextStopLabel: nextStop.name,
+      sourceFile: source,
+    })
+  }
+
+  return slots
+}
+
+/**
+ * 文件名 = 当前站名，音频内容报下一站（N171、77XA 等复用音频池时使用）。
+ * @param {{ name: { zh?: string, en?: string } }[]} stopList
+ * @param {string[]} sourceFileNames
+ */
+export function buildCurrentStopAudioSlots(stopList, sourceFileNames) {
+  const slots = []
+
+  for (let at = 0; at < stopList.length; at++) {
+    const current = stopList[at]
+    const nextStop = stopList[at + 1]
+    if (!nextStop) continue
+
+    const pass = passIndexForStopAtRow(stopList, at)
+    const source = matchStopNameMp3(current, pass, sourceFileNames)
     if (!source) continue
 
     slots.push({

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildNextStopAudioSlots } from './stop-name-audio-match.mjs'
+import { buildCurrentStopAudioSlots } from './stop-name-audio-match.mjs'
 
 export const ROUTE_N171_ID = 'N171'
 export const ROUTE_N171_AT_PREFIX = 'n171'
@@ -29,7 +29,7 @@ export function n171DestFilename(directionKey, atStopIndex) {
  * @param {string[]} sourceFileNames
  */
 export function buildRouteN171DirectionAudioSlots(group, sourceFileNames) {
-  return buildNextStopAudioSlots(group.list, sourceFileNames).map((slot) => ({
+  return buildCurrentStopAudioSlots(group.list, sourceFileNames).map((slot) => ({
     ...slot,
     directionKey: group.directionKey,
     directionGroupIndex: group.directionGroupIndex,
