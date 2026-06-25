@@ -189,9 +189,9 @@ const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
     var prefs = JSON.parse(localStorage.getItem('${APP_PREFERENCES_STORAGE_KEY}') || 'null');
     var fill = 25;
     if (prefs && typeof prefs.panelFill === 'number') {
-      fill = Math.min(100, Math.max(25, Math.round(prefs.panelFill)));
+      fill = Math.min(75, Math.max(25, Math.round(prefs.panelFill)));
     } else if (prefs && prefs.panelStyle === 'classic') {
-      fill = 100;
+      fill = 75;
     }
     document.documentElement.style.setProperty('--panel-fill', fill + '%');
   } catch (e) {

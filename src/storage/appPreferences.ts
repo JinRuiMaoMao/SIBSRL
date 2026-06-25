@@ -1,7 +1,7 @@
 export type ListDensity = 'comfortable' | 'compact'
 
 export const PANEL_FILL_MIN = 25
-export const PANEL_FILL_MAX = 100
+export const PANEL_FILL_MAX = 75
 export const PANEL_FILL_DEFAULT = PANEL_FILL_MIN
 
 export const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'

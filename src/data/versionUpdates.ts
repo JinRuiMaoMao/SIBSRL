@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "面板样式滑块范围改为 25%（左）～ 75%（右）不透明，不再拉至 100%。",
+            en: "Panel style slider now ranges from 25% opaque (left) to 75% opaque (right), no longer up to 100%.",
+          },
+                    {
             zh: "修复同日追加更新日志后弹窗不再出现的问题：已读标记恢复为条目 id + 内容指纹。",
             en: "Fixed the updates prompt not reappearing after same-day changelog additions—seen state again tracks id plus content fingerprint.",
           },

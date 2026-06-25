@@ -188,7 +188,7 @@ const messagesZhHans = {
   panelStyle: '面板样式',
   panelStyleGradient: '透明渐变',
   panelStyleClassic: '经典实心',
-  panelStyleHint: '左滑透明、右滑实心，仅调节面板不透明度；各栏目背景渐变与卡片描边保持不变。',
+  panelStyleHint: '左滑透明（25% 不透明）、右滑实心（75% 不透明），仅调节面板不透明度；各栏目背景渐变与卡片描边保持不变。',
   themeSystem: '跟随系统',
   themeDark: '深色',
   themeLight: '浅色',
@@ -713,7 +713,7 @@ const messagesEn: Record<MessageKey, string> = {
   panelStyleGradient: 'Transparent gradient',
   panelStyleClassic: 'Classic solid',
   panelStyleHint:
-    'Slide left for transparent panels, right for solid—only panel opacity changes; page gradients and card borders stay the same.',
+    'Slide left for transparent panels (25% opaque), right for solid (75% opaque)—only panel opacity changes; page gradients and card borders stay the same.',
   themeSystem: 'System',
   themeDark: 'Dark',
   themeLight: 'Light',
