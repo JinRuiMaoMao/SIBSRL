@@ -6,7 +6,7 @@ import type { AppTab } from '../types/appTab'
 import { APP_TABS, getTabPageHref } from '../utils/appTabNavigation'
 import { getSettingsPageHref } from '../utils/appPage'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
-import { formatDocumentTitle, syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
+import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
 const TAB_KEYS: Record<AppTab, MessageKey> = {
   routes: 'tabRoutes',
@@ -25,7 +25,7 @@ export function StartPage() {
   useEffect(() => {
     syncFavicon()
     syncHtmlLang(locale)
-    document.title = formatDocumentTitle(t('startPageTitle'), t('documentTitleSuffix'))
+    document.title = t('startPageDocumentTitle')
   }, [locale, t])
 
   return (

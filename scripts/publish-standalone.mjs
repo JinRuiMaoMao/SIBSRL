@@ -85,7 +85,7 @@ export function publishStandalone(options = {}) {
   }
 
   let startHtml = injectStartPageMeta(baseHtml)
-  startHtml = adjustAppPageTitle(startHtml, '开始')
+  startHtml = adjustAppPageTitle(startHtml, '阳光群岛巴士线路查询', { standalone: true })
   writeFileSync(resolve(root, 'index.html'), startHtml)
   writeFileSync(resolve(root, 'dist', 'index.html'), startHtml)
 

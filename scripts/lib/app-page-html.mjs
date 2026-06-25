@@ -30,9 +30,9 @@ export function injectAppTabMeta(html, tab) {
   return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    ${meta}`)
 }
 
-/** @param {string} html @param {string} titleZh */
-export function adjustAppPageTitle(html, titleZh) {
-  const title = `${titleZh} · 阳光群岛线路查询`
+/** @param {string} html @param {string} titleZh @param {{ standalone?: boolean }} [options] */
+export function adjustAppPageTitle(html, titleZh, options = {}) {
+  const title = options.standalone ? titleZh : `${titleZh} · 阳光群岛线路查询`
   return html.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
 }
 

@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "修复开始页（index.html）浏览器标签误显示为「线路查询 / Routes」的问题，现独立为「阳光群岛巴士线路查询 / Sunshine Islands Bus Lookup」。",
+            en: "Fixed the start page (index.html) tab title showing Routes—it now reads Sunshine Islands Bus Lookup (阳光群岛巴士线路查询 in Chinese).",
+          },
+                    {
             zh: "顶栏巴士 Logo 单击返回开始页（index.html）；连点 10 次仍进入秘密线路页，逻辑不变。",
             en: "A single tap on the header bus logo now returns to the start page (index.html); 10 rapid taps still open secret routes as before.",
           },
