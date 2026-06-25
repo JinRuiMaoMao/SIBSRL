@@ -12,7 +12,7 @@ export function SettingsAppearanceSection() {
     <div className="settings-page-fields">
       <div className="settings-field">
         <p className="settings-field-label">{t('themeLabel')}</p>
-        <ThemeToggle className="settings-theme-toggle" />
+        <ThemeToggle className="settings-theme-toggle" showLabels />
       </div>
       <div className="settings-field">
         <p className="settings-field-label">{t('panelStyle')}</p>

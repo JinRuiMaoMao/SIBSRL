@@ -1573,7 +1573,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   width: 1.75rem;
   height: 1.75rem;
   padding: 0;
-  border: none;
+  border: 1px solid transparent;
   border-radius: calc(var(--radius-lg) - 4px);
   background: transparent;
   color: var(--text-muted);
@@ -1581,16 +1581,55 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   line-height: 1;
   transition:
     color 0.15s ease,
-    background 0.15s ease;
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .theme-toggle-btn:hover {
   color: var(--accent);
+  border-color: var(--border);
 }
 
 .theme-toggle-btn[aria-pressed='true'] {
-  background: var(--accent-soft);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 24%, var(--bg-elevated));
   color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+html[data-theme='dark'] .theme-toggle-btn[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--accent) 34%, var(--bg-elevated));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 72%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.theme-toggle--labeled .theme-toggle-btn {
+  flex-direction: column;
+  gap: 0.18rem;
+  width: auto;
+  height: auto;
+  min-height: 2.85rem;
+  padding: 0.42rem 0.35rem 0.36rem;
+}
+
+.theme-toggle-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.theme-toggle-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: inherit;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.theme-toggle-btn[aria-pressed='true'] .theme-toggle-label {
+  font-weight: 700;
 }
 
 .settings-theme-toggle.theme-toggle {

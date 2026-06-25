@@ -2,7 +2,13 @@ import { useLocale } from '../i18n/LocaleContext'
 import { useTheme } from '../theme/ThemeContext'
 import type { ThemePreference } from '../theme/types'
 
-export function ThemeToggle({ className = '' }: { className?: string }) {
+export function ThemeToggle({
+  className = '',
+  showLabels = false,
+}: {
+  className?: string
+  showLabels?: boolean
+}) {
   const { t } = useLocale()
   const { theme, setTheme } = useTheme()
 
@@ -18,7 +24,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
 
   return (
     <div
-      className={`theme-toggle ${className}`.trim()}
+      className={`theme-toggle ${showLabels ? 'theme-toggle--labeled' : ''} ${className}`.trim()}
       role="group"
       aria-label={t('themeLabel')}
     >
@@ -32,7 +38,10 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
           title={t(opt.labelKey)}
           onClick={() => setTheme(opt.id)}
         >
-          <span aria-hidden>{opt.icon}</span>
+          <span className="theme-toggle-icon" aria-hidden>
+            {opt.icon}
+          </span>
+          {showLabels ? <span className="theme-toggle-label">{t(opt.labelKey)}</span> : null}
         </button>
       ))}
     </div>
