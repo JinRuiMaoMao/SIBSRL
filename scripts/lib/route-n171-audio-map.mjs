@@ -27,9 +27,17 @@ export function n171DestFilename(directionKey, atStopIndex) {
 /**
  * @param {{ directionKey: string, directionGroupIndex: number, list: { name: { zh?: string, en?: string } }[] }} group
  * @param {string[]} sourceFileNames
+ * @param {{ directionKey: string, list: { name: { zh?: string, en?: string } }[] } | null} [mirrorGroup]
  */
-export function buildRouteN171DirectionAudioSlots(group, sourceFileNames) {
-  return buildCurrentStopAudioSlots(group.list, sourceFileNames).map((slot) => ({
+export function buildRouteN171DirectionAudioSlots(group, sourceFileNames, mirrorGroup = null) {
+  const directionKey = group.directionKey
+  const mirrorStopList =
+    directionKey === 's' || directionKey === 'w' ? (mirrorGroup?.list ?? null) : null
+
+  return buildCurrentStopAudioSlots(group.list, sourceFileNames, {
+    directionKey,
+    mirrorStopList: mirrorStopList ?? undefined,
+  }).map((slot) => ({
     ...slot,
     directionKey: group.directionKey,
     directionGroupIndex: group.directionGroupIndex,
@@ -39,7 +47,17 @@ export function buildRouteN171DirectionAudioSlots(group, sourceFileNames) {
 
 /** @param {string[]} sourceFileNames */
 export function buildRouteN171StopAudioSlots(sourceFileNames) {
-  return loadN171StopGroups().flatMap((group) =>
-    buildRouteN171DirectionAudioSlots(group, sourceFileNames),
-  )
+  const groups = loadN171StopGroups()
+  const northGroup = groups.find((group) => group.directionKey === 'n') ?? groups[0]
+  const southGroup = groups.find((group) => group.directionKey === 's') ?? groups[1]
+
+  return groups.flatMap((group) => {
+    const mirrorGroup =
+      group.directionKey === 's'
+        ? northGroup
+        : group.directionKey === 'w'
+          ? (groups.find((item) => item.directionKey === 'e') ?? null)
+          : null
+    return buildRouteN171DirectionAudioSlots(group, sourceFileNames, mirrorGroup)
+  })
 }

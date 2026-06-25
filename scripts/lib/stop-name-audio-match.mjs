@@ -75,6 +75,36 @@ export const STOP_NAME_ALIASES = {
 
 const ALIGHTING_HINTS = ['下车提醒', '落車提示', '落车提示', 'alight']
 
+/** @typedef {'n' | 's' | 'e' | 'w'} DirectionAudioKey */
+
+/** @type {{ pattern: RegExp, key: DirectionAudioKey }[]} */
+const DIRECTION_TAG_PATTERNS = [
+  { pattern: /（北行）$/, key: 'n' },
+  { pattern: /（南行）$/, key: 's' },
+  { pattern: /（东行）$/, key: 'e' },
+  { pattern: /（西行）$/, key: 'w' },
+]
+
+/**
+ * @param {string} body
+ * @returns {{ body: string, directionTag: DirectionAudioKey | null }}
+ */
+function splitDirectionTag(body) {
+  for (const { pattern, key } of DIRECTION_TAG_PATTERNS) {
+    if (pattern.test(body)) {
+      return { body: body.replace(pattern, '').trim(), directionTag: key }
+    }
+  }
+  return { body, directionTag: null }
+}
+
+/** @param {DirectionAudioKey | null | undefined} directionTag @param {DirectionAudioKey | undefined} directionKey */
+function directionTagMatches(directionTag, directionKey) {
+  if (!directionKey) return true
+  if (directionTag == null) return directionKey === 'n' || directionKey === 'e'
+  return directionTag === directionKey
+}
+
 /** @param {string} filename */
 export function parseMp3StopHint(filename) {
   const stem = filename.replace(/\.mp3$/i, '')
@@ -82,8 +112,11 @@ export function parseMp3StopHint(filename) {
 
   if (!body) return null
   if (ALIGHTING_HINTS.some((hint) => body.includes(hint))) {
-    return { kind: 'alight', hint: '下车提醒', passSuffix: null }
+    return { kind: 'alight', hint: '下车提醒', passSuffix: null, directionTag: null }
   }
+
+  const tagged = splitDirectionTag(body)
+  body = tagged.body
 
   const numbered = body.match(/^(.+?)(\d+)$/)
   if (numbered) {
@@ -91,10 +124,11 @@ export function parseMp3StopHint(filename) {
       kind: 'stop',
       hint: numbered[1],
       passSuffix: Number.parseInt(numbered[2], 10),
+      directionTag: tagged.directionTag,
     }
   }
 
-  return { kind: 'stop', hint: body, passSuffix: null }
+  return { kind: 'stop', hint: body, passSuffix: null, directionTag: tagged.directionTag }
 }
 
 /** @param {{ zh?: string, en?: string }} stopName @param {string} hint */
@@ -122,18 +156,49 @@ export function stopNameMatchesHint(stopName, hint) {
 }
 
 /**
+ * @param {{ zh?: string, en?: string }} a
+ * @param {{ zh?: string, en?: string }} b
+ */
+export function stopNamesReferToSamePlace(a, b) {
+  const aZh = a.zh?.trim() ?? ''
+  const bZh = b.zh?.trim() ?? ''
+  const aEn = a.en?.trim() ?? ''
+  const bEn = b.en?.trim() ?? ''
+
+  if (aZh && bZh && aZh === bZh) return true
+  if (aEn && bEn && aEn === bEn) return true
+  if (aEn && stopNameMatchesHint(b, aEn)) return true
+  if (bEn && stopNameMatchesHint(a, bEn)) return true
+  if (aZh && stopNameMatchesHint(b, aZh)) return true
+  if (bZh && stopNameMatchesHint(a, bZh)) return true
+  return false
+}
+
+/**
+ * @param {{ name: { zh?: string, en?: string } }[]} stopList
+ * @param {{ name: { zh?: string, en?: string } }} stop
+ */
+export function findStopRowIndex(stopList, stop) {
+  return stopList.findIndex((row) => stopNamesReferToSamePlace(row.name, stop.name))
+}
+
+/**
  * @param {{ name: { zh?: string, en?: string } }} stop
  * @param {number} passIndex 同名站在站序中第几次出现（0 起）
  * @param {string[]} sourceFileNames
+ * @param {{ directionKey?: DirectionAudioKey, requireDirectionTag?: boolean }} [options]
  */
-export function matchStopNameMp3(stop, passIndex, sourceFileNames) {
+export function matchStopNameMp3(stop, passIndex, sourceFileNames, options = {}) {
+  const { directionKey, requireDirectionTag = false } = options
   const candidates = []
 
   for (const file of sourceFileNames) {
     const parsed = parseMp3StopHint(file)
     if (!parsed || parsed.kind === 'alight') continue
+    if (requireDirectionTag && parsed.directionTag == null) continue
+    if (!directionTagMatches(parsed.directionTag, directionKey)) continue
     if (!stopNameMatchesHint(stop.name, parsed.hint)) continue
-    candidates.push({ file, passSuffix: parsed.passSuffix })
+    candidates.push({ file, passSuffix: parsed.passSuffix, directionTag: parsed.directionTag })
   }
 
   if (candidates.length === 0) return null
@@ -149,6 +214,41 @@ export function matchStopNameMp3(stop, passIndex, sourceFileNames) {
 
   const fallback = candidates.find((c) => c.passSuffix === 1) ?? candidates[0]
   return fallback?.file ?? null
+}
+
+/**
+ * 南行/西行等：优先方向专用文件；否则用对向站序镜像匹配默认方向音频池。
+ * @param {{ name: { zh?: string, en?: string } }} current
+ * @param {{ name: { zh?: string, en?: string } }} nextStop
+ * @param {number} passIndex
+ * @param {string[]} sourceFileNames
+ * @param {{ name: { zh?: string, en?: string } }[]} mirrorStopList
+ * @param {DirectionAudioKey} directionKey
+ */
+export function matchMirrorDirectionCurrentStopMp3(
+  current,
+  nextStop,
+  passIndex,
+  sourceFileNames,
+  mirrorStopList,
+  directionKey = 's',
+) {
+  const poolDirectionKey = directionKey === 'w' ? 'e' : 'n'
+
+  const tagged = matchStopNameMp3(current, passIndex, sourceFileNames, {
+    directionKey,
+    requireDirectionTag: true,
+  })
+  if (tagged) return tagged
+
+  const mirrorNextIndex = findStopRowIndex(mirrorStopList, nextStop)
+  if (mirrorNextIndex <= 0) return null
+
+  const mirrorCurrent = mirrorStopList[mirrorNextIndex - 1]
+  const mirrorPass = passIndexForStopAtRow(mirrorStopList, mirrorNextIndex - 1)
+  return matchStopNameMp3(mirrorCurrent, mirrorPass, sourceFileNames, {
+    directionKey: poolDirectionKey,
+  })
 }
 
 /** @deprecated Use matchStopNameMp3 */
@@ -222,8 +322,10 @@ export function buildNextStopAudioSlots(stopList, sourceFileNames) {
  * 文件名 = 当前站名，音频内容报下一站（N171、77XA 等复用音频池时使用）。
  * @param {{ name: { zh?: string, en?: string } }[]} stopList
  * @param {string[]} sourceFileNames
+ * @param {{ directionKey?: DirectionAudioKey, mirrorStopList?: { name: { zh?: string, en?: string } }[] }} [options]
  */
-export function buildCurrentStopAudioSlots(stopList, sourceFileNames) {
+export function buildCurrentStopAudioSlots(stopList, sourceFileNames, options = {}) {
+  const { directionKey, mirrorStopList } = options
   const slots = []
 
   for (let at = 0; at < stopList.length; at++) {
@@ -232,7 +334,21 @@ export function buildCurrentStopAudioSlots(stopList, sourceFileNames) {
     if (!nextStop) continue
 
     const pass = passIndexForStopAtRow(stopList, at)
-    const source = matchStopNameMp3(current, pass, sourceFileNames)
+    let source = null
+
+    if ((directionKey === 's' || directionKey === 'w') && mirrorStopList?.length) {
+      source = matchMirrorDirectionCurrentStopMp3(
+        current,
+        nextStop,
+        pass,
+        sourceFileNames,
+        mirrorStopList,
+        directionKey,
+      )
+    } else {
+      source = matchStopNameMp3(current, pass, sourceFileNames, { directionKey: directionKey ?? 'n' })
+    }
+
     if (!source) continue
 
     slots.push({
