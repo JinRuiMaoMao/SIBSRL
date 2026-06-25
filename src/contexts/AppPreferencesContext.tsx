@@ -21,6 +21,7 @@ interface AppPreferencesContextValue extends AppPreferences {
   setGuidedTourAutoStart: (value: boolean) => void
   setPanelFill: (value: number) => void
   setPanelNoFill: (value: boolean) => void
+  setDesktopTabBarPinned: (value: boolean) => void
 }
 
 const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(null)
@@ -48,14 +49,18 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
       guidedTourAutoStart: preferences.guidedTourAutoStart,
       panelFill: preferences.panelFill,
       panelNoFill: preferences.panelNoFill,
+      desktopTabBarPinned: preferences.desktopTabBarPinned,
       setReduceMotion: (reduceMotion: boolean) => updatePreferences({ reduceMotion }),
       setListDensity: (listDensity: ListDensity) => updatePreferences({ listDensity }),
       setGuidedTourAutoStart: (guidedTourAutoStart: boolean) =>
         updatePreferences({ guidedTourAutoStart }),
       setPanelFill: (panelFill: number) => updatePreferences({ panelFill }),
       setPanelNoFill: (panelNoFill: boolean) => updatePreferences({ panelNoFill }),
+      setDesktopTabBarPinned: (desktopTabBarPinned: boolean) =>
+        updatePreferences({ desktopTabBarPinned }),
     }),
     [
+      preferences.desktopTabBarPinned,
       preferences.guidedTourAutoStart,
       preferences.listDensity,
       preferences.panelFill,

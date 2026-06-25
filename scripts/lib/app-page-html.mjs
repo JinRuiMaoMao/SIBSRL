@@ -198,6 +198,9 @@ const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
       document.documentElement.style.setProperty('--panel-fill', '0%');
       document.documentElement.setAttribute('data-panel-no-fill', 'true');
     }
+    if (prefs && prefs.desktopTabBarPinned) {
+      document.documentElement.setAttribute('data-desktop-tab-bar-pinned', 'true');
+    }
   } catch (e) {
     document.documentElement.style.setProperty('--panel-fill', '25%');
   }

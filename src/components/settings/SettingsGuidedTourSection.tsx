@@ -1,4 +1,4 @@
-import { resolveReplayGuidedTourContext } from '../../data/guidedTourSteps'
+import { beginGuidedTourReplayFromSettings } from '../../storage/guidedTourReplay'
 import { useAppPreferences } from '../../contexts/AppPreferencesContext'
 import { useGuidedTourControl } from '../../contexts/GuidedTourContext'
 import { useLocale } from '../../i18n/LocaleContext'
@@ -6,7 +6,7 @@ import { useLocale } from '../../i18n/LocaleContext'
 export function SettingsGuidedTourSection() {
   const { t } = useLocale()
   const { guidedTourAutoStart, setGuidedTourAutoStart } = useAppPreferences()
-  const { openTour, cancelAutoStartTimer, closeTour } = useGuidedTourControl()
+  const { cancelAutoStartTimer, closeTour } = useGuidedTourControl()
 
   return (
     <div className="settings-page-fields">
@@ -39,10 +39,11 @@ export function SettingsGuidedTourSection() {
       <button
         type="button"
         className="settings-action-btn"
-        onClick={() => openTour({ manual: true, mode: resolveReplayGuidedTourContext() })}
+        onClick={() => beginGuidedTourReplayFromSettings()}
       >
         {t('guidedTourReplay')}
       </button>
+      <p className="settings-hint">{t('guidedTourReplayHint')}</p>
     </div>
   )
 }

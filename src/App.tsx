@@ -26,6 +26,10 @@ import { useLocale } from './i18n/LocaleContext'
 import { getLatestUpdatePromptKey } from './data/versionUpdates'
 import { markDailyChallengePromptSeen } from './storage/dailyChallengePrompt'
 import { canAutoStartGuidedTour, getGuidedTourAutoStartDelayMs } from './storage/guidedTour'
+import {
+  consumePendingGuidedTourReplay,
+  isGuidedTourReplaySessionActive,
+} from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isSecretPage, isSettingsPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
@@ -105,6 +109,24 @@ function App() {
   useEffect(() => {
     if (isAccountPage() || isSecretPage() || isSettingsPage()) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
+
+    const pendingReplay = consumePendingGuidedTourReplay()
+    if (pendingReplay) {
+      const timer = window.setTimeout(() => {
+        openTour({ manual: true, mode: pendingReplay })
+      }, getGuidedTourAutoStartDelayMs(pendingReplay))
+      registerAutoStartTimer(timer)
+      return () => cancelAutoStartTimer()
+    }
+
+    if (isGuidedTourReplaySessionActive()) {
+      const mode = detectGuidedTourContext()
+      const timer = window.setTimeout(() => {
+        openTour({ manual: true, mode })
+      }, getGuidedTourAutoStartDelayMs(mode))
+      registerAutoStartTimer(timer)
+      return () => cancelAutoStartTimer()
+    }
 
     const mode = detectGuidedTourContext()
     if (

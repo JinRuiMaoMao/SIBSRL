@@ -224,6 +224,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "设置 → 显示新增「底栏常驻」：电脑端底部栏目切换栏可始终显示（默认仍悬停唤出）。",
+            en: "Settings → Display adds Pin tab bar—keep the bottom tab bar always visible on desktop (default: hover to reveal).",
+          },
+                    {
+            zh: "修复在 settings.html 点击「重新观看新手引导」无反应：现跳转至线路查询页开启，切换其他栏目 HTML 后继续该页引导。",
+            en: "Fixed Replay guided tour from settings.html doing nothing—it now opens the routes page and continues per-tab tours as you switch pages.",
+          },
+                    {
             zh: "设置页外观主题切换加强选中态：显示「跟随系统/深色/浅色」文字标签，深色模式下高亮描边与底色更易辨认。",
             en: "Settings appearance theme toggle now shows System/Dark/Light labels with stronger selected borders and fill, especially in dark mode.",
           },

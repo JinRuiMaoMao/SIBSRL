@@ -12,6 +12,7 @@ export interface AppPreferences {
   guidedTourAutoStart: boolean
   panelFill: number
   panelNoFill: boolean
+  desktopTabBarPinned: boolean
 }
 
 const DEFAULT_APP_PREFERENCES: AppPreferences = {
@@ -20,6 +21,7 @@ const DEFAULT_APP_PREFERENCES: AppPreferences = {
   guidedTourAutoStart: true,
   panelFill: PANEL_FILL_DEFAULT,
   panelNoFill: false,
+  desktopTabBarPinned: false,
 }
 
 function clampPanelFill(value: number): number {
@@ -45,6 +47,7 @@ export function readAppPreferences(): AppPreferences {
       guidedTourAutoStart: stored.guidedTourAutoStart !== false,
       panelFill: readPanelFill(stored as Record<string, unknown>),
       panelNoFill: Boolean((stored as Record<string, unknown>).panelNoFill),
+      desktopTabBarPinned: Boolean((stored as Record<string, unknown>).desktopTabBarPinned),
     }
   } catch {
     return { ...DEFAULT_APP_PREFERENCES }
@@ -73,6 +76,11 @@ export function applyAppPreferences(preferences: AppPreferences): void {
     document.documentElement.setAttribute('data-panel-no-fill', 'true')
   } else {
     document.documentElement.removeAttribute('data-panel-no-fill')
+  }
+  if (preferences.desktopTabBarPinned) {
+    document.documentElement.setAttribute('data-desktop-tab-bar-pinned', 'true')
+  } else {
+    document.documentElement.removeAttribute('data-desktop-tab-bar-pinned')
   }
   document.documentElement.removeAttribute('data-panel-style')
 }

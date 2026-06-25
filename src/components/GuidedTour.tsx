@@ -12,6 +12,7 @@ import { GUIDED_TOUR_STEPS, getGuidedTourSteps, type GuidedTourContext, type Gui
 import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { markGuidedTourSeen } from '../storage/guidedTour'
+import { endGuidedTourReplaySession } from '../storage/guidedTourReplay'
 import { lockPageScroll } from '../utils/pageScrollLock'
 
 const SPOTLIGHT_PADDING = 12
@@ -222,7 +223,13 @@ export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) 
   const onPrepareRef = useRef(onPrepare)
   onPrepareRef.current = onPrepare
 
-  const finish = useCallback(() => {
+  const completeTour = useCallback(() => {
+    markGuidedTourSeen(mode)
+    onClose()
+  }, [mode, onClose])
+
+  const skipTour = useCallback(() => {
+    endGuidedTourReplaySession()
     markGuidedTourSeen(mode)
     onClose()
   }, [mode, onClose])
@@ -281,9 +288,9 @@ export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) 
         return
       }
 
-      finish()
+      completeTour()
     },
-    [baseSteps, finish],
+    [baseSteps, completeTour],
   )
 
   useEffect(() => {
@@ -323,7 +330,7 @@ export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) 
     if (!open) return
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') finish()
+      if (event.key === 'Escape') skipTour()
     }
 
     const onLayoutChange = () => scheduleRemeasure(() => remeasureRef.current())
@@ -342,13 +349,13 @@ export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) 
       viewport?.removeEventListener('resize', onLayoutChange)
       viewport?.removeEventListener('scroll', onLayoutChange)
     }
-  }, [open, finish])
+  }, [open, skipTour])
 
   if (!open || !step) return null
 
   const handleNext = () => {
     if (isLast) {
-      finish()
+      completeTour()
       return
     }
     void goToStep(stepIndex + 1)
@@ -424,7 +431,7 @@ export function GuidedTour({ open, mode, onClose, onPrepare }: GuidedTourProps) 
         </h2>
         <p className="guided-tour-body">{t(step.bodyKey)}</p>
         <div className="guided-tour-actions">
-          <button type="button" className="guided-tour-btn guided-tour-btn--ghost" onClick={finish}>
+          <button type="button" className="guided-tour-btn guided-tour-btn--ghost" onClick={skipTour}>
             {t('guidedTourSkip')}
           </button>
           <div className="guided-tour-actions-main">

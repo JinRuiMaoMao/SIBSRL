@@ -32,7 +32,14 @@ function SettingsToggleGroup<T extends string>({
 
 export function DisplayPreferencesSection({ layout = 'menu' }: { layout?: 'menu' | 'page' }) {
   const { t } = useLocale()
-  const { reduceMotion, listDensity, setReduceMotion, setListDensity } = useAppPreferences()
+  const {
+    reduceMotion,
+    listDensity,
+    desktopTabBarPinned,
+    setReduceMotion,
+    setListDensity,
+    setDesktopTabBarPinned,
+  } = useAppPreferences()
 
   const densityOptions: { id: ListDensity; label: string }[] = [
     { id: 'comfortable', label: t('listDensityComfortable') },
@@ -62,6 +69,20 @@ export function DisplayPreferencesSection({ layout = 'menu' }: { layout?: 'menu'
           options={densityOptions}
           onChange={setListDensity}
         />
+      </div>
+
+      <div className="settings-field">
+        <p className="settings-field-label">{t('desktopTabBarPinned')}</p>
+        <SettingsToggleGroup
+          label={t('desktopTabBarPinned')}
+          value={desktopTabBarPinned ? 'on' : 'off'}
+          options={[
+            { id: 'off', label: t('settingOff') },
+            { id: 'on', label: t('settingOn') },
+          ]}
+          onChange={(next) => setDesktopTabBarPinned(next === 'on')}
+        />
+        <p className="settings-hint">{t('desktopTabBarPinnedHint')}</p>
       </div>
     </>
   )

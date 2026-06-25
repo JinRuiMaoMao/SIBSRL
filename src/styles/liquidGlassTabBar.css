@@ -121,7 +121,8 @@
 
 .app-tab-bar-shell--desktop:hover .app-tab-bar--liquid.app-tab-bar--desktop,
 .app-tab-bar-shell--desktop:focus-within .app-tab-bar--liquid.app-tab-bar--desktop,
-.app-tab-bar-shell--desktop.is-tour-visible .app-tab-bar--liquid.app-tab-bar--desktop {
+.app-tab-bar-shell--desktop.is-tour-visible .app-tab-bar--liquid.app-tab-bar--desktop,
+html[data-desktop-tab-bar-pinned='true'] .app-tab-bar-shell--desktop .app-tab-bar--liquid.app-tab-bar--desktop {
   transform: translateY(0);
   opacity: 1;
 }
