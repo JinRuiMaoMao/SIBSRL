@@ -1,5 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
+import { PanelFillSlider } from './PanelFillSlider'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
@@ -11,7 +12,7 @@ import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
-  const { guidedTourAutoStart, setGuidedTourAutoStart, panelStyle, setPanelStyle } = useAppPreferences()
+  const { guidedTourAutoStart, setGuidedTourAutoStart, panelFill, setPanelFill } = useAppPreferences()
   const { openTour, cancelAutoStartTimer, closeTour } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
@@ -118,24 +119,7 @@ export function SettingsMenu() {
             <ThemeToggle className="settings-theme-toggle" />
             <div className="settings-field">
               <p className="settings-field-label">{t('panelStyle')}</p>
-              <div className="settings-toggle-group" role="group" aria-label={t('panelStyle')}>
-                <button
-                  type="button"
-                  className="settings-toggle-btn"
-                  aria-pressed={panelStyle === 'gradient'}
-                  onClick={() => setPanelStyle('gradient')}
-                >
-                  {t('panelStyleGradient')}
-                </button>
-                <button
-                  type="button"
-                  className="settings-toggle-btn"
-                  aria-pressed={panelStyle === 'classic'}
-                  onClick={() => setPanelStyle('classic')}
-                >
-                  {t('panelStyleClassic')}
-                </button>
-              </div>
+              <PanelFillSlider value={panelFill} onChange={setPanelFill} />
               <p className="settings-hint">{t('panelStyleHint')}</p>
             </div>
           </section>

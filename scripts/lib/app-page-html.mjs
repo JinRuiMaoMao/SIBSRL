@@ -187,12 +187,15 @@ const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
   if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
   try {
     var prefs = JSON.parse(localStorage.getItem('${APP_PREFERENCES_STORAGE_KEY}') || 'null');
-    document.documentElement.setAttribute(
-      'data-panel-style',
-      prefs && prefs.panelStyle === 'classic' ? 'classic' : 'gradient',
-    );
+    var fill = 25;
+    if (prefs && typeof prefs.panelFill === 'number') {
+      fill = Math.min(100, Math.max(25, Math.round(prefs.panelFill)));
+    } else if (prefs && prefs.panelStyle === 'classic') {
+      fill = 100;
+    }
+    document.documentElement.style.setProperty('--panel-fill', fill + '%');
   } catch (e) {
-    document.documentElement.setAttribute('data-panel-style', 'gradient');
+    document.documentElement.style.setProperty('--panel-fill', '25%');
   }
 })();
 </script>`

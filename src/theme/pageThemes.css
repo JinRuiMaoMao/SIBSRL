@@ -1,8 +1,8 @@
 /* 各栏目独立配色：多层渐变 + 面板基色 + 强调色（深浅色分开调优） */
 
 /* —— 线路查询 routes（金/青/蓝/紫） —— */
-html:not([data-panel-style='classic']),
-html:not([data-panel-style='classic'])[data-app-tab='routes'] {
+html,
+html[data-app-tab='routes'] {
   --accent: #f5b942;
   --accent-soft: rgba(245, 185, 66, 0.15);
   --accent-glow: rgba(245, 185, 66, 0.4);
@@ -22,7 +22,7 @@ html:not([data-panel-style='classic'])[data-app-tab='routes'] {
 }
 
 /* —— 广播 broadcast（橙/珊瑚/琥珀/玫瑰） —— */
-html:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
+html[data-app-tab='broadcast'] {
   --accent: #ff9f43;
   --accent-soft: rgba(255, 159, 67, 0.16);
   --accent-glow: rgba(255, 120, 60, 0.38);
@@ -42,7 +42,7 @@ html:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
 }
 
 /* —— 音乐 music（紫/粉/靛/蓝） —— */
-html:not([data-panel-style='classic'])[data-app-tab='music'] {
+html[data-app-tab='music'] {
   --accent: #c084fc;
   --accent-soft: rgba(192, 132, 252, 0.16);
   --accent-glow: rgba(167, 139, 250, 0.38);
@@ -62,7 +62,7 @@ html:not([data-panel-style='classic'])[data-app-tab='music'] {
 }
 
 /* —— 抱怨 complaints（玫红/酒红/紫/暖棕） —— */
-html:not([data-panel-style='classic'])[data-app-tab='complaints'] {
+html[data-app-tab='complaints'] {
   --accent: #fb7185;
   --accent-soft: rgba(251, 113, 133, 0.16);
   --accent-glow: rgba(244, 63, 94, 0.34);
@@ -82,7 +82,7 @@ html:not([data-panel-style='classic'])[data-app-tab='complaints'] {
 }
 
 /* —— 你知道吗 trivia（青柠/薄荷/琥珀） —— */
-html:not([data-panel-style='classic'])[data-app-tab='trivia'] {
+html[data-app-tab='trivia'] {
   --accent: #a3e635;
   --accent-soft: rgba(163, 230, 53, 0.16);
   --accent-glow: rgba(132, 204, 22, 0.36);
@@ -102,7 +102,7 @@ html:not([data-panel-style='classic'])[data-app-tab='trivia'] {
 }
 
 /* —— 版本更新 updates（青/蓝/靛/薄荷） —— */
-html:not([data-panel-style='classic'])[data-app-tab='updates'] {
+html[data-app-tab='updates'] {
   --accent: #38bdf8;
   --accent-soft: rgba(56, 189, 248, 0.16);
   --accent-glow: rgba(14, 165, 233, 0.36);
@@ -122,7 +122,7 @@ html:not([data-panel-style='classic'])[data-app-tab='updates'] {
 }
 
 /* —— 个人中心 account（翠绿/青/金） —— */
-html:not([data-panel-style='classic'])[data-app-page='account'] {
+html[data-app-page='account'] {
   --accent: #34d399;
   --accent-soft: rgba(52, 211, 153, 0.16);
   --accent-glow: rgba(16, 185, 129, 0.36);
@@ -142,7 +142,7 @@ html:not([data-panel-style='classic'])[data-app-page='account'] {
 }
 
 /* —— 秘密页 secret（靛蓝/紫/粉） —— */
-html:not([data-panel-style='classic'])[data-app-page='secret'] {
+html[data-app-page='secret'] {
   --accent: #818cf8;
   --accent-soft: rgba(129, 140, 248, 0.16);
   --accent-glow: rgba(99, 102, 241, 0.38);
@@ -162,8 +162,8 @@ html:not([data-panel-style='classic'])[data-app-page='secret'] {
 }
 
 /* —— 浅色主题：低饱和强调色 + 中性面板 + 柔和多层渐变 —— */
-html[data-theme='light']:not([data-panel-style='classic']),
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='routes'] {
+html[data-theme='light'],
+html[data-theme='light'][data-app-tab='routes'] {
   --accent: #9a6700;
   --accent-soft: rgba(154, 103, 0, 0.1);
   --accent-glow: rgba(154, 103, 0, 0.16);
@@ -182,7 +182,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='routes'
     linear-gradient(165deg, #f4f6fa 0%, #eef2f7 22%, #e8edf4 46%, #f0f3f8 70%, #e6ebf2 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='broadcast'] {
+html[data-theme='light'][data-app-tab='broadcast'] {
   --accent: #a04e12;
   --accent-soft: rgba(160, 78, 18, 0.1);
   --accent-glow: rgba(160, 78, 18, 0.15);
@@ -201,7 +201,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='broadca
     linear-gradient(165deg, #faf7f2 0%, #f5f0e8 22%, #efe8de 46%, #f7f3ec 70%, #ebe5dc 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='music'] {
+html[data-theme='light'][data-app-tab='music'] {
   --accent: #7c3aad;
   --accent-soft: rgba(124, 58, 173, 0.1);
   --accent-glow: rgba(124, 58, 173, 0.16);
@@ -220,7 +220,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='music']
     linear-gradient(165deg, #f6f3f9 0%, #f0ebf6 22%, #e8e0f2 46%, #f3eff8 70%, #ebe4f2 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='complaints'] {
+html[data-theme='light'][data-app-tab='complaints'] {
   --accent: #9a3d52;
   --accent-soft: rgba(154, 61, 82, 0.1);
   --accent-glow: rgba(154, 61, 82, 0.14);
@@ -239,7 +239,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='complai
     linear-gradient(165deg, #faf6f7 0%, #f5eef0 22%, #ede4e8 46%, #f7f2f4 70%, #ebe4e8 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='trivia'] {
+html[data-theme='light'][data-app-tab='trivia'] {
   --accent: #5a7a12;
   --accent-soft: rgba(90, 122, 18, 0.1);
   --accent-glow: rgba(90, 122, 18, 0.15);
@@ -258,7 +258,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='trivia'
     linear-gradient(165deg, #f6faf2 0%, #f0f6ea 22%, #e6f0de 46%, #f2f8ee 70%, #eaf2e4 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='updates'] {
+html[data-theme='light'][data-app-tab='updates'] {
   --accent: #1e5f8f;
   --accent-soft: rgba(30, 95, 143, 0.1);
   --accent-glow: rgba(30, 95, 143, 0.15);
@@ -277,7 +277,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-tab='updates
     linear-gradient(165deg, #f2f6fa 0%, #eaf0f6 22%, #e0e8f2 46%, #eef4fa 70%, #e4ecf4 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='account'] {
+html[data-theme='light'][data-app-page='account'] {
   --accent: #0f7a56;
   --accent-soft: rgba(15, 122, 86, 0.1);
   --accent-glow: rgba(15, 122, 86, 0.15);
@@ -296,7 +296,7 @@ html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='accoun
     linear-gradient(165deg, #f2f8f4 0%, #eaf4ee 22%, #e0ece4 46%, #eef6f0 70%, #e4f0ea 100%);
 }
 
-html[data-theme='light']:not([data-panel-style='classic'])[data-app-page='secret'] {
+html[data-theme='light'][data-app-page='secret'] {
   --accent: #4a46b8;
   --accent-soft: rgba(74, 70, 184, 0.1);
   --accent-glow: rgba(74, 70, 184, 0.16);

@@ -1,6 +1,8 @@
 export type ListDensity = 'comfortable' | 'compact'
 
-export type PanelStyle = 'gradient' | 'classic'
+export const PANEL_FILL_MIN = 25
+export const PANEL_FILL_MAX = 100
+export const PANEL_FILL_DEFAULT = PANEL_FILL_MIN
 
 export const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'
 
@@ -8,14 +10,27 @@ export interface AppPreferences {
   reduceMotion: boolean
   listDensity: ListDensity
   guidedTourAutoStart: boolean
-  panelStyle: PanelStyle
+  panelFill: number
 }
 
 const DEFAULT_APP_PREFERENCES: AppPreferences = {
   reduceMotion: false,
   listDensity: 'comfortable',
   guidedTourAutoStart: true,
-  panelStyle: 'gradient',
+  panelFill: PANEL_FILL_DEFAULT,
+}
+
+function clampPanelFill(value: number): number {
+  if (!Number.isFinite(value)) return PANEL_FILL_DEFAULT
+  return Math.min(PANEL_FILL_MAX, Math.max(PANEL_FILL_MIN, Math.round(value)))
+}
+
+function readPanelFill(stored: Record<string, unknown>): number {
+  if (typeof stored.panelFill === 'number') {
+    return clampPanelFill(stored.panelFill)
+  }
+  if (stored.panelStyle === 'classic') return PANEL_FILL_MAX
+  return PANEL_FILL_DEFAULT
 }
 
 export function readAppPreferences(): AppPreferences {
@@ -26,7 +41,7 @@ export function readAppPreferences(): AppPreferences {
       reduceMotion: Boolean(stored.reduceMotion),
       listDensity: stored.listDensity === 'compact' ? 'compact' : 'comfortable',
       guidedTourAutoStart: stored.guidedTourAutoStart !== false,
-      panelStyle: stored.panelStyle === 'classic' ? 'classic' : 'gradient',
+      panelFill: readPanelFill(stored as Record<string, unknown>),
     }
   } catch {
     return { ...DEFAULT_APP_PREFERENCES }
@@ -47,7 +62,8 @@ export function applyAppPreferences(preferences: AppPreferences): void {
     preferences.reduceMotion ? 'true' : 'false',
   )
   document.documentElement.setAttribute('data-list-density', preferences.listDensity)
-  document.documentElement.setAttribute('data-panel-style', preferences.panelStyle)
+  document.documentElement.style.setProperty('--panel-fill', `${clampPanelFill(preferences.panelFill)}%`)
+  document.documentElement.removeAttribute('data-panel-style')
 }
 
 export function shouldReduceMotion(): boolean {

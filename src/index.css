@@ -1,5 +1,4 @@
 @import './theme/pageThemes.css';
-@import './theme/classicSurface.css';
 
 :root {
   color-scheme: dark;
@@ -29,7 +28,7 @@
   --stop-name-sub: color-mix(in srgb, var(--accent) 42%, #9fd4f7);
 }
 
-html:not([data-panel-style='classic']) {
+html {
   --bg-deep: color-mix(in srgb, var(--panel-base-deep) var(--panel-fill), transparent);
   --bg-surface: color-mix(in srgb, var(--panel-base-surface) var(--panel-fill), transparent);
   --bg-elevated: color-mix(in srgb, var(--panel-base-elevated) var(--panel-fill), transparent);
@@ -55,7 +54,7 @@ html:not([data-panel-style='classic']) {
   --bg-float: color-mix(in srgb, var(--panel-base-deep) 85%, transparent);
 }
 
-html:not([data-panel-style='classic'])[data-theme='light'] {
+html[data-theme='light'] {
   /* 浅色：与 transparent 混色几乎看不见，改与白色混出不透明浮层（≥75% 实感） */
   --bg-float: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
   --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 94%, #ffffff);
@@ -81,7 +80,7 @@ html:not([data-panel-style='classic'])[data-theme='light'] {
   --stop-name-sub: color-mix(in srgb, var(--accent) 62%, #0a5f52);
 }
 
-html:not([data-panel-style='classic'])[data-theme='light'] {
+html[data-theme='light'] {
   --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 45%), transparent);
   --route-card-promoted-border-width: 1.5px;
   --route-card-promoted-shadow:

@@ -222,6 +222,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "设置内「面板样式」改为滑块：左滑透明、右滑实心，仅调节面板不透明度；各栏目背景渐变与卡片描边保持不变。",
+            en: "Panel style in Settings is now a slider—left for transparent, right for solid—adjusting only panel opacity while page gradients and card borders stay unchanged.",
+          },
+                    {
             zh: "个人中心上传头像后不再撑满卡片宽度，头像固定为小圆形容器（约 3rem）显示。",
             en: "Uploaded avatars on the account page no longer stretch to full card width—they stay in a small circular frame (~3rem).",
           },
