@@ -1,3 +1,4 @@
+import { OPERATORS } from '../data/routes'
 import type { RouteCategory, RouteFilters, RouteTypeFilter } from '../types/route'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 
@@ -18,6 +19,15 @@ export interface ParsedStructuredSearchQuery {
 
 const STRUCTURED_COLON_TOKEN =
   /(?:^|\s)(-)?(zone|z|operator|op|type|cat|level|lv|lvl)[：:]([^\s]+)/gi
+
+const STRUCTURED_EXCLUDE_ZONE_SPACE = /(?:^|\s)-(?:zone|z)\s+(\d+)\b/gi
+
+const OPERATOR_CODES = Object.keys(OPERATORS).sort((a, b) => b.length - a.length)
+
+const STRUCTURED_EXCLUDE_OPERATOR = new RegExp(
+  `(?:^|\\s)-(${OPERATOR_CODES.join('|')})\\b`,
+  'gi',
+)
 
 const STRUCTURED_EXCLUDE_SHORTHAND =
   /(?:^|\s)-(express|night|inner|inter|special|centralaxis|circular|axis|loop|peakexpress)\b/gi
@@ -83,6 +93,10 @@ function parseStopPairFromText(text: string): { from?: string; to?: string; rest
   return { from, to, rest: '' }
 }
 
+function collapseQuerySpaces(query: string): string {
+  return query.replace(/\s+/g, ' ').trim()
+}
+
 function removeStructuredTokens(
   query: string,
   shouldRemove: (
@@ -103,21 +117,25 @@ function removeStructuredTokens(
       text = text.replace(match[0], ' ')
     }
   }
-  return text.replace(/\s+/g, ' ').trim()
+  return collapseQuerySpaces(text)
 }
 
 export function stripZoneTokens(query: string): string {
-  return removeStructuredTokens(
+  let text = removeStructuredTokens(
     query,
-    (negated, key) => key === 'zone' || key === 'z',
+    (_negated, key) => key === 'zone' || key === 'z',
   )
+  text = text.replace(STRUCTURED_EXCLUDE_ZONE_SPACE, ' ')
+  return collapseQuerySpaces(text)
 }
 
 export function stripOperatorTokens(query: string): string {
-  return removeStructuredTokens(
+  let text = removeStructuredTokens(
     query,
     (_negated, key) => key === 'operator' || key === 'op',
   )
+  text = text.replace(STRUCTURED_EXCLUDE_OPERATOR, ' ')
+  return collapseQuerySpaces(text)
 }
 
 export function stripTypeFilterTokens(query: string): string {
@@ -219,13 +237,29 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     }
   }
 
+  for (const match of [...query.matchAll(STRUCTURED_EXCLUDE_ZONE_SPACE)]) {
+    text = text.replace(match[0], ' ')
+    const zone = Number.parseInt(match[1] ?? '', 10)
+    if (Number.isFinite(zone) && !parsed.excludeZones.includes(zone)) {
+      parsed.excludeZones.push(zone)
+    }
+  }
+
+  for (const match of [...query.matchAll(STRUCTURED_EXCLUDE_OPERATOR)]) {
+    text = text.replace(match[0], ' ')
+    const operator = match[1]?.toUpperCase()
+    if (operator && !parsed.excludeOperators.includes(operator)) {
+      parsed.excludeOperators.push(operator)
+    }
+  }
+
   for (const match of [...query.matchAll(STRUCTURED_EXCLUDE_SHORTHAND)]) {
     text = text.replace(match[0], ' ')
     const exclude = match[1]
     if (exclude) applyTypeExcludeToken(parsed, exclude)
   }
 
-  text = text.replace(/\s+/g, ' ').trim()
+  text = collapseQuerySpaces(text)
   const stopPair = parseStopPairFromText(text)
   if (stopPair.from && stopPair.to) {
     parsed.from = stopPair.from

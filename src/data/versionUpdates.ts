@@ -174,8 +174,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
-            zh: "高级搜索现支持排除区域与运营商：-zone:3 / -z:3、-op:FT（或 -operator:）；类型仍可用 -night 或 -type:night。",
-            en: "Advanced search can exclude zones and operators: -zone:3 / -z:3, -op:FT (or -operator:); types still support -night or -type:night.",
+            zh: "高级搜索现支持排除区域与运营商：-zone 3 / -z 3、-FT 等（无需 op: 或冒号）；类型仍可用 -night。",
+            en: "Advanced search can exclude zones and operators with -zone 3 / -z 3, -FT, etc. (no op: or colons); types still use -night.",
+          },
+                    {
+            zh: "排除语法亦支持旧写法 -zone:3、-op:FT，与筛选菜单红色高亮同步。",
+            en: "Legacy exclusion forms -zone:3 and -op:FT still work and sync to red filter chips.",
           },
                     {
             zh: "搜索框中的 zone:/op:/type: 及排除语法会同步反映到筛选菜单：正向筛选高亮强调色，排除项高亮红色。",
