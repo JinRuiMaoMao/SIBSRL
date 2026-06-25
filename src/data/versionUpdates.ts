@@ -169,6 +169,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
     groups: [
       {
         title:         {
+          zh: "秘密线路",
+          en: "Secret routes",
+        },
+        fixes:         [
+                    {
+            zh: "秘密页 673 与主列表 73A 分站：673 恢复海怡车厂环线原站序（经海怡岛、东厂、叶角湾及海西），主列表 73A 仍为东厂 ↺ 东门总站。",
+            en: "Secret route 673 is now separate from main-list 73A: 673 restores the original Horizon Depot circular stop list (via Horizon Island, East Factory, Leafy Bay and Haisey); 73A on the index stays East Factory ↺ East Door.",
+          },
+        ],
+      },
+      {
+        title:         {
           zh: "搜索与筛选",
           en: "Search & filters",
         },
