@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "顶栏巴士 Logo 单击返回开始页（index.html）；连点 10 次仍进入秘密线路页，逻辑不变。",
+            en: "A single tap on the header bus logo now returns to the start page (index.html); 10 rapid taps still open secret routes as before.",
+          },
+                    {
             zh: "新增开始界面：GitHub Pages 入口 index.html 为欢迎页，原线路查询页移至 routes.html；旧 ?route= 等链接会自动跳转。",
             en: "Added a start page at index.html for GitHub Pages; the route lookup app moved to routes.html, with legacy ?route= links redirecting automatically.",
           },
