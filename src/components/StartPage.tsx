@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { START_PAGE_EXTERNAL_LINKS } from '../data/startPageLinks'
+import { START_PAGE_EXTERNAL_LINKS, getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { getSettingsPageHref } from '../utils/appPage'
@@ -50,7 +50,7 @@ export function StartPage() {
               <li key={link.id}>
                 <a
                   className="start-page-external-link"
-                  href={link.url}
+                  href={getStartPageExternalLinkUrl(link.id, locale)}
                   target="_blank"
                   rel="noreferrer"
                 >
