@@ -232,6 +232,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "The update prompt and tab “!” badge now track the latest changelog entry id—auto-show once per release, then clear after dismissing the dialog or opening the updates page until the next entry.",
           },
         ],
+        fixes:         [
+                    {
+            zh: "收藏夹线路卡片同一行高度现对齐：拖拽外层参与网格拉伸，底部标签与运营商信息贴齐卡片底边。",
+            en: "Favorite route cards in the same row now share equal height—the drag wrapper stretches with the grid and bottom tags/operators align to the card foot.",
+          },
+        ],
       },
       {
         title:         {

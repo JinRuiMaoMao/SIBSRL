@@ -2817,6 +2817,10 @@ html[data-list-density='compact'] .transfer-plan-stop {
   align-items: start;
 }
 
+.route-grid--favorites {
+  align-items: stretch;
+}
+
 .route-grid-span,
 .daily-challenge-card {
   grid-column: 1 / -1;
@@ -3813,7 +3817,16 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 .favorite-draggable {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   border-radius: var(--radius);
+}
+
+.route-grid--favorites .favorite-draggable > .route-card-link {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .favorite-draggable.is-dragging {

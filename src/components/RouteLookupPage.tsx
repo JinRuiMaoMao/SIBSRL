@@ -1240,7 +1240,7 @@ export function RouteLookupPage({
                     {favoriteRoutes.length > 0 ? (
                       <>
                         <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
-                        <div className="route-grid">{renderFavoriteRouteCards()}</div>
+                        <div className="route-grid route-grid--favorites">{renderFavoriteRouteCards()}</div>
                       </>
                     ) : (
                       <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
