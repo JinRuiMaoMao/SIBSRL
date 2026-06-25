@@ -222,6 +222,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "全站弹窗（确认框、更新/每日挑战提示、设置与筛选菜单、日历、引导教程等）面板与遮罩统一为 ≥75% 不透明，透明渐变模式下不再过度透出底层页面。",
+            en: "All popups (confirm dialogs, update/daily-challenge prompts, settings & filter menus, calendar, guided tour, etc.) now use ≥75% opaque panels and backdrops so the page gradient no longer bleeds through in transparent-gradient mode.",
+          },
+                    {
             zh: "收藏夹线路卡片同一行高度现对齐：拖拽外层参与网格拉伸，底部标签与运营商信息贴齐卡片底边。",
             en: "Favorite route cards in the same row now share equal height—the drag wrapper stretches with the grid and bottom tags/operators align to the card foot.",
           },

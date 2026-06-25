@@ -21,6 +21,10 @@
   --scrollbar-thumb: rgba(245, 185, 66, 0.45);
   --scrollbar-thumb-hover: rgba(245, 185, 66, 0.72);
   --scrollbar-thumb-active: #f5b942;
+  /* 弹窗：面板与遮罩统一 ≥75% 不透明 */
+  --popup-bg: var(--bg-surface);
+  --popup-bg-deep: var(--bg-deep);
+  --popup-backdrop: rgba(8, 12, 22, 0.78);
   /* 副站名：强调色 + 冷色混色，与主站名、次要文案区分 */
   --stop-name-sub: color-mix(in srgb, var(--accent) 42%, #9fd4f7);
 }
@@ -33,6 +37,8 @@ html:not([data-panel-style='classic']) {
   /* 全屏详情页需更不透明，避免站序等内容透出底层渐变 */
   --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 92%, transparent);
   --route-detail-surface: color-mix(in srgb, var(--panel-base-surface) 92%, transparent);
+  --popup-bg: var(--route-detail-surface);
+  --popup-bg-deep: var(--route-detail-bg);
   --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 35%), transparent);
   --route-card-promoted-bg: var(--bg-card);
   --route-card-promoted-border: color-mix(in srgb, var(--accent) 55%, var(--border));
@@ -54,6 +60,9 @@ html:not([data-panel-style='classic'])[data-theme='light'] {
   --bg-float: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
   --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 94%, #ffffff);
   --route-detail-surface: color-mix(in srgb, var(--panel-base-surface) 94%, #ffffff);
+  --popup-bg: var(--route-detail-surface);
+  --popup-bg-deep: var(--route-detail-bg);
+  --popup-backdrop: rgba(24, 32, 44, 0.78);
 }
 
 [data-theme='light'] {

@@ -512,7 +512,7 @@
   padding: 0.55rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg-elevated);
+  background: var(--popup-bg);
   box-shadow: 0 8px 24px var(--shadow-overlay);
 }
 
@@ -1529,7 +1529,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   max-height: min(70vh, 36rem);
   overflow: auto;
   padding: 0.85rem 1rem 1rem;
-  background: var(--bg-deep);
+  background: var(--popup-bg-deep);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 40px var(--shadow-overlay);
@@ -1872,7 +1872,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   z-index: 300;
   min-width: 12.25rem;
   padding: 0.35rem;
-  background: var(--bg-deep);
+  background: var(--popup-bg-deep);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 40px var(--shadow-overlay);
@@ -1919,7 +1919,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
     100dvh - var(--settings-panel-top, 3.5rem) - 0.35rem - max(0.75rem, env(safe-area-inset-bottom, 0px))
   );
   padding: 0.75rem;
-  background: var(--bg-float, var(--bg-deep));
+  background: var(--popup-bg-deep);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border);
@@ -2175,7 +2175,7 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   padding: 0.35rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--bg-surface) 96%, transparent);
+  background: var(--popup-bg);
   backdrop-filter: blur(10px);
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
   max-height: min(10.5rem, 38vh);
@@ -3026,13 +3026,14 @@ html[data-list-density='compact'] .transfer-plan-stop {
   position: absolute;
   inset: 0;
   border: none;
-  background: color-mix(in srgb, var(--bg) 20%, transparent);
+  background: var(--popup-backdrop);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   cursor: pointer;
 }
 
 .daily-challenge-calendar-panel {
+  --lg-tint: var(--popup-bg);
   position: relative;
   z-index: 1;
   width: min(960px, 100%);
@@ -4215,7 +4216,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   border: none;
   padding: 0;
   margin: 0;
-  background: rgba(8, 12, 22, 0.62);
+  background: var(--popup-backdrop);
   opacity: 0;
   pointer-events: none;
   cursor: pointer;
@@ -4517,7 +4518,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   border: none;
   padding: 0;
   margin: 0;
-  background: rgba(8, 12, 22, 0.62);
+  background: var(--popup-backdrop);
   cursor: pointer;
   pointer-events: auto;
 }
@@ -4527,7 +4528,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   z-index: 1;
   width: min(100%, 28rem);
   padding: 1.25rem;
-  background: var(--bg-surface);
+  background: var(--popup-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 48px var(--shadow-overlay);
@@ -4569,8 +4570,7 @@ html[data-list-density='compact'] .transfer-plan-stop {
   max-height: min(88vh, 40rem);
   display: flex;
   flex-direction: column;
-  /* 透明渐变模式下 --bg-surface 仅 25% 不透明，弹窗需与详情页同级实感 */
-  background: var(--route-detail-surface, var(--bg-float, var(--bg-surface)));
+  background: var(--popup-bg);
 }
 
 .updates-prompt-body {
@@ -5596,7 +5596,7 @@ html[data-reduce-motion='true'] .site-header-shell {
   border: none;
   padding: 0;
   margin: 0;
-  background: rgba(8, 12, 22, 0.62);
+  background: var(--popup-backdrop);
   cursor: pointer;
   pointer-events: auto;
 }
@@ -5606,7 +5606,7 @@ html[data-reduce-motion='true'] .site-header-shell {
   z-index: 1;
   width: min(100%, 24rem);
   padding: 1.15rem 1.25rem 1.25rem;
-  background: var(--bg-surface);
+  background: var(--popup-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 48px var(--shadow-overlay);
@@ -5838,7 +5838,7 @@ html[data-reduce-motion='true'] .site-header-shell {
   padding: 0.65rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg-deep);
+  background: var(--popup-bg-deep);
   box-shadow: 0 12px 32px var(--shadow-overlay);
 }
 
@@ -5869,7 +5869,7 @@ html[data-reduce-motion='true'] .site-header-shell {
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg-deep);
+  background: var(--popup-bg-deep);
   box-shadow: 0 12px 32px var(--shadow-overlay);
 }
 
@@ -5973,13 +5973,13 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 /* Guided tour spotlight */
 :root {
-  --guided-tour-mask-fill: rgba(8, 12, 22, 0.78);
-  --guided-tour-panel-bg: var(--bg-float, var(--bg-surface));
+  --guided-tour-mask-fill: var(--popup-backdrop);
+  --guided-tour-panel-bg: var(--popup-bg);
 }
 
 [data-theme='light'] {
-  --guided-tour-mask-fill: rgba(24, 32, 44, 0.58);
-  --guided-tour-panel-bg: var(--bg-float, color-mix(in srgb, #eef2f7 88%, #ffffff));
+  --guided-tour-mask-fill: var(--popup-backdrop);
+  --guided-tour-panel-bg: var(--popup-bg);
 }
 
 .guided-tour-root {
