@@ -194,6 +194,9 @@ const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
       fill = 75;
     }
     document.documentElement.style.setProperty('--panel-fill', fill + '%');
+    if (prefs && prefs.panelNoFill) {
+      document.documentElement.setAttribute('data-panel-no-fill', '');
+    }
   } catch (e) {
     document.documentElement.style.setProperty('--panel-fill', '25%');
   }

@@ -98,6 +98,62 @@ html[data-theme='light'] {
   --scrollbar-thumb-active: var(--accent);
 }
 
+/* 无填充：除弹窗与页面背景外，面板底色全透明，边框保留 */
+html[data-panel-no-fill='true'] {
+  --bg-deep: transparent;
+  --bg-surface: transparent;
+  --bg-elevated: transparent;
+  --bg-card: transparent;
+  --route-detail-bg: transparent;
+  --route-detail-surface: transparent;
+  --header-shell-bg: transparent;
+  --route-card-promoted-bg: transparent;
+  --route-card-promoted-bg-hover: transparent;
+  --route-card-promoted-bg-muted: transparent;
+  --bg-float: transparent;
+  --lg-tint: transparent;
+  --lg-tint-strong: transparent;
+  --accent-soft: transparent;
+  --race-soft: transparent;
+}
+
+html[data-panel-no-fill='true'] code {
+  background: transparent;
+}
+
+html[data-panel-no-fill='true'] .route-lookup-sticky--fade {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html[data-panel-no-fill='true'] .route-lookup-sticky::after,
+html[data-panel-no-fill='true'] .route-lookup-sticky--fade::after {
+  background: transparent;
+}
+
+html[data-panel-no-fill='true'] .favorites-folder-tab.active {
+  background: transparent;
+}
+
+html[data-panel-no-fill='true'] :where(
+  .badge-inner,
+  .badge-inter,
+  .badge-express,
+  .badge-night,
+  .badge-special,
+  .badge-centralAxis,
+  .route-completeness-badge,
+  .route-type-tag,
+  .transfer-plan-route-label,
+  .transfer-plan-route-link,
+  .transfer-plan-stop,
+  .transfer-plan-stop-tag,
+  .transfer-plan-walk-end
+) {
+  background: transparent !important;
+}
+
 *,
 *::before,
 *::after {

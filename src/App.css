@@ -2048,6 +2048,73 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   outline-offset: 2px;
 }
 
+.settings-panel-no-fill {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+}
+
+.settings-panel-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.settings-panel-switch-label {
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+.settings-panel-switch-input {
+  position: relative;
+  width: 2.35rem;
+  height: 1.3rem;
+  margin: 0;
+  appearance: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-surface);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.settings-panel-switch-input::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.12rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transform: translateY(-50%);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.settings-panel-switch-input:checked {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.settings-panel-switch-input:checked::before {
+  transform: translate(1.05rem, -50%);
+  background: var(--accent);
+}
+
+.settings-panel-switch-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .settings-action-row {
   display: flex;
   gap: 0.5rem;

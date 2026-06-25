@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "面板样式滑块下方新增「无填充」开关：开启后除弹窗与页面背景外，全站面板透明无底色，仅保留边框；关闭后恢复滑块不透明度。",
+            en: "Added a No fill switch below the panel style slider—when on, all panels except popups and the page background become transparent with borders kept; off restores slider opacity.",
+          },
+                    {
             zh: "面板样式滑块现全局生效：线路夹、音频/广播卡片、收藏分类、线路详情、底栏浮层等均随滑块调节不透明度；弹窗仍固定 ≥75% 不透明。",
             en: "Panel style slider now applies globally—route folders, audio/broadcast cards, favorite tabs, route detail sheets, tab bar float, etc. follow the slider; popups stay fixed at ≥75% opaque.",
           },

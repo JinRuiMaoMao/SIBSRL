@@ -20,6 +20,7 @@ interface AppPreferencesContextValue extends AppPreferences {
   setListDensity: (value: ListDensity) => void
   setGuidedTourAutoStart: (value: boolean) => void
   setPanelFill: (value: number) => void
+  setPanelNoFill: (value: boolean) => void
 }
 
 const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(null)
@@ -46,16 +47,19 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
       listDensity: preferences.listDensity,
       guidedTourAutoStart: preferences.guidedTourAutoStart,
       panelFill: preferences.panelFill,
+      panelNoFill: preferences.panelNoFill,
       setReduceMotion: (reduceMotion: boolean) => updatePreferences({ reduceMotion }),
       setListDensity: (listDensity: ListDensity) => updatePreferences({ listDensity }),
       setGuidedTourAutoStart: (guidedTourAutoStart: boolean) =>
         updatePreferences({ guidedTourAutoStart }),
       setPanelFill: (panelFill: number) => updatePreferences({ panelFill }),
+      setPanelNoFill: (panelNoFill: boolean) => updatePreferences({ panelNoFill }),
     }),
     [
       preferences.guidedTourAutoStart,
       preferences.listDensity,
       preferences.panelFill,
+      preferences.panelNoFill,
       preferences.reduceMotion,
       updatePreferences,
     ],

@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { DisplayPreferencesSection } from './DisplayPreferencesSection'
 import { PanelFillSlider } from './PanelFillSlider'
+import { PanelNoFillSwitch } from './PanelNoFillSwitch'
 import { ResetSettingsSection } from './ResetSettingsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { ThemeToggle } from './ThemeToggle'
@@ -12,7 +13,14 @@ import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 
 export function SettingsMenu() {
   const { locale, setLocale, t } = useLocale()
-  const { guidedTourAutoStart, setGuidedTourAutoStart, panelFill, setPanelFill } = useAppPreferences()
+  const {
+    guidedTourAutoStart,
+    setGuidedTourAutoStart,
+    panelFill,
+    setPanelFill,
+    panelNoFill,
+    setPanelNoFill,
+  } = useAppPreferences()
   const { openTour, cancelAutoStartTimer, closeTour } = useGuidedTourControl()
   const [open, setOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
@@ -120,6 +128,7 @@ export function SettingsMenu() {
             <div className="settings-field">
               <p className="settings-field-label">{t('panelStyle')}</p>
               <PanelFillSlider value={panelFill} onChange={setPanelFill} />
+              <PanelNoFillSwitch checked={panelNoFill} onChange={setPanelNoFill} />
               <p className="settings-hint">{t('panelStyleHint')}</p>
             </div>
           </section>

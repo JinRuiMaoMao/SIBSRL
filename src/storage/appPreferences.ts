@@ -11,6 +11,7 @@ export interface AppPreferences {
   listDensity: ListDensity
   guidedTourAutoStart: boolean
   panelFill: number
+  panelNoFill: boolean
 }
 
 const DEFAULT_APP_PREFERENCES: AppPreferences = {
@@ -18,6 +19,7 @@ const DEFAULT_APP_PREFERENCES: AppPreferences = {
   listDensity: 'comfortable',
   guidedTourAutoStart: true,
   panelFill: PANEL_FILL_DEFAULT,
+  panelNoFill: false,
 }
 
 function clampPanelFill(value: number): number {
@@ -42,6 +44,7 @@ export function readAppPreferences(): AppPreferences {
       listDensity: stored.listDensity === 'compact' ? 'compact' : 'comfortable',
       guidedTourAutoStart: stored.guidedTourAutoStart !== false,
       panelFill: readPanelFill(stored as Record<string, unknown>),
+      panelNoFill: Boolean((stored as Record<string, unknown>).panelNoFill),
     }
   } catch {
     return { ...DEFAULT_APP_PREFERENCES }
@@ -63,6 +66,7 @@ export function applyAppPreferences(preferences: AppPreferences): void {
   )
   document.documentElement.setAttribute('data-list-density', preferences.listDensity)
   document.documentElement.style.setProperty('--panel-fill', `${clampPanelFill(preferences.panelFill)}%`)
+  document.documentElement.toggleAttribute('data-panel-no-fill', preferences.panelNoFill)
   document.documentElement.removeAttribute('data-panel-style')
 }
 
