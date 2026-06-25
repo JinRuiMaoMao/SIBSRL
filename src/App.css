@@ -78,15 +78,35 @@
   line-height: 1.55;
 }
 
-.start-page-cta {
+.start-page-cta-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
   margin-top: 0.35rem;
-  padding: 0.85rem 1.6rem;
+  width: 100%;
+  max-width: 22rem;
+}
+
+.start-page-cta {
+  flex: 1 1 9rem;
+  min-width: 8.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.25rem;
   border-radius: 999px;
   text-decoration: none;
+  font-size: 0.98rem;
+  font-weight: 700;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.start-page-cta--primary {
   color: #1a1208;
   background: linear-gradient(
     135deg,
@@ -97,29 +117,32 @@
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent-glow) 40%, transparent),
     0 10px 28px color-mix(in srgb, var(--accent-glow) 70%, transparent);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-html[data-theme='light'] .start-page-cta {
+html[data-theme='light'] .start-page-cta--primary {
   color: #2a1f08;
 }
 
-.start-page-cta:hover,
-.start-page-cta:focus-visible {
+.start-page-cta--secondary {
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow) 55%, transparent);
+}
+
+.start-page-cta--primary:hover,
+.start-page-cta--primary:focus-visible {
   transform: translateY(-2px);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent-glow) 55%, transparent),
     0 14px 34px color-mix(in srgb, var(--accent-glow) 85%, transparent);
 }
 
-.start-page-cta-label {
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.start-page-cta-hint {
-  font-size: 0.78rem;
-  opacity: 0.82;
+.start-page-cta--secondary:hover,
+.start-page-cta--secondary:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  background: var(--bg-elevated);
 }
 
 .start-page-section {
@@ -136,48 +159,42 @@ html[data-theme='light'] .start-page-cta {
   text-align: center;
 }
 
-.start-page-links {
+.start-page-external-links {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: 0.55rem;
 }
 
-.start-page-link {
+.start-page-external-link {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.7rem 0.85rem;
-  border-radius: var(--radius);
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
   text-decoration: none;
-  color: var(--text);
-  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  text-align: center;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
   border: 1px solid var(--border);
   transition:
+    color 0.2s ease,
     border-color 0.2s ease,
     background 0.2s ease,
     transform 0.2s ease;
 }
 
-.start-page-link:hover,
-.start-page-link:focus-visible {
-  border-color: var(--border-strong);
-  background: var(--bg-elevated);
+.start-page-external-link:hover,
+.start-page-external-link:focus-visible {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 12%, transparent);
   transform: translateY(-1px);
-}
-
-.start-page-link-icon {
-  display: inline-flex;
-  width: 1.35rem;
-  height: 1.35rem;
-  flex-shrink: 0;
-}
-
-.start-page-link-text {
-  font-size: 0.86rem;
-  font-weight: 600;
 }
 
 .start-page-footer {
@@ -191,10 +208,12 @@ html[data-theme='light'] .start-page-cta {
   margin: 0.25rem 0;
 }
 
-html[data-reduce-motion='true'] .start-page-cta:hover,
-html[data-reduce-motion='true'] .start-page-cta:focus-visible,
-html[data-reduce-motion='true'] .start-page-link:hover,
-html[data-reduce-motion='true'] .start-page-link:focus-visible {
+html[data-reduce-motion='true'] .start-page-cta--primary:hover,
+html[data-reduce-motion='true'] .start-page-cta--primary:focus-visible,
+html[data-reduce-motion='true'] .start-page-cta--secondary:hover,
+html[data-reduce-motion='true'] .start-page-cta--secondary:focus-visible,
+html[data-reduce-motion='true'] .start-page-external-link:hover,
+html[data-reduce-motion='true'] .start-page-external-link:focus-visible {
   transform: none;
 }
 

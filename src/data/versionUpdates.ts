@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页主按钮改为「路线查询」与「更新日志」；下方栏目入口替换为 YouTube、Discord、Roblox、Facebook、Website、Wiki 外链按钮。",
+            en: "Start page now has Route lookup and Updates as primary buttons; the tab grid is replaced with outbound links to YouTube, Discord, Roblox, Facebook, Website, and Wiki.",
+          },
+                    {
             zh: "秘密线路页路线详情与主列表一致：打开时渐隐顶栏与列表仅留背景，关闭时即时恢复交互。",
             en: "Secret route detail now matches the main routes page—chrome fades out on open with only the background left, and interaction restores immediately on close.",
           },

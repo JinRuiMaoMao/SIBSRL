@@ -1,26 +1,16 @@
 import { useEffect } from 'react'
-import { AppTabIcon } from './AppTabIcons'
+import { START_PAGE_EXTERNAL_LINKS } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
-import type { MessageKey } from '../i18n/messages'
-import type { AppTab } from '../types/appTab'
-import { APP_TABS, getTabPageHref } from '../utils/appTabNavigation'
+import { getTabPageHref } from '../utils/appTabNavigation'
 import { getSettingsPageHref } from '../utils/appPage'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
-
-const TAB_KEYS: Record<AppTab, MessageKey> = {
-  routes: 'tabRoutes',
-  broadcast: 'tabBroadcast',
-  music: 'tabMusic',
-  complaints: 'tabComplaints',
-  trivia: 'tabTrivia',
-  updates: 'tabUpdates',
-}
 
 export function StartPage() {
   const { locale, t } = useLocale()
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const routesHref = getTabPageHref('routes')
+  const updatesHref = getTabPageHref('updates')
 
   useEffect(() => {
     syncFavicon()
@@ -41,24 +31,30 @@ export function StartPage() {
           <img className="start-page-logo" src="./sibs-logo.png" alt="" width={72} height={72} decoding="async" />
           <h1 className="start-page-title">{t('startPageTitle')}</h1>
           <p className="start-page-lead">{t('startPageLead')}</p>
-          <a className="start-page-cta" href={routesHref}>
-            <span className="start-page-cta-label">{t('startPageCta')}</span>
-            <span className="start-page-cta-hint">{t('startPageCtaHint')}</span>
-          </a>
+          <div className="start-page-cta-row">
+            <a className="start-page-cta start-page-cta--primary" href={routesHref}>
+              {t('startPageRoutesCta')}
+            </a>
+            <a className="start-page-cta start-page-cta--secondary" href={updatesHref}>
+              {t('startPageUpdatesCta')}
+            </a>
+          </div>
         </div>
 
-        <section className="start-page-section" aria-labelledby="start-page-explore-title">
-          <h2 id="start-page-explore-title" className="start-page-section-title">
-            {t('startPageExplore')}
+        <section className="start-page-section" aria-labelledby="start-page-community-title">
+          <h2 id="start-page-community-title" className="start-page-section-title">
+            {t('startPageCommunityLinks')}
           </h2>
-          <ul className="start-page-links">
-            {APP_TABS.map((tab) => (
-              <li key={tab}>
-                <a className="start-page-link" href={getTabPageHref(tab)}>
-                  <span className="start-page-link-icon" aria-hidden>
-                    <AppTabIcon tab={tab} active={tab === 'routes'} />
-                  </span>
-                  <span className="start-page-link-text">{t(TAB_KEYS[tab])}</span>
+          <ul className="start-page-external-links">
+            {START_PAGE_EXTERNAL_LINKS.map((link) => (
+              <li key={link.id}>
+                <a
+                  className="start-page-external-link"
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t(link.labelKey)}
                 </a>
               </li>
             ))}
