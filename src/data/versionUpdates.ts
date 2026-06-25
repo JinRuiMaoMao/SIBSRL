@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "新增开始界面：GitHub Pages 入口 index.html 为欢迎页，原线路查询页移至 routes.html；旧 ?route= 等链接会自动跳转。",
+            en: "Added a start page at index.html for GitHub Pages; the route lookup app moved to routes.html, with legacy ?route= links redirecting automatically.",
+          },
+                    {
             zh: "全站主内容区滚动时，列表卡片、区块标题与设置项等以渐入上滑动画进入视野；开启「减少动态效果」时自动跳过动画。",
             en: "Scrolling any main page now reveals list cards, section blocks, and settings fields with a fade-up animation; Reduce motion skips the effect.",
           },

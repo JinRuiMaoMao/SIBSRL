@@ -1,5 +1,5 @@
-const CACHE_VERSION = 'sibs-offline-v3'
-const SHELL_URLS = ['./index.html', './account.html', './sibs-logo.png', './apple-touch-icon.png']
+const CACHE_VERSION = 'sibs-offline-v4'
+const SHELL_URLS = ['./index.html', './routes.html', './account.html', './sibs-logo.png', './apple-touch-icon.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

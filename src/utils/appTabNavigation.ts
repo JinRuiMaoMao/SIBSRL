@@ -2,9 +2,14 @@ import type { AppTab } from '../types/appTab'
 
 export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates']
 
+/** 线路查询页文件名（开发 dev.html，发布 routes.html） */
+export function getRoutesPageFile(): string {
+  return import.meta.env.DEV ? 'dev.html' : 'routes.html'
+}
+
 /** 各栏目对应的根目录 HTML（开发时线路查询用 dev.html） */
 const TAB_PAGE_HREF: Record<AppTab, string> = {
-  routes: import.meta.env.DEV ? 'dev.html' : 'index.html',
+  routes: getRoutesPageFile(),
   broadcast: 'ann.html',
   music: 'music.html',
   complaints: 'complaints.html',
@@ -13,7 +18,7 @@ const TAB_PAGE_HREF: Record<AppTab, string> = {
 }
 
 const FILENAME_TO_TAB: Record<string, AppTab> = {
-  'index.html': 'routes',
+  'routes.html': 'routes',
   'dev.html': 'routes',
   'ann.html': 'broadcast',
   'music.html': 'music',
@@ -26,7 +31,7 @@ export function isAppTab(value: string): value is AppTab {
   return (APP_TABS as string[]).includes(value)
 }
 
-/** 顶栏链接：线路查询 → index.html，广播 → ann.html，其余同理 */
+/** 顶栏链接：线路查询 → routes.html，广播 → ann.html，其余同理 */
 export function getTabPageHref(tab: AppTab): string {
   return TAB_PAGE_HREF[tab]
 }

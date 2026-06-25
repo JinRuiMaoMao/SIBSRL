@@ -1,3 +1,16 @@
+export function isStartPage(): boolean {
+  const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
+  if (meta === 'start') return true
+
+  const file =
+    window.location.pathname.replace(/\\/g, '/').split('/').filter(Boolean).pop()?.toLowerCase() ?? ''
+  return file === 'index.html'
+}
+
+export function getStartPageHref(): string {
+  return './index.html'
+}
+
 export function isSecretPage(): boolean {
   const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
   if (meta === 'secret') return true

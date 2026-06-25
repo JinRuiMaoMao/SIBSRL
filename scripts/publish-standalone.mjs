@@ -12,6 +12,7 @@ import {
   injectNoScriptGuard,
   injectSecretPageMeta,
   injectServiceWorkerBootstrap,
+  injectStartPageMeta,
   injectThemeBootstrap,
   injectAppSurfaceBootstrap,
   injectUserApiMeta,
@@ -82,6 +83,11 @@ export function publishStandalone(options = {}) {
     writeFileSync(resolve(root, page.publishFile), html)
     writeFileSync(resolve(root, 'dist', page.publishFile), html)
   }
+
+  let startHtml = injectStartPageMeta(baseHtml)
+  startHtml = adjustAppPageTitle(startHtml, '开始')
+  writeFileSync(resolve(root, 'index.html'), startHtml)
+  writeFileSync(resolve(root, 'dist', 'index.html'), startHtml)
 
   let secretHtml = injectSecretPageMeta(baseHtml)
   secretHtml = adjustAppPageTitle(secretHtml, '???')
@@ -155,7 +161,7 @@ export function publishStandalone(options = {}) {
   }
 
   console.log(
-    `[publish] 已更新 ${APP_PAGES.map((p) => p.publishFile).join('、')}（构建 ${buildTag}）`,
+    `[publish] 已更新 index.html、${APP_PAGES.map((p) => p.publishFile).join('、')}（构建 ${buildTag}）`,
   )
   return { buildTag, built }
 }

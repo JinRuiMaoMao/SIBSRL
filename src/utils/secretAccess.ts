@@ -18,7 +18,7 @@ export function hasSecretAccess(): boolean {
 }
 
 export function routesIndexHref(): string {
-  return import.meta.env.DEV ? './dev.html' : './index.html'
+  return import.meta.env.DEV ? './dev.html' : './routes.html'
 }
 
 export function redirectToRoutesIndex(): void {

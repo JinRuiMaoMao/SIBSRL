@@ -129,7 +129,7 @@ function publishStandalonePlugin(buildTag: string): Plugin {
   }
 }
 
-/** 开发时 / 与 /index.html 指向 dev.html；根目录 ann.html 等作为独立栏目入口 */
+/** 开发时 / 与 /index.html 为开始页；/routes.html 与 dev.html 为线路查询 */
 function devEntryRedirectPlugin(): Plugin {
   const devAppPages = APP_PAGES.filter((page) => page.tab !== 'routes')
 
@@ -168,6 +168,16 @@ function devEntryRedirectPlugin(): Plugin {
         }
 
         if (pathOnly === '/' || pathOnly === '/index.html') {
+          const file = resolve(root, 'pages/start.html')
+          if (existsSync(file)) {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'text/html; charset=utf-8')
+            res.end(readFileSync(file, 'utf8'))
+            return
+          }
+        }
+
+        if (pathOnly === '/routes.html') {
           const qs = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
           req.url = `/dev.html${qs}`
         }

@@ -107,7 +107,7 @@
   <body>
     <main class="route-map-page">
       <div class="route-map-toolbar">
-        <a class="route-map-back" id="back-link" href="./index.html">← 返回线路查询</a>
+        <a class="route-map-back" id="back-link" href="./routes.html">← 返回线路查询</a>
         <h1 class="route-map-title" id="page-title">线路图</h1>
       </div>
       <div class="route-map-frame">
@@ -148,8 +148,8 @@
         function backHref() {
           var params = new URLSearchParams(location.search);
           var route = params.get('route');
-          if (!route) return assetPrefix() + 'index.html';
-          return assetPrefix() + 'index.html?route=' + encodeURIComponent(route);
+          if (!route) return assetPrefix() + 'routes.html';
+          return assetPrefix() + 'routes.html?route=' + encodeURIComponent(route);
         }
 
         var locale = readLocale();

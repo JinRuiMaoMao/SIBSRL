@@ -1,4 +1,4 @@
-import { isRoutesPage } from './appTabNavigation'
+import { getRoutesPageFile, isRoutesPage } from './appTabNavigation'
 import { hasSeenDailyChallengePrompt } from '../storage/dailyChallengePrompt'
 
 const ROUTE_PAGE_DIR = 'routes'
@@ -40,7 +40,7 @@ export function getRoutePageHref(routeId: string, directionIndex?: number): stri
   } else {
     params.delete(DIRECTION_QUERY_KEY)
   }
-  const page = import.meta.env.DEV ? 'dev.html' : 'index.html'
+  const page = getRoutesPageFile()
   const qs = params.toString()
   return qs ? `${page}?${qs}` : page
 }
@@ -54,7 +54,7 @@ export function readRouteQueryFromLocation(): string | null {
   const path = window.location.pathname.replace(/\\/g, '/')
   const segments = path.split('/').filter(Boolean)
   const last = segments[segments.length - 1]
-  if (!last?.endsWith('.html') || last === 'index.html' || last === 'dev.html') {
+  if (!last?.endsWith('.html') || last === 'index.html' || last === 'dev.html' || last === 'routes.html') {
     return null
   }
 
@@ -123,7 +123,7 @@ export function buildRouteShareUrl(routeId: string, directionIndex: number): str
   const segments = path.split('/').filter(Boolean)
   const inRoutesDir = segments[segments.length - 2] === ROUTE_PAGE_DIR
   const prefix = inRoutesDir ? '../' : './'
-  const page = import.meta.env.DEV ? 'dev.html' : 'index.html'
+  const page = getRoutesPageFile()
   const params = new URLSearchParams({
     [ROUTE_QUERY_KEY]: routeId,
     [DIRECTION_QUERY_KEY]: String(directionIndex),
@@ -178,7 +178,7 @@ export function buildStopPairShareUrl(from: string, to: string, depart?: string 
   const segments = path.split('/').filter(Boolean)
   const inRoutesDir = segments[segments.length - 2] === ROUTE_PAGE_DIR
   const prefix = inRoutesDir ? '../' : './'
-  const page = import.meta.env.DEV ? 'dev.html' : 'index.html'
+  const page = getRoutesPageFile()
   const params = new URLSearchParams({
     [FROM_STOP_QUERY_KEY]: from.trim(),
     [TO_STOP_QUERY_KEY]: to.trim(),
@@ -226,7 +226,7 @@ export function buildRouteLandingUrl(
   if (directionIndex != null && directionIndex >= 0) {
     params.set(DIRECTION_QUERY_KEY, String(directionIndex))
   }
-  return `${prefix}index.html?${params.toString()}`
+  return `${prefix}${getRoutesPageFile()}?${params.toString()}`
 }
 
 /** 仅在线路查询首页、无 ?route=、且尚未展示过每日挑战弹窗时弹出提示 */

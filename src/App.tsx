@@ -16,6 +16,7 @@ import { RouteLookupPage } from './components/RouteLookupPage'
 import { ScrollRevealScope } from './components/ScrollRevealScope'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
+import { StartPage } from './components/StartPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
@@ -33,7 +34,7 @@ import {
   isGuidedTourReplaySessionActive,
 } from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
-import { isAccountPage, isSecretPage, isSettingsPage } from './utils/appPage'
+import { isAccountPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
@@ -177,7 +178,7 @@ function App() {
   }, [])
 
   const guidedTourLayer =
-    !isAccountPage() && !isSecretPage() && !isSettingsPage() ? (
+    !isAccountPage() && !isSecretPage() && !isSettingsPage() && !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
         mode={tourMode}
@@ -185,6 +186,15 @@ function App() {
         onPrepare={prepareGuidedTour}
       />
     ) : null
+
+  if (isStartPage()) {
+    return (
+      <>
+        <LiquidGlassDefs />
+        <StartPage />
+      </>
+    )
+  }
 
   if (isSettingsPage()) {
     return (

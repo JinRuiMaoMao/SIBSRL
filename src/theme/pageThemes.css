@@ -121,6 +121,26 @@ html[data-app-tab='updates'] {
     linear-gradient(160deg, #060e14 0%, #0c1620 26%, #09141c 52%, #102030 76%, #060c12 100%);
 }
 
+/* —— 开始页 start（金/青/蓝/紫，欢迎入口） —— */
+html[data-app-page='start'] {
+  --accent: #f5b942;
+  --accent-soft: rgba(245, 185, 66, 0.15);
+  --accent-glow: rgba(245, 185, 66, 0.4);
+  --border: color-mix(in srgb, var(--accent) 18%, transparent);
+  --border-strong: color-mix(in srgb, var(--accent) 38%, transparent);
+  --panel-base-deep: #0c1222;
+  --panel-base-surface: #141c2e;
+  --panel-base-elevated: #1a2540;
+  --panel-base-card: #1e2d4a;
+  --page-background:
+    radial-gradient(ellipse 100% 80% at 12% -8%, rgba(245, 185, 66, 0.24), transparent 58%),
+    radial-gradient(ellipse 85% 70% at 100% 12%, rgba(45, 212, 160, 0.16), transparent 54%),
+    radial-gradient(ellipse 78% 58% at 48% 108%, rgba(96, 132, 220, 0.18), transparent 60%),
+    radial-gradient(ellipse 65% 50% at 72% 42%, rgba(167, 139, 250, 0.1), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 8% 72%, rgba(251, 146, 60, 0.08), transparent 52%),
+    linear-gradient(160deg, #070b14 0%, #101829 24%, #0d1524 48%, #14102a 72%, #0a101c 100%);
+}
+
 /* —— 设置页 settings（冷灰蓝 / 工具面板） —— */
 html[data-app-page='settings'] {
   --accent: #8ba4c4;
@@ -295,6 +315,25 @@ html[data-theme='light'][data-app-tab='updates'] {
     radial-gradient(ellipse 68% 52% at 70% 44%, rgba(45, 170, 150, 0.08), transparent 50%),
     radial-gradient(ellipse 64% 48% at 16% 70%, rgba(220, 234, 246, 0.55), transparent 52%),
     linear-gradient(165deg, #f2f6fa 0%, #eaf0f6 22%, #e0e8f2 46%, #eef4fa 70%, #e4ecf4 100%);
+}
+
+html[data-theme='light'][data-app-page='start'] {
+  --accent: #9a6700;
+  --accent-soft: rgba(154, 103, 0, 0.1);
+  --accent-glow: rgba(154, 103, 0, 0.16);
+  --border: color-mix(in srgb, var(--accent) 14%, #c8cdd6);
+  --border-strong: color-mix(in srgb, var(--accent) 26%, #b8bec8);
+  --panel-base-deep: #e4e8ef;
+  --panel-base-surface: #eaedf3;
+  --panel-base-elevated: #dfe3eb;
+  --panel-base-card: #d4dae4;
+  --page-background:
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(217, 168, 46, 0.2), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(16, 138, 100, 0.14), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(99, 102, 241, 0.1), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(244, 114, 82, 0.08), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 18% 72%, rgba(56, 189, 248, 0.07), transparent 48%),
+    linear-gradient(165deg, #f4f6fa 0%, #eef2f7 22%, #e8edf4 46%, #f0f3f8 70%, #e6ebf2 100%);
 }
 
 html[data-theme='light'][data-app-page='settings'] {

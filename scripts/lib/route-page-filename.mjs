@@ -14,5 +14,5 @@ export function routeIdToPageFilename(routeId) {
 /** @param {string} routeId @param {boolean} [fromRoutesDir] */
 export function buildRouteLandingUrl(routeId, fromRoutesDir = true) {
   const prefix = fromRoutesDir ? '../' : './'
-  return `${prefix}index.html?${ROUTE_QUERY_KEY}=${encodeURIComponent(routeId)}`
+  return `${prefix}routes.html?${ROUTE_QUERY_KEY}=${encodeURIComponent(routeId)}`
 }

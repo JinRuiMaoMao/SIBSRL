@@ -2,7 +2,7 @@
 
 /** @type {Array<{ tab: AppTabId, devFile: string, publishFile: string, titleZh: string }>} */
 export const APP_PAGES = [
-  { tab: 'routes', devFile: 'dev.html', publishFile: 'index.html', titleZh: '线路查询' },
+  { tab: 'routes', devFile: 'dev.html', publishFile: 'routes.html', titleZh: '线路查询' },
   { tab: 'broadcast', devFile: 'pages/ann.html', publishFile: 'ann.html', titleZh: '广播' },
   { tab: 'music', devFile: 'pages/music.html', publishFile: 'music.html', titleZh: '音乐' },
   { tab: 'complaints', devFile: 'pages/complaints.html', publishFile: 'complaints.html', titleZh: 'NPC' },
@@ -262,10 +262,10 @@ const SECRET_ACCESS_GUARD_SCRIPT = `<script id="secret-access-guard">
 (function () {
   try {
     if (sessionStorage.getItem('${SECRET_ACCESS_STORAGE_KEY}') !== '1') {
-      location.replace('./index.html');
+      location.replace('./routes.html');
     }
   } catch (e) {
-    location.replace('./index.html');
+    location.replace('./routes.html');
   }
 })();
 </script>`
@@ -308,6 +308,38 @@ export function injectSettingsPageMeta(html) {
       '<meta charset="UTF-8" />',
       `<meta charset="UTF-8" />\n    <meta name="app-page" content="settings" />`,
     )
+  }
+  return out
+}
+
+const START_ROUTE_REDIRECT_SCRIPT = `<script id="start-route-redirect">
+(function () {
+  var q = window.location.search || '';
+  if (!q) return;
+  var params = new URLSearchParams(q);
+  if (params.has('route') || params.has('from') || params.has('to') || params.has('q')) {
+    window.location.replace('./routes.html' + q + (window.location.hash || ''));
+  }
+})();
+</script>`
+
+/** @param {string} html */
+export function injectStartPageMeta(html) {
+  let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')
+  const head = out.split('</head>')[0] ?? out
+  if (/<meta name="app-page"[^>]*>/i.test(head)) {
+    out = out.replace(
+      /(<meta name="app-page" content=")[^"]*(")/i,
+      `$1start$2`,
+    )
+  } else {
+    out = out.replace(
+      '<meta charset="UTF-8" />',
+      `<meta charset="UTF-8" />\n    <meta name="app-page" content="start" />`,
+    )
+  }
+  if (!out.includes('id="start-route-redirect"')) {
+    out = out.replace('<head>', `<head>\n    ${START_ROUTE_REDIRECT_SCRIPT}`)
   }
   return out
 }

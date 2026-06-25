@@ -103,7 +103,7 @@ export function renderRoutePageHtml(routeId, routeData) {
   <!--
     线路数据（可编辑）
     - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
-    - 保存后刷新 index.html 详情即可生效，无需改 routes.ts
+    - 保存后刷新 routes.html 详情即可生效，无需改 routes.ts
     - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
     - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
     - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
