@@ -116,6 +116,7 @@ const EVENT_ZH: Record<string, string> = {
   'Private Hire': '私人租用',
   'Rare Appearance x Private Hire': '罕见外观 × 私人租用',
   'Rare Appearance': '罕见外观',
+  'Long Time No See': '活久见！',
   'E-Payment Outage': '电子支付故障',
   'Friendly Day': '友善日',
   'Lazy Passengers': '懒惰乘客',
