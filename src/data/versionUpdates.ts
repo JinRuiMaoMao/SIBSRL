@@ -224,8 +224,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
-            zh: "进入线路详情后，查询页仅保留页面背景渐变，顶栏、底栏与线路列表暂时隐藏，无填充/透明模式下观感更干净。",
-            en: "Opening route detail on the index now hides the header, tab bar, and route list—only the page background gradient remains—for a cleaner look in no-fill/transparent modes.",
+            zh: "进入线路详情后，查询页顶栏、底栏与线路列表以渐隐动画收起，仅保留页面背景渐变；关闭详情时渐显恢复，无填充/透明模式下观感更干净。",
+            en: "Opening route detail on the index now fades out the header, tab bar, and route list—only the page background gradient remains—and fades them back in on close for a cleaner no-fill/transparent look.",
           },
                     {
             zh: "设置 → 显示新增「底栏常驻」：电脑端底部栏目切换栏可始终显示（默认仍悬停唤出）。",

@@ -752,6 +752,8 @@ export function RouteLookupPage({
   }
 
   const handleCloseDetail = () => {
+    document.documentElement.classList.remove('route-detail-open')
+
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
     if (!sheet) {

@@ -29,7 +29,8 @@
   transition:
     background var(--header-collapse-duration) var(--header-collapse-easing),
     border-color var(--header-collapse-duration) var(--header-collapse-easing),
-    min-height var(--header-collapse-duration) var(--header-collapse-easing);
+    min-height var(--header-collapse-duration) var(--header-collapse-easing),
+    opacity var(--route-detail-chrome-dur, 0.5s) var(--route-detail-chrome-easing, cubic-bezier(0.32, 0.72, 0, 1));
 }
 
 .site-header-shell.is-collapsed {
@@ -4480,13 +4481,29 @@ html[data-panel-no-fill] .route-card .direction-toggle-btn.active {
   background: rgba(60, 180, 120, 0.12);
 }
 
-/* Route detail open — index keeps only the page background visible */
+/* Route detail open — index chrome fades out, page background remains */
+html {
+  --route-detail-chrome-dur: 0.5s;
+  --route-detail-chrome-easing: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html[data-reduce-motion='true'] {
+  --route-detail-chrome-dur: 0.2s;
+}
+
+html:not([data-reduce-motion='true']) .site-footer,
+html:not([data-reduce-motion='true']) .route-lookup-sticky,
+html:not([data-reduce-motion='true']) .content-layout,
+html:not([data-reduce-motion='true']) .app-tab-bar-shell {
+  transition: opacity var(--route-detail-chrome-dur) var(--route-detail-chrome-easing);
+}
+
 html.route-detail-open .site-header-shell,
 html.route-detail-open .site-footer,
 html.route-detail-open .route-lookup-sticky,
 html.route-detail-open .content-layout,
 html.route-detail-open .app-tab-bar-shell {
-  visibility: hidden;
+  opacity: 0;
   pointer-events: none;
 }
 
