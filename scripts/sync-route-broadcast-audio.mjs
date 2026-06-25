@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { findSibsAudioRoot } from './lib/sibs-audio-root.mjs'
@@ -78,6 +78,7 @@ function syncRouteN171(srcDir, destDir) {
   const sourceFiles = readdirSync(srcDir).filter((f) => f.toLowerCase().endsWith('.mp3'))
   const groups = loadN171StopGroups()
   const slots = buildRouteN171StopAudioSlots(sourceFiles)
+  rmSync(destDir, { recursive: true, force: true })
   mkdirSync(destDir, { recursive: true })
 
   let copied = 0
