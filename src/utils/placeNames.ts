@@ -4,7 +4,6 @@ import { GENERATED_ZH_STOP_ALIASES } from '../data/stopAliases.generated'
 const ZH_ALIASES: Record<string, string> = {
   安灵台灵灰安置所: '安灵台',
   灵灰安置所: '安灵台',
-  伊迪城: '艾迪城',
   第7区转车站: '第七区转车站',
   城际巴士车厂: '际巴车厂',
   叶欣海旁路: '叶欣海旁道',
@@ -40,6 +39,7 @@ const EN_TO_ZH: Record<string, string> = {
   'central - western interchange': '中西转车站',
   'containers terminal': '货柜码头',
   'addi city': '艾迪城',
+  'eddie city': '伊迪城',
   'dove industry zone': '白鸽工业区',
   'haisey estate': '海西邨',
   'csb depot': '际巴车厂',
