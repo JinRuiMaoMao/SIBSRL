@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "无填充模式下底栏保留文字与图标、去掉毛玻璃底色；线路卡片底部区域标签与方向切换条背景同步为 0% 不透明。",
+            en: "No fill mode now clears the bottom tab bar glass/fill while keeping labels and icons, and zeroes route card bottom chip backgrounds.",
+          },
+                    {
             zh: "修复「无填充」未生效的问题，并强化线路卡片在无填充模式下为 0% 不透明（全透明底色）；开启无填充时隐藏面板透明度滑块。",
             en: "Fixed No fill not applying correctly—route cards now use 0% opaque (fully transparent) fills in that mode, and the panel opacity slider hides while No fill is on.",
           },

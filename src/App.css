@@ -4065,6 +4065,12 @@ html[data-panel-no-fill] .route-card-link--selected .route-card--classic {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 65%, var(--border));
 }
 
+html[data-panel-no-fill] .route-card .direction-toggle,
+html[data-panel-no-fill] .route-card .direction-toggle-btn:hover,
+html[data-panel-no-fill] .route-card .direction-toggle-btn.active {
+  background-color: transparent !important;
+}
+
 .route-card.selected {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-soft);

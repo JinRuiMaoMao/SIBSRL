@@ -198,7 +198,7 @@ const messagesZhHans = {
   panelStyleClassic: '经典实心',
   panelStyleHint: '左滑透明（25% 不透明）、右滑实心（75% 不透明），全站面板（线路夹、音频页、收藏夹、详情页、底栏等）同步调节，弹窗保持固定不透明；各栏目背景渐变与卡片描边保持不变。',
   panelNoFill: '无填充',
-  panelNoFillHint: '开启后除弹窗与页面背景外，所有面板变为透明、无底色，仅保留边框颜色；关闭后恢复滑块对应的不透明度。',
+  panelNoFillHint: '开启后除弹窗与页面背景外，面板与底栏变为透明无底色（文字与边框保留）；关闭后恢复滑块不透明度。开启时隐藏透明度滑块。',
   themeSystem: '跟随系统',
   themeDark: '深色',
   themeLight: '浅色',
@@ -735,7 +735,7 @@ const messagesEn: Record<MessageKey, string> = {
     'Slide left for transparent panels (25% opaque), right for solid (75% opaque)—all panels (route folders, audio pages, favorites, detail sheets, tab bar, etc.) follow the slider; popups stay fixed opaque. Page gradients and card borders stay unchanged.',
   panelNoFill: 'No fill',
   panelNoFillHint:
-    'When on, all panels except popups and the page background become fully transparent with borders kept; turn off to restore slider opacity.',
+    'When on, panels and the bottom tab bar become transparent (text and borders stay); popups and page background unchanged. Hides the opacity slider until turned off.',
   themeSystem: 'System',
   themeDark: 'Dark',
   themeLight: 'Light',
