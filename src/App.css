@@ -4577,6 +4577,11 @@ html.route-detail-open .route-detail-backdrop {
   pointer-events: auto;
 }
 
+.route-detail-backdrop.is-closing,
+.route-detail-sheet.is-closing {
+  pointer-events: none;
+}
+
 @keyframes route-sheet-slide-in {
   from {
     transform: translate3d(0, 100%, 0);

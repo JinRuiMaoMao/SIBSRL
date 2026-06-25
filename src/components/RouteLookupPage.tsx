@@ -201,6 +201,7 @@ export function RouteLookupPage({
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
+  const [detailClosing, setDetailClosing] = useState(false)
   const [dailyChallengeRouteView, setDailyChallengeRouteView] = useState(false)
   const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
@@ -510,12 +511,15 @@ export function RouteLookupPage({
   const finishDetailClose = useCallback(() => {
     cancelAnimations(openAnimsRef.current)
     cancelAnimations(closeAnimsRef.current)
+    setDetailClosing(false)
     setDetailOverlay(null)
     setRoutePageDetail(null)
     setDailyChallengeRouteView(false)
     clearSelection()
     clearRouteFromLocation()
   }, [clearSelection])
+
+  const detailChromeHidden = Boolean(detailOverlay) && !detailClosing
 
   useEffect(() => {
     if (detailOverlay?.kind !== 'route') return
@@ -666,14 +670,20 @@ export function RouteLookupPage({
   }, [activeOverlayKey, isWideLayout])
 
   useEffect(() => {
-    if (!detailOverlay) return
+    if (!detailOverlay || detailClosing) return
     return lockPageScroll()
-  }, [detailOverlay])
+  }, [detailOverlay, detailClosing])
 
   useEffect(() => {
-    document.documentElement.classList.toggle('route-detail-open', Boolean(detailOverlay))
+    document.documentElement.classList.toggle('route-detail-open', detailChromeHidden)
     return () => {
       document.documentElement.classList.remove('route-detail-open')
+    }
+  }, [detailChromeHidden])
+
+  useEffect(() => {
+    if (!detailOverlay) {
+      setDetailClosing(false)
     }
   }, [detailOverlay])
 
@@ -752,7 +762,8 @@ export function RouteLookupPage({
   }
 
   const handleCloseDetail = () => {
-    document.documentElement.classList.remove('route-detail-open')
+    if (!detailOverlay || detailClosing) return
+    setDetailClosing(true)
 
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
@@ -1168,7 +1179,7 @@ export function RouteLookupPage({
 
   useRouteListKeyboard({
     enabled: true,
-    detailOpen: Boolean(detailOverlay),
+    detailOpen: detailChromeHidden,
     onCloseDetail: handleCloseDetail,
     searchInputId: 'route-search',
   })
@@ -1341,13 +1352,13 @@ export function RouteLookupPage({
           <button
             ref={backdropRef}
             type="button"
-            className="route-detail-backdrop is-visible"
+            className={`route-detail-backdrop is-visible${detailClosing ? ' is-closing' : ''}`}
             aria-label={t('closeDetail')}
             onClick={handleCloseDetail}
           />
           <div
             ref={sheetRef}
-            className={`route-detail-sheet is-open ${isWideLayout ? 'route-detail-sheet--wide' : ''}`}
+            className={`route-detail-sheet is-open ${isWideLayout ? 'route-detail-sheet--wide' : ''}${detailClosing ? ' is-closing' : ''}`}
             role="dialog"
             aria-modal="true"
           >

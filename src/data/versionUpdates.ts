@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "修复从线路详情返回查询页后短暂无法点击或滚动的问题：关闭动画开始时即解除遮罩拦截与滚动锁定。",
+            en: "Fixed a freeze after closing route detail—the overlay no longer blocks clicks or scroll while the sheet animates out.",
+          },
+                    {
             zh: "面板样式透明度滑块拖动时，滑条上方实时显示当前不透明度百分比（25%～75%），并随拇指位置移动。",
             en: "The panel opacity slider now shows the current fill percentage (25%–75%) above the thumb in real time while you drag.",
           },
