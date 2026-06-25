@@ -15,7 +15,7 @@ export interface StartPageExternalLink {
 }
 
 const START_PAGE_WIKI_URL_ZH_HANT =
-  'https://roblox.fandom.com/zh/wiki/%E9%99%BD%E5%85%89%E7%BE%A4%E5%B3%B6%E5%B7%B4%E5%A3%AB?variant=zh-hk'
+  'https://roblox.fandom.com/zh/wiki/Sunshine_Islands_%E9%99%BD%E5%85%89%E7%BE%A4%E5%B3%B6'
 
 const START_PAGE_WIKI_URL_DEFAULT =
   'https://sunshine-islands-roblox.fandom.com/wiki/Sunshine_Islands_Bus_Simulator_Wiki'

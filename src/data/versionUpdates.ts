@@ -224,8 +224,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
-            zh: "开始页 Wiki 链接按语言切换：繁体中文指向 Roblox 中文 Wiki，其余语言指向英文 Fandom Wiki；社区站链接改为 sites.google.com/view/sunshine-islands。",
-            en: "Start page Wiki link now follows locale—Traditional Chinese opens the Roblox zh-HK wiki, all other languages the English Fandom wiki; community site URL updated to sites.google.com/view/sunshine-islands.",
+            zh: "开始页 Wiki 链接按语言切换：繁体中文指向 Roblox 中文 Wiki（Sunshine Islands 陽光群島），其余语言指向英文 Fandom Wiki；社区站链接改为 sites.google.com/view/sunshine-islands。",
+            en: "Start page Wiki link now follows locale—Traditional Chinese opens the Roblox zh wiki (Sunshine Islands 陽光群島), all other languages the English Fandom wiki; community site URL updated to sites.google.com/view/sunshine-islands.",
           },
                     {
             zh: "开始页主按钮改为「路线查询」与「更新日志」；下方栏目入口替换为 YouTube、Discord、Roblox、Facebook、Website、Wiki 外链按钮。",
