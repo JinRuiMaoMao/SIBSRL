@@ -18,7 +18,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-25'
+export const CURRENT_CHANGELOG_DATE = '2026-06-26'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -160,6 +160,66 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
+    id: "2026-06-26-summary",
+    date: "2026-06-26",
+    title:     {
+      zh: "2026-06-26 更新",
+      en: "2026-06-26 updates",
+    },
+    groups: [
+      {
+        title:         {
+          zh: "搜索与筛选",
+          en: "Search & filters",
+        },
+        additions:         [
+                    {
+            zh: "高级搜索现支持排除区域与运营商：-zone:3 / -z:3、-op:FT（或 -operator:）；类型仍可用 -night 或 -type:night。",
+            en: "Advanced search can exclude zones and operators: -zone:3 / -z:3, -op:FT (or -operator:); types still support -night or -type:night.",
+          },
+                    {
+            zh: "搜索框中的 zone:/op:/type: 及排除语法会同步反映到筛选菜单：正向筛选高亮强调色，排除项高亮红色。",
+            en: "zone:/op:/type: tokens and exclusions in the search box now mirror the filter menu—includes use the accent highlight, exclusions show in red.",
+          },
+        ],
+      },
+      {
+        title:         {
+          zh: "界面与主题",
+          en: "UI & themes",
+        },
+        fixes:         [
+                    {
+            zh: "收藏夹线路卡片同一行高度现对齐：拖拽外层参与网格拉伸，底部标签与运营商信息贴齐卡片底边。",
+            en: "Favorite route cards in the same row now share equal height—the drag wrapper stretches with the grid and bottom tags/operators align to the card foot.",
+          },
+        ],
+      },
+      {
+        title:         {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions:         [
+                    {
+            zh: "按 Discord「~June Daily Challenge~」全文重刷 2026 年 6 月社区日程（含 6/26、6/29 待公布空白）。",
+            en: "Refreshed the full June 2026 community schedule from Discord “~June Daily Challenge~” (6/26 and 6/29 left blank pending announcement).",
+          },
+                    {
+            zh: "同步 6/25 每日挑战：罕见外观 U47S（非竞速）。",
+            en: "Synced 6/25 daily challenge: Rare Appearance on U47S (non-race).",
+          },
+        ],
+        fixes:         [
+                    {
+            zh: "修正 6/13：夜间马拉松封路 N171EM（竞速）；6/18：大桥封路 Y370A；6/23：夜间马拉松封路 N171WM（原误为 N271S）。",
+            en: "Corrected 6/13 to Marathon Road Closure (N) N171EM (race), 6/18 Bridge Closure Y370A, and 6/23 Marathon Road Closure (N) N171WM (was wrongly N271S).",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "2026-06-25-summary",
     date: "2026-06-25",
     title:     {
@@ -232,28 +292,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "The update prompt and tab “!” badge now track the latest changelog entry id—auto-show once per release, then clear after dismissing the dialog or opening the updates page until the next entry.",
           },
         ],
-        fixes:         [
-                    {
-            zh: "收藏夹线路卡片同一行高度现对齐：拖拽外层参与网格拉伸，底部标签与运营商信息贴齐卡片底边。",
-            en: "Favorite route cards in the same row now share equal height—the drag wrapper stretches with the grid and bottom tags/operators align to the card foot.",
-          },
-        ],
-      },
-      {
-        title:         {
-          zh: "搜索与筛选",
-          en: "Search & filters",
-        },
-        additions:         [
-                    {
-            zh: "高级搜索现支持排除区域与运营商：-zone:3 / -z:3、-op:FT（或 -operator:）；类型仍可用 -night 或 -type:night。",
-            en: "Advanced search can exclude zones and operators: -zone:3 / -z:3, -op:FT (or -operator:); types still support -night or -type:night.",
-          },
-                    {
-            zh: "搜索框中的 zone:/op:/type: 及排除语法会同步反映到筛选菜单：正向筛选高亮强调色，排除项高亮红色。",
-            en: "zone:/op:/type: tokens and exclusions in the search box now mirror the filter menu—includes use the accent highlight, exclusions show in red.",
-          },
-        ],
       },
       {
         title:         {
@@ -272,28 +310,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
                     {
             zh: "当日新增与修复条数改显示在日期大标题右侧，格式为「本日新增 N 条 · Bug修复 N 条」。",
             en: "Per-day new and fix counts now sit to the right of the dated entry title as “Today: N new · N bug fixes”.",
-          },
-        ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "按 Discord「~June Daily Challenge~」全文重刷 2026 年 6 月社区日程（含 6/26、6/29 待公布空白）。",
-            en: "Refreshed the full June 2026 community schedule from Discord “~June Daily Challenge~” (6/26 and 6/29 left blank pending announcement).",
-          },
-                    {
-            zh: "同步 6/25 每日挑战：罕见外观 U47S（非竞速）。",
-            en: "Synced 6/25 daily challenge: Rare Appearance on U47S (non-race).",
-          },
-        ],
-        fixes:         [
-                    {
-            zh: "修正 6/13：夜间马拉松封路 N171EM（竞速）；6/18：大桥封路 Y370A；6/23：夜间马拉松封路 N171WM（原误为 N271S）。",
-            en: "Corrected 6/13 to Marathon Road Closure (N) N171EM (race), 6/18 Bridge Closure Y370A, and 6/23 Marathon Road Closure (N) N171WM (was wrongly N271S).",
           },
         ],
       },
