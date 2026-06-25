@@ -16,35 +16,22 @@ import {
   buildStopNameAudioManifest,
   STOP_NAME_AUDIO_PUBLIC,
 } from './build-stop-name-audio-manifest.mjs'
-
 import {
-  buildRouteN171StopAudioSlots,
-  loadN171StopGroups,
-  ROUTE_N171_ID,
-} from './lib/route-n171-audio-map.mjs'
-import { buildRouteN171AudioManifest } from './build-route-n171-audio-manifest.mjs'
+  buildRouteDirectionAudioSlots,
+  loadRouteStopGroups,
+} from './lib/route-direction-audio-map.mjs'
+import {
+  discoverDirectionAudioRouteIds,
+  resolveRouteSourceDir,
+} from './lib/discover-direction-audio-routes.mjs'
+import { buildRouteDirectionAudioManifest } from './build-route-direction-audio-manifest.mjs'
 
-/** 已录入线路报站音频的 routeId */
-export const ROUTE_BROADCAST_IDS = ['21A', '77XA', 'N171']
 const ROUTE_21A_ID = '21A'
 const ROUTE_77XA_ID = '77XA'
+const SPECIAL_ROUTE_IDS = [ROUTE_21A_ID, ROUTE_77XA_ID]
 
-function resolveRouteSourceDir(root, routeId) {
-  const candidates = [
-    routeId,
-    routeId.toUpperCase(),
-    routeId.toLowerCase(),
-    join('REBC', routeId),
-    join('线路', routeId),
-    routeId.replace(/A$/i, ''),
-    join('REBC', routeId.replace(/A$/i, '')),
-  ]
-  for (const name of candidates) {
-    const dir = join(root, name)
-    if (existsSync(dir)) return dir
-  }
-  return null
-}
+/** @deprecated Use discoverDirectionAudioRouteIds — kept for scripts that import this list. */
+export const ROUTE_BROADCAST_IDS = ['21A', '77XA', 'N171']
 
 function syncRoute21A(srcDir, destDir) {
   const sourceFiles = readdirSync(srcDir).filter((f) => f.toLowerCase().endsWith('.mp3'))
@@ -74,10 +61,11 @@ function syncRoute77XA(srcDir, destDir) {
   return { copied, slots, sourceCount: sourceFiles.length }
 }
 
-function syncRouteN171(srcDir, destDir) {
+/** @param {string} routeId @param {string} srcDir @param {string} destDir */
+function syncRouteDirectionAudio(routeId, srcDir, destDir) {
   const sourceFiles = readdirSync(srcDir).filter((f) => f.toLowerCase().endsWith('.mp3'))
-  const groups = loadN171StopGroups()
-  const slots = buildRouteN171StopAudioSlots(sourceFiles)
+  const groups = loadRouteStopGroups(routeId) ?? []
+  const slots = buildRouteDirectionAudioSlots(routeId, sourceFiles)
   rmSync(destDir, { recursive: true, force: true })
   mkdirSync(destDir, { recursive: true })
 
@@ -129,7 +117,11 @@ function syncAlightingReminder(root) {
 
 export function syncRouteBroadcastAudio(options = {}) {
   const root = options.root ?? findSibsAudioRoot()
-  const routeIds = options.routeIds ?? ROUTE_BROADCAST_IDS
+  const directionRouteIds = root
+    ? discoverDirectionAudioRouteIds(root, { exclude: SPECIAL_ROUTE_IDS })
+    : []
+  const routeIds =
+    options.routeIds ?? [...SPECIAL_ROUTE_IDS, ...directionRouteIds]
   const results = []
 
   if (!root) {
@@ -182,12 +174,12 @@ export function syncRouteBroadcastAudio(options = {}) {
         }
       }
       results.push({ routeId, srcDir, destDir, count: copied, slots })
-    } else if (routeId === ROUTE_N171_ID) {
-      const { copied, slots, sourceCount, groups } = syncRouteN171(srcDir, destDir)
+    } else if (directionRouteIds.includes(routeId) || routeId === 'N171') {
+      const { copied, slots, sourceCount, groups } = syncRouteDirectionAudio(routeId, srcDir, destDir)
       if (sourceCount === 0) {
         console.warn(`${routeId} 报站：源目录为空（${srcDir}），请先放入 MP3`)
       } else {
-        console.log(`${routeId} 报站：${copied} 个（文件名=当前站，内容报下一站）→ ${destDir}`)
+        console.log(`${routeId} 报站：${copied} 个（分方向，文件名=当前站）→ ${destDir}`)
         for (const s of slots) {
           const group = groups.find((g) => g.directionGroupIndex === s.directionGroupIndex)
           const atStop = group?.list[s.atStopIndex]
@@ -198,12 +190,13 @@ export function syncRouteBroadcastAudio(options = {}) {
           )
         }
       }
-      buildRouteN171AudioManifest()
       results.push({ routeId, srcDir, destDir, count: copied, slots })
     } else {
       results.push({ routeId, srcDir, destDir, count: 0 })
     }
   }
+
+  buildRouteDirectionAudioManifest()
 
   return results
 }

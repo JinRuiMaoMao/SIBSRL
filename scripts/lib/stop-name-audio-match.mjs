@@ -108,7 +108,10 @@ function directionTagMatches(directionTag, directionKey) {
 /** @param {string} filename */
 export function parseMp3StopHint(filename) {
   const stem = filename.replace(/\.mp3$/i, '')
-  let body = stem.replace(/^\d+[A-Za-z#%*]*路/, '').replace(/^77XA/i, '').replace(/^N171\s*/i, '').trim()
+  let body = stem
+    .replace(/^\d+[A-Za-z#%*]*路/, '')
+    .replace(/^[A-Z]?\d+[A-Za-z#%*]*/i, '')
+    .trim()
 
   if (!body) return null
   if (ALIGHTING_HINTS.some((hint) => body.includes(hint))) {

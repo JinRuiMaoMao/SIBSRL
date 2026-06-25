@@ -8,9 +8,14 @@ import {
   passIndexForNextStop,
 } from './stopNameAudioManifest'
 import type { RouteStopAudioAtRow } from './routeStopAudio21A'
+import { getRoute21AStopAudioByAtIndex, ROUTE_21A_ID } from './routeStopAudio21A'
 import { getRoute77XAStopAudioByAtIndex, ROUTE_77XA_ID } from './routeStopAudio77XA'
-import { getRouteN171StopAudioByAtIndex, ROUTE_N171_ID } from './routeStopAudioN171'
+import {
+  getRouteDirectionStopAudioByAtIndex,
+  ROUTE_DIRECTION_AUDIO_ROUTE_IDS,
+} from './routeStopAudioByDirection.generated'
 import { passIndexForStopNamePool } from '../utils/stopNameAudioMatch'
+import { borrowRouteStopAudioAtRow } from '../utils/borrowRouteStopAudio'
 
 const ROUTE_ID_ALIASES: Record<string, string> = {
   '21': '21A',
@@ -21,11 +26,34 @@ function resolveRouteDataId(routeId: string): string {
   return ROUTE_ID_ALIASES[routeId] ?? routeId
 }
 
+function routeHasMultipleDirections(routeId: string): boolean {
+  const dataId = resolveRouteDataId(routeId)
+  const route = routes.find((r) => r.id === dataId)
+  return (route?.stops?.length ?? 0) > 1
+}
+
+function getRoute21AStopAudio(routeId: string, atStopIndex: number): RouteStopAudioAtRow | undefined {
+  if (resolveRouteDataId(routeId) !== ROUTE_21A_ID) return undefined
+  return getRoute21AStopAudioByAtIndex()?.get(atStopIndex)
+}
+
 function getRoute77XAStopAudio(routeId: string, atStopIndex: number): RouteStopAudioAtRow | undefined {
   if (routeId === ROUTE_77XA_ID || routeId === '77X') {
     return getRoute77XAStopAudioByAtIndex()?.get(atStopIndex)
   }
   return undefined
+}
+
+function getDirectionSyncedStopAudio(
+  routeId: string,
+  atStopIndex: number,
+  directionGroupIndex: number,
+): RouteStopAudioAtRow | undefined {
+  const dataId = resolveRouteDataId(routeId)
+  if (!(ROUTE_DIRECTION_AUDIO_ROUTE_IDS as readonly string[]).includes(dataId)) {
+    return undefined
+  }
+  return getRouteDirectionStopAudioByAtIndex(dataId, directionGroupIndex)?.get(atStopIndex)
 }
 
 function getNextStopNamePoolAudio(
@@ -60,15 +88,6 @@ function getNextStopNamePoolAudio(
   }
 }
 
-function getRouteN171StopAudio(
-  routeId: string,
-  atStopIndex: number,
-  directionGroupIndex: number,
-): RouteStopAudioAtRow | undefined {
-  if (routeId !== ROUTE_N171_ID) return undefined
-  return getRouteN171StopAudioByAtIndex(directionGroupIndex)?.get(atStopIndex)
-}
-
 export function getRouteStopAudioAtRow(
   routeId: string,
   atStopIndex: number,
@@ -84,10 +103,16 @@ export function getRouteStopAudioAtRow(
     }
   }
 
+  const dataId = resolveRouteDataId(routeId)
+
   return (
-    getRouteN171StopAudio(routeId, atStopIndex, directionGroupIndex) ??
+    getDirectionSyncedStopAudio(dataId, atStopIndex, directionGroupIndex) ??
+    getRoute21AStopAudio(dataId, atStopIndex) ??
     getRoute77XAStopAudio(routeId, atStopIndex) ??
-    getNextStopNamePoolAudio(routeId, atStopIndex, directionGroupIndex, length)
+    borrowRouteStopAudioAtRow(dataId, atStopIndex, directionGroupIndex) ??
+    (routeHasMultipleDirections(dataId)
+      ? undefined
+      : getNextStopNamePoolAudio(dataId, atStopIndex, directionGroupIndex, length))
   )
 }
 
@@ -96,8 +121,24 @@ export function routeHasStopAudio(routeId: string): boolean {
   const route = routes.find((r) => r.id === dataId)
   if (!route?.stops?.length) return false
 
+  if (getRoute21AStopAudioByAtIndex()?.size) {
+    if (dataId === ROUTE_21A_ID) return true
+  }
   if (getRoute77XAStopAudio(routeId, 0)) return true
-  if (getRouteN171StopAudioByAtIndex(0)?.size) return true
+
+  if ((ROUTE_DIRECTION_AUDIO_ROUTE_IDS as readonly string[]).includes(dataId)) {
+    return route.stops.some(
+      (_, groupIndex) => (getRouteDirectionStopAudioByAtIndex(dataId, groupIndex)?.size ?? 0) > 0,
+    )
+  }
+
+  if (routeHasMultipleDirections(dataId)) {
+    return route.stops.some((group, groupIndex) =>
+      group.list.some(
+        (_, at) => borrowRouteStopAudioAtRow(dataId, at, groupIndex) != null,
+      ),
+    )
+  }
 
   return route.stops.some((group) => group.list.length > 0)
 }
