@@ -31,9 +31,10 @@ function notifyUpdatesViewingChanged(): void {
   window.dispatchEvent(new CustomEvent(UPDATES_VIEWING_CHANGED_EVENT))
 }
 
-export function markUpdateSeen(updateId: string): void {
+/** 已读标记：完整 prompt key（id#内容指纹）。 */
+export function markUpdateSeen(promptKey: string): void {
   try {
-    localStorage.setItem(UPDATES_LAST_SEEN_ID_KEY, updateId)
+    localStorage.setItem(UPDATES_LAST_SEEN_ID_KEY, promptKey)
     localStorage.removeItem(LEGACY_UPDATES_LOG_VIEWED_KEY)
     localStorage.removeItem(LEGACY_UPDATES_PROMPT_SHOWN_KEY)
     notifyUpdatesViewingChanged()
@@ -54,6 +55,6 @@ export function clearUpdatesPromptSeen(): void {
 }
 
 /** 打开完整更新页时标记已读 */
-export function markUpdatesLogViewed(updateId: string): void {
-  markUpdateSeen(updateId)
+export function markUpdatesLogViewed(promptKey: string): void {
+  markUpdateSeen(promptKey)
 }

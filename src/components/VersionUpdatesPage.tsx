@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { countChangelogEntries } from '../data/changelogStructure'
-import { getLatestUpdateId, versionUpdates } from '../data/versionUpdates'
+import { getLatestUpdatePromptKey, versionUpdates } from '../data/versionUpdates'
 import { useLocale } from '../i18n/LocaleContext'
 import { markUpdatesLogViewed } from '../storage/updatesViewing'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
@@ -13,8 +13,8 @@ export function VersionUpdatesPage() {
   const allTotals = countChangelogEntries(versionUpdates)
 
   useEffect(() => {
-    const latestUpdateId = getLatestUpdateId()
-    if (latestUpdateId) markUpdatesLogViewed(latestUpdateId)
+    const latestPromptKey = getLatestUpdatePromptKey()
+    if (latestPromptKey) markUpdatesLogViewed(latestPromptKey)
   }, [])
 
   return (

@@ -12,9 +12,11 @@ export function getLatestUpdateId(): string | undefined {
   return versionUpdates[0]?.id
 }
 
-/** 弹窗 / 角标已读标记：以最新更新条目 id 为准，同日追加内容不再重复弹出。 */
+/** 弹窗 / 角标已读标记：最新条目 id + 内容指纹，同日追加内容会再次弹出。 */
 export function getLatestUpdatePromptKey(): string | undefined {
-  return getLatestUpdateId()
+  const entry = versionUpdates[0]
+  if (!entry) return undefined
+  return `${entry.id}#${computeUpdateContentFingerprint(entry)}`
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
@@ -221,6 +223,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "UI & themes",
         },
         fixes:         [
+                    {
+            zh: "修复同日追加更新日志后弹窗不再出现的问题：已读标记恢复为条目 id + 内容指纹。",
+            en: "Fixed the updates prompt not reappearing after same-day changelog additions—seen state again tracks id plus content fingerprint.",
+          },
                     {
             zh: "设置内「面板样式」改为滑块：左滑透明、右滑实心，仅调节面板不透明度；各栏目背景渐变与卡片描边保持不变。",
             en: "Panel style in Settings is now a slider—left for transparent, right for solid—adjusting only panel opacity while page gradients and card borders stay unchanged.",
@@ -2135,5 +2141,23 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
 export const versionUpdates = mergeVersionUpdatesByDate(versionUpdatesRaw)
   .filter(entryHasContent)
   .map(normalizeChangelogEntry)
+
+function computeUpdateContentFingerprint(entry: VersionUpdateEntry): string {
+  const parts: string[] = [entry.title.zh, entry.title.en]
+  for (const group of entry.groups ?? []) {
+    parts.push(group.title.zh, group.title.en)
+    for (const item of group.additions ?? []) parts.push(item.zh, item.en)
+    for (const item of group.fixes ?? []) parts.push(item.zh, item.en)
+    for (const item of group.items ?? []) parts.push(item.zh, item.en)
+  }
+  for (const item of entry.items ?? []) parts.push(item.zh, item.en)
+
+  let hash = 0
+  const text = parts.join('\0')
+  for (let index = 0; index < text.length; index += 1) {
+    hash = (hash * 31 + text.charCodeAt(index)) | 0
+  }
+  return Math.abs(hash).toString(36)
+}
 
 export { versionUpdatesRaw }
