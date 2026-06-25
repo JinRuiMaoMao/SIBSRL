@@ -222,6 +222,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "个人中心上传头像后不再撑满卡片宽度，头像固定为小圆形容器（约 3rem）显示。",
+            en: "Uploaded avatars on the account page no longer stretch to full card width—they stay in a small circular frame (~3rem).",
+          },
+                    {
             zh: "收藏夹线路卡片同一行高度现对齐：拖拽外层参与网格拉伸，底部标签与运营商信息贴齐卡片底边。",
             en: "Favorite route cards in the same row now share equal height—the drag wrapper stretches with the grid and bottom tags/operators align to the card foot.",
           },
