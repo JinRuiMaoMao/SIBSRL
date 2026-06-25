@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "秘密线路页路线详情与主列表一致：打开时渐隐顶栏与列表仅留背景，关闭时即时恢复交互。",
+            en: "Secret route detail now matches the main routes page—chrome fades out on open with only the background left, and interaction restores immediately on close.",
+          },
+                    {
             zh: "修复开始页（index.html）浏览器标签误显示为「线路查询 / Routes」的问题，现独立为「阳光群岛巴士线路查询 / Sunshine Islands Bus Lookup」。",
             en: "Fixed the start page (index.html) tab title showing Routes—it now reads Sunshine Islands Bus Lookup (阳光群岛巴士线路查询 in Chinese).",
           },

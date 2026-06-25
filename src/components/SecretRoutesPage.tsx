@@ -47,6 +47,7 @@ export function SecretRoutesPage() {
   const [selectedRoute, setSelectedRoute] = useState<BusRoute | null>(null)
   const [directionByRoute, setDirectionByRoute] = useState<Record<string, number>>({})
   const [notFoundRouteId, setNotFoundRouteId] = useState<string | null>(null)
+  const [detailClosing, setDetailClosing] = useState(false)
 
   const sheetRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
@@ -55,6 +56,7 @@ export function SecretRoutesPage() {
   const animGenerationRef = useRef(0)
 
   const detailOpen = selectedRoute != null || notFoundRouteId != null
+  const detailChromeHidden = detailOpen && !detailClosing
   const activeOverlayKey = selectedRoute?.id ?? (notFoundRouteId ? `nf-${notFoundRouteId}` : null)
 
   const getDirectionIndex = useCallback(
@@ -74,6 +76,7 @@ export function SecretRoutesPage() {
   const finishDetailClose = useCallback(() => {
     cancelAnimations(openAnimsRef.current)
     cancelAnimations(closeAnimsRef.current)
+    setDetailClosing(false)
     setSelectedRoute(null)
     setNotFoundRouteId(null)
     clearRouteFromLocation()
@@ -147,11 +150,27 @@ export function SecretRoutesPage() {
   }, [activeOverlayKey, detailOpen, isWideLayout])
 
   useEffect(() => {
-    if (!detailOpen) return
+    if (!detailOpen || detailClosing) return
     return lockPageScroll()
+  }, [detailOpen, detailClosing])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('route-detail-open', detailChromeHidden)
+    return () => {
+      document.documentElement.classList.remove('route-detail-open')
+    }
+  }, [detailChromeHidden])
+
+  useEffect(() => {
+    if (!detailOpen) {
+      setDetailClosing(false)
+    }
   }, [detailOpen])
 
   const handleCloseDetail = () => {
+    if (!detailOpen || detailClosing) return
+    setDetailClosing(true)
+
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
     if (!sheet) {
@@ -230,13 +249,13 @@ export function SecretRoutesPage() {
           <button
             ref={backdropRef}
             type="button"
-            className="route-detail-backdrop is-visible"
+            className={`route-detail-backdrop is-visible${detailClosing ? ' is-closing' : ''}`}
             aria-label={t('closeDetail')}
             onClick={handleCloseDetail}
           />
           <div
             ref={sheetRef}
-            className={`route-detail-sheet is-open ${isWideLayout ? 'route-detail-sheet--wide' : ''}`}
+            className={`route-detail-sheet is-open ${isWideLayout ? 'route-detail-sheet--wide' : ''}${detailClosing ? ' is-closing' : ''}`}
             role="dialog"
             aria-modal="true"
           >

@@ -4734,6 +4734,7 @@ html[data-reduce-motion='true'] {
 html:not([data-reduce-motion='true']) .site-footer,
 html:not([data-reduce-motion='true']) .route-lookup-sticky,
 html:not([data-reduce-motion='true']) .content-layout,
+html:not([data-reduce-motion='true']) .secret-page-intro,
 html:not([data-reduce-motion='true']) .app-tab-bar-shell {
   transition: opacity var(--route-detail-chrome-dur) var(--route-detail-chrome-easing);
 }
@@ -4742,6 +4743,7 @@ html.route-detail-open .site-header-shell,
 html.route-detail-open .site-footer,
 html.route-detail-open .route-lookup-sticky,
 html.route-detail-open .content-layout,
+html.route-detail-open .secret-page-intro,
 html.route-detail-open .app-tab-bar-shell {
   opacity: 0;
   pointer-events: none;
