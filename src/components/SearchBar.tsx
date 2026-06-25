@@ -1,11 +1,12 @@
-import { useMemo, useState, type RefObject } from 'react'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import {
-  getRouteSearchSuggestions,
-  isRouteSearchSuggestionActive,
-  parseRouteNumberPatternQuery,
-} from '../utils/routeSearchQuery'
+  applySearchCompletion,
+  getSearchCompletions,
+  isSearchCompletionActive,
+  type SearchCompletion,
+} from '../utils/searchCompletions'
 
 interface SearchBarProps {
   value: string
@@ -26,15 +27,19 @@ interface SearchBarProps {
   dataTour?: string
 }
 
-function suggestionLabel(suggestion: string, t: (key: MessageKey, vars?: Record<string, string | number>) => string): string {
-  const pattern = parseRouteNumberPatternQuery(suggestion)
-  if (pattern?.kind === 'prefix') {
-    return t('searchSuggestionPrefix', { value: pattern.value })
+function resolveCompletionDescription(
+  completion: SearchCompletion,
+  t: (key: MessageKey, vars?: Record<string, string | number>) => string,
+): string {
+  if (!completion.descriptionKey) return completion.replacement
+
+  const vars: Record<string, string | number> = { ...completion.descriptionVars }
+  if (typeof vars.nameKey === 'string') {
+    vars.name = t(vars.nameKey as MessageKey)
+    delete vars.nameKey
   }
-  if (pattern?.kind === 'suffix') {
-    return t('searchSuggestionSuffix', { value: pattern.value })
-  }
-  return suggestion
+
+  return t(completion.descriptionKey, vars)
 }
 
 export function SearchBar({
@@ -57,8 +62,25 @@ export function SearchBar({
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
-  const suggestions = useMemo(() => getRouteSearchSuggestions(value), [value])
+  const [tabCycleIndex, setTabCycleIndex] = useState(-1)
+  const tabApplyingRef = useRef(false)
+  const completions = useMemo(() => getSearchCompletions(value), [value])
+  const completionSignature = useMemo(
+    () => completions.map((item) => item.replacement).join('\0'),
+    [completions],
+  )
   const showHistory = focused && !value.trim() && searchHistory.length > 0
+  const showCompletions = focused && value.trim().length > 0 && completions.length > 0
+
+  useEffect(() => {
+    setTabCycleIndex(-1)
+  }, [completionSignature])
+
+  const applyCompletion = (completion: SearchCompletion, index: number) => {
+    tabApplyingRef.current = true
+    setTabCycleIndex(index)
+    onChange(applySearchCompletion(value, completion))
+  }
 
   return (
     <div className="search-bar-wrap">
@@ -75,10 +97,41 @@ export function SearchBar({
           type="search"
           placeholder={t(placeholderKey)}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            if (!tabApplyingRef.current) {
+              setTabCycleIndex(-1)
+            }
+            tabApplyingRef.current = false
+            onChange(e.target.value)
+          }}
           onFocus={() => setFocused(true)}
           onBlur={() => window.setTimeout(() => setFocused(false), 120)}
           onKeyDown={(e) => {
+            if (e.key === 'Tab' && showCompletions) {
+              e.preventDefault()
+              const next = (tabCycleIndex + 1) % completions.length
+              applyCompletion(completions[next]!, next)
+              return
+            }
+
+            if (e.key === 'ArrowDown' && showCompletions) {
+              e.preventDefault()
+              const next =
+                tabCycleIndex < 0 ? 0 : Math.min(completions.length - 1, tabCycleIndex + 1)
+              setTabCycleIndex(next)
+              return
+            }
+
+            if (e.key === 'ArrowUp' && showCompletions) {
+              e.preventDefault()
+              const next =
+                tabCycleIndex < 0
+                  ? completions.length - 1
+                  : Math.max(0, tabCycleIndex - 1)
+              setTabCycleIndex(next)
+              return
+            }
+
             if (e.key === 'Enter') {
               e.preventDefault()
               onSearchCommit?.()
@@ -86,27 +139,45 @@ export function SearchBar({
           }}
           autoComplete="off"
           spellCheck={false}
+          role="combobox"
+          aria-expanded={showCompletions}
+          aria-controls={showCompletions ? `${id}-completions` : undefined}
+          aria-autocomplete="list"
+          aria-activedescendant={
+            showCompletions && tabCycleIndex >= 0
+              ? `${id}-completion-${tabCycleIndex}`
+              : undefined
+          }
         />
         <span className="search-meta" aria-live="polite">
           {t('routeCount', { count: resultCount, total: totalCount })}
         </span>
       </div>
 
-      {suggestions.length > 0 ? (
-        <div className="search-suggestions" role="listbox" aria-label={t('searchLabel')}>
-          {suggestions.map((suggestion) => {
-            const active = isRouteSearchSuggestionActive(suggestion, value)
+      {showCompletions ? (
+        <div
+          id={`${id}-completions`}
+          className="search-completion-panel"
+          role="listbox"
+          aria-label={t('searchCompletionPanelLabel')}
+        >
+          {completions.map((completion, index) => {
+            const active = isSearchCompletionActive(completion, value, tabCycleIndex, index)
             return (
               <button
-                key={suggestion}
+                key={`${completion.kind}-${completion.replacement}`}
+                id={`${id}-completion-${index}`}
                 type="button"
                 role="option"
                 aria-selected={active}
-                className={`search-suggestion-chip ${active ? 'active' : ''}`}
-                onClick={() => onChange(suggestion)}
+                className={`search-completion-option ${active ? 'active' : ''}`}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => applyCompletion(completion, index)}
               >
-                <code className="search-suggestion-code">{suggestion}</code>
-                <span className="search-suggestion-desc">{suggestionLabel(suggestion, t)}</span>
+                <code className="search-completion-code">{completion.replacement}</code>
+                <span className="search-completion-desc">
+                  {resolveCompletionDescription(completion, t)}
+                </span>
               </button>
             )
           })}

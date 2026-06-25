@@ -174,6 +174,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
+            zh: "搜索框新增补全面板：输入线路号或筛选语法时列出相似线路与 zone/op/type 等筛选建议，Tab 循环应用，↑↓ 高亮选项。",
+            en: "Search now shows a completion panel for similar route numbers and filter tokens (zone/op/type, etc.); Tab cycles through applies, ↑↓ highlights options.",
+          },
+                    {
             zh: "高级搜索现支持排除区域与运营商：-zone 3 / -z 3、-FT 等（无需 op: 或冒号）；类型仍可用 -night。",
             en: "Advanced search can exclude zones and operators with -zone 3 / -z 3, -FT, etc. (no op: or colons); types still use -night.",
           },

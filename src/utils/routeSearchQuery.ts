@@ -10,7 +10,7 @@ import {
 } from './routeMerge'
 
 /** 线路编号可用字符（含 476#、U47* 等） */
-const ROUTE_NUMBER_TOKEN = /^[0-9A-Za-z#*%]+$/
+export const ROUTE_NUMBER_TOKEN = /^[0-9A-Za-z#*%]+$/
 
 export type RouteNumberPattern =
   | { kind: 'prefix'; value: string }
