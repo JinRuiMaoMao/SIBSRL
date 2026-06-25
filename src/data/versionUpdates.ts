@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "面板样式滑块现全局生效：线路夹、音频/广播卡片、收藏分类、线路详情、底栏浮层等均随滑块调节不透明度；弹窗仍固定 ≥75% 不透明。",
+            en: "Panel style slider now applies globally—route folders, audio/broadcast cards, favorite tabs, route detail sheets, tab bar float, etc. follow the slider; popups stay fixed at ≥75% opaque.",
+          },
+                    {
             zh: "面板样式滑块范围改为 25%（左）～ 75%（右）不透明，不再拉至 100%。",
             en: "Panel style slider now ranges from 25% opaque (left) to 75% opaque (right), no longer up to 100%.",
           },

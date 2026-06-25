@@ -1223,16 +1223,16 @@ html[data-reduce-motion='true'] .app-tab-bar--liquid.app-tab-bar--desktop {
   transition: opacity 0.22s ease;
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 82%, transparent),
+    color-mix(in srgb, var(--bg-surface) 88%, transparent),
     transparent
   );
 }
 
 .route-lookup-sticky--fade {
-  --route-sticky-scrim-top: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 94%, transparent);
-  --route-sticky-scrim-mid: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 88%, transparent);
-  --route-sticky-scrim-bottom: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 68%, transparent);
-  --route-sticky-mask-edge: color-mix(in srgb, var(--panel-base-surface, var(--bg-deep)) 84%, transparent);
+  --route-sticky-scrim-top: var(--bg-surface);
+  --route-sticky-scrim-mid: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  --route-sticky-scrim-bottom: color-mix(in srgb, var(--bg-surface) 52%, transparent);
+  --route-sticky-mask-edge: color-mix(in srgb, var(--bg-surface) 72%, transparent);
   background: linear-gradient(
     to bottom,
     var(--route-sticky-scrim-top) 0%,
@@ -1241,13 +1241,6 @@ html[data-reduce-motion='true'] .app-tab-bar--liquid.app-tab-bar--desktop {
   );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-}
-
-html[data-theme='light'] .route-lookup-sticky--fade {
-  --route-sticky-scrim-top: color-mix(in srgb, var(--panel-base-surface) 94%, #ffffff);
-  --route-sticky-scrim-mid: color-mix(in srgb, var(--panel-base-surface) 90%, #ffffff);
-  --route-sticky-scrim-bottom: color-mix(in srgb, var(--panel-base-surface) 76%, #ffffff);
-  --route-sticky-mask-edge: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
 }
 
 .route-lookup-sticky--fade::after {

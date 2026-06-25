@@ -20,25 +20,24 @@
   --scrollbar-thumb: rgba(245, 185, 66, 0.45);
   --scrollbar-thumb-hover: rgba(245, 185, 66, 0.72);
   --scrollbar-thumb-active: #f5b942;
-  /* 弹窗：面板与遮罩统一 ≥75% 不透明 */
-  --popup-bg: var(--bg-surface);
-  --popup-bg-deep: var(--bg-deep);
+  /* 弹窗：固定高不透明，不随面板样式滑块变化 */
+  --popup-fill: 92%;
   --popup-backdrop: rgba(8, 12, 22, 0.78);
   /* 副站名：强调色 + 冷色混色，与主站名、次要文案区分 */
   --stop-name-sub: color-mix(in srgb, var(--accent) 42%, #9fd4f7);
 }
 
 html {
-  --bg-deep: color-mix(in srgb, var(--panel-base-deep) var(--panel-fill), transparent);
-  --bg-surface: color-mix(in srgb, var(--panel-base-surface) var(--panel-fill), transparent);
-  --bg-elevated: color-mix(in srgb, var(--panel-base-elevated) var(--panel-fill), transparent);
-  --bg-card: color-mix(in srgb, var(--panel-base-card) var(--panel-fill), transparent);
-  /* 全屏详情页需更不透明，避免站序等内容透出底层渐变 */
-  --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 92%, transparent);
-  --route-detail-surface: color-mix(in srgb, var(--panel-base-surface) 92%, transparent);
-  --popup-bg: var(--route-detail-surface);
-  --popup-bg-deep: var(--route-detail-bg);
-  --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 35%), transparent);
+  --panel-fill-blend: transparent;
+  --bg-deep: color-mix(in srgb, var(--panel-base-deep) var(--panel-fill), var(--panel-fill-blend));
+  --bg-surface: color-mix(in srgb, var(--panel-base-surface) var(--panel-fill), var(--panel-fill-blend));
+  --bg-elevated: color-mix(in srgb, var(--panel-base-elevated) var(--panel-fill), var(--panel-fill-blend));
+  --bg-card: color-mix(in srgb, var(--panel-base-card) var(--panel-fill), var(--panel-fill-blend));
+  --route-detail-bg: var(--bg-deep);
+  --route-detail-surface: var(--bg-surface);
+  --popup-bg: color-mix(in srgb, var(--panel-base-surface) var(--popup-fill), var(--panel-fill-blend));
+  --popup-bg-deep: color-mix(in srgb, var(--panel-base-deep) var(--popup-fill), var(--panel-fill-blend));
+  --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 35%), var(--panel-fill-blend));
   --route-card-promoted-bg: var(--bg-card);
   --route-card-promoted-border: color-mix(in srgb, var(--accent) 55%, var(--border));
   --route-card-promoted-border-width: 1px;
@@ -50,17 +49,13 @@ html {
   --route-card-promoted-shadow-selected:
     0 0 0 1px color-mix(in srgb, var(--accent) 65%, transparent), 0 8px 24px var(--accent-soft);
   --route-card-promoted-border-muted: color-mix(in srgb, var(--accent) 28%, var(--border));
-  --route-card-promoted-bg-muted: color-mix(in srgb, var(--bg-card) 60%, transparent);
-  --bg-float: color-mix(in srgb, var(--panel-base-deep) 85%, transparent);
+  --route-card-promoted-bg-muted: var(--bg-surface);
+  --bg-float: color-mix(in srgb, var(--panel-base-deep) calc(var(--panel-fill) + 10%), var(--panel-fill-blend));
 }
 
 html[data-theme='light'] {
-  /* 浅色：与 transparent 混色几乎看不见，改与白色混出不透明浮层（≥75% 实感） */
-  --bg-float: color-mix(in srgb, var(--panel-base-surface) 88%, #ffffff);
-  --route-detail-bg: color-mix(in srgb, var(--panel-base-deep) 94%, #ffffff);
-  --route-detail-surface: color-mix(in srgb, var(--panel-base-surface) 94%, #ffffff);
-  --popup-bg: var(--route-detail-surface);
-  --popup-bg-deep: var(--route-detail-bg);
+  --panel-fill-blend: #ffffff;
+  --popup-fill: 94%;
   --popup-backdrop: rgba(24, 32, 44, 0.78);
 }
 
@@ -81,7 +76,7 @@ html[data-theme='light'] {
 }
 
 html[data-theme='light'] {
-  --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 45%), transparent);
+  --header-shell-bg: color-mix(in srgb, var(--panel-base-surface) calc(var(--panel-fill) + 45%), var(--panel-fill-blend));
   --route-card-promoted-border-width: 1.5px;
   --route-card-promoted-shadow:
     0 1px 0 color-mix(in srgb, var(--accent) 22%, transparent),
@@ -94,7 +89,7 @@ html[data-theme='light'] {
     0 0 0 2px color-mix(in srgb, var(--accent) 42%, transparent),
     0 8px 26px color-mix(in srgb, var(--accent-glow) 85%, transparent);
   --route-card-promoted-border-muted: color-mix(in srgb, var(--accent) 45%, var(--border));
-  --route-card-promoted-bg-muted: color-mix(in srgb, var(--bg-card) 55%, transparent);
+  --route-card-promoted-bg-muted: var(--bg-surface);
 }
 
 [data-theme='light'] html {
