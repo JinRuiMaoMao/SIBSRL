@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "全站主内容区滚动时，列表卡片、区块标题与设置项等以渐入上滑动画进入视野；开启「减少动态效果」时自动跳过动画。",
+            en: "Scrolling any main page now reveals list cards, section blocks, and settings fields with a fade-up animation; Reduce motion skips the effect.",
+          },
+                    {
             zh: "修复从线路详情返回查询页后短暂无法点击或滚动的问题：关闭动画开始时即解除遮罩拦截与滚动锁定。",
             en: "Fixed a freeze after closing route detail—the overlay no longer blocks clicks or scroll while the sheet animates out.",
           },

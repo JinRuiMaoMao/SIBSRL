@@ -1,4 +1,5 @@
 @import './styles/liquidGlassTabBar.css';
+@import './styles/scrollReveal.css';
 
 .app {
   min-height: 100vh;

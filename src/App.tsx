@@ -13,6 +13,8 @@ import { SecretHeader } from './components/SecretHeader'
 import { MusicPage } from './components/MusicPage'
 import { TriviaPage } from './components/TriviaPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
+import { ScrollRevealScope } from './components/ScrollRevealScope'
+import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
@@ -196,11 +198,11 @@ function App() {
             onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
           />
 
-          <main className="main">
+          <ScrollRevealScope className="main">
             <ErrorBoundary>
               <SettingsPage />
             </ErrorBoundary>
-          </main>
+          </ScrollRevealScope>
 
           <footer className="site-footer">
             <p>
@@ -235,11 +237,11 @@ function App() {
           onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
         />
 
-        <main className="main">
+        <ScrollRevealScope className="main">
           <ErrorBoundary>
             <AccountPage />
           </ErrorBoundary>
-        </main>
+        </ScrollRevealScope>
 
         <footer className="site-footer">
           <p>
@@ -278,11 +280,11 @@ function App() {
           onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
         />
 
-        <main className="main">
+        <ScrollRevealScope className="main">
           <ErrorBoundary>
             <SecretRoutesPage />
           </ErrorBoundary>
-        </main>
+        </ScrollRevealScope>
 
         <footer className="site-footer">
           <p className="build-tag" title={t('buildTagHint')}>
@@ -321,7 +323,7 @@ function App() {
         </>
       ) : null}
 
-      <main className="main">
+      <ScrollRevealScope className="main">
         <ErrorBoundary>
           {activeTab === 'routes' ? (
             <RouteLookupPage
@@ -341,7 +343,7 @@ function App() {
             <VersionUpdatesPage />
           )}
         </ErrorBoundary>
-      </main>
+      </ScrollRevealScope>
 
       <footer className="site-footer">
         <p>

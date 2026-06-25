@@ -1,0 +1,32 @@
+html {
+  --scroll-reveal-duration: 0.5s;
+  --scroll-reveal-easing: cubic-bezier(0.32, 0.72, 0, 1);
+  --scroll-reveal-distance: 1rem;
+}
+
+html[data-reduce-motion='true'] {
+  --scroll-reveal-duration: 0.2s;
+  --scroll-reveal-distance: 0;
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--scroll-reveal-distance), 0);
+  transition:
+    opacity var(--scroll-reveal-duration) var(--scroll-reveal-easing),
+    transform var(--scroll-reveal-duration) var(--scroll-reveal-easing);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+html[data-reduce-motion='true'] .scroll-reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  will-change: auto;
+}
