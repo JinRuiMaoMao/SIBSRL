@@ -30,6 +30,18 @@ export function routeMatchesFilters(route: BusRoute, filters: RouteFilters): boo
     if (route.category === excluded) return false
   }
 
+  for (const excludedZone of structured.excludeZones) {
+    if (route.zones.includes(excludedZone)) return false
+  }
+
+  for (const excludedOperator of structured.excludeOperators) {
+    if (
+      route.operators.some((o) => o.toLowerCase() === excludedOperator.toLowerCase())
+    ) {
+      return false
+    }
+  }
+
   if (structured.level != null) {
     if (route.levelRequired !== structured.level) return false
   }

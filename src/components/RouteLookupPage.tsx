@@ -42,7 +42,7 @@ import { getPrimaryText } from '../i18n/displayText'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { isChineseLocale } from '../i18n/types'
-import type { BusRoute } from '../types/route'
+import type { BusRoute, RouteTypeFilter } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { loadRoutePageData } from '../utils/loadRoutePageData'
 import { lockPageScroll } from '../utils/pageScrollLock'
@@ -98,7 +98,13 @@ import {
 import { findWalkTransferPlans, mergeTransferAndWalkPlans } from '../utils/walkTransferPlans'
 import { BetweenStopsResults } from './BetweenStopsResults'
 import { TransferPlanDetail } from './TransferPlanDetail'
-import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
+import {
+  getFilterChipView,
+  parseStructuredSearchQuery,
+  stripOperatorTokens,
+  stripTypeFilterTokens,
+  stripZoneTokens,
+} from '../utils/structuredSearchQuery'
 import type { MatchedStop } from '../utils/routeStopLookup'
 
 type DetailOverlay =
@@ -777,10 +783,42 @@ export function RouteLookupPage({
     void Promise.all(anims.map((a) => a.finished.catch(() => undefined))).then(finishDetailClose)
   }
 
+  const filterChipView = useMemo(
+    () => getFilterChipView(filters.query, filters),
+    [filters],
+  )
+
   const filtersActive =
-    filters.zone !== 'all' ||
-    filters.operator !== 'all' ||
-    filters.type !== 'all'
+    filterChipView.zone !== 'all' ||
+    filterChipView.operator !== 'all' ||
+    filterChipView.type !== 'all' ||
+    filterChipView.excludedZones.length > 0 ||
+    filterChipView.excludedOperators.length > 0 ||
+    filterChipView.excludedTypes.length > 0
+
+  const handleZoneFilterChange = useCallback(
+    (zone: number | 'all') => {
+      updateFilter('query', stripZoneTokens(filters.query))
+      updateFilter('zone', zone)
+    },
+    [filters.query, updateFilter],
+  )
+
+  const handleOperatorFilterChange = useCallback(
+    (operator: string | 'all') => {
+      updateFilter('query', stripOperatorTokens(filters.query))
+      updateFilter('operator', operator)
+    },
+    [filters.query, updateFilter],
+  )
+
+  const handleTypeFilterChange = useCallback(
+    (type: RouteTypeFilter | 'all') => {
+      updateFilter('query', stripTypeFilterTokens(filters.query))
+      updateFilter('type', type)
+    },
+    [filters.query, updateFilter],
+  )
 
   const dailyChallengeSelected =
     detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteView
@@ -1141,15 +1179,18 @@ export function RouteLookupPage({
           randomEligibleCount={randomEligibleCount}
           onRandom={handleRandomRoute}
           filtersActive={filtersActive}
-          zone={filters.zone}
-          operator={filters.operator}
-          type={filters.type}
+          zone={filterChipView.zone}
+          operator={filterChipView.operator}
+          type={filterChipView.type}
+          excludedZones={filterChipView.excludedZones}
+          excludedOperators={filterChipView.excludedOperators}
+          excludedTypes={filterChipView.excludedTypes}
           zones={zones}
           operators={operators}
           types={types}
-          onZoneChange={(z) => updateFilter('zone', z)}
-          onOperatorChange={(op) => updateFilter('operator', op)}
-          onTypeChange={(item) => updateFilter('type', item)}
+          onZoneChange={handleZoneFilterChange}
+          onOperatorChange={handleOperatorFilterChange}
+          onTypeChange={handleTypeFilterChange}
           searchHistory={searchHistory}
           onApplyHistory={handleApplyHistory}
           onClearHistory={handleClearHistory}

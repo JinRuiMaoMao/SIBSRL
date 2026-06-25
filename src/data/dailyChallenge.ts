@@ -450,6 +450,22 @@ export function dailyChallengeMatchesFilters(
     if (linkedRoute?.category === excluded) return false
   }
 
+  for (const excluded of structured.excludeTypes) {
+    if (linkedRoute && routeMatchesTypeFilter(linkedRoute, excluded)) return false
+  }
+
+  for (const excludedZone of structured.excludeZones) {
+    if (linkedRoute?.zones.includes(excludedZone)) return false
+  }
+
+  for (const excludedOperator of structured.excludeOperators) {
+    if (
+      linkedRoute?.operators.some((o) => o.toLowerCase() === excludedOperator.toLowerCase())
+    ) {
+      return false
+    }
+  }
+
   if (structured.level != null) {
     if (linkedRoute?.levelRequired !== structured.level) return false
   }

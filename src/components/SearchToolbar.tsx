@@ -17,6 +17,9 @@ interface SearchToolbarProps {
   zone: number | 'all'
   operator: string | 'all'
   type: RouteTypeFilter | 'all'
+  excludedZones: number[]
+  excludedOperators: string[]
+  excludedTypes: RouteTypeFilter[]
   zones: number[]
   operators: string[]
   types: RouteTypeFilter[]
@@ -44,6 +47,9 @@ export function SearchToolbar({
   zone,
   operator,
   type,
+  excludedZones,
+  excludedOperators,
+  excludedTypes,
   zones,
   operators,
   types,
@@ -93,6 +99,9 @@ export function SearchToolbar({
             zone={zone}
             operator={operator}
             type={type}
+            excludedZones={excludedZones}
+            excludedOperators={excludedOperators}
+            excludedTypes={excludedTypes}
             zones={zones}
             operators={operators}
             types={types}

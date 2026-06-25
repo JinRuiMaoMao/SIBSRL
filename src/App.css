@@ -2805,6 +2805,18 @@ html[data-list-density='compact'] .transfer-plan-stop {
   font-weight: 600;
 }
 
+.chip.excluded {
+  background: color-mix(in srgb, #ef4444 14%, transparent);
+  border-color: color-mix(in srgb, #ef4444 72%, var(--border));
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.chip.excluded:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 /* Layout */
 .content-layout {
   margin-bottom: 2.5rem;

@@ -241,6 +241,22 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       },
       {
         title:         {
+          zh: "搜索与筛选",
+          en: "Search & filters",
+        },
+        additions:         [
+                    {
+            zh: "高级搜索现支持排除区域与运营商：-zone:3 / -z:3、-op:FT（或 -operator:）；类型仍可用 -night 或 -type:night。",
+            en: "Advanced search can exclude zones and operators: -zone:3 / -z:3, -op:FT (or -operator:); types still support -night or -type:night.",
+          },
+                    {
+            zh: "搜索框中的 zone:/op:/type: 及排除语法会同步反映到筛选菜单：正向筛选高亮强调色，排除项高亮红色。",
+            en: "zone:/op:/type: tokens and exclusions in the search box now mirror the filter menu—includes use the accent highlight, exclusions show in red.",
+          },
+        ],
+      },
+      {
+        title:         {
           zh: "更新日志",
           en: "Change log",
         },

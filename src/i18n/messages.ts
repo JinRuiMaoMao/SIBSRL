@@ -310,7 +310,8 @@ const messagesZhHans = {
   searchSyntaxLevel: 'lv:75 — 只显示解锁等级为 Lv. 75 的线路（也可用 level:）',
   searchSyntaxType:
     'type:express — 只显示特快类线路（也可用 inner、night、loop 等；见筛选菜单中的类型名）',
-  searchSyntaxExclude: '-night — 排除通宵线路（在类型前加 - 表示不要这类线路）',
+  searchSyntaxExclude:
+    '-night — 排除通宵线路；-zone:3 / -z:3 排除区域；-op:FT 排除运营商（类型也可用 -type:night）',
   searchSyntaxPattern: 'F... / ...A — 号码以 F 开头 / 以 A 结尾',
   searchSyntaxFromTo:
     '起点--终点 — 两站直达；无直达时自动显示最少转车方案（可与 zone: 等筛选组合）',
@@ -826,7 +827,8 @@ const messagesEn: Record<MessageKey, string> = {
   searchSyntaxLevel: 'lv:75 — routes unlocked at Lv. 75 (level: also works)',
   searchSyntaxType:
     'type:express — express-category routes only (also inner, night, loop, etc.; see filter menu type names)',
-  searchSyntaxExclude: '-night — hide overnight routes (leading - excludes that type)',
+  searchSyntaxExclude:
+    '-night — hide overnight routes; -zone:3 / -z:3 exclude a zone; -op:FT exclude an operator (-type:night also works)',
   searchSyntaxPattern: 'F... / ...A — route numbers starting with F / ending with A',
   searchSyntaxFromTo:
     'start--end — direct routes between two stops; shows minimum-transfer plans when none are direct (combine with zone: etc.)',

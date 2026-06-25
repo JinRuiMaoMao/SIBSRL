@@ -8,6 +8,9 @@ interface RouteFiltersProps {
   zone: number | 'all'
   operator: string | 'all'
   type: RouteTypeFilter | 'all'
+  excludedZones: number[]
+  excludedOperators: string[]
+  excludedTypes: RouteTypeFilter[]
   zones: number[]
   operators: string[]
   types: RouteTypeFilter[]
@@ -16,10 +19,19 @@ interface RouteFiltersProps {
   onTypeChange: (type: RouteTypeFilter | 'all') => void
 }
 
+function chipClassName(active: boolean, excluded: boolean): string {
+  if (excluded) return 'chip excluded'
+  if (active) return 'chip active'
+  return 'chip'
+}
+
 export function RouteFilters({
   zone,
   operator,
   type,
+  excludedZones,
+  excludedOperators,
+  excludedTypes,
   zones,
   operators,
   types,
@@ -28,6 +40,9 @@ export function RouteFilters({
   onTypeChange,
 }: RouteFiltersProps) {
   const { locale, t } = useLocale()
+  const zoneAllActive = zone === 'all' && excludedZones.length === 0
+  const operatorAllActive = operator === 'all' && excludedOperators.length === 0
+  const typeAllActive = type === 'all' && excludedTypes.length === 0
 
   return (
     <div className="filters">
@@ -36,7 +51,7 @@ export function RouteFilters({
         <div className="chip-row">
           <button
             type="button"
-            className={`chip ${zone === 'all' ? 'active' : ''}`}
+            className={chipClassName(zoneAllActive, false)}
             onClick={() => onZoneChange('all')}
           >
             {t('filterAll')}
@@ -45,7 +60,7 @@ export function RouteFilters({
             <button
               key={z}
               type="button"
-              className={`chip ${zone === z ? 'active' : ''}`}
+              className={chipClassName(zone === z, excludedZones.includes(z))}
               onClick={() => onZoneChange(z)}
             >
               {t('filterZoneN', { n: z })}
@@ -59,7 +74,7 @@ export function RouteFilters({
         <div className="chip-row">
           <button
             type="button"
-            className={`chip ${operator === 'all' ? 'active' : ''}`}
+            className={chipClassName(operatorAllActive, false)}
             onClick={() => onOperatorChange('all')}
           >
             {t('filterAll')}
@@ -68,7 +83,10 @@ export function RouteFilters({
             <button
               key={op}
               type="button"
-              className={`chip ${operator === op ? 'active' : ''}`}
+              className={chipClassName(
+                operator === op,
+                excludedOperators.some((item) => item.toLowerCase() === op.toLowerCase()),
+              )}
               onClick={() => onOperatorChange(op)}
               title={OPERATORS[op] ? getPrimaryText(OPERATORS[op], locale) : op}
             >
@@ -84,7 +102,7 @@ export function RouteFilters({
           <div className="chip-row">
             <button
               type="button"
-              className={`chip ${type === 'all' ? 'active' : ''}`}
+              className={chipClassName(typeAllActive, false)}
               onClick={() => onTypeChange('all')}
             >
               {t('filterAll')}
@@ -93,7 +111,7 @@ export function RouteFilters({
               <button
                 key={item}
                 type="button"
-                className={`chip ${type === item ? 'active' : ''}`}
+                className={chipClassName(type === item, excludedTypes.includes(item))}
                 onClick={() => onTypeChange(item)}
               >
                 {t(TYPE_FILTER_KEYS[item])}
