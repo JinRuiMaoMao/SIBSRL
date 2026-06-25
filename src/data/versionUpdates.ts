@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "面板样式透明度滑块拖动时，滑条上方实时显示当前不透明度百分比（25%～75%），并随拇指位置移动。",
+            en: "The panel opacity slider now shows the current fill percentage (25%–75%) above the thumb in real time while you drag.",
+          },
+                    {
             zh: "进入线路详情后，查询页顶栏、底栏与线路列表以渐隐动画收起，仅保留页面背景渐变；关闭详情时渐显恢复，无填充/透明模式下观感更干净。",
             en: "Opening route detail on the index now fades out the header, tab bar, and route list—only the page background gradient remains—and fades them back in on close for a cleaner no-fill/transparent look.",
           },

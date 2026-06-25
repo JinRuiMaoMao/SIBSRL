@@ -2074,6 +2074,54 @@ a.settings-trigger {
   gap: 0.35rem;
 }
 
+.settings-panel-fill-track {
+  position: relative;
+  --panel-fill-thumb: 1.125rem;
+  padding-top: 1.7rem;
+}
+
+.settings-panel-fill-value {
+  position: absolute;
+  top: 0;
+  left: calc(
+    var(--panel-fill-ratio, 0) * (100% - var(--panel-fill-thumb)) + calc(var(--panel-fill-thumb) / 2)
+  );
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: var(--accent);
+  padding: 0.12rem 0.4rem;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.settings-panel-fill-track.is-dragging .settings-panel-fill-value,
+.settings-panel-fill-track:focus-within .settings-panel-fill-value {
+  opacity: 1;
+}
+
+.settings-panel-fill-track.is-dragging .settings-panel-fill-value {
+  transform: translateX(-50%) scale(1.04);
+}
+
+html[data-reduce-motion='true'] .settings-panel-fill-value {
+  transition: none;
+}
+
+html[data-reduce-motion='true'] .settings-panel-fill-track.is-dragging .settings-panel-fill-value {
+  transform: translateX(-50%);
+}
+
 .settings-panel-fill-labels {
   display: flex;
   justify-content: space-between;
