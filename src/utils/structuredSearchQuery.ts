@@ -1,6 +1,12 @@
 import { OPERATORS } from '../data/routes'
 import type { RouteCategory, RouteFilters, RouteTypeFilter } from '../types/route'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
+import {
+  applyFilterTokenAlias,
+  parseLocalizedExcludeTokens,
+  resolveFilterTokenAlias,
+  stripLocalizedExcludeTokens,
+} from './filterTokenAliases'
 
 export interface ParsedStructuredSearchQuery {
   text: string
@@ -73,6 +79,12 @@ function pushExcludeCategory(parsed: ParsedStructuredSearchQuery, category: Rout
 }
 
 function applyTypeExcludeToken(parsed: ParsedStructuredSearchQuery, raw: string) {
+  const localized = resolveFilterTokenAlias(raw)
+  if (localized) {
+    applyFilterTokenAlias(parsed, localized, 'exclude')
+    return
+  }
+
   const type = normalizeTypeToken(raw)
   if (type) {
     pushExcludeType(parsed, type)
@@ -139,10 +151,12 @@ export function stripOperatorTokens(query: string): string {
 }
 
 export function stripTypeFilterTokens(query: string): string {
-  return removeStructuredTokens(query, (negated, key, _value, shorthand) => {
+  let text = removeStructuredTokens(query, (negated, key, _value, shorthand) => {
     if (shorthand) return true
     return key === 'type' || key === 'cat'
   })
+  text = stripLocalizedExcludeTokens(text)
+  return collapseQuerySpaces(text)
 }
 
 export interface FilterChipView {
@@ -220,6 +234,11 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
         applyTypeExcludeToken(parsed, value)
         continue
       }
+      const localized = resolveFilterTokenAlias(value)
+      if (localized) {
+        applyFilterTokenAlias(parsed, localized, 'include')
+        continue
+      }
       const category = normalizeCategoryToken(value)
       if (category) {
         parsed.category = category
@@ -258,6 +277,10 @@ export function parseStructuredSearchQuery(query: string): ParsedStructuredSearc
     const exclude = match[1]
     if (exclude) applyTypeExcludeToken(parsed, exclude)
   }
+
+  text = parseLocalizedExcludeTokens(text, (alias) => {
+    applyFilterTokenAlias(parsed, alias, 'exclude')
+  })
 
   text = collapseQuerySpaces(text)
   const stopPair = parseStopPairFromText(text)

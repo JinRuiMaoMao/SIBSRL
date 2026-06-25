@@ -174,6 +174,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
+            zh: "排除语法支持中文筛选名：如 -城市中轴线、-通宵、-区内；type:城市中轴线 等正向筛选同样可用中文。",
+            en: "Exclusions accept localized filter names, e.g. -城市中轴线, -通宵, -区内; includes like type:城市中轴线 work too.",
+          },
+                    {
             zh: "搜索框新增补全面板：输入线路号或筛选语法时列出相似线路与 zone/op/type 等筛选建议，Tab 循环应用，↑↓ 高亮选项。",
             en: "Search now shows a completion panel for similar route numbers and filter tokens (zone/op/type, etc.); Tab cycles through applies, ↑↓ highlights options.",
           },

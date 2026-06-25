@@ -322,7 +322,7 @@ const messagesZhHans = {
   searchSyntaxType:
     'type:express — 只显示特快类线路（也可用 inner、night、loop 等；见筛选菜单中的类型名）',
   searchSyntaxExclude:
-    '-night — 排除通宵线路；-zone 3 排除第 3 区；-FT 排除该运营商（类型仍可直接写 -night）',
+    '-night / -城市中轴线 / -通宵 等 — 排除类型（可用中文或英文筛选名）；-zone 3 排除区域；-FT 排除运营商',
   searchSyntaxPattern: 'F... / ...A — 号码以 F 开头 / 以 A 结尾',
   searchSyntaxFromTo:
     '起点--终点 — 两站直达；无直达时自动显示最少转车方案（可与 zone: 等筛选组合）',
@@ -850,7 +850,7 @@ const messagesEn: Record<MessageKey, string> = {
   searchSyntaxType:
     'type:express — express-category routes only (also inner, night, loop, etc.; see filter menu type names)',
   searchSyntaxExclude:
-    '-night — hide overnight routes; -zone 3 excludes Zone 3; -FT excludes that operator (-night still works for types)',
+    '-night / -城市中轴线 / -通宵 etc. — exclude by Chinese or English type names; -zone 3 excludes a zone; -FT excludes an operator',
   searchSyntaxPattern: 'F... / ...A — route numbers starting with F / ending with A',
   searchSyntaxFromTo:
     'start--end — direct routes between two stops; shows minimum-transfer plans when none are direct (combine with zone: etc.)',

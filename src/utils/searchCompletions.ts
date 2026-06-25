@@ -2,7 +2,8 @@ import { OPERATORS, routes } from '../data/routes'
 import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
 import type { MessageKey } from '../i18n/messages'
 import { TYPE_FILTER_KEYS, TYPE_FILTER_ORDER } from '../i18n/routeTypes'
-import type { RouteTypeFilter } from '../types/route'
+import type { RouteCategory, RouteTypeFilter } from '../types/route'
+import { getFilterTokenAliases, localizedExcludeMatchesToken } from './filterTokenAliases'
 import { mergeRoutesByBaseNumber } from './routeMerge'
 import { compareRouteNumber } from './routeSort'
 import { parseRouteNumberPatternQuery, ROUTE_NUMBER_TOKEN } from './routeSearchQuery'
@@ -16,13 +17,19 @@ export interface SearchCompletion {
   descriptionVars?: Record<string, string | number>
 }
 
-const CATEGORY_LABEL_KEYS: Record<string, MessageKey> = {
+const CATEGORY_LABEL_KEYS: Record<RouteCategory, MessageKey> = {
   inner: 'categoryInner',
   inter: 'categoryInter',
   express: 'categoryExpress',
   night: 'categoryNight',
   special: 'categorySpecial',
-  centralaxis: 'categoryCentralAxis',
+  centralAxis: 'categoryCentralAxis',
+}
+
+function aliasNameKey(alias: ReturnType<typeof getFilterTokenAliases>[number]): MessageKey | null {
+  if (alias.category) return CATEGORY_LABEL_KEYS[alias.category]
+  if (alias.type) return TYPE_FILTER_KEYS[alias.type]
+  return null
 }
 
 export function getCompletionContext(query: string): {
@@ -148,7 +155,7 @@ function getAllFilterCompletionTemplates(): SearchCompletion[] {
 
   const categories = ['inner', 'inter', 'express', 'night', 'special', 'centralaxis'] as const
   for (const category of categories) {
-    const nameKey = CATEGORY_LABEL_KEYS[category]!
+    const nameKey = CATEGORY_LABEL_KEYS[category === 'centralaxis' ? 'centralAxis' : category]!
     items.push({
       replacement: `type:${category}`,
       kind: 'filter',
@@ -201,6 +208,25 @@ function getAllFilterCompletionTemplates(): SearchCompletion[] {
     })
   }
 
+  for (const alias of getFilterTokenAliases()) {
+    const nameKey = aliasNameKey(alias)
+    if (!nameKey) continue
+    for (const label of alias.labels) {
+      items.push({
+        replacement: `-${label}`,
+        kind: 'filter',
+        descriptionKey: alias.type ? 'searchCompletionServiceTypeExclude' : 'searchCompletionCategoryExclude',
+        descriptionVars: { nameKey },
+      })
+      items.push({
+        replacement: `type:${label}`,
+        kind: 'filter',
+        descriptionKey: alias.type ? 'searchCompletionServiceType' : 'searchCompletionCategory',
+        descriptionVars: { nameKey },
+      })
+    }
+  }
+
   filterCompletionCache = items
   return items
 }
@@ -242,6 +268,17 @@ function matchesFilterToken(replacement: string, token: string): boolean {
 
   if (query.startsWith('-') && value.startsWith('-')) {
     return value.startsWith(query) || query.length === 1
+  }
+
+  if (replacement.startsWith('-')) {
+    const label = replacement.slice(1)
+    if (localizedExcludeMatchesToken(label, token)) return true
+  }
+
+  if (replacement.startsWith('type:') || replacement.startsWith('cat:')) {
+    const label = replacement.replace(/^(type|cat):/i, '')
+    const bare = query.replace(/^(type|cat):?/i, '')
+    if (query === 'type' || query === 'cat' || label.startsWith(bare)) return true
   }
 
   return false
