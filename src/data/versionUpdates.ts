@@ -260,8 +260,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
-            zh: "同步 6/25 每日挑战：活久见！U47S（非竞速）。",
-            en: "Synced 6/25 daily challenge: Long Time No See on U47S (non-race).",
+            zh: "同步 6/25 每日挑战：罕见外观 U47S（非竞速）。",
+            en: "Synced 6/25 daily challenge: Rare Appearance on U47S (non-race).",
           },
         ],
       },
