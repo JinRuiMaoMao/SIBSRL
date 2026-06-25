@@ -5,6 +5,7 @@ import {
   applySearchCompletion,
   getSearchCompletions,
   isSearchCompletionActive,
+  shouldShowSearchCompletionPanel,
   type SearchCompletion,
 } from '../utils/searchCompletions'
 
@@ -70,7 +71,9 @@ export function SearchBar({
     [completions],
   )
   const showHistory = focused && !value.trim() && searchHistory.length > 0
-  const showCompletions = focused && value.trim().length > 0 && completions.length > 0
+  const showCompletionPanel =
+    focused && value.trim().length > 0 && shouldShowSearchCompletionPanel(value, completions)
+  const tabCompletionsAvailable = focused && completions.length > 0
 
   useEffect(() => {
     setTabCycleIndex(-1)
@@ -107,14 +110,14 @@ export function SearchBar({
           onFocus={() => setFocused(true)}
           onBlur={() => window.setTimeout(() => setFocused(false), 120)}
           onKeyDown={(e) => {
-            if (e.key === 'Tab' && showCompletions) {
+            if (e.key === 'Tab' && tabCompletionsAvailable) {
               e.preventDefault()
               const next = (tabCycleIndex + 1) % completions.length
               applyCompletion(completions[next]!, next)
               return
             }
 
-            if (e.key === 'ArrowDown' && showCompletions) {
+            if (e.key === 'ArrowDown' && showCompletionPanel) {
               e.preventDefault()
               const next =
                 tabCycleIndex < 0 ? 0 : Math.min(completions.length - 1, tabCycleIndex + 1)
@@ -122,7 +125,7 @@ export function SearchBar({
               return
             }
 
-            if (e.key === 'ArrowUp' && showCompletions) {
+            if (e.key === 'ArrowUp' && showCompletionPanel) {
               e.preventDefault()
               const next =
                 tabCycleIndex < 0
@@ -140,11 +143,11 @@ export function SearchBar({
           autoComplete="off"
           spellCheck={false}
           role="combobox"
-          aria-expanded={showCompletions}
-          aria-controls={showCompletions ? `${id}-completions` : undefined}
+          aria-expanded={showCompletionPanel}
+          aria-controls={showCompletionPanel ? `${id}-completions` : undefined}
           aria-autocomplete="list"
           aria-activedescendant={
-            showCompletions && tabCycleIndex >= 0
+            showCompletionPanel && tabCycleIndex >= 0
               ? `${id}-completion-${tabCycleIndex}`
               : undefined
           }
@@ -152,37 +155,38 @@ export function SearchBar({
         <span className="search-meta" aria-live="polite">
           {t('routeCount', { count: resultCount, total: totalCount })}
         </span>
-      </div>
 
-      {showCompletions ? (
-        <div
-          id={`${id}-completions`}
-          className="search-completion-panel"
-          role="listbox"
-          aria-label={t('searchCompletionPanelLabel')}
-        >
-          {completions.map((completion, index) => {
-            const active = isSearchCompletionActive(completion, value, tabCycleIndex, index)
-            return (
-              <button
-                key={`${completion.kind}-${completion.replacement}`}
-                id={`${id}-completion-${index}`}
-                type="button"
-                role="option"
-                aria-selected={active}
-                className={`search-completion-option ${active ? 'active' : ''}`}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => applyCompletion(completion, index)}
-              >
-                <code className="search-completion-code">{completion.replacement}</code>
-                <span className="search-completion-desc">
-                  {resolveCompletionDescription(completion, t)}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      ) : null}
+        {showCompletionPanel ? (
+          <div
+            id={`${id}-completions`}
+            className="search-completion-panel"
+            role="listbox"
+            aria-label={t('searchCompletionPanelLabel')}
+          >
+            <p className="search-completion-hint">{t('searchCompletionTabHint')}</p>
+            {completions.map((completion, index) => {
+              const active = isSearchCompletionActive(completion, value, tabCycleIndex, index)
+              return (
+                <button
+                  key={`${completion.kind}-${completion.replacement}`}
+                  id={`${id}-completion-${index}`}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  className={`search-completion-option ${active ? 'active' : ''}`}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => applyCompletion(completion, index)}
+                >
+                  <code className="search-completion-code">{completion.replacement}</code>
+                  <span className="search-completion-desc">
+                    {resolveCompletionDescription(completion, t)}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        ) : null}
+      </div>
 
       {showHistory ? (
         <div className="search-history" aria-label={t('searchHistory')}>

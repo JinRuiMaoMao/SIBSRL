@@ -174,6 +174,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
+            zh: "搜索补全面板改为浮动层，不再挤占下方语法区；已完整输入的筛选词（如 -night）自动收起面板。",
+            en: "Search completions now float over the page instead of pushing content; fully typed filter tokens (e.g. -night) auto-hide the panel.",
+          },
+                    {
+            zh: "含 - 排除筛选时不再出现 … 前缀/后缀建议；排除词输入中仅展示筛选补全。",
+            en: "Prefix/suffix … route patterns are suppressed while typing exclusions; only filter completions are offered.",
+          },
+                    {
             zh: "排除语法支持中文筛选名：如 -城市中轴线、-通宵、-区内；type:城市中轴线 等正向筛选同样可用中文。",
             en: "Exclusions accept localized filter names, e.g. -城市中轴线, -通宵, -区内; includes like type:城市中轴线 work too.",
           },

@@ -284,14 +284,30 @@ function matchesFilterToken(replacement: string, token: string): boolean {
   return false
 }
 
-function getRouteCompletions(token: string): SearchCompletion[] {
+function queryHasExclusionFilter(query: string): boolean {
+  return /(?:^|\s)-\S/.test(query.trim())
+}
+
+function isExclusionFilterToken(token: string): boolean {
+  return token.startsWith('-')
+}
+
+function isStructuredFilterToken(token: string): boolean {
+  return /^(zone|z|op|operator|type|cat|level|lv|lvl)[：:]?/i.test(token)
+}
+
+function getRouteCompletions(
+  token: string,
+  options: { allowPatterns: boolean },
+): SearchCompletion[] {
   if (!token || !ROUTE_NUMBER_TOKEN.test(token)) return []
   if (parseRouteNumberPatternQuery(token)) return []
+  if (isExclusionFilterToken(token) || isStructuredFilterToken(token)) return []
 
   const lower = token.toLowerCase()
   const items: SearchCompletion[] = []
 
-  if (!token.includes('...')) {
+  if (options.allowPatterns && !token.includes('...')) {
     items.push({
       replacement: `${token}...`,
       kind: 'route-pattern',
@@ -331,6 +347,7 @@ export function getSearchCompletions(query: string): SearchCompletion[] {
   const { token } = getCompletionContext(trimmed)
   if (!token) return []
 
+  const exclusionContext = isExclusionFilterToken(token) || queryHasExclusionFilter(trimmed)
   const seen = new Set<string>()
   const result: SearchCompletion[] = []
 
@@ -340,9 +357,11 @@ export function getSearchCompletions(query: string): SearchCompletion[] {
     result.push(item)
   }
 
-  for (const item of getRouteCompletions(token)) {
-    push(item)
-    if (result.length >= 12) return result
+  if (!isExclusionFilterToken(token)) {
+    for (const item of getRouteCompletions(token, { allowPatterns: !exclusionContext })) {
+      push(item)
+      if (result.length >= 12) return result
+    }
   }
 
   for (const item of getAllFilterCompletionTemplates()) {
@@ -352,6 +371,31 @@ export function getSearchCompletions(query: string): SearchCompletion[] {
   }
 
   return result
+}
+
+/** 当前词已完整命中某条补全时不再弹出面板（Tab 仍可用于其他部分词）。 */
+export function shouldShowSearchCompletionPanel(
+  query: string,
+  completions: SearchCompletion[],
+): boolean {
+  if (completions.length === 0) return false
+
+  const { token } = getCompletionContext(query.trimEnd())
+  if (!token) return false
+
+  if (completions.some((item) => item.replacement === token)) {
+    return false
+  }
+
+  const onlyFilters = completions.every((item) => item.kind === 'filter')
+  const partialFilters = completions.filter(
+    (item) => item.kind === 'filter' && item.replacement.startsWith(token) && item.replacement !== token,
+  )
+  if (onlyFilters && partialFilters.length === 0 && isExclusionFilterToken(token)) {
+    return false
+  }
+
+  return true
 }
 
 export function isSearchCompletionActive(
