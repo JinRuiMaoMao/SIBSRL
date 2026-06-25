@@ -9,6 +9,7 @@ import {
 } from './stopNameAudioManifest'
 import type { RouteStopAudioAtRow } from './routeStopAudio21A'
 import { getRoute77XAStopAudioByAtIndex, ROUTE_77XA_ID } from './routeStopAudio77XA'
+import { getRouteN171StopAudioByAtIndex, ROUTE_N171_ID } from './routeStopAudioN171'
 import { passIndexForStopNamePool } from '../utils/stopNameAudioMatch'
 
 const ROUTE_ID_ALIASES: Record<string, string> = {
@@ -59,6 +60,15 @@ function getNextStopNamePoolAudio(
   }
 }
 
+function getRouteN171StopAudio(
+  routeId: string,
+  atStopIndex: number,
+  directionGroupIndex: number,
+): RouteStopAudioAtRow | undefined {
+  if (routeId !== ROUTE_N171_ID) return undefined
+  return getRouteN171StopAudioByAtIndex(directionGroupIndex)?.get(atStopIndex)
+}
+
 export function getRouteStopAudioAtRow(
   routeId: string,
   atStopIndex: number,
@@ -75,6 +85,7 @@ export function getRouteStopAudioAtRow(
   }
 
   return (
+    getRouteN171StopAudio(routeId, atStopIndex, directionGroupIndex) ??
     getRoute77XAStopAudio(routeId, atStopIndex) ??
     getNextStopNamePoolAudio(routeId, atStopIndex, directionGroupIndex, length)
   )
@@ -86,6 +97,7 @@ export function routeHasStopAudio(routeId: string): boolean {
   if (!route?.stops?.length) return false
 
   if (getRoute77XAStopAudio(routeId, 0)) return true
+  if (getRouteN171StopAudioByAtIndex(0)?.size) return true
 
   return route.stops.some((group) => group.list.length > 0)
 }

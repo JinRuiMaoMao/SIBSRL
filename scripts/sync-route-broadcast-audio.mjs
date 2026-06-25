@@ -17,8 +17,15 @@ import {
   STOP_NAME_AUDIO_PUBLIC,
 } from './build-stop-name-audio-manifest.mjs'
 
+import {
+  buildRouteN171StopAudioSlots,
+  loadN171StopGroups,
+  ROUTE_N171_ID,
+} from './lib/route-n171-audio-map.mjs'
+import { buildRouteN171AudioManifest } from './build-route-n171-audio-manifest.mjs'
+
 /** 已录入线路报站音频的 routeId */
-export const ROUTE_BROADCAST_IDS = ['21A', '77XA']
+export const ROUTE_BROADCAST_IDS = ['21A', '77XA', 'N171']
 const ROUTE_21A_ID = '21A'
 const ROUTE_77XA_ID = '77XA'
 
@@ -65,6 +72,20 @@ function syncRoute77XA(srcDir, destDir) {
     copied++
   }
   return { copied, slots, sourceCount: sourceFiles.length }
+}
+
+function syncRouteN171(srcDir, destDir) {
+  const sourceFiles = readdirSync(srcDir).filter((f) => f.toLowerCase().endsWith('.mp3'))
+  const groups = loadN171StopGroups()
+  const slots = buildRouteN171StopAudioSlots(sourceFiles)
+  mkdirSync(destDir, { recursive: true })
+
+  let copied = 0
+  for (const slot of slots) {
+    copyFileSync(join(srcDir, slot.sourceFile), join(destDir, slot.destName))
+    copied++
+  }
+  return { copied, slots, sourceCount: sourceFiles.length, groups }
 }
 
 const ALIGHTING_REMINDER_SOURCE_HINTS = ['21路下车提醒', '下车提醒']
@@ -159,6 +180,24 @@ export function syncRouteBroadcastAudio(options = {}) {
           console.log(`  [${s.atStopIndex + 1}] ${atName} → ${s.sourceFile}`)
         }
       }
+      results.push({ routeId, srcDir, destDir, count: copied, slots })
+    } else if (routeId === ROUTE_N171_ID) {
+      const { copied, slots, sourceCount, groups } = syncRouteN171(srcDir, destDir)
+      if (sourceCount === 0) {
+        console.warn(`${routeId} 报站：源目录为空（${srcDir}），请先放入 MP3`)
+      } else {
+        console.log(`${routeId} 报站：${copied} 个（文件名=下一站，挂载当前站）→ ${destDir}`)
+        for (const s of slots) {
+          const group = groups.find((g) => g.directionGroupIndex === s.directionGroupIndex)
+          const atStop = group?.list[s.atStopIndex]
+          const atName = atStop?.name.zh || atStop?.name.en || `#${s.atStopIndex + 1}`
+          const nextName = s.nextStopLabel?.zh || s.nextStopLabel?.en || '?'
+          console.log(
+            `  [${s.directionKey.toUpperCase()} ${s.atStopIndex + 1}] ${atName} ← ${s.sourceFile} (→ ${nextName})`,
+          )
+        }
+      }
+      buildRouteN171AudioManifest()
       results.push({ routeId, srcDir, destDir, count: copied, slots })
     } else {
       results.push({ routeId, srcDir, destDir, count: 0 })
