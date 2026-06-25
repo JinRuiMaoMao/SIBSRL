@@ -260,8 +260,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
+            zh: "按 Discord「~June Daily Challenge~」全文重刷 2026 年 6 月社区日程（含 6/26、6/29 待公布空白）。",
+            en: "Refreshed the full June 2026 community schedule from Discord “~June Daily Challenge~” (6/26 and 6/29 left blank pending announcement).",
+          },
+                    {
             zh: "同步 6/25 每日挑战：罕见外观 U47S（非竞速）。",
             en: "Synced 6/25 daily challenge: Rare Appearance on U47S (non-race).",
+          },
+        ],
+        fixes:         [
+                    {
+            zh: "修正 6/13：夜间马拉松封路 N171EM（竞速）；6/18：大桥封路 Y370A；6/23：夜间马拉松封路 N171WM（原误为 N271S）。",
+            en: "Corrected 6/13 to Marathon Road Closure (N) N171EM (race), 6/18 Bridge Closure Y370A, and 6/23 Marathon Road Closure (N) N171WM (was wrongly N271S).",
           },
         ],
       },
