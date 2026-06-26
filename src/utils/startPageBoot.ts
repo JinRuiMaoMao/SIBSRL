@@ -42,26 +42,31 @@ export async function runStartPageBoot(
   const set = (percent: number, label: string) => {
     bridge?.setProgress(percent, label)
   }
+  const pause = (ms: number) => waitMs(options?.reduceMotion ? Math.min(ms, 80) : ms)
 
-  set(Math.max(28, 32), labels.script)
-  await waitMs(options?.reduceMotion ? 0 : 80)
+  set(Math.max(24, 28), labels.script)
+  await pause(520)
 
-  set(48, labels.interface)
-  await waitMs(options?.reduceMotion ? 0 : 60)
+  set(38, labels.script)
+  await pause(480)
+
+  set(52, labels.interface)
+  await pause(560)
 
   try {
-    set(62, labels.logo)
-    await preloadImage('./sibs-logo.png')
+    set(66, labels.logo)
+    await Promise.all([preloadImage('./sibs-logo.png'), pause(640)])
   } catch {
-    // Logo missing should not block the start page.
+    await pause(640)
   }
-  set(78, labels.logo)
+  set(80, labels.logo)
+  await pause(520)
 
-  set(88, labels.fonts)
-  await waitForFonts()
+  set(90, labels.fonts)
+  await Promise.all([waitForFonts(), pause(560)])
 
   set(100, labels.ready)
-  await waitMs(options?.reduceMotion ? 120 : 320)
+  await pause(options?.reduceMotion ? 160 : 720)
 
   if (bridge) {
     bridge.finish()

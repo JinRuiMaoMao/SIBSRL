@@ -21,20 +21,24 @@ html.start-boot-active #root {
   pointer-events: none;
 }
 .start-boot-splash__inner {
-  width: min(100%, 18rem);
+  width: min(100%, 22rem);
+}
+.start-boot-splash__row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1.15rem;
+  gap: 0.85rem;
+  width: 100%;
 }
 .start-boot-splash__logo {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
   object-fit: contain;
 }
 .start-boot-splash__progress-wrap {
   position: relative;
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   padding-top: 1.35rem;
   padding-bottom: 1.35rem;
 }
@@ -64,7 +68,7 @@ html.start-boot-active #root {
     color-mix(in srgb, var(--accent, #f5b942) 82%, #fff 18%),
     var(--accent, #f5b942)
   );
-  transition: width 0.28s ease;
+  transition: width 0.72s ease;
 }
 .start-boot-splash__label {
   position: absolute;
@@ -82,13 +86,15 @@ html.start-boot-active #root {
 
 export const START_BOOT_SPLASH_HTML = `<div id="start-boot-splash" class="start-boot-splash" aria-live="polite" aria-busy="true">
   <div class="start-boot-splash__inner">
-    <img class="start-boot-splash__logo" src="./sibs-logo.png" alt="" width="56" height="56" decoding="async" />
-    <div class="start-boot-splash__progress-wrap">
-      <span class="start-boot-splash__percent" id="start-boot-percent">0%</span>
-      <div class="start-boot-splash__track" id="start-boot-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading">
-        <div class="start-boot-splash__fill" id="start-boot-fill"></div>
+    <div class="start-boot-splash__row">
+      <img class="start-boot-splash__logo" src="./sibs-logo.png" alt="" width="44" height="44" decoding="async" />
+      <div class="start-boot-splash__progress-wrap">
+        <span class="start-boot-splash__percent" id="start-boot-percent">0%</span>
+        <div class="start-boot-splash__track" id="start-boot-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading">
+          <div class="start-boot-splash__fill" id="start-boot-fill"></div>
+        </div>
+        <span class="start-boot-splash__label" id="start-boot-label">加载中…</span>
       </div>
-      <span class="start-boot-splash__label" id="start-boot-label">加载中…</span>
     </div>
   </div>
 </div>`
@@ -109,7 +115,8 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
     if (label && labelEl) labelEl.textContent = label;
     if (track) track.setAttribute('aria-valuenow', String(value));
   }
-  setProgress(6, '初始化…');
+  setProgress(4, '初始化…');
+  window.setTimeout(function () { setProgress(10, '初始化…'); }, 420);
   window.__SIBS_START_BOOT__ = {
     setProgress: setProgress,
     finish: function () {
@@ -123,10 +130,10 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
-      setProgress(18, '加载样式…');
+      window.setTimeout(function () { setProgress(18, '加载样式…'); }, 360);
     }, { once: true });
   } else {
-    setProgress(18, '加载样式…');
+    window.setTimeout(function () { setProgress(18, '加载样式…'); }, 360);
   }
 })();
 </script>`

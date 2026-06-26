@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页加载动画：图标移至进度条左侧，并放慢进度推进速度。",
+            en: "Start page boot splash: logo sits left of the progress bar with slower fill pacing.",
+          },
+                    {
             zh: "开始页（index）恢复加载动画：进度条右上角显示百分比，右下角显示当前加载项（程序、图标、字体等）。",
             en: "Start page (index) boot splash restored—progress % at the top-right of the bar, current load step at the bottom-right.",
           },
