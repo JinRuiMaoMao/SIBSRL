@@ -1,4 +1,4 @@
-import { stutterProgressTo } from './startPageBootStutter'
+import { bootProgressTo } from './startPageBootStutter'
 
 export interface StartPageBootBridge {
   setProgress: (percent: number, label?: string, mode?: 'surge' | 'retract' | 'hold') => void
@@ -47,19 +47,19 @@ export async function runStartPageBoot(
 
   let current = 18
 
-  current = await stutterProgressTo(set, current, 36, labels.script, options)
-  current = await stutterProgressTo(set, current, 52, labels.interface, options)
+  current = await bootProgressTo(set, current, 36, labels.script, options)
+  current = await bootProgressTo(set, current, 52, labels.interface, options)
 
   const logoPromise = preloadImage('./sibs-logo.png').catch(() => undefined)
-  current = await stutterProgressTo(set, current, 72, labels.logo, options)
+  current = await bootProgressTo(set, current, 72, labels.logo, options)
   await logoPromise
-  current = await stutterProgressTo(set, current, 88, labels.logo, options)
+  current = await bootProgressTo(set, current, 88, labels.logo, options)
 
   const fontsPromise = waitForFonts()
-  current = await stutterProgressTo(set, current, 96, labels.fonts, options)
+  current = await bootProgressTo(set, current, 96, labels.fonts, options)
   await fontsPromise
 
-  current = await stutterProgressTo(set, current, 100, labels.ready, options)
+  current = await bootProgressTo(set, current, 100, labels.ready, options)
   await waitMs(options?.reduceMotion ? 160 : 520)
 
   if (bridge) {

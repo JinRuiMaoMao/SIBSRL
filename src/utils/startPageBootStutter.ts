@@ -6,6 +6,10 @@ export type BootProgressSetter = (
   mode?: BootProgressMode,
 ) => void
 
+/** Stutter only between 50% and 95%. */
+export const BOOT_STUTTER_MIN = 50
+export const BOOT_STUTTER_MAX = 95
+
 function waitMs(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms))
 }
@@ -14,22 +18,64 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
-/** Game-style loading bar: surge forward, snap back (sometimes more than gained). */
-export async function stutterProgressTo(
+function buildBootSegments(
+  start: number,
+  target: number,
+): Array<{ from: number; to: number; stutter: boolean }> {
+  if (start >= target) return []
+
+  const segments: Array<{ from: number; to: number; stutter: boolean }> = []
+
+  if (start < BOOT_STUTTER_MIN) {
+    const end = Math.min(target, BOOT_STUTTER_MIN)
+    if (end > start) segments.push({ from: start, to: end, stutter: false })
+  }
+
+  const stutterStart = Math.max(start, BOOT_STUTTER_MIN)
+  const stutterEnd = Math.min(target, BOOT_STUTTER_MAX)
+  if (stutterEnd > stutterStart) {
+    segments.push({ from: stutterStart, to: stutterEnd, stutter: true })
+  }
+
+  if (target > BOOT_STUTTER_MAX) {
+    const tailStart = Math.max(start, BOOT_STUTTER_MAX)
+    if (target > tailStart) segments.push({ from: tailStart, to: target, stutter: false })
+  }
+
+  return segments
+}
+
+async function smoothProgressTo(
   set: BootProgressSetter,
   start: number,
   target: number,
   label: string,
-  options?: { reduceMotion?: boolean },
 ): Promise<number> {
-  if (options?.reduceMotion) {
-    set(target, label, 'hold')
-    return target
-  }
-
   let current = start
   set(current, label, 'hold')
-  const floor = Math.max(0, start - 3)
+
+  while (current < target - 0.5) {
+    const remaining = target - current
+    const step = Math.max(1.2, Math.min(remaining, remaining * (0.14 + Math.random() * 0.18)))
+    current = clamp(current + step, 0, target)
+    set(current, label, 'surge')
+    await waitMs(200 + Math.random() * 160)
+  }
+
+  set(target, label, 'hold')
+  await waitMs(140 + Math.random() * 100)
+  return target
+}
+
+async function stutterSegmentTo(
+  set: BootProgressSetter,
+  start: number,
+  target: number,
+  label: string,
+): Promise<number> {
+  let current = start
+  set(current, label, 'hold')
+  const floor = Math.max(BOOT_STUTTER_MIN - 4, start - 3)
 
   while (current < target - 1) {
     const remaining = target - current
@@ -88,3 +134,29 @@ export async function stutterProgressTo(
   await waitMs(160 + Math.random() * 120)
   return target
 }
+
+/** Smooth below 50% and above 95%; stutter only in the middle band. */
+export async function bootProgressTo(
+  set: BootProgressSetter,
+  start: number,
+  target: number,
+  label: string,
+  options?: { reduceMotion?: boolean },
+): Promise<number> {
+  if (options?.reduceMotion) {
+    set(target, label, 'hold')
+    return target
+  }
+
+  let current = start
+  for (const segment of buildBootSegments(start, target)) {
+    current = segment.stutter
+      ? await stutterSegmentTo(set, segment.from, segment.to, label)
+      : await smoothProgressTo(set, segment.from, segment.to, label)
+  }
+
+  return current
+}
+
+/** @deprecated use bootProgressTo */
+export const stutterProgressTo = bootProgressTo

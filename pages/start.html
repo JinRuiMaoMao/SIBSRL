@@ -219,9 +219,41 @@ html.start-boot-active #root {
     if (label && labelEl) labelEl.textContent = label;
     if (track) track.setAttribute('aria-valuenow', String(value));
   }
-  async function stutterProgressTo(start, target, label) {
+  var STUTTER_MIN = 50;
+  var STUTTER_MAX = 95;
+  function buildBootSegments(start, target) {
+    if (start >= target) return [];
+    var segments = [];
+    if (start < STUTTER_MIN) {
+      var headEnd = Math.min(target, STUTTER_MIN);
+      if (headEnd > start) segments.push({ from: start, to: headEnd, stutter: false });
+    }
+    var stutterStart = Math.max(start, STUTTER_MIN);
+    var stutterEnd = Math.min(target, STUTTER_MAX);
+    if (stutterEnd > stutterStart) segments.push({ from: stutterStart, to: stutterEnd, stutter: true });
+    if (target > STUTTER_MAX) {
+      var tailStart = Math.max(start, STUTTER_MAX);
+      if (target > tailStart) segments.push({ from: tailStart, to: target, stutter: false });
+    }
+    return segments;
+  }
+  async function smoothProgressTo(start, target, label) {
     var current = start;
-    var floor = Math.max(0, start - 3);
+    setProgress(current, label, 'hold');
+    while (current < target - 0.5) {
+      var remaining = target - current;
+      var step = Math.max(1.2, Math.min(remaining, remaining * (0.14 + Math.random() * 0.18)));
+      current = clamp(current + step, 0, target);
+      setProgress(current, label, 'surge');
+      await wait(200 + Math.random() * 160);
+    }
+    setProgress(target, label, 'hold');
+    await wait(140 + Math.random() * 100);
+    return target;
+  }
+  async function stutterSegmentTo(start, target, label) {
+    var current = start;
+    var floor = Math.max(STUTTER_MIN - 4, start - 3);
     setProgress(current, label, 'hold');
     while (current < target - 1) {
       var remaining = target - current;
@@ -268,6 +300,17 @@ html.start-boot-active #root {
     await wait(160 + Math.random() * 120);
     return target;
   }
+  async function bootProgressTo(start, target, label) {
+    var current = start;
+    var segments = buildBootSegments(start, target);
+    for (var i = 0; i < segments.length; i++) {
+      var seg = segments[i];
+      current = seg.stutter
+        ? await stutterSegmentTo(seg.from, seg.to, label)
+        : await smoothProgressTo(seg.from, seg.to, label);
+    }
+    return current;
+  }
   window.__SIBS_START_BOOT__ = {
     setProgress: setProgress,
     finish: function () {
@@ -280,13 +323,13 @@ html.start-boot-active #root {
     },
   };
   void (async function () {
-    var current = await stutterProgressTo(0, 10, '初始化…');
+    var current = await bootProgressTo(0, 10, '初始化…');
     if (document.readyState === 'loading') {
       await new Promise(function (resolve) {
         document.addEventListener('DOMContentLoaded', resolve, { once: true });
       });
     }
-    await stutterProgressTo(current, 18, '加载样式…');
+    await bootProgressTo(current, 18, '加载样式…');
   })();
 })();
     </script>

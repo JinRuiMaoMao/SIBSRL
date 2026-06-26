@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页加载条抽搐仅限 50%～95% 区间，前半段与 95% 之后平滑推进。",
+            en: "Start boot bar stutters only between 50% and 95%; the first half and final 5% advance smoothly.",
+          },
+                    {
             zh: "开始页加载条加入原版游戏式抽搐：大幅前冲后回缩更多，或小幅推进后略退回。",
             en: "Start page boot bar now stutters like the original game—big surges that snap back, or small ticks with partial retreats.",
           },
