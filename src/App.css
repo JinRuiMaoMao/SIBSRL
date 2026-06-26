@@ -11,6 +11,20 @@
 .start-page {
   min-height: 100vh;
   min-height: 100dvh;
+  transition: opacity 0.35s ease;
+}
+
+.start-page--booting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.start-page--ready {
+  opacity: 1;
+}
+
+html[data-reduce-motion='true'] .start-page {
+  transition: none;
 }
 
 .start-page-top {

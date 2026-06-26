@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页（index）恢复加载动画：进度条右上角显示百分比，右下角显示当前加载项（程序、图标、字体等）。",
+            en: "Start page (index) boot splash restored—progress % at the top-right of the bar, current load step at the bottom-right.",
+          },
+                    {
             zh: "移除全站动态背景层，恢复为 html 静态主题渐变（与引入动画前一致），解决卡顿。",
             en: "Removed the site-wide animated background layer; restored static html theme gradients as before animations were added to fix lag.",
           },

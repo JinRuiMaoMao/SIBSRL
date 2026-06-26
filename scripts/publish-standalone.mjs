@@ -18,6 +18,7 @@ import {
   injectUserApiMeta,
   syncFaviconLink,
 } from './lib/app-page-html.mjs'
+import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 import { syncBrandAssets } from './sync-brand-assets.mjs'
 
@@ -84,7 +85,7 @@ export function publishStandalone(options = {}) {
     writeFileSync(resolve(root, 'dist', page.publishFile), html)
   }
 
-  let startHtml = injectStartPageMeta(baseHtml)
+  let startHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
   startHtml = adjustAppPageTitle(startHtml, '阳光群岛巴士线路查询', { standalone: true })
   writeFileSync(resolve(root, 'index.html'), startHtml)
   writeFileSync(resolve(root, 'dist', 'index.html'), startHtml)

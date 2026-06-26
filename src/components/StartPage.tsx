@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { START_PAGE_EXTERNAL_LINKS, getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { getTabPageHref } from '../utils/appTabNavigation'
@@ -7,6 +8,7 @@ import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
 export function StartPage() {
+  const bootReady = useStartPageBoot()
   const { locale, t } = useLocale()
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const routesHref = getTabPageHref('routes')
@@ -19,7 +21,7 @@ export function StartPage() {
   }, [locale, t])
 
   return (
-    <div className="app sibs-scrollbar start-page">
+    <div className={`app sibs-scrollbar start-page${bootReady ? ' start-page--ready' : ' start-page--booting'}`}>
       <header className="start-page-top">
         <a className="start-page-settings" href={getSettingsPageHref()} aria-label={t('settings')}>
           {t('settings')}

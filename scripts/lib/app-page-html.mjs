@@ -39,6 +39,7 @@ export function adjustAppPageTitle(html, titleZh, options = {}) {
 const NOSCRIPT_GUARD_HTML = `<noscript>
   <style>
     #root, .boot-hint { display: none !important; }
+    #start-boot-splash { display: none !important; }
     .noscript-wall {
       display: flex;
       flex-direction: column;
