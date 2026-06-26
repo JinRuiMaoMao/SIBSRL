@@ -191,10 +191,19 @@ body {
 }
 
 #root {
+  min-height: 100vh;
+}
+
+.app-viewport {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+.app-viewport__content {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  isolation: isolate;
 }
 
 /* 自制滚动条（Firefox + Chromium / Edge） */

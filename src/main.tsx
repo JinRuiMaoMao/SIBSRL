@@ -36,13 +36,17 @@ createRoot(rootEl).render(
           <GuidedTourProvider>
             <AppDialogProvider>
               <AppPreferencesProvider>
-                <PageAnimatedBackground />
-                <FavoriteRoutesProvider>
-                  <RecentRoutesProvider>
-                    <App />
-                    <CustomContextMenu />
-                  </RecentRoutesProvider>
-                </FavoriteRoutesProvider>
+                <div className="app-viewport">
+                  <PageAnimatedBackground />
+                  <div className="app-viewport__content">
+                    <FavoriteRoutesProvider>
+                      <RecentRoutesProvider>
+                        <App />
+                        <CustomContextMenu />
+                      </RecentRoutesProvider>
+                    </FavoriteRoutesProvider>
+                  </div>
+                </div>
               </AppPreferencesProvider>
             </AppDialogProvider>
           </GuidedTourProvider>

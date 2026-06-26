@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "修复动态背景层叠顺序错误导致开始页 Logo 与「路线查询 / 更新日志」按钮被遮挡的问题。",
+            en: "Fixed start page logo and Route lookup / Updates buttons hidden behind the animated background layer.",
+          },
+                    {
             zh: "动态背景增加多色光斑与旋转色带填充，各栏目按主题配色显示金/青/蓝/紫等更多色彩。",
             en: "Animated background now adds multi-color blobs and a rotating color mesh—each tab fills with more of its theme palette (gold, teal, blue, purple, etc.).",
           },
