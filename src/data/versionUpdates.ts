@@ -224,8 +224,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
-            zh: "开始页外链改为一行横排，主按钮与链接字号、点击区域加大；窄屏可横向滑动浏览全部链接。",
-            en: "Start page community links now sit in a single horizontal row with larger buttons and type; narrow screens can scroll sideways to reach every link.",
+            zh: "开始页外链在手机端改为一行 3 个、共两行网格；桌面端仍保持单行横排。",
+            en: "Start page community links on mobile now use a 3×2 grid; desktop stays a single horizontal row.",
+          },
+                    {
+            zh: "开始页外链改为一行横排，主按钮与链接字号、点击区域加大。",
+            en: "Start page community links sit in a single horizontal row on desktop with larger buttons and type.",
           },
                     {
             zh: "开始页 Wiki 链接按语言切换：繁体中文指向 Roblox 中文 Wiki（Sunshine Islands 陽光群島），其余语言指向英文 Fandom Wiki；社区站链接改为 sites.google.com/view/sunshine-islands。",
