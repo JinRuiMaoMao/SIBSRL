@@ -4,7 +4,7 @@
 > 已接入 `getTodaysDailyChallenge()`，读取 [`daily-challenge-schedule-2026-06.json`](./daily-challenge-schedule-2026-06.json)，每日 **HKT 08:00** 切换。  
 > 主站线路列表折叠分组见 [`route-display-groups.json`](./route-display-groups.json)。  
 > 月份假定 **2026-06**（与站点更新日期一致）；若年份不同请改 JSON 内 `month` 与各 `date`。  
-> **暂无公布内容的日期**（6/26、6/29）在 JSON 中留空（`event: null`）。
+> **暂无公布内容的日期**（6/29）在 JSON 中留空（`event: null`）。
 
 ## 原文
 
@@ -35,7 +35,7 @@
 6/23: Marathon Road Closure at Night (N271S) — Rainbow Estate Complex → Long Island Ferry Pier via Central Western Bridge; any HK Special, CSB or FT buses; time 03:30
 6/24: [Race] Urban Odyssey (77XA)
 6/25: Rare appearance
-6/26:
+6/26: Foggy Day (74A)
 6/27: [Race] Marathon Shuttle
 6/28: [Race] Rush Hour
 6/29:

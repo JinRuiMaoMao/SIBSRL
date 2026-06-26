@@ -332,8 +332,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions:         [
                     {
-            zh: "按 Discord「~June Daily Challenge~」全文重刷 2026 年 6 月社区日程（含 6/26、6/29 待公布空白）。",
-            en: "Refreshed the full June 2026 community schedule from Discord “~June Daily Challenge~” (6/26 and 6/29 left blank pending announcement).",
+            zh: "同步 6/26 每日挑战：大雾天气 Foggy Day 74A（非竞速）。",
+            en: "Synced 6/26 daily challenge: Foggy Day on 74A (non-race).",
+          },
+                    {
+            zh: "按 Discord「~June Daily Challenge~」全文重刷 2026 年 6 月社区日程（含 6/29 待公布空白）。",
+            en: "Refreshed the full June 2026 community schedule from Discord “~June Daily Challenge~” (6/29 left blank pending announcement).",
           },
                     {
             zh: "同步 6/25 每日挑战：罕见外观 U47S（非竞速）。",
