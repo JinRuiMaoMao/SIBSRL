@@ -1,5 +1,7 @@
+import { stutterProgressTo } from './startPageBootStutter'
+
 export interface StartPageBootBridge {
-  setProgress: (percent: number, label?: string) => void
+  setProgress: (percent: number, label?: string, mode?: 'surge' | 'retract' | 'hold') => void
   finish: () => void
 }
 
@@ -39,34 +41,26 @@ export async function runStartPageBoot(
   options?: { reduceMotion?: boolean },
 ): Promise<void> {
   const bridge = window.__SIBS_START_BOOT__
-  const set = (percent: number, label: string) => {
-    bridge?.setProgress(percent, label)
+  const set = (percent: number, label: string, mode?: 'surge' | 'retract' | 'hold') => {
+    bridge?.setProgress(percent, label, mode)
   }
-  const pause = (ms: number) => waitMs(options?.reduceMotion ? Math.min(ms, 80) : ms)
 
-  set(Math.max(24, 28), labels.script)
-  await pause(520)
+  let current = 18
 
-  set(38, labels.script)
-  await pause(480)
+  current = await stutterProgressTo(set, current, 36, labels.script, options)
+  current = await stutterProgressTo(set, current, 52, labels.interface, options)
 
-  set(52, labels.interface)
-  await pause(560)
+  const logoPromise = preloadImage('./sibs-logo.png').catch(() => undefined)
+  current = await stutterProgressTo(set, current, 72, labels.logo, options)
+  await logoPromise
+  current = await stutterProgressTo(set, current, 88, labels.logo, options)
 
-  try {
-    set(66, labels.logo)
-    await Promise.all([preloadImage('./sibs-logo.png'), pause(640)])
-  } catch {
-    await pause(640)
-  }
-  set(80, labels.logo)
-  await pause(520)
+  const fontsPromise = waitForFonts()
+  current = await stutterProgressTo(set, current, 96, labels.fonts, options)
+  await fontsPromise
 
-  set(90, labels.fonts)
-  await Promise.all([waitForFonts(), pause(560)])
-
-  set(100, labels.ready)
-  await pause(options?.reduceMotion ? 160 : 720)
+  current = await stutterProgressTo(set, current, 100, labels.ready, options)
+  await waitMs(options?.reduceMotion ? 160 : 520)
 
   if (bridge) {
     bridge.finish()

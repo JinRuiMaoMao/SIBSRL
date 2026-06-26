@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页加载条加入原版游戏式抽搐：大幅前冲后回缩更多，或小幅推进后略退回。",
+            en: "Start page boot bar now stutters like the original game—big surges that snap back, or small ticks with partial retreats.",
+          },
+                    {
             zh: "开始页加载动画：图标移至进度条左侧，并放慢进度推进速度。",
             en: "Start page boot splash: logo sits left of the progress bar with slower fill pacing.",
           },

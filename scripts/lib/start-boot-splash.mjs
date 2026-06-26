@@ -68,7 +68,13 @@ html.start-boot-active #root {
     color-mix(in srgb, var(--accent, #f5b942) 82%, #fff 18%),
     var(--accent, #f5b942)
   );
-  transition: width 0.72s ease;
+  transition: width 0.2s steps(5);
+}
+.start-boot-splash__fill.is-surging {
+  transition: width 0.28s steps(8);
+}
+.start-boot-splash__fill.is-retracting {
+  transition: width 0.12s steps(4);
 }
 .start-boot-splash__label {
   position: absolute;
@@ -108,15 +114,71 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
   var fillEl = document.getElementById('start-boot-fill');
   var labelEl = document.getElementById('start-boot-label');
   var track = document.getElementById('start-boot-track');
-  function setProgress(p, label) {
-    var value = Math.max(0, Math.min(100, Math.round(p)));
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function wait(ms) {
+    return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
+  }
+  function setProgress(p, label, mode) {
+    var value = clamp(Math.round(p), 0, 100);
     if (pctEl) pctEl.textContent = value + '%';
-    if (fillEl) fillEl.style.width = value + '%';
+    if (fillEl) {
+      fillEl.classList.remove('is-surging', 'is-retracting');
+      if (mode === 'surge') fillEl.classList.add('is-surging');
+      if (mode === 'retract') fillEl.classList.add('is-retracting');
+      fillEl.style.width = value + '%';
+    }
     if (label && labelEl) labelEl.textContent = label;
     if (track) track.setAttribute('aria-valuenow', String(value));
   }
-  setProgress(4, '初始化…');
-  window.setTimeout(function () { setProgress(10, '初始化…'); }, 420);
+  async function stutterProgressTo(start, target, label) {
+    var current = start;
+    var floor = Math.max(0, start - 3);
+    setProgress(current, label, 'hold');
+    while (current < target - 1) {
+      var remaining = target - current;
+      var roll = Math.random();
+      if (roll < 0.34 && remaining > 7) {
+        var bigFwd = clamp(remaining * (0.42 + Math.random() * 0.38), 10, 30);
+        var bigPeak = clamp(current + bigFwd, 0, 100);
+        setProgress(bigPeak, label, 'surge');
+        await wait(260 + Math.random() * 240);
+        current = Math.max(floor, bigPeak - bigFwd * (0.8 + Math.random() * 0.32));
+        setProgress(current, label, 'retract');
+        await wait(170 + Math.random() * 190);
+        if (Math.random() < 0.48) {
+          current = clamp(current + bigFwd * 0.2, 0, target);
+          setProgress(current, label, 'surge');
+          await wait(110 + Math.random() * 100);
+        }
+        continue;
+      }
+      if (roll < 0.74) {
+        var smallFwd = clamp(remaining * (0.05 + Math.random() * 0.13), 2, 8);
+        var smallPeak = clamp(current + smallFwd, 0, 100);
+        setProgress(smallPeak, label, 'surge');
+        await wait(100 + Math.random() * 130);
+        current = Math.max(floor, smallPeak - smallFwd * (0.45 + Math.random() * 0.5));
+        setProgress(current, label, 'retract');
+        await wait(70 + Math.random() * 110);
+        if (Math.random() < 0.64) {
+          current = clamp(current + smallFwd * 0.4, 0, target);
+          setProgress(current, label, 'hold');
+          await wait(85 + Math.random() * 90);
+        }
+        continue;
+      }
+      var medFwd = clamp(remaining * (0.18 + Math.random() * 0.28), 5, 20);
+      var medPeak = clamp(current + medFwd, 0, 100);
+      setProgress(medPeak, label, 'surge');
+      await wait(190 + Math.random() * 170);
+      current = clamp(Math.max(floor, medPeak - medFwd * (0.55 + Math.random() * 0.38)) + medFwd * 0.32, 0, target);
+      setProgress(current, label, 'retract');
+      await wait(120 + Math.random() * 140);
+    }
+    setProgress(target, label, 'surge');
+    await wait(160 + Math.random() * 120);
+    return target;
+  }
   window.__SIBS_START_BOOT__ = {
     setProgress: setProgress,
     finish: function () {
@@ -128,13 +190,15 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
       }, 420);
     },
   };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      window.setTimeout(function () { setProgress(18, '加载样式…'); }, 360);
-    }, { once: true });
-  } else {
-    window.setTimeout(function () { setProgress(18, '加载样式…'); }, 360);
-  }
+  void (async function () {
+    var current = await stutterProgressTo(0, 10, '初始化…');
+    if (document.readyState === 'loading') {
+      await new Promise(function (resolve) {
+        document.addEventListener('DOMContentLoaded', resolve, { once: true });
+      });
+    }
+    await stutterProgressTo(current, 18, '加载样式…');
+  })();
 })();
 </script>`
 
