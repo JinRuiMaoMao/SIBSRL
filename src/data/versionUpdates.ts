@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页外链按钮悬浮时增加与线路卡片相同的上浮阴影质感（translateY + 主题阴影）。",
+            en: "Start page outbound links now lift on hover with the same shadow treatment as route cards.",
+          },
+                    {
             zh: "开始页外链按钮悬浮时以主题色从左向右填充，移开后恢复仅描边样式。",
             en: "Start page outbound link buttons fill with the theme accent left-to-right on hover, reverting to outline-only when the pointer leaves.",
           },

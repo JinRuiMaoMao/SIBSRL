@@ -205,10 +205,12 @@ html[data-theme='light'] .start-page-cta--primary {
   color: var(--text-muted);
   background: transparent;
   border: 1px solid var(--border);
+  box-shadow: none;
   transition:
     color 0.28s ease,
     border-color 0.28s ease,
-    transform 0.2s ease;
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .start-page-external-link::before {
@@ -223,16 +225,30 @@ html[data-theme='light'] .start-page-cta--primary {
   transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.start-page-external-link:hover,
-.start-page-external-link:focus-visible {
-  color: #1a1208;
-  border-color: var(--accent);
-  transform: none;
-}
-
 .start-page-external-link:hover::before,
 .start-page-external-link:focus-visible::before {
   transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .start-page-external-link:hover {
+    color: #1a1208;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--route-card-promoted-shadow-hover);
+  }
+}
+
+.start-page-external-link:focus-visible {
+  color: #1a1208;
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--route-card-promoted-shadow-hover);
+}
+
+.start-page-external-link:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 html[data-theme='light'] .start-page-external-link:hover,
@@ -289,6 +305,12 @@ html[data-reduce-motion='true'] .start-page-cta--secondary:hover,
 html[data-reduce-motion='true'] .start-page-cta--secondary:focus-visible,
 html[data-reduce-motion='true'] .start-page-external-link::before {
   transition: none;
+}
+
+html[data-reduce-motion='true'] .start-page-external-link:hover,
+html[data-reduce-motion='true'] .start-page-external-link:focus-visible,
+html[data-reduce-motion='true'] .start-page-external-link:active {
+  transform: none;
 }
 
 /* Header */
