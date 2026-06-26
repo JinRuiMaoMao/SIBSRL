@@ -1,19 +1,11 @@
 import { useRef } from 'react'
-import { EXTERNAL_LINKS } from '../data/routes'
 import { useHeaderControlsReserve } from '../hooks/useHeaderControlsReserve'
 import { useSecretLogoClick } from '../hooks/useSecretLogoClick'
 import { useLocale } from '../i18n/LocaleContext'
-import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
 import { SiteLogo } from './SiteLogo'
-
-const LINK_LABEL_KEYS: Record<string, MessageKey> = {
-  'https://www.roblox.com/games/1588965415': 'linkOfficialGame',
-  'https://sites.google.com/view/sunshine-islands/home': 'linkCommunitySite',
-  'https://sunshine-islands-roblox.fandom.com/wiki/Roblox_Sunshine_Islands': 'linkWiki',
-}
 
 interface HeaderProps {
   activeTab: AppTab
@@ -54,16 +46,6 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
               <p className="tagline">{t('appTagline')}</p>
             </div>
           </div>
-        </div>
-
-        <div className="header-sub" aria-hidden={collapsed}>
-          <nav className="header-links" aria-label={t('externalLinks')}>
-            {EXTERNAL_LINKS.map((link) => (
-              <a key={link.url} href={link.url} target="_blank" rel="noreferrer">
-                {t(LINK_LABEL_KEYS[link.url] ?? 'linkWiki')}
-              </a>
-            ))}
-          </nav>
         </div>
       </header>
     </div>

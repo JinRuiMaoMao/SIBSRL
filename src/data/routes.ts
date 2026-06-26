@@ -2881,18 +2881,3 @@ const mergedRoutes = [
 export const routes = [...mergedRoutes].sort((a, b) =>
   compareRouteNumber(a.number, b.number),
 )
-
-export const EXTERNAL_LINKS = [
-  {
-    label: { zh: '官方 Roblox 游戏', en: 'Official Roblox Game' },
-    url: 'https://www.roblox.com/games/1588965415',
-  },
-  {
-    label: { zh: '阳光群岛社区站', en: 'Sunshine Islands Community Site' },
-    url: 'https://sites.google.com/view/sunshine-islands/home',
-  },
-  {
-    label: { zh: 'Fandom Wiki', en: 'Fandom Wiki' },
-    url: 'https://sunshine-islands-roblox.fandom.com/wiki/Roblox_Sunshine_Islands',
-  },
-]

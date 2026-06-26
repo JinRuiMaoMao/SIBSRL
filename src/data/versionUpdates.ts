@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "线路查询等页面顶栏已移除 Roblox / 社区站 / Wiki 外链（改由开始页 index 统一提供）。",
+            en: "Removed Roblox, community site, and Wiki links from the header on routes and other app pages—they now live on the start page only.",
+          },
+                    {
             zh: "开始页外链按钮悬浮时增加与线路卡片相同的上浮阴影质感（translateY + 主题阴影）。",
             en: "Start page outbound links now lift on hover with the same shadow treatment as route cards.",
           },
