@@ -224,8 +224,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
-            zh: "开始页加载条抽搐仅限 50%～95% 区间，前半段与 95% 之后平滑推进。",
-            en: "Start boot bar stutters only between 50% and 95%; the first half and final 5% advance smoothly.",
+            zh: "开始页加载：0～50% 与 95～100% 仅平滑推进；50～94% 条带可抽搐，抽搐时百分比与阶段文字锁定、不回退。",
+            en: "Start boot: 0–50% and 95–100% advance smoothly; the bar stutters only at 50–94% while percent and step label stay locked with no rollback.",
           },
                     {
             zh: "开始页加载条加入原版游戏式抽搐：大幅前冲后回缩更多，或小幅推进后略退回。",

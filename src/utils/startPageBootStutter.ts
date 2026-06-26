@@ -1,4 +1,4 @@
-export type BootProgressMode = 'surge' | 'retract' | 'hold'
+export type BootProgressMode = 'smooth' | 'surge' | 'retract' | 'hold'
 
 export type BootProgressSetter = (
   percent: number,
@@ -6,9 +6,9 @@ export type BootProgressSetter = (
   mode?: BootProgressMode,
 ) => void
 
-/** Stutter only between 50% and 95%. */
+/** Stutter only while bar position is in [50, 95). */
 export const BOOT_STUTTER_MIN = 50
-export const BOOT_STUTTER_MAX = 95
+export const BOOT_STUTTER_TAIL = 95
 
 function waitMs(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms))
@@ -32,14 +32,14 @@ function buildBootSegments(
   }
 
   const stutterStart = Math.max(start, BOOT_STUTTER_MIN)
-  const stutterEnd = Math.min(target, BOOT_STUTTER_MAX)
-  if (stutterEnd > stutterStart) {
+  const stutterEnd = Math.min(target, BOOT_STUTTER_TAIL - 1)
+  if (stutterEnd >= BOOT_STUTTER_MIN && stutterEnd > stutterStart) {
     segments.push({ from: stutterStart, to: stutterEnd, stutter: true })
   }
 
-  if (target > BOOT_STUTTER_MAX) {
-    const tailStart = Math.max(start, BOOT_STUTTER_MAX)
-    if (target > tailStart) segments.push({ from: tailStart, to: target, stutter: false })
+  const tailStart = Math.max(start, BOOT_STUTTER_TAIL)
+  if (target > tailStart) {
+    segments.push({ from: tailStart, to: target, stutter: false })
   }
 
   return segments
@@ -56,14 +56,14 @@ async function smoothProgressTo(
 
   while (current < target - 0.5) {
     const remaining = target - current
-    const step = Math.max(1.2, Math.min(remaining, remaining * (0.14 + Math.random() * 0.18)))
+    const step = Math.max(0.8, Math.min(remaining, remaining * (0.12 + Math.random() * 0.14)))
     current = clamp(current + step, 0, target)
-    set(current, label, 'surge')
-    await waitMs(200 + Math.random() * 160)
+    set(current, label, 'smooth')
+    await waitMs(240 + Math.random() * 180)
   }
 
   set(target, label, 'hold')
-  await waitMs(140 + Math.random() * 100)
+  await waitMs(160 + Math.random() * 120)
   return target
 }
 
@@ -73,28 +73,29 @@ async function stutterSegmentTo(
   target: number,
   label: string,
 ): Promise<number> {
-  let current = start
-  set(current, label, 'hold')
-  const floor = Math.max(BOOT_STUTTER_MIN - 4, start - 3)
+  let bar = start
+  let locked = start
+  set(locked, label, 'hold')
+  const barFloor = Math.max(BOOT_STUTTER_MIN - 2, start - 1)
 
-  while (current < target - 1) {
-    const remaining = target - current
+  while (locked < target - 1) {
+    const remaining = target - locked
     const roll = Math.random()
 
     if (roll < 0.34 && remaining > 7) {
       const forward = clamp(remaining * (0.42 + Math.random() * 0.38), 10, 30)
-      const peak = clamp(current + forward, 0, 100)
+      const peak = clamp(bar + forward, 0, 100)
       set(peak, label, 'surge')
       await waitMs(260 + Math.random() * 240)
 
-      const back = forward * (0.8 + Math.random() * 0.32)
-      current = Math.max(floor, peak - back)
-      set(current, label, 'retract')
+      bar = Math.max(barFloor, peak - forward * (0.8 + Math.random() * 0.32))
+      set(bar, label, 'retract')
       await waitMs(170 + Math.random() * 190)
 
       if (Math.random() < 0.48) {
-        current = clamp(current + forward * 0.2, 0, target)
-        set(current, label, 'surge')
+        locked = clamp(locked + forward * 0.2, 0, target)
+        bar = Math.max(bar, locked)
+        set(locked, label, 'surge')
         await waitMs(110 + Math.random() * 100)
       }
       continue
@@ -102,40 +103,44 @@ async function stutterSegmentTo(
 
     if (roll < 0.74) {
       const forward = clamp(remaining * (0.05 + Math.random() * 0.13), 2, 8)
-      const peak = clamp(current + forward, 0, 100)
+      const peak = clamp(bar + forward, 0, 100)
       set(peak, label, 'surge')
       await waitMs(100 + Math.random() * 130)
 
-      const back = forward * (0.45 + Math.random() * 0.5)
-      current = Math.max(floor, peak - back)
-      set(current, label, 'retract')
+      bar = Math.max(barFloor, peak - forward * (0.45 + Math.random() * 0.5))
+      set(bar, label, 'retract')
       await waitMs(70 + Math.random() * 110)
 
       if (Math.random() < 0.64) {
-        current = clamp(current + forward * 0.4, 0, target)
-        set(current, label, 'hold')
+        locked = clamp(locked + forward * 0.4, 0, target)
+        bar = Math.max(bar, locked)
+        set(locked, label, 'surge')
         await waitMs(85 + Math.random() * 90)
       }
       continue
     }
 
     const forward = clamp(remaining * (0.18 + Math.random() * 0.28), 5, 20)
-    const peak = clamp(current + forward, 0, 100)
+    const peak = clamp(bar + forward, 0, 100)
     set(peak, label, 'surge')
     await waitMs(190 + Math.random() * 170)
 
-    const back = forward * (0.55 + Math.random() * 0.38)
-    current = clamp(Math.max(floor, peak - back) + forward * 0.32, 0, target)
-    set(current, label, 'retract')
+    bar = Math.max(barFloor, peak - forward * (0.55 + Math.random() * 0.38))
+    set(bar, label, 'retract')
     await waitMs(120 + Math.random() * 140)
+
+    locked = clamp(locked + forward * 0.32, 0, target)
+    bar = Math.max(bar, locked)
+    set(locked, label, 'surge')
+    await waitMs(100 + Math.random() * 100)
   }
 
-  set(target, label, 'surge')
+  set(target, label, 'hold')
   await waitMs(160 + Math.random() * 120)
   return target
 }
 
-/** Smooth below 50% and above 95%; stutter only in the middle band. */
+/** Smooth below 50% and from 95%; stutter only in [50, 95). */
 export async function bootProgressTo(
   set: BootProgressSetter,
   start: number,

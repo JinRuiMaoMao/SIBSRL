@@ -1,7 +1,7 @@
 import { bootProgressTo } from './startPageBootStutter'
 
 export interface StartPageBootBridge {
-  setProgress: (percent: number, label?: string, mode?: 'surge' | 'retract' | 'hold') => void
+  setProgress: (percent: number, label?: string, mode?: 'smooth' | 'surge' | 'retract' | 'hold') => void
   finish: () => void
 }
 
@@ -41,7 +41,7 @@ export async function runStartPageBoot(
   options?: { reduceMotion?: boolean },
 ): Promise<void> {
   const bridge = window.__SIBS_START_BOOT__
-  const set = (percent: number, label: string, mode?: 'surge' | 'retract' | 'hold') => {
+  const set = (percent: number, label: string, mode?: 'smooth' | 'surge' | 'retract' | 'hold') => {
     bridge?.setProgress(percent, label, mode)
   }
 
