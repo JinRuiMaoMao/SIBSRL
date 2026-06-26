@@ -1,0 +1,131 @@
+/* Per-theme multi-color orb fills (paired with pageThemes.css gradients) */
+
+html,
+html[data-app-tab='routes'],
+html[data-app-page='start'] {
+  --page-orb-b: rgba(45, 212, 160, 0.62);
+  --page-orb-c: rgba(96, 132, 220, 0.58);
+  --page-orb-d: rgba(167, 139, 250, 0.52);
+  --page-orb-e: rgba(251, 146, 60, 0.48);
+}
+
+html[data-app-tab='broadcast'] {
+  --page-orb-b: rgba(255, 90, 70, 0.58);
+  --page-orb-c: rgba(255, 200, 120, 0.52);
+  --page-orb-d: rgba(251, 113, 133, 0.48);
+  --page-orb-e: rgba(245, 158, 11, 0.5);
+}
+
+html[data-app-tab='music'] {
+  --page-orb-b: rgba(236, 72, 153, 0.55);
+  --page-orb-c: rgba(129, 140, 248, 0.58);
+  --page-orb-d: rgba(244, 114, 182, 0.48);
+  --page-orb-e: rgba(99, 102, 241, 0.52);
+}
+
+html[data-app-tab='complaints'] {
+  --page-orb-b: rgba(225, 80, 100, 0.55);
+  --page-orb-c: rgba(190, 60, 90, 0.5);
+  --page-orb-d: rgba(167, 139, 250, 0.45);
+  --page-orb-e: rgba(180, 83, 9, 0.42);
+}
+
+html[data-app-tab='trivia'] {
+  --page-orb-b: rgba(45, 212, 160, 0.55);
+  --page-orb-c: rgba(250, 204, 21, 0.52);
+  --page-orb-d: rgba(56, 189, 248, 0.48);
+  --page-orb-e: rgba(132, 204, 22, 0.5);
+}
+
+html[data-app-tab='updates'] {
+  --page-orb-b: rgba(34, 211, 238, 0.55);
+  --page-orb-c: rgba(59, 130, 246, 0.58);
+  --page-orb-d: rgba(129, 140, 248, 0.5);
+  --page-orb-e: rgba(45, 212, 160, 0.48);
+}
+
+html[data-app-page='settings'] {
+  --page-orb-b: rgba(96, 165, 250, 0.5);
+  --page-orb-c: rgba(71, 85, 105, 0.48);
+  --page-orb-d: rgba(148, 163, 184, 0.45);
+  --page-orb-e: rgba(56, 189, 248, 0.42);
+}
+
+html[data-app-page='account'] {
+  --page-orb-b: rgba(45, 212, 160, 0.55);
+  --page-orb-c: rgba(20, 160, 120, 0.5);
+  --page-orb-d: rgba(56, 189, 248, 0.45);
+  --page-orb-e: rgba(245, 185, 66, 0.42);
+}
+
+html[data-app-page='secret'] {
+  --page-orb-b: rgba(167, 139, 250, 0.55);
+  --page-orb-c: rgba(76, 29, 149, 0.52);
+  --page-orb-d: rgba(192, 132, 252, 0.48);
+  --page-orb-e: rgba(56, 189, 248, 0.42);
+}
+
+html[data-theme='light'],
+html[data-theme='light'][data-app-tab='routes'],
+html[data-theme='light'][data-app-page='start'] {
+  --page-orb-b: rgba(16, 138, 100, 0.42);
+  --page-orb-c: rgba(99, 102, 241, 0.38);
+  --page-orb-d: rgba(244, 114, 82, 0.35);
+  --page-orb-e: rgba(56, 189, 248, 0.32);
+}
+
+html[data-theme='light'][data-app-tab='broadcast'] {
+  --page-orb-b: rgba(220, 130, 90, 0.4);
+  --page-orb-c: rgba(251, 191, 36, 0.38);
+  --page-orb-d: rgba(244, 114, 82, 0.34);
+  --page-orb-e: rgba(253, 200, 120, 0.45);
+}
+
+html[data-theme='light'][data-app-tab='music'] {
+  --page-orb-b: rgba(192, 132, 252, 0.38);
+  --page-orb-c: rgba(219, 39, 119, 0.32);
+  --page-orb-d: rgba(99, 102, 241, 0.35);
+  --page-orb-e: rgba(237, 200, 248, 0.42);
+}
+
+html[data-theme='light'][data-app-tab='complaints'] {
+  --page-orb-b: rgba(186, 120, 140, 0.38);
+  --page-orb-c: rgba(167, 139, 250, 0.32);
+  --page-orb-d: rgba(244, 180, 190, 0.36);
+  --page-orb-e: rgba(248, 210, 218, 0.4);
+}
+
+html[data-theme='light'][data-app-tab='trivia'] {
+  --page-orb-b: rgba(45, 170, 130, 0.36);
+  --page-orb-c: rgba(200, 170, 60, 0.34);
+  --page-orb-d: rgba(100, 150, 200, 0.3);
+  --page-orb-e: rgba(180, 210, 140, 0.38);
+}
+
+html[data-theme='light'][data-app-tab='updates'] {
+  --page-orb-b: rgba(120, 170, 210, 0.36);
+  --page-orb-c: rgba(99, 130, 190, 0.34);
+  --page-orb-d: rgba(45, 170, 150, 0.3);
+  --page-orb-e: rgba(180, 210, 235, 0.38);
+}
+
+html[data-theme='light'][data-app-page='settings'] {
+  --page-orb-b: rgba(120, 150, 190, 0.32);
+  --page-orb-c: rgba(90, 110, 140, 0.28);
+  --page-orb-d: rgba(56, 120, 180, 0.26);
+  --page-orb-e: rgba(200, 215, 230, 0.38);
+}
+
+html[data-theme='light'][data-app-page='account'] {
+  --page-orb-b: rgba(80, 190, 150, 0.34);
+  --page-orb-c: rgba(16, 130, 100, 0.3);
+  --page-orb-d: rgba(56, 170, 200, 0.28);
+  --page-orb-e: rgba(200, 235, 220, 0.38);
+}
+
+html[data-theme='light'][data-app-page='secret'] {
+  --page-orb-b: rgba(167, 139, 250, 0.34);
+  --page-orb-c: rgba(99, 80, 180, 0.32);
+  --page-orb-d: rgba(56, 150, 200, 0.28);
+  --page-orb-e: rgba(210, 200, 245, 0.38);
+}

@@ -10,9 +10,13 @@ export function PageAnimatedBackground() {
       aria-hidden
     >
       <div className="page-animated-bg__base" />
+      <div className="page-animated-bg__mesh" />
       <div className="page-animated-bg__orb page-animated-bg__orb--1" />
       <div className="page-animated-bg__orb page-animated-bg__orb--2" />
       <div className="page-animated-bg__orb page-animated-bg__orb--3" />
+      <div className="page-animated-bg__orb page-animated-bg__orb--4" />
+      <div className="page-animated-bg__orb page-animated-bg__orb--5" />
+      <div className="page-animated-bg__orb page-animated-bg__orb--6" />
     </div>
   )
 }

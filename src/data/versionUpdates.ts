@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "动态背景增加多色光斑与旋转色带填充，各栏目按主题配色显示金/青/蓝/紫等更多色彩。",
+            en: "Animated background now adds multi-color blobs and a rotating color mesh—each tab fills with more of its theme palette (gold, teal, blue, purple, etc.).",
+          },
+                    {
             zh: "修复动态背景未生效的问题，改为固定光斑层并加大漂移幅度，渐变流动应更易察觉。",
             en: "Fixed animated background not running (bad CSS selectors); replaced with fixed aurora blobs and larger motion so the gradient shift is easier to see.",
           },
