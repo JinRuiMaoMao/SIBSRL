@@ -15,7 +15,6 @@ export const SCROLL_REVEAL_SELECTORS = [
   '.complaints-list > li',
   '.updates-list > li',
   '.route-group-collapse',
-  '.route-card-link',
   '.transfer-plan-card-link',
   '.between-stops-section',
   '.settings-page-header',

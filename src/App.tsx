@@ -86,6 +86,12 @@ function App() {
   const [headerCollapsed, setHeaderCollapsed] = useState(false)
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
 
+  useEffect(() => {
+    const open = dailyChallengePromptOpen || updatesPromptOpen
+    document.documentElement.classList.toggle('overlay-prompt-open', open)
+    return () => document.documentElement.classList.remove('overlay-prompt-open')
+  }, [dailyChallengePromptOpen, updatesPromptOpen])
+
   const prepareGuidedTour = useCallback(() => {
     setHeaderCollapsed(false)
   }, [])

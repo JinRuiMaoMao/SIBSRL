@@ -341,3 +341,17 @@ code {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+/* Touch devices: drop sticky header/search blur — major scroll perf win */
+@media (hover: none) {
+  .site-header,
+  .site-header-shell.is-collapsed {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .route-lookup-sticky--fade {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

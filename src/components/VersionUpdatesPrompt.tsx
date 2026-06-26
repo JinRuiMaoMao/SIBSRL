@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { lockPageScroll } from '../utils/pageScrollLock'
 import { getLatestUpdatePromptKey, versionUpdates } from '../data/versionUpdates'
 import { useLocale } from '../i18n/LocaleContext'
@@ -38,7 +39,7 @@ export function VersionUpdatesPrompt({ open, onClose }: VersionUpdatesPromptProp
     window.location.href = getTabPageHref('updates')
   }
 
-  return (
+  return createPortal(
     <div className="daily-challenge-prompt-root">
       <button
         type="button"
@@ -65,6 +66,7 @@ export function VersionUpdatesPrompt({ open, onClose }: VersionUpdatesPromptProp
           {t('updatesPromptDismiss')}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

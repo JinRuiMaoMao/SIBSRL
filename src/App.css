@@ -4819,6 +4819,15 @@ html.route-detail-open .app-tab-bar-shell {
   pointer-events: none;
 }
 
+html.overlay-prompt-open .app-tab-bar-shell {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.overlay-prompt-open .app-tab-bar-reveal-zone {
+  pointer-events: none;
+}
+
 html.route-detail-open .route-detail-backdrop {
   background: transparent;
 }
@@ -5124,11 +5133,12 @@ html.route-detail-open .route-detail-backdrop {
 .daily-challenge-prompt-root {
   position: fixed;
   inset: 0;
-  z-index: 240;
+  z-index: 1200;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
+  padding-bottom: calc(1.25rem + var(--app-tab-bar-reserve, 0px));
   pointer-events: none;
 }
 
@@ -5187,7 +5197,10 @@ html.route-detail-open .route-detail-backdrop {
 
 .updates-prompt-panel {
   width: min(100%, 32rem);
-  max-height: min(88vh, 40rem);
+  max-height: min(
+    calc(88vh - var(--app-tab-bar-reserve, 0px)),
+    calc(40rem - var(--app-tab-bar-reserve, 0px))
+  );
   display: flex;
   flex-direction: column;
   background: var(--popup-bg);

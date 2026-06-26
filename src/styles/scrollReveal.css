@@ -15,18 +15,15 @@ html[data-reduce-motion='true'] {
   transition:
     opacity var(--scroll-reveal-duration) var(--scroll-reveal-easing),
     transform var(--scroll-reveal-duration) var(--scroll-reveal-easing);
-  will-change: opacity, transform;
 }
 
 .scroll-reveal.is-revealed {
   opacity: 1;
   transform: none;
-  will-change: auto;
 }
 
 html[data-reduce-motion='true'] .scroll-reveal {
   opacity: 1;
   transform: none;
   transition: none;
-  will-change: auto;
 }

@@ -224,6 +224,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "更新日志/每日挑战弹窗改为挂载到 body 并置于底栏之上，弹窗打开时隐藏底栏，避免底部按钮被挡住。",
+            en: "Changelog and daily-challenge prompts now portal to body above the tab bar; the bar hides while a prompt is open so bottom buttons stay tappable.",
+          },
+                    {
+            zh: "全站性能优化：背景改为静态主题渐变（去掉模糊光斑动画）、线路卡片取消滚动渐入、顶栏/搜索栏在触控设备关闭毛玻璃、列表蒙版检测节流。",
+            en: "Site-wide perf: static theme gradient background (no blurred orb animation), no scroll-reveal on route cards, no header/search blur on touch, throttled sticky-fade checks.",
+          },
+                    {
             zh: "修复高级搜索语法面板展开后内容不可见（折叠动画期间高度被误算为 0）的问题。",
             en: "Fixed advanced search syntax panel appearing empty after expand—height was wrongly measured as 0 during the dock animation.",
           },

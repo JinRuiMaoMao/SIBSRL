@@ -11,8 +11,19 @@ export function useRouteLookupStickyFade(stickyRef: RefObject<HTMLElement | null
     const sticky = stickyRef.current
     if (!sticky) return
 
+    let frame = 0
+    let lastFade = false
+
     const sync = () => {
-      setFade(isRouteListUnderStickyToolbar(sticky))
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        frame = 0
+        const nextFade = isRouteListUnderStickyToolbar(sticky)
+        if (nextFade !== lastFade) {
+          lastFade = nextFade
+          setFade(nextFade)
+        }
+      })
     }
 
     sync()
@@ -27,6 +38,7 @@ export function useRouteLookupStickyFade(stickyRef: RefObject<HTMLElement | null
     if (list) ro.observe(list)
 
     return () => {
+      if (frame) window.cancelAnimationFrame(frame)
       window.removeEventListener('scroll', sync)
       window.removeEventListener('resize', sync)
       ro.disconnect()

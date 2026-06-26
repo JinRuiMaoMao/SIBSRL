@@ -22,9 +22,11 @@ export function isRouteListUnderStickyToolbar(sticky: HTMLElement): boolean {
   const list = sticky.closest('.route-lookup-page')?.querySelector('.route-list-section')
   if (!list) return false
 
+  const viewportBottom = window.innerHeight
   for (const el of list.querySelectorAll<HTMLElement>(ROUTE_LIST_OBSCURED_SELECTORS)) {
     const rect = el.getBoundingClientRect()
     if (rect.bottom <= stickyRect.top + 2) continue
+    if (rect.top >= viewportBottom) break
     if (rect.top < stickyRect.bottom - 2) return true
   }
 

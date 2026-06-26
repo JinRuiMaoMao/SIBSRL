@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { lockPageScroll } from '../utils/pageScrollLock'
 import type { DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
@@ -40,7 +41,7 @@ export function DailyChallengePrompt({
     onOpenDetail()
   }
 
-  return (
+  return createPortal(
     <div className="daily-challenge-prompt-root">
       <button
         type="button"
@@ -67,6 +68,7 @@ export function DailyChallengePrompt({
           {t('dailyChallengePromptDismiss')}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
