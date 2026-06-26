@@ -2,6 +2,8 @@ import { useEffect, type RefObject } from 'react'
 
 const ORIGINAL_MAX_REM = 20
 const VIEWPORT_BOTTOM_GAP_PX = 8
+/** Match App.css --syntax-dock-duration so we remeasure after expand/collapse. */
+const LAYOUT_RETRY_MS = 480
 
 function readOriginalMaxPx(): number {
   const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
@@ -25,33 +27,72 @@ export function useSearchSyntaxPanelHeight(
     const sticky = stickyRef.current
     if (!panel || !content || !sticky || !enabled) return
 
+    let retryTimer: number | null = null
+
     const clear = () => {
+      if (retryTimer != null) {
+        window.clearTimeout(retryTimer)
+        retryTimer = null
+      }
       panel.style.removeProperty('--search-syntax-max-height')
       panel.classList.remove('is-scrollable')
+    }
+
+    const scheduleRetry = () => {
+      if (retryTimer != null) return
+      retryTimer = window.setTimeout(() => {
+        retryTimer = null
+        sync()
+      }, LAYOUT_RETRY_MS)
     }
 
     const sync = () => {
       const originalMaxPx = readOriginalMaxPx()
       const viewportBudget = readViewportBudget(sticky)
-      const capMax = Math.min(originalMaxPx, viewportBudget)
+      const capMax =
+        viewportBudget > 0 ? Math.min(originalMaxPx, viewportBudget) : originalMaxPx
       const contentHeight = content.scrollHeight
+
+      if (contentHeight <= 0) {
+        panel.style.removeProperty('--search-syntax-max-height')
+        panel.classList.remove('is-scrollable')
+        scheduleRetry()
+        return
+      }
+
+      if (retryTimer != null) {
+        window.clearTimeout(retryTimer)
+        retryTimer = null
+      }
+
       const openHeight = Math.min(contentHeight, capMax)
-      const needsScroll = contentHeight > capMax
+      if (openHeight <= 0) {
+        panel.style.removeProperty('--search-syntax-max-height')
+        panel.classList.remove('is-scrollable')
+        scheduleRetry()
+        return
+      }
 
       panel.style.setProperty('--search-syntax-max-height', `${openHeight}px`)
-      panel.classList.toggle('is-scrollable', needsScroll)
+      panel.classList.toggle('is-scrollable', contentHeight > capMax)
     }
 
     sync()
     window.addEventListener('resize', sync)
 
+    const dock = panel.closest('.route-syntax-dock')
+    const onTransitionEnd = (event: TransitionEvent) => {
+      if (event.propertyName === 'grid-template-rows') sync()
+    }
+    dock?.addEventListener('transitionend', onTransitionEnd)
+
     const ro = new ResizeObserver(sync)
     ro.observe(content)
-    ro.observe(panel)
     ro.observe(sticky)
 
     return () => {
       window.removeEventListener('resize', sync)
+      dock?.removeEventListener('transitionend', onTransitionEnd)
       ro.disconnect()
       clear()
     }

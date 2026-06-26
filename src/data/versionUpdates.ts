@@ -224,6 +224,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "修复高级搜索语法面板展开后内容不可见（折叠动画期间高度被误算为 0）的问题。",
+            en: "Fixed advanced search syntax panel appearing empty after expand—height was wrongly measured as 0 during the dock animation.",
+          },
+                    {
+            zh: "动态背景按深/浅色分别调低亮度与动效强度（减少光斑层数与模糊），缓解深色过亮、浅色过暗及全站滚动卡顿。",
+            en: "Tuned animated background separately for dark/light (fewer blobs, softer blur) to fix overly bright dark mode, dim light mode, and scroll jank.",
+          },
+                    {
             zh: "修复动态背景层叠顺序错误导致开始页 Logo 与「路线查询 / 更新日志」按钮被遮挡的问题。",
             en: "Fixed start page logo and Route lookup / Updates buttons hidden behind the animated background layer.",
           },
