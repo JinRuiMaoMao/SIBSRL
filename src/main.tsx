@@ -7,7 +7,6 @@ import { UserProfileProvider } from './contexts/UserProfileContext.tsx'
 import { GuidedTourProvider } from './contexts/GuidedTourContext.tsx'
 import { AppDialogProvider } from './contexts/AppDialogContext.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
-import { PageAnimatedBackground } from './components/PageAnimatedBackground.tsx'
 import { AppPreferencesProvider } from './contexts/AppPreferencesContext.tsx'
 import { FavoriteRoutesProvider } from './contexts/FavoriteRoutesContext.tsx'
 import { RecentRoutesProvider } from './contexts/RecentRoutesContext.tsx'
@@ -36,17 +35,12 @@ createRoot(rootEl).render(
           <GuidedTourProvider>
             <AppDialogProvider>
               <AppPreferencesProvider>
-                <div className="app-viewport">
-                  <PageAnimatedBackground />
-                  <div className="app-viewport__content">
-                    <FavoriteRoutesProvider>
-                      <RecentRoutesProvider>
-                        <App />
-                        <CustomContextMenu />
-                      </RecentRoutesProvider>
-                    </FavoriteRoutesProvider>
-                  </div>
-                </div>
+                <FavoriteRoutesProvider>
+                  <RecentRoutesProvider>
+                    <App />
+                    <CustomContextMenu />
+                  </RecentRoutesProvider>
+                </FavoriteRoutesProvider>
               </AppPreferencesProvider>
             </AppDialogProvider>
           </GuidedTourProvider>

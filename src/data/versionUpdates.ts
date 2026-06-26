@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "移除全站动态背景层，恢复为 html 静态主题渐变（与引入动画前一致），解决卡顿。",
+            en: "Removed the site-wide animated background layer; restored static html theme gradients as before animations were added to fix lag.",
+          },
+                    {
             zh: "更新日志/每日挑战弹窗改为挂载到 body 并置于底栏之上，弹窗打开时隐藏底栏，避免底部按钮被挡住。",
             en: "Changelog and daily-challenge prompts now portal to body above the tab bar; the bar hides while a prompt is open so bottom buttons stay tappable.",
           },
