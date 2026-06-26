@@ -112,6 +112,18 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
 (function () {
   var splash = document.getElementById('start-boot-splash');
   if (!splash) return;
+  var BOOT_SEEN_KEY = 'sibs-start-boot-seen';
+  function isBootSeen() {
+    try { return localStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch (e) { return false; }
+  }
+  if (isBootSeen()) {
+    splash.remove();
+    window.__SIBS_START_BOOT__ = {
+      setProgress: function () {},
+      finish: function () {},
+    };
+    return;
+  }
   document.documentElement.classList.add('start-boot-active');
   var pctEl = document.getElementById('start-boot-percent');
   var fillEl = document.getElementById('start-boot-fill');

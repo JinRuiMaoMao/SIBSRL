@@ -1,4 +1,5 @@
 import { bootProgressTo } from './startPageBootStutter'
+import { hasStartBootBeenSeen, markStartBootBeenSeen } from '../storage/startPageBootSeen'
 
 export interface StartPageBootBridge {
   setProgress: (percent: number, label?: string, mode?: 'smooth' | 'surge' | 'retract' | 'hold') => void
@@ -40,6 +41,13 @@ export async function runStartPageBoot(
   },
   options?: { reduceMotion?: boolean },
 ): Promise<void> {
+  if (hasStartBootBeenSeen()) {
+    window.__SIBS_START_BOOT__?.finish()
+    document.documentElement.classList.remove('start-boot-active')
+    document.getElementById('start-boot-splash')?.remove()
+    return
+  }
+
   const bridge = window.__SIBS_START_BOOT__
   const set = (percent: number, label: string, mode?: 'smooth' | 'surge' | 'retract' | 'hold') => {
     bridge?.setProgress(percent, label, mode)
@@ -61,6 +69,8 @@ export async function runStartPageBoot(
 
   current = await bootProgressTo(set, current, 100, labels.ready, options)
   await waitMs(options?.reduceMotion ? 160 : 520)
+
+  markStartBootBeenSeen()
 
   if (bridge) {
     bridge.finish()

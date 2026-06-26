@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页加载进度条仅在首次进入时展示；设置中「重置页面」后会再次显示。",
+            en: "Start page boot splash shows only on first visit; it plays again after using Reset page in settings.",
+          },
+                    {
             zh: "开始页加载：0～50% 与 95～100% 仅平滑推进；50～94% 条带可抽搐，抽搐时百分比与阶段文字锁定、不回退。",
             en: "Start boot: 0–50% and 95–100% advance smoothly; the bar stutters only at 50–94% while percent and step label stay locked with no rollback.",
           },

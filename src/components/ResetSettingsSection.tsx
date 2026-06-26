@@ -16,6 +16,7 @@ import {
   ROUTE_FILTERS_STORAGE_KEY,
   ROUTE_GROUP_OPEN_STORAGE_KEY,
 } from '../storage/routePreferences'
+import { clearStartBootSeen } from '../storage/startPageBootSeen'
 import { clearUpdatesPromptSeen } from '../storage/updatesViewing'
 import { useTheme } from '../theme/ThemeContext'
 import { THEME_STORAGE_KEY } from '../theme/types'
@@ -46,6 +47,7 @@ export function ResetSettingsSection({ layout = 'menu' }: { layout?: 'menu' | 'p
       localStorage.removeItem(DAILY_CHALLENGE_PROMPT_SEEN_KEY)
       localStorage.removeItem(GUIDED_TOUR_SEEN_KEY)
       localStorage.removeItem(GUIDED_TOUR_SEEN_ENTRIES_KEY)
+      clearStartBootSeen()
       clearUpdatesPromptSeen()
       logout()
     } catch {
