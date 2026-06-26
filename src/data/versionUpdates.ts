@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "全站页面背景渐变改为缓慢动态漂移（双层光晕随主题色流动）；开启「减少动态效果」时保持静态。",
+            en: "Site-wide page gradients now drift slowly with a dual-layer glow tied to each theme accent; Reduce motion keeps them static.",
+          },
+                    {
             zh: "线路查询等页面顶栏已移除 Roblox / 社区站 / Wiki 外链（改由开始页 index 统一提供）。",
             en: "Removed Roblox, community site, and Wiki links from the header on routes and other app pages—they now live on the start page only.",
           },
