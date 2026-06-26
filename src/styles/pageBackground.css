@@ -1,182 +1,135 @@
-/* Animated page backdrop — layered gradients drift behind all pages */
+/* Animated page backdrop — fixed layer with drifting accent blobs */
 
-html::before,
-html::after,
-body::before,
-body::after {
-  content: '';
+.page-animated-bg {
   position: fixed;
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
-html::before {
-  inset: -20%;
-  z-index: -4;
+.page-animated-bg__base {
+  position: absolute;
+  inset: -18%;
   background: var(--page-background);
-  transform-origin: 48% 42%;
+  transform-origin: 50% 45%;
   will-change: transform;
 }
 
-html::after {
-  inset: -35%;
-  z-index: -3;
-  opacity: 0.72;
-  background: radial-gradient(
-    circle at 50% 50%,
-    color-mix(in srgb, var(--accent-glow) 70%, transparent),
-    transparent 58%
-  );
-  mix-blend-mode: screen;
-  transform-origin: 40% 45%;
-  will-change: transform;
+.page-animated-bg__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  will-change: transform, opacity;
 }
 
-body::before {
-  inset: -32%;
-  z-index: -2;
+.page-animated-bg__orb--1 {
+  top: -12%;
+  left: -10%;
+  width: min(72vmax, 920px);
+  height: min(72vmax, 920px);
+  background: color-mix(in srgb, var(--accent-glow) 88%, transparent);
+  opacity: 0.62;
+}
+
+.page-animated-bg__orb--2 {
+  right: -14%;
+  bottom: -8%;
+  width: min(68vmax, 860px);
+  height: min(68vmax, 860px);
+  background: color-mix(in srgb, var(--accent) 52%, transparent);
+  opacity: 0.48;
+}
+
+.page-animated-bg__orb--3 {
+  top: 32%;
+  left: 38%;
+  width: min(58vmax, 720px);
+  height: min(58vmax, 720px);
+  background: color-mix(in srgb, var(--accent-soft) 95%, white 8%);
   opacity: 0.55;
-  background: radial-gradient(
-    circle at 50% 50%,
-    color-mix(in srgb, var(--accent-soft) 85%, transparent),
-    transparent 62%
-  );
-  mix-blend-mode: screen;
-  transform-origin: 60% 55%;
-  will-change: transform;
 }
 
-body::after {
-  inset: -28%;
-  z-index: -1;
+html[data-theme='light'] .page-animated-bg__orb--1 {
   opacity: 0.42;
-  background:
-    radial-gradient(
-      ellipse 70% 55% at 50% 50%,
-      color-mix(in srgb, var(--accent) 28%, transparent),
-      transparent 68%
-    ),
-    radial-gradient(
-      ellipse 55% 45% at 50% 50%,
-      color-mix(in srgb, var(--accent-glow) 45%, transparent),
-      transparent 72%
-    );
-  mix-blend-mode: screen;
-  transform-origin: 52% 48%;
-  will-change: transform;
 }
 
-html[data-theme='light']::after,
-html[data-theme='light'] body::before,
-html[data-theme='light'] body::after {
-  mix-blend-mode: normal;
+html[data-theme='light'] .page-animated-bg__orb--2 {
+  opacity: 0.34;
 }
 
-html[data-theme='light']::after {
+html[data-theme='light'] .page-animated-bg__orb--3 {
   opacity: 0.38;
 }
 
-html[data-theme='light'] body::before {
-  opacity: 0.32;
+.page-animated-bg:not(.is-static) .page-animated-bg__base {
+  animation: page-background-drift 22s ease-in-out infinite alternate;
 }
 
-html[data-theme='light'] body::after {
-  opacity: 0.28;
+.page-animated-bg:not(.is-static) .page-animated-bg__orb--1 {
+  animation: page-background-orb-1 16s ease-in-out infinite alternate;
 }
 
-html:not([data-reduce-motion='true']) html::before {
-  animation: page-background-drift 34s ease-in-out infinite alternate;
+.page-animated-bg:not(.is-static) .page-animated-bg__orb--2 {
+  animation: page-background-orb-2 19s ease-in-out infinite alternate;
 }
 
-html:not([data-reduce-motion='true']) html::after {
-  animation: page-background-orb-a 26s ease-in-out infinite;
-}
-
-html:not([data-reduce-motion='true']) body::before {
-  animation: page-background-orb-b 32s ease-in-out infinite;
-}
-
-html:not([data-reduce-motion='true']) body::after {
-  animation: page-background-orb-c 38s ease-in-out infinite;
+.page-animated-bg:not(.is-static) .page-animated-bg__orb--3 {
+  animation: page-background-orb-3 14s ease-in-out infinite alternate;
 }
 
 @keyframes page-background-drift {
   0% {
-    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(4%, -3%, 0) scale(1.08) rotate(0.6deg);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   100% {
-    transform: translate3d(-3.5%, 4.5%, 0) scale(1.12) rotate(-0.5deg);
+    transform: translate3d(6%, -5%, 0) scale(1.14);
   }
 }
 
-@keyframes page-background-orb-a {
-  0%,
-  100% {
-    transform: translate3d(-8%, 6%, 0) scale(0.92);
-    opacity: 0.62;
-  }
-  33% {
-    transform: translate3d(10%, -4%, 0) scale(1.08);
-    opacity: 0.82;
-  }
-  66% {
-    transform: translate3d(4%, 9%, 0) scale(1.02);
-    opacity: 0.7;
-  }
-}
-
-@keyframes page-background-orb-b {
-  0%,
-  100% {
-    transform: translate3d(9%, -7%, 0) scale(1.05);
-    opacity: 0.48;
-  }
-  40% {
-    transform: translate3d(-6%, 5%, 0) scale(0.9);
-    opacity: 0.62;
-  }
-  70% {
-    transform: translate3d(-10%, -8%, 0) scale(1.12);
-    opacity: 0.52;
-  }
-}
-
-@keyframes page-background-orb-c {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-    opacity: 0.38;
-  }
-  25% {
-    transform: translate3d(-7%, 4%, 0) scale(1.1) rotate(-2deg);
+@keyframes page-background-orb-1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 0.5;
   }
-  50% {
-    transform: translate3d(6%, -6%, 0) scale(0.94) rotate(1deg);
-    opacity: 0.44;
+  100% {
+    transform: translate3d(22vw, 14vh, 0) scale(1.18);
+    opacity: 0.78;
   }
-  75% {
-    transform: translate3d(8%, 7%, 0) scale(1.14) rotate(2deg);
-    opacity: 0.52;
+}
+
+@keyframes page-background-orb-2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(-20vw, -12vh, 0) scale(0.88);
+    opacity: 0.68;
+  }
+}
+
+@keyframes page-background-orb-3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(-14vw, 18vh, 0) scale(1.22);
+    opacity: 0.72;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html::before,
-  html::after,
-  body::before,
-  body::after {
+  .page-animated-bg:not(.is-static) .page-animated-bg__base,
+  .page-animated-bg:not(.is-static) .page-animated-bg__orb {
     animation: none !important;
     transform: none !important;
   }
 }
 
-html[data-reduce-motion='true'] html::before,
-html[data-reduce-motion='true'] html::after,
-html[data-reduce-motion='true'] body::before,
-html[data-reduce-motion='true'] body::after {
+html[data-reduce-motion='true'] .page-animated-bg .page-animated-bg__base,
+html[data-reduce-motion='true'] .page-animated-bg .page-animated-bg__orb {
   animation: none;
   transform: none;
 }

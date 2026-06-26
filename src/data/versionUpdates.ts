@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "修复动态背景未生效的问题，改为固定光斑层并加大漂移幅度，渐变流动应更易察觉。",
+            en: "Fixed animated background not running (bad CSS selectors); replaced with fixed aurora blobs and larger motion so the gradient shift is easier to see.",
+          },
+                    {
             zh: "加强全站动态背景：四层主题光晕独立漂移，渐变流动更明显；「减少动态效果」仍为静态。",
             en: "Enhanced site-wide animated background—four accent glow layers drift independently for a more visible gradient flow; Reduce motion still freezes it.",
           },
