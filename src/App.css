@@ -186,6 +186,10 @@ html[data-theme='light'] .start-page-cta--primary {
 }
 
 .start-page-external-link {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  overflow: hidden;
   flex: 1;
   display: flex;
   align-items: center;
@@ -202,10 +206,38 @@ html[data-theme='light'] .start-page-cta--primary {
   background: transparent;
   border: 1px solid var(--border);
   transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
+    color 0.28s ease,
+    border-color 0.28s ease,
     transform 0.2s ease;
+}
+
+.start-page-external-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.start-page-external-link:hover,
+.start-page-external-link:focus-visible {
+  color: #1a1208;
+  border-color: var(--accent);
+  transform: none;
+}
+
+.start-page-external-link:hover::before,
+.start-page-external-link:focus-visible::before {
+  transform: scaleX(1);
+}
+
+html[data-theme='light'] .start-page-external-link:hover,
+html[data-theme='light'] .start-page-external-link:focus-visible {
+  color: #2a1f08;
 }
 
 @media (max-width: 640px) {
@@ -240,14 +272,6 @@ html[data-theme='light'] .start-page-cta--primary {
   }
 }
 
-.start-page-external-link:hover,
-.start-page-external-link:focus-visible {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-  background: color-mix(in srgb, var(--accent-glow) 12%, transparent);
-  transform: translateY(-1px);
-}
-
 .start-page-footer {
   padding: 1rem 1.25rem max(1.25rem, env(safe-area-inset-bottom));
   text-align: center;
@@ -263,9 +287,8 @@ html[data-reduce-motion='true'] .start-page-cta--primary:hover,
 html[data-reduce-motion='true'] .start-page-cta--primary:focus-visible,
 html[data-reduce-motion='true'] .start-page-cta--secondary:hover,
 html[data-reduce-motion='true'] .start-page-cta--secondary:focus-visible,
-html[data-reduce-motion='true'] .start-page-external-link:hover,
-html[data-reduce-motion='true'] .start-page-external-link:focus-visible {
-  transform: none;
+html[data-reduce-motion='true'] .start-page-external-link::before {
+  transition: none;
 }
 
 /* Header */

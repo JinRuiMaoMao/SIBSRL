@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes:         [
                     {
+            zh: "开始页外链按钮悬浮时以主题色从左向右填充，移开后恢复仅描边样式。",
+            en: "Start page outbound link buttons fill with the theme accent left-to-right on hover, reverting to outline-only when the pointer leaves.",
+          },
+                    {
             zh: "开始页外链在手机端改为一行 3 个、共两行网格；桌面端仍保持单行横排。",
             en: "Start page community links on mobile now use a 3×2 grid; desktop stays a single horizontal row.",
           },
