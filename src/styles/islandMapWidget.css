@@ -51,6 +51,14 @@ html.has-compact-tab-nav .island-map--widget {
   cursor: grabbing;
 }
 
+.island-map-panzoom--pending {
+  background: color-mix(in srgb, var(--bg, #0f0f0f) 92%, #000);
+}
+
+.island-map-panzoom--pending .island-map-panzoom-image {
+  opacity: 0;
+}
+
 .island-map-viewport--fullscreen {
   position: absolute;
   inset: 0;

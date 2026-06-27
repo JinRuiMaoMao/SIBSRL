@@ -145,6 +145,16 @@ function zoomAtPoint(
   )
 }
 
+function resolvePanZoom(
+  view: NormalizedMapView | null,
+  viewport: ImageSize,
+  image: ImageSize,
+  mode: 'widget' | 'fullscreen',
+): PanZoomState {
+  if (view) return normalizedToPanZoom(view, viewport, image)
+  return createInitialPanZoom(viewport, image, mode)
+}
+
 export function IslandMapPanZoomSurface({
   src,
   mode,
@@ -153,8 +163,11 @@ export function IslandMapPanZoomSurface({
   onViewChange,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
+  const viewRef = useRef(view)
+  viewRef.current = view
+
   const [imageSize, setImageSize] = useState<ImageSize | null>(null)
-  const [panZoom, setPanZoom] = useState<PanZoomState>({ x: 0, y: 0, scale: 1 })
+  const [panZoom, setPanZoom] = useState<PanZoomState | null>(null)
   const [dragging, setDragging] = useState(false)
   const dragOriginRef = useRef<{ pointerX: number; pointerY: number; panX: number; panY: number } | null>(
     null,
@@ -163,6 +176,7 @@ export function IslandMapPanZoomSurface({
 
   useEffect(() => {
     setImageSize(null)
+    setPanZoom(null)
   }, [src])
 
   const readViewportSize = useCallback((): ImageSize | null => {
@@ -172,6 +186,25 @@ export function IslandMapPanZoomSurface({
     if (rect.width <= 0 || rect.height <= 0) return null
     return { width: rect.width, height: rect.height }
   }, [])
+
+  const syncPanZoom = useCallback(
+    (options: { publish?: boolean } = {}) => {
+      const viewport = readViewportSize()
+      if (!viewport || !imageSize) return false
+
+      const next = resolvePanZoom(viewRef.current, viewport, imageSize, mode)
+      applyingExternalViewRef.current = true
+      setPanZoom(next)
+
+      if (!viewRef.current && options.publish !== false) {
+        onViewChange(panZoomToNormalized(next, viewport, imageSize))
+      }
+
+      applyingExternalViewRef.current = false
+      return true
+    },
+    [imageSize, mode, onViewChange, readViewportSize],
+  )
 
   const publishView = useCallback(
     (next: PanZoomState) => {
@@ -186,8 +219,8 @@ export function IslandMapPanZoomSurface({
     (next: PanZoomState | ((current: PanZoomState) => PanZoomState)) => {
       setPanZoom((current) => {
         const viewport = readViewportSize()
-        if (!viewport || !imageSize) {
-          return typeof next === 'function' ? next(current) : next
+        if (!viewport || !imageSize || !current) {
+          return current
         }
         const resolved = typeof next === 'function' ? next(current) : next
         const clamped = clampPanZoom(resolved, viewport, imageSize)
@@ -198,47 +231,34 @@ export function IslandMapPanZoomSurface({
     [imageSize, publishView, readViewportSize],
   )
 
-  const applyExternalView = useCallback(() => {
-    const viewport = readViewportSize()
-    if (!viewport || !imageSize) return
-
-    applyingExternalViewRef.current = true
-    if (view) {
-      setPanZoom(normalizedToPanZoom(view, viewport, imageSize))
-    } else {
-      const initial = createInitialPanZoom(viewport, imageSize, mode)
-      setPanZoom(initial)
-      onViewChange(panZoomToNormalized(initial, viewport, imageSize))
-    }
-    applyingExternalViewRef.current = false
-  }, [imageSize, mode, onViewChange, readViewportSize, view])
-
   useEffect(() => {
     if (!imageSize) return
-    applyExternalView()
-  }, [applyExternalView, imageSize, src])
+
+    let cancelled = false
+    const frame = window.requestAnimationFrame(() => {
+      if (!cancelled) syncPanZoom()
+    })
+
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(frame)
+    }
+  }, [imageSize, mode, src, syncPanZoom, view])
 
   useEffect(() => {
     const viewport = viewportRef.current
     if (!viewport || !imageSize) return
 
     const observer = new ResizeObserver(() => {
-      applyingExternalViewRef.current = true
-      setPanZoom((current) => {
-        const nextViewport = readViewportSize()
-        if (!nextViewport) return current
-        if (view) return normalizedToPanZoom(view, nextViewport, imageSize)
-        return clampPanZoom(current, nextViewport, imageSize)
-      })
-      applyingExternalViewRef.current = false
+      syncPanZoom({ publish: false })
     })
     observer.observe(viewport)
     return () => observer.disconnect()
-  }, [imageSize, readViewportSize, view])
+  }, [imageSize, syncPanZoom])
 
   useEffect(() => {
     const viewport = viewportRef.current
-    if (!viewport || !imageSize) return
+    if (!viewport || !imageSize || !panZoom) return
 
     const onWheel = (event: WheelEvent) => {
       event.preventDefault()
@@ -256,10 +276,10 @@ export function IslandMapPanZoomSurface({
 
     viewport.addEventListener('wheel', onWheel, { passive: false })
     return () => viewport.removeEventListener('wheel', onWheel)
-  }, [applyPanZoom, imageSize])
+  }, [applyPanZoom, imageSize, panZoom])
 
   useEffect(() => {
-    if (!dragging) return
+    if (!dragging || !panZoom) return
 
     const onPointerMove = (event: PointerEvent) => {
       const origin = dragOriginRef.current
@@ -285,10 +305,10 @@ export function IslandMapPanZoomSurface({
       window.removeEventListener('pointerup', onPointerUp)
       window.removeEventListener('pointercancel', onPointerUp)
     }
-  }, [applyPanZoom, dragging, imageSize, panZoom.scale, readViewportSize])
+  }, [applyPanZoom, dragging, imageSize, panZoom, readViewportSize])
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0) return
+    if (event.button !== 0 || !panZoom) return
     event.preventDefault()
     dragOriginRef.current = {
       pointerX: event.clientX,
@@ -314,18 +334,19 @@ export function IslandMapPanZoomSurface({
     setImageSize({ width: image.naturalWidth, height: image.naturalHeight })
   }
 
-  const imageStyle: CSSProperties | undefined = imageSize
-    ? {
-        width: `${imageSize.width}px`,
-        height: `${imageSize.height}px`,
-        transform: `translate3d(${panZoom.x}px, ${panZoom.y}px, 0) scale(${panZoom.scale})`,
-      }
-    : undefined
+  const imageStyle: CSSProperties | undefined =
+    imageSize && panZoom
+      ? {
+          width: `${imageSize.width}px`,
+          height: `${imageSize.height}px`,
+          transform: `translate3d(${panZoom.x}px, ${panZoom.y}px, 0) scale(${panZoom.scale})`,
+        }
+      : undefined
 
   return (
     <div
       ref={viewportRef}
-      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''} ${className}`.trim()}
+      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''} ${panZoom ? '' : 'island-map-panzoom--pending'} ${className}`.trim()}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
