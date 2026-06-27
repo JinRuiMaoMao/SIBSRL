@@ -201,6 +201,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复刷新页面后小地图卡在角落、需切换 Layers 才恢复正常的问题。",
             en: "Fixed the mini-map stuck in a corner after refresh until Layers was toggled.",
           },
+                    {
+            zh: "修复多次刷新后小地图黑屏、以及切换 Layers 时闪烁的问题：换图层时预加载并保持旧图直至新图就绪。",
+            en: "Fixed black mini-map after repeated refreshes and flicker when switching Layers—layers preload and the previous image stays visible until the next is ready.",
+          },
         ],
       },
       {

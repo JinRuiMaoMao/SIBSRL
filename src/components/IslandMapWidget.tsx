@@ -37,6 +37,17 @@ export function IslandMapWidget() {
   const [expanded, setExpanded] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
+  const handleViewChange = useCallback((next: NormalizedMapView) => {
+    setMapView(next)
+  }, [])
+
+  useEffect(() => {
+    for (const url of Object.values(MAP_URLS)) {
+      const image = new Image()
+      image.decoding = 'async'
+      image.src = url
+    }
+  }, [])
 
   const mapSrc = MAP_URLS[layer]
 
@@ -71,7 +82,7 @@ export function IslandMapWidget() {
         src={mapSrc}
         mode="fullscreen"
         view={mapView}
-        onViewChange={setMapView}
+        onViewChange={handleViewChange}
         className="island-map-viewport island-map-viewport--fullscreen"
       />
       <div className="island-map-controls island-map-controls--fullscreen">
@@ -101,7 +112,7 @@ export function IslandMapWidget() {
         src={mapSrc}
         mode="widget"
         view={mapView}
-        onViewChange={setMapView}
+        onViewChange={handleViewChange}
         className="island-map-viewport island-map-viewport--widget"
       />
       <div className="island-map-widget-toolbar">
