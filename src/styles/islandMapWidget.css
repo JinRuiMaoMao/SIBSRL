@@ -38,29 +38,37 @@ html.has-compact-tab-nav .island-map--widget {
   background: var(--island-map-control-bg);
 }
 
+.island-map-panzoom {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.island-map-panzoom--dragging {
+  cursor: grabbing;
+}
+
 .island-map-viewport--fullscreen {
   position: absolute;
   inset: 0;
-  overflow: auto;
   background: var(--bg, #0f0f0f);
 }
 
-.island-map-image {
+.island-map-panzoom-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  max-width: none;
+  max-height: none;
+  transform-origin: 0 0;
+  will-change: transform;
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
-}
-
-.island-map-viewport--fullscreen .island-map-image {
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  pointer-events: auto;
 }
 
 .island-map-btn {
@@ -119,6 +127,11 @@ html.has-compact-tab-nav .island-map--widget {
   display: flex;
   align-items: center;
   gap: 0.45rem;
+  pointer-events: none;
+}
+
+.island-map-controls--fullscreen .island-map-btn {
+  pointer-events: auto;
 }
 
 .island-map-btn--layers {

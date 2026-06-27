@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocale } from '../i18n/LocaleContext'
+import { IslandMapPanZoomSurface } from './IslandMapPanZoomSurface'
 
 type MapLayer = 'general' | 'detailed'
 
@@ -65,9 +66,12 @@ export function IslandMapWidget() {
       aria-modal="true"
       aria-label={t('islandMapAria')}
     >
-      <div className="island-map-viewport island-map-viewport--fullscreen">
-        <img src={mapSrc} alt="" className="island-map-image" decoding="async" draggable={false} />
-      </div>
+      <IslandMapPanZoomSurface
+        key={layer}
+        src={mapSrc}
+        mode="fullscreen"
+        className="island-map-viewport island-map-viewport--fullscreen"
+      />
       <div className="island-map-controls island-map-controls--fullscreen">
         <button
           type="button"
@@ -91,9 +95,12 @@ export function IslandMapWidget() {
     </div>
   ) : (
     <div className="island-map island-map--widget" aria-label={t('islandMapAria')}>
-      <div className="island-map-viewport island-map-viewport--widget">
-        <img src={mapSrc} alt="" className="island-map-image" decoding="async" draggable={false} />
-      </div>
+      <IslandMapPanZoomSurface
+        key={layer}
+        src={mapSrc}
+        mode="widget"
+        className="island-map-viewport island-map-viewport--widget"
+      />
       <div className="island-map-widget-toolbar">
         <button
           type="button"
