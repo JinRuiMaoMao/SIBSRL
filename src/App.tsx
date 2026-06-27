@@ -7,6 +7,7 @@ import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
+import { IslandMapWidget } from './components/IslandMapWidget'
 import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
 import { SecretHeader } from './components/SecretHeader'
@@ -377,6 +378,7 @@ function App() {
         </p>
       </footer>
       </div>
+      <IslandMapWidget />
       <AppTabBar activeTab={tabFromLocation} />
     </>
   )

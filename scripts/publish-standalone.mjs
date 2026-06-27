@@ -21,6 +21,7 @@ import {
 import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 import { syncBrandAssets } from './sync-brand-assets.mjs'
+import { syncWorldMapImages } from './sync-world-map-images.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const built = resolve(root, 'dist', 'dev.html')
@@ -119,6 +120,7 @@ export function publishStandalone(options = {}) {
   })
 
   syncBrandAssets()
+  syncWorldMapImages()
 
   if (existsSync(distAudio)) {
     cpSync(distAudio, rootAudio, { recursive: true })
@@ -137,6 +139,17 @@ export function publishStandalone(options = {}) {
   } else if (existsSync(publicRouteMaps)) {
     cpSync(publicRouteMaps, rootRouteMaps, { recursive: true })
     console.log('[publish] 已复制线路图到 route-maps/')
+  }
+
+  const publicWorldMaps = resolve(root, 'public', 'maps')
+  const distWorldMaps = resolve(root, 'dist', 'maps')
+  const rootWorldMaps = resolve(root, 'maps')
+  if (existsSync(distWorldMaps)) {
+    cpSync(distWorldMaps, rootWorldMaps, { recursive: true })
+    console.log('[publish] 已复制群岛地图到 maps/')
+  } else if (existsSync(publicWorldMaps)) {
+    cpSync(publicWorldMaps, rootWorldMaps, { recursive: true })
+    console.log('[publish] 已复制群岛地图到 maps/')
   }
 
   const routeMapPage = resolve(root, 'pages', 'route-map.html')
