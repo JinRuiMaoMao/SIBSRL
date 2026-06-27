@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-26'
+export const CURRENT_CHANGELOG_DATE = '2026-06-27'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -161,6 +161,62 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-06-27-summary",
+    date: "2026-06-27",
+    title:     {
+      zh: "2026-06-27 更新",
+      en: "2026-06-27 updates",
+    },
+    groups: [
+      {
+        title:         {
+          zh: "群岛地图",
+          en: "Island map",
+        },
+        additions:         [
+                    {
+            zh: "线路查询页与秘密页左下角新增群岛小地图，默认以概览图（SIMapGerenal）局部放大显示。",
+            en: "Routes and secret pages now have a bottom-left island mini-map, defaulting to a zoomed-in portion of the overview map (SIMapGerenal).",
+          },
+                    {
+            zh: "小地图可放大至全屏；全屏左下角提供 Layers 按钮，在概览图与详细图（SIMap）间切换，右侧缩小按钮返回小窗。",
+            en: "Expand the mini-map to fullscreen; bottom-left Layers toggles overview vs detailed map (SIMap), with minimize beside it to return to the widget.",
+          },
+                    {
+            zh: "小窗与全屏均支持鼠标滚轮缩放、左键拖动平移（触屏可单指拖动）。",
+            en: "Both widget and fullscreen support mouse-wheel zoom and left-button drag to pan (single-finger drag on touch).",
+          },
+        ],
+        fixes:         [
+                    {
+            zh: "切换 Layers 时保持当前视口中心与缩放比例，不再跳回默认位置。",
+            en: "Switching Layers now preserves the current viewport center and zoom instead of resetting.",
+          },
+                    {
+            zh: "修复小地图放大按钮被底部栏目栏挡住无法点击的问题。",
+            en: "Fixed the mini-map expand button being blocked by the bottom tab bar.",
+          },
+                    {
+            zh: "修复刷新页面后小地图卡在角落、需切换 Layers 才恢复正常的问题。",
+            en: "Fixed the mini-map stuck in a corner after refresh until Layers was toggled.",
+          },
+        ],
+      },
+      {
+        title:         {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions:         [
+                    {
+            zh: "同步 6/27 每日挑战：马拉松接驳 R370（竞速）。",
+            en: "Synced 6/27 daily challenge: Marathon Shuttle R370 (race).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-06-26-summary",
     date: "2026-06-26",
