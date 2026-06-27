@@ -33,9 +33,18 @@ html.has-compact-tab-nav .island-map--widget {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  gap: 0.35rem;
   padding: 0.28rem 0.35rem;
   border-top: 1px solid var(--island-map-control-border);
   background: var(--island-map-control-bg);
+}
+
+.island-map--widget-collapsed {
+  width: auto;
+}
+
+.island-map--widget-collapsed .island-map-widget-toolbar {
+  border-top: none;
 }
 
 .island-map-panzoom {

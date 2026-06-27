@@ -187,6 +187,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "小窗与全屏均支持鼠标滚轮缩放、左键拖动平移（触屏可单指拖动）。",
             en: "Both widget and fullscreen support mouse-wheel zoom and left-button drag to pan (single-finger drag on touch).",
           },
+                    {
+            zh: "小地图工具栏新增隐藏按钮；隐藏后左下角保留显示按钮，点击可重新展开小地图。",
+            en: "Mini-map toolbar adds a hide control; when hidden, a show button stays in the bottom-left corner to bring the map back.",
+          },
         ],
         fixes:         [
                     {
