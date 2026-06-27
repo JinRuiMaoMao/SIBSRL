@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocale } from '../i18n/LocaleContext'
-import { IslandMapPanZoomSurface } from './IslandMapPanZoomSurface'
+import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 
 type MapLayer = 'general' | 'detailed'
 
@@ -36,6 +36,7 @@ export function IslandMapWidget() {
   const { t } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
+  const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
 
   const mapSrc = MAP_URLS[layer]
 
@@ -67,9 +68,10 @@ export function IslandMapWidget() {
       aria-label={t('islandMapAria')}
     >
       <IslandMapPanZoomSurface
-        key={layer}
         src={mapSrc}
         mode="fullscreen"
+        view={mapView}
+        onViewChange={setMapView}
         className="island-map-viewport island-map-viewport--fullscreen"
       />
       <div className="island-map-controls island-map-controls--fullscreen">
@@ -96,9 +98,10 @@ export function IslandMapWidget() {
   ) : (
     <div className="island-map island-map--widget" aria-label={t('islandMapAria')}>
       <IslandMapPanZoomSurface
-        key={layer}
         src={mapSrc}
         mode="widget"
+        view={mapView}
+        onViewChange={setMapView}
         className="island-map-viewport island-map-viewport--widget"
       />
       <div className="island-map-widget-toolbar">
