@@ -94,15 +94,17 @@ export function IslandMapWidget() {
       <div className="island-map-viewport island-map-viewport--widget">
         <img src={mapSrc} alt="" className="island-map-image" decoding="async" draggable={false} />
       </div>
-      <button
-        type="button"
-        className="island-map-btn island-map-btn--expand"
-        onClick={openFullscreen}
-        aria-label={t('islandMapExpand')}
-        title={t('islandMapExpand')}
-      >
-        <ExpandIcon />
-      </button>
+      <div className="island-map-widget-toolbar">
+        <button
+          type="button"
+          className="island-map-btn island-map-btn--expand"
+          onClick={openFullscreen}
+          aria-label={t('islandMapExpand')}
+          title={t('islandMapExpand')}
+        >
+          <ExpandIcon />
+        </button>
+      </div>
     </div>
   )
 
