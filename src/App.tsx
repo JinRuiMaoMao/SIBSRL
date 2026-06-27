@@ -37,7 +37,7 @@ import {
 import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
-import { readTabFromLocation } from './utils/appTabNavigation'
+import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
@@ -309,6 +309,7 @@ function App() {
           </p>
         </footer>
         </div>
+        <IslandMapWidget />
       </>
     )
   }
@@ -378,7 +379,7 @@ function App() {
         </p>
       </footer>
       </div>
-      <IslandMapWidget />
+      {isRoutesPage() ? <IslandMapWidget /> : null}
       <AppTabBar activeTab={tabFromLocation} />
     </>
   )
