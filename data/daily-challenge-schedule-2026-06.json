@@ -30,7 +30,7 @@
     { "date": "2026-06-24", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },
     { "date": "2026-06-25", "event": "Rare Appearance", "routeCode": "U47S", "race": false },
     { "date": "2026-06-26", "event": "Foggy Day", "routeCode": "74A", "race": false },
-    { "date": "2026-06-27", "event": "Marathon Shuttle", "routeCode": null, "race": true },
+    { "date": "2026-06-27", "event": "Marathon Shuttle", "routeCode": "R370", "race": true },
     { "date": "2026-06-28", "event": "Rush Hour", "routeCode": null, "race": true },
     { "date": "2026-06-29", "event": null, "routeCode": null, "race": false },
     { "date": "2026-06-30", "event": "Urban Odyssey", "routeCode": "77XA", "race": true }

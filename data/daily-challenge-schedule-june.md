@@ -34,9 +34,9 @@
 6/22: Marathon Road Closure (248A)
 6/23: Marathon Road Closure at Night (N271S) — Rainbow Estate Complex → Long Island Ferry Pier via Central Western Bridge; any HK Special, CSB or FT buses; time 03:30
 6/24: [Race] Urban Odyssey (77XA)
-6/25: Rare appearance
+6/25: Rare appearance (U47S)
 6/26: Foggy Day (74A)
-6/27: [Race] Marathon Shuttle
+6/27: [Race] Marathon Shuttle (R370)
 6/28: [Race] Rush Hour
 6/29:
 6/30: [Race] Urban Odyssey (77XA)
