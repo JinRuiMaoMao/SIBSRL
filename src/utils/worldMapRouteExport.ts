@@ -93,13 +93,10 @@ export function buildWorldMapRouteExportPayload(
   virtualNodes: readonly WorldMapVirtualNode[] = [],
 ): WorldMapRouteExportPayload | null {
   const trimmedRouteId = routeId.trim()
-  const routeVirtualNodes = virtualNodes.filter((node) =>
-    canonicalVirtualNodeRouteId(node.routeId) === (resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId),
-  )
   const hasPath = points.length >= 2
-  const hasStops = stops.length >= 2
-  const hasVirtualNodes = routeVirtualNodes.length > 0
-  if (!trimmedRouteId || (!hasPath && !hasStops && !hasVirtualNodes)) return null
+  const hasStops = stops.length > 0
+  const hasVirtualNodes = virtualNodes.length > 0
+  if (!trimmedRouteId || (!hasPath && stops.length < 2 && !hasVirtualNodes)) return null
 
   const canonicalId = resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId
 
@@ -119,8 +116,8 @@ export function buildWorldMapRouteExportPayload(
               }))
             : undefined,
         virtualNodes:
-          routeVirtualNodes.length > 0
-            ? [...routeVirtualNodes]
+          virtualNodes.length > 0
+            ? [...virtualNodes]
                 .sort((a, b) => a.order - b.order)
                 .map((node) => ({
                   order: node.order,

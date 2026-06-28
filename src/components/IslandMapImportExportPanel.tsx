@@ -35,9 +35,7 @@ export function IslandMapImportExportPanel({
   const exportTitle =
     interaction === 'catalog'
       ? t('islandMapDrawExportCatalogHint')
-      : interaction === 'virtual'
-        ? t('islandMapDrawExportVirtualHint')
-        : t('islandMapDrawExportRouteHint')
+      : t('islandMapDrawExportRouteHint')
 
   return (
     <div className={`island-map-draw-panel island-map-import-export-panel ${className}`.trim()}>
@@ -70,7 +68,13 @@ export function IslandMapImportExportPanel({
         </button>
       </div>
       {showMeta ? (
-        interaction === 'route' ? (
+        interaction === 'catalog' ? (
+          <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
+            <span className="island-map-draw-count">
+              {t('islandMapDrawStopCount', { count: stopCount })}
+            </span>
+          </div>
+        ) : (
           <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
             {routeId ? (
               <span className="island-map-draw-count">
@@ -80,17 +84,8 @@ export function IslandMapImportExportPanel({
             <span className="island-map-draw-count">
               {t('islandMapDrawStopCount', { count: stopCount })}
             </span>
-          </div>
-        ) : interaction === 'virtual' ? (
-          <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
             <span className="island-map-draw-count">
               {t('islandMapDrawVirtualCount', { count: virtualNodeCount })}
-            </span>
-          </div>
-        ) : (
-          <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
-            <span className="island-map-draw-count">
-              {t('islandMapDrawStopCount', { count: stopCount })}
             </span>
           </div>
         )

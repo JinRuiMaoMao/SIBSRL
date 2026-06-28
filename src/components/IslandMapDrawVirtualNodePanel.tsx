@@ -1,10 +1,5 @@
 import { useLocale } from '../i18n/LocaleContext'
-import type {
-  IslandMapDrawInteraction,
-  WorldMapVirtualNode,
-  WorldMapVirtualNodeDraft,
-  WorldMapVirtualNodeKind,
-} from '../types/worldMapDraw'
+import type { WorldMapVirtualNode, WorldMapVirtualNodeDraft, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
 import {
   COMPASS_ROSE_LAYOUT,
   RELATIVE_DIRECTION_KINDS,
@@ -14,8 +9,6 @@ import {
 } from './IslandMapVirtualNodeOverlayLayer'
 
 interface IslandMapDrawVirtualNodePanelProps {
-  interaction: IslandMapDrawInteraction
-  onInteractionChange: (interaction: IslandMapDrawInteraction) => void
   nodes: readonly WorldMapVirtualNode[]
   pendingNode: WorldMapVirtualNodeDraft | null
   onPendingRouteIdChange: (routeId: string) => void
@@ -50,8 +43,6 @@ function KindButton({
 }
 
 export function IslandMapDrawVirtualNodePanel({
-  interaction,
-  onInteractionChange,
   nodes,
   pendingNode,
   onPendingRouteIdChange,
@@ -64,33 +55,6 @@ export function IslandMapDrawVirtualNodePanel({
 
   return (
     <div className="island-map-draw-stop-panel">
-      <div className="island-map-draw-panel-row">
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'route' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('route')}
-          aria-pressed={interaction === 'route'}
-        >
-          {t('islandMapDrawRouteMode')}
-        </button>
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'virtual' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('virtual')}
-          aria-pressed={interaction === 'virtual'}
-        >
-          {t('islandMapDrawVirtualMode')}
-        </button>
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'catalog' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('catalog')}
-          aria-pressed={interaction === 'catalog'}
-        >
-          {t('islandMapDrawCatalogMode')}
-        </button>
-      </div>
-
       <p className="island-map-draw-help">{t('islandMapDrawVirtualHelp')}</p>
 
       {pendingNode ? (

@@ -6,7 +6,6 @@ import { resolveStopByQuery } from '../utils/routeBetweenStops'
 
 interface IslandMapDrawStopPanelProps {
   interaction: IslandMapDrawInteraction
-  onInteractionChange: (interaction: IslandMapDrawInteraction) => void
   stops: readonly WorldMapDrawStop[]
   pendingStop: WorldMapDrawStopDraft | null
   onPendingQueryChange: (query: string) => void
@@ -17,7 +16,6 @@ interface IslandMapDrawStopPanelProps {
 
 export function IslandMapDrawStopPanel({
   interaction,
-  onInteractionChange,
   stops,
   pendingStop,
   onPendingQueryChange,
@@ -51,33 +49,6 @@ export function IslandMapDrawStopPanel({
 
   return (
     <div className="island-map-draw-stop-panel">
-      <div className="island-map-draw-panel-row">
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'route' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('route')}
-          aria-pressed={interaction === 'route'}
-        >
-          {t('islandMapDrawRouteMode')}
-        </button>
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'virtual' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('virtual')}
-          aria-pressed={interaction === 'virtual'}
-        >
-          {t('islandMapDrawVirtualMode')}
-        </button>
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'catalog' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('catalog')}
-          aria-pressed={interaction === 'catalog'}
-        >
-          {t('islandMapDrawCatalogMode')}
-        </button>
-      </div>
-
       <p className="island-map-draw-help">
         {interaction === 'route'
           ? t('islandMapDrawRouteHelp')

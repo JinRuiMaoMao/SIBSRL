@@ -207,6 +207,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "虚拟节点新增 order 字段：同路口多个节点按先后顺序经过；站点与虚拟节点可一并导出到同一线路 JSON。",
             en: "Virtual nodes now have an order field for sequencing at the same junction; stops and virtual nodes export together in one route JSON.",
           },
+          {
+            zh: "修复：开始/停止绘制不再清空站点与虚拟节点；切换模式保留路径；导出始终合并站点、虚拟节点与走线。",
+            en: "Fix: start/stop draw no longer clears stops or virtual nodes; switching modes keeps the path; export always includes stops, virtual nodes, and path together.",
+          },
         ],
       },
       {

@@ -13,11 +13,6 @@ import {
   downloadWorldMapCatalogStopsJson,
   downloadWorldMapRouteJson,
 } from '../utils/worldMapRouteExport'
-import {
-  buildWorldMapVirtualNodeCatalogPayload,
-  copyWorldMapVirtualNodeCatalogJson,
-  downloadWorldMapVirtualNodeCatalogJson,
-} from '../utils/worldMapVirtualNodeExport'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
@@ -30,7 +25,7 @@ import type {
   WorldMapVirtualNodeDraft,
   WorldMapVirtualNodeKind,
 } from '../types/worldMapDraw'
-import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
+import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
@@ -226,10 +221,7 @@ export function IslandMapWidget() {
 
   const rebuildPath = useCallback(
     (stops: readonly WorldMapDrawStop[]) => {
-      if (drawInteraction !== 'route') {
-        setDraftPoints([])
-        return
-      }
+      if (drawInteraction !== 'route') return
       setDraftPoints(
         rebuildDraftPathFromStops(
           stops,
@@ -360,16 +352,22 @@ export function IslandMapWidget() {
       const next = !current
       if (next) {
         setLayer('general')
-        setDrawInteraction('route')
-        setDraftPoints([])
-        setDraftStops([])
-        setDraftVirtualNodes([])
-        setPendingStop(null)
-        setPendingVirtualNode(null)
       }
       return next
     })
   }, [])
+
+  const exportRoutePayload = useCallback(
+    () =>
+      buildWorldMapRouteExportPayload(
+        drawRouteId,
+        drawDirectionIndex,
+        draftPoints,
+        draftStops,
+        draftVirtualNodes,
+      ),
+    [drawDirectionIndex, drawRouteId, draftPoints, draftStops, draftVirtualNodes],
+  )
 
   const handleExport = useCallback(async () => {
     if (drawInteraction === 'catalog') {
@@ -384,25 +382,7 @@ export function IslandMapWidget() {
       return
     }
 
-    if (drawInteraction === 'virtual') {
-      const payload = buildWorldMapVirtualNodeCatalogPayload(draftVirtualNodes)
-      if (!payload) {
-        showExportHint(t('islandMapDrawExportNeedVirtualNodes'))
-        return
-      }
-      downloadWorldMapVirtualNodeCatalogJson(payload)
-      const copied = await copyWorldMapVirtualNodeCatalogJson(payload)
-      showExportHint(copied ? t('islandMapDrawExportVirtualDone') : t('islandMapDrawExportVirtualDownloaded'))
-      return
-    }
-
-    const payload = buildWorldMapRouteExportPayload(
-      drawRouteId,
-      drawDirectionIndex,
-      draftPoints,
-      draftStops,
-      draftVirtualNodes,
-    )
+    const payload = exportRoutePayload()
     if (!payload) {
       showExportHint(t('islandMapDrawExportNeedRoute'))
       return
@@ -410,16 +390,7 @@ export function IslandMapWidget() {
     downloadWorldMapRouteJson(payload)
     const copied = await copyWorldMapRouteJson(payload)
     showExportHint(copied ? t('islandMapDrawExportRouteDone') : t('islandMapDrawExportRouteDownloaded'))
-  }, [
-    drawDirectionIndex,
-    drawInteraction,
-    drawRouteId,
-    draftPoints,
-    draftStops,
-    draftVirtualNodes,
-    showExportHint,
-    t,
-  ])
+  }, [drawInteraction, draftStops, exportRoutePayload, showExportHint, t])
 
   const handleImportFileChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -507,15 +478,7 @@ export function IslandMapWidget() {
   const canExport =
     drawInteraction === 'catalog'
       ? buildWorldMapCatalogStopsExportPayload(draftStops) != null
-      : drawInteraction === 'virtual'
-        ? buildWorldMapVirtualNodeCatalogPayload(draftVirtualNodes) != null
-        : buildWorldMapRouteExportPayload(
-            drawRouteId,
-            drawDirectionIndex,
-            draftPoints,
-            draftStops,
-            draftVirtualNodes,
-          ) != null
+      : exportRoutePayload() != null
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
   const draftRouteNumber = drawRouteId.trim()
@@ -620,14 +583,16 @@ export function IslandMapWidget() {
           title={
             drawInteraction === 'catalog'
               ? t('islandMapDrawExportCatalogHint')
-              : drawInteraction === 'virtual'
-                ? t('islandMapDrawExportVirtualHint')
-                : t('islandMapDrawExportRouteHint')
+              : t('islandMapDrawExportRouteHint')
           }
         >
           {t('islandMapDrawExport')}
         </button>
       </div>
+      <IslandMapDrawInteractionTabs
+        interaction={drawInteraction}
+        onInteractionChange={handleInteractionChange}
+      />
       {drawInteraction === 'route' ? (
         <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
           <label className="island-map-draw-field">
@@ -652,9 +617,15 @@ export function IslandMapWidget() {
           <span className="island-map-draw-count">
             {t('islandMapDrawStopCount', { count: draftStops.length })}
           </span>
+          <span className="island-map-draw-count">
+            {t('islandMapDrawVirtualCount', { count: draftVirtualNodes.length })}
+          </span>
         </div>
       ) : drawInteraction === 'virtual' ? (
         <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
+          <span className="island-map-draw-count">
+            {t('islandMapDrawStopCount', { count: draftStops.length })}
+          </span>
           <span className="island-map-draw-count">
             {t('islandMapDrawVirtualCount', { count: draftVirtualNodes.length })}
           </span>
@@ -669,12 +640,10 @@ export function IslandMapWidget() {
       {drawMode && drawInteraction === 'route' ? (
         <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
       ) : null}
-      {drawMode && drawInteraction === 'virtual' ? (
+      {drawInteraction === 'virtual' ? (
         <IslandMapDrawVirtualNodePanel
-          interaction={drawInteraction}
-          onInteractionChange={handleInteractionChange}
           nodes={draftVirtualNodes}
-          pendingNode={pendingVirtualNode}
+          pendingNode={drawMode ? pendingVirtualNode : null}
           onPendingRouteIdChange={(routeId) =>
             setPendingVirtualNode((current) => (current ? { ...current, routeId } : current))
           }
@@ -690,12 +659,11 @@ export function IslandMapWidget() {
           onRemoveNode={handleRemoveVirtualNode}
         />
       ) : null}
-      {drawMode && drawInteraction !== 'virtual' ? (
+      {drawInteraction !== 'virtual' ? (
         <IslandMapDrawStopPanel
           interaction={drawInteraction}
-          onInteractionChange={handleInteractionChange}
           stops={draftStops}
-          pendingStop={pendingStop}
+          pendingStop={drawMode ? pendingStop : null}
           onPendingQueryChange={(query) =>
             setPendingStop((current) => (current ? { ...current, query } : current))
           }
