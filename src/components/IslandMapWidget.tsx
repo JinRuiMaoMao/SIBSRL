@@ -251,9 +251,9 @@ export function IslandMapWidget() {
       if (drawInteraction === 'virtual') {
         if (pendingVirtualNode) return
         setPendingVirtualNode({
-          point: roadSnap.snapVirtualNode(point, 'straight'),
+          point: roadSnap.snapVirtualNode(point, 'north'),
           routeId: drawRouteId.trim() || '21A',
-          kind: 'straight',
+          kind: 'north',
         })
         return
       }

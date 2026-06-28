@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import { normalizeVirtualNodeKind } from './mapSurfaceKind'
 
 export type WorldMapDrawImportResult =
   | {
@@ -62,15 +63,8 @@ function readStopList(value: unknown): WorldMapDrawStop[] {
   return stops
 }
 
-function readVirtualNodeKind(value: unknown): WorldMapVirtualNodeKind | null {
-  if (value === 'straight') return 'straight'
-  if (value === 'left' || value === 'turn') return 'left'
-  if (value === 'right' || value === 'u-turn') return 'right'
-  if (value === 'on-bridge' || value === '上桥') return 'on-bridge'
-  if (value === 'off-bridge' || value === '下桥') return 'off-bridge'
-  if (value === 'enter-tunnel' || value === '进隧道' || value === '进隧') return 'enter-tunnel'
-  if (value === 'exit-tunnel' || value === '出隧道' || value === '出隧') return 'exit-tunnel'
-  return null
+function readVirtualNodeKind(value: unknown): WorldMapVirtualNode['kind'] | null {
+  return normalizeVirtualNodeKind(value)
 }
 
 function readVirtualNodeEntry(value: unknown, index: number): WorldMapVirtualNode | null {

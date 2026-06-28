@@ -196,8 +196,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Road pathfinding no longer allows mid-segment U-turns—turnarounds must use roundabouts or junctions (degree ≠ 2), following road direction.",
           },
           {
-            zh: "绘制工具新增「虚拟节点」模式：标注线路号与类型（↑直行向北 / ←左转 / →右转；上桥/下桥/进隧/出隧自动吸附最近桥面或道路/隧道）。",
-            en: "Draw tools add a Virtual nodes mode: tag route ID and type (↑ north straight, ← left, → right; on/off bridge and tunnel enter/exit snap to nearest bridge, road, or tunnel).",
+            zh: "虚拟节点支持上北罗盘八向（↑↓←→↖↗↙↘）、相对转向（↺左转 ↻右转 ↩掉头）及上桥/下桥/进隧/出隧。",
+            en: "Virtual nodes support north-up compass (8 dirs), relative turns (↺ ↻ ↩ U-turn), and bridge/tunnel enter/exit.",
           },
         ],
       },

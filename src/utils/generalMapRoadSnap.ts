@@ -1,6 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapVirtualNodeKind } from '../types/worldMapDraw'
-import { MAP_NORTH_DIR } from './mapSurfaceKind'
+import { absoluteExitDirForKind } from './mapSurfaceKind'
 
 const GENERAL_MAP_URL = './maps/SIMapGerenal.png'
 const ROAD_CELL_PX = 8
@@ -117,9 +117,10 @@ function turnRightDir(inDir: number): number {
 }
 
 export function exitDirForKind(incomingDir: number, kind: VirtualNodeKind): number {
-  if (kind === 'straight') return MAP_NORTH_DIR
-  if (kind === 'left') return turnLeftDir(incomingDir)
-  if (kind === 'right') return turnRightDir(incomingDir)
+  const absolute = absoluteExitDirForKind(kind)
+  if (absolute != null) return absolute
+  if (kind === 'turn-left') return turnLeftDir(incomingDir)
+  if (kind === 'turn-right') return turnRightDir(incomingDir)
   return incomingDir
 }
 
@@ -387,12 +388,23 @@ class GeneralMapRoadSnapIndex {
     if (!this.roadGrid[cellIndex(this.gridWidth, nextGx, nextGy)]) return false
 
     switch (kind) {
-      case 'straight':
-        return outDir === MAP_NORTH_DIR
-      case 'left':
+      case 'north':
+      case 'south':
+      case 'east':
+      case 'west':
+      case 'northwest':
+      case 'northeast':
+      case 'southwest':
+      case 'southeast': {
+        const required = absoluteExitDirForKind(kind)
+        return required != null && outDir === required
+      }
+      case 'turn-left':
         return outDir === turnLeftDir(incomingDir)
-      case 'right':
+      case 'turn-right':
         return outDir === turnRightDir(incomingDir)
+      case 'u-turn':
+        return isOppositeDir(inDx, inDy, outDx, outDy)
       case 'on-bridge':
         return (
           this.isPlainRoadCell(prevGx, prevGy) &&

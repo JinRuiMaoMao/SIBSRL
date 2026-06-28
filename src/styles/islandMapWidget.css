@@ -502,15 +502,43 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   gap: 0.35rem;
 }
 
+.island-map-draw-compass-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(3.2rem, 1fr));
+  gap: 0.25rem;
+  max-width: 14rem;
+}
+
+.island-map-draw-compass-gap {
+  display: block;
+  min-height: 2rem;
+}
+
 .island-map-draw-virtual-kind {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.25rem;
+  min-height: 2rem;
+  padding-inline: 0.35rem;
 }
 
 .island-map-draw-virtual-kind-symbol {
   font-size: 1rem;
   line-height: 1;
+}
+
+.island-map-draw-virtual-kind-text {
+  font-size: 0.72rem;
+}
+
+.island-map-draw-compass-grid .island-map-draw-virtual-kind {
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.25rem 0.2rem;
+}
+
+.island-map-draw-compass-grid .island-map-draw-virtual-kind-text {
+  font-size: 0.65rem;
 }
 
 .island-map-virtual-node-overlay {
@@ -533,15 +561,23 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   font-weight: 800;
 }
 
-.island-map-virtual-node-overlay-item--straight .island-map-virtual-node-overlay-marker {
+.island-map-virtual-node-overlay-item--north .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--south .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--east .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--west .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--northwest .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--northeast .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--southwest .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--southeast .island-map-virtual-node-overlay-marker {
   stroke: color-mix(in srgb, #7ec8ff 75%, transparent);
 }
 
-.island-map-virtual-node-overlay-item--left .island-map-virtual-node-overlay-marker {
+.island-map-virtual-node-overlay-item--turn-left .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--turn-right .island-map-virtual-node-overlay-marker {
   stroke: color-mix(in srgb, #f5b942 75%, transparent);
 }
 
-.island-map-virtual-node-overlay-item--right .island-map-virtual-node-overlay-marker {
+.island-map-virtual-node-overlay-item--u-turn .island-map-virtual-node-overlay-marker {
   stroke: color-mix(in srgb, #ff7a7a 75%, transparent);
 }
 
