@@ -54,6 +54,19 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
       client_ip TEXT,
       created_at INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS map_draw_permission_requests (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      email TEXT NOT NULL COLLATE NOCASE,
+      token TEXT NOT NULL UNIQUE,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at INTEGER NOT NULL,
+      last_sent_at INTEGER NOT NULL,
+      expires_at INTEGER NOT NULL,
+      resolved_at INTEGER,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
   `)
 
   const userDataColumns = db.prepare('PRAGMA table_info(user_data)').all()
@@ -260,3 +273,66 @@ export function insertRouteFeedback(db, { id, routeId, category, message, contac
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(id, routeId ?? null, category, message, contactEmail ?? null, clientIp ?? null, createdAt)
 }
+
+const MAP_DRAW_REQUEST_COOLDOWN_MS = 60 * 1000
+const MAP_DRAW_REQUEST_TTL_MS = 7 * 24 * 60 * 60 * 1000
+
+/** @param {import('better-sqlite3').Database} db */
+export function getLatestMapDrawPermissionRequest(db, userId) {
+  return db
+    .prepare(`
+      SELECT id, user_id, email, token, status, created_at, last_sent_at, expires_at, resolved_at
+      FROM map_draw_permission_requests
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+      LIMIT 1
+    `)
+    .get(userId)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function findMapDrawPermissionRequestByToken(db, token) {
+  return db
+    .prepare(`
+      SELECT id, user_id, email, token, status, created_at, last_sent_at, expires_at, resolved_at
+      FROM map_draw_permission_requests
+      WHERE token = ?
+    `)
+    .get(token)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function canSendMapDrawPermissionRequest(db, userId, now = Date.now()) {
+  const latest = getLatestMapDrawPermissionRequest(db, userId)
+  if (!latest) return true
+  if (latest.status === 'pending' && latest.expires_at > now) {
+    return now - latest.last_sent_at >= MAP_DRAW_REQUEST_COOLDOWN_MS
+  }
+  return now - latest.last_sent_at >= MAP_DRAW_REQUEST_COOLDOWN_MS
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function createMapDrawPermissionRequest(db, { id, userId, email, token, createdAt, lastSentAt, expiresAt }) {
+  db.prepare(`
+    INSERT INTO map_draw_permission_requests (
+      id, user_id, email, token, status, created_at, last_sent_at, expires_at, resolved_at
+    ) VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, NULL)
+  `).run(id, userId, email, token, createdAt, lastSentAt, expiresAt)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function approveMapDrawPermissionRequest(db, token, resolvedAt = Date.now()) {
+  const request = findMapDrawPermissionRequestByToken(db, token)
+  if (!request || request.status !== 'pending' || request.expires_at <= resolvedAt) {
+    return null
+  }
+  setUserAdminByEmail(db, request.email, true)
+  db.prepare(`
+    UPDATE map_draw_permission_requests
+    SET status = 'approved', resolved_at = ?
+    WHERE token = ?
+  `).run(resolvedAt, token)
+  return request
+}
+
+export { MAP_DRAW_REQUEST_COOLDOWN_MS, MAP_DRAW_REQUEST_TTL_MS }

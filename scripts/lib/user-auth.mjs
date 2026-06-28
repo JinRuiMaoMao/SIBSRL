@@ -103,3 +103,7 @@ export function verifyToken(token) {
 export function randomUserId() {
   return randomBytes(16).toString('hex')
 }
+
+export function randomApprovalToken() {
+  return randomBytes(24).toString('hex')
+}

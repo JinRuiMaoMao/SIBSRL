@@ -8,6 +8,7 @@ import {
   isVerificationExpired,
   normalizeEmail,
   randomUserId,
+  randomApprovalToken,
   signToken,
   validatePassword,
   verificationExpiresAt,
@@ -31,6 +32,10 @@ import {
   linkOAuthIdentity,
   openUserDatabase,
   parseUserProfileJson,
+  createMapDrawPermissionRequest,
+  canSendMapDrawPermissionRequest,
+  approveMapDrawPermissionRequest,
+  MAP_DRAW_REQUEST_TTL_MS,
   updateUserPassword,
   updateUserProfile,
   upsertUserData,
@@ -47,7 +52,7 @@ import {
   isGitHubOAuthConfigured,
   isGoogleOAuthConfigured,
 } from './lib/user-oauth.mjs'
-import { resolveMailProvider, sendVerificationEmail } from './lib/user-mail.mjs'
+import { resolveMailProvider, sendVerificationEmail, sendMapDrawPermissionRequestEmail, buildMapDrawApprovalResultHtml } from './lib/user-mail.mjs'
 
 const DEFAULT_PORT = 8788
 
@@ -133,6 +138,16 @@ function json(req, res, status, body) {
 /** @param {import('node:http').IncomingMessage} req @param {import('node:http').ServerResponse} res @param {number} status @param {string} code @param {string} message */
 function error(req, res, status, code, message) {
   json(req, res, status, { error: code, message })
+}
+
+/** @param {import('node:http').IncomingMessage} req @param {import('node:http').ServerResponse} res @param {number} status @param {string} html */
+function html(req, res, status, htmlBody) {
+  res.writeHead(status, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Content-Length': Buffer.byteLength(htmlBody),
+    'Access-Control-Allow-Origin': resolveCorsOrigin(req),
+  })
+  res.end(htmlBody)
 }
 
 async function readJson(req) {
@@ -473,6 +488,83 @@ async function handleDeleteAccount(req, res) {
   json(req, res, 200, { ok: true })
 }
 
+async function handleMapDrawRequest(req, res) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  const user = findUserById(db, session.userId)
+  if (!user) return error(req, res, 404, 'user_not_found', 'User not found')
+  if (isUserAdmin(user)) {
+    return error(req, res, 409, 'already_admin', 'You already have map draw permission')
+  }
+
+  const now = Date.now()
+  if (!canSendMapDrawPermissionRequest(db, user.id, now)) {
+    return error(req, res, 429, 'rate_limited', 'Please wait before sending another request')
+  }
+
+  const token = randomApprovalToken()
+  createMapDrawPermissionRequest(db, {
+    id: randomUserId(),
+    userId: user.id,
+    email: user.email,
+    token,
+    createdAt: now,
+    lastSentAt: now,
+    expiresAt: now + MAP_DRAW_REQUEST_TTL_MS,
+  })
+
+  const approveUrl = `${getApiPublicBaseUrl(req)}/api/user/map-draw-approve?token=${encodeURIComponent(token)}`
+  try {
+    await sendMapDrawPermissionRequestEmail({
+      applicantEmail: user.email,
+      approveUrl,
+    })
+  } catch (err) {
+    console.error('[user-api] map draw request mail failed:', err)
+    return error(req, res, 502, 'mail_failed', 'Failed to send permission request email')
+  }
+
+  json(req, res, 200, { ok: true })
+}
+
+function handleMapDrawApprove(req, res, url) {
+  const token = url.searchParams.get('token')?.trim() ?? ''
+  if (!token) {
+    return html(
+      req,
+      res,
+      400,
+      buildMapDrawApprovalResultHtml({
+        applicantEmail: '',
+        ok: false,
+        reason: '缺少审批链接参数 / Missing approval token.',
+      }),
+    )
+  }
+
+  const request = approveMapDrawPermissionRequest(db, token)
+  if (!request) {
+    return html(
+      req,
+      res,
+      400,
+      buildMapDrawApprovalResultHtml({
+        applicantEmail: '',
+        ok: false,
+        reason: '链接无效、已使用或已过期 / Link invalid, already used, or expired.',
+      }),
+    )
+  }
+
+  return html(
+    req,
+    res,
+    200,
+    buildMapDrawApprovalResultHtml({ applicantEmail: request.email, ok: true }),
+  )
+}
+
 async function handleRouteFeedback(req, res) {
   let body
   try {
@@ -670,6 +762,12 @@ const server = createServer(async (req, res) => {
     }
     if (method === 'POST' && path === '/api/feedback/route') {
       return await handleRouteFeedback(req, res)
+    }
+    if (method === 'POST' && path === '/api/user/map-draw-request') {
+      return await handleMapDrawRequest(req, res)
+    }
+    if (method === 'GET' && path === '/api/user/map-draw-approve') {
+      return handleMapDrawApprove(req, res, url)
     }
     return error(req, res, 404, 'not_found', 'Not found')
   } catch (err) {

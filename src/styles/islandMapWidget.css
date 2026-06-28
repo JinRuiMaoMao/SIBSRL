@@ -711,3 +711,18 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   color: #e07070;
   font-size: 0.88rem;
 }
+
+.island-map-permission-dialog-root {
+  z-index: 12060;
+}
+
+.island-map-permission-dialog {
+  width: min(24rem, calc(100vw - 2rem));
+}
+
+.island-map-permission-dialog-email {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  color: var(--text-muted, #aaa);
+  word-break: break-all;
+}

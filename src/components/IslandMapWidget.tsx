@@ -5,6 +5,10 @@ import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPo
 import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useGeneralMapRoadSnap } from '../hooks/useGeneralMapRoadSnap'
 import { useLocale } from '../i18n/LocaleContext'
+import { useAuth } from '../contexts/AuthContext'
+import { useUserProfile } from '../contexts/UserProfileContext'
+import { isUserApiConfigured } from '../api/userApiConfig'
+import { requestMapDrawPermission, UserApiError } from '../api/userApi'
 import {
   buildWorldMapRouteExportPayload,
   copyWorldMapRouteJson,
@@ -26,6 +30,10 @@ import type {
   WorldMapVirtualNodeKind,
 } from '../types/worldMapDraw'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
+import {
+  IslandMapDrawPermissionDialogs,
+  type IslandMapDrawPermissionDialogStep,
+} from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
@@ -131,7 +139,10 @@ function surfaceProps(
 
 export function IslandMapWidget() {
   const { t } = useLocale()
+  const { isLoggedIn, token, email } = useAuth()
+  const { refreshProfile } = useUserProfile()
   const isMapAdmin = useIsMapAdmin()
+  const userApiEnabled = isUserApiConfigured()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const [expanded, setExpanded] = useState(false)
@@ -152,6 +163,8 @@ export function IslandMapWidget() {
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
+  const [permissionDialog, setPermissionDialog] = useState<IslandMapDrawPermissionDialogStep | null>(null)
+  const [permissionSending, setPermissionSending] = useState(false)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -364,6 +377,51 @@ export function IslandMapWidget() {
     })
   }, [])
 
+  const handleDrawEntryClick = useCallback(() => {
+    if (isMapAdmin) {
+      toggleDrawMode()
+      return
+    }
+    if (!userApiEnabled) return
+    if (!isLoggedIn) {
+      setPermissionDialog('register')
+      return
+    }
+    setPermissionDialog('confirm')
+  }, [isLoggedIn, isMapAdmin, toggleDrawMode, userApiEnabled])
+
+  const handleSendDrawPermissionRequest = useCallback(async () => {
+    if (!token) {
+      setPermissionDialog('register')
+      return
+    }
+    setPermissionSending(true)
+    try {
+      await requestMapDrawPermission(token)
+      setPermissionDialog('sent')
+    } catch (error) {
+      const message =
+        error instanceof UserApiError && error.code === 'rate_limited'
+          ? t('islandMapDrawPermissionRateLimited')
+          : error instanceof UserApiError && error.code === 'already_admin'
+            ? t('islandMapDrawPermissionAlreadyAdmin')
+            : t('islandMapDrawPermissionSendFailed')
+      showExportHint(message)
+      setPermissionDialog(null)
+      if (error instanceof UserApiError && error.code === 'already_admin') {
+        void refreshProfile()
+      }
+    } finally {
+      setPermissionSending(false)
+    }
+  }, [refreshProfile, showExportHint, t, token])
+
+  const closePermissionDialog = useCallback(() => {
+    setPermissionDialog(null)
+    setPermissionSending(false)
+    void refreshProfile()
+  }, [refreshProfile])
+
   const overlayRouteId = routeOverlay?.routeId
 
   const openExportDialog = useCallback(() => {
@@ -562,6 +620,7 @@ export function IslandMapWidget() {
     onImport: () => importInputRef.current?.click(),
     onExport: openExportDialog,
     onClear: clearDraft,
+    onDrawRequest: userApiEnabled && !isMapAdmin ? handleDrawEntryClick : undefined,
   }
 
   const hiddenImportInput = (
@@ -820,12 +879,40 @@ export function IslandMapWidget() {
               <button
                 type="button"
                 className={`island-map-btn island-map-btn--draw${drawMode ? ' island-map-btn--active' : ''}`.trim()}
-                onClick={toggleDrawMode}
+                onClick={handleDrawEntryClick}
                 aria-pressed={drawMode}
                 title={drawMode ? t('islandMapDrawStopHint') : t('islandMapDrawStartHint')}
               >
                 {drawMode ? t('islandMapDrawStop') : t('islandMapDraw')}
               </button>
+            ) : userApiEnabled ? (
+              <>
+                <button
+                  type="button"
+                  className="island-map-btn island-map-btn--draw"
+                  onClick={handleDrawEntryClick}
+                  title={t('islandMapDrawPermissionButtonHint')}
+                >
+                  {t('islandMapDraw')}
+                </button>
+                <button
+                  type="button"
+                  className="island-map-btn island-map-btn--import"
+                  onClick={() => importInputRef.current?.click()}
+                  title={t('islandMapDrawImportHint')}
+                >
+                  {t('islandMapDrawImport')}
+                </button>
+                <button
+                  type="button"
+                  className="island-map-btn island-map-btn--export"
+                  onClick={openExportDialog}
+                  disabled={!canExport}
+                  title={t('islandMapDrawExportRouteHint')}
+                >
+                  {t('islandMapDrawExport')}
+                </button>
+              </>
             ) : (
               <>
                 <button
@@ -891,6 +978,16 @@ export function IslandMapWidget() {
           setExportMergeFiles([])
         }}
         onConfirm={(selection, merged) => void handleExportConfirm(selection, merged)}
+      />
+      <IslandMapDrawPermissionDialogs
+        step={permissionDialog}
+        applicantEmail={email}
+        sending={permissionSending}
+        onCancel={closePermissionDialog}
+        onConfirmSend={() => void handleSendDrawPermissionRequest()}
+        onGoRegister={() => {
+          window.location.href = './account.html'
+        }}
       />
       {node}
     </>,

@@ -219,6 +219,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "导出前弹出选项窗口：勾选站点/虚拟节点/路径（路径默认不导出），可合并多份 JSON 后一并写出。",
             en: "Export opens a dialog: choose stops, virtual nodes, and/or path (path off by default); optional merge of multiple JSON files before writing.",
           },
+          {
+            zh: "非管理员可在小地图点击「绘制」申请权限：需先注册，邮件发送给管理员，点击「我同意」后自动发放绘制权限。",
+            en: "Non-admins can tap Draw on the mini map to request permission: register first, admin approves by email, draw access is granted automatically.",
+          },
         ],
       },
       {

@@ -12,6 +12,7 @@ interface IslandMapImportExportPanelProps {
   onImport: () => void
   onExport: () => void
   onClear: () => void
+  onDrawRequest?: () => void
   showMeta?: boolean
   className?: string
 }
@@ -27,6 +28,7 @@ export function IslandMapImportExportPanel({
   onImport,
   onExport,
   onClear,
+  onDrawRequest,
   showMeta = true,
   className = '',
 }: IslandMapImportExportPanelProps) {
@@ -37,6 +39,16 @@ export function IslandMapImportExportPanel({
   return (
     <div className={`island-map-draw-panel island-map-import-export-panel ${className}`.trim()}>
       <div className="island-map-draw-panel-row">
+        {onDrawRequest ? (
+          <button
+            type="button"
+            className="island-map-btn island-map-btn--draw"
+            onClick={onDrawRequest}
+            title={t('islandMapDrawPermissionButtonHint')}
+          >
+            {t('islandMapDraw')}
+          </button>
+        ) : null}
         <button
           type="button"
           className="island-map-btn island-map-btn--import"

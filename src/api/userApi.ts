@@ -164,6 +164,14 @@ export async function deleteAccount(token: string, currentPassword?: string) {
   })
 }
 
+export async function requestMapDrawPermission(token: string) {
+  return request<{ ok: true }>('/api/user/map-draw-request', {
+    method: 'POST',
+    token,
+    body: JSON.stringify({}),
+  })
+}
+
 export async function submitRouteFeedback(payload: {
   routeId?: string | null
   category: string

@@ -381,3 +381,86 @@ export async function sendVerificationEmail({ to, code, purpose, locale }) {
     headers: preheader ? { 'X-Preheader': preheader } : undefined,
   })
 }
+
+const DEFAULT_MAP_DRAW_APPROVAL_EMAIL = 'gengyue_sun@outlook.com'
+
+export function resolveMapDrawApprovalEmail() {
+  return process.env.MAP_DRAW_APPROVAL_EMAIL?.trim().toLowerCase() || DEFAULT_MAP_DRAW_APPROVAL_EMAIL
+}
+
+/** @param {{ applicantEmail: string, approveUrl: string }} params */
+export function buildMapDrawPermissionRequestContent({ applicantEmail, approveUrl }) {
+  const safeEmail = escapeHtml(applicantEmail)
+  const safeUrl = escapeHtml(approveUrl)
+  const subject = 'SIBS 地图绘制权限申请 / Map draw permission request'
+  const text = [
+    '有成员尝试申请绘制权限，是否同意？',
+    'A member is requesting map draw permission. Approve?',
+    '',
+    `申请人 Applicant: ${applicantEmail}`,
+    '',
+    `我同意 / Approve: ${approveUrl}`,
+  ].join('\n')
+  const html = `<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="utf-8" /><title>${escapeHtml(subject)}</title></head>
+<body style="margin:0;padding:24px;background:#f3f4f6;font-family:Segoe UI,system-ui,sans-serif;color:#111827;">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:28px;border:1px solid #e5e7eb;">
+    <h1 style="margin:0 0 12px;font-size:20px;">有成员尝试申请绘制权限，是否同意？</h1>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.7;color:#374151;">A member is requesting map draw permission. Do you approve?</p>
+    <p style="margin:16px 0 8px;font-size:14px;"><strong>申请人 Applicant:</strong> ${safeEmail}</p>
+    <p style="margin:24px 0;">
+      <a href="${safeUrl}" style="display:inline-block;padding:12px 20px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">我同意 / Approve</a>
+    </p>
+    <p style="margin:16px 0 0;font-size:12px;color:#6b7280;word-break:break-all;">${safeUrl}</p>
+  </div>
+</body>
+</html>`
+  return { subject, text, html, preheader: `绘制权限申请 ${applicantEmail}` }
+}
+
+/** @param {{ applicantEmail: string, approveUrl: string }} params */
+export async function sendMapDrawPermissionRequestEmail({ applicantEmail, approveUrl }) {
+  const { subject, text, html, preheader } = buildMapDrawPermissionRequestContent({
+    applicantEmail,
+    approveUrl,
+  })
+  const provider = assertMailProviderConfigured()
+  const from =
+    process.env.MAIL_FROM?.trim() ||
+    (provider === 'smtp' ? requireSmtpConfig().from : DEFAULT_RESEND_FROM)
+  const to = resolveMapDrawApprovalEmail()
+
+  if (provider === 'resend') {
+    await sendViaResend({ to, subject, text, html, headers: { 'X-Preheader': preheader } })
+    return
+  }
+  if (provider === 'sendgrid') {
+    await sendViaSendGrid({ to, subject, text, html, from, category: 'map-draw-permission', preheader })
+    return
+  }
+  await getTransporter().sendMail({ from, to, subject, text, html, headers: { 'X-Preheader': preheader } })
+}
+
+/** @param {{ applicantEmail: string, ok: boolean, reason?: string }} params */
+export function buildMapDrawApprovalResultHtml({ applicantEmail, ok, reason }) {
+  const title = ok ? '已发放绘制权限' : '无法处理申请'
+  const titleEn = ok ? 'Draw permission granted' : 'Request could not be processed'
+  const body = ok
+    ? `已为 ${escapeHtml(applicantEmail)} 发放地图绘制权限。该成员重新打开网站后即可使用绘制功能。`
+    : escapeHtml(reason ?? '链接无效或已过期。')
+  const bodyEn = ok
+    ? `Map draw permission has been granted to ${escapeHtml(applicantEmail)}. They can use draw tools after reopening the site.`
+    : escapeHtml(reason ?? 'This link is invalid or has expired.')
+  return `<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="utf-8" /><title>${escapeHtml(title)}</title></head>
+<body style="margin:0;padding:24px;background:#f3f4f6;font-family:Segoe UI,system-ui,sans-serif;color:#111827;">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:28px;border:1px solid #e5e7eb;">
+    <h1 style="margin:0 0 12px;font-size:20px;">${escapeHtml(title)}</h1>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.7;">${body}</p>
+    <p style="margin:0;font-size:14px;line-height:1.7;color:#4b5563;">${bodyEn}</p>
+  </div>
+</body>
+</html>`
+}
