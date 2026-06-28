@@ -281,6 +281,14 @@ html.has-compact-tab-nav .island-map--widget {
   padding-inline: 0.75rem;
 }
 
+.island-map-btn--import {
+  padding-inline: 0.75rem;
+}
+
+.island-map-draw-import-input {
+  display: none;
+}
+
 .island-map-draw-field--color input {
   min-width: min(100%, 14rem);
 }

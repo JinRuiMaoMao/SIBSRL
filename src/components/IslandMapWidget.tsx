@@ -14,6 +14,7 @@ import {
   downloadWorldMapRouteJson,
 } from '../utils/worldMapRouteExport'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
+import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import type { IslandMapDrawInteraction, WorldMapDrawStop, WorldMapDrawStopDraft } from '../types/worldMapDraw'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
@@ -131,6 +132,7 @@ export function IslandMapWidget() {
   const [exportHint, setExportHint] = useState<string | null>(null)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
   const exportHintTimerRef = useRef<number | null>(null)
+  const importInputRef = useRef<HTMLInputElement>(null)
 
   const handleViewChange = useCallback((next: NormalizedMapView) => {
     setMapView(next)
@@ -326,6 +328,57 @@ export function IslandMapWidget() {
     t,
   ])
 
+  const handleImportFileChange = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0]
+      event.target.value = ''
+      if (!file) return
+
+      try {
+        const parsed = parseWorldMapDrawImportJson(JSON.parse(await file.text()))
+        if (!parsed) {
+          showExportHint(t('islandMapDrawImportInvalid'))
+          return
+        }
+
+        setPendingStop(null)
+
+        if (parsed.kind === 'catalog') {
+          setDrawInteraction('catalog')
+          setDraftPoints([])
+          setDraftStops(parsed.stops)
+          setMapView(
+            fitNormalizedViewToRoutePoints(
+              parsed.stops.map((stop) => stop.point),
+              expanded ? 'fullscreen' : 'widget',
+            ),
+          )
+          showExportHint(t('islandMapDrawImportCatalogDone', { count: parsed.stops.length }))
+          return
+        }
+
+        setDrawInteraction('route')
+        setDrawRouteId(parsed.routeId)
+        setDrawDirectionIndex(parsed.directionIndex)
+        setDraftStops(parsed.stops)
+        const nextPoints =
+          parsed.points.length >= 2
+            ? parsed.points
+            : rebuildDraftPathFromStops(parsed.stops, traceSegment)
+        setDraftPoints(nextPoints)
+        const fitPoints =
+          nextPoints.length >= 2 ? nextPoints : parsed.stops.map((stop) => stop.point)
+        if (fitPoints.length > 0) {
+          setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
+        }
+        showExportHint(t('islandMapDrawImportRouteDone', { routeId: parsed.routeId }))
+      } catch {
+        showExportHint(t('islandMapDrawImportInvalid'))
+      }
+    },
+    [expanded, showExportHint, t, traceSegment],
+  )
+
   const mapSrc = MAP_URLS[layer]
   const surfaceRouteOverlay = routeOverlay
     ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
@@ -391,6 +444,14 @@ export function IslandMapWidget() {
         </button>
         <button
           type="button"
+          className="island-map-btn island-map-btn--import"
+          onClick={() => importInputRef.current?.click()}
+          title={t('islandMapDrawImportHint')}
+        >
+          {t('islandMapDrawImport')}
+        </button>
+        <button
+          type="button"
           className="island-map-btn island-map-btn--export"
           onClick={() => void handleExport()}
           disabled={!canExport}
@@ -402,6 +463,13 @@ export function IslandMapWidget() {
         >
           {t('islandMapDrawExport')}
         </button>
+        <input
+          ref={importInputRef}
+          type="file"
+          accept=".json,application/json"
+          className="island-map-draw-import-input"
+          onChange={(event) => void handleImportFileChange(event)}
+        />
       </div>
       {drawInteraction === 'route' ? (
         <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
