@@ -37,7 +37,7 @@
 6/25: Rare appearance (U47S)
 6/26: Foggy Day (74A)
 6/27: [Race] Marathon Shuttle (R370)
-6/28: [Race] Rush Hour
+6/28: [Race] Rush Hour (472W)
 6/29:
 6/30: [Race] Urban Odyssey (77XA)
 ```

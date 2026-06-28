@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
+import { fitNormalizedViewToRoutePoints } from '../data/worldMapRoutes'
 import { useLocale } from '../i18n/LocaleContext'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 
@@ -56,10 +58,13 @@ function ShowIcon() {
 
 export function IslandMapWidget() {
   const { t } = useLocale()
+  const overlayContext = useOptionalIslandMapOverlay()
+  const routeOverlay = overlayContext?.routeOverlay ?? null
   const [expanded, setExpanded] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
+  const savedViewRef = useRef<NormalizedMapView | null>(null)
   const handleViewChange = useCallback((next: NormalizedMapView) => {
     setMapView(next)
   }, [])
@@ -72,7 +77,25 @@ export function IslandMapWidget() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!routeOverlay) {
+      if (savedViewRef.current) {
+        setMapView(savedViewRef.current)
+        savedViewRef.current = null
+      }
+      return
+    }
+    savedViewRef.current = mapView
+    setMapView(
+      fitNormalizedViewToRoutePoints(routeOverlay.points, expanded ? 'fullscreen' : 'widget'),
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only refit when route overlay or mode changes
+  }, [expanded, routeOverlay])
+
   const mapSrc = MAP_URLS[layer]
+  const surfaceRouteOverlay = routeOverlay
+    ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
+    : null
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
   const closeFullscreen = useCallback(() => setExpanded(false), [])
@@ -106,6 +129,7 @@ export function IslandMapWidget() {
         mode="fullscreen"
         view={mapView}
         onViewChange={handleViewChange}
+        routeOverlay={surfaceRouteOverlay}
         className="island-map-viewport island-map-viewport--fullscreen"
       />
       <div className="island-map-controls island-map-controls--fullscreen">
@@ -131,7 +155,7 @@ export function IslandMapWidget() {
     </div>
   ) : (
     <div
-      className={`island-map island-map--widget${widgetHidden ? ' island-map--widget-collapsed' : ''}`.trim()}
+      className={`island-map island-map--widget${widgetHidden ? ' island-map--widget-collapsed' : ''}${routeOverlay ? ' island-map--widget-route' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
       {widgetHidden ? null : (
@@ -140,6 +164,7 @@ export function IslandMapWidget() {
           mode="widget"
           view={mapView}
           onViewChange={handleViewChange}
+          routeOverlay={surfaceRouteOverlay}
           className="island-map-viewport island-map-viewport--widget"
         />
       )}

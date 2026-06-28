@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import type { WorldMapPoint } from '../data/worldMapRoutes'
+import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 
 export interface PanZoomState {
   x: number
@@ -23,6 +25,10 @@ interface IslandMapPanZoomSurfaceProps {
   className?: string
   view: NormalizedMapView | null
   onViewChange: (view: NormalizedMapView) => void
+  routeOverlay?: {
+    routeNumber: string
+    points: readonly WorldMapPoint[]
+  } | null
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
@@ -167,6 +173,7 @@ export function IslandMapPanZoomSurface({
   className = '',
   view,
   onViewChange,
+  routeOverlay = null,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -418,6 +425,15 @@ export function IslandMapPanZoomSurface({
         }
       : undefined
 
+  const overlayStyle: CSSProperties | undefined =
+    imageSize && panZoom
+      ? {
+          width: `${imageSize.width}px`,
+          height: `${imageSize.height}px`,
+          transform: `translate3d(${panZoom.x}px, ${panZoom.y}px, 0) scale(${panZoom.scale})`,
+        }
+      : undefined
+
   return (
     <div
       ref={viewportRef}
@@ -436,6 +452,16 @@ export function IslandMapPanZoomSurface({
         style={imageStyle}
         onLoad={onImageLoad}
       />
+      {imageSize && routeOverlay && overlayStyle ? (
+        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+          <IslandMapRouteOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            routeNumber={routeOverlay.routeNumber}
+            points={routeOverlay.points}
+          />
+        </div>
+      ) : null}
     </div>
   )
 }

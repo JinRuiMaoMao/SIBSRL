@@ -80,6 +80,47 @@ html.has-compact-tab-nav .island-map--widget {
   pointer-events: none;
 }
 
+.island-map-route-overlay-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.island-map-route-overlay {
+  display: block;
+  overflow: visible;
+}
+
+.island-map-route-overlay-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent, #f5b942) 88%, #fff 12%);
+  stroke-width: max(3px, 0.0035em);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, #000 55%, transparent));
+}
+
+.island-map-route-overlay-marker {
+  fill: var(--accent, #f5b942);
+  stroke: color-mix(in srgb, var(--bg-deep, #0c1222) 75%, transparent);
+  stroke-width: 1.5;
+}
+
+.island-map-route-overlay-marker--end {
+  fill: color-mix(in srgb, var(--accent, #f5b942) 55%, #fff 45%);
+}
+
+.island-map-route-overlay-label {
+  fill: var(--text, #f2f2f2);
+  stroke: color-mix(in srgb, var(--bg-deep, #0c1222) 82%, transparent);
+  stroke-width: 3;
+  paint-order: stroke fill;
+  font-size: max(11px, 0.012em);
+  font-weight: 700;
+}
+
 .island-map-btn {
   display: inline-flex;
   align-items: center;
@@ -155,7 +196,7 @@ html.island-map-fullscreen-open body {
   overflow: hidden;
 }
 
-html.route-detail-open .island-map--widget {
+html.route-detail-open .island-map--widget:not(.island-map--widget-route) {
   opacity: 0;
   pointer-events: none;
 }

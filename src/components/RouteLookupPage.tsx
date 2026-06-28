@@ -40,7 +40,9 @@ import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { getPrimaryText } from '../i18n/displayText'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
+import { useIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
+import { getWorldMapRoutePoints } from '../data/worldMapRoutes'
 import { isChineseLocale } from '../i18n/types'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
@@ -197,6 +199,7 @@ export function RouteLookupPage({
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
+  const { setRouteOverlay } = useIslandMapOverlay()
   const { openTour, registerAutoStartTimer, cancelAutoStartTimer } = useGuidedTourControl()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
@@ -558,6 +561,31 @@ export function RouteLookupPage({
       cancelled = true
     }
   }, [detailOverlay])
+
+  const overlayRoute = detailOverlay?.kind === 'route' ? detailOverlay.route : null
+  const overlayDirectionIndex = overlayRoute ? getDirectionIndex(overlayRoute) : null
+
+  useEffect(() => {
+    if (!overlayRoute || overlayDirectionIndex == null) {
+      setRouteOverlay(null)
+      return
+    }
+
+    const points = getWorldMapRoutePoints(overlayRoute.id, overlayDirectionIndex)
+    if (!points) {
+      setRouteOverlay(null)
+      return
+    }
+
+    setRouteOverlay({
+      routeId: overlayRoute.id,
+      routeNumber: overlayRoute.number,
+      directionIndex: overlayDirectionIndex,
+      points,
+    })
+
+    return () => setRouteOverlay(null)
+  }, [overlayDirectionIndex, overlayRoute, setRouteOverlay])
 
   useEffect(() => {
     const routeId = readRouteQueryFromLocation()

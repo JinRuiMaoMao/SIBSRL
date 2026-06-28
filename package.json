@@ -11,6 +11,7 @@
     "sync:route-maps": "node scripts/sync-route-map-images.mjs",
     "sync:npc": "node scripts/sync-npc-audio.mjs",
     "gen:route-maps": "node scripts/build-route-maps-manifest.mjs",
+    "gen:world-map-routes": "node scripts/build-world-map-routes-manifest.mjs",
     "sync:brand": "node scripts/sync-brand-assets.mjs",
     "gen:changelog": "npx vite-node scripts/materialize-changelog.mjs",
     "gen:stop-aliases": "node scripts/generate-stop-aliases.mjs",

@@ -7,6 +7,7 @@ import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
+import { IslandMapOverlayProvider } from './contexts/IslandMapOverlayContext'
 import { IslandMapWidget } from './components/IslandMapWidget'
 import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
@@ -309,7 +310,9 @@ function App() {
           </p>
         </footer>
         </div>
-        <IslandMapWidget />
+        <IslandMapOverlayProvider>
+          <IslandMapWidget />
+        </IslandMapOverlayProvider>
       </>
     )
   }
@@ -319,6 +322,7 @@ function App() {
       <LiquidGlassDefs />
       {favoritesSyncDialog}
       {guidedTourLayer}
+      <IslandMapOverlayProvider>
       <div className="app sibs-scrollbar">
       <Header
         activeTab={activeTab}
@@ -381,6 +385,7 @@ function App() {
       </div>
       {isRoutesPage() ? <IslandMapWidget /> : null}
       <AppTabBar activeTab={tabFromLocation} />
+      </IslandMapOverlayProvider>
     </>
   )
 }

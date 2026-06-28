@@ -22,6 +22,7 @@ import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 import { syncBrandAssets } from './sync-brand-assets.mjs'
 import { syncWorldMapImages } from './sync-world-map-images.mjs'
+import { buildWorldMapRoutesManifest } from './build-world-map-routes-manifest.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const built = resolve(root, 'dist', 'dev.html')
@@ -121,6 +122,7 @@ export function publishStandalone(options = {}) {
 
   syncBrandAssets()
   syncWorldMapImages()
+  buildWorldMapRoutesManifest()
 
   if (existsSync(distAudio)) {
     cpSync(distAudio, rootAudio, { recursive: true })
