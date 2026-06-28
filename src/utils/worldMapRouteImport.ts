@@ -151,39 +151,17 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
   const points = direction.points
   const virtualNodes = direction.virtualNodes
 
-  if (stops.length === 0 && points.length < 2 && virtualNodes.length === 0) return null
-  if (stops.length >= 2 && points.length === 0) {
-    return {
-      kind: 'route',
-      routeId,
-      directionIndex: direction.directionIndex,
-      points: [],
-      stops,
-      virtualNodes,
-    }
-  }
+  const hasPath = points.length >= 2
+  const hasStops = stops.length > 0
+  const hasVirtualNodes = virtualNodes.length > 0
+  if (!hasPath && !hasStops && !hasVirtualNodes) return null
 
-  if (points.length >= 2) {
-    return {
-      kind: 'route',
-      routeId,
-      directionIndex: direction.directionIndex,
-      points,
-      stops: stops.length > 0 ? stops : [],
-      virtualNodes,
-    }
+  return {
+    kind: 'route',
+    routeId,
+    directionIndex: direction.directionIndex,
+    points: hasPath ? points : [],
+    stops,
+    virtualNodes,
   }
-
-  if (stops.length >= 2) {
-    return {
-      kind: 'route',
-      routeId,
-      directionIndex: direction.directionIndex,
-      points: [],
-      stops,
-      virtualNodes,
-    }
-  }
-
-  return null
 }

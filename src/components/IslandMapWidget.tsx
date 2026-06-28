@@ -18,6 +18,7 @@ import {
 } from '../utils/worldMapRouteExport'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
+import { preloadGeneralMapRoadSnapIndex, traceGeneralMapRoadPath, type GeneralMapRoadSnapIndex } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
@@ -40,7 +41,33 @@ import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
-import { preloadGeneralMapRoadSnapIndex, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
+function readImportJsonText(text: string): unknown {
+  const trimmed = text.replace(/^\uFEFF/, '').trim()
+  return JSON.parse(trimmed)
+}
+
+async function traceImportedRoutePath(
+  stops: readonly WorldMapDrawStop[],
+  virtualNodes: readonly WorldMapVirtualNode[],
+  routeId: string,
+  roadSnapReady: boolean,
+  roadSnapIndex: GeneralMapRoadSnapIndex | null,
+): Promise<WorldMapPoint[]> {
+  if (stops.length < 2) return []
+  const index = roadSnapReady ? roadSnapIndex : await preloadGeneralMapRoadSnapIndex()
+  const traceSegment = (
+    from: WorldMapPoint,
+    to: WorldMapPoint,
+    via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
+  ) => traceGeneralMapRoadPath(index, from, to, via)
+  return rebuildDraftPathFromStops(
+    stops,
+    traceSegment,
+    virtualNodes,
+    routeId,
+    (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
+  )
+}
 
 type MapLayer = 'general' | 'detailed'
 
@@ -433,7 +460,7 @@ export function IslandMapWidget() {
     const next: IslandMapDrawExportMergeFile[] = []
     for (const file of Array.from(files)) {
       try {
-        const parsed = parseWorldMapDrawImportJson(JSON.parse(await file.text()))
+        const parsed = parseWorldMapDrawImportJson(readImportJsonText(await file.text()))
         if (!parsed) continue
         next.push({
           id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -515,7 +542,7 @@ export function IslandMapWidget() {
       if (!file) return
 
       try {
-        const parsed = parseWorldMapDrawImportJson(JSON.parse(await file.text()))
+        const parsed = parseWorldMapDrawImportJson(readImportJsonText(await file.text()))
         if (!parsed) {
           showExportHint(t('islandMapDrawImportInvalid'))
           return
@@ -557,30 +584,35 @@ export function IslandMapWidget() {
         setDrawStops(parsed.stops)
         const importedVirtualNodes = parsed.virtualNodes ?? []
         setDraftVirtualNodes(importedVirtualNodes)
-        let nextPoints = parsed.points
-        if (nextPoints.length < 2 && parsed.stops.length >= 2) {
-          const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
-          const traceSegment = (
-            from: WorldMapPoint,
-            to: WorldMapPoint,
-            via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
-          ) => traceGeneralMapRoadPath(index, from, to, via)
-          nextPoints = rebuildDraftPathFromStops(
-            parsed.stops,
-            traceSegment,
-            importedVirtualNodes,
-            parsed.routeId,
-            (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
-          )
-        }
-        setDraftPoints(nextPoints)
+        const initialPoints = parsed.points.length >= 2 ? parsed.points : []
+        setDraftPoints(initialPoints)
         const fitPoints =
-          nextPoints.length >= 2 ? nextPoints : parsed.stops.map((stop) => stop.point)
+          initialPoints.length >= 2 ? initialPoints : parsed.stops.map((stop) => stop.point)
         if (fitPoints.length > 0) {
           setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
         }
         showExportHint(t('islandMapDrawImportRouteDone', { routeId: parsed.routeId }))
-      } catch {
+        if (initialPoints.length < 2 && parsed.stops.length >= 2) {
+          void traceImportedRoutePath(
+            parsed.stops,
+            importedVirtualNodes,
+            parsed.routeId,
+            roadSnap.ready,
+            roadSnap.index,
+          )
+            .then((nextPoints) => {
+              if (nextPoints.length >= 2) setDraftPoints(nextPoints)
+            })
+            .catch((error) => {
+              console.warn('Imported route path trace failed', error)
+            })
+        }
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          showExportHint(t('islandMapDrawImportInvalid'))
+          return
+        }
+        console.error('Route import failed', error)
         showExportHint(t('islandMapDrawImportInvalid'))
       }
     },
