@@ -29,7 +29,7 @@ export interface WorldMapRouteExportPayload {
   note: string
   directions: Array<{
     directionIndex: number
-    points: WorldMapPoint[]
+    points?: WorldMapPoint[]
     stops?: Array<{
       name: { zh: string; en: string }
       point: WorldMapPoint
@@ -41,6 +41,12 @@ export interface WorldMapRouteExportPayload {
       point: WorldMapPoint
     }>
   }>
+}
+
+export interface WorldMapRouteExportSelection {
+  includeStops: boolean
+  includeVirtualNodes: boolean
+  includePath: boolean
 }
 
 export function buildWorldMapCatalogStopsExportPayload(
@@ -113,33 +119,52 @@ export function buildWorldMapRouteExportPayload(
   stops: readonly WorldMapDrawStop[] = [],
   virtualNodes: readonly WorldMapVirtualNode[] = [],
   fallbackRouteId?: string,
+  selection: WorldMapRouteExportSelection = {
+    includeStops: true,
+    includeVirtualNodes: true,
+    includePath: true,
+  },
 ): WorldMapRouteExportPayload | null {
   const canonicalId = resolveWorldMapExportRouteId(routeId, virtualNodes, fallbackRouteId)
-  const hasPath = points.length >= 2
-  if (!canonicalId || (!hasPath && stops.length === 0 && virtualNodes.length === 0)) return null
+  const exportPoints =
+    selection.includePath && points.length >= 2
+      ? points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint)
+      : []
+  const exportStops = selection.includeStops
+    ? stops.map((stop) => ({
+        name: { zh: stop.name.zh, en: stop.name.en },
+        point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
+      }))
+    : []
+  const exportVirtualNodes = selection.includeVirtualNodes
+    ? [...virtualNodes]
+        .sort((a, b) => a.order - b.order)
+        .map((node) => ({
+          order: node.order,
+          routeId: canonicalVirtualNodeRouteId(node.routeId),
+          kind: node.kind,
+          point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
+        }))
+    : []
+
+  if (!canonicalId || (exportPoints.length === 0 && exportStops.length === 0 && exportVirtualNodes.length === 0)) {
+    return null
+  }
+
+  const included: string[] = []
+  if (exportStops.length > 0) included.push('stops')
+  if (exportVirtualNodes.length > 0) included.push('virtual nodes')
+  if (exportPoints.length > 0) included.push('path')
+
+  const direction: WorldMapRouteExportPayload['directions'][number] = { directionIndex }
+  if (exportPoints.length > 0) direction.points = exportPoints
+  if (exportStops.length > 0) direction.stops = exportStops
+  if (exportVirtualNodes.length > 0) direction.virtualNodes = exportVirtualNodes
 
   return {
     routeId: canonicalId,
-    note:
-      'Route on SIMapGerenal (normalized 0–1): path points, stops, and virtual nodes in one file. Virtual nodes follow order field along the route.',
-    directions: [
-      {
-        directionIndex,
-        points: hasPath ? points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint) : [],
-        stops: stops.map((stop) => ({
-          name: { zh: stop.name.zh, en: stop.name.en },
-          point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
-        })),
-        virtualNodes: [...virtualNodes]
-          .sort((a, b) => a.order - b.order)
-          .map((node) => ({
-            order: node.order,
-            routeId: canonicalVirtualNodeRouteId(node.routeId),
-            kind: node.kind,
-            point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
-          })),
-      },
-    ],
+    note: `Route on SIMapGerenal (normalized 0–1). Exported: ${included.join(', ')}.`,
+    directions: [direction],
   }
 }
 

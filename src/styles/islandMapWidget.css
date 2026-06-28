@@ -622,3 +622,92 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
     width: min(8.5rem, 38vw);
   }
 }
+
+.island-map-export-dialog-root {
+  z-index: 12050;
+}
+
+.island-map-export-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: min(90vh, 40rem);
+  overflow: auto;
+}
+
+.island-map-export-dialog-route {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, #aaa);
+}
+
+.island-map-export-dialog-route--missing {
+  color: #e8a040;
+}
+
+.island-map-export-dialog-fieldset {
+  margin: 0 0 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--island-map-control-border);
+  border-radius: 8px;
+}
+
+.island-map-export-dialog-fieldset legend {
+  padding: 0 0.35rem;
+  font-size: 0.85rem;
+}
+
+.island-map-export-dialog-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0.35rem 0;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.island-map-export-dialog-check input {
+  margin-top: 0.15rem;
+}
+
+.island-map-export-dialog-check input:disabled + span {
+  opacity: 0.45;
+}
+
+.island-map-export-dialog-merge {
+  margin-bottom: 0.75rem;
+}
+
+.island-map-export-dialog-merge-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+}
+
+.island-map-export-dialog-merge-empty {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted, #aaa);
+}
+
+.island-map-export-dialog-merge-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.island-map-export-dialog-merge-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 0.85rem;
+}
+
+.island-map-export-dialog-error {
+  margin: 0 0 0.75rem;
+  color: #e07070;
+  font-size: 0.88rem;
+}

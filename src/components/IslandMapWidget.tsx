@@ -10,7 +10,9 @@ import {
   copyWorldMapRouteJson,
   downloadWorldMapRouteJson,
   resolveWorldMapExportRouteId,
+  type WorldMapRouteExportSelection,
 } from '../utils/worldMapRouteExport'
+import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
@@ -23,6 +25,7 @@ import type {
   WorldMapVirtualNodeDraft,
   WorldMapVirtualNodeKind,
 } from '../types/worldMapDraw'
+import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
 import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
@@ -147,6 +150,8 @@ export function IslandMapWidget() {
   const [drawRouteId, setDrawRouteId] = useState('')
   const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
   const [exportHint, setExportHint] = useState<string | null>(null)
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
   const savedViewRef = useRef<NormalizedMapView | null>(null)
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -361,61 +366,89 @@ export function IslandMapWidget() {
 
   const overlayRouteId = routeOverlay?.routeId
 
-  const exportRoutePayload = useCallback(
-    (points: readonly WorldMapPoint[] = draftPoints) =>
-      buildWorldMapRouteExportPayload(
-        drawRouteId,
-        drawDirectionIndex,
-        points,
-        draftStops,
-        draftVirtualNodes,
+  const openExportDialog = useCallback(() => {
+    setExportMergeFiles([])
+    setExportDialogOpen(true)
+  }, [])
+
+  const handleAddExportMergeFiles = useCallback(async (files: FileList) => {
+    const next: IslandMapDrawExportMergeFile[] = []
+    for (const file of Array.from(files)) {
+      try {
+        const parsed = parseWorldMapDrawImportJson(JSON.parse(await file.text()))
+        if (!parsed) continue
+        next.push({
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          name: file.name,
+          slice: worldMapDrawDraftSliceFromImport(parsed),
+        })
+      } catch {
+        // skip invalid merge files
+      }
+    }
+    if (next.length > 0) {
+      setExportMergeFiles((current) => [...current, ...next])
+    }
+  }, [])
+
+  const handleExportConfirm = useCallback(
+    async (selection: WorldMapRouteExportSelection, merged: WorldMapDrawDraftSlice) => {
+      const resolvedRouteId = resolveWorldMapExportRouteId(
+        drawRouteId || merged.routeId,
+        merged.virtualNodes,
         overlayRouteId,
-      ),
-    [drawDirectionIndex, drawRouteId, draftPoints, draftStops, draftVirtualNodes, overlayRouteId],
-  )
-
-  const handleExport = useCallback(async () => {
-    const resolvedRouteId = resolveWorldMapExportRouteId(
-      drawRouteId,
-      draftVirtualNodes,
-      overlayRouteId,
-    )
-    if (!resolvedRouteId) {
-      showExportHint(t('islandMapDrawExportNeedRouteId'))
-      return
-    }
-
-    let pointsForExport = draftPoints
-    if (pointsForExport.length < 2 && draftStops.length >= 2) {
-      const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
-      pointsForExport = rebuildDraftPathFromStops(
-        draftStops,
-        (from, to, via = []) => traceGeneralMapRoadPath(index, from, to, via),
-        draftVirtualNodes,
-        resolvedRouteId,
-        (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
       )
-    }
+      if (!resolvedRouteId) {
+        showExportHint(t('islandMapDrawExportNeedRouteId'))
+        return
+      }
 
-    const payload = exportRoutePayload(pointsForExport)
-    if (!payload) {
-      showExportHint(t('islandMapDrawExportNeedRoute'))
-      return
-    }
-    downloadWorldMapRouteJson(payload)
-    const copied = await copyWorldMapRouteJson(payload)
-    showExportHint(copied ? t('islandMapDrawExportRouteDone') : t('islandMapDrawExportRouteDownloaded'))
-  }, [
-    drawRouteId,
-    draftPoints,
-    draftStops,
-    draftVirtualNodes,
-    exportRoutePayload,
-    overlayRouteId,
-    roadSnap,
-    showExportHint,
-    t,
-  ])
+      let pointsForExport = merged.points
+      if (selection.includePath && pointsForExport.length < 2 && merged.stops.length >= 2) {
+        const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
+        pointsForExport = rebuildDraftPathFromStops(
+          merged.stops,
+          (from, to, via = []) => traceGeneralMapRoadPath(index, from, to, via),
+          merged.virtualNodes,
+          resolvedRouteId,
+          (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
+        )
+      }
+
+      if (selection.includePath && pointsForExport.length < 2) {
+        showExportHint(t('islandMapDrawExportNoPath'))
+        return
+      }
+
+      const payload = buildWorldMapRouteExportPayload(
+        drawRouteId || merged.routeId,
+        drawDirectionIndex || merged.directionIndex,
+        pointsForExport,
+        merged.stops,
+        merged.virtualNodes,
+        overlayRouteId,
+        selection,
+      )
+      if (!payload) {
+        showExportHint(t('islandMapDrawExportNeedRoute'))
+        return
+      }
+
+      setExportDialogOpen(false)
+      setExportMergeFiles([])
+      downloadWorldMapRouteJson(payload)
+      const copied = await copyWorldMapRouteJson(payload)
+      showExportHint(copied ? t('islandMapDrawExportRouteDone') : t('islandMapDrawExportRouteDownloaded'))
+    },
+    [
+      drawDirectionIndex,
+      drawRouteId,
+      overlayRouteId,
+      roadSnap,
+      showExportHint,
+      t,
+    ],
+  )
 
   const handleImportFileChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -500,7 +533,11 @@ export function IslandMapWidget() {
   const surfaceRouteOverlay = routeOverlay
     ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
     : null
-  const canExport = exportRoutePayload() != null
+  const canExport =
+    draftStops.length > 0 ||
+    draftVirtualNodes.length > 0 ||
+    draftPoints.length >= 2 ||
+    resolveWorldMapExportRouteId(drawRouteId, draftVirtualNodes, overlayRouteId) !== ''
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
   const draftRouteNumber = drawRouteId.trim()
@@ -523,7 +560,7 @@ export function IslandMapWidget() {
     canClear,
     exportHint,
     onImport: () => importInputRef.current?.click(),
-    onExport: () => void handleExport(),
+    onExport: openExportDialog,
     onClear: clearDraft,
   }
 
@@ -600,7 +637,7 @@ export function IslandMapWidget() {
         <button
           type="button"
           className="island-map-btn island-map-btn--export"
-          onClick={() => void handleExport()}
+          onClick={openExportDialog}
           disabled={!canExport}
           title={t('islandMapDrawExportRouteHint')}
         >
@@ -802,7 +839,7 @@ export function IslandMapWidget() {
                 <button
                   type="button"
                   className="island-map-btn island-map-btn--export"
-                  onClick={() => void handleExport()}
+                  onClick={openExportDialog}
                   disabled={!canExport}
                   title={t('islandMapDrawExportRouteHint')}
                 >
@@ -838,6 +875,23 @@ export function IslandMapWidget() {
   return createPortal(
     <>
       {hiddenImportInput}
+      <IslandMapDrawExportDialog
+        open={exportDialogOpen}
+        routeId={drawRouteId}
+        directionIndex={drawDirectionIndex}
+        stops={draftStops}
+        virtualNodes={draftVirtualNodes}
+        points={draftPoints}
+        mergeFiles={exportMergeFiles}
+        overlayRouteId={overlayRouteId}
+        onAddMergeFiles={(files) => void handleAddExportMergeFiles(files)}
+        onRemoveMergeFile={(id) => setExportMergeFiles((files) => files.filter((file) => file.id !== id))}
+        onCancel={() => {
+          setExportDialogOpen(false)
+          setExportMergeFiles([])
+        }}
+        onConfirm={(selection, merged) => void handleExportConfirm(selection, merged)}
+      />
       {node}
     </>,
     document.body,

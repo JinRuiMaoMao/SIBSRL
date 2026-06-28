@@ -215,6 +215,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "任意绘制模式下点导出均输出完整线路 JSON（站点 + 虚拟节点 + 路径），不再按当前标签分别导出。",
             en: "Export from any draw tab now always writes the full route JSON (stops + virtual nodes + path), not a mode-specific subset.",
           },
+          {
+            zh: "导出前弹出选项窗口：勾选站点/虚拟节点/路径（路径默认不导出），可合并多份 JSON 后一并写出。",
+            en: "Export opens a dialog: choose stops, virtual nodes, and/or path (path off by default); optional merge of multiple JSON files before writing.",
+          },
         ],
       },
       {
