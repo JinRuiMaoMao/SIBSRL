@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
+import { IslandMapDraftPathEditLayer } from './IslandMapDraftPathEditLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import type { WorldMapDrawStop, WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
@@ -45,6 +46,15 @@ interface IslandMapPanZoomSurfaceProps {
   pendingVirtualNode?: { point: WorldMapPoint; kind: WorldMapVirtualNodeKind } | null
   onDrawMapClick?: (point: WorldMapPoint) => void
   onDrawUndo?: () => void
+  onStopDrag?: (stopId: string, point: WorldMapPoint) => void
+  onStopDragEnd?: (stopId: string, point: WorldMapPoint) => void
+  onStopClick?: (stopId: string) => void
+  selectedStopId?: string | null
+  onPathPointsChange?: (points: WorldMapPoint[]) => void
+  pathEditable?: boolean
+  traceSelectedStopId?: string | null
+  traceSelectedVirtualNodeId?: string | null
+  onVirtualNodeClick?: (nodeId: string) => void
   maxZoomRatio?: number
 }
 
@@ -227,6 +237,15 @@ export function IslandMapPanZoomSurface({
   pendingVirtualNode = null,
   onDrawMapClick,
   onDrawUndo,
+  onStopDrag,
+  onStopDragEnd,
+  onStopClick,
+  selectedStopId = null,
+  onPathPointsChange,
+  pathEditable = false,
+  traceSelectedStopId = null,
+  traceSelectedVirtualNodeId = null,
+  onVirtualNodeClick,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -237,6 +256,22 @@ export function IslandMapPanZoomSurface({
   const onViewChangeRef = useRef(onViewChange)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
+  const stopDragRef = useRef<{
+    stopId: string
+    pointerId: number
+    startX: number
+    startY: number
+    moved: boolean
+  } | null>(null)
+  const [draggingStopId, setDraggingStopId] = useState<string | null>(null)
+  const pathEditActiveRef = useRef(false)
+  const virtualNodeDragRef = useRef<{
+    nodeId: string
+    pointerId: number
+    startX: number
+    startY: number
+    moved: boolean
+  } | null>(null)
   const suppressPublishRef = useRef(false)
 
   viewRef.current = view
@@ -450,6 +485,10 @@ export function IslandMapPanZoomSurface({
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!panZoom || !imageSize) return
 
+    if (stopDragRef.current) return
+    if (pathEditActiveRef.current) return
+    if (virtualNodeDragRef.current) return
+
     if (drawMode) {
       event.preventDefault()
       if (event.button === 2) {
@@ -484,6 +523,113 @@ export function IslandMapPanZoomSurface({
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
   }
+
+  const handleStopPointerDown = useCallback(
+    (stopId: string, event: ReactPointerEvent<SVGGElement>) => {
+      if (!drawMode || drawInteraction !== 'route' || !panZoom || !imageSize) return
+      event.preventDefault()
+      event.stopPropagation()
+      stopDragRef.current = {
+        stopId,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        moved: false,
+      }
+      setDraggingStopId(stopId)
+      event.currentTarget.setPointerCapture(event.pointerId)
+    },
+    [drawInteraction, drawMode, imageSize, panZoom],
+  )
+
+  useEffect(() => {
+    if (!draggingStopId || !panZoom || !imageSize) return
+
+    const onPointerMove = (event: PointerEvent) => {
+      const drag = stopDragRef.current
+      if (!drag || event.pointerId !== drag.pointerId) return
+      const viewport = viewportRef.current
+      if (!viewport) return
+      if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 4) {
+        drag.moved = true
+      }
+      const rect = viewport.getBoundingClientRect()
+      const point = viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize)
+      onStopDrag?.(drag.stopId, point)
+    }
+
+    const finishDrag = (event: PointerEvent) => {
+      const drag = stopDragRef.current
+      if (!drag || event.pointerId !== drag.pointerId) return
+      const viewport = viewportRef.current
+      if (!viewport) return
+      const rect = viewport.getBoundingClientRect()
+      const point = viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize)
+      if (drag.moved) {
+        onStopDragEnd?.(drag.stopId, point)
+      } else {
+        onStopClick?.(drag.stopId)
+      }
+      stopDragRef.current = null
+      setDraggingStopId(null)
+    }
+
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', finishDrag)
+    window.addEventListener('pointercancel', finishDrag)
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', finishDrag)
+      window.removeEventListener('pointercancel', finishDrag)
+    }
+  }, [draggingStopId, imageSize, onStopClick, onStopDrag, onStopDragEnd, panZoom])
+
+  const handleVirtualNodePointerDown = useCallback(
+    (nodeId: string, event: ReactPointerEvent<SVGGElement>) => {
+      if (!drawMode || drawInteraction !== 'route' || !onVirtualNodeClick) return
+      event.preventDefault()
+      event.stopPropagation()
+      virtualNodeDragRef.current = {
+        nodeId,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        moved: false,
+      }
+      event.currentTarget.setPointerCapture(event.pointerId)
+    },
+    [drawInteraction, drawMode, onVirtualNodeClick],
+  )
+
+  useEffect(() => {
+    if (!onVirtualNodeClick) return
+
+    const onPointerMove = (event: PointerEvent) => {
+      const drag = virtualNodeDragRef.current
+      if (!drag || event.pointerId !== drag.pointerId) return
+      if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 4) {
+        drag.moved = true
+      }
+    }
+
+    const finishDrag = (event: PointerEvent) => {
+      const drag = virtualNodeDragRef.current
+      if (!drag || event.pointerId !== drag.pointerId) return
+      if (!drag.moved) {
+        onVirtualNodeClick(drag.nodeId)
+      }
+      virtualNodeDragRef.current = null
+    }
+
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', finishDrag)
+    window.addEventListener('pointercancel', finishDrag)
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', finishDrag)
+      window.removeEventListener('pointercancel', finishDrag)
+    }
+  }, [onVirtualNodeClick])
 
   const onImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
     adoptImage(displayedSrcRef.current, event.currentTarget)
@@ -538,7 +684,10 @@ export function IslandMapPanZoomSurface({
         </div>
       ) : null}
       {imageSize && drawInteraction === 'route' && draftPoints.length > 0 && overlayStyle ? (
-        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+        <div
+          className={`island-map-route-overlay-wrap${drawMode && pathEditable ? ' island-map-route-overlay-wrap--path-editable' : ''}`.trim()}
+          style={overlayStyle}
+        >
           <IslandMapRouteOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -548,10 +697,26 @@ export function IslandMapPanZoomSurface({
             variant="draft"
             strokeColor={draftStrokeColor}
           />
+          {drawMode && pathEditable && onPathPointsChange ? (
+            <IslandMapDraftPathEditLayer
+              imageWidth={imageSize.width}
+              imageHeight={imageSize.height}
+              points={draftPoints}
+              strokeColor={draftStrokeColor}
+              editable
+              onPointsChange={onPathPointsChange}
+              onInteractionActiveChange={(active) => {
+                pathEditActiveRef.current = active
+              }}
+            />
+          ) : null}
         </div>
       ) : null}
       {imageSize && (draftStops.length > 0 || pendingStopPoint) && overlayStyle ? (
-        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+        <div
+          className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--stop-editable' : ''}`.trim()}
+          style={overlayStyle}
+        >
           <IslandMapStopOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -564,11 +729,19 @@ export function IslandMapPanZoomSurface({
                   }
                 : null
             }
+            editable={drawMode && drawInteraction === 'route'}
+            selectedStopId={selectedStopId}
+            traceSelectedStopId={traceSelectedStopId}
+            draggingStopId={draggingStopId}
+            onStopPointerDown={handleStopPointerDown}
           />
         </div>
       ) : null}
-      {imageSize && (draftVirtualNodes.length > 0 || pendingVirtualNode) && overlayStyle ? (
-        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+      {imageSize && draftVirtualNodes.length > 0 && overlayStyle ? (
+        <div
+          className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--virtual-traceable' : ''}`.trim()}
+          style={overlayStyle}
+        >
           <IslandMapVirtualNodeOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -582,6 +755,23 @@ export function IslandMapPanZoomSurface({
                   }
                 : null
             }
+            traceable={drawMode && drawInteraction === 'route'}
+            traceSelectedNodeId={traceSelectedVirtualNodeId}
+            onNodePointerDown={handleVirtualNodePointerDown}
+          />
+        </div>
+      ) : null}
+      {imageSize && pendingVirtualNode && draftVirtualNodes.length === 0 && overlayStyle ? (
+        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+          <IslandMapVirtualNodeOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            nodes={[]}
+            pendingNode={{
+              x: pendingVirtualNode.point[0] * imageSize.width,
+              y: pendingVirtualNode.point[1] * imageSize.height,
+              kind: pendingVirtualNode.kind,
+            }}
           />
         </div>
       ) : null}

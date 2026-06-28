@@ -2,6 +2,10 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 
 export type IslandMapDrawInteraction = 'route' | 'catalog' | 'virtual'
 
+export type WorldMapTraceAnchor =
+  | { kind: 'stop'; id: string }
+  | { kind: 'virtual-node'; id: string }
+
 export type WorldMapCompassDirectionKind =
   | 'north'
   | 'south'
@@ -52,4 +56,6 @@ export interface WorldMapDrawStop {
 export interface WorldMapDrawStopDraft {
   point: WorldMapPoint
   query: string
+  /** When set, confirming updates this stop instead of adding a new one. */
+  editingStopId?: string
 }

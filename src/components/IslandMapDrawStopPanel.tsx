@@ -10,10 +10,12 @@ interface IslandMapDrawStopPanelProps {
   directionIndex: number
   stops: readonly WorldMapDrawStop[]
   pendingStop: WorldMapDrawStopDraft | null
+  selectedStopId?: string | null
   onPendingQueryChange: (query: string) => void
   onConfirmPendingStop: () => void
   onCancelPendingStop: () => void
   onRemoveStop: (id: string) => void
+  onEditStop?: (stop: WorldMapDrawStop) => void
 }
 
 export function IslandMapDrawStopPanel({
@@ -22,18 +24,25 @@ export function IslandMapDrawStopPanel({
   directionIndex,
   stops,
   pendingStop,
+  selectedStopId = null,
   onPendingQueryChange,
   onConfirmPendingStop,
   onCancelPendingStop,
   onRemoveStop,
+  onEditStop,
 }: IslandMapDrawStopPanelProps) {
   const { t, locale } = useLocale()
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const isEditing = Boolean(pendingStop?.editingStopId)
 
-  const addedStopKeys = useMemo(
-    () => new Set(stops.map((stop) => `${stop.name.zh}|${stop.name.en || stop.name.zh}`)),
-    [stops],
-  )
+  const addedStopKeys = useMemo(() => {
+    const editingId = pendingStop?.editingStopId
+    return new Set(
+      stops
+        .filter((stop) => stop.id !== editingId)
+        .map((stop) => `${stop.name.zh}|${stop.name.en || stop.name.zh}`),
+    )
+  }, [pendingStop?.editingStopId, stops])
 
   const suggestions = useMemo(() => {
     if (interaction !== 'route' || !pendingStop) return []
@@ -118,7 +127,7 @@ export function IslandMapDrawStopPanel({
           ) : null}
           <div className="island-map-draw-panel-row">
             <button type="button" className="island-map-btn" onClick={handleConfirm}>
-              {t('islandMapDrawStopConfirm')}
+              {isEditing ? t('islandMapDrawStopUpdate') : t('islandMapDrawStopConfirm')}
             </button>
             <button type="button" className="island-map-btn" onClick={onCancelPendingStop}>
               {t('islandMapDrawStopCancel')}
@@ -130,12 +139,20 @@ export function IslandMapDrawStopPanel({
       {stops.length > 0 ? (
         <ul className="island-map-draw-stop-list">
           {stops.map((stop, index) => (
-            <li key={stop.id}>
-              <span>
+            <li
+              key={stop.id}
+              className={selectedStopId === stop.id ? 'island-map-draw-stop-list-item--selected' : undefined}
+            >
+              <button
+                type="button"
+                className="island-map-draw-stop-list-label"
+                onClick={() => onEditStop?.(stop)}
+                disabled={!onEditStop || interaction !== 'route'}
+              >
                 {interaction === 'route' ? `${index + 1}. ` : ''}
                 {stop.name.zh}
                 {stop.name.en && stop.name.en !== stop.name.zh ? ` / ${stop.name.en}` : ''}
-              </span>
+              </button>
               <button
                 type="button"
                 className="island-map-draw-stop-remove"

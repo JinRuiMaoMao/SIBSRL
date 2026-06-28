@@ -1,3 +1,4 @@
+import type { PointerEvent } from 'react'
 import type { WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
 import {
   COMPASS_ROSE_LAYOUT,
@@ -117,6 +118,9 @@ interface IslandMapVirtualNodeOverlayLayerProps {
   imageHeight: number
   nodes: readonly WorldMapVirtualNode[]
   pendingNode?: { x: number; y: number; kind: WorldMapVirtualNodeKind } | null
+  traceable?: boolean
+  traceSelectedNodeId?: string | null
+  onNodePointerDown?: (nodeId: string, event: PointerEvent<SVGGElement>) => void
 }
 
 export function IslandMapVirtualNodeOverlayLayer({
@@ -124,14 +128,18 @@ export function IslandMapVirtualNodeOverlayLayer({
   imageHeight,
   nodes,
   pendingNode = null,
+  traceable = false,
+  traceSelectedNodeId = null,
+  onNodePointerDown,
 }: IslandMapVirtualNodeOverlayLayerProps) {
   const markerSize = Math.max(10, imageWidth * 0.005)
   const fontSize = Math.max(12, imageWidth * 0.003)
   const labelSize = Math.max(10, imageWidth * 0.0028)
+  const hitSize = Math.max(markerSize * 2.4, 20)
 
   return (
     <svg
-      className="island-map-virtual-node-overlay"
+      className={`island-map-virtual-node-overlay${traceable ? ' island-map-virtual-node-overlay--traceable' : ''}`.trim()}
       width={imageWidth}
       height={imageHeight}
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
@@ -141,11 +149,28 @@ export function IslandMapVirtualNodeOverlayLayer({
         const x = node.point[0] * imageWidth
         const y = node.point[1] * imageHeight
         const surface = isBridgeTunnelVirtualKind(node.kind)
+        const isTraceSelected = traceSelectedNodeId === node.id
         return (
           <g
             key={node.id}
-            className={`island-map-virtual-node-overlay-item island-map-virtual-node-overlay-item--${node.kind}`.trim()}
+            className={`island-map-virtual-node-overlay-item island-map-virtual-node-overlay-item--${node.kind}${isTraceSelected ? ' island-map-virtual-node-overlay-item--trace-selected' : ''}`.trim()}
+            onPointerDown={
+              traceable && onNodePointerDown
+                ? (event) => {
+                    event.stopPropagation()
+                    onNodePointerDown(node.id, event)
+                  }
+                : undefined
+            }
           >
+            {traceable ? (
+              <circle
+                className="island-map-virtual-node-overlay-hit"
+                cx={x}
+                cy={y}
+                r={hitSize / 2}
+              />
+            ) : null}
             <circle
               className="island-map-virtual-node-overlay-marker"
               cx={x}

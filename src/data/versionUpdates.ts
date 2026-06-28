@@ -223,6 +223,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "非管理员可在小地图点击「绘制」申请权限：需先注册，邮件发送给管理员，点击「我同意」后自动发放绘制权限。",
             en: "Non-admins can tap Draw on the mini map to request permission: register first, admin approves by email, draw access is granted automatically.",
           },
+          {
+            zh: "绘制走线：依次点击两个站点、站点与虚拟节点或两个虚拟节点，即可沿道路生成连接线段；终点保持选中可继续串联下一段。",
+            en: "Draw route: click two stops, a stop and a virtual node, or two virtual nodes to trace a road segment; the end stays selected to chain the next leg.",
+          },
+          {
+            zh: "站点可拖动调整位置，站名在列表中点击编辑；再次「直接生成」保留站点位置与自定义站名。",
+            en: "Stops can be dragged to reposition; edit names from the list. Generate again keeps stop positions and custom names.",
+          },
+          {
+            zh: "路线线段可拖动调整，双击线段删除拐点；手动编辑后的路线在再次生成时保留形状。",
+            en: "Path segments can be dragged; double-click a segment to remove a corner. Manually edited paths keep their shape on regenerate.",
+          },
         ],
       },
       {

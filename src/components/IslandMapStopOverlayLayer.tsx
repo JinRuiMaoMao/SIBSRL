@@ -1,3 +1,4 @@
+import type { PointerEvent } from 'react'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 
 interface IslandMapStopOverlayLayerProps {
@@ -5,6 +6,11 @@ interface IslandMapStopOverlayLayerProps {
   imageHeight: number
   stops: readonly WorldMapDrawStop[]
   pendingStop?: { x: number; y: number } | null
+  editable?: boolean
+  selectedStopId?: string | null
+  traceSelectedStopId?: string | null
+  draggingStopId?: string | null
+  onStopPointerDown?: (stopId: string, event: PointerEvent<SVGGElement>) => void
 }
 
 export function IslandMapStopOverlayLayer({
@@ -12,23 +18,53 @@ export function IslandMapStopOverlayLayer({
   imageHeight,
   stops,
   pendingStop = null,
+  editable = false,
+  selectedStopId = null,
+  traceSelectedStopId = null,
+  draggingStopId = null,
+  onStopPointerDown,
 }: IslandMapStopOverlayLayerProps) {
   const markerSize = Math.max(8, imageWidth * 0.0045)
   const fontSize = Math.max(11, imageWidth * 0.0032)
+  const hitSize = Math.max(markerSize * 2.2, 18)
 
   return (
     <svg
-      className="island-map-stop-overlay"
+      className={`island-map-stop-overlay${editable ? ' island-map-stop-overlay--editable' : ''}`.trim()}
       width={imageWidth}
       height={imageHeight}
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
-      aria-hidden
+      aria-hidden={!editable}
     >
-      {stops.map((stop) => {
+      {stops.map((stop, index) => {
         const x = stop.point[0] * imageWidth
         const y = stop.point[1] * imageHeight
+        const isSelected = selectedStopId === stop.id
+        const isTraceSelected = traceSelectedStopId === stop.id
+        const isDragging = draggingStopId === stop.id
         return (
-          <g key={stop.id} className="island-map-stop-overlay-item">
+          <g
+            key={stop.id}
+            className={`island-map-stop-overlay-item${isSelected ? ' island-map-stop-overlay-item--selected' : ''}${isTraceSelected ? ' island-map-stop-overlay-item--trace-selected' : ''}${isDragging ? ' island-map-stop-overlay-item--dragging' : ''}`.trim()}
+            onPointerDown={
+              editable && onStopPointerDown
+                ? (event) => {
+                    event.stopPropagation()
+                    onStopPointerDown(stop.id, event)
+                  }
+                : undefined
+            }
+          >
+            {editable ? (
+              <rect
+                className="island-map-stop-overlay-hit"
+                x={x - hitSize / 2}
+                y={y - hitSize / 2}
+                width={hitSize}
+                height={hitSize}
+                rx={hitSize * 0.2}
+              />
+            ) : null}
             <rect
               className="island-map-stop-overlay-marker"
               x={x - markerSize / 2}
@@ -37,8 +73,13 @@ export function IslandMapStopOverlayLayer({
               height={markerSize}
               rx={markerSize * 0.22}
             />
-            <text className="island-map-stop-overlay-label" x={x + markerSize * 0.7} y={y + fontSize * 0.35} style={{ fontSize }}>
-              {stop.name.zh || stop.name.en}
+            <text
+              className="island-map-stop-overlay-label"
+              x={x + markerSize * 0.7}
+              y={y + fontSize * 0.35}
+              style={{ fontSize }}
+            >
+              {index + 1}. {stop.name.zh || stop.name.en}
             </text>
           </g>
         )

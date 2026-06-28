@@ -78,6 +78,26 @@ function resolveRouteStopsFromCatalog(
   return { stops, estimatedCount }
 }
 
+function mergeExistingStopPositions(
+  routeStops: readonly RouteStop[],
+  existingStops: readonly WorldMapDrawStop[],
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+): WorldMapDrawStop[] {
+    return routeStops.map((routeStop, stopIndex) => {
+    const existing = existingStops[stopIndex]
+    return {
+      id: existing?.id ?? `gen-${stopIndex}-${Math.random().toString(36).slice(2, 8)}`,
+      name: existing
+        ? { ...existing.name }
+        : {
+            zh: routeStop.name.zh || routeStop.name.en,
+            en: routeStop.name.en || routeStop.name.zh,
+          },
+      point: snap(existing?.point ?? [0.5, 0.5]),
+    }
+  })
+}
+
 function findBusRouteForGenerate(routeQuery: string) {
   return findBusRouteForDraw(routeQuery)
 }
@@ -112,15 +132,21 @@ export async function generateWorldMapRouteDraft(
 
   const routeStopList =
     route?.stops?.[options.directionIndex]?.list ?? route?.stops?.[0]?.list ?? null
+  const existing = options.existingStops ?? []
+
   if (routeStopList?.length) {
-    const catalog = options.catalogStops ?? (await loadWorldMapStopCatalog())
-    const resolved = resolveRouteStopsFromCatalog(catalog, routeStopList, options.snap)
-    stops = resolved.stops
-    estimatedCount = resolved.estimatedCount
-  } else if ((options.existingStops?.length ?? 0) >= 2) {
-    stops = options.existingStops!.map((stop) => ({
+    if (existing.length === routeStopList.length) {
+      stops = mergeExistingStopPositions(routeStopList, existing, options.snap)
+    } else {
+      const catalog = options.catalogStops ?? (await loadWorldMapStopCatalog())
+      const resolved = resolveRouteStopsFromCatalog(catalog, routeStopList, options.snap)
+      stops = resolved.stops
+      estimatedCount = resolved.estimatedCount
+    }
+  } else if (existing.length >= 2) {
+    stops = existing.map((stop) => ({
       ...stop,
-      point: [stop.point[0], stop.point[1]] as WorldMapPoint,
+      point: options.snap([stop.point[0], stop.point[1]]),
     }))
   } else {
     return null

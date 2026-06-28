@@ -21,6 +21,29 @@ export function mergePathPoints(
   return merged
 }
 
+export function resolveTraceAnchorPoint(
+  anchor: { kind: 'stop' | 'virtual-node'; id: string },
+  stops: readonly { id: string; point: WorldMapPoint }[],
+  virtualNodes: readonly WorldMapVirtualNode[],
+): WorldMapPoint | null {
+  if (anchor.kind === 'stop') {
+    return stops.find((stop) => stop.id === anchor.id)?.point ?? null
+  }
+  return virtualNodes.find((node) => node.id === anchor.id)?.point ?? null
+}
+
+export function traceViaForAnchorTarget(
+  anchor: { kind: 'stop' | 'virtual-node'; id: string },
+  virtualNodes: readonly WorldMapVirtualNode[],
+  toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null,
+): VirtualNodePathConstraint[] {
+  if (anchor.kind !== 'virtual-node') return []
+  const node = virtualNodes.find((entry) => entry.id === anchor.id)
+  if (!node) return []
+  const constraint = toConstraint(node)
+  return constraint ? [constraint] : []
+}
+
 export type TraceSegmentFn = (
   from: WorldMapPoint,
   to: WorldMapPoint,
