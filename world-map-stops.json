@@ -1,0 +1,516 @@
+{
+  "kind": "world-map-stop-catalog",
+  "note": "All-stop catalog on SIMap (normalized 0–1). Routes can be traced later by matching route stop names to these points.",
+  "stops": [
+    {
+      "name": {
+        "zh": "白鸽邨",
+        "en": "Dove Estate"
+      },
+      "point": [
+        0.436,
+        0.852
+      ]
+    },
+    {
+      "name": {
+        "zh": "白鸽山",
+        "en": "Dove Hill"
+      },
+      "point": [
+        0.447,
+        0.828
+      ]
+    },
+    {
+      "name": {
+        "zh": "三哥大厦",
+        "en": "Third Technology Building"
+      },
+      "point": [
+        0.414,
+        0.798
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光体育馆",
+        "en": "Sunshine Stadium"
+      },
+      "point": [
+        0.181,
+        0.785
+      ]
+    },
+    {
+      "name": {
+        "zh": "长岛码头",
+        "en": "Long Island Ferry Pier"
+      },
+      "point": [
+        0.238,
+        0.699
+      ]
+    },
+    {
+      "name": {
+        "zh": "伊迪城",
+        "en": "Eddie City"
+      },
+      "point": [
+        0.488,
+        0.783
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光码头",
+        "en": "Sunshine Pier"
+      },
+      "point": [
+        0.659,
+        0.631
+      ]
+    },
+    {
+      "name": {
+        "zh": "北滩",
+        "en": "Northern Beach"
+      },
+      "point": [
+        0.306,
+        0.545
+      ]
+    },
+    {
+      "name": {
+        "zh": "明月角",
+        "en": "Lunar Point"
+      },
+      "point": [
+        0.413,
+        0.62
+      ]
+    },
+    {
+      "name": {
+        "zh": "中环南总站",
+        "en": "Southern Central Bus Terminus"
+      },
+      "point": [
+        0.637,
+        0.532
+      ]
+    },
+    {
+      "name": {
+        "zh": "中日街",
+        "en": "Sun Central Street"
+      },
+      "point": [
+        0.538,
+        0.559
+      ]
+    },
+    {
+      "name": {
+        "zh": "巨石路",
+        "en": "Rocky Road"
+      },
+      "point": [
+        0.379,
+        0.555
+      ]
+    },
+    {
+      "name": {
+        "zh": "北顿市中心",
+        "en": "Norton Town Center"
+      },
+      "point": [
+        0.37,
+        0.607
+      ]
+    },
+    {
+      "name": {
+        "zh": "东锦葵海傍路",
+        "en": "Eastmallow Praya Road"
+      },
+      "point": [
+        0.529,
+        0.454
+      ]
+    },
+    {
+      "name": {
+        "zh": "东厂",
+        "en": "East Factory"
+      },
+      "point": [
+        0.743,
+        0.297
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣海旁道",
+        "en": "Praya YiYan Road"
+      },
+      "point": [
+        0.806,
+        0.317
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶角湾",
+        "en": "Leafy Bay"
+      },
+      "point": [
+        0.835,
+        0.245
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶角医院",
+        "en": "Leafy Hospital"
+      },
+      "point": [
+        0.81,
+        0.192
+      ]
+    },
+    {
+      "name": {
+        "zh": "仙贝广场",
+        "en": "Senpai Shopping Center"
+      },
+      "point": [
+        0.715,
+        0.177
+      ]
+    },
+    {
+      "name": {
+        "zh": "安灵台",
+        "en": "Ambling Peak"
+      },
+      "point": [
+        0.861,
+        0.147
+      ]
+    },
+    {
+      "name": {
+        "zh": "彩虹中心",
+        "en": "Rainbow Estate Complex"
+      },
+      "point": [
+        0.858,
+        0.102
+      ]
+    },
+    {
+      "name": {
+        "zh": "海西邨",
+        "en": "Haisey Estate"
+      },
+      "point": [
+        0.832,
+        0.047
+      ]
+    },
+    {
+      "name": {
+        "zh": "北岛山顶",
+        "en": "North Island Hill Peak"
+      },
+      "point": [
+        0.366,
+        0.559
+      ]
+    },
+    {
+      "name": {
+        "zh": "第七区转车站",
+        "en": "Zone 7 Interchange"
+      },
+      "point": [
+        0.706,
+        0.282
+      ]
+    },
+    {
+      "name": {
+        "zh": "北环转车站",
+        "en": "Northern Interchange (Southbound)"
+      },
+      "point": [
+        0.453,
+        0.575
+      ]
+    },
+    {
+      "name": {
+        "zh": "西区海底隧道转车站",
+        "en": "Western Habour Tunnel Interchange"
+      },
+      "point": [
+        0.431,
+        0.618
+      ]
+    },
+    {
+      "name": {
+        "zh": "货柜码头",
+        "en": "Containers Terminal"
+      },
+      "point": [
+        0.675,
+        0.931
+      ]
+    },
+    {
+      "name": {
+        "zh": "货柜码头岛",
+        "en": "Container's Island"
+      },
+      "point": [
+        0.687,
+        0.968
+      ]
+    },
+    {
+      "name": {
+        "zh": "国际码头",
+        "en": "Regional Pier"
+      },
+      "point": [
+        0.306,
+        0.752
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光站",
+        "en": "Sunshine Station"
+      },
+      "point": [
+        0.661,
+        0.584
+      ]
+    },
+    {
+      "name": {
+        "zh": "南环台",
+        "en": "Southern Terrance"
+      },
+      "point": [
+        0.608,
+        0.584
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学北",
+        "en": "North Sunshine University"
+      },
+      "point": [
+        0.404,
+        0.458
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学运动场",
+        "en": "Sunshine University Sports Field"
+      },
+      "point": [
+        0.379,
+        0.455
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学",
+        "en": "Sunshine University"
+      },
+      "point": [
+        0.434,
+        0.484
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学本部",
+        "en": "Sunshine University Main Campus"
+      },
+      "point": [
+        0.42,
+        0.454
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学宿舍",
+        "en": "Sunshine University Residences"
+      },
+      "point": [
+        0.401,
+        0.445
+      ]
+    },
+    {
+      "name": {
+        "zh": "旭涛荟",
+        "en": "Hotel Symbol"
+      },
+      "point": [
+        0.644,
+        0.578
+      ]
+    },
+    {
+      "name": {
+        "zh": "甄博士楼",
+        "en": "X.Y.Zhen College"
+      },
+      "point": [
+        0.398,
+        0.476
+      ]
+    },
+    {
+      "name": {
+        "zh": "镰塔花园",
+        "en": "Kamaya Garden"
+      },
+      "point": [
+        0.708,
+        0.263
+      ]
+    },
+    {
+      "name": {
+        "zh": "赖得里",
+        "en": "Wright Lane"
+      },
+      "point": [
+        0.379,
+        0.783
+      ]
+    },
+    {
+      "name": {
+        "zh": "时间廊",
+        "en": "Timelapse Mall"
+      },
+      "point": [
+        0.356,
+        0.784
+      ]
+    },
+    {
+      "name": {
+        "zh": "赖得商场",
+        "en": "Wright Shopping Center"
+      },
+      "point": [
+        0.375,
+        0.791
+      ]
+    },
+    {
+      "name": {
+        "zh": "艾迪路",
+        "en": "Addi Road"
+      },
+      "point": [
+        0.399,
+        0.774
+      ]
+    },
+    {
+      "name": {
+        "zh": "路博斯总部大楼",
+        "en": "Roblox HQ"
+      },
+      "point": [
+        0.43,
+        0.754
+      ]
+    },
+    {
+      "name": {
+        "zh": "白鸽消防局",
+        "en": "Dove Fire Station"
+      },
+      "point": [
+        0.458,
+        0.773
+      ]
+    },
+    {
+      "name": {
+        "zh": "白鸽消防局",
+        "en": "Dove Fire Station"
+      },
+      "point": [
+        0.459,
+        0.769
+      ]
+    },
+    {
+      "name": {
+        "zh": "伊迪城",
+        "en": "Eddie City"
+      },
+      "point": [
+        0.495,
+        0.777
+      ]
+    },
+    {
+      "name": {
+        "zh": "",
+        "en": "Basketball Court"
+      },
+      "point": [
+        0.538,
+        0.788
+      ]
+    },
+    {
+      "name": {
+        "zh": "阿周电视",
+        "en": "Roblox TV"
+      },
+      "point": [
+        0.564,
+        0.806
+      ]
+    },
+    {
+      "name": {
+        "zh": "西区医院",
+        "en": "Western Hospital"
+      },
+      "point": [
+        0.54,
+        0.804
+      ]
+    },
+    {
+      "name": {
+        "zh": "银行大厦",
+        "en": "Bank Tower"
+      },
+      "point": [
+        0.389,
+        0.786
+      ]
+    }
+  ]
+}

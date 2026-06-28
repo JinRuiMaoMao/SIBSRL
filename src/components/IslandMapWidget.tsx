@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
@@ -21,6 +21,7 @@ import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
 import { preloadGeneralMapRoadSnapIndex, traceGeneralMapRoadPath, type GeneralMapRoadSnapIndex } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
+import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import type {
   IslandMapDrawInteraction,
@@ -190,6 +191,7 @@ export function IslandMapWidget() {
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
+  const [generatingRoute, setGeneratingRoute] = useState(false)
   const [permissionDialog, setPermissionDialog] = useState<IslandMapDrawPermissionDialogStep | null>(null)
   const [permissionSending, setPermissionSending] = useState(false)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
@@ -417,6 +419,66 @@ export function IslandMapWidget() {
     setPermissionDialog('confirm')
   }, [isLoggedIn, isMapAdmin, toggleDrawMode, userApiEnabled])
 
+  const handleGenerateRoute = useCallback(async () => {
+    const routeId = drawRouteId.trim()
+    if (!routeId) {
+      showExportHint(t('islandMapDrawGenerateNeedRouteId'))
+      return
+    }
+    if (roadSnap.loading) {
+      showExportHint(t('islandMapDrawRoadLoading'))
+      return
+    }
+    setGeneratingRoute(true)
+    try {
+      const result = await generateWorldMapRouteDraft({
+        routeId,
+        directionIndex: drawDirectionIndex,
+        existingStops: draftStops,
+        virtualNodes: draftVirtualNodes,
+        snap: (point) => roadSnap.snap(point),
+        toConstraint: (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind),
+        traceSegment,
+      })
+      if (!result) {
+        showExportHint(t('islandMapDrawGenerateFailed'))
+        return
+      }
+      setDrawInteraction('route')
+      setDrawStops(result.stops)
+      setDraftPoints(result.points)
+      const fitPoints =
+        result.points.length >= 2 ? result.points : result.stops.map((stop) => stop.point)
+      if (fitPoints.length > 0) {
+        setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
+      }
+      showExportHint(
+        result.estimatedCount > 0
+          ? t('islandMapDrawGenerateDoneEstimated', {
+              routeId,
+              points: result.points.length,
+              count: result.estimatedCount,
+            })
+          : t('islandMapDrawGenerateDone', { routeId, points: result.points.length }),
+      )
+    } catch (error) {
+      console.error('Route generate failed', error)
+      showExportHint(t('islandMapDrawGenerateFailed'))
+    } finally {
+      setGeneratingRoute(false)
+    }
+  }, [
+    drawDirectionIndex,
+    drawRouteId,
+    draftStops,
+    draftVirtualNodes,
+    expanded,
+    roadSnap,
+    showExportHint,
+    t,
+    traceSegment,
+  ])
+
   const handleSendDrawPermissionRequest = useCallback(async () => {
     if (!token) {
       setPermissionDialog('register')
@@ -479,7 +541,7 @@ export function IslandMapWidget() {
   const handleExportConfirm = useCallback(
     async (selection: WorldMapRouteExportSelection, merged: WorldMapDrawDraftSlice) => {
       const resolvedRouteId = resolveWorldMapExportRouteId(
-        drawRouteId || merged.routeId,
+        merged.routeId || drawRouteId,
         merged.virtualNodes,
         overlayRouteId,
       )
@@ -506,8 +568,8 @@ export function IslandMapWidget() {
       }
 
       const payload = buildWorldMapRouteExportPayload(
-        drawRouteId || merged.routeId,
-        drawDirectionIndex || merged.directionIndex,
+        merged.routeId || drawRouteId,
+        merged.directionIndex ?? drawDirectionIndex,
         pointsForExport,
         merged.stops,
         merged.virtualNodes,
@@ -641,6 +703,20 @@ export function IslandMapWidget() {
   const canClear =
     draftStops.length > 0 || draftVirtualNodes.length > 0 || pendingStop != null || pendingVirtualNode != null
 
+  const exportSourceSlices = useMemo<WorldMapDrawDraftSlice[]>(
+    () => [
+      {
+        routeId: drawRouteId,
+        directionIndex: drawDirectionIndex,
+        points: [...draftPoints],
+        stops: [...draftStops],
+        virtualNodes: [...draftVirtualNodes],
+      },
+      ...exportMergeFiles.map((file) => file.slice),
+    ],
+    [drawDirectionIndex, drawRouteId, draftPoints, draftStops, draftVirtualNodes, exportMergeFiles],
+  )
+
   const importExportPanelProps = {
     interaction: drawInteraction,
     routeId: drawRouteId,
@@ -716,6 +792,15 @@ export function IslandMapWidget() {
           title={t('islandMapDrawClearHint')}
         >
           {t('islandMapDrawClear')}
+        </button>
+        <button
+          type="button"
+          className="island-map-btn island-map-btn--generate"
+          onClick={() => void handleGenerateRoute()}
+          disabled={generatingRoute || !drawRouteId.trim() || roadSnap.loading}
+          title={t('islandMapDrawGenerateHint')}
+        >
+          {generatingRoute ? t('islandMapDrawGenerating') : t('islandMapDrawGenerate')}
         </button>
         <button
           type="button"
@@ -963,6 +1048,7 @@ export function IslandMapWidget() {
         virtualNodes={draftVirtualNodes}
         points={draftPoints}
         mergeFiles={exportMergeFiles}
+        sourceSlices={exportSourceSlices}
         overlayRouteId={overlayRouteId}
         onAddMergeFiles={(files) => void handleAddExportMergeFiles(files)}
         onRemoveMergeFile={(id) => setExportMergeFiles((files) => files.filter((file) => file.id !== id))}

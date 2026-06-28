@@ -1,4 +1,4 @@
-import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { copyFileSync, cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -149,9 +149,17 @@ export function publishStandalone(options = {}) {
   if (existsSync(distWorldMaps)) {
     cpSync(distWorldMaps, rootWorldMaps, { recursive: true })
     console.log('[publish] 已复制群岛地图到 maps/')
-  } else if (existsSync(publicWorldMaps)) {
+  } else   if (existsSync(publicWorldMaps)) {
     cpSync(publicWorldMaps, rootWorldMaps, { recursive: true })
     console.log('[publish] 已复制群岛地图到 maps/')
+  }
+
+  const catalogSource = resolve(root, 'data', 'world-map-stops.json')
+  if (existsSync(catalogSource)) {
+    copyFileSync(catalogSource, resolve(root, 'world-map-stops.json'))
+    copyFileSync(catalogSource, resolve(root, 'dist', 'world-map-stops.json'))
+    copyFileSync(catalogSource, resolve(root, 'public', 'world-map-stops.json'))
+    console.log('[publish] 已复制 world-map-stops.json')
   }
 
   const routeMapPage = resolve(root, 'pages', 'route-map.html')

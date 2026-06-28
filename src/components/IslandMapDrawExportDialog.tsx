@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import type { WorldMapPoint } from '../data/worldMapRoutes'
+import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
-import { mergeWorldMapDrawSlices, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
+import {
+  collectWorldMapDrawRouteIds,
+  filterWorldMapDrawSliceForRoute,
+  mergeWorldMapDrawSlices,
+  type WorldMapDrawDraftSlice,
+} from '../utils/worldMapDrawMerge'
 import type { WorldMapRouteExportSelection } from '../utils/worldMapRouteExport'
 import { resolveWorldMapExportRouteId } from '../utils/worldMapRouteExport'
 
@@ -20,11 +25,19 @@ interface IslandMapDrawExportDialogProps {
   virtualNodes: readonly WorldMapVirtualNode[]
   points: readonly WorldMapPoint[]
   mergeFiles: readonly IslandMapDrawExportMergeFile[]
+  sourceSlices: readonly WorldMapDrawDraftSlice[]
   overlayRouteId?: string
   onAddMergeFiles: (files: FileList) => void
   onRemoveMergeFile: (id: string) => void
   onCancel: () => void
   onConfirm: (selection: WorldMapRouteExportSelection, merged: WorldMapDrawDraftSlice) => void
+}
+
+function preferredExportRouteId(routeId: string, ids: readonly string[]): string {
+  const trimmed = routeId.trim()
+  const canonical = trimmed ? (resolveWorldMapRouteId(trimmed) ?? trimmed) : ''
+  if (canonical && ids.includes(canonical)) return canonical
+  return ids[0] ?? canonical
 }
 
 export function IslandMapDrawExportDialog({
@@ -35,6 +48,7 @@ export function IslandMapDrawExportDialog({
   virtualNodes,
   points,
   mergeFiles,
+  sourceSlices,
   overlayRouteId,
   onAddMergeFiles,
   onRemoveMergeFile,
@@ -46,6 +60,7 @@ export function IslandMapDrawExportDialog({
   const [includeStops, setIncludeStops] = useState(false)
   const [includeVirtualNodes, setIncludeVirtualNodes] = useState(false)
   const [includePath, setIncludePath] = useState(false)
+  const [exportRouteId, setExportRouteId] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   const merged = useMemo(
@@ -57,20 +72,41 @@ export function IslandMapDrawExportDialog({
     [directionIndex, mergeFiles, points, routeId, stops, virtualNodes],
   )
 
-  const resolvedRouteId = useMemo(
-    () => resolveWorldMapExportRouteId(routeId || merged.routeId, merged.virtualNodes, overlayRouteId),
-    [merged.routeId, merged.virtualNodes, overlayRouteId, routeId],
+  const routeIds = useMemo(() => collectWorldMapDrawRouteIds(sourceSlices), [sourceSlices])
+
+  const filtered = useMemo(
+    () =>
+      exportRouteId
+        ? filterWorldMapDrawSliceForRoute(merged, exportRouteId, sourceSlices)
+        : merged,
+    [exportRouteId, merged, sourceSlices],
   )
 
-  const canIncludePath = merged.points.length >= 2 || merged.stops.length >= 2
+  const resolvedRouteId = useMemo(
+    () =>
+      resolveWorldMapExportRouteId(
+        exportRouteId || routeId || filtered.routeId,
+        filtered.virtualNodes,
+        overlayRouteId,
+      ),
+    [exportRouteId, filtered.routeId, filtered.virtualNodes, overlayRouteId, routeId],
+  )
+
+  const canIncludePath = filtered.points.length >= 2 || filtered.stops.length >= 2
 
   useEffect(() => {
     if (!open) return
-    setIncludeStops(merged.stops.length > 0)
-    setIncludeVirtualNodes(merged.virtualNodes.length > 0)
+    const ids = collectWorldMapDrawRouteIds(sourceSlices)
+    setExportRouteId(preferredExportRouteId(routeId, ids))
     setIncludePath(false)
     setError(null)
-  }, [merged.stops.length, merged.virtualNodes.length, open])
+  }, [open, routeId, sourceSlices])
+
+  useEffect(() => {
+    if (!open) return
+    setIncludeStops(filtered.stops.length > 0)
+    setIncludeVirtualNodes(filtered.virtualNodes.length > 0)
+  }, [exportRouteId, filtered.stops.length, filtered.virtualNodes.length, open])
 
   if (!open) return null
 
@@ -83,11 +119,11 @@ export function IslandMapDrawExportDialog({
       setError(t('islandMapDrawExportNeedSelection'))
       return
     }
-    if (includeStops && merged.stops.length === 0) {
+    if (includeStops && filtered.stops.length === 0) {
       setError(t('islandMapDrawExportNoStops'))
       return
     }
-    if (includeVirtualNodes && merged.virtualNodes.length === 0) {
+    if (includeVirtualNodes && filtered.virtualNodes.length === 0) {
       setError(t('islandMapDrawExportNoVirtualNodes'))
       return
     }
@@ -95,7 +131,7 @@ export function IslandMapDrawExportDialog({
       setError(t('islandMapDrawExportNoPath'))
       return
     }
-    onConfirm({ includeStops, includeVirtualNodes, includePath }, merged)
+    onConfirm({ includeStops, includeVirtualNodes, includePath }, filtered)
   }
 
   return (
@@ -111,6 +147,19 @@ export function IslandMapDrawExportDialog({
           {t('islandMapDrawExportDialogTitle')}
         </h2>
         <p className="app-dialog-message">{t('islandMapDrawExportDialogLead')}</p>
+
+        {routeIds.length > 1 ? (
+          <label className="island-map-export-dialog-route-select">
+            <span>{t('islandMapDrawExportRouteSelect')}</span>
+            <select value={exportRouteId} onChange={(event) => setExportRouteId(event.target.value)}>
+              {routeIds.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
 
         {resolvedRouteId ? (
           <p className="island-map-export-dialog-route">
@@ -128,19 +177,21 @@ export function IslandMapDrawExportDialog({
             <input
               type="checkbox"
               checked={includeStops}
-              disabled={merged.stops.length === 0}
+              disabled={filtered.stops.length === 0}
               onChange={(event) => setIncludeStops(event.target.checked)}
             />
-            <span>{t('islandMapDrawExportIncludeStops', { count: merged.stops.length })}</span>
+            <span>{t('islandMapDrawExportIncludeStops', { count: filtered.stops.length })}</span>
           </label>
           <label className="island-map-export-dialog-check">
             <input
               type="checkbox"
               checked={includeVirtualNodes}
-              disabled={merged.virtualNodes.length === 0}
+              disabled={filtered.virtualNodes.length === 0}
               onChange={(event) => setIncludeVirtualNodes(event.target.checked)}
             />
-            <span>{t('islandMapDrawExportIncludeVirtualNodes', { count: merged.virtualNodes.length })}</span>
+            <span>
+              {t('islandMapDrawExportIncludeVirtualNodes', { count: filtered.virtualNodes.length })}
+            </span>
           </label>
           <label className="island-map-export-dialog-check">
             <input
@@ -150,9 +201,9 @@ export function IslandMapDrawExportDialog({
               onChange={(event) => setIncludePath(event.target.checked)}
             />
             <span>
-              {merged.points.length >= 2
-                ? t('islandMapDrawExportIncludePathExisting', { count: merged.points.length })
-                : t('islandMapDrawExportIncludePathTrace', { count: merged.stops.length })}
+              {filtered.points.length >= 2
+                ? t('islandMapDrawExportIncludePathExisting', { count: filtered.points.length })
+                : t('islandMapDrawExportIncludePathTrace', { count: filtered.stops.length })}
             </span>
           </label>
         </fieldset>

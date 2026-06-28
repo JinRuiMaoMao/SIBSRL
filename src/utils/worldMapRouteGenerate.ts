@@ -1,0 +1,160 @@
+import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
+import { routes } from '../data/routes'
+import type { RouteStop } from '../types/route'
+import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
+import { findDisplayRouteByQuery, mergeRoutesByBaseNumber, DISPLAY_ONLY_RENAMES } from './routeMerge'
+import { rebuildDraftPathFromStops, type TraceSegmentFn } from './worldMapDrawPath'
+import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from './worldMapStopCatalog'
+
+function namesMatch(a: { zh: string; en: string }, b: { zh: string; en: string }): boolean {
+  const zhA = (a.zh ?? '').trim()
+  const zhB = (b.zh ?? '').trim()
+  const enA = (a.en ?? '').trim().toLowerCase()
+  const enB = (b.en ?? '').trim().toLowerCase()
+  if (zhA && zhB && zhA === zhB) return true
+  if (enA && enB && enA === enB) return true
+  return false
+}
+
+function dist(a: WorldMapPoint, b: WorldMapPoint): number {
+  return Math.hypot(a[0] - b[0], a[1] - b[1])
+}
+
+function pickClosest(
+  candidates: readonly WorldMapCatalogStop[],
+  prevPoint: WorldMapPoint | null,
+): WorldMapCatalogStop {
+  if (!prevPoint || candidates.length === 1) return candidates[0]!
+  return candidates.reduce((best, entry) =>
+    dist(entry.point, prevPoint) < dist(best.point, prevPoint) ? entry : best,
+  )
+}
+
+function resolveRouteStopsFromCatalog(
+  catalogStops: readonly WorldMapCatalogStop[],
+  routeStops: readonly RouteStop[],
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+): { stops: WorldMapDrawStop[]; estimatedCount: number } {
+  let prevPoint: WorldMapPoint | null = null
+  const stops: WorldMapDrawStop[] = []
+  let estimatedCount = 0
+
+  for (let stopIndex = 0; stopIndex < routeStops.length; stopIndex += 1) {
+    const stop = routeStops[stopIndex]!
+    const candidates = catalogStops.filter((entry) => namesMatch(entry.name, stop.name))
+
+    if (candidates.length === 0) {
+      const nextStop = routeStops[stopIndex + 1]
+      const nextCandidates = nextStop
+        ? catalogStops.filter((entry) => namesMatch(entry.name, nextStop.name))
+        : []
+      const nextPoint =
+        nextCandidates.length > 0 ? pickClosest(nextCandidates, prevPoint).point : prevPoint
+      const estimate: WorldMapPoint =
+        prevPoint && nextPoint
+          ? [(prevPoint[0] + nextPoint[0]) / 2, (prevPoint[1] + nextPoint[1]) / 2]
+          : (prevPoint ?? [0.5, 0.5])
+      const snapped = snap(estimate)
+      stops.push({
+        id: `gen-${stopIndex}-${Math.random().toString(36).slice(2, 8)}`,
+        name: { zh: stop.name.zh || stop.name.en, en: stop.name.en || stop.name.zh },
+        point: snapped,
+      })
+      prevPoint = snapped
+      estimatedCount += 1
+      continue
+    }
+
+    const pick = pickClosest(candidates, prevPoint)
+    const point = snap(pick.point)
+    stops.push({
+      id: `gen-${stopIndex}-${Math.random().toString(36).slice(2, 8)}`,
+      name: { zh: stop.name.zh || stop.name.en, en: stop.name.en || stop.name.zh },
+      point,
+    })
+    prevPoint = point
+  }
+
+  return { stops, estimatedCount }
+}
+
+function findBusRouteForGenerate(routeQuery: string) {
+  const displayRoutes = mergeRoutesByBaseNumber(routes)
+  const query = routeQuery.trim()
+  if (!query) return undefined
+
+  const direct = findDisplayRouteByQuery(displayRoutes, query)
+  if (direct) return direct
+
+  const byDisplayNumber = displayRoutes.find((entry) => {
+    const display = DISPLAY_ONLY_RENAMES[entry.id] ?? DISPLAY_ONLY_RENAMES[entry.number]
+    return display === query
+  })
+  if (byDisplayNumber) return byDisplayNumber
+
+  const knownAliases: Record<string, string> = { '21': '21A' }
+  const aliasedId = knownAliases[query]
+  if (aliasedId) {
+    return displayRoutes.find((entry) => entry.id === aliasedId)
+  }
+
+  return undefined
+}
+
+export interface GenerateWorldMapRouteDraftOptions {
+  routeId: string
+  directionIndex: number
+  existingStops?: readonly WorldMapDrawStop[]
+  virtualNodes: readonly WorldMapVirtualNode[]
+  snap: (point: WorldMapPoint) => WorldMapPoint
+  toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null
+  traceSegment: TraceSegmentFn
+  catalogStops?: readonly WorldMapCatalogStop[]
+}
+
+export interface GenerateWorldMapRouteDraftResult {
+  stops: WorldMapDrawStop[]
+  points: WorldMapPoint[]
+  estimatedCount: number
+}
+
+export async function generateWorldMapRouteDraft(
+  options: GenerateWorldMapRouteDraftOptions,
+): Promise<GenerateWorldMapRouteDraftResult | null> {
+  const trimmedRouteId = options.routeId.trim()
+  if (!trimmedRouteId) return null
+
+  const route = findBusRouteForGenerate(trimmedRouteId)
+
+  let stops: WorldMapDrawStop[]
+  let estimatedCount = 0
+
+  const routeStopList =
+    route?.stops?.[options.directionIndex]?.list ?? route?.stops?.[0]?.list ?? null
+  if (routeStopList?.length) {
+    const catalog = options.catalogStops ?? (await loadWorldMapStopCatalog())
+    const resolved = resolveRouteStopsFromCatalog(catalog, routeStopList, options.snap)
+    stops = resolved.stops
+    estimatedCount = resolved.estimatedCount
+  } else if ((options.existingStops?.length ?? 0) >= 2) {
+    stops = options.existingStops!.map((stop) => ({
+      ...stop,
+      point: [stop.point[0], stop.point[1]] as WorldMapPoint,
+    }))
+  } else {
+    return null
+  }
+
+  const canonicalRouteId = resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId
+  const points = rebuildDraftPathFromStops(
+    stops,
+    options.traceSegment,
+    options.virtualNodes,
+    canonicalRouteId,
+    options.toConstraint,
+  )
+  if (points.length < 2) return null
+
+  return { stops, points, estimatedCount }
+}

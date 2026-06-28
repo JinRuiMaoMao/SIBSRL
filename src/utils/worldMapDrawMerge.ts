@@ -1,6 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import type { WorldMapDrawImportResult } from './worldMapRouteImport'
+import { canonicalVirtualNodeRouteId, virtualNodeAppliesToRoute } from './worldMapVirtualNodes'
 
 export interface WorldMapDrawDraftSlice {
   routeId: string
@@ -76,4 +77,73 @@ export function mergeWorldMapDrawSlices(slices: readonly WorldMapDrawDraftSlice[
   virtualNodes.sort((a, b) => a.order - b.order)
 
   return { routeId, directionIndex, points: bestPoints, stops, virtualNodes }
+}
+
+export function collectWorldMapDrawRouteIds(slices: readonly WorldMapDrawDraftSlice[]): string[] {
+  const ids = new Set<string>()
+  const add = (id: string) => {
+    const canonical = canonicalVirtualNodeRouteId(id)
+    if (canonical) ids.add(canonical)
+  }
+  for (const slice of slices) {
+    add(slice.routeId)
+    for (const node of slice.virtualNodes) add(node.routeId)
+  }
+  return [...ids].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+}
+
+export function filterWorldMapDrawSliceForRoute(
+  merged: WorldMapDrawDraftSlice,
+  selectedRouteId: string,
+  slices: readonly WorldMapDrawDraftSlice[],
+): WorldMapDrawDraftSlice {
+  const canonical = canonicalVirtualNodeRouteId(selectedRouteId)
+  if (!canonical) return merged
+
+  const matchingSlices = slices.filter(
+    (slice) => canonicalVirtualNodeRouteId(slice.routeId) === canonical,
+  )
+
+  let stops: WorldMapDrawStop[] = []
+  const stopSeen = new Set<string>()
+  const hasRouteTaggedStops = matchingSlices.some((slice) => slice.stops.length > 0)
+
+  if (hasRouteTaggedStops) {
+    for (const slice of matchingSlices) {
+      for (const stop of slice.stops) {
+        const key = stopKey(stop)
+        if (stopSeen.has(key)) continue
+        stopSeen.add(key)
+        stops.push(stop)
+      }
+    }
+  } else {
+    stops = merged.stops.map((stop) => ({
+      ...stop,
+      point: [stop.point[0], stop.point[1]] as WorldMapPoint,
+    }))
+  }
+
+  const virtualNodes = merged.virtualNodes.filter((node) =>
+    virtualNodeAppliesToRoute(node.routeId, canonical),
+  )
+
+  const taggedPathSlice = matchingSlices.find((slice) => slice.points.length >= 2)
+  const points =
+    taggedPathSlice?.points.map((point) => [point[0], point[1]] as WorldMapPoint) ??
+    (canonicalVirtualNodeRouteId(merged.routeId) === canonical
+      ? merged.points.map((point) => [point[0], point[1]] as WorldMapPoint)
+      : [])
+
+  const directionIndex =
+    matchingSlices.find((slice) => slice.stops.length > 0 || slice.virtualNodes.length > 0)
+      ?.directionIndex ?? merged.directionIndex
+
+  return {
+    routeId: canonical,
+    directionIndex,
+    points,
+    stops,
+    virtualNodes,
+  }
 }
