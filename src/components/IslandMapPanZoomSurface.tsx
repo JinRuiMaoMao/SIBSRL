@@ -32,9 +32,6 @@ interface IslandMapPanZoomSurfaceProps {
     points: readonly WorldMapPoint[]
   } | null
   drawMode?: boolean
-  draftPoints?: readonly WorldMapPoint[]
-  draftStopPoints?: readonly WorldMapPoint[]
-  draftStrokeColor?: string
   draftStops?: readonly WorldMapDrawStop[]
   pendingStopPoint?: WorldMapPoint | null
   onDrawMapClick?: (point: WorldMapPoint) => void
@@ -210,9 +207,6 @@ export function IslandMapPanZoomSurface({
   onViewChange,
   routeOverlay = null,
   drawMode = false,
-  draftPoints = [],
-  draftStopPoints = [],
-  draftStrokeColor,
   draftStops = [],
   pendingStopPoint = null,
   onDrawMapClick,
@@ -524,19 +518,6 @@ export function IslandMapPanZoomSurface({
             routeNumber={routeOverlay.routeNumber}
             points={routeOverlay.points}
             variant="route"
-          />
-        </div>
-      ) : null}
-      {imageSize && draftPoints.length > 0 && overlayStyle ? (
-        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
-          <IslandMapRouteOverlayLayer
-            imageWidth={imageSize.width}
-            imageHeight={imageSize.height}
-            routeNumber=""
-            points={draftPoints}
-            vertexPoints={draftStopPoints}
-            variant="draft"
-            strokeColor={draftStrokeColor}
           />
         </div>
       ) : null}

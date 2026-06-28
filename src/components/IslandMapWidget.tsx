@@ -6,17 +6,14 @@ import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useGeneralMapRoadSnap } from '../hooks/useGeneralMapRoadSnap'
 import { useLocale } from '../i18n/LocaleContext'
 import {
-  buildWorldMapRouteExportPayload,
-  copyWorldMapRouteJson,
-  downloadWorldMapRouteJson,
+  buildWorldMapStopsExportPayload,
+  copyWorldMapStopsJson,
+  downloadWorldMapStopsJson,
 } from '../utils/worldMapRouteExport'
-import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import type { WorldMapDrawStop, WorldMapDrawStopDraft } from '../types/worldMapDraw'
-import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
-import { readStoredMapDrawColor } from '../utils/mapDrawColor'
 
 type MapLayer = 'general' | 'detailed'
 
@@ -77,11 +74,8 @@ function surfaceProps(
   handleViewChange: (next: NormalizedMapView) => void,
   surfaceRouteOverlay: { routeNumber: string; points: readonly WorldMapPoint[] } | null,
   drawMode: boolean,
-  draftPoints: readonly WorldMapPoint[],
-  draftStopPoints: readonly WorldMapPoint[],
   draftStops: readonly WorldMapDrawStop[],
   pendingStopPoint: WorldMapPoint | null,
-  draftStrokeColor: string,
   onDrawMapClick: (point: WorldMapPoint) => void,
   onDrawUndo: () => void,
   maxZoomRatio: number,
@@ -93,11 +87,8 @@ function surfaceProps(
     onViewChange: handleViewChange,
     routeOverlay: surfaceRouteOverlay,
     drawMode,
-    draftPoints,
-    draftStopPoints,
     draftStops,
     pendingStopPoint,
-    draftStrokeColor,
     onDrawMapClick,
     onDrawUndo,
     maxZoomRatio,
@@ -116,10 +107,8 @@ export function IslandMapWidget() {
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [drawMode, setDrawMode] = useState(false)
   const roadSnap = useGeneralMapRoadSnap(isMapAdmin && drawMode)
-  const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
   const [pendingStop, setPendingStop] = useState<WorldMapDrawStopDraft | null>(null)
-  const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
   const [drawRouteId, setDrawRouteId] = useState('')
   const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
   const [exportHint, setExportHint] = useState<string | null>(null)
@@ -162,7 +151,6 @@ export function IslandMapWidget() {
   useEffect(() => {
     if (!isMapAdmin) {
       setDrawMode(false)
-      setDraftPoints([])
       setDraftStops([])
       setPendingStop(null)
     }
@@ -187,18 +175,6 @@ export function IslandMapWidget() {
     }, 2600)
   }, [])
 
-  const traceSegment = useCallback(
-    (from: WorldMapPoint, to: WorldMapPoint) => roadSnap.appendSegment(from, to),
-    [roadSnap],
-  )
-
-  const rebuildPath = useCallback(
-    (stops: readonly WorldMapDrawStop[]) => {
-      setDraftPoints(rebuildDraftPathFromStops(stops, traceSegment))
-    },
-    [traceSegment],
-  )
-
   const handleDrawMapClick = useCallback(
     (point: WorldMapPoint) => {
       if (pendingStop) return
@@ -212,29 +188,17 @@ export function IslandMapWidget() {
       setPendingStop(null)
       return
     }
-    setDraftStops((stops) => {
-      const next = stops.slice(0, -1)
-      rebuildPath(next)
-      return next
-    })
-  }, [pendingStop, rebuildPath])
+    setDraftStops((stops) => stops.slice(0, -1))
+  }, [pendingStop])
 
   const clearDraft = useCallback(() => {
-    setDraftPoints([])
     setDraftStops([])
     setPendingStop(null)
   }, [])
 
-  const handleRemoveStop = useCallback(
-    (id: string) => {
-      setDraftStops((stops) => {
-        const next = stops.filter((stop) => stop.id !== id)
-        rebuildPath(next)
-        return next
-      })
-    },
-    [rebuildPath],
-  )
+  const handleRemoveStop = useCallback((id: string) => {
+    setDraftStops((stops) => stops.filter((stop) => stop.id !== id))
+  }, [])
 
   const handleConfirmPendingStop = useCallback(() => {
     if (!pendingStop) return
@@ -244,25 +208,22 @@ export function IslandMapWidget() {
     const name = matched
       ? { zh: matched.zh, en: matched.en || matched.zh }
       : { zh: query, en: query }
-    const newStop: WorldMapDrawStop = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      point: pendingStop.point,
-      name,
-    }
-    setDraftStops((stops) => {
-      const next = [...stops, newStop]
-      rebuildPath(next)
-      return next
-    })
+    setDraftStops((stops) => [
+      ...stops,
+      {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        point: pendingStop.point,
+        name,
+      },
+    ])
     setPendingStop(null)
-  }, [pendingStop, rebuildPath])
+  }, [pendingStop])
 
   const toggleDrawMode = useCallback(() => {
     setDrawMode((current) => {
       const next = !current
       if (next) {
         setLayer('general')
-        setDraftPoints([])
         setDraftStops([])
         setPendingStop(null)
       }
@@ -271,29 +232,22 @@ export function IslandMapWidget() {
   }, [])
 
   const handleExport = useCallback(async () => {
-    const payload = buildWorldMapRouteExportPayload(
-      drawRouteId,
-      drawDirectionIndex,
-      draftPoints,
-      draftStops,
-    )
+    const payload = buildWorldMapStopsExportPayload(drawRouteId, drawDirectionIndex, draftStops)
     if (!payload) {
-      showExportHint(t('islandMapDrawExportNeedPoints'))
+      showExportHint(t('islandMapDrawExportNeedStops'))
       return
     }
-    downloadWorldMapRouteJson(payload)
-    const copied = await copyWorldMapRouteJson(payload)
-    showExportHint(copied ? t('islandMapDrawExportDone') : t('islandMapDrawExportDownloaded'))
-  }, [drawDirectionIndex, drawRouteId, draftPoints, draftStops, showExportHint, t])
+    downloadWorldMapStopsJson(payload)
+    const copied = await copyWorldMapStopsJson(payload)
+    showExportHint(copied ? t('islandMapDrawExportStopsDone') : t('islandMapDrawExportStopsDownloaded'))
+  }, [drawDirectionIndex, drawRouteId, draftStops, showExportHint, t])
 
   const mapSrc = MAP_URLS[layer]
   const surfaceRouteOverlay = routeOverlay
     ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
     : null
-  const canExport =
-    buildWorldMapRouteExportPayload(drawRouteId, drawDirectionIndex, draftPoints, draftStops) != null
+  const canExport = buildWorldMapStopsExportPayload(drawRouteId, drawDirectionIndex, draftStops) != null
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
-  const draftStopPoints = draftStops.map((stop) => stop.point)
   const canUndo = pendingStop != null || draftStops.length > 0
   const canClear = draftStops.length > 0 || pendingStop != null
 
@@ -381,7 +335,6 @@ export function IslandMapWidget() {
           {t('islandMapDrawStopCount', { count: draftStops.length })}
         </span>
       </div>
-      <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
       {drawMode ? (
         <IslandMapDrawStopPanel
           stops={draftStops}
@@ -419,11 +372,8 @@ export function IslandMapWidget() {
           handleViewChange,
           surfaceRouteOverlay,
           drawMode,
-          draftPoints,
-          draftStopPoints,
           draftStops,
           pendingStop?.point ?? null,
-          drawColor,
           handleDrawMapClick,
           handleDrawUndo,
           surfaceMaxZoomRatio,
@@ -468,11 +418,8 @@ export function IslandMapWidget() {
             handleViewChange,
             surfaceRouteOverlay,
             drawMode,
-            draftPoints,
-            draftStopPoints,
             draftStops,
             pendingStop?.point ?? null,
-            drawColor,
             handleDrawMapClick,
             handleDrawUndo,
             surfaceMaxZoomRatio,

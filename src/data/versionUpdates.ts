@@ -188,8 +188,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Drawn paths snap to and follow SIMapGerenal roads (#ffffff), bridges (#fece7a), and tunnels (#d33682).",
           },
           {
-            zh: "绘制走线改为按站点顺序连接：每个站点即路径节点，确认站名后自动沿道路/大桥/隧道寻路。",
-            en: "Route drawing now connects stops in order—each stop is a path node, with road/bridge/tunnel tracing after you confirm the name.",
+            zh: "地图绘制改为仅标注站点并导出 `{线路ID}-stops.json`，走线由站点顺序离线生成。",
+            en: "Map drawing now exports stops only as `{routeId}-stops.json`; paths are generated offline from stop order.",
           },
         ],
       },
