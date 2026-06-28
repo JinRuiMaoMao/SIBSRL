@@ -352,8 +352,115 @@ html.has-compact-tab-nav .island-map--widget {
   cursor: crosshair;
 }
 
+.island-map-panzoom--draw-stop {
+  cursor: cell;
+}
+
 .island-map-panzoom--draw.island-map-panzoom--dragging {
   cursor: crosshair;
+}
+
+.island-map-draw-stop-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.island-map-draw-stop-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.island-map-draw-stop-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  border-radius: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
+  background: color-mix(in srgb, var(--surface, #1a1a1a) 92%, #000);
+}
+
+.island-map-draw-stop-suggestions li button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.island-map-draw-stop-suggestions li button:hover {
+  background: color-mix(in srgb, var(--accent, #f5b942) 18%, transparent);
+}
+
+.island-map-draw-stop-suggestion-en {
+  font-size: 0.78rem;
+  opacity: 0.72;
+}
+
+.island-map-draw-stop-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.island-map-draw-stop-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.island-map-draw-stop-remove {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.1rem 0.35rem;
+}
+
+.island-map-stop-overlay {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.island-map-stop-overlay-marker {
+  fill: color-mix(in srgb, var(--accent, #f5b942) 85%, #fff);
+  stroke: color-mix(in srgb, #000 55%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.island-map-stop-overlay-label {
+  fill: var(--text, #f2f2f2);
+  stroke: color-mix(in srgb, #000 70%, transparent);
+  stroke-width: 3;
+  paint-order: stroke fill;
+  font-weight: 600;
+}
+
+.island-map-stop-overlay-pending {
+  fill: none;
+  stroke: var(--accent, #f5b942);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 4 3;
 }
 
 .island-map-btn--layers {

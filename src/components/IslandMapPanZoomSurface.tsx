@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
+import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 
 export interface PanZoomState {
   x: number
@@ -30,17 +33,21 @@ interface IslandMapPanZoomSurfaceProps {
     points: readonly WorldMapPoint[]
   } | null
   drawMode?: boolean
+  drawInteraction?: IslandMapDrawInteraction
   draftPoints?: readonly WorldMapPoint[]
+  draftAnchorPoints?: readonly WorldMapPoint[]
   draftStrokeColor?: string
-  onDraftPointAdd?: (point: WorldMapPoint) => void
-  onDraftPointUndo?: () => void
+  draftStops?: readonly WorldMapDrawStop[]
+  pendingStopPoint?: WorldMapPoint | null
+  onDrawMapClick?: (point: WorldMapPoint) => void
+  onDrawUndo?: () => void
   maxZoomRatio?: number
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
 const MIN_SCALE_RATIO = 0.45
 const DEFAULT_MAX_SCALE_RATIO = 8
-export const DRAW_MAX_ZOOM_RATIO = 8
+export const DRAW_MAX_ZOOM_RATIO = 16
 const WHEEL_ZOOM_FACTOR = 1.12
 const MAX_SYNC_ATTEMPTS = 12
 
@@ -205,10 +212,14 @@ export function IslandMapPanZoomSurface({
   onViewChange,
   routeOverlay = null,
   drawMode = false,
+  drawInteraction = 'path',
   draftPoints = [],
+  draftAnchorPoints = [],
   draftStrokeColor,
-  onDraftPointAdd,
-  onDraftPointUndo,
+  draftStops = [],
+  pendingStopPoint = null,
+  onDrawMapClick,
+  onDrawUndo,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -435,12 +446,14 @@ export function IslandMapPanZoomSurface({
     if (drawMode) {
       event.preventDefault()
       if (event.button === 2) {
-        onDraftPointUndo?.()
+        onDrawUndo?.()
         return
       }
       if (event.button !== 0) return
       const rect = event.currentTarget.getBoundingClientRect()
-      onDraftPointAdd?.(viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize))
+      onDrawMapClick?.(
+        viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize),
+      )
       return
     }
 
@@ -490,7 +503,7 @@ export function IslandMapPanZoomSurface({
   return (
     <div
       ref={viewportRef}
-      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''} ${className}`.trim()}
+      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''}${drawMode && drawInteraction === 'stop' ? ' island-map-panzoom--draw-stop' : ''} ${className}`.trim()}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
@@ -524,8 +537,26 @@ export function IslandMapPanZoomSurface({
             imageHeight={imageSize.height}
             routeNumber=""
             points={draftPoints}
+            vertexPoints={draftAnchorPoints}
             variant="draft"
             strokeColor={draftStrokeColor}
+          />
+        </div>
+      ) : null}
+      {imageSize && (draftStops.length > 0 || pendingStopPoint) && overlayStyle ? (
+        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+          <IslandMapStopOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            stops={draftStops}
+            pendingStop={
+              pendingStopPoint
+                ? {
+                    x: pendingStopPoint[0] * imageSize.width,
+                    y: pendingStopPoint[1] * imageSize.height,
+                  }
+                : null
+            }
           />
         </div>
       ) : null}

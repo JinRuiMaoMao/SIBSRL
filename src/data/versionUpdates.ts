@@ -184,8 +184,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Draw tools now include a color picker, preset swatches, and #HEX / rgb() input; the chosen color persists and updates the path live.",
           },
                     {
-            zh: "绘制模式可放大至 800%，点击会自动吸附 SIMapGerenal 白线并在道路上网状寻路连线。",
-            en: "Draw mode now zooms up to 800%; clicks snap to SIMapGerenal white roads and path segments follow the road network.",
+            zh: "绘制走线会吸附并沿 SIMapGerenal 道路（#ffffff）、大桥（#fece7a）与隧道（#d33682）寻路。",
+            en: "Drawn paths snap to and follow SIMapGerenal roads (#ffffff), bridges (#fece7a), and tunnels (#d33682).",
+          },
+          {
+            zh: "绘制工具新增「添加站点」：可在地图上放置站点，支持自定义站名或匹配现有站名，导出 JSON 含 stops 字段。",
+            en: "Draw tools add “Add stops”: place stops on the map with custom names or matched stop names; exported JSON includes a stops field.",
           },
         ],
       },

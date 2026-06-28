@@ -7,12 +7,20 @@ const PATHFIND_MAX_NODES = 120_000
 
 let loadPromise: Promise<GeneralMapRoadSnapIndex | null> | null = null
 
-function isRoadPixel(r: number, g: number, b: number, a: number): boolean {
+/** Walkable route colors on SIMapGerenal: roads, bridges, tunnels. */
+const ROUTE_COLORS = [
+  { r: 255, g: 255, b: 255, tolerance: 28 }, // 道路 #ffffff
+  { r: 254, g: 206, b: 122, tolerance: 38 }, // 大桥 #fece7a
+  { r: 211, g: 54, b: 130, tolerance: 38 }, // 隧道 #d33682
+] as const
+
+function colorDistance(r: number, g: number, b: number, target: (typeof ROUTE_COLORS)[number]): number {
+  return Math.hypot(r - target.r, g - target.g, b - target.b)
+}
+
+function isRoutePixel(r: number, g: number, b: number, a: number): boolean {
   if (a < 180) return false
-  const min = Math.min(r, g, b)
-  const max = Math.max(r, g, b)
-  if (min < 198 || max < 215) return false
-  return max - min <= 36
+  return ROUTE_COLORS.some((color) => colorDistance(r, g, b, color) <= color.tolerance)
 }
 
 function loadImage(url: string): Promise<HTMLImageElement> {
@@ -66,7 +74,7 @@ class GeneralMapRoadSnapIndex {
 
   private isRoadAtPixel(x: number, y: number): boolean {
     const offset = this.pixelOffset(x, y)
-    return isRoadPixel(
+    return isRoutePixel(
       this.imageData[offset]!,
       this.imageData[offset + 1]!,
       this.imageData[offset + 2]!,

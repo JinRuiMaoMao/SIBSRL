@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
 
 export interface WorldMapRouteExportPayload {
   routeId: string
@@ -7,6 +8,10 @@ export interface WorldMapRouteExportPayload {
   directions: Array<{
     directionIndex: number
     points: WorldMapPoint[]
+    stops?: Array<{
+      name: { zh: string; en: string }
+      point: WorldMapPoint
+    }>
   }>
 }
 
@@ -14,6 +19,7 @@ export function buildWorldMapRouteExportPayload(
   routeId: string,
   directionIndex: number,
   points: readonly WorldMapPoint[],
+  stops: readonly WorldMapDrawStop[] = [],
 ): WorldMapRouteExportPayload | null {
   const trimmedRouteId = routeId.trim()
   if (!trimmedRouteId || points.length < 2) return null
@@ -27,6 +33,13 @@ export function buildWorldMapRouteExportPayload(
       {
         directionIndex,
         points: points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint),
+        stops:
+          stops.length > 0
+            ? stops.map((stop) => ({
+                name: { zh: stop.name.zh, en: stop.name.en },
+                point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
+              }))
+            : undefined,
       },
     ],
   }
