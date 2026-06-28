@@ -203,6 +203,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "普通用户可在全屏地图与小地图工具栏导入/导出 JSON，在地图上查看线路、站点或虚拟节点（无绘制功能）。",
             en: "All users can import/export JSON from the fullscreen map and widget toolbar to view routes, stops, or virtual nodes—without draw tools.",
           },
+          {
+            zh: "虚拟节点新增 order 字段：同路口多个节点按先后顺序经过；站点与虚拟节点可一并导出到同一线路 JSON。",
+            en: "Virtual nodes now have an order field for sequencing at the same junction; stops and virtual nodes export together in one route JSON.",
+          },
         ],
       },
       {

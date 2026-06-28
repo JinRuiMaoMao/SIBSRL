@@ -30,6 +30,8 @@ export interface WorldMapVirtualNode {
   point: WorldMapPoint
   routeId: string
   kind: WorldMapVirtualNodeKind
+  /** Sequence along the route; multiple nodes at one junction follow this order. */
+  order: number
 }
 
 export interface WorldMapVirtualNodeDraft {

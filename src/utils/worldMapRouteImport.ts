@@ -17,6 +17,7 @@ export type WorldMapDrawImportResult =
       directionIndex: number
       points: WorldMapPoint[]
       stops: WorldMapDrawStop[]
+      virtualNodes: WorldMapVirtualNode[]
     }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -71,12 +72,15 @@ function readVirtualNodeEntry(value: unknown, index: number): WorldMapVirtualNod
   if (!isRecord(value) || !isWorldMapPoint(value.point)) return null
   const routeId = typeof value.routeId === 'string' ? value.routeId.trim() : ''
   const kind = readVirtualNodeKind(value.kind)
+  const order =
+    typeof value.order === 'number' && Number.isFinite(value.order) ? Math.round(value.order) : index
   if (!routeId || !kind) return null
   return {
     id: `import-vn-${index}-${Math.random().toString(36).slice(2, 8)}`,
     point: [value.point[0], value.point[1]],
     routeId,
     kind,
+    order,
   }
 }
 
@@ -103,6 +107,7 @@ function readDirection(value: unknown): {
   directionIndex: number
   points: WorldMapPoint[]
   stops: WorldMapDrawStop[]
+  virtualNodes: WorldMapVirtualNode[]
 } | null {
   if (!isRecord(value)) return null
   const directionIndex =
@@ -113,6 +118,7 @@ function readDirection(value: unknown): {
     directionIndex,
     points: readPointList(value.points),
     stops: readStopList(value.stops),
+    virtualNodes: readVirtualNodeList(value.virtualNodes),
   }
 }
 
@@ -143,8 +149,9 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
 
   const stops = direction.stops
   const points = direction.points
+  const virtualNodes = direction.virtualNodes
 
-  if (stops.length === 0 && points.length < 2) return null
+  if (stops.length === 0 && points.length < 2 && virtualNodes.length === 0) return null
   if (stops.length >= 2 && points.length === 0) {
     return {
       kind: 'route',
@@ -152,6 +159,7 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
       directionIndex: direction.directionIndex,
       points: [],
       stops,
+      virtualNodes,
     }
   }
 
@@ -162,6 +170,18 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
       directionIndex: direction.directionIndex,
       points,
       stops: stops.length > 0 ? stops : [],
+      virtualNodes,
+    }
+  }
+
+  if (stops.length >= 2) {
+    return {
+      kind: 'route',
+      routeId,
+      directionIndex: direction.directionIndex,
+      points: [],
+      stops,
+      virtualNodes,
     }
   }
 

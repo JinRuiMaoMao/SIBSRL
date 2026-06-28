@@ -1,6 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import { canonicalVirtualNodeRouteId } from './worldMapVirtualNodes'
 
 export interface WorldMapStopsExportPayload {
   routeId: string
@@ -31,6 +32,12 @@ export interface WorldMapRouteExportPayload {
     points: WorldMapPoint[]
     stops?: Array<{
       name: { zh: string; en: string }
+      point: WorldMapPoint
+    }>
+    virtualNodes?: Array<{
+      order: number
+      routeId: string
+      kind: WorldMapVirtualNode['kind']
       point: WorldMapPoint
     }>
   }>
@@ -83,25 +90,44 @@ export function buildWorldMapRouteExportPayload(
   directionIndex: number,
   points: readonly WorldMapPoint[],
   stops: readonly WorldMapDrawStop[] = [],
+  virtualNodes: readonly WorldMapVirtualNode[] = [],
 ): WorldMapRouteExportPayload | null {
   const trimmedRouteId = routeId.trim()
-  if (!trimmedRouteId || points.length < 2) return null
+  const routeVirtualNodes = virtualNodes.filter((node) =>
+    canonicalVirtualNodeRouteId(node.routeId) === (resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId),
+  )
+  const hasPath = points.length >= 2
+  const hasStops = stops.length >= 2
+  const hasVirtualNodes = routeVirtualNodes.length > 0
+  if (!trimmedRouteId || (!hasPath && !hasStops && !hasVirtualNodes)) return null
 
   const canonicalId = resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId
 
   return {
     routeId: canonicalId,
-    note: 'Drawn in SIBS Route Lookup map editor; coordinates are normalized (0–1) on SIMap.png.',
+    note:
+      'Route on SIMapGerenal (normalized 0–1): path points, stops, and virtual nodes in one file. Virtual nodes follow order field along the route.',
     directions: [
       {
         directionIndex,
-        points: points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint),
+        points: hasPath ? points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint) : [],
         stops:
           stops.length > 0
             ? stops.map((stop) => ({
                 name: { zh: stop.name.zh, en: stop.name.en },
                 point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
               }))
+            : undefined,
+        virtualNodes:
+          routeVirtualNodes.length > 0
+            ? [...routeVirtualNodes]
+                .sort((a, b) => a.order - b.order)
+                .map((node) => ({
+                  order: node.order,
+                  routeId: canonicalVirtualNodeRouteId(node.routeId),
+                  kind: node.kind,
+                  point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
+                }))
             : undefined,
       },
     ],

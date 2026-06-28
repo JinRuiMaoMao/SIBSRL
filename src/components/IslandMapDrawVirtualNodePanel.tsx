@@ -169,10 +169,13 @@ export function IslandMapDrawVirtualNodePanel({
 
       {nodes.length > 0 ? (
         <ul className="island-map-draw-stop-list">
-          {nodes.map((node) => (
+          {[...nodes]
+            .sort((a, b) => a.order - b.order)
+            .map((node) => (
             <li key={node.id}>
               <span>
-                {node.routeId} · {virtualNodeKindSymbol(node.kind)} {virtualNodeKindLabel(node.kind, locale)}
+                #{node.order} · {node.routeId} · {virtualNodeKindSymbol(node.kind)}{' '}
+                {virtualNodeKindLabel(node.kind, locale)}
               </span>
               <button
                 type="button"

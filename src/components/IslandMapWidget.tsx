@@ -19,6 +19,7 @@ import {
   downloadWorldMapVirtualNodeCatalogJson,
 } from '../utils/worldMapVirtualNodeExport'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
+import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import type {
@@ -335,6 +336,7 @@ export function IslandMapWidget() {
         point: pendingVirtualNode.point,
         routeId: pendingVirtualNode.routeId.trim(),
         kind: pendingVirtualNode.kind,
+        order: nextVirtualNodeOrder(nodes, pendingVirtualNode.routeId.trim()),
       },
     ])
     setPendingVirtualNode(null)
@@ -399,6 +401,7 @@ export function IslandMapWidget() {
       drawDirectionIndex,
       draftPoints,
       draftStops,
+      draftVirtualNodes,
     )
     if (!payload) {
       showExportHint(t('islandMapDrawExportNeedRoute'))
@@ -465,6 +468,8 @@ export function IslandMapWidget() {
         setDrawRouteId(parsed.routeId)
         setDrawDirectionIndex(parsed.directionIndex)
         setDrawStops(parsed.stops)
+        const importedVirtualNodes = parsed.virtualNodes ?? []
+        setDraftVirtualNodes(importedVirtualNodes)
         let nextPoints = parsed.points
         if (nextPoints.length < 2 && parsed.stops.length >= 2) {
           const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
@@ -476,7 +481,7 @@ export function IslandMapWidget() {
           nextPoints = rebuildDraftPathFromStops(
             parsed.stops,
             traceSegment,
-            draftVirtualNodes,
+            importedVirtualNodes,
             parsed.routeId,
             (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
           )
@@ -492,7 +497,7 @@ export function IslandMapWidget() {
         showExportHint(t('islandMapDrawImportInvalid'))
       }
     },
-    [draftVirtualNodes, expanded, roadSnap, showExportHint, t],
+    [expanded, roadSnap, showExportHint, t],
   )
 
   const mapSrc = MAP_URLS[layer]
@@ -504,7 +509,13 @@ export function IslandMapWidget() {
       ? buildWorldMapCatalogStopsExportPayload(draftStops) != null
       : drawInteraction === 'virtual'
         ? buildWorldMapVirtualNodeCatalogPayload(draftVirtualNodes) != null
-        : buildWorldMapRouteExportPayload(drawRouteId, drawDirectionIndex, draftPoints, draftStops) != null
+        : buildWorldMapRouteExportPayload(
+            drawRouteId,
+            drawDirectionIndex,
+            draftPoints,
+            draftStops,
+            draftVirtualNodes,
+          ) != null
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
   const draftRouteNumber = drawRouteId.trim()

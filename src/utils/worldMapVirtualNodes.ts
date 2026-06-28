@@ -1,6 +1,9 @@
 import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
+const JUNCTION_EPSILON = 0.00008
+const LEG_CORRIDOR = 0.035
+
 export function canonicalVirtualNodeRouteId(routeId: string): string {
   const trimmed = routeId.trim()
   return resolveWorldMapRouteId(trimmed) ?? trimmed
@@ -11,6 +14,24 @@ export function virtualNodeAppliesToRoute(nodeRouteId: string, currentRouteId: s
   const current = canonicalVirtualNodeRouteId(currentRouteId)
   if (!node || !current) return false
   return node === current
+}
+
+export function orderedVirtualNodesForRoute(
+  nodes: readonly WorldMapVirtualNode[],
+  routeId: string,
+): WorldMapVirtualNode[] {
+  return nodes
+    .filter((node) => virtualNodeAppliesToRoute(node.routeId, routeId))
+    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id))
+}
+
+export function nextVirtualNodeOrder(
+  nodes: readonly WorldMapVirtualNode[],
+  routeId: string,
+): number {
+  const routeNodes = orderedVirtualNodesForRoute(nodes, routeId)
+  if (routeNodes.length === 0) return 0
+  return routeNodes[routeNodes.length - 1]!.order + 1
 }
 
 function projectionT(from: WorldMapPoint, to: WorldMapPoint, point: WorldMapPoint): number {
@@ -28,21 +49,36 @@ function distanceToSegment(from: WorldMapPoint, to: WorldMapPoint, point: WorldM
   return Math.hypot(point[0] - px, point[1] - py)
 }
 
-export function virtualNodesOnLeg(
+export function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = JUNCTION_EPSILON): boolean {
+  return Math.hypot(a[0] - b[0], a[1] - b[1]) <= epsilon
+}
+
+/** Whether this ordered virtual node lies on the current leg before the next stop. */
+export function shouldVisitVirtualNodeBeforeStop(
+  node: WorldMapVirtualNode,
   from: WorldMapPoint,
   to: WorldMapPoint,
-  nodes: readonly WorldMapVirtualNode[],
-  routeId: string,
-  corridor = 0.035,
-): WorldMapVirtualNode[] {
-  return nodes
-    .filter((node) => virtualNodeAppliesToRoute(node.routeId, routeId))
-    .filter((node) => {
-      const t = projectionT(from, to, node.point)
-      if (t <= 0.04 || t >= 0.96) return false
-      return distanceToSegment(from, to, node.point) <= corridor
-    })
-    .sort((a, b) => projectionT(from, to, a.point) - projectionT(from, to, b.point))
+): boolean {
+  const t = projectionT(from, to, node.point)
+  if (t <= 0.02 || t >= 0.98) return false
+  return distanceToSegment(from, to, node.point) <= LEG_CORRIDOR
+}
+
+/** Consecutive virtual nodes at the same junction, in order. */
+export function collectJunctionVirtualNodeChain(
+  orderedNodes: readonly WorldMapVirtualNode[],
+  startIndex: number,
+): { chain: WorldMapVirtualNode[]; nextIndex: number } {
+  const first = orderedNodes[startIndex]
+  if (!first) return { chain: [], nextIndex: startIndex }
+
+  const chain = [first]
+  let index = startIndex + 1
+  while (index < orderedNodes.length && pointsNear(orderedNodes[index]!.point, first.point)) {
+    chain.push(orderedNodes[index]!)
+    index += 1
+  }
+  return { chain, nextIndex: index }
 }
 
 export function buildLegAnchorPoints(
@@ -51,6 +87,13 @@ export function buildLegAnchorPoints(
   nodes: readonly WorldMapVirtualNode[],
   routeId: string,
 ): WorldMapPoint[] {
-  const via = virtualNodesOnLeg(from, to, nodes, routeId)
-  return [from, ...via.map((node) => node.point), to]
+  const ordered = orderedVirtualNodesForRoute(nodes, routeId)
+  const anchors: WorldMapPoint[] = [from]
+  for (const node of ordered) {
+    if (shouldVisitVirtualNodeBeforeStop(node, from, to)) {
+      anchors.push(node.point)
+    }
+  }
+  anchors.push(to)
+  return anchors
 }
