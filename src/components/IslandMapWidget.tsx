@@ -12,6 +12,7 @@ import {
   copyWorldMapRouteJson,
   downloadWorldMapCatalogStopsJson,
   downloadWorldMapRouteJson,
+  resolveWorldMapExportRouteId,
 } from '../utils/worldMapRouteExport'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
@@ -321,18 +322,22 @@ export function IslandMapWidget() {
 
   const handleConfirmPendingVirtualNode = useCallback(() => {
     if (!pendingVirtualNode || !pendingVirtualNode.routeId.trim()) return
+    const nodeRouteId = pendingVirtualNode.routeId.trim()
+    if (!drawRouteId.trim()) {
+      setDrawRouteId(nodeRouteId)
+    }
     setDraftVirtualNodes((nodes) => [
       ...nodes,
       {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         point: pendingVirtualNode.point,
-        routeId: pendingVirtualNode.routeId.trim(),
+        routeId: nodeRouteId,
         kind: pendingVirtualNode.kind,
-        order: nextVirtualNodeOrder(nodes, pendingVirtualNode.routeId.trim()),
+        order: nextVirtualNodeOrder(nodes, nodeRouteId),
       },
     ])
     setPendingVirtualNode(null)
-  }, [pendingVirtualNode])
+  }, [drawRouteId, pendingVirtualNode])
 
   const handleRemoveVirtualNode = useCallback((id: string) => {
     setDraftVirtualNodes((nodes) => nodes.filter((node) => node.id !== id))
@@ -357,16 +362,19 @@ export function IslandMapWidget() {
     })
   }, [])
 
+  const overlayRouteId = routeOverlay?.routeId
+
   const exportRoutePayload = useCallback(
-    () =>
+    (points: readonly WorldMapPoint[] = draftPoints) =>
       buildWorldMapRouteExportPayload(
         drawRouteId,
         drawDirectionIndex,
-        draftPoints,
+        points,
         draftStops,
         draftVirtualNodes,
+        overlayRouteId,
       ),
-    [drawDirectionIndex, drawRouteId, draftPoints, draftStops, draftVirtualNodes],
+    [drawDirectionIndex, drawRouteId, draftPoints, draftStops, draftVirtualNodes, overlayRouteId],
   )
 
   const handleExport = useCallback(async () => {
@@ -382,7 +390,29 @@ export function IslandMapWidget() {
       return
     }
 
-    const payload = exportRoutePayload()
+    const resolvedRouteId = resolveWorldMapExportRouteId(
+      drawRouteId,
+      draftVirtualNodes,
+      overlayRouteId,
+    )
+    if (!resolvedRouteId) {
+      showExportHint(t('islandMapDrawExportNeedRouteId'))
+      return
+    }
+
+    let pointsForExport = draftPoints
+    if (pointsForExport.length < 2 && draftStops.length >= 2) {
+      const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
+      pointsForExport = rebuildDraftPathFromStops(
+        draftStops,
+        (from, to, via = []) => traceGeneralMapRoadPath(index, from, to, via),
+        draftVirtualNodes,
+        resolvedRouteId,
+        (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
+      )
+    }
+
+    const payload = exportRoutePayload(pointsForExport)
     if (!payload) {
       showExportHint(t('islandMapDrawExportNeedRoute'))
       return
@@ -390,7 +420,18 @@ export function IslandMapWidget() {
     downloadWorldMapRouteJson(payload)
     const copied = await copyWorldMapRouteJson(payload)
     showExportHint(copied ? t('islandMapDrawExportRouteDone') : t('islandMapDrawExportRouteDownloaded'))
-  }, [drawInteraction, draftStops, exportRoutePayload, showExportHint, t])
+  }, [
+    drawInteraction,
+    drawRouteId,
+    draftPoints,
+    draftStops,
+    draftVirtualNodes,
+    exportRoutePayload,
+    overlayRouteId,
+    roadSnap,
+    showExportHint,
+    t,
+  ])
 
   const handleImportFileChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -593,7 +634,7 @@ export function IslandMapWidget() {
         interaction={drawInteraction}
         onInteractionChange={handleInteractionChange}
       />
-      {drawInteraction === 'route' ? (
+      {drawInteraction === 'route' || drawInteraction === 'virtual' ? (
         <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
           <label className="island-map-draw-field">
             <span>{t('islandMapDrawRouteId')}</span>
@@ -614,15 +655,6 @@ export function IslandMapWidget() {
               onChange={(event) => setDrawDirectionIndex(Number(event.target.value) || 0)}
             />
           </label>
-          <span className="island-map-draw-count">
-            {t('islandMapDrawStopCount', { count: draftStops.length })}
-          </span>
-          <span className="island-map-draw-count">
-            {t('islandMapDrawVirtualCount', { count: draftVirtualNodes.length })}
-          </span>
-        </div>
-      ) : drawInteraction === 'virtual' ? (
-        <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
           <span className="island-map-draw-count">
             {t('islandMapDrawStopCount', { count: draftStops.length })}
           </span>

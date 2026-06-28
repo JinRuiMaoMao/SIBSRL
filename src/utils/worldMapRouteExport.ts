@@ -85,20 +85,38 @@ export function buildWorldMapStopsExportPayload(
   }
 }
 
+function roundCoord(value: number): number {
+  return Math.round(value * 1000) / 1000
+}
+
+/** Route ID for export: form field, then virtual nodes, then map overlay. */
+export function resolveWorldMapExportRouteId(
+  routeId: string,
+  virtualNodes: readonly WorldMapVirtualNode[],
+  fallbackRouteId?: string,
+): string {
+  const trimmed = routeId.trim()
+  if (trimmed) return resolveWorldMapRouteId(trimmed) ?? trimmed
+  for (const node of virtualNodes) {
+    const fromNode = node.routeId.trim()
+    if (fromNode) return resolveWorldMapRouteId(fromNode) ?? fromNode
+  }
+  const fallback = fallbackRouteId?.trim()
+  if (fallback) return resolveWorldMapRouteId(fallback) ?? fallback
+  return ''
+}
+
 export function buildWorldMapRouteExportPayload(
   routeId: string,
   directionIndex: number,
   points: readonly WorldMapPoint[],
   stops: readonly WorldMapDrawStop[] = [],
   virtualNodes: readonly WorldMapVirtualNode[] = [],
+  fallbackRouteId?: string,
 ): WorldMapRouteExportPayload | null {
-  const trimmedRouteId = routeId.trim()
+  const canonicalId = resolveWorldMapExportRouteId(routeId, virtualNodes, fallbackRouteId)
   const hasPath = points.length >= 2
-  const hasStops = stops.length > 0
-  const hasVirtualNodes = virtualNodes.length > 0
-  if (!trimmedRouteId || (!hasPath && stops.length < 2 && !hasVirtualNodes)) return null
-
-  const canonicalId = resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId
+  if (!canonicalId || (!hasPath && stops.length < 2 && virtualNodes.length === 0)) return null
 
   return {
     routeId: canonicalId,
@@ -108,31 +126,21 @@ export function buildWorldMapRouteExportPayload(
       {
         directionIndex,
         points: hasPath ? points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint) : [],
-        stops:
-          stops.length > 0
-            ? stops.map((stop) => ({
-                name: { zh: stop.name.zh, en: stop.name.en },
-                point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
-              }))
-            : undefined,
-        virtualNodes:
-          virtualNodes.length > 0
-            ? [...virtualNodes]
-                .sort((a, b) => a.order - b.order)
-                .map((node) => ({
-                  order: node.order,
-                  routeId: canonicalVirtualNodeRouteId(node.routeId),
-                  kind: node.kind,
-                  point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
-                }))
-            : undefined,
+        stops: stops.map((stop) => ({
+          name: { zh: stop.name.zh, en: stop.name.en },
+          point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
+        })),
+        virtualNodes: [...virtualNodes]
+          .sort((a, b) => a.order - b.order)
+          .map((node) => ({
+            order: node.order,
+            routeId: canonicalVirtualNodeRouteId(node.routeId),
+            kind: node.kind,
+            point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
+          })),
       },
     ],
   }
-}
-
-function roundCoord(value: number): number {
-  return Math.round(value * 1000) / 1000
 }
 
 export function downloadWorldMapCatalogStopsJson(payload: WorldMapCatalogStopsExportPayload): void {
