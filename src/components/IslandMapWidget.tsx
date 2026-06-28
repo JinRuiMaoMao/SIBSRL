@@ -37,6 +37,7 @@ import {
   type IslandMapDrawPermissionDialogStep,
 } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
+import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
