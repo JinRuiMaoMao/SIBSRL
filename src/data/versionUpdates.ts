@@ -195,6 +195,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "道路寻路禁止在直路中间直接掉头，只能在环岛或路口（连接数≠2）处折返，并优先顺路方向。",
             en: "Road pathfinding no longer allows mid-segment U-turns—turnarounds must use roundabouts or junctions (degree ≠ 2), following road direction.",
           },
+          {
+            zh: "绘制工具新增「虚拟节点」模式：标注线路号与类型（直行/转向/掉头）及顺路方向；绘制走线会强制经过并顺路匹配线路号的虚拟节点。",
+            en: "Draw tools add a Virtual nodes mode: tag route ID, type (straight / turn / U-turn), and exit direction. Route tracing must pass through matching virtual nodes in the required direction.",
+          },
         ],
       },
       {

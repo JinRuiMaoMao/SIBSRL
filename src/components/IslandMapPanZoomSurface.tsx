@@ -2,8 +2,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProp
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
-import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
+import { IslandMapVirtualNodeOverlayLayer } from './IslandMapVirtualNodeOverlayLayer'
 
 export interface PanZoomState {
   x: number
@@ -38,7 +39,9 @@ interface IslandMapPanZoomSurfaceProps {
   draftStopPoints?: readonly WorldMapPoint[]
   draftStrokeColor?: string
   draftStops?: readonly WorldMapDrawStop[]
+  draftVirtualNodes?: readonly WorldMapVirtualNode[]
   pendingStopPoint?: WorldMapPoint | null
+  pendingVirtualNode?: { point: WorldMapPoint; outDir: number } | null
   onDrawMapClick?: (point: WorldMapPoint) => void
   onDrawUndo?: () => void
   maxZoomRatio?: number
@@ -217,7 +220,9 @@ export function IslandMapPanZoomSurface({
   draftStopPoints = [],
   draftStrokeColor,
   draftStops = [],
+  draftVirtualNodes = [],
   pendingStopPoint = null,
+  pendingVirtualNode = null,
   onDrawMapClick,
   onDrawUndo,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
@@ -554,6 +559,24 @@ export function IslandMapPanZoomSurface({
                 ? {
                     x: pendingStopPoint[0] * imageSize.width,
                     y: pendingStopPoint[1] * imageSize.height,
+                  }
+                : null
+            }
+          />
+        </div>
+      ) : null}
+      {imageSize && (draftVirtualNodes.length > 0 || pendingVirtualNode) && overlayStyle ? (
+        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+          <IslandMapVirtualNodeOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            nodes={draftVirtualNodes}
+            pendingNode={
+              pendingVirtualNode
+                ? {
+                    x: pendingVirtualNode.point[0] * imageSize.width,
+                    y: pendingVirtualNode.point[1] * imageSize.height,
+                    outDir: pendingVirtualNode.outDir,
                   }
                 : null
             }

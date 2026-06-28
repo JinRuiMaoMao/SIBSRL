@@ -5,6 +5,7 @@ import {
   snapPointToGeneralMapRoad,
   traceGeneralMapRoadPath,
   type GeneralMapRoadSnapIndex,
+  type VirtualNodePathConstraint,
 } from '../utils/generalMapRoadSnap'
 
 export function useGeneralMapRoadSnap(enabled: boolean) {
@@ -29,14 +30,29 @@ export function useGeneralMapRoadSnap(enabled: boolean) {
     () => ({
       ready: Boolean(index),
       loading,
+      index,
       snap(point: WorldMapPoint): WorldMapPoint {
         return snapPointToGeneralMapRoad(index, point)
       },
-      appendSegment(from: WorldMapPoint | null, to: WorldMapPoint): WorldMapPoint[] {
+      roadDirectionsAt(point: WorldMapPoint): number[] {
+        return index?.roadDirectionsAt(point) ?? []
+      },
+      toVirtualNodeConstraint(
+        point: WorldMapPoint,
+        kind: VirtualNodePathConstraint['kind'],
+        outDir: number,
+      ): VirtualNodePathConstraint | null {
+        return index?.toVirtualNodeConstraint(point, kind, outDir) ?? null
+      },
+      appendSegment(
+        from: WorldMapPoint | null,
+        to: WorldMapPoint,
+        via: VirtualNodePathConstraint[] = [],
+      ): WorldMapPoint[] {
         const snapped = snapPointToGeneralMapRoad(index, to)
         if (!from) return [snapped]
         if (!index) return [snapped]
-        const traced = traceGeneralMapRoadPath(index, from, snapped)
+        const traced = traceGeneralMapRoadPath(index, from, snapped, via)
         return traced.length > 0 ? traced : [snapped]
       },
     }),

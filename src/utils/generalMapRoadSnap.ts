@@ -69,6 +69,33 @@ function heuristic(ax: number, ay: number, bx: number, by: number): number {
   return Math.hypot(ax - bx, ay - by)
 }
 
+export type VirtualNodeKind = 'straight' | 'turn' | 'u-turn'
+
+export interface VirtualNodePathConstraint {
+  gx: number
+  gy: number
+  kind: VirtualNodeKind
+  outDir: number
+}
+
+export function satisfiesVirtualNodeTransition(
+  incomingDir: number,
+  constraint: VirtualNodePathConstraint,
+): boolean {
+  if (incomingDir === PATH_START_DIR) return false
+  const outDir = constraint.outDir
+  if (constraint.kind === 'straight') return incomingDir === outDir
+  const [inDx, inDy] = NEIGHBORS[incomingDir]!
+  const [outDx, outDy] = NEIGHBORS[outDir]!
+  if (constraint.kind === 'u-turn') return isOppositeDir(inDx, inDy, outDx, outDy)
+  return incomingDir !== outDir && !isOppositeDir(inDx, inDy, outDx, outDy)
+}
+
+interface FindPathOptions {
+  endConstraint?: VirtualNodePathConstraint
+  startStates?: number[]
+}
+
 class GeneralMapRoadSnapIndex {
   readonly width: number
   readonly height: number
@@ -172,18 +199,49 @@ class GeneralMapRoadSnapIndex {
     return this.toNormalized(bestX, bestY)
   }
 
-  trace(from: WorldMapPoint, to: WorldMapPoint): WorldMapPoint[] {
+  trace(from: WorldMapPoint, to: WorldMapPoint, via: VirtualNodePathConstraint[] = []): WorldMapPoint[] {
     const start = this.toGridPoint(from)
     const end = this.toGridPoint(to)
     const startCell = this.findNearestRoadCell(start.gx, start.gy)
     const endCell = this.findNearestRoadCell(end.gx, end.gy)
     if (!startCell || !endCell) return [this.snap(to)]
 
-    const pathCells = this.findPath(startCell.gx, start.gy, endCell.gx, endCell.gy)
-    if (!pathCells || pathCells.length === 0) return [this.snap(to)]
+    const chain: Array<{ gx: number; gy: number; endConstraint?: VirtualNodePathConstraint }> = [
+      ...via.map((constraint) => ({
+        gx: constraint.gx,
+        gy: constraint.gy,
+        endConstraint: constraint,
+      })),
+      { gx: endCell.gx, gy: endCell.gy },
+    ]
+
+    let startStates: number[] | undefined
+    const mergedCells: Array<{ gx: number; gy: number }> = []
+    let cursor = startCell
+
+    for (const target of chain) {
+      const segment = this.findPath(cursor.gx, cursor.gy, target.gx, target.gy, {
+        endConstraint: target.endConstraint,
+        startStates,
+      })
+      if (!segment || segment.length === 0) return [this.snap(to)]
+
+      if (mergedCells.length > 0 && segment.length > 0) {
+        segment.shift()
+      }
+      mergedCells.push(...segment)
+
+      if (target.endConstraint) {
+        startStates = this.collectStatesAtCell(target.endConstraint)
+        if (startStates.length === 0) return [this.snap(to)]
+      } else {
+        startStates = undefined
+      }
+      cursor = { gx: target.gx, gy: target.gy }
+    }
 
     const points: WorldMapPoint[] = []
-    for (const cell of pathCells) {
+    for (const cell of mergedCells) {
       const px = cell.gx * ROAD_CELL_PX + ROAD_CELL_PX / 2
       const py = cell.gy * ROAD_CELL_PX + ROAD_CELL_PX / 2
       points.push(this.toNormalized(px, py))
@@ -191,6 +249,43 @@ class GeneralMapRoadSnapIndex {
 
     points[points.length - 1] = this.snap(to)
     return simplifyPath(points, 0.00045)
+  }
+
+  roadDirectionsAt(point: WorldMapPoint): number[] {
+    const { gx, gy } = this.toGridPoint(point)
+    const cell = this.findNearestRoadCell(gx, gy)
+    if (!cell) return []
+    const dirs: number[] = []
+    for (let dir = 0; dir < PATH_DIR_COUNT; dir += 1) {
+      const [dx, dy] = NEIGHBORS[dir]!
+      const nx = cell.gx + dx
+      const ny = cell.gy + dy
+      if (nx < 0 || ny < 0 || nx >= this.gridWidth || ny >= this.gridHeight) continue
+      if (this.roadGrid[cellIndex(this.gridWidth, nx, ny)]) dirs.push(dir)
+    }
+    return dirs
+  }
+
+  toVirtualNodeConstraint(
+    point: WorldMapPoint,
+    kind: VirtualNodeKind,
+    outDir: number,
+  ): VirtualNodePathConstraint | null {
+    const { gx, gy } = this.toGridPoint(point)
+    const cell = this.findNearestRoadCell(gx, gy)
+    if (!cell) return null
+    return { gx: cell.gx, gy: cell.gy, kind, outDir }
+  }
+
+  private collectStatesAtCell(constraint: VirtualNodePathConstraint): number[] {
+    const cell = cellIndex(this.gridWidth, constraint.gx, constraint.gy)
+    const states: number[] = []
+    for (let incomingDir = 0; incomingDir < PATH_DIR_COUNT; incomingDir += 1) {
+      if (satisfiesVirtualNodeTransition(incomingDir, constraint)) {
+        states.push(pathStateId(cell, incomingDir))
+      }
+    }
+    return states
   }
 
   private roadNeighborCount(gx: number, gy: number): number {
@@ -226,8 +321,14 @@ class GeneralMapRoadSnapIndex {
     return null
   }
 
-  private findPath(sx: number, sy: number, ex: number, ey: number): Array<{ gx: number; gy: number }> | null {
-    if (sx === ex && sy === ey) return [{ gx: sx, gy: sy }]
+  private findPath(
+    sx: number,
+    sy: number,
+    ex: number,
+    ey: number,
+    options: FindPathOptions = {},
+  ): Array<{ gx: number; gy: number }> | null {
+    if (sx === ex && sy === ey && !options.endConstraint) return [{ gx: sx, gy: sy }]
 
     const cellCount = this.gridWidth * this.gridHeight
     const stateCount = cellCount * PATH_STATE_STRIDE
@@ -239,14 +340,26 @@ class GeneralMapRoadSnapIndex {
     fScore.fill(Number.POSITIVE_INFINITY)
     cameFrom.fill(-1)
 
-    const startCell = cellIndex(this.gridWidth, sx, sy)
     const endCell = cellIndex(this.gridWidth, ex, ey)
-    const startState = pathStateId(startCell, PATH_START_DIR)
-    gScore[startState] = 0
-    fScore[startState] = heuristic(sx, sy, ex, ey)
+    const queue: number[] = []
 
-    const queue: number[] = [startState]
+    if (options.startStates && options.startStates.length > 0) {
+      for (const state of options.startStates) {
+        gScore[state] = 0
+        fScore[state] = heuristic(sx, sy, ex, ey)
+        queue.push(state)
+      }
+    } else {
+      const startCell = cellIndex(this.gridWidth, sx, sy)
+      const startState = pathStateId(startCell, PATH_START_DIR)
+      gScore[startState] = 0
+      fScore[startState] = heuristic(sx, sy, ex, ey)
+      queue.push(startState)
+    }
+
     let visited = 0
+    let bestGoalState = -1
+    let bestGoalScore = Number.POSITIVE_INFINITY
 
     while (queue.length > 0) {
       queue.sort((a, b) => fScore[a]! - fScore[b]!)
@@ -257,11 +370,26 @@ class GeneralMapRoadSnapIndex {
       if (visited > PATHFIND_MAX_NODES) return null
 
       const cell = Math.floor(state / PATH_STATE_STRIDE)
+      const incomingDir = state % PATH_STATE_STRIDE
+
       if (cell === endCell) {
-        return this.reconstructDirectionalPath(cameFrom, state)
+        const endOk =
+          !options.endConstraint ||
+          (incomingDir !== PATH_START_DIR &&
+            satisfiesVirtualNodeTransition(incomingDir, options.endConstraint))
+        if (endOk) {
+          if (options.endConstraint) {
+            return this.reconstructDirectionalPath(cameFrom, state)
+          }
+          if (gScore[state]! < bestGoalScore) {
+            bestGoalScore = gScore[state]!
+            bestGoalState = state
+          }
+        }
       }
 
-      const incomingDir = state % PATH_STATE_STRIDE
+      if (bestGoalState >= 0 && gScore[state]! > bestGoalScore) continue
+
       const cx = cell % this.gridWidth
       const cy = Math.floor(cell / this.gridWidth)
 
@@ -296,6 +424,10 @@ class GeneralMapRoadSnapIndex {
         fScore[nextState] = tentative + heuristic(nx, ny, ex, ey)
         queue.push(nextState)
       }
+    }
+
+    if (bestGoalState >= 0) {
+      return this.reconstructDirectionalPath(cameFrom, bestGoalState)
     }
 
     return null
@@ -378,9 +510,10 @@ export function traceGeneralMapRoadPath(
   index: GeneralMapRoadSnapIndex | null,
   from: WorldMapPoint,
   to: WorldMapPoint,
+  via: VirtualNodePathConstraint[] = [],
 ): WorldMapPoint[] {
   if (!index) return [to]
-  const traced = index.trace(from, to)
+  const traced = index.trace(from, to, via)
   return traced.length > 0 ? traced : [index.snap(to)]
 }
 

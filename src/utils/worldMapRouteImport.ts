@@ -1,10 +1,14 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
 
 export type WorldMapDrawImportResult =
   | {
       kind: 'catalog'
       stops: WorldMapDrawStop[]
+    }
+  | {
+      kind: 'virtual'
+      nodes: WorldMapVirtualNode[]
     }
   | {
       kind: 'route'
@@ -58,6 +62,36 @@ function readStopList(value: unknown): WorldMapDrawStop[] {
   return stops
 }
 
+function readVirtualNodeKind(value: unknown): WorldMapVirtualNodeKind | null {
+  if (value === 'straight' || value === 'turn' || value === 'u-turn') return value
+  return null
+}
+
+function readVirtualNodeEntry(value: unknown, index: number): WorldMapVirtualNode | null {
+  if (!isRecord(value) || !isWorldMapPoint(value.point)) return null
+  const routeId = typeof value.routeId === 'string' ? value.routeId.trim() : ''
+  const kind = readVirtualNodeKind(value.kind)
+  const outDir = typeof value.outDir === 'number' && Number.isFinite(value.outDir) ? value.outDir : -1
+  if (!routeId || !kind || outDir < 0 || outDir > 7) return null
+  return {
+    id: `import-vn-${index}-${Math.random().toString(36).slice(2, 8)}`,
+    point: [value.point[0], value.point[1]],
+    routeId,
+    kind,
+    outDir: Math.round(outDir),
+  }
+}
+
+function readVirtualNodeList(value: unknown): WorldMapVirtualNode[] {
+  if (!Array.isArray(value)) return []
+  const nodes: WorldMapVirtualNode[] = []
+  for (let index = 0; index < value.length; index += 1) {
+    const node = readVirtualNodeEntry(value[index], index)
+    if (node) nodes.push(node)
+  }
+  return nodes
+}
+
 function readPointList(value: unknown): WorldMapPoint[] {
   if (!Array.isArray(value)) return []
   const points: WorldMapPoint[] = []
@@ -91,6 +125,12 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
     const stops = readStopList(raw.stops)
     if (stops.length === 0) return null
     return { kind: 'catalog', stops }
+  }
+
+  if (raw.kind === 'world-map-virtual-node-catalog') {
+    const nodes = readVirtualNodeList(raw.nodes)
+    if (nodes.length === 0) return null
+    return { kind: 'virtual', nodes }
   }
 
   if (typeof raw.routeId !== 'string' || !Array.isArray(raw.directions) || raw.directions.length === 0) {

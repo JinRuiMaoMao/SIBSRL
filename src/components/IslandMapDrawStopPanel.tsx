@@ -62,6 +62,14 @@ export function IslandMapDrawStopPanel({
         </button>
         <button
           type="button"
+          className={`island-map-btn${interaction === 'virtual' ? ' island-map-btn--active' : ''}`.trim()}
+          onClick={() => onInteractionChange('virtual')}
+          aria-pressed={interaction === 'virtual'}
+        >
+          {t('islandMapDrawVirtualMode')}
+        </button>
+        <button
+          type="button"
           className={`island-map-btn${interaction === 'catalog' ? ' island-map-btn--active' : ''}`.trim()}
           onClick={() => onInteractionChange('catalog')}
           aria-pressed={interaction === 'catalog'}
@@ -71,7 +79,11 @@ export function IslandMapDrawStopPanel({
       </div>
 
       <p className="island-map-draw-help">
-        {interaction === 'route' ? t('islandMapDrawRouteHelp') : t('islandMapDrawCatalogHelp')}
+        {interaction === 'route'
+          ? t('islandMapDrawRouteHelp')
+          : interaction === 'virtual'
+            ? t('islandMapDrawVirtualHelp')
+            : t('islandMapDrawCatalogHelp')}
       </p>
 
       {pendingStop ? (

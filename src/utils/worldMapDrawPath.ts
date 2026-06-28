@@ -1,4 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
+import { virtualNodesOnLeg } from './worldMapVirtualNodes'
+import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
 export function mergePathPoints(
   current: WorldMapPoint[],
@@ -14,27 +17,46 @@ export function mergePathPoints(
   return merged
 }
 
-export function rebuildDraftPathFromAnchors(
-  anchors: readonly WorldMapPoint[],
-  appendSegment: (from: WorldMapPoint, to: WorldMapPoint) => WorldMapPoint[],
-): WorldMapPoint[] {
-  if (anchors.length === 0) return []
-  if (anchors.length === 1) return [anchors[0]!]
-
-  let points: WorldMapPoint[] = [anchors[0]!]
-  for (let index = 1; index < anchors.length; index += 1) {
-    const segment = appendSegment(anchors[index - 1]!, anchors[index]!)
-    points = mergePathPoints(points, segment)
-  }
-  return points
-}
+export type TraceSegmentFn = (
+  from: WorldMapPoint,
+  to: WorldMapPoint,
+  via: VirtualNodePathConstraint[],
+) => WorldMapPoint[]
 
 export function rebuildDraftPathFromStops(
   stops: readonly { point: WorldMapPoint }[],
-  appendSegment: (from: WorldMapPoint, to: WorldMapPoint) => WorldMapPoint[],
+  appendSegment: TraceSegmentFn,
+  virtualNodes: readonly WorldMapVirtualNode[] = [],
+  routeId = '',
+  toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null = () => null,
 ): WorldMapPoint[] {
-  return rebuildDraftPathFromAnchors(
-    stops.map((stop) => stop.point),
-    appendSegment,
-  )
+  if (stops.length === 0) return []
+  if (stops.length === 1) return [stops[0]!.point]
+
+  let points: WorldMapPoint[] = [stops[0]!.point]
+  for (let index = 1; index < stops.length; index += 1) {
+    const from = stops[index - 1]!.point
+    const to = stops[index]!.point
+    const legNodes = virtualNodesOnLeg(from, to, virtualNodes, routeId)
+    const anchors: WorldMapPoint[] = [from, ...legNodes.map((node) => node.point), to]
+
+    let legPoints: WorldMapPoint[] = [anchors[0]!]
+    for (let leg = 1; leg < anchors.length; leg += 1) {
+      const viaNode = legNodes[leg - 1]
+      const via =
+        viaNode && leg < anchors.length - 1
+          ? (() => {
+              const constraint = toConstraint(viaNode)
+              return constraint ? [constraint] : []
+            })()
+          : []
+      const segment = appendSegment(anchors[leg - 1]!, anchors[leg]!, via)
+      legPoints = mergePathPoints(legPoints, segment)
+    }
+
+    if (legPoints.length > 1) {
+      points = mergePathPoints(points, legPoints.slice(1))
+    }
+  }
+  return points
 }
