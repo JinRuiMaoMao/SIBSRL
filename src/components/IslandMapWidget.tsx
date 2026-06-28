@@ -42,6 +42,7 @@ import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
+import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
 function readImportJsonText(text: string): unknown {
   const trimmed = text.replace(/^\uFEFF/, '').trim()
@@ -168,7 +169,7 @@ function surfaceProps(
 }
 
 export function IslandMapWidget() {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const { isLoggedIn, token, email } = useAuth()
   const { refreshProfile } = useUserProfile()
   const isMapAdmin = useIsMapAdmin()
@@ -187,6 +188,7 @@ export function IslandMapWidget() {
     () => listWorldMapRouteSegmentsExcept(drawRouteId),
     [drawRouteId],
   )
+  const drawBuildLabel = formatBuildLabel(readPublishedBuild() ?? 'development', locale)
   const roadSnap = useGeneralMapRoadSnap(isMapAdmin, { avoidParallelSegments })
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
@@ -905,6 +907,7 @@ export function IslandMapWidget() {
       {drawMode && drawInteraction === 'route' ? (
         <p className="island-map-draw-help">
           {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawHelp')}
+          <span className="island-map-draw-build-tag">{t('buildTag', { time: drawBuildLabel })}</span>
         </p>
       ) : null}
       {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}
