@@ -462,7 +462,7 @@ class GeneralMapRoadSnapIndex {
     const end = this.toGridPoint(to)
     const startCell = this.findNearestRoadCell(start.gx, start.gy)
     const endCell = this.findNearestRoadCell(end.gx, end.gy)
-    if (!startCell || !endCell) return [this.snap(to)]
+    if (!startCell || !endCell) return [this.ensureOnRoad(to)]
 
     const chain: Array<{ gx: number; gy: number; endConstraint?: VirtualNodePathConstraint }> = [
       ...via.map((constraint) => ({
@@ -493,7 +493,10 @@ class GeneralMapRoadSnapIndex {
           target.endConstraint?.kind === 'enter-tunnel',
         avoidParallelSegments: options.avoidParallelSegments,
       })
-      if (!segment || segment.length === 0) return [this.snap(to)]
+      if (!segment || segment.length === 0) {
+        if (mergedCells.length > 0) break
+        return [this.ensureOnRoad(from), this.ensureOnRoad(to)]
+      }
 
       if (mergedCells.length > 0 && segment.length > 0) {
         segment.shift()
@@ -503,7 +506,10 @@ class GeneralMapRoadSnapIndex {
       if (target.endConstraint) {
         startStates = this.collectStatesAtCell(target.endConstraint)
         startViaKind = target.endConstraint.kind
-        if (startStates.length === 0) return [this.snap(to)]
+        if (startStates.length === 0) {
+          if (mergedCells.length > 0) break
+          return [this.ensureOnRoad(from), this.ensureOnRoad(to)]
+        }
       } else {
         startStates = undefined
         startViaKind = undefined
@@ -518,9 +524,35 @@ class GeneralMapRoadSnapIndex {
       points.push(this.toNormalized(px, py))
     }
 
-    points[points.length - 1] = this.snap(to)
+    points[points.length - 1] = this.ensureOnRoad(to)
     const smoothed = this.smoothRoadCorners(points)
-    return simplifyPath(smoothed, 0.00028)
+    const onRoad = this.densifyOnRoad(smoothed)
+    return simplifyPath(onRoad, 0.00012)
+  }
+
+  private densifyOnRoad(points: WorldMapPoint[]): WorldMapPoint[] {
+    if (points.length < 2) return points.map((point) => this.ensureOnRoad(point))
+
+    const result: WorldMapPoint[] = [this.ensureOnRoad(points[0]!)]
+    for (let index = 1; index < points.length; index += 1) {
+      const prev = result[result.length - 1]!
+      const next = points[index]!
+      const span = Math.hypot(next[0] - prev[0], next[1] - prev[1])
+      const steps = Math.max(1, Math.ceil(span / 0.00016))
+      for (let step = 1; step <= steps; step += 1) {
+        const t = step / steps
+        const sample: WorldMapPoint = [
+          prev[0] + (next[0] - prev[0]) * t,
+          prev[1] + (next[1] - prev[1]) * t,
+        ]
+        const onRoad = this.ensureOnRoad(sample)
+        const last = result[result.length - 1]!
+        if (Math.hypot(onRoad[0] - last[0], onRoad[1] - last[1]) > 0.00003) {
+          result.push(onRoad)
+        }
+      }
+    }
+    return result
   }
 
   private ensureOnRoad(point: WorldMapPoint): WorldMapPoint {
@@ -550,15 +582,15 @@ class GeneralMapRoadSnapIndex {
       const next = points[index + 1]!
       const angle = turnAngleAt(prev, curr, next)
 
-      if (angle < SMOOTH_CORNER_ANGLE && !this.isJunctionPoint(curr)) {
+      if (angle < SMOOTH_CORNER_ANGLE) {
         const inLen = Math.hypot(curr[0] - prev[0], curr[1] - prev[1])
         const outLen = Math.hypot(next[0] - curr[0], next[1] - curr[1])
-        const radius = Math.min(SMOOTH_CORNER_RADIUS, inLen * 0.42, outLen * 0.42)
-        if (radius > 0.00004) {
+        const radius = Math.min(SMOOTH_CORNER_RADIUS, inLen * 0.45, outLen * 0.45)
+        if (radius > 0.00003) {
           const pIn = pointAlong(curr, prev, radius)
           const pOut = pointAlong(curr, next, radius)
-          for (let step = 1; step <= 4; step += 1) {
-            const t = step / 4
+          for (let step = 1; step <= 6; step += 1) {
+            const t = step / 6
             const sample = quadraticBezier(pIn, curr, pOut, t)
             result.push(this.ensureOnRoad(sample))
           }
@@ -754,13 +786,7 @@ class GeneralMapRoadSnapIndex {
             startStateSet?.has(state) &&
             this.getValidExitDirs(cx, cy, incomingDir, options.startViaKind).includes(outDir)
 
-          const turningTowardVirtualGoal =
-            options.endConstraint != null &&
-            nx === ex &&
-            ny === ey &&
-            this.isValidVirtualTransition(cx, cy, incomingDir, outDir, options.endConstraint.kind)
-
-          if (!allowedByStartVia && !turningTowardVirtualGoal) {
+          if (!options.endConstraint && !allowedByStartVia) {
             continue
           }
         }

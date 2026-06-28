@@ -443,7 +443,10 @@ export function IslandMapWidget() {
         from: WorldMapPoint,
         to: WorldMapPoint,
         via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
-      ) => traceGeneralMapRoadPath(index, from, to, via)
+      ) =>
+        traceGeneralMapRoadPath(index, from, to, via, {
+          avoidParallelSegments: listWorldMapRouteSegmentsExcept(routeId),
+        })
       const result = await generateWorldMapRouteDraft({
         routeId,
         directionIndex: drawDirectionIndex,

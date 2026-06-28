@@ -2,6 +2,7 @@ import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRout
 import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
 const JUNCTION_EPSILON = 0.00008
+const NEXT_LEG_CLOSER_RATIO = 0.92
 
 export function canonicalVirtualNodeRouteId(routeId: string): string {
   const trimmed = routeId.trim()
@@ -33,29 +34,44 @@ export function nextVirtualNodeOrder(
   return routeNodes[routeNodes.length - 1]!.order + 1
 }
 
-function projectionT(from: WorldMapPoint, to: WorldMapPoint, point: WorldMapPoint): number {
-  const dx = to[0] - from[0]
-  const dy = to[1] - from[1]
-  const lenSq = dx * dx + dy * dy
-  if (lenSq <= 1e-12) return 0
-  return ((point[0] - from[0]) * dx + (point[1] - from[1]) * dy) / lenSq
+function dist(a: WorldMapPoint, b: WorldMapPoint): number {
+  return Math.hypot(a[0] - b[0], a[1] - b[1])
 }
 
 export function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = JUNCTION_EPSILON): boolean {
   return Math.hypot(a[0] - b[0], a[1] - b[1]) <= epsilon
 }
 
-/** Whether the next ordered virtual node should be visited before the upcoming stop. */
-export function shouldVisitVirtualNodeBeforeStop(
+/**
+ * Virtual nodes for the leg stop[i] → stop[i+1]: consume global order from vnIndex until
+ * the next node is clearly closer to the following stop (belongs to the next leg).
+ */
+export function shouldDeferVirtualNodeToNextLeg(
   node: WorldMapVirtualNode,
-  from: WorldMapPoint,
-  to: WorldMapPoint,
+  legEnd: WorldMapPoint,
+  nextLegEnd: WorldMapPoint | undefined,
 ): boolean {
-  const t = projectionT(from, to, node.point)
-  if (t <= 0) return false
-  const distToNode = Math.hypot(node.point[0] - from[0], node.point[1] - from[1])
-  const distToStop = Math.hypot(to[0] - from[0], to[1] - from[1])
-  return distToNode <= distToStop * 1.05
+  if (!nextLegEnd) return false
+  const toLegEnd = dist(node.point, legEnd)
+  const toNextLeg = dist(node.point, nextLegEnd)
+  return toNextLeg < toLegEnd * NEXT_LEG_CLOSER_RATIO
+}
+
+export function collectVirtualNodesForLeg(
+  orderedNodes: readonly WorldMapVirtualNode[],
+  startIndex: number,
+  legEnd: WorldMapPoint,
+  nextLegEnd: WorldMapPoint | undefined,
+): { nodes: WorldMapVirtualNode[]; nextIndex: number } {
+  const nodes: WorldMapVirtualNode[] = []
+  let index = startIndex
+  while (index < orderedNodes.length) {
+    const node = orderedNodes[index]!
+    if (shouldDeferVirtualNodeToNextLeg(node, legEnd, nextLegEnd)) break
+    nodes.push(node)
+    index += 1
+  }
+  return { nodes, nextIndex: index }
 }
 
 /** Consecutive virtual nodes at the same junction share one map location but keep separate order values. */
@@ -73,21 +89,4 @@ export function collectJunctionVirtualNodeChain(
     index += 1
   }
   return { chain, nextIndex: index }
-}
-
-export function buildLegAnchorPoints(
-  from: WorldMapPoint,
-  to: WorldMapPoint,
-  nodes: readonly WorldMapVirtualNode[],
-  routeId: string,
-): WorldMapPoint[] {
-  const ordered = orderedVirtualNodesForRoute(nodes, routeId)
-  const anchors: WorldMapPoint[] = [from]
-  for (const node of ordered) {
-    if (shouldVisitVirtualNodeBeforeStop(node, from, to)) {
-      anchors.push(node.point)
-    }
-  }
-  anchors.push(to)
-  return anchors
 }

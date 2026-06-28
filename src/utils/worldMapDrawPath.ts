@@ -1,6 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
-import { orderedVirtualNodesForRoute, shouldVisitVirtualNodeBeforeStop } from './worldMapVirtualNodes'
+import { collectVirtualNodesForLeg, orderedVirtualNodesForRoute } from './worldMapVirtualNodes'
 import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
 export function mergePathPoints(
@@ -23,19 +23,39 @@ export type TraceSegmentFn = (
   via: VirtualNodePathConstraint[],
 ) => WorldMapPoint[]
 
-function appendWithVirtualConstraints(
+function buildLegViaConstraints(
+  legNodes: readonly WorldMapVirtualNode[],
+  toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null,
+): VirtualNodePathConstraint[] {
+  const via: VirtualNodePathConstraint[] = []
+  for (const node of legNodes) {
+    const constraint = toConstraint(node)
+    if (constraint) {
+      via.push(constraint)
+    }
+  }
+  return via
+}
+
+function appendLeg(
   points: WorldMapPoint[],
   cursor: WorldMapPoint,
-  target: WorldMapPoint,
-  constraints: VirtualNodePathConstraint[],
+  legEnd: WorldMapPoint,
+  legNodes: readonly WorldMapVirtualNode[],
   appendSegment: TraceSegmentFn,
+  toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null,
 ): { points: WorldMapPoint[]; cursor: WorldMapPoint } {
-  const segment = appendSegment(cursor, target, constraints)
+  const via = buildLegViaConstraints(legNodes, toConstraint)
+  const segment = appendSegment(cursor, legEnd, via)
   const nextPoints = mergePathPoints(points, segment.length > 1 ? segment.slice(1) : segment)
-  const nextCursor = nextPoints[nextPoints.length - 1] ?? target
+  const nextCursor = nextPoints[nextPoints.length - 1] ?? legEnd
   return { points: nextPoints, cursor: nextCursor }
 }
 
+/**
+ * Rebuild path: for each leg between consecutive route-detail stops, trace along roads
+ * through that leg's virtual nodes (global order) in one chained road trace, then to the stop.
+ */
 export function rebuildDraftPathFromStops(
   stops: readonly { point: WorldMapPoint }[],
   appendSegment: TraceSegmentFn,
@@ -52,33 +72,20 @@ export function rebuildDraftPathFromStops(
   let vnIndex = 0
 
   for (let stopIndex = 1; stopIndex < stops.length; stopIndex += 1) {
-    const nextStop = stops[stopIndex]!.point
+    const legEnd = stops[stopIndex]!.point
+    const nextLegEnd = stops[stopIndex + 1]?.point
 
-    while (vnIndex < orderedVNs.length) {
-      const node = orderedVNs[vnIndex]!
-      if (!shouldVisitVirtualNodeBeforeStop(node, cursor, nextStop)) break
+    const { nodes: legNodes, nextIndex } = collectVirtualNodesForLeg(
+      orderedVNs,
+      vnIndex,
+      legEnd,
+      nextLegEnd,
+    )
+    vnIndex = nextIndex
 
-      const constraint = toConstraint(node)
-      const constraints = constraint ? [constraint] : []
-      const traced = appendWithVirtualConstraints(points, cursor, node.point, constraints, appendSegment)
-      points = traced.points
-      cursor = traced.cursor
-      vnIndex += 1
-    }
-
-    const traced = appendWithVirtualConstraints(points, cursor, nextStop, [], appendSegment)
+    const traced = appendLeg(points, cursor, legEnd, legNodes, appendSegment, toConstraint)
     points = traced.points
     cursor = traced.cursor
-  }
-
-  while (vnIndex < orderedVNs.length) {
-    const node = orderedVNs[vnIndex]!
-    const constraint = toConstraint(node)
-    const constraints = constraint ? [constraint] : []
-    const traced = appendWithVirtualConstraints(points, cursor, node.point, constraints, appendSegment)
-    points = traced.points
-    cursor = traced.cursor
-    vnIndex += 1
   }
 
   return points
