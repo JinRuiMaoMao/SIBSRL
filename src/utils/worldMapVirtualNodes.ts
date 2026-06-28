@@ -43,8 +43,8 @@ export function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = JUNCTIO
 }
 
 /**
- * Virtual nodes for the leg stop[i] → stop[i+1]: consume global order from vnIndex until
- * the next node is clearly closer to the following stop (belongs to the next leg).
+ * Multi-stop routes only: defer when the next list node clearly belongs to a later leg.
+ * Does not inspect road junctions — only list order and stop positions.
  */
 export function shouldDeferVirtualNodeToNextLeg(
   node: WorldMapVirtualNode,
@@ -57,6 +57,7 @@ export function shouldDeferVirtualNodeToNextLeg(
   return toNextLeg < toLegEnd * NEXT_LEG_CLOSER_RATIO
 }
 
+/** @deprecated Use sequential next-node hops in rebuildDraftPathFromStops instead. */
 export function collectVirtualNodesForLeg(
   orderedNodes: readonly WorldMapVirtualNode[],
   startIndex: number,
