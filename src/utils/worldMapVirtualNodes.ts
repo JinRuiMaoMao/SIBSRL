@@ -42,6 +42,36 @@ export function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = JUNCTIO
   return Math.hypot(a[0] - b[0], a[1] - b[1]) <= epsilon
 }
 
+export type RoutePathTarget =
+  | { kind: 'virtual-node'; node: WorldMapVirtualNode }
+  | { kind: 'stop'; point: WorldMapPoint }
+
+/**
+ * Pick the next travel target: list's next virtual node, or the next route-detail stop.
+ * Ignores road junctions — only list order and stop sequence matter.
+ */
+export function pickNextRoutePathTarget(
+  orderedVNs: readonly WorldMapVirtualNode[],
+  vnIndex: number,
+  stops: readonly { point: WorldMapPoint }[],
+  stopIndex: number,
+): RoutePathTarget | null {
+  const nextNode = orderedVNs[vnIndex]
+  const nextStop = stops[stopIndex]
+  const nextLegEnd = stops[stopIndex + 1]?.point
+
+  if (nextNode && nextStop) {
+    if (!shouldDeferVirtualNodeToNextLeg(nextNode, nextStop.point, nextLegEnd)) {
+      return { kind: 'virtual-node', node: nextNode }
+    }
+    return { kind: 'stop', point: nextStop.point }
+  }
+
+  if (nextNode) return { kind: 'virtual-node', node: nextNode }
+  if (nextStop) return { kind: 'stop', point: nextStop.point }
+  return null
+}
+
 /**
  * Multi-stop routes only: defer when the next list node clearly belongs to a later leg.
  * Does not inspect road junctions — only list order and stop positions.

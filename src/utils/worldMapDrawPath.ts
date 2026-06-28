@@ -2,7 +2,8 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
 import {
   orderedVirtualNodesForRoute,
-  shouldDeferVirtualNodeToNextLeg,
+  pickNextRoutePathTarget,
+  type RoutePathTarget,
 } from './worldMapVirtualNodes'
 import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
@@ -39,10 +40,31 @@ function appendHop(
   return { points: nextPoints, cursor: nextCursor }
 }
 
+/** Flatten the combined node + stop sequence for debugging or export. */
+export function buildRoutePathTargetQueue(
+  stops: readonly { point: WorldMapPoint }[],
+  virtualNodes: readonly WorldMapVirtualNode[],
+  routeId: string,
+): RoutePathTarget[] {
+  const orderedVNs = orderedVirtualNodesForRoute(virtualNodes, routeId)
+  const queue: RoutePathTarget[] = []
+  let vnIndex = 0
+  let stopIndex = 1
+
+  while (vnIndex < orderedVNs.length || stopIndex < stops.length) {
+    const target = pickNextRoutePathTarget(orderedVNs, vnIndex, stops, stopIndex)
+    if (!target) break
+    queue.push(target)
+    if (target.kind === 'virtual-node') vnIndex += 1
+    else stopIndex += 1
+  }
+
+  return queue
+}
+
 /**
- * Rebuild path between route-detail stops. Virtual nodes are visited strictly in list order:
- * go directly to the next node (ignore road junctions), then the next, until the leg's nodes
- * are done, then continue to the upcoming stop.
+ * Rebuild path: each step picks the next virtual node OR the next stop in the combined
+ * travel list, road-traces directly to it (ignore road junctions), then repeats.
  */
 export function rebuildDraftPathFromStops(
   stops: readonly { point: WorldMapPoint }[],
@@ -58,36 +80,26 @@ export function rebuildDraftPathFromStops(
   let points: WorldMapPoint[] = [stops[0]!.point]
   let cursor = stops[0]!.point
   let vnIndex = 0
+  let stopIndex = 1
 
-  for (let stopIndex = 1; stopIndex < stops.length; stopIndex += 1) {
-    const legEnd = stops[stopIndex]!.point
-    const nextLegEnd = stops[stopIndex + 1]?.point
+  while (vnIndex < orderedVNs.length || stopIndex < stops.length) {
+    const target = pickNextRoutePathTarget(orderedVNs, vnIndex, stops, stopIndex)
+    if (!target) break
 
-    while (vnIndex < orderedVNs.length) {
-      const node = orderedVNs[vnIndex]!
-      if (shouldDeferVirtualNodeToNextLeg(node, legEnd, nextLegEnd)) break
-
-      const constraint = toConstraint(node)
+    if (target.kind === 'virtual-node') {
+      const constraint = toConstraint(target.node)
       const via = constraint ? [constraint] : []
-      const traced = appendHop(points, cursor, node.point, via, appendSegment)
+      const traced = appendHop(points, cursor, target.node.point, via, appendSegment)
       points = traced.points
       cursor = traced.cursor
       vnIndex += 1
+      continue
     }
 
-    const traced = appendHop(points, cursor, legEnd, [], appendSegment)
+    const traced = appendHop(points, cursor, target.point, [], appendSegment)
     points = traced.points
     cursor = traced.cursor
-  }
-
-  while (vnIndex < orderedVNs.length) {
-    const node = orderedVNs[vnIndex]!
-    const constraint = toConstraint(node)
-    const via = constraint ? [constraint] : []
-    const traced = appendHop(points, cursor, node.point, via, appendSegment)
-    points = traced.points
-    cursor = traced.cursor
-    vnIndex += 1
+    stopIndex += 1
   }
 
   return points
