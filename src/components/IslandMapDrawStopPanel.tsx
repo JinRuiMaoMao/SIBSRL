@@ -5,8 +5,6 @@ import { findStopsMatchingQuery } from '../utils/routeStopLookup'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 
 interface IslandMapDrawStopPanelProps {
-  interaction: 'path' | 'stop'
-  onInteractionChange: (interaction: 'path' | 'stop') => void
   stops: readonly WorldMapDrawStop[]
   pendingStop: WorldMapDrawStopDraft | null
   onPendingQueryChange: (query: string) => void
@@ -16,8 +14,6 @@ interface IslandMapDrawStopPanelProps {
 }
 
 export function IslandMapDrawStopPanel({
-  interaction,
-  onInteractionChange,
   stops,
   pendingStop,
   onPendingQueryChange,
@@ -51,28 +47,7 @@ export function IslandMapDrawStopPanel({
 
   return (
     <div className="island-map-draw-stop-panel">
-      <div className="island-map-draw-panel-row">
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'path' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('path')}
-          aria-pressed={interaction === 'path'}
-        >
-          {t('islandMapDrawPathMode')}
-        </button>
-        <button
-          type="button"
-          className={`island-map-btn${interaction === 'stop' ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={() => onInteractionChange('stop')}
-          aria-pressed={interaction === 'stop'}
-        >
-          {t('islandMapDrawStopMode')}
-        </button>
-      </div>
-
-      {interaction === 'stop' ? (
-        <p className="island-map-draw-help">{t('islandMapDrawStopHelp')}</p>
-      ) : null}
+      <p className="island-map-draw-help">{t('islandMapDrawStopHelp')}</p>
 
       {pendingStop ? (
         <div className="island-map-draw-stop-form">

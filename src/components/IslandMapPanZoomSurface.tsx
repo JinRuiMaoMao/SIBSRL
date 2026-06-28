@@ -3,7 +3,6 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
-import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 
 export interface PanZoomState {
   x: number
@@ -33,9 +32,8 @@ interface IslandMapPanZoomSurfaceProps {
     points: readonly WorldMapPoint[]
   } | null
   drawMode?: boolean
-  drawInteraction?: IslandMapDrawInteraction
   draftPoints?: readonly WorldMapPoint[]
-  draftAnchorPoints?: readonly WorldMapPoint[]
+  draftStopPoints?: readonly WorldMapPoint[]
   draftStrokeColor?: string
   draftStops?: readonly WorldMapDrawStop[]
   pendingStopPoint?: WorldMapPoint | null
@@ -212,9 +210,8 @@ export function IslandMapPanZoomSurface({
   onViewChange,
   routeOverlay = null,
   drawMode = false,
-  drawInteraction = 'path',
   draftPoints = [],
-  draftAnchorPoints = [],
+  draftStopPoints = [],
   draftStrokeColor,
   draftStops = [],
   pendingStopPoint = null,
@@ -503,7 +500,7 @@ export function IslandMapPanZoomSurface({
   return (
     <div
       ref={viewportRef}
-      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''}${drawMode && drawInteraction === 'stop' ? ' island-map-panzoom--draw-stop' : ''} ${className}`.trim()}
+      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''} ${className}`.trim()}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
@@ -537,7 +534,7 @@ export function IslandMapPanZoomSurface({
             imageHeight={imageSize.height}
             routeNumber=""
             points={draftPoints}
-            vertexPoints={draftAnchorPoints}
+            vertexPoints={draftStopPoints}
             variant="draft"
             strokeColor={draftStrokeColor}
           />

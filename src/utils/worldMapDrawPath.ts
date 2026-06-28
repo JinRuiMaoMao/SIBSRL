@@ -28,3 +28,13 @@ export function rebuildDraftPathFromAnchors(
   }
   return points
 }
+
+export function rebuildDraftPathFromStops(
+  stops: readonly { point: WorldMapPoint }[],
+  appendSegment: (from: WorldMapPoint, to: WorldMapPoint) => WorldMapPoint[],
+): WorldMapPoint[] {
+  return rebuildDraftPathFromAnchors(
+    stops.map((stop) => stop.point),
+    appendSegment,
+  )
+}

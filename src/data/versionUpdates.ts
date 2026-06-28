@@ -188,8 +188,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Drawn paths snap to and follow SIMapGerenal roads (#ffffff), bridges (#fece7a), and tunnels (#d33682).",
           },
           {
-            zh: "绘制工具新增「添加站点」：可在地图上放置站点，支持自定义站名或匹配现有站名，导出 JSON 含 stops 字段。",
-            en: "Draw tools add “Add stops”: place stops on the map with custom names or matched stop names; exported JSON includes a stops field.",
+            zh: "绘制走线改为按站点顺序连接：每个站点即路径节点，确认站名后自动沿道路/大桥/隧道寻路。",
+            en: "Route drawing now connects stops in order—each stop is a path node, with road/bridge/tunnel tracing after you confirm the name.",
           },
         ],
       },
