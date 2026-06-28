@@ -445,7 +445,7 @@ export function IslandMapWidget() {
         return
       }
       setDrawInteraction('route')
-      setDrawStops(result.stops)
+      setDraftStops(result.stops)
       setDraftPoints(result.points)
       const fitPoints =
         result.points.length >= 2 ? result.points : result.stops.map((stop) => stop.point)
@@ -643,7 +643,7 @@ export function IslandMapWidget() {
         setDrawInteraction('route')
         setDrawRouteId(parsed.routeId)
         setDrawDirectionIndex(parsed.directionIndex)
-        setDrawStops(parsed.stops)
+        setDraftStops(parsed.stops)
         const importedVirtualNodes = parsed.virtualNodes ?? []
         setDraftVirtualNodes(importedVirtualNodes)
         const initialPoints = parsed.points.length >= 2 ? parsed.points : []
