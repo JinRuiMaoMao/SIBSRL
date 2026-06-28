@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
   buildDailyChallengeFromScheduleDay,
@@ -565,7 +565,7 @@ export function RouteLookupPage({
   const overlayRoute = detailOverlay?.kind === 'route' ? detailOverlay.route : null
   const overlayDirectionIndex = overlayRoute ? getDirectionIndex(overlayRoute) : null
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!overlayRoute || overlayDirectionIndex == null) {
       setRouteOverlay(null)
       return
@@ -702,7 +702,7 @@ export function RouteLookupPage({
     return lockPageScroll()
   }, [detailOverlay, detailClosing])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle('route-detail-open', detailChromeHidden)
     return () => {
       document.documentElement.classList.remove('route-detail-open')

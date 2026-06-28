@@ -201,6 +201,10 @@ html.route-detail-open .island-map--widget:not(.island-map--widget-route) {
   pointer-events: none;
 }
 
+html.route-detail-open .island-map--widget.island-map--widget-route {
+  z-index: 270;
+}
+
 @media (max-width: 520px) {
   .island-map--widget {
     width: min(8.5rem, 38vw);
