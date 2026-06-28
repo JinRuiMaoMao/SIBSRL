@@ -28,7 +28,7 @@ export function IslandMapRouteOverlayLayer({
     .join(' ')
   const start = points[0]
   const end = points[points.length - 1]
-  const strokeWidth = Math.max(2.5, imageWidth * 0.00045)
+  const strokeWidth = variant === 'draft' ? 1.25 : 1.75
   const draftStyle =
     strokeColor && variant === 'draft'
       ? { stroke: strokeColor, strokeWidth, vectorEffect: 'non-scaling-stroke' as const }
@@ -57,7 +57,7 @@ export function IslandMapRouteOverlayLayer({
           className="island-map-route-overlay-vertex"
           cx={x * imageWidth}
           cy={y * imageHeight}
-          r={markerRadius(imageWidth, 0.0018, 2.5)}
+          r={markerRadius(imageWidth, variant === 'draft' ? 0.0012 : 0.0018, variant === 'draft' ? 2 : 2.5)}
           style={strokeColor && variant === 'draft' ? { fill: strokeColor, stroke: 'none' } : undefined}
         />
       ))}
