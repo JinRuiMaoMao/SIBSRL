@@ -188,8 +188,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Drawn paths snap to and follow SIMapGerenal roads (#ffffff), bridges (#fece7a), and tunnels (#d33682).",
           },
           {
-            zh: "地图绘制工具新增「导入」，可从本地 JSON 恢复 world-map-stops.json 或线路走线数据。",
-            en: "Map draw tools add Import to restore world-map-stops.json or route path JSON from local files.",
+            zh: "21/21A 环线走线已根据 world-map-stops.json 站点 catalog 重新寻路生成（343 个路径点）。",
+            en: "Route 21/21A loop path regenerated from the world-map-stops.json catalog (343 path points).",
           },
         ],
       },
