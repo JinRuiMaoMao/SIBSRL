@@ -24,6 +24,34 @@ function cellIndex(gridWidth, x, y) {
   return y * gridWidth + x
 }
 
+const NEIGHBORS = [
+  [1, 0],
+  [-1, 0],
+  [0, 1],
+  [0, -1],
+  [1, 1],
+  [1, -1],
+  [-1, 1],
+  [-1, -1],
+]
+
+const PATH_DIR_COUNT = NEIGHBORS.length
+const PATH_STATE_STRIDE = PATH_DIR_COUNT + 1
+const PATH_START_DIR = PATH_DIR_COUNT
+const TURN_PENALTY = 0.35
+
+function isOppositeDir(inDx, inDy, outDx, outDy) {
+  return outDx === -inDx && outDy === -inDy
+}
+
+function neighborDirIndex(dx, dy) {
+  return NEIGHBORS.findIndex(([x, y]) => x === dx && y === dy)
+}
+
+function pathStateId(cellIndexValue, incomingDir) {
+  return cellIndexValue * PATH_STATE_STRIDE + incomingDir
+}
+
 function heuristic(ax, ay, bx, by) {
   return Math.hypot(ax - bx, ay - by)
 }
@@ -166,6 +194,22 @@ export class GeneralMapRoadSnapIndex {
     return simplifyPath(points, 0.00045)
   }
 
+  roadNeighborCount(gx, gy) {
+    let count = 0
+    for (const [dx, dy] of NEIGHBORS) {
+      const nx = gx + dx
+      const ny = gy + dy
+      if (nx < 0 || ny < 0 || nx >= this.gridWidth || ny >= this.gridHeight) continue
+      if (this.roadGrid[cellIndex(this.gridWidth, nx, ny)]) count += 1
+    }
+    return count
+  }
+
+  /** U-turn only at junctions / roundabouts (degree ≠ 2), not on straight road segments. */
+  allowsTurnaround(gx, gy) {
+    return this.roadNeighborCount(gx, gy) !== 2
+  }
+
   findNearestRoadCell(gx, gy) {
     if (this.roadGrid[cellIndex(this.gridWidth, gx, gy)]) return { gx, gy }
     const maxRadius = Math.ceil(SNAP_SEARCH_PX / ROAD_CELL_PX)
@@ -186,80 +230,84 @@ export class GeneralMapRoadSnapIndex {
   findPath(sx, sy, ex, ey) {
     if (sx === ex && sy === ey) return [{ gx: sx, gy: sy }]
 
-    const total = this.gridWidth * this.gridHeight
-    const gScore = new Float32Array(total)
-    const fScore = new Float32Array(total)
-    const cameFrom = new Int32Array(total)
-    const open = new Int8Array(total)
-    const closed = new Int8Array(total)
+    const cellCount = this.gridWidth * this.gridHeight
+    const stateCount = cellCount * PATH_STATE_STRIDE
+    const gScore = new Float32Array(stateCount)
+    const fScore = new Float32Array(stateCount)
+    const cameFrom = new Int32Array(stateCount)
+    const closed = new Uint8Array(stateCount)
     gScore.fill(Number.POSITIVE_INFINITY)
     fScore.fill(Number.POSITIVE_INFINITY)
     cameFrom.fill(-1)
 
-    const startIndex = cellIndex(this.gridWidth, sx, sy)
-    const endIndex = cellIndex(this.gridWidth, ex, ey)
-    gScore[startIndex] = 0
-    fScore[startIndex] = heuristic(sx, sy, ex, ey)
+    const startCell = cellIndex(this.gridWidth, sx, sy)
+    const endCell = cellIndex(this.gridWidth, ex, ey)
+    const startState = pathStateId(startCell, PATH_START_DIR)
+    gScore[startState] = 0
+    fScore[startState] = heuristic(sx, sy, ex, ey)
 
-    const queue = [startIndex]
-    open[startIndex] = 1
+    const queue = [startState]
     let visited = 0
-
-    const neighbors = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-      [1, 1],
-      [1, -1],
-      [-1, 1],
-      [-1, -1],
-    ]
 
     while (queue.length > 0) {
       queue.sort((a, b) => fScore[a] - fScore[b])
-      const current = queue.shift()
-      if (current === endIndex) {
-        return this.reconstructPath(cameFrom, current)
-      }
-      if (closed[current]) continue
-      closed[current] = 1
-      open[current] = 0
+      const state = queue.shift()
+      if (closed[state]) continue
+      closed[state] = 1
       visited += 1
       if (visited > PATHFIND_MAX_NODES) return null
 
-      const cx = current % this.gridWidth
-      const cy = Math.floor(current / this.gridWidth)
+      const cell = Math.floor(state / PATH_STATE_STRIDE)
+      if (cell === endCell) {
+        return this.reconstructDirectionalPath(cameFrom, state)
+      }
 
-      for (const [dx, dy] of neighbors) {
+      const incomingDir = state % PATH_STATE_STRIDE
+      const cx = cell % this.gridWidth
+      const cy = Math.floor(cell / this.gridWidth)
+
+      for (const [dx, dy] of NEIGHBORS) {
         const nx = cx + dx
         const ny = cy + dy
         if (nx < 0 || ny < 0 || nx >= this.gridWidth || ny >= this.gridHeight) continue
-        const neighbor = cellIndex(this.gridWidth, nx, ny)
-        if (!this.roadGrid[neighbor] || closed[neighbor]) continue
+        const nextCell = cellIndex(this.gridWidth, nx, ny)
+        if (!this.roadGrid[nextCell]) continue
 
-        const stepCost = dx !== 0 && dy !== 0 ? 1.414 : 1
-        const tentative = gScore[current] + stepCost
-        if (tentative >= gScore[neighbor]) continue
-
-        cameFrom[neighbor] = current
-        gScore[neighbor] = tentative
-        fScore[neighbor] = tentative + heuristic(nx, ny, ex, ey)
-        if (!open[neighbor]) {
-          open[neighbor] = 1
-          queue.push(neighbor)
+        if (incomingDir !== PATH_START_DIR) {
+          const [inDx, inDy] = NEIGHBORS[incomingDir]
+          if (!this.allowsTurnaround(cx, cy) && isOppositeDir(inDx, inDy, dx, dy)) continue
         }
+
+        const outDir = neighborDirIndex(dx, dy)
+        if (outDir < 0) continue
+
+        let stepCost = dx !== 0 && dy !== 0 ? 1.414 : 1
+        if (incomingDir !== PATH_START_DIR && incomingDir !== outDir) {
+          stepCost += TURN_PENALTY
+        }
+
+        const nextState = pathStateId(nextCell, outDir)
+        if (closed[nextState]) continue
+
+        const tentative = gScore[state] + stepCost
+        if (tentative >= gScore[nextState]) continue
+
+        cameFrom[nextState] = state
+        gScore[nextState] = tentative
+        fScore[nextState] = tentative + heuristic(nx, ny, ex, ey)
+        queue.push(nextState)
       }
     }
 
     return null
   }
 
-  reconstructPath(cameFrom, current) {
+  reconstructDirectionalPath(cameFrom, state) {
     const path = []
-    let cursor = current
+    let cursor = state
     while (cursor >= 0) {
-      path.push({ gx: cursor % this.gridWidth, gy: Math.floor(cursor / this.gridWidth) })
+      const cell = Math.floor(cursor / PATH_STATE_STRIDE)
+      path.push({ gx: cell % this.gridWidth, gy: Math.floor(cell / this.gridWidth) })
       cursor = cameFrom[cursor]
     }
     path.reverse()

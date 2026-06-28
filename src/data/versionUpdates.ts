@@ -191,6 +191,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "21/21A 环线走线已根据 world-map-stops.json 站点 catalog 重新寻路生成（343 个路径点）。",
             en: "Route 21/21A loop path regenerated from the world-map-stops.json catalog (343 path points).",
           },
+          {
+            zh: "道路寻路禁止在直路中间直接掉头，只能在环岛或路口（连接数≠2）处折返，并优先顺路方向。",
+            en: "Road pathfinding no longer allows mid-segment U-turns—turnarounds must use roundabouts or junctions (degree ≠ 2), following road direction.",
+          },
         ],
       },
       {

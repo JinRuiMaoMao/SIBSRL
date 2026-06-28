@@ -79,11 +79,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.441,
-            0.829
+            0.831
           ],
           [
             0.443,
-            0.829
+            0.831
           ],
           [
             0.445,
@@ -103,11 +103,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.443,
-            0.829
+            0.831
           ],
           [
             0.441,
-            0.829
+            0.831
           ],
           [
             0.439,
@@ -142,11 +142,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
             0.821
           ],
           [
-            0.431,
+            0.429,
             0.819
           ],
           [
-            0.431,
+            0.429,
             0.817
           ],
           [
@@ -158,7 +158,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
             0.813
           ],
           [
-            0.427,
+            0.429,
             0.811
           ],
           [
@@ -211,59 +211,59 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.405,
-            0.795
+            0.793
           ],
           [
             0.403,
-            0.793
+            0.791
           ],
           [
             0.401,
-            0.793
+            0.791
           ],
           [
             0.399,
-            0.793
+            0.791
           ],
           [
             0.397,
-            0.793
+            0.791
           ],
           [
             0.395,
-            0.793
+            0.791
           ],
           [
             0.393,
-            0.793
+            0.791
           ],
           [
             0.391,
-            0.793
+            0.791
           ],
           [
             0.389,
-            0.793
+            0.791
           ],
           [
             0.387,
-            0.793
+            0.791
           ],
           [
             0.385,
-            0.793
+            0.791
           ],
           [
             0.383,
-            0.793
+            0.791
           ],
           [
             0.381,
-            0.793
+            0.791
           ],
           [
             0.379,
-            0.793
+            0.791
           ],
           [
             0.377,
@@ -295,19 +295,19 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.365,
-            0.785
+            0.783
           ],
           [
             0.363,
-            0.785
+            0.783
           ],
           [
             0.361,
-            0.785
+            0.783
           ],
           [
             0.359,
-            0.785
+            0.783
           ],
           [
             0.357,
@@ -419,23 +419,23 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.401,
-            0.771
+            0.773
           ],
           [
             0.403,
-            0.769
+            0.771
           ],
           [
             0.405,
-            0.767
+            0.769
           ],
           [
             0.407,
-            0.765
+            0.767
           ],
           [
             0.409,
-            0.763
+            0.765
           ],
           [
             0.411,
@@ -451,23 +451,23 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.417,
-            0.759
+            0.757
           ],
           [
             0.419,
-            0.757
+            0.755
           ],
           [
             0.421,
-            0.757
+            0.753
           ],
           [
             0.423,
-            0.755
+            0.753
           ],
           [
             0.425,
-            0.755
+            0.753
           ],
           [
             0.427,
@@ -523,7 +523,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.447,
-            0.763
+            0.765
           ],
           [
             0.449,
@@ -555,19 +555,19 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.461,
-            0.769
-          ],
-          [
-            0.463,
             0.771
           ],
           [
-            0.465,
+            0.463,
             0.773
           ],
           [
+            0.465,
+            0.775
+          ],
+          [
             0.467,
-            0.773
+            0.775
           ],
           [
             0.469,
@@ -579,11 +579,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.473,
-            0.777
+            0.775
           ],
           [
             0.475,
-            0.777
+            0.775
           ],
           [
             0.477,
@@ -699,7 +699,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.531,
-            0.785
+            0.783
           ],
           [
             0.533,
@@ -723,7 +723,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.541,
-            0.789
+            0.791
           ],
           [
             0.543,
@@ -799,23 +799,23 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.549,
-            0.811
+            0.813
           ],
           [
             0.547,
-            0.809
+            0.811
           ],
           [
             0.545,
-            0.807
+            0.809
           ],
           [
             0.543,
-            0.805
+            0.807
           ],
           [
             0.541,
-            0.803
+            0.805
           ],
           [
             0.54,
@@ -843,7 +843,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.529,
-            0.799
+            0.797
           ],
           [
             0.527,
@@ -999,7 +999,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.459,
-            0.773
+            0.775
           ],
           [
             0.458,
@@ -1019,11 +1019,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.455,
-            0.769
+            0.767
           ],
           [
             0.453,
-            0.767
+            0.765
           ],
           [
             0.451,
@@ -1031,11 +1031,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.449,
-            0.763
+            0.765
           ],
           [
             0.447,
-            0.763
+            0.765
           ],
           [
             0.445,
@@ -1059,19 +1059,19 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.439,
-            0.755
+            0.753
           ],
           [
             0.437,
-            0.755
+            0.753
           ],
           [
             0.435,
-            0.755
+            0.753
           ],
           [
             0.433,
-            0.755
+            0.753
           ],
           [
             0.431,
@@ -1099,31 +1099,31 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.421,
-            0.755
+            0.753
           ],
           [
             0.419,
-            0.757
+            0.755
           ],
           [
             0.417,
-            0.759
+            0.757
           ],
           [
             0.415,
-            0.761
+            0.759
           ],
           [
             0.413,
-            0.763
+            0.761
           ],
           [
             0.411,
-            0.765
+            0.763
           ],
           [
             0.409,
-            0.767
+            0.765
           ],
           [
             0.407,
@@ -1183,23 +1183,23 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.393,
-            0.791
+            0.793
           ],
           [
             0.395,
-            0.791
+            0.793
           ],
           [
             0.397,
-            0.791
+            0.793
           ],
           [
             0.399,
-            0.791
+            0.793
           ],
           [
             0.401,
-            0.791
+            0.793
           ],
           [
             0.403,
@@ -1211,7 +1211,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.407,
-            0.795
+            0.793
           ],
           [
             0.409,
@@ -1270,15 +1270,15 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
             0.815
           ],
           [
-            0.431,
+            0.429,
             0.817
           ],
           [
-            0.431,
+            0.429,
             0.819
           ],
           [
-            0.431,
+            0.429,
             0.821
           ],
           [
@@ -1290,7 +1290,7 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
             0.825
           ],
           [
-            0.433,
+            0.431,
             0.827
           ],
           [
@@ -1311,11 +1311,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.441,
-            0.829
+            0.831
           ],
           [
             0.443,
-            0.829
+            0.831
           ],
           [
             0.445,
@@ -1335,11 +1335,11 @@ export const WORLD_MAP_ROUTE_PATHS: Record<string, WorldMapRoutePaths> = {
           ],
           [
             0.443,
-            0.829
+            0.831
           ],
           [
             0.441,
-            0.829
+            0.831
           ],
           [
             0.439,
