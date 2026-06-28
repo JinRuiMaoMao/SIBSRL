@@ -23,7 +23,7 @@ export function buildWorldMapVirtualNodeCatalogPayload(
   return {
     kind: 'world-map-virtual-node-catalog',
     note:
-      'Virtual path nodes on SIMapGerenal (normalized 0–1). Routes must pass through matching routeId nodes and follow kind: straight ↑, left ←, right →.',
+      'Virtual path nodes on SIMapGerenal (north-up, normalized 0–1). Direction: ↑ straight north, ← left, → right. Surface: on-bridge/off-bridge/enter-tunnel/exit-tunnel snap to nearest bridge, road, or tunnel.',
     nodes: nodes.map((node) => ({
       routeId: canonicalVirtualNodeRouteId(node.routeId),
       kind: node.kind,

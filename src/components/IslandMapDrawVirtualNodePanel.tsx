@@ -5,9 +5,12 @@ import type {
   WorldMapVirtualNodeDraft,
   WorldMapVirtualNodeKind,
 } from '../types/worldMapDraw'
-import { virtualNodeKindLabel, virtualNodeKindSymbol } from './IslandMapVirtualNodeOverlayLayer'
-
-const VIRTUAL_NODE_KINDS: WorldMapVirtualNodeKind[] = ['straight', 'left', 'right']
+import {
+  DIRECTION_VIRTUAL_NODE_KINDS,
+  SURFACE_VIRTUAL_NODE_KINDS,
+  virtualNodeKindLabel,
+  virtualNodeKindSymbol,
+} from './IslandMapVirtualNodeOverlayLayer'
 
 interface IslandMapDrawVirtualNodePanelProps {
   interaction: IslandMapDrawInteraction
@@ -19,6 +22,35 @@ interface IslandMapDrawVirtualNodePanelProps {
   onConfirmPendingNode: () => void
   onCancelPendingNode: () => void
   onRemoveNode: (id: string) => void
+}
+
+function KindButtons({
+  kinds,
+  activeKind,
+  locale,
+  onSelect,
+}: {
+  kinds: readonly WorldMapVirtualNodeKind[]
+  activeKind: WorldMapVirtualNodeKind
+  locale: string
+  onSelect: (kind: WorldMapVirtualNodeKind) => void
+}) {
+  return (
+    <div className="island-map-draw-panel-row island-map-draw-virtual-kinds">
+      {kinds.map((kind) => (
+        <button
+          key={kind}
+          type="button"
+          className={`island-map-btn island-map-draw-virtual-kind${activeKind === kind ? ' island-map-btn--active' : ''}`.trim()}
+          onClick={() => onSelect(kind)}
+          title={virtualNodeKindLabel(kind, locale)}
+        >
+          <span className="island-map-draw-virtual-kind-symbol">{virtualNodeKindSymbol(kind)}</span>
+          <span>{virtualNodeKindLabel(kind, locale)}</span>
+        </button>
+      ))}
+    </div>
+  )
 }
 
 export function IslandMapDrawVirtualNodePanel({
@@ -78,21 +110,22 @@ export function IslandMapDrawVirtualNodePanel({
             />
           </label>
           <div className="island-map-draw-field">
-            <span>{t('islandMapDrawVirtualKind')}</span>
-            <div className="island-map-draw-panel-row island-map-draw-virtual-kinds">
-              {VIRTUAL_NODE_KINDS.map((kind) => (
-                <button
-                  key={kind}
-                  type="button"
-                  className={`island-map-btn island-map-draw-virtual-kind${pendingNode.kind === kind ? ' island-map-btn--active' : ''}`.trim()}
-                  onClick={() => onPendingKindChange(kind)}
-                  title={virtualNodeKindLabel(kind, locale)}
-                >
-                  <span className="island-map-draw-virtual-kind-symbol">{virtualNodeKindSymbol(kind)}</span>
-                  <span>{virtualNodeKindLabel(kind, locale)}</span>
-                </button>
-              ))}
-            </div>
+            <span>{t('islandMapDrawVirtualDirectionKind')}</span>
+            <KindButtons
+              kinds={DIRECTION_VIRTUAL_NODE_KINDS}
+              activeKind={pendingNode.kind}
+              locale={locale}
+              onSelect={onPendingKindChange}
+            />
+          </div>
+          <div className="island-map-draw-field">
+            <span>{t('islandMapDrawVirtualSurfaceKind')}</span>
+            <KindButtons
+              kinds={SURFACE_VIRTUAL_NODE_KINDS}
+              activeKind={pendingNode.kind}
+              locale={locale}
+              onSelect={onPendingKindChange}
+            />
           </div>
           <div className="island-map-draw-panel-row">
             <button

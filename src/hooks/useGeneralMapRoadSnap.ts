@@ -34,6 +34,9 @@ export function useGeneralMapRoadSnap(enabled: boolean) {
       snap(point: WorldMapPoint): WorldMapPoint {
         return snapPointToGeneralMapRoad(index, point)
       },
+      snapVirtualNode(point: WorldMapPoint, kind: VirtualNodePathConstraint['kind']): WorldMapPoint {
+        return index?.snapVirtualNode(point, kind) ?? point
+      },
       toVirtualNodeConstraint(
         point: WorldMapPoint,
         kind: VirtualNodePathConstraint['kind'],

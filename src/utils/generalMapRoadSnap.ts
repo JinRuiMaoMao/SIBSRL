@@ -1,4 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { WorldMapVirtualNodeKind } from '../types/worldMapDraw'
+import { MAP_NORTH_DIR } from './mapSurfaceKind'
 
 const GENERAL_MAP_URL = './maps/SIMapGerenal.png'
 const ROAD_CELL_PX = 8
@@ -14,6 +16,10 @@ const ROUTE_COLORS = [
   { r: 211, g: 54, b: 130, tolerance: 38 }, // 隧道 #d33682
 ] as const
 
+const PLAIN_ROAD = ROUTE_COLORS[0]!
+const BRIDGE_SURFACE = ROUTE_COLORS[1]!
+const TUNNEL_SURFACE = ROUTE_COLORS[2]!
+
 function colorDistance(r: number, g: number, b: number, target: (typeof ROUTE_COLORS)[number]): number {
   return Math.hypot(r - target.r, g - target.g, b - target.b)
 }
@@ -21,6 +27,29 @@ function colorDistance(r: number, g: number, b: number, target: (typeof ROUTE_CO
 function isRoutePixel(r: number, g: number, b: number, a: number): boolean {
   if (a < 180) return false
   return ROUTE_COLORS.some((color) => colorDistance(r, g, b, color) <= color.tolerance)
+}
+
+function matchesSurface(
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+  target: (typeof ROUTE_COLORS)[number],
+): boolean {
+  if (a < 180) return false
+  return colorDistance(r, g, b, target) <= target.tolerance
+}
+
+function isPlainRoadPixel(r: number, g: number, b: number, a: number): boolean {
+  return matchesSurface(r, g, b, a, PLAIN_ROAD)
+}
+
+function isBridgePixel(r: number, g: number, b: number, a: number): boolean {
+  return matchesSurface(r, g, b, a, BRIDGE_SURFACE)
+}
+
+function isTunnelPixel(r: number, g: number, b: number, a: number): boolean {
+  return matchesSurface(r, g, b, a, TUNNEL_SURFACE)
 }
 
 function loadImage(url: string): Promise<HTMLImageElement> {
@@ -69,7 +98,7 @@ function heuristic(ax: number, ay: number, bx: number, by: number): number {
   return Math.hypot(ax - bx, ay - by)
 }
 
-export type VirtualNodeKind = 'straight' | 'left' | 'right'
+export type VirtualNodeKind = WorldMapVirtualNodeKind
 
 export interface VirtualNodePathConstraint {
   gx: number
@@ -88,9 +117,10 @@ function turnRightDir(inDir: number): number {
 }
 
 export function exitDirForKind(incomingDir: number, kind: VirtualNodeKind): number {
-  if (kind === 'straight') return incomingDir
+  if (kind === 'straight') return MAP_NORTH_DIR
   if (kind === 'left') return turnLeftDir(incomingDir)
-  return turnRightDir(incomingDir)
+  if (kind === 'right') return turnRightDir(incomingDir)
+  return incomingDir
 }
 
 export function satisfiesVirtualNodeTransition(
@@ -112,6 +142,9 @@ class GeneralMapRoadSnapIndex {
   readonly gridWidth: number
   readonly gridHeight: number
   readonly roadGrid: Uint8Array
+  readonly plainRoadGrid: Uint8Array
+  readonly bridgeGrid: Uint8Array
+  readonly tunnelGrid: Uint8Array
   readonly imageData: Uint8ClampedArray
 
   constructor(width: number, height: number, imageData: Uint8ClampedArray) {
@@ -121,12 +154,20 @@ class GeneralMapRoadSnapIndex {
     this.gridHeight = Math.ceil(height / ROAD_CELL_PX)
     this.imageData = imageData
     this.roadGrid = new Uint8Array(this.gridWidth * this.gridHeight)
+    this.plainRoadGrid = new Uint8Array(this.gridWidth * this.gridHeight)
+    this.bridgeGrid = new Uint8Array(this.gridWidth * this.gridHeight)
+    this.tunnelGrid = new Uint8Array(this.gridWidth * this.gridHeight)
 
     for (let gy = 0; gy < this.gridHeight; gy += 1) {
       for (let gx = 0; gx < this.gridWidth; gx += 1) {
-        if (this.cellHasRoad(gx, gy)) {
-          this.roadGrid[cellIndex(this.gridWidth, gx, gy)] = 1
-        }
+        const idx = cellIndex(this.gridWidth, gx, gy)
+        const plain = this.cellHasPlainRoad(gx, gy)
+        const bridge = this.cellHasBridge(gx, gy)
+        const tunnel = this.cellHasTunnel(gx, gy)
+        if (plain) this.plainRoadGrid[idx] = 1
+        if (bridge) this.bridgeGrid[idx] = 1
+        if (tunnel) this.tunnelGrid[idx] = 1
+        if (plain || bridge || tunnel) this.roadGrid[idx] = 1
       }
     }
   }
@@ -147,17 +188,77 @@ class GeneralMapRoadSnapIndex {
     )
   }
 
-  private cellHasRoad(gx: number, gy: number): boolean {
+  private readPixel(x: number, y: number): [number, number, number, number] {
+    const offset = this.pixelOffset(x, y)
+    return [
+      this.imageData[offset]!,
+      this.imageData[offset + 1]!,
+      this.imageData[offset + 2]!,
+      this.imageData[offset + 3]!,
+    ]
+  }
+
+  private isPlainRoadAtPixel(x: number, y: number): boolean {
+    const [r, g, b, a] = this.readPixel(x, y)
+    return isPlainRoadPixel(r, g, b, a)
+  }
+
+  private isBridgeAtPixel(x: number, y: number): boolean {
+    const [r, g, b, a] = this.readPixel(x, y)
+    return isBridgePixel(r, g, b, a)
+  }
+
+  private isTunnelAtPixel(x: number, y: number): boolean {
+    const [r, g, b, a] = this.readPixel(x, y)
+    return isTunnelPixel(r, g, b, a)
+  }
+
+  private cellHasSurface(
+    gx: number,
+    gy: number,
+    probe: (x: number, y: number) => boolean,
+  ): boolean {
     const startX = gx * ROAD_CELL_PX
     const startY = gy * ROAD_CELL_PX
     const endX = Math.min(this.width, startX + ROAD_CELL_PX)
     const endY = Math.min(this.height, startY + ROAD_CELL_PX)
     for (let y = startY; y < endY; y += 2) {
       for (let x = startX; x < endX; x += 2) {
-        if (this.isRoadAtPixel(x, y)) return true
+        if (probe(x, y)) return true
       }
     }
     return false
+  }
+
+  private cellHasRoad(gx: number, gy: number): boolean {
+    return this.cellHasSurface(gx, gy, (x, y) => this.isRoadAtPixel(x, y))
+  }
+
+  private cellHasPlainRoad(gx: number, gy: number): boolean {
+    return this.cellHasSurface(gx, gy, (x, y) => this.isPlainRoadAtPixel(x, y))
+  }
+
+  private cellHasBridge(gx: number, gy: number): boolean {
+    return this.cellHasSurface(gx, gy, (x, y) => this.isBridgeAtPixel(x, y))
+  }
+
+  private cellHasTunnel(gx: number, gy: number): boolean {
+    return this.cellHasSurface(gx, gy, (x, y) => this.isTunnelAtPixel(x, y))
+  }
+
+  isPlainRoadCell(gx: number, gy: number): boolean {
+    if (gx < 0 || gy < 0 || gx >= this.gridWidth || gy >= this.gridHeight) return false
+    return this.plainRoadGrid[cellIndex(this.gridWidth, gx, gy)] === 1
+  }
+
+  isBridgeCell(gx: number, gy: number): boolean {
+    if (gx < 0 || gy < 0 || gx >= this.gridWidth || gy >= this.gridHeight) return false
+    return this.bridgeGrid[cellIndex(this.gridWidth, gx, gy)] === 1
+  }
+
+  isTunnelCell(gx: number, gy: number): boolean {
+    if (gx < 0 || gy < 0 || gx >= this.gridWidth || gy >= this.gridHeight) return false
+    return this.tunnelGrid[cellIndex(this.gridWidth, gx, gy)] === 1
   }
 
   private toGridPoint(point: WorldMapPoint): { gx: number; gy: number; px: number; py: number } {
@@ -207,6 +308,118 @@ class GeneralMapRoadSnapIndex {
     }
 
     return this.toNormalized(bestX, bestY)
+  }
+
+  snapVirtualNode(point: WorldMapPoint, kind: VirtualNodeKind): WorldMapPoint {
+    const { px, py, gx, gy } = this.toGridPoint(point)
+    let cell: { gx: number; gy: number } | null = null
+
+    switch (kind) {
+      case 'on-bridge':
+        cell = this.findNearestSurfaceCell(gx, gy, (x, y) => this.bridgeGrid[y * this.gridWidth + x] === 1)
+        break
+      case 'off-bridge':
+        cell = this.findNearestSurfaceCell(gx, gy, (x, y) => this.plainRoadGrid[y * this.gridWidth + x] === 1)
+        break
+      case 'enter-tunnel':
+        cell = this.findNearestSurfaceCell(gx, gy, (x, y) => this.tunnelGrid[y * this.gridWidth + x] === 1)
+        break
+      case 'exit-tunnel':
+        cell = this.findNearestSurfaceCell(gx, gy, (x, y) => this.plainRoadGrid[y * this.gridWidth + x] === 1)
+        break
+      default:
+        cell = this.findNearestRoadCell(gx, gy)
+        break
+    }
+
+    if (!cell) return this.snap(point)
+    const snapPx = cell.gx * ROAD_CELL_PX + ROAD_CELL_PX / 2
+    const snapPy = cell.gy * ROAD_CELL_PX + ROAD_CELL_PX / 2
+    return this.toNormalized(snapPx, snapPy)
+  }
+
+  private findNearestSurfaceCell(
+    gx: number,
+    gy: number,
+    matches: (gx: number, gy: number) => boolean,
+  ): { gx: number; gy: number } | null {
+    if (matches(gx, gy)) return { gx, gy }
+    const maxRadius = Math.ceil(SNAP_SEARCH_PX / ROAD_CELL_PX)
+    for (let radius = 1; radius <= maxRadius; radius += 1) {
+      for (let dx = -radius; dx <= radius; dx += 1) {
+        for (let dy = -radius; dy <= radius; dy += 1) {
+          if (Math.abs(dx) !== radius && Math.abs(dy) !== radius) continue
+          const nx = gx + dx
+          const ny = gy + dy
+          if (nx < 0 || ny < 0 || nx >= this.gridWidth || ny >= this.gridHeight) continue
+          if (matches(nx, ny)) return { gx: nx, gy: ny }
+        }
+      }
+    }
+    return null
+  }
+
+  private getValidExitDirs(gx: number, gy: number, incomingDir: number, kind: VirtualNodeKind): number[] {
+    if (incomingDir === PATH_START_DIR) return []
+    const exits: number[] = []
+    for (let outDir = 0; outDir < PATH_DIR_COUNT; outDir += 1) {
+      if (this.isValidVirtualTransition(gx, gy, incomingDir, outDir, kind)) exits.push(outDir)
+    }
+    return exits
+  }
+
+  private isValidVirtualTransition(
+    gx: number,
+    gy: number,
+    incomingDir: number,
+    outDir: number,
+    kind: VirtualNodeKind,
+  ): boolean {
+    const [inDx, inDy] = NEIGHBORS[incomingDir]!
+    const [outDx, outDy] = NEIGHBORS[outDir]!
+    const prevGx = gx - inDx
+    const prevGy = gy - inDy
+    const nextGx = gx + outDx
+    const nextGy = gy + outDy
+    if (prevGx < 0 || prevGy < 0 || prevGx >= this.gridWidth || prevGy >= this.gridHeight) return false
+    if (nextGx < 0 || nextGy < 0 || nextGx >= this.gridWidth || nextGy >= this.gridHeight) return false
+    if (!this.roadGrid[cellIndex(this.gridWidth, prevGx, prevGy)]) return false
+    if (!this.roadGrid[cellIndex(this.gridWidth, nextGx, nextGy)]) return false
+
+    switch (kind) {
+      case 'straight':
+        return outDir === MAP_NORTH_DIR
+      case 'left':
+        return outDir === turnLeftDir(incomingDir)
+      case 'right':
+        return outDir === turnRightDir(incomingDir)
+      case 'on-bridge':
+        return (
+          this.isPlainRoadCell(prevGx, prevGy) &&
+          this.isBridgeCell(gx, gy) &&
+          this.isBridgeCell(nextGx, nextGy)
+        )
+      case 'off-bridge':
+        return (
+          this.isBridgeCell(prevGx, prevGy) &&
+          this.isPlainRoadCell(gx, gy) &&
+          this.isPlainRoadCell(nextGx, nextGy)
+        )
+      case 'enter-tunnel':
+        return (
+          this.isPlainRoadCell(prevGx, prevGy) &&
+          this.isTunnelCell(gx, gy) &&
+          this.isTunnelCell(nextGx, nextGy)
+        )
+      case 'exit-tunnel':
+        return (
+          this.isTunnelCell(prevGx, prevGy) &&
+          this.isPlainRoadCell(gx, gy) &&
+          this.isPlainRoadCell(nextGx, nextGy)
+        )
+      default:
+        return false
+    }
   }
 
   trace(from: WorldMapPoint, to: WorldMapPoint, via: VirtualNodePathConstraint[] = []): WorldMapPoint[] {
@@ -281,30 +494,38 @@ class GeneralMapRoadSnapIndex {
   }
 
   toVirtualNodeConstraint(point: WorldMapPoint, kind: VirtualNodeKind): VirtualNodePathConstraint | null {
-    const { gx, gy } = this.toGridPoint(point)
-    const cell = this.findNearestRoadCell(gx, gy)
+    const snapped = this.snapVirtualNode(point, kind)
+    const { gx, gy } = this.toGridPoint(snapped)
+    const cell = this.resolveConstraintCell(gx, gy, kind)
     if (!cell) return null
     return { gx: cell.gx, gy: cell.gy, kind }
+  }
+
+  private resolveConstraintCell(
+    gx: number,
+    gy: number,
+    kind: VirtualNodeKind,
+  ): { gx: number; gy: number } | null {
+    switch (kind) {
+      case 'on-bridge':
+        return this.findNearestSurfaceCell(gx, gy, (x, y) => this.isBridgeCell(x, y))
+      case 'off-bridge':
+      case 'exit-tunnel':
+        return this.findNearestSurfaceCell(gx, gy, (x, y) => this.isPlainRoadCell(x, y))
+      case 'enter-tunnel':
+        return this.findNearestSurfaceCell(gx, gy, (x, y) => this.isTunnelCell(x, y))
+      default:
+        return this.findNearestRoadCell(gx, gy)
+    }
   }
 
   private collectStatesAtCell(constraint: VirtualNodePathConstraint): number[] {
     const cell = cellIndex(this.gridWidth, constraint.gx, constraint.gy)
     const states: number[] = []
     for (let incomingDir = 0; incomingDir < PATH_DIR_COUNT; incomingDir += 1) {
-      const [inDx, inDy] = NEIGHBORS[incomingDir]!
-      const prevGx = constraint.gx - inDx
-      const prevGy = constraint.gy - inDy
-      if (prevGx < 0 || prevGy < 0 || prevGx >= this.gridWidth || prevGy >= this.gridHeight) continue
-      if (!this.roadGrid[cellIndex(this.gridWidth, prevGx, prevGy)]) continue
-
-      const exitDir = exitDirForKind(incomingDir, constraint.kind)
-      if (exitDir < 0) continue
-      const [ex, ey] = NEIGHBORS[exitDir]!
-      const nx = constraint.gx + ex
-      const ny = constraint.gy + ey
-      if (nx < 0 || ny < 0 || nx >= this.gridWidth || ny >= this.gridHeight) continue
-      if (!this.roadGrid[cellIndex(this.gridWidth, nx, ny)]) continue
-
+      if (this.getValidExitDirs(constraint.gx, constraint.gy, incomingDir, constraint.kind).length === 0) {
+        continue
+      }
       states.push(pathStateId(cell, incomingDir))
     }
     return states
@@ -434,7 +655,7 @@ class GeneralMapRoadSnapIndex {
         if (
           options.startViaKind &&
           startStateSet?.has(state) &&
-          outDir !== exitDirForKind(incomingDir, options.startViaKind)
+          !this.getValidExitDirs(cx, cy, incomingDir, options.startViaKind).includes(outDir)
         ) {
           continue
         }

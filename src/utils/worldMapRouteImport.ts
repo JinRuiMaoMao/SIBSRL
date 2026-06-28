@@ -66,6 +66,10 @@ function readVirtualNodeKind(value: unknown): WorldMapVirtualNodeKind | null {
   if (value === 'straight') return 'straight'
   if (value === 'left' || value === 'turn') return 'left'
   if (value === 'right' || value === 'u-turn') return 'right'
+  if (value === 'on-bridge' || value === '上桥') return 'on-bridge'
+  if (value === 'off-bridge' || value === '下桥') return 'off-bridge'
+  if (value === 'enter-tunnel' || value === '进隧道' || value === '进隧') return 'enter-tunnel'
+  if (value === 'exit-tunnel' || value === '出隧道' || value === '出隧') return 'exit-tunnel'
   return null
 }
 

@@ -250,9 +250,8 @@ export function IslandMapWidget() {
     (point: WorldMapPoint) => {
       if (drawInteraction === 'virtual') {
         if (pendingVirtualNode) return
-        const snapped = roadSnap.snap(point)
         setPendingVirtualNode({
-          point: snapped,
+          point: roadSnap.snapVirtualNode(point, 'straight'),
           routeId: drawRouteId.trim() || '21A',
           kind: 'straight',
         })
@@ -643,7 +642,11 @@ export function IslandMapWidget() {
             setPendingVirtualNode((current) => (current ? { ...current, routeId } : current))
           }
           onPendingKindChange={(kind) =>
-            setPendingVirtualNode((current) => (current ? { ...current, kind } : current))
+            setPendingVirtualNode((current) =>
+              current
+                ? { ...current, kind, point: roadSnap.snapVirtualNode(current.point, kind) }
+                : current,
+            )
           }
           onConfirmPendingNode={handleConfirmPendingVirtualNode}
           onCancelPendingNode={() => setPendingVirtualNode(null)}

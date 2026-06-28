@@ -545,6 +545,26 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   stroke: color-mix(in srgb, #ff7a7a 75%, transparent);
 }
 
+.island-map-virtual-node-overlay-item--on-bridge .island-map-virtual-node-overlay-marker {
+  stroke: color-mix(in srgb, #fece7a 85%, transparent);
+}
+
+.island-map-virtual-node-overlay-item--off-bridge .island-map-virtual-node-overlay-marker {
+  stroke: color-mix(in srgb, #ffffff 55%, #fece7a 45%);
+}
+
+.island-map-virtual-node-overlay-item--enter-tunnel .island-map-virtual-node-overlay-marker {
+  stroke: color-mix(in srgb, #d33682 85%, transparent);
+}
+
+.island-map-virtual-node-overlay-item--exit-tunnel .island-map-virtual-node-overlay-marker {
+  stroke: color-mix(in srgb, #ffffff 55%, #d33682 45%);
+}
+
+.island-map-virtual-node-overlay-symbol--surface {
+  font-weight: 700;
+}
+
 .island-map-virtual-node-overlay-label {
   fill: var(--text, #f2f2f2);
   stroke: color-mix(in srgb, var(--bg-deep, #0c1222) 82%, transparent);
