@@ -6,11 +6,8 @@ import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useGeneralMapRoadSnap } from '../hooks/useGeneralMapRoadSnap'
 import { useLocale } from '../i18n/LocaleContext'
 import {
-  buildWorldMapCatalogStopsExportPayload,
   buildWorldMapRouteExportPayload,
-  copyWorldMapCatalogStopsJson,
   copyWorldMapRouteJson,
-  downloadWorldMapCatalogStopsJson,
   downloadWorldMapRouteJson,
   resolveWorldMapExportRouteId,
 } from '../utils/worldMapRouteExport'
@@ -378,18 +375,6 @@ export function IslandMapWidget() {
   )
 
   const handleExport = useCallback(async () => {
-    if (drawInteraction === 'catalog') {
-      const payload = buildWorldMapCatalogStopsExportPayload(draftStops)
-      if (!payload) {
-        showExportHint(t('islandMapDrawExportNeedCatalogStops'))
-        return
-      }
-      downloadWorldMapCatalogStopsJson(payload)
-      const copied = await copyWorldMapCatalogStopsJson(payload)
-      showExportHint(copied ? t('islandMapDrawExportCatalogDone') : t('islandMapDrawExportCatalogDownloaded'))
-      return
-    }
-
     const resolvedRouteId = resolveWorldMapExportRouteId(
       drawRouteId,
       draftVirtualNodes,
@@ -421,7 +406,6 @@ export function IslandMapWidget() {
     const copied = await copyWorldMapRouteJson(payload)
     showExportHint(copied ? t('islandMapDrawExportRouteDone') : t('islandMapDrawExportRouteDownloaded'))
   }, [
-    drawInteraction,
     drawRouteId,
     draftPoints,
     draftStops,
@@ -516,10 +500,7 @@ export function IslandMapWidget() {
   const surfaceRouteOverlay = routeOverlay
     ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
     : null
-  const canExport =
-    drawInteraction === 'catalog'
-      ? buildWorldMapCatalogStopsExportPayload(draftStops) != null
-      : exportRoutePayload() != null
+  const canExport = exportRoutePayload() != null
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
   const draftRouteNumber = drawRouteId.trim()
@@ -621,11 +602,7 @@ export function IslandMapWidget() {
           className="island-map-btn island-map-btn--export"
           onClick={() => void handleExport()}
           disabled={!canExport}
-          title={
-            drawInteraction === 'catalog'
-              ? t('islandMapDrawExportCatalogHint')
-              : t('islandMapDrawExportRouteHint')
-          }
+          title={t('islandMapDrawExportRouteHint')}
         >
           {t('islandMapDrawExport')}
         </button>
@@ -634,41 +611,33 @@ export function IslandMapWidget() {
         interaction={drawInteraction}
         onInteractionChange={handleInteractionChange}
       />
-      {drawInteraction === 'route' || drawInteraction === 'virtual' ? (
-        <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
-          <label className="island-map-draw-field">
-            <span>{t('islandMapDrawRouteId')}</span>
-            <input
-              value={drawRouteId}
-              onChange={(event) => setDrawRouteId(event.target.value.trim())}
-              placeholder={resolveWorldMapRouteId('21A') ?? '21'}
-              spellCheck={false}
-            />
-          </label>
-          <label className="island-map-draw-field island-map-draw-field--direction">
-            <span>{t('islandMapDrawDirection')}</span>
-            <input
-              type="number"
-              min={0}
-              max={9}
-              value={drawDirectionIndex}
-              onChange={(event) => setDrawDirectionIndex(Number(event.target.value) || 0)}
-            />
-          </label>
-          <span className="island-map-draw-count">
-            {t('islandMapDrawStopCount', { count: draftStops.length })}
-          </span>
-          <span className="island-map-draw-count">
-            {t('islandMapDrawVirtualCount', { count: draftVirtualNodes.length })}
-          </span>
-        </div>
-      ) : (
-        <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
-          <span className="island-map-draw-count">
-            {t('islandMapDrawStopCount', { count: draftStops.length })}
-          </span>
-        </div>
-      )}
+      <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
+        <label className="island-map-draw-field">
+          <span>{t('islandMapDrawRouteId')}</span>
+          <input
+            value={drawRouteId}
+            onChange={(event) => setDrawRouteId(event.target.value.trim())}
+            placeholder={resolveWorldMapRouteId('21A') ?? '21'}
+            spellCheck={false}
+          />
+        </label>
+        <label className="island-map-draw-field island-map-draw-field--direction">
+          <span>{t('islandMapDrawDirection')}</span>
+          <input
+            type="number"
+            min={0}
+            max={9}
+            value={drawDirectionIndex}
+            onChange={(event) => setDrawDirectionIndex(Number(event.target.value) || 0)}
+          />
+        </label>
+        <span className="island-map-draw-count">
+          {t('islandMapDrawStopCount', { count: draftStops.length })}
+        </span>
+        <span className="island-map-draw-count">
+          {t('islandMapDrawVirtualCount', { count: draftVirtualNodes.length })}
+        </span>
+      </div>
       {drawMode && drawInteraction === 'route' ? (
         <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
       ) : null}

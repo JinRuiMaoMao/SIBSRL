@@ -211,6 +211,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复：开始/停止绘制不再清空站点与虚拟节点；切换模式保留路径；导出始终合并站点、虚拟节点与走线。",
             en: "Fix: start/stop draw no longer clears stops or virtual nodes; switching modes keeps the path; export always includes stops, virtual nodes, and path together.",
           },
+          {
+            zh: "任意绘制模式下点导出均输出完整线路 JSON（站点 + 虚拟节点 + 路径），不再按当前标签分别导出。",
+            en: "Export from any draw tab now always writes the full route JSON (stops + virtual nodes + path), not a mode-specific subset.",
+          },
         ],
       },
       {

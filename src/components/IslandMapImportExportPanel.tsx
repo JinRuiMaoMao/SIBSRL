@@ -32,10 +32,7 @@ export function IslandMapImportExportPanel({
 }: IslandMapImportExportPanelProps) {
   const { t } = useLocale()
 
-  const exportTitle =
-    interaction === 'catalog'
-      ? t('islandMapDrawExportCatalogHint')
-      : t('islandMapDrawExportRouteHint')
+  const exportTitle = t('islandMapDrawExportRouteHint')
 
   return (
     <div className={`island-map-draw-panel island-map-import-export-panel ${className}`.trim()}>
@@ -68,27 +65,19 @@ export function IslandMapImportExportPanel({
         </button>
       </div>
       {showMeta ? (
-        interaction === 'catalog' ? (
-          <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
+        <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
+          {routeId ? (
             <span className="island-map-draw-count">
-              {t('islandMapDrawStopCount', { count: stopCount })}
+              {t('islandMapImportExportRouteLabel', { routeId })}
             </span>
-          </div>
-        ) : (
-          <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
-            {routeId ? (
-              <span className="island-map-draw-count">
-                {t('islandMapImportExportRouteLabel', { routeId })}
-              </span>
-            ) : null}
-            <span className="island-map-draw-count">
-              {t('islandMapDrawStopCount', { count: stopCount })}
-            </span>
-            <span className="island-map-draw-count">
-              {t('islandMapDrawVirtualCount', { count: virtualNodeCount })}
-            </span>
-          </div>
-        )
+          ) : null}
+          <span className="island-map-draw-count">
+            {t('islandMapDrawStopCount', { count: stopCount })}
+          </span>
+          <span className="island-map-draw-count">
+            {t('islandMapDrawVirtualCount', { count: virtualNodeCount })}
+          </span>
+        </div>
       ) : null}
       <p className="island-map-draw-help">{t('islandMapImportExportHelp')}</p>
       {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}

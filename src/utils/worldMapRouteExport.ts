@@ -116,7 +116,7 @@ export function buildWorldMapRouteExportPayload(
 ): WorldMapRouteExportPayload | null {
   const canonicalId = resolveWorldMapExportRouteId(routeId, virtualNodes, fallbackRouteId)
   const hasPath = points.length >= 2
-  if (!canonicalId || (!hasPath && stops.length < 2 && virtualNodes.length === 0)) return null
+  if (!canonicalId || (!hasPath && stops.length === 0 && virtualNodes.length === 0)) return null
 
   return {
     routeId: canonicalId,
