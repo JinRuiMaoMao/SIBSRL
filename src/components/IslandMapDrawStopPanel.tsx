@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import type { WorldMapDrawStop, WorldMapDrawStopDraft } from '../types/worldMapDraw'
+import type { IslandMapDrawInteraction, WorldMapDrawStop, WorldMapDrawStopDraft } from '../types/worldMapDraw'
 import { findStopsMatchingQuery } from '../utils/routeStopLookup'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 
 interface IslandMapDrawStopPanelProps {
+  interaction: IslandMapDrawInteraction
+  onInteractionChange: (interaction: IslandMapDrawInteraction) => void
   stops: readonly WorldMapDrawStop[]
   pendingStop: WorldMapDrawStopDraft | null
   onPendingQueryChange: (query: string) => void
@@ -14,6 +16,8 @@ interface IslandMapDrawStopPanelProps {
 }
 
 export function IslandMapDrawStopPanel({
+  interaction,
+  onInteractionChange,
   stops,
   pendingStop,
   onPendingQueryChange,
@@ -47,7 +51,28 @@ export function IslandMapDrawStopPanel({
 
   return (
     <div className="island-map-draw-stop-panel">
-      <p className="island-map-draw-help">{t('islandMapDrawStopHelp')}</p>
+      <div className="island-map-draw-panel-row">
+        <button
+          type="button"
+          className={`island-map-btn${interaction === 'route' ? ' island-map-btn--active' : ''}`.trim()}
+          onClick={() => onInteractionChange('route')}
+          aria-pressed={interaction === 'route'}
+        >
+          {t('islandMapDrawRouteMode')}
+        </button>
+        <button
+          type="button"
+          className={`island-map-btn${interaction === 'catalog' ? ' island-map-btn--active' : ''}`.trim()}
+          onClick={() => onInteractionChange('catalog')}
+          aria-pressed={interaction === 'catalog'}
+        >
+          {t('islandMapDrawCatalogMode')}
+        </button>
+      </div>
+
+      <p className="island-map-draw-help">
+        {interaction === 'route' ? t('islandMapDrawRouteHelp') : t('islandMapDrawCatalogHelp')}
+      </p>
 
       {pendingStop ? (
         <div className="island-map-draw-stop-form">
@@ -108,7 +133,8 @@ export function IslandMapDrawStopPanel({
           {stops.map((stop, index) => (
             <li key={stop.id}>
               <span>
-                {index + 1}. {stop.name.zh}
+                {interaction === 'route' ? `${index + 1}. ` : ''}
+                {stop.name.zh}
                 {stop.name.en && stop.name.en !== stop.name.zh ? ` / ${stop.name.en}` : ''}
               </span>
               <button

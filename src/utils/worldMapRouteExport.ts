@@ -14,6 +14,15 @@ export interface WorldMapStopsExportPayload {
   }>
 }
 
+export interface WorldMapCatalogStopsExportPayload {
+  kind: 'world-map-stop-catalog'
+  note: string
+  stops: Array<{
+    name: { zh: string; en: string }
+    point: WorldMapPoint
+  }>
+}
+
 export interface WorldMapRouteExportPayload {
   routeId: string
   note: string
@@ -25,6 +34,22 @@ export interface WorldMapRouteExportPayload {
       point: WorldMapPoint
     }>
   }>
+}
+
+export function buildWorldMapCatalogStopsExportPayload(
+  stops: readonly WorldMapDrawStop[],
+): WorldMapCatalogStopsExportPayload | null {
+  if (stops.length < 1) return null
+
+  return {
+    kind: 'world-map-stop-catalog',
+    note:
+      'All-stop catalog on SIMap (normalized 0–1). Routes can be traced later by matching route stop names to these points.',
+    stops: stops.map((stop) => ({
+      name: { zh: stop.name.zh, en: stop.name.en },
+      point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
+    })),
+  }
 }
 
 export function buildWorldMapStopsExportPayload(
@@ -87,6 +112,16 @@ function roundCoord(value: number): number {
   return Math.round(value * 1000) / 1000
 }
 
+export function downloadWorldMapCatalogStopsJson(payload: WorldMapCatalogStopsExportPayload): void {
+  const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = 'world-map-stops.json'
+  anchor.click()
+  URL.revokeObjectURL(url)
+}
+
 export function downloadWorldMapStopsJson(payload: WorldMapStopsExportPayload): void {
   const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -105,6 +140,17 @@ export function downloadWorldMapRouteJson(payload: WorldMapRouteExportPayload): 
   anchor.download = `${payload.routeId}.json`
   anchor.click()
   URL.revokeObjectURL(url)
+}
+
+export async function copyWorldMapCatalogStopsJson(
+  payload: WorldMapCatalogStopsExportPayload,
+): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(`${JSON.stringify(payload, null, 2)}\n`)
+    return true
+  } catch {
+    return false
+  }
 }
 
 export async function copyWorldMapStopsJson(payload: WorldMapStopsExportPayload): Promise<boolean> {

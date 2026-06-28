@@ -3,6 +3,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 
 export interface PanZoomState {
   x: number
@@ -32,6 +33,10 @@ interface IslandMapPanZoomSurfaceProps {
     points: readonly WorldMapPoint[]
   } | null
   drawMode?: boolean
+  drawInteraction?: IslandMapDrawInteraction
+  draftPoints?: readonly WorldMapPoint[]
+  draftStopPoints?: readonly WorldMapPoint[]
+  draftStrokeColor?: string
   draftStops?: readonly WorldMapDrawStop[]
   pendingStopPoint?: WorldMapPoint | null
   onDrawMapClick?: (point: WorldMapPoint) => void
@@ -207,6 +212,10 @@ export function IslandMapPanZoomSurface({
   onViewChange,
   routeOverlay = null,
   drawMode = false,
+  drawInteraction = 'route',
+  draftPoints = [],
+  draftStopPoints = [],
+  draftStrokeColor,
   draftStops = [],
   pendingStopPoint = null,
   onDrawMapClick,
@@ -494,7 +503,7 @@ export function IslandMapPanZoomSurface({
   return (
     <div
       ref={viewportRef}
-      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''} ${className}`.trim()}
+      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''}${drawMode && drawInteraction === 'catalog' ? ' island-map-panzoom--draw-stop' : ''} ${className}`.trim()}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
@@ -518,6 +527,19 @@ export function IslandMapPanZoomSurface({
             routeNumber={routeOverlay.routeNumber}
             points={routeOverlay.points}
             variant="route"
+          />
+        </div>
+      ) : null}
+      {imageSize && drawInteraction === 'route' && draftPoints.length > 0 && overlayStyle ? (
+        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+          <IslandMapRouteOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            routeNumber=""
+            points={draftPoints}
+            vertexPoints={draftStopPoints}
+            variant="draft"
+            strokeColor={draftStrokeColor}
           />
         </div>
       ) : null}

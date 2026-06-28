@@ -188,8 +188,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Drawn paths snap to and follow SIMapGerenal roads (#ffffff), bridges (#fece7a), and tunnels (#d33682).",
           },
           {
-            zh: "地图绘制改为仅标注站点并导出 `{线路ID}-stops.json`，走线由站点顺序离线生成。",
-            en: "Map drawing now exports stops only as `{routeId}-stops.json`; paths are generated offline from stop order.",
+            zh: "地图工具分为「绘制走线」（站点作节点、实时预览路径）与「标注站点」（全图 catalog，导出 world-map-stops.json）。",
+            en: "Map tools split into Draw route (stops as nodes with live path) and Mark stops (full-map catalog exported as world-map-stops.json).",
           },
         ],
       },
