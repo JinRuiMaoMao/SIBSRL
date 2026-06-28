@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
 import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
+import { useGeneralMapRoadSnap } from '../hooks/useGeneralMapRoadSnap'
 import { useLocale } from '../i18n/LocaleContext'
 import {
   buildWorldMapRouteExportPayload,
@@ -10,7 +11,7 @@ import {
   downloadWorldMapRouteJson,
 } from '../utils/worldMapRouteExport'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
-import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
+import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
 
 type MapLayer = 'general' | 'detailed'
@@ -76,6 +77,7 @@ function surfaceProps(
   draftStrokeColor: string,
   onDraftPointAdd: (point: WorldMapPoint) => void,
   onDraftPointUndo: () => void,
+  maxZoomRatio: number,
 ) {
   return {
     src: mapSrc,
@@ -88,6 +90,7 @@ function surfaceProps(
     draftStrokeColor,
     onDraftPointAdd,
     onDraftPointUndo,
+    maxZoomRatio,
     className,
   }
 }
@@ -102,6 +105,7 @@ export function IslandMapWidget() {
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [drawMode, setDrawMode] = useState(false)
+  const roadSnap = useGeneralMapRoadSnap(isMapAdmin && drawMode)
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
   const [drawRouteId, setDrawRouteId] = useState('')
@@ -169,9 +173,24 @@ export function IslandMapWidget() {
     }, 2600)
   }, [])
 
-  const onDraftPointAdd = useCallback((point: WorldMapPoint) => {
-    setDraftPoints((current) => [...current, point])
-  }, [])
+  const onDraftPointAdd = useCallback(
+    (point: WorldMapPoint) => {
+      setDraftPoints((current) => {
+        const last = current.length > 0 ? current[current.length - 1]! : null
+        const segment = roadSnap.appendSegment(last, point)
+        if (!last) return segment
+        const merged = [...current]
+        for (const next of segment) {
+          const prev = merged[merged.length - 1]
+          if (!prev || Math.hypot(prev[0] - next[0], prev[1] - next[1]) > 0.00005) {
+            merged.push(next)
+          }
+        }
+        return merged
+      })
+    },
+    [roadSnap],
+  )
 
   const onDraftPointUndo = useCallback(() => {
     setDraftPoints((current) => current.slice(0, -1))
@@ -185,7 +204,7 @@ export function IslandMapWidget() {
     setDrawMode((current) => {
       const next = !current
       if (next) {
-        setLayer('detailed')
+        setLayer('general')
         setDraftPoints((points) => {
           if (points.length > 0) return points
           return routeOverlay ? [...routeOverlay.points] : points
@@ -213,6 +232,7 @@ export function IslandMapWidget() {
     : null
   const exportPoints = draftPoints.length >= 2 ? draftPoints : routeOverlay?.points ?? draftPoints
   const canExport = buildWorldMapRouteExportPayload(drawRouteId, drawDirectionIndex, exportPoints) != null
+  const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
   const closeFullscreen = useCallback(() => setExpanded(false), [])
@@ -299,7 +319,11 @@ export function IslandMapWidget() {
         </span>
       </div>
       <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
-      {drawMode ? <p className="island-map-draw-help">{t('islandMapDrawHelp')}</p> : null}
+      {drawMode ? (
+        <p className="island-map-draw-help">
+          {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawHelp')}
+        </p>
+      ) : null}
       {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}
     </div>
   ) : null
@@ -324,6 +348,7 @@ export function IslandMapWidget() {
           drawColor,
           onDraftPointAdd,
           onDraftPointUndo,
+          surfaceMaxZoomRatio,
         )}
       />
       <div className="island-map-controls island-map-controls--fullscreen">
@@ -369,6 +394,7 @@ export function IslandMapWidget() {
             drawColor,
             onDraftPointAdd,
             onDraftPointUndo,
+            surfaceMaxZoomRatio,
           )}
         />
       )}

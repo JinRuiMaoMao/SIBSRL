@@ -34,11 +34,13 @@ interface IslandMapPanZoomSurfaceProps {
   draftStrokeColor?: string
   onDraftPointAdd?: (point: WorldMapPoint) => void
   onDraftPointUndo?: () => void
+  maxZoomRatio?: number
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
 const MIN_SCALE_RATIO = 0.45
-const MAX_SCALE_RATIO = 8
+const DEFAULT_MAX_SCALE_RATIO = 8
+export const DRAW_MAX_ZOOM_RATIO = 8
 const WHEEL_ZOOM_FACTOR = 1.12
 const MAX_SYNC_ATTEMPTS = 12
 
@@ -86,10 +88,11 @@ export function normalizedToPanZoom(
   view: NormalizedMapView,
   viewport: ImageSize,
   image: ImageSize,
+  maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 ): PanZoomState {
   const fitScale = computeFitScale(viewport, image)
   const minScale = fitScale * MIN_SCALE_RATIO
-  const maxScale = fitScale * MAX_SCALE_RATIO
+  const maxScale = fitScale * maxZoomRatio
   const scale = clamp(view.zoomRatio * fitScale, minScale, maxScale)
   return clampPanZoom(
     {
@@ -99,6 +102,7 @@ export function normalizedToPanZoom(
     },
     viewport,
     image,
+    maxZoomRatio,
   )
 }
 
@@ -106,10 +110,11 @@ function clampPanZoom(
   panZoom: PanZoomState,
   viewport: ImageSize,
   image: ImageSize,
+  maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 ): PanZoomState {
   const fitScale = computeFitScale(viewport, image)
   const minScale = fitScale * MIN_SCALE_RATIO
-  const maxScale = fitScale * MAX_SCALE_RATIO
+  const maxScale = fitScale * maxZoomRatio
   const scale = clamp(panZoom.scale, minScale, maxScale)
   const scaledWidth = image.width * scale
   const scaledHeight = image.height * scale
@@ -138,10 +143,11 @@ function zoomAtPoint(
   direction: 'in' | 'out',
   viewport: ImageSize,
   image: ImageSize,
+  maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 ): PanZoomState {
   const fitScale = computeFitScale(viewport, image)
   const minScale = fitScale * MIN_SCALE_RATIO
-  const maxScale = fitScale * MAX_SCALE_RATIO
+  const maxScale = fitScale * maxZoomRatio
   const factor = direction === 'in' ? WHEEL_ZOOM_FACTOR : 1 / WHEEL_ZOOM_FACTOR
   const nextScale = clamp(panZoom.scale * factor, minScale, maxScale)
   const ratio = nextScale / panZoom.scale
@@ -154,6 +160,7 @@ function zoomAtPoint(
     },
     viewport,
     image,
+    maxZoomRatio,
   )
 }
 
@@ -162,8 +169,9 @@ function resolvePanZoom(
   viewport: ImageSize,
   image: ImageSize,
   mode: 'widget' | 'fullscreen',
+  maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 ): PanZoomState {
-  if (view) return normalizedToPanZoom(view, viewport, image)
+  if (view) return normalizedToPanZoom(view, viewport, image, maxZoomRatio)
   return createInitialPanZoom(viewport, image, mode)
 }
 
@@ -201,11 +209,13 @@ export function IslandMapPanZoomSurface({
   draftStrokeColor,
   onDraftPointAdd,
   onDraftPointUndo,
+  maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const viewRef = useRef(view)
   const modeRef = useRef(mode)
+  const maxZoomRatioRef = useRef(maxZoomRatio)
   const onViewChangeRef = useRef(onViewChange)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
@@ -213,6 +223,7 @@ export function IslandMapPanZoomSurface({
 
   viewRef.current = view
   modeRef.current = mode
+  maxZoomRatioRef.current = maxZoomRatio
   onViewChangeRef.current = onViewChange
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
@@ -239,7 +250,7 @@ export function IslandMapPanZoomSurface({
       const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
       if (!viewport || !size) return false
 
-      const next = resolvePanZoom(viewRef.current, viewport, size, modeRef.current)
+      const next = resolvePanZoom(viewRef.current, viewport, size, modeRef.current, maxZoomRatioRef.current)
       suppressPublishRef.current = true
       setPanZoom(next)
       suppressPublishRef.current = false
@@ -281,7 +292,7 @@ export function IslandMapPanZoomSurface({
         const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
         if (!viewport || !size || !current) return current
         const resolved = typeof next === 'function' ? next(current) : next
-        const clamped = clampPanZoom(resolved, viewport, size)
+        const clamped = clampPanZoom(resolved, viewport, size, maxZoomRatioRef.current)
         if (!suppressPublishRef.current) {
           onViewChangeRef.current(panZoomToNormalized(clamped, viewport, size))
         }
@@ -380,6 +391,7 @@ export function IslandMapPanZoomSurface({
           event.deltaY < 0 ? 'in' : 'out',
           { width: rect.width, height: rect.height },
           imageSize,
+          maxZoomRatioRef.current,
         ),
       )
     }

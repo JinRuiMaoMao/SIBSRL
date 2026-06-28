@@ -183,6 +183,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "绘制工具新增调色盘、预设色块，以及 #HEX / rgb() 颜色输入；所选颜色会记住并实时应用到走线。",
             en: "Draw tools now include a color picker, preset swatches, and #HEX / rgb() input; the chosen color persists and updates the path live.",
           },
+                    {
+            zh: "绘制模式可放大至 800%，点击会自动吸附 SIMapGerenal 白线并在道路上网状寻路连线。",
+            en: "Draw mode now zooms up to 800%; clicks snap to SIMapGerenal white roads and path segments follow the road network.",
+          },
         ],
       },
       {
