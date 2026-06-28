@@ -1,42 +1,27 @@
 import type { WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
 
-const DIR_LABELS = ['→', '←', '↓', '↑', '↘', '↗', '↙', '↖'] as const
-
-function outDirDegrees(outDir: number): number {
-  const dirs = [
-    [1, 0],
-    [-1, 0],
-    [0, 1],
-    [0, -1],
-    [1, 1],
-    [1, -1],
-    [-1, 1],
-    [-1, -1],
-  ] as const
-  const [dx, dy] = dirs[outDir] ?? [1, 0]
-  return (Math.atan2(dy, dx) * 180) / Math.PI
+export function virtualNodeKindSymbol(kind: WorldMapVirtualNodeKind): string {
+  if (kind === 'straight') return '↑'
+  if (kind === 'left') return '←'
+  return '→'
 }
 
 export function virtualNodeKindLabel(kind: WorldMapVirtualNodeKind, locale: string): string {
   if (locale.startsWith('zh')) {
     if (kind === 'straight') return '直行'
-    if (kind === 'turn') return '转向'
-    return '掉头'
+    if (kind === 'left') return '左转'
+    return '右转'
   }
   if (kind === 'straight') return 'Straight'
-  if (kind === 'turn') return 'Turn'
-  return 'U-turn'
-}
-
-export function virtualNodeOutDirLabel(outDir: number): string {
-  return DIR_LABELS[outDir] ?? '?'
+  if (kind === 'left') return 'Left'
+  return 'Right'
 }
 
 interface IslandMapVirtualNodeOverlayLayerProps {
   imageWidth: number
   imageHeight: number
   nodes: readonly WorldMapVirtualNode[]
-  pendingNode?: { x: number; y: number; outDir: number } | null
+  pendingNode?: { x: number; y: number; kind: WorldMapVirtualNodeKind } | null
 }
 
 export function IslandMapVirtualNodeOverlayLayer({
@@ -46,7 +31,8 @@ export function IslandMapVirtualNodeOverlayLayer({
   pendingNode = null,
 }: IslandMapVirtualNodeOverlayLayerProps) {
   const markerSize = Math.max(10, imageWidth * 0.005)
-  const fontSize = Math.max(10, imageWidth * 0.0028)
+  const fontSize = Math.max(12, imageWidth * 0.0034)
+  const labelSize = Math.max(10, imageWidth * 0.0028)
 
   return (
     <svg
@@ -59,23 +45,32 @@ export function IslandMapVirtualNodeOverlayLayer({
       {nodes.map((node) => {
         const x = node.point[0] * imageWidth
         const y = node.point[1] * imageHeight
-        const angle = outDirDegrees(node.outDir)
         return (
           <g
             key={node.id}
             className={`island-map-virtual-node-overlay-item island-map-virtual-node-overlay-item--${node.kind}`}
           >
-            <polygon
+            <circle
               className="island-map-virtual-node-overlay-marker"
-              points={`${x},${y - markerSize * 0.65} ${x + markerSize * 0.55},${y + markerSize * 0.45} ${x - markerSize * 0.55},${y + markerSize * 0.45}`}
-              transform={`rotate(${angle} ${x} ${y})`}
+              cx={x}
+              cy={y}
+              r={markerSize * 0.55}
             />
+            <text
+              className="island-map-virtual-node-overlay-symbol"
+              x={x}
+              y={y + fontSize * 0.35}
+              textAnchor="middle"
+              style={{ fontSize }}
+            >
+              {virtualNodeKindSymbol(node.kind)}
+            </text>
             <text
               className="island-map-virtual-node-overlay-label"
               x={x}
-              y={y - markerSize * 0.85}
+              y={y - markerSize * 0.95}
               textAnchor="middle"
-              style={{ fontSize }}
+              style={{ fontSize: labelSize }}
             >
               {node.routeId}
             </text>
@@ -85,22 +80,17 @@ export function IslandMapVirtualNodeOverlayLayer({
       {pendingNode ? (
         <g className="island-map-virtual-node-overlay-pending">
           <circle cx={pendingNode.x} cy={pendingNode.y} r={markerSize * 0.45} />
-          <line
-            x1={pendingNode.x}
-            y1={pendingNode.y}
-            x2={
-              pendingNode.x +
-              Math.cos((outDirDegrees(pendingNode.outDir) * Math.PI) / 180) * markerSize
-            }
-            y2={
-              pendingNode.y +
-              Math.sin((outDirDegrees(pendingNode.outDir) * Math.PI) / 180) * markerSize
-            }
-          />
+          <text
+            className="island-map-virtual-node-overlay-symbol"
+            x={pendingNode.x}
+            y={pendingNode.y + fontSize * 0.35}
+            textAnchor="middle"
+            style={{ fontSize }}
+          >
+            {virtualNodeKindSymbol(pendingNode.kind)}
+          </text>
         </g>
       ) : null}
     </svg>
   )
 }
-
-export { DIR_LABELS }

@@ -27,6 +27,7 @@ import type {
   WorldMapDrawStopDraft,
   WorldMapVirtualNode,
   WorldMapVirtualNodeDraft,
+  WorldMapVirtualNodeKind,
 } from '../types/worldMapDraw'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
@@ -99,7 +100,7 @@ function surfaceProps(
   draftStops: readonly WorldMapDrawStop[],
   draftVirtualNodes: readonly WorldMapVirtualNode[],
   pendingStopPoint: WorldMapPoint | null,
-  pendingVirtualNode: { point: WorldMapPoint; outDir: number } | null,
+  pendingVirtualNode: { point: WorldMapPoint; kind: WorldMapVirtualNodeKind } | null,
   draftStrokeColor: string,
   onDrawMapClick: (point: WorldMapPoint) => void,
   onDrawUndo: () => void,
@@ -233,7 +234,7 @@ export function IslandMapWidget() {
           traceSegment,
           draftVirtualNodes,
           drawRouteId,
-          (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind, node.outDir),
+          (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind),
         ),
       )
     },
@@ -250,12 +251,10 @@ export function IslandMapWidget() {
       if (drawInteraction === 'virtual') {
         if (pendingVirtualNode) return
         const snapped = roadSnap.snap(point)
-        const dirs = roadSnap.roadDirectionsAt(snapped)
         setPendingVirtualNode({
           point: snapped,
           routeId: drawRouteId.trim() || '21A',
           kind: 'straight',
-          outDir: dirs[0] ?? 0,
         })
         return
       }
@@ -336,7 +335,6 @@ export function IslandMapWidget() {
         point: pendingVirtualNode.point,
         routeId: pendingVirtualNode.routeId.trim(),
         kind: pendingVirtualNode.kind,
-        outDir: pendingVirtualNode.outDir,
       },
     ])
     setPendingVirtualNode(null)
@@ -475,7 +473,7 @@ export function IslandMapWidget() {
                 traceSegment,
                 draftVirtualNodes,
                 parsed.routeId,
-                (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind, node.outDir),
+                (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind),
               )
         setDraftPoints(nextPoints)
         const fitPoints =
@@ -504,7 +502,7 @@ export function IslandMapWidget() {
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
   const pendingVirtualNodeOverlay = pendingVirtualNode
-    ? { point: pendingVirtualNode.point, outDir: pendingVirtualNode.outDir }
+    ? { point: pendingVirtualNode.point, kind: pendingVirtualNode.kind }
     : null
   const canUndo =
     pendingVirtualNode != null ||
@@ -512,9 +510,6 @@ export function IslandMapWidget() {
     (drawInteraction === 'virtual' ? draftVirtualNodes.length > 0 : draftStops.length > 0)
   const canClear =
     draftStops.length > 0 || draftVirtualNodes.length > 0 || pendingStop != null || pendingVirtualNode != null
-  const pendingVirtualRoadDirs = pendingVirtualNode
-    ? roadSnap.roadDirectionsAt(pendingVirtualNode.point)
-    : []
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
   const closeFullscreen = useCallback(() => setExpanded(false), [])
@@ -644,15 +639,11 @@ export function IslandMapWidget() {
           onInteractionChange={handleInteractionChange}
           nodes={draftVirtualNodes}
           pendingNode={pendingVirtualNode}
-          roadDirections={pendingVirtualRoadDirs}
           onPendingRouteIdChange={(routeId) =>
             setPendingVirtualNode((current) => (current ? { ...current, routeId } : current))
           }
           onPendingKindChange={(kind) =>
             setPendingVirtualNode((current) => (current ? { ...current, kind } : current))
-          }
-          onPendingOutDirChange={(outDir) =>
-            setPendingVirtualNode((current) => (current ? { ...current, outDir } : current))
           }
           onConfirmPendingNode={handleConfirmPendingVirtualNode}
           onCancelPendingNode={() => setPendingVirtualNode(null)}

@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type {
   IslandMapDrawInteraction,
@@ -6,17 +5,17 @@ import type {
   WorldMapVirtualNodeDraft,
   WorldMapVirtualNodeKind,
 } from '../types/worldMapDraw'
-import { DIR_LABELS, virtualNodeKindLabel } from './IslandMapVirtualNodeOverlayLayer'
+import { virtualNodeKindLabel, virtualNodeKindSymbol } from './IslandMapVirtualNodeOverlayLayer'
+
+const VIRTUAL_NODE_KINDS: WorldMapVirtualNodeKind[] = ['straight', 'left', 'right']
 
 interface IslandMapDrawVirtualNodePanelProps {
   interaction: IslandMapDrawInteraction
   onInteractionChange: (interaction: IslandMapDrawInteraction) => void
   nodes: readonly WorldMapVirtualNode[]
   pendingNode: WorldMapVirtualNodeDraft | null
-  roadDirections: readonly number[]
   onPendingRouteIdChange: (routeId: string) => void
   onPendingKindChange: (kind: WorldMapVirtualNodeKind) => void
-  onPendingOutDirChange: (outDir: number) => void
   onConfirmPendingNode: () => void
   onCancelPendingNode: () => void
   onRemoveNode: (id: string) => void
@@ -27,19 +26,13 @@ export function IslandMapDrawVirtualNodePanel({
   onInteractionChange,
   nodes,
   pendingNode,
-  roadDirections,
   onPendingRouteIdChange,
   onPendingKindChange,
-  onPendingOutDirChange,
   onConfirmPendingNode,
   onCancelPendingNode,
   onRemoveNode,
 }: IslandMapDrawVirtualNodePanelProps) {
   const { t, locale } = useLocale()
-  const allowedDirs = useMemo(() => {
-    if (roadDirections.length === 0) return [0, 2, 4, 6]
-    return roadDirections
-  }, [roadDirections])
 
   return (
     <div className="island-map-draw-stop-panel">
@@ -86,32 +79,17 @@ export function IslandMapDrawVirtualNodePanel({
           </label>
           <div className="island-map-draw-field">
             <span>{t('islandMapDrawVirtualKind')}</span>
-            <div className="island-map-draw-panel-row">
-              {(['straight', 'turn', 'u-turn'] as const).map((kind) => (
+            <div className="island-map-draw-panel-row island-map-draw-virtual-kinds">
+              {VIRTUAL_NODE_KINDS.map((kind) => (
                 <button
                   key={kind}
                   type="button"
-                  className={`island-map-btn${pendingNode.kind === kind ? ' island-map-btn--active' : ''}`.trim()}
+                  className={`island-map-btn island-map-draw-virtual-kind${pendingNode.kind === kind ? ' island-map-btn--active' : ''}`.trim()}
                   onClick={() => onPendingKindChange(kind)}
+                  title={virtualNodeKindLabel(kind, locale)}
                 >
-                  {virtualNodeKindLabel(kind, locale)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="island-map-draw-field">
-            <span>{t('islandMapDrawVirtualOutDir')}</span>
-            <div className="island-map-draw-virtual-dirs">
-              {DIR_LABELS.map((label, dir) => (
-                <button
-                  key={dir}
-                  type="button"
-                  className={`island-map-btn island-map-draw-virtual-dir${pendingNode.outDir === dir ? ' island-map-btn--active' : ''}${allowedDirs.includes(dir) ? '' : ' island-map-draw-virtual-dir--disabled'}`.trim()}
-                  disabled={!allowedDirs.includes(dir)}
-                  onClick={() => onPendingOutDirChange(dir)}
-                  title={label}
-                >
-                  {label}
+                  <span className="island-map-draw-virtual-kind-symbol">{virtualNodeKindSymbol(kind)}</span>
+                  <span>{virtualNodeKindLabel(kind, locale)}</span>
                 </button>
               ))}
             </div>
@@ -137,7 +115,7 @@ export function IslandMapDrawVirtualNodePanel({
           {nodes.map((node) => (
             <li key={node.id}>
               <span>
-                {node.routeId} · {virtualNodeKindLabel(node.kind, locale)} · {DIR_LABELS[node.outDir]}
+                {node.routeId} · {virtualNodeKindSymbol(node.kind)} {virtualNodeKindLabel(node.kind, locale)}
               </span>
               <button
                 type="button"

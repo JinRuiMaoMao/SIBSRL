@@ -63,7 +63,9 @@ function readStopList(value: unknown): WorldMapDrawStop[] {
 }
 
 function readVirtualNodeKind(value: unknown): WorldMapVirtualNodeKind | null {
-  if (value === 'straight' || value === 'turn' || value === 'u-turn') return value
+  if (value === 'straight') return 'straight'
+  if (value === 'left' || value === 'turn') return 'left'
+  if (value === 'right' || value === 'u-turn') return 'right'
   return null
 }
 
@@ -71,14 +73,12 @@ function readVirtualNodeEntry(value: unknown, index: number): WorldMapVirtualNod
   if (!isRecord(value) || !isWorldMapPoint(value.point)) return null
   const routeId = typeof value.routeId === 'string' ? value.routeId.trim() : ''
   const kind = readVirtualNodeKind(value.kind)
-  const outDir = typeof value.outDir === 'number' && Number.isFinite(value.outDir) ? value.outDir : -1
-  if (!routeId || !kind || outDir < 0 || outDir > 7) return null
+  if (!routeId || !kind) return null
   return {
     id: `import-vn-${index}-${Math.random().toString(36).slice(2, 8)}`,
     point: [value.point[0], value.point[1]],
     routeId,
     kind,
-    outDir: Math.round(outDir),
   }
 }
 

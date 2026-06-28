@@ -8,7 +8,6 @@ export interface WorldMapVirtualNodeCatalogPayload {
   nodes: Array<{
     routeId: string
     kind: WorldMapVirtualNodeKind
-    outDir: number
     point: WorldMapPoint
   }>
 }
@@ -24,11 +23,10 @@ export function buildWorldMapVirtualNodeCatalogPayload(
   return {
     kind: 'world-map-virtual-node-catalog',
     note:
-      'Virtual path nodes on SIMapGerenal (normalized 0–1). Routes must pass through matching routeId nodes and follow outDir/kind.',
+      'Virtual path nodes on SIMapGerenal (normalized 0–1). Routes must pass through matching routeId nodes and follow kind: straight ↑, left ←, right →.',
     nodes: nodes.map((node) => ({
       routeId: canonicalVirtualNodeRouteId(node.routeId),
       kind: node.kind,
-      outDir: node.outDir,
       point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
     })),
   }

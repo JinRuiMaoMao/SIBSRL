@@ -34,15 +34,11 @@ export function useGeneralMapRoadSnap(enabled: boolean) {
       snap(point: WorldMapPoint): WorldMapPoint {
         return snapPointToGeneralMapRoad(index, point)
       },
-      roadDirectionsAt(point: WorldMapPoint): number[] {
-        return index?.roadDirectionsAt(point) ?? []
-      },
       toVirtualNodeConstraint(
         point: WorldMapPoint,
         kind: VirtualNodePathConstraint['kind'],
-        outDir: number,
       ): VirtualNodePathConstraint | null {
-        return index?.toVirtualNodeConstraint(point, kind, outDir) ?? null
+        return index?.toVirtualNodeConstraint(point, kind) ?? null
       },
       appendSegment(
         from: WorldMapPoint | null,

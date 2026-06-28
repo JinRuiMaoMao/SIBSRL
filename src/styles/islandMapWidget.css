@@ -496,19 +496,21 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   z-index: 270;
 }
 
-.island-map-draw-virtual-dirs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(2rem, 1fr));
-  gap: 0.25rem;
+.island-map-draw-virtual-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
-.island-map-draw-virtual-dir {
-  min-width: 2rem;
-  padding-inline: 0.25rem;
+.island-map-draw-virtual-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.island-map-draw-virtual-dir--disabled {
-  opacity: 0.35;
+.island-map-draw-virtual-kind-symbol {
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .island-map-virtual-node-overlay {
@@ -517,22 +519,30 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
 }
 
 .island-map-virtual-node-overlay-marker {
-  fill: color-mix(in srgb, #c678ff 82%, #fff);
+  fill: color-mix(in srgb, #c678ff 55%, transparent);
   stroke: color-mix(in srgb, #000 55%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
+.island-map-virtual-node-overlay-symbol {
+  fill: var(--text, #f2f2f2);
+  stroke: color-mix(in srgb, var(--bg-deep, #0c1222) 82%, transparent);
+  stroke-width: 2.5;
+  paint-order: stroke fill;
+  font-weight: 800;
+}
+
 .island-map-virtual-node-overlay-item--straight .island-map-virtual-node-overlay-marker {
-  fill: color-mix(in srgb, #7ec8ff 82%, #fff);
+  stroke: color-mix(in srgb, #7ec8ff 75%, transparent);
 }
 
-.island-map-virtual-node-overlay-item--turn .island-map-virtual-node-overlay-marker {
-  fill: color-mix(in srgb, #f5b942 82%, #fff);
+.island-map-virtual-node-overlay-item--left .island-map-virtual-node-overlay-marker {
+  stroke: color-mix(in srgb, #f5b942 75%, transparent);
 }
 
-.island-map-virtual-node-overlay-item--u-turn .island-map-virtual-node-overlay-marker {
-  fill: color-mix(in srgb, #ff7a7a 82%, #fff);
+.island-map-virtual-node-overlay-item--right .island-map-virtual-node-overlay-marker {
+  stroke: color-mix(in srgb, #ff7a7a 75%, transparent);
 }
 
 .island-map-virtual-node-overlay-label {
@@ -549,12 +559,6 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 4 3;
-}
-
-.island-map-virtual-node-overlay-pending line {
-  stroke: #c678ff;
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
 }
 
 @media (max-width: 520px) {

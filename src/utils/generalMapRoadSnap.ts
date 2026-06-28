@@ -69,31 +69,41 @@ function heuristic(ax: number, ay: number, bx: number, by: number): number {
   return Math.hypot(ax - bx, ay - by)
 }
 
-export type VirtualNodeKind = 'straight' | 'turn' | 'u-turn'
+export type VirtualNodeKind = 'straight' | 'left' | 'right'
 
 export interface VirtualNodePathConstraint {
   gx: number
   gy: number
   kind: VirtualNodeKind
-  outDir: number
+}
+
+function turnLeftDir(inDir: number): number {
+  const [dx, dy] = NEIGHBORS[inDir]!
+  return neighborDirIndex(-dy, dx)
+}
+
+function turnRightDir(inDir: number): number {
+  const [dx, dy] = NEIGHBORS[inDir]!
+  return neighborDirIndex(dy, -dx)
+}
+
+export function exitDirForKind(incomingDir: number, kind: VirtualNodeKind): number {
+  if (kind === 'straight') return incomingDir
+  if (kind === 'left') return turnLeftDir(incomingDir)
+  return turnRightDir(incomingDir)
 }
 
 export function satisfiesVirtualNodeTransition(
   incomingDir: number,
-  constraint: VirtualNodePathConstraint,
+  _constraint: VirtualNodePathConstraint,
 ): boolean {
-  if (incomingDir === PATH_START_DIR) return false
-  const outDir = constraint.outDir
-  if (constraint.kind === 'straight') return incomingDir === outDir
-  const [inDx, inDy] = NEIGHBORS[incomingDir]!
-  const [outDx, outDy] = NEIGHBORS[outDir]!
-  if (constraint.kind === 'u-turn') return isOppositeDir(inDx, inDy, outDx, outDy)
-  return incomingDir !== outDir && !isOppositeDir(inDx, inDy, outDx, outDy)
+  return incomingDir !== PATH_START_DIR
 }
 
 interface FindPathOptions {
   endConstraint?: VirtualNodePathConstraint
   startStates?: number[]
+  startViaKind?: VirtualNodeKind
 }
 
 class GeneralMapRoadSnapIndex {
@@ -216,6 +226,7 @@ class GeneralMapRoadSnapIndex {
     ]
 
     let startStates: number[] | undefined
+    let startViaKind: VirtualNodeKind | undefined
     const mergedCells: Array<{ gx: number; gy: number }> = []
     let cursor = startCell
 
@@ -223,6 +234,7 @@ class GeneralMapRoadSnapIndex {
       const segment = this.findPath(cursor.gx, cursor.gy, target.gx, target.gy, {
         endConstraint: target.endConstraint,
         startStates,
+        startViaKind,
       })
       if (!segment || segment.length === 0) return [this.snap(to)]
 
@@ -233,9 +245,11 @@ class GeneralMapRoadSnapIndex {
 
       if (target.endConstraint) {
         startStates = this.collectStatesAtCell(target.endConstraint)
+        startViaKind = target.endConstraint.kind
         if (startStates.length === 0) return [this.snap(to)]
       } else {
         startStates = undefined
+        startViaKind = undefined
       }
       cursor = { gx: target.gx, gy: target.gy }
     }
@@ -266,24 +280,32 @@ class GeneralMapRoadSnapIndex {
     return dirs
   }
 
-  toVirtualNodeConstraint(
-    point: WorldMapPoint,
-    kind: VirtualNodeKind,
-    outDir: number,
-  ): VirtualNodePathConstraint | null {
+  toVirtualNodeConstraint(point: WorldMapPoint, kind: VirtualNodeKind): VirtualNodePathConstraint | null {
     const { gx, gy } = this.toGridPoint(point)
     const cell = this.findNearestRoadCell(gx, gy)
     if (!cell) return null
-    return { gx: cell.gx, gy: cell.gy, kind, outDir }
+    return { gx: cell.gx, gy: cell.gy, kind }
   }
 
   private collectStatesAtCell(constraint: VirtualNodePathConstraint): number[] {
     const cell = cellIndex(this.gridWidth, constraint.gx, constraint.gy)
     const states: number[] = []
     for (let incomingDir = 0; incomingDir < PATH_DIR_COUNT; incomingDir += 1) {
-      if (satisfiesVirtualNodeTransition(incomingDir, constraint)) {
-        states.push(pathStateId(cell, incomingDir))
-      }
+      const [inDx, inDy] = NEIGHBORS[incomingDir]!
+      const prevGx = constraint.gx - inDx
+      const prevGy = constraint.gy - inDy
+      if (prevGx < 0 || prevGy < 0 || prevGx >= this.gridWidth || prevGy >= this.gridHeight) continue
+      if (!this.roadGrid[cellIndex(this.gridWidth, prevGx, prevGy)]) continue
+
+      const exitDir = exitDirForKind(incomingDir, constraint.kind)
+      if (exitDir < 0) continue
+      const [ex, ey] = NEIGHBORS[exitDir]!
+      const nx = constraint.gx + ex
+      const ny = constraint.gy + ey
+      if (nx < 0 || ny < 0 || nx >= this.gridWidth || ny >= this.gridHeight) continue
+      if (!this.roadGrid[cellIndex(this.gridWidth, nx, ny)]) continue
+
+      states.push(pathStateId(cell, incomingDir))
     }
     return states
   }
@@ -342,6 +364,7 @@ class GeneralMapRoadSnapIndex {
 
     const endCell = cellIndex(this.gridWidth, ex, ey)
     const queue: number[] = []
+    const startStateSet = options.startStates ? new Set(options.startStates) : null
 
     if (options.startStates && options.startStates.length > 0) {
       for (const state of options.startStates) {
@@ -407,6 +430,14 @@ class GeneralMapRoadSnapIndex {
 
         const outDir = neighborDirIndex(dx, dy)
         if (outDir < 0) continue
+
+        if (
+          options.startViaKind &&
+          startStateSet?.has(state) &&
+          outDir !== exitDirForKind(incomingDir, options.startViaKind)
+        ) {
+          continue
+        }
 
         let stepCost = dx !== 0 && dy !== 0 ? 1.414 : 1
         if (incomingDir !== PATH_START_DIR && incomingDir !== outDir) {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProp
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
-import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 import { IslandMapVirtualNodeOverlayLayer } from './IslandMapVirtualNodeOverlayLayer'
 
@@ -41,7 +41,7 @@ interface IslandMapPanZoomSurfaceProps {
   draftStops?: readonly WorldMapDrawStop[]
   draftVirtualNodes?: readonly WorldMapVirtualNode[]
   pendingStopPoint?: WorldMapPoint | null
-  pendingVirtualNode?: { point: WorldMapPoint; outDir: number } | null
+  pendingVirtualNode?: { point: WorldMapPoint; kind: WorldMapVirtualNodeKind } | null
   onDrawMapClick?: (point: WorldMapPoint) => void
   onDrawUndo?: () => void
   maxZoomRatio?: number
@@ -576,7 +576,7 @@ export function IslandMapPanZoomSurface({
                 ? {
                     x: pendingVirtualNode.point[0] * imageSize.width,
                     y: pendingVirtualNode.point[1] * imageSize.height,
-                    outDir: pendingVirtualNode.outDir,
+                    kind: pendingVirtualNode.kind,
                   }
                 : null
             }
