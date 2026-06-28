@@ -45,18 +45,17 @@ export function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = JUNCTIO
   return Math.hypot(a[0] - b[0], a[1] - b[1]) <= epsilon
 }
 
-/** Whether the next ordered virtual node lies ahead on the leg toward the next stop. */
+/** Whether the next ordered virtual node should be visited before the upcoming stop. */
 export function shouldVisitVirtualNodeBeforeStop(
   node: WorldMapVirtualNode,
   from: WorldMapPoint,
   to: WorldMapPoint,
 ): boolean {
   const t = projectionT(from, to, node.point)
-  if (t <= 0.01) return false
-  if (t >= 0.99) return false
+  if (t <= 0) return false
   const distToNode = Math.hypot(node.point[0] - from[0], node.point[1] - from[1])
   const distToStop = Math.hypot(to[0] - from[0], to[1] - from[1])
-  return distToNode <= distToStop * 1.2
+  return distToNode <= distToStop * 1.05
 }
 
 /** Consecutive virtual nodes at the same junction share one map location but keep separate order values. */

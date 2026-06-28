@@ -77,8 +77,6 @@ const PATH_DIR_COUNT = NEIGHBORS.length
 const PATH_STATE_STRIDE = PATH_DIR_COUNT + 1
 const PATH_START_DIR = PATH_DIR_COUNT
 const TURN_PENALTY = 0.35
-/** Prefer continuing straight at junctions when no virtual node directs a turn. */
-const JUNCTION_TURN_PENALTY = 2.5
 /** Avoid bridge/tunnel unless a matching virtual node or already on that surface. */
 const BRIDGE_ENTRY_PENALTY = 4
 const TUNNEL_ENTRY_PENALTY = 4
@@ -531,6 +529,17 @@ class GeneralMapRoadSnapIndex {
     return this.snap(point)
   }
 
+  private isJunctionCell(gx: number, gy: number): boolean {
+    return this.roadNeighborCount(gx, gy) !== 2
+  }
+
+  private isJunctionPoint(point: WorldMapPoint): boolean {
+    const { gx, gy } = this.toGridPoint(point)
+    const cell = this.findNearestRoadCell(gx, gy)
+    if (!cell) return false
+    return this.isJunctionCell(cell.gx, cell.gy)
+  }
+
   private smoothRoadCorners(points: WorldMapPoint[]): WorldMapPoint[] {
     if (points.length < 3) return points.map((point) => this.ensureOnRoad(point))
 
@@ -541,7 +550,7 @@ class GeneralMapRoadSnapIndex {
       const next = points[index + 1]!
       const angle = turnAngleAt(prev, curr, next)
 
-      if (angle < SMOOTH_CORNER_ANGLE) {
+      if (angle < SMOOTH_CORNER_ANGLE && !this.isJunctionPoint(curr)) {
         const inLen = Math.hypot(curr[0] - prev[0], curr[1] - prev[1])
         const outLen = Math.hypot(next[0] - curr[0], next[1] - curr[1])
         const radius = Math.min(SMOOTH_CORNER_RADIUS, inLen * 0.42, outLen * 0.42)
@@ -738,6 +747,24 @@ class GeneralMapRoadSnapIndex {
         const outDir = neighborDirIndex(dx, dy)
         if (outDir < 0) continue
 
+        const isJunction = this.roadNeighborCount(cx, cy) !== 2
+        if (isJunction && incomingDir !== PATH_START_DIR && incomingDir !== outDir) {
+          const allowedByStartVia =
+            options.startViaKind != null &&
+            startStateSet?.has(state) &&
+            this.getValidExitDirs(cx, cy, incomingDir, options.startViaKind).includes(outDir)
+
+          const turningTowardVirtualGoal =
+            options.endConstraint != null &&
+            nx === ex &&
+            ny === ey &&
+            this.isValidVirtualTransition(cx, cy, incomingDir, outDir, options.endConstraint.kind)
+
+          if (!allowedByStartVia && !turningTowardVirtualGoal) {
+            continue
+          }
+        }
+
         if (
           options.startViaKind &&
           startStateSet?.has(state) &&
@@ -749,9 +776,6 @@ class GeneralMapRoadSnapIndex {
         let stepCost = dx !== 0 && dy !== 0 ? 1.414 : 1
         if (incomingDir !== PATH_START_DIR && incomingDir !== outDir) {
           stepCost += TURN_PENALTY
-          if (this.roadNeighborCount(cx, cy) !== 2) {
-            stepCost += JUNCTION_TURN_PENALTY
-          }
         }
 
         const allowBridge =
