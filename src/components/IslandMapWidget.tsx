@@ -18,7 +18,7 @@ import {
 } from '../utils/worldMapRouteExport'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
 import { rebuildDraftPathFromStops } from '../utils/worldMapDrawPath'
-import { preloadGeneralMapRoadSnapIndex, traceGeneralMapRoadPath, type GeneralMapRoadSnapIndex } from '../utils/generalMapRoadSnap'
+import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad, traceGeneralMapRoadPath, type GeneralMapRoadSnapIndex } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
@@ -179,7 +179,7 @@ export function IslandMapWidget() {
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [drawMode, setDrawMode] = useState(false)
   const [drawInteraction, setDrawInteraction] = useState<IslandMapDrawInteraction>('route')
-  const roadSnap = useGeneralMapRoadSnap(isMapAdmin && drawMode)
+  const roadSnap = useGeneralMapRoadSnap(isMapAdmin)
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
   const [draftVirtualNodes, setDraftVirtualNodes] = useState<WorldMapVirtualNode[]>([])
@@ -281,9 +281,9 @@ export function IslandMapWidget() {
   )
 
   useEffect(() => {
-    if (drawInteraction !== 'route' || draftStops.length < 2) return
+    if (drawInteraction !== 'route' || draftStops.length < 2 || !roadSnap.ready) return
     rebuildPath(draftStops)
-  }, [draftVirtualNodes, drawRouteId, drawInteraction, draftStops, rebuildPath])
+  }, [draftVirtualNodes, drawRouteId, drawInteraction, draftStops, rebuildPath, roadSnap.ready])
 
   const handleDrawMapClick = useCallback(
     (point: WorldMapPoint) => {
@@ -425,20 +425,27 @@ export function IslandMapWidget() {
       showExportHint(t('islandMapDrawGenerateNeedRouteId'))
       return
     }
-    if (roadSnap.loading) {
-      showExportHint(t('islandMapDrawRoadLoading'))
-      return
-    }
     setGeneratingRoute(true)
     try {
+      const index = roadSnap.index ?? (await preloadGeneralMapRoadSnapIndex())
+      if (!index) {
+        showExportHint(t('islandMapDrawGenerateFailed'))
+        return
+      }
+      setLayer('general')
+      const traceSeg = (
+        from: WorldMapPoint,
+        to: WorldMapPoint,
+        via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
+      ) => traceGeneralMapRoadPath(index, from, to, via)
       const result = await generateWorldMapRouteDraft({
         routeId,
         directionIndex: drawDirectionIndex,
         existingStops: draftStops,
         virtualNodes: draftVirtualNodes,
-        snap: (point) => roadSnap.snap(point),
-        toConstraint: (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind),
-        traceSegment,
+        snap: (point) => snapPointToGeneralMapRoad(index, point),
+        toConstraint: (node) => index.toVirtualNodeConstraint(node.point, node.kind) ?? null,
+        traceSegment: traceSeg,
       })
       if (!result) {
         showExportHint(t('islandMapDrawGenerateFailed'))
@@ -473,10 +480,8 @@ export function IslandMapWidget() {
     draftStops,
     draftVirtualNodes,
     expanded,
-    roadSnap,
     showExportHint,
     t,
-    traceSegment,
   ])
 
   const handleSendDrawPermissionRequest = useCallback(async () => {
@@ -797,7 +802,7 @@ export function IslandMapWidget() {
           type="button"
           className="island-map-btn island-map-btn--generate"
           onClick={() => void handleGenerateRoute()}
-          disabled={generatingRoute || !drawRouteId.trim() || roadSnap.loading}
+          disabled={generatingRoute || !drawRouteId.trim()}
           title={t('islandMapDrawGenerateHint')}
         >
           {generatingRoute ? t('islandMapDrawGenerating') : t('islandMapDrawGenerate')}
