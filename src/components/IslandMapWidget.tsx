@@ -918,54 +918,15 @@ export function IslandMapWidget() {
                 {drawMode ? t('islandMapDrawStop') : t('islandMapDraw')}
               </button>
             ) : userApiEnabled ? (
-              <>
-                <button
-                  type="button"
-                  className="island-map-btn island-map-btn--draw"
-                  onClick={handleDrawEntryClick}
-                  title={t('islandMapDrawPermissionButtonHint')}
-                >
-                  {t('islandMapDraw')}
-                </button>
-                <button
-                  type="button"
-                  className="island-map-btn island-map-btn--import"
-                  onClick={() => importInputRef.current?.click()}
-                  title={t('islandMapDrawImportHint')}
-                >
-                  {t('islandMapDrawImport')}
-                </button>
-                <button
-                  type="button"
-                  className="island-map-btn island-map-btn--export"
-                  onClick={openExportDialog}
-                  disabled={!canExport}
-                  title={t('islandMapDrawExportRouteHint')}
-                >
-                  {t('islandMapDrawExport')}
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="island-map-btn island-map-btn--import"
-                  onClick={() => importInputRef.current?.click()}
-                  title={t('islandMapDrawImportHint')}
-                >
-                  {t('islandMapDrawImport')}
-                </button>
-                <button
-                  type="button"
-                  className="island-map-btn island-map-btn--export"
-                  onClick={openExportDialog}
-                  disabled={!canExport}
-                  title={t('islandMapDrawExportRouteHint')}
-                >
-                  {t('islandMapDrawExport')}
-                </button>
-              </>
-            )}
+              <button
+                type="button"
+                className="island-map-btn island-map-btn--draw"
+                onClick={handleDrawEntryClick}
+                title={t('islandMapDrawPermissionButtonHint')}
+              >
+                {t('islandMapDraw')}
+              </button>
+            ) : null}
             <button
               type="button"
               className="island-map-btn island-map-btn--hide"
