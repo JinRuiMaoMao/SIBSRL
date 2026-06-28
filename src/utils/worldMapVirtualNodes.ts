@@ -2,7 +2,6 @@ import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRout
 import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
 const JUNCTION_EPSILON = 0.00008
-const LEG_CORRIDOR = 0.035
 
 export function canonicalVirtualNodeRouteId(routeId: string): string {
   const trimmed = routeId.trim()
@@ -42,29 +41,25 @@ function projectionT(from: WorldMapPoint, to: WorldMapPoint, point: WorldMapPoin
   return ((point[0] - from[0]) * dx + (point[1] - from[1]) * dy) / lenSq
 }
 
-function distanceToSegment(from: WorldMapPoint, to: WorldMapPoint, point: WorldMapPoint): number {
-  const t = Math.max(0, Math.min(1, projectionT(from, to, point)))
-  const px = from[0] + (to[0] - from[0]) * t
-  const py = from[1] + (to[1] - from[1]) * t
-  return Math.hypot(point[0] - px, point[1] - py)
-}
-
 export function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = JUNCTION_EPSILON): boolean {
   return Math.hypot(a[0] - b[0], a[1] - b[1]) <= epsilon
 }
 
-/** Whether this ordered virtual node lies on the current leg before the next stop. */
+/** Whether the next ordered virtual node lies ahead on the leg toward the next stop. */
 export function shouldVisitVirtualNodeBeforeStop(
   node: WorldMapVirtualNode,
   from: WorldMapPoint,
   to: WorldMapPoint,
 ): boolean {
   const t = projectionT(from, to, node.point)
-  if (t <= 0.02 || t >= 0.98) return false
-  return distanceToSegment(from, to, node.point) <= LEG_CORRIDOR
+  if (t <= 0.01) return false
+  if (t >= 0.99) return false
+  const distToNode = Math.hypot(node.point[0] - from[0], node.point[1] - from[1])
+  const distToStop = Math.hypot(to[0] - from[0], to[1] - from[1])
+  return distToNode <= distToStop * 1.2
 }
 
-/** Consecutive virtual nodes at the same junction, in order. */
+/** Consecutive virtual nodes at the same junction share one map location but keep separate order values. */
 export function collectJunctionVirtualNodeChain(
   orderedNodes: readonly WorldMapVirtualNode[],
   startIndex: number,

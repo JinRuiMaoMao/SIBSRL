@@ -418,6 +418,12 @@ html.has-compact-tab-nav .island-map--widget {
   opacity: 0.72;
 }
 
+.island-map-draw-stop-suggestion-route {
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
 .island-map-draw-stop-list {
   list-style: none;
   margin: 0;

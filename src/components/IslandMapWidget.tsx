@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
-import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
+import { fitNormalizedViewToRoutePoints, listWorldMapRouteSegmentsExcept, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
 import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useGeneralMapRoadSnap } from '../hooks/useGeneralMapRoadSnap'
 import { useLocale } from '../i18n/LocaleContext'
@@ -57,11 +57,12 @@ async function traceImportedRoutePath(
 ): Promise<WorldMapPoint[]> {
   if (stops.length < 2) return []
   const index = roadSnapReady ? roadSnapIndex : await preloadGeneralMapRoadSnapIndex()
+  const avoidParallelSegments = listWorldMapRouteSegmentsExcept(routeId)
   const traceSegment = (
     from: WorldMapPoint,
     to: WorldMapPoint,
     via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
-  ) => traceGeneralMapRoadPath(index, from, to, via)
+  ) => traceGeneralMapRoadPath(index, from, to, via, { avoidParallelSegments })
   return rebuildDraftPathFromStops(
     stops,
     traceSegment,
@@ -180,15 +181,19 @@ export function IslandMapWidget() {
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [drawMode, setDrawMode] = useState(false)
   const [drawInteraction, setDrawInteraction] = useState<IslandMapDrawInteraction>('route')
-  const roadSnap = useGeneralMapRoadSnap(isMapAdmin)
+  const [drawRouteId, setDrawRouteId] = useState('')
+  const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
+  const avoidParallelSegments = useMemo(
+    () => listWorldMapRouteSegmentsExcept(drawRouteId),
+    [drawRouteId],
+  )
+  const roadSnap = useGeneralMapRoadSnap(isMapAdmin, { avoidParallelSegments })
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
   const [draftVirtualNodes, setDraftVirtualNodes] = useState<WorldMapVirtualNode[]>([])
   const [pendingStop, setPendingStop] = useState<WorldMapDrawStopDraft | null>(null)
   const [pendingVirtualNode, setPendingVirtualNode] = useState<WorldMapVirtualNodeDraft | null>(null)
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
-  const [drawRouteId, setDrawRouteId] = useState('')
-  const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
@@ -882,6 +887,8 @@ export function IslandMapWidget() {
       {drawInteraction !== 'virtual' ? (
         <IslandMapDrawStopPanel
           interaction={drawInteraction}
+          routeId={drawRouteId}
+          directionIndex={drawDirectionIndex}
           stops={draftStops}
           pendingStop={drawMode ? pendingStop : null}
           onPendingQueryChange={(query) =>

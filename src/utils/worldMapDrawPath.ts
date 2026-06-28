@@ -1,10 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
-import {
-  collectJunctionVirtualNodeChain,
-  orderedVirtualNodesForRoute,
-  shouldVisitVirtualNodeBeforeStop,
-} from './worldMapVirtualNodes'
+import { orderedVirtualNodesForRoute, shouldVisitVirtualNodeBeforeStop } from './worldMapVirtualNodes'
 import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 
 export function mergePathPoints(
@@ -62,15 +58,12 @@ export function rebuildDraftPathFromStops(
       const node = orderedVNs[vnIndex]!
       if (!shouldVisitVirtualNodeBeforeStop(node, cursor, nextStop)) break
 
-      const { chain, nextIndex } = collectJunctionVirtualNodeChain(orderedVNs, vnIndex)
-      const constraints = chain
-        .map((entry) => toConstraint(entry))
-        .filter((entry): entry is VirtualNodePathConstraint => entry != null)
-      const target = chain[chain.length - 1]!.point
-      const traced = appendWithVirtualConstraints(points, cursor, target, constraints, appendSegment)
+      const constraint = toConstraint(node)
+      const constraints = constraint ? [constraint] : []
+      const traced = appendWithVirtualConstraints(points, cursor, node.point, constraints, appendSegment)
       points = traced.points
       cursor = traced.cursor
-      vnIndex = nextIndex
+      vnIndex += 1
     }
 
     const traced = appendWithVirtualConstraints(points, cursor, nextStop, [], appendSegment)
@@ -79,15 +72,13 @@ export function rebuildDraftPathFromStops(
   }
 
   while (vnIndex < orderedVNs.length) {
-    const { chain, nextIndex } = collectJunctionVirtualNodeChain(orderedVNs, vnIndex)
-    const constraints = chain
-      .map((entry) => toConstraint(entry))
-      .filter((entry): entry is VirtualNodePathConstraint => entry != null)
-    const target = chain[chain.length - 1]!.point
-    const traced = appendWithVirtualConstraints(points, cursor, target, constraints, appendSegment)
+    const node = orderedVNs[vnIndex]!
+    const constraint = toConstraint(node)
+    const constraints = constraint ? [constraint] : []
+    const traced = appendWithVirtualConstraints(points, cursor, node.point, constraints, appendSegment)
     points = traced.points
     cursor = traced.cursor
-    vnIndex = nextIndex
+    vnIndex += 1
   }
 
   return points

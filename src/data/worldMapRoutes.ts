@@ -37,6 +37,25 @@ export function hasWorldMapRoutePath(routeId: string): boolean {
   return resolveWorldMapRouteId(routeId) != null
 }
 
+export type WorldMapRouteSegment = readonly [WorldMapPoint, WorldMapPoint]
+
+/** Road segments from published routes, for parallel-overlap avoidance while drawing. */
+export function listWorldMapRouteSegmentsExcept(excludeRouteId?: string): WorldMapRouteSegment[] {
+  const exclude = excludeRouteId ? resolveWorldMapRouteId(excludeRouteId) ?? excludeRouteId.trim() : null
+  const segments: WorldMapRouteSegment[] = []
+
+  for (const [routeId, entry] of Object.entries(WORLD_MAP_ROUTE_PATHS)) {
+    if (exclude && (routeId === exclude || resolveWorldMapRouteId(routeId) === exclude)) continue
+    for (const direction of entry.directions) {
+      for (let index = 0; index < direction.points.length - 1; index += 1) {
+        segments.push([direction.points[index]!, direction.points[index + 1]!])
+      }
+    }
+  }
+
+  return segments
+}
+
 export function fitNormalizedViewToRoutePoints(
   points: readonly WorldMapPoint[],
   mode: 'widget' | 'fullscreen',

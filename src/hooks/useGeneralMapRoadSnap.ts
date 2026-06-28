@@ -5,10 +5,15 @@ import {
   snapPointToGeneralMapRoad,
   traceGeneralMapRoadPath,
   type GeneralMapRoadSnapIndex,
+  type TraceRoadPathOptions,
   type VirtualNodePathConstraint,
+  type WorldMapRouteSegmentRef,
 } from '../utils/generalMapRoadSnap'
 
-export function useGeneralMapRoadSnap(enabled: boolean) {
+export function useGeneralMapRoadSnap(
+  enabled: boolean,
+  options?: { avoidParallelSegments?: readonly WorldMapRouteSegmentRef[] },
+) {
   const [index, setIndex] = useState<GeneralMapRoadSnapIndex | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -47,14 +52,18 @@ export function useGeneralMapRoadSnap(enabled: boolean) {
         from: WorldMapPoint | null,
         to: WorldMapPoint,
         via: VirtualNodePathConstraint[] = [],
+        traceOptions: TraceRoadPathOptions = {},
       ): WorldMapPoint[] {
         const snapped = snapPointToGeneralMapRoad(index, to)
         if (!from) return [snapped]
         if (!index) return [snapped]
-        const traced = traceGeneralMapRoadPath(index, from, snapped, via)
+        const traced = traceGeneralMapRoadPath(index, from, snapped, via, {
+          avoidParallelSegments: options?.avoidParallelSegments,
+          ...traceOptions,
+        })
         return traced.length > 0 ? traced : [snapped]
       },
     }),
-    [index, loading],
+    [index, loading, options?.avoidParallelSegments],
   )
 }

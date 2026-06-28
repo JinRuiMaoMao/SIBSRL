@@ -77,6 +77,17 @@ const PATH_DIR_COUNT = NEIGHBORS.length
 const PATH_STATE_STRIDE = PATH_DIR_COUNT + 1
 const PATH_START_DIR = PATH_DIR_COUNT
 const TURN_PENALTY = 0.35
+/** Prefer continuing straight at junctions when no virtual node directs a turn. */
+const JUNCTION_TURN_PENALTY = 2.5
+/** Avoid bridge/tunnel unless a matching virtual node or already on that surface. */
+const BRIDGE_ENTRY_PENALTY = 4
+const TUNNEL_ENTRY_PENALTY = 4
+/** Penalize tracing parallel to an existing route segment at close range. */
+const PARALLEL_OVERLAP_PENALTY = 3
+const PARALLEL_DIST = 0.0028
+const PARALLEL_ANGLE_TOL = 0.4
+const SMOOTH_CORNER_ANGLE = 2.35
+const SMOOTH_CORNER_RADIUS = 0.00022
 
 function cellIndex(gridWidth: number, x: number, y: number): number {
   return y * gridWidth + x
@@ -135,6 +146,15 @@ interface FindPathOptions {
   endConstraint?: VirtualNodePathConstraint
   startStates?: number[]
   startViaKind?: VirtualNodeKind
+  allowBridge?: boolean
+  allowTunnel?: boolean
+  avoidParallelSegments?: readonly WorldMapRouteSegmentRef[]
+}
+
+export type WorldMapRouteSegmentRef = readonly [WorldMapPoint, WorldMapPoint]
+
+export interface TraceRoadPathOptions {
+  avoidParallelSegments?: readonly WorldMapRouteSegmentRef[]
 }
 
 class GeneralMapRoadSnapIndex {
@@ -434,7 +454,12 @@ class GeneralMapRoadSnapIndex {
     }
   }
 
-  trace(from: WorldMapPoint, to: WorldMapPoint, via: VirtualNodePathConstraint[] = []): WorldMapPoint[] {
+  trace(
+    from: WorldMapPoint,
+    to: WorldMapPoint,
+    via: VirtualNodePathConstraint[] = [],
+    options: TraceRoadPathOptions = {},
+  ): WorldMapPoint[] {
     const start = this.toGridPoint(from)
     const end = this.toGridPoint(to)
     const startCell = this.findNearestRoadCell(start.gx, start.gy)
@@ -456,10 +481,19 @@ class GeneralMapRoadSnapIndex {
     let cursor = startCell
 
     for (const target of chain) {
+      const onBridge = this.isBridgeCell(cursor.gx, cursor.gy)
+      const onTunnel = this.isTunnelCell(cursor.gx, cursor.gy)
       const segment = this.findPath(cursor.gx, cursor.gy, target.gx, target.gy, {
         endConstraint: target.endConstraint,
         startStates,
         startViaKind,
+        allowBridge:
+          onBridge || startViaKind === 'on-bridge' || target.endConstraint?.kind === 'on-bridge',
+        allowTunnel:
+          onTunnel ||
+          startViaKind === 'enter-tunnel' ||
+          target.endConstraint?.kind === 'enter-tunnel',
+        avoidParallelSegments: options.avoidParallelSegments,
       })
       if (!segment || segment.length === 0) return [this.snap(to)]
 
@@ -487,7 +521,47 @@ class GeneralMapRoadSnapIndex {
     }
 
     points[points.length - 1] = this.snap(to)
-    return simplifyPath(points, 0.00045)
+    const smoothed = this.smoothRoadCorners(points)
+    return simplifyPath(smoothed, 0.00028)
+  }
+
+  private ensureOnRoad(point: WorldMapPoint): WorldMapPoint {
+    const { px, py } = this.toGridPoint(point)
+    if (this.isRoadAtPixel(px, py)) return point
+    return this.snap(point)
+  }
+
+  private smoothRoadCorners(points: WorldMapPoint[]): WorldMapPoint[] {
+    if (points.length < 3) return points.map((point) => this.ensureOnRoad(point))
+
+    const result: WorldMapPoint[] = [this.ensureOnRoad(points[0]!)]
+    for (let index = 1; index < points.length - 1; index += 1) {
+      const prev = points[index - 1]!
+      const curr = points[index]!
+      const next = points[index + 1]!
+      const angle = turnAngleAt(prev, curr, next)
+
+      if (angle < SMOOTH_CORNER_ANGLE) {
+        const inLen = Math.hypot(curr[0] - prev[0], curr[1] - prev[1])
+        const outLen = Math.hypot(next[0] - curr[0], next[1] - curr[1])
+        const radius = Math.min(SMOOTH_CORNER_RADIUS, inLen * 0.42, outLen * 0.42)
+        if (radius > 0.00004) {
+          const pIn = pointAlong(curr, prev, radius)
+          const pOut = pointAlong(curr, next, radius)
+          for (let step = 1; step <= 4; step += 1) {
+            const t = step / 4
+            const sample = quadraticBezier(pIn, curr, pOut, t)
+            result.push(this.ensureOnRoad(sample))
+          }
+          continue
+        }
+      }
+
+      result.push(this.ensureOnRoad(curr))
+    }
+
+    result.push(this.ensureOnRoad(points[points.length - 1]!))
+    return result
   }
 
   roadDirectionsAt(point: WorldMapPoint): number[] {
@@ -632,7 +706,7 @@ class GeneralMapRoadSnapIndex {
         const endOk =
           !options.endConstraint ||
           (incomingDir !== PATH_START_DIR &&
-            satisfiesVirtualNodeTransition(incomingDir, options.endConstraint))
+            this.getValidExitDirs(ex, ey, incomingDir, options.endConstraint.kind).length > 0)
         if (endOk) {
           if (options.endConstraint) {
             return this.reconstructDirectionalPath(cameFrom, state)
@@ -675,6 +749,32 @@ class GeneralMapRoadSnapIndex {
         let stepCost = dx !== 0 && dy !== 0 ? 1.414 : 1
         if (incomingDir !== PATH_START_DIR && incomingDir !== outDir) {
           stepCost += TURN_PENALTY
+          if (this.roadNeighborCount(cx, cy) !== 2) {
+            stepCost += JUNCTION_TURN_PENALTY
+          }
+        }
+
+        const allowBridge =
+          options.allowBridge || this.isBridgeCell(cx, cy) || options.startViaKind === 'on-bridge'
+        const allowTunnel =
+          options.allowTunnel ||
+          this.isTunnelCell(cx, cy) ||
+          options.startViaKind === 'enter-tunnel'
+        if (!allowBridge && this.isPlainRoadCell(cx, cy) && this.isBridgeCell(nx, ny)) {
+          stepCost += BRIDGE_ENTRY_PENALTY
+        }
+        if (!allowTunnel && this.isPlainRoadCell(cx, cy) && this.isTunnelCell(nx, ny)) {
+          stepCost += TUNNEL_ENTRY_PENALTY
+        }
+        if (options.avoidParallelSegments?.length) {
+          stepCost += parallelOverlapPenalty(
+            cx,
+            cy,
+            nx,
+            ny,
+            this,
+            options.avoidParallelSegments,
+          )
         }
 
         const nextState = pathStateId(nextCell, outDir)
@@ -719,6 +819,87 @@ function clamp(value: number, min: number, max: number): number {
 
 function pointsNear(a: WorldMapPoint, b: WorldMapPoint, epsilon = 0.00005): boolean {
   return Math.hypot(a[0] - b[0], a[1] - b[1]) <= epsilon
+}
+
+function turnAngleAt(prev: WorldMapPoint, curr: WorldMapPoint, next: WorldMapPoint): number {
+  const inDx = curr[0] - prev[0]
+  const inDy = curr[1] - prev[1]
+  const outDx = next[0] - curr[0]
+  const outDy = next[1] - curr[1]
+  const inLen = Math.hypot(inDx, inDy)
+  const outLen = Math.hypot(outDx, outDy)
+  if (inLen <= 1e-9 || outLen <= 1e-9) return Math.PI
+  const dot = (inDx * outDx + inDy * outDy) / (inLen * outLen)
+  return Math.acos(clamp(dot, -1, 1))
+}
+
+function pointAlong(from: WorldMapPoint, toward: WorldMapPoint, distance: number): WorldMapPoint {
+  const dx = toward[0] - from[0]
+  const dy = toward[1] - from[1]
+  const len = Math.hypot(dx, dy)
+  if (len <= 1e-9) return [from[0], from[1]]
+  const scale = distance / len
+  return [from[0] + dx * scale, from[1] + dy * scale]
+}
+
+function quadraticBezier(
+  start: WorldMapPoint,
+  control: WorldMapPoint,
+  end: WorldMapPoint,
+  t: number,
+): WorldMapPoint {
+  const u = 1 - t
+  return [
+    u * u * start[0] + 2 * u * t * control[0] + t * t * end[0],
+    u * u * start[1] + 2 * u * t * control[1] + t * t * end[1],
+  ]
+}
+
+function segmentBearing(from: WorldMapPoint, to: WorldMapPoint): number {
+  return Math.atan2(to[1] - from[1], to[0] - from[0])
+}
+
+function pointSegmentDistance(point: WorldMapPoint, a: WorldMapPoint, b: WorldMapPoint): number {
+  const dx = b[0] - a[0]
+  const dy = b[1] - a[1]
+  const lenSq = dx * dx + dy * dy
+  if (lenSq <= 1e-12) return Math.hypot(point[0] - a[0], point[1] - a[1])
+  const t = clamp(((point[0] - a[0]) * dx + (point[1] - a[1]) * dy) / lenSq, 0, 1)
+  const px = a[0] + dx * t
+  const py = a[1] + dy * t
+  return Math.hypot(point[0] - px, point[1] - py)
+}
+
+function parallelOverlapPenalty(
+  cx: number,
+  cy: number,
+  nx: number,
+  ny: number,
+  index: GeneralMapRoadSnapIndex,
+  segments: readonly WorldMapRouteSegmentRef[],
+): number {
+  const fromPx = cx * ROAD_CELL_PX + ROAD_CELL_PX / 2
+  const fromPy = cy * ROAD_CELL_PX + ROAD_CELL_PX / 2
+  const toPx = nx * ROAD_CELL_PX + ROAD_CELL_PX / 2
+  const toPy = ny * ROAD_CELL_PX + ROAD_CELL_PX / 2
+  const from: WorldMapPoint = [fromPx / (index.width - 1), fromPy / (index.height - 1)]
+  const to: WorldMapPoint = [toPx / (index.width - 1), toPy / (index.height - 1)]
+  const moveBearing = segmentBearing(from, to)
+  const mid: WorldMapPoint = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2]
+
+  for (const [a, b] of segments) {
+    const dist = pointSegmentDistance(mid, a, b)
+    if (dist > PARALLEL_DIST) continue
+    const segBearing = segmentBearing(a, b)
+    const delta = Math.abs(
+      Math.atan2(Math.sin(moveBearing - segBearing), Math.cos(moveBearing - segBearing)),
+    )
+    if (delta < PARALLEL_ANGLE_TOL) {
+      return PARALLEL_OVERLAP_PENALTY
+    }
+  }
+
+  return 0
 }
 
 function simplifyPath(points: WorldMapPoint[], minDistance: number): WorldMapPoint[] {
@@ -775,9 +956,10 @@ export function traceGeneralMapRoadPath(
   from: WorldMapPoint,
   to: WorldMapPoint,
   via: VirtualNodePathConstraint[] = [],
+  options: TraceRoadPathOptions = {},
 ): WorldMapPoint[] {
   if (!index) return [to]
-  const traced = index.trace(from, to, via)
+  const traced = index.trace(from, to, via, options)
   return traced.length > 0 ? traced : [index.snap(to)]
 }
 

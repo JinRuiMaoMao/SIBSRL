@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { IslandMapDrawInteraction, WorldMapDrawStop, WorldMapDrawStopDraft } from '../types/worldMapDraw'
-import { findStopsMatchingQuery } from '../utils/routeStopLookup'
+import { findDrawStopSuggestions } from '../utils/worldMapDrawRouteLookup'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 
 interface IslandMapDrawStopPanelProps {
   interaction: IslandMapDrawInteraction
+  routeId: string
+  directionIndex: number
   stops: readonly WorldMapDrawStop[]
   pendingStop: WorldMapDrawStopDraft | null
   onPendingQueryChange: (query: string) => void
@@ -16,6 +18,8 @@ interface IslandMapDrawStopPanelProps {
 
 export function IslandMapDrawStopPanel({
   interaction,
+  routeId,
+  directionIndex,
   stops,
   pendingStop,
   onPendingQueryChange,
@@ -26,10 +30,15 @@ export function IslandMapDrawStopPanel({
   const { t, locale } = useLocale()
   const [showSuggestions, setShowSuggestions] = useState(false)
 
+  const addedStopKeys = useMemo(
+    () => new Set(stops.map((stop) => `${stop.name.zh}|${stop.name.en || stop.name.zh}`)),
+    [stops],
+  )
+
   const suggestions = useMemo(() => {
-    if (!pendingStop?.query.trim()) return []
-    return findStopsMatchingQuery(pendingStop.query).slice(0, 8)
-  }, [pendingStop?.query])
+    if (interaction !== 'route' || !pendingStop) return []
+    return findDrawStopSuggestions(pendingStop.query, routeId, directionIndex, addedStopKeys)
+  }, [addedStopKeys, directionIndex, interaction, pendingStop, routeId])
 
   const applySuggestion = (zh: string, en: string) => {
     onPendingQueryChange(locale.startsWith('zh') ? zh : en || zh)
@@ -93,8 +102,15 @@ export function IslandMapDrawStopPanel({
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => applySuggestion(stop.zh, stop.en)}
                   >
-                    <span>{stop.zh}</span>
-                    {stop.en ? <span className="island-map-draw-stop-suggestion-en">{stop.en}</span> : null}
+                    <span>
+                      {stop.zh}
+                      {stop.fromRouteDetail ? (
+                        <span className="island-map-draw-stop-suggestion-route">{t('islandMapDrawStopFromRoute')}</span>
+                      ) : null}
+                    </span>
+                    {stop.en && stop.en !== stop.zh ? (
+                      <span className="island-map-draw-stop-suggestion-en">{stop.en}</span>
+                    ) : null}
                   </button>
                 </li>
               ))}

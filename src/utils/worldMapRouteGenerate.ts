@@ -1,9 +1,8 @@
 import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
-import { routes } from '../data/routes'
 import type { RouteStop } from '../types/route'
 import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
-import { findDisplayRouteByQuery, mergeRoutesByBaseNumber, DISPLAY_ONLY_RENAMES } from './routeMerge'
+import { findBusRouteForDraw } from './worldMapDrawRouteLookup'
 import { rebuildDraftPathFromStops, type TraceSegmentFn } from './worldMapDrawPath'
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from './worldMapStopCatalog'
 
@@ -80,26 +79,7 @@ function resolveRouteStopsFromCatalog(
 }
 
 function findBusRouteForGenerate(routeQuery: string) {
-  const displayRoutes = mergeRoutesByBaseNumber(routes)
-  const query = routeQuery.trim()
-  if (!query) return undefined
-
-  const direct = findDisplayRouteByQuery(displayRoutes, query)
-  if (direct) return direct
-
-  const byDisplayNumber = displayRoutes.find((entry) => {
-    const display = DISPLAY_ONLY_RENAMES[entry.id] ?? DISPLAY_ONLY_RENAMES[entry.number]
-    return display === query
-  })
-  if (byDisplayNumber) return byDisplayNumber
-
-  const knownAliases: Record<string, string> = { '21': '21A' }
-  const aliasedId = knownAliases[query]
-  if (aliasedId) {
-    return displayRoutes.find((entry) => entry.id === aliasedId)
-  }
-
-  return undefined
+  return findBusRouteForDraw(routeQuery)
 }
 
 export interface GenerateWorldMapRouteDraftOptions {
