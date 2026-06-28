@@ -106,6 +106,7 @@ export async function resetAccountPassword(email: string, password: string, code
 export interface UserProfilePayload {
   email: string
   oauthOnly: boolean
+  isAdmin: boolean
   displayName: string | null
   avatarDataUrl: string | null
 }

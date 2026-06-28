@@ -5,6 +5,8 @@ interface IslandMapRouteOverlayLayerProps {
   imageHeight: number
   routeNumber: string
   points: readonly WorldMapPoint[]
+  variant?: 'route' | 'draft'
+  strokeColor?: string
 }
 
 export function IslandMapRouteOverlayLayer({
@@ -12,22 +14,36 @@ export function IslandMapRouteOverlayLayer({
   imageHeight,
   routeNumber,
   points,
+  variant = 'route',
+  strokeColor,
 }: IslandMapRouteOverlayLayerProps) {
   const polyline = points
     .map(([x, y]) => `${x * imageWidth},${y * imageHeight}`)
     .join(' ')
   const start = points[0]
   const end = points[points.length - 1]
+  const draftStyle = strokeColor && variant === 'draft' ? { stroke: strokeColor } : undefined
+  const vertexStyle = strokeColor && variant === 'draft' ? { fill: strokeColor, stroke: strokeColor } : undefined
 
   return (
     <svg
-      className="island-map-route-overlay"
+      className={`island-map-route-overlay island-map-route-overlay--${variant}`.trim()}
       width={imageWidth}
       height={imageHeight}
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
     >
-      <polyline className="island-map-route-overlay-line" points={polyline} />
+      <polyline className="island-map-route-overlay-line" points={polyline} style={draftStyle} />
+      {points.map(([x, y], index) => (
+        <circle
+          key={`${index}-${x}-${y}`}
+          className="island-map-route-overlay-vertex"
+          cx={x * imageWidth}
+          cy={y * imageHeight}
+          r={Math.max(3, imageWidth * 0.003)}
+          style={vertexStyle}
+        />
+      ))}
       {start ? (
         <circle
           className="island-map-route-overlay-marker island-map-route-overlay-marker--start"

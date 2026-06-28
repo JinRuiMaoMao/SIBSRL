@@ -22,6 +22,7 @@
     "bot:daily": "node scripts/daily-challenge-bot.mjs",
     "bot:daily:api": "node scripts/daily-challenge-bot.mjs --api-only",
     "user-api": "node --env-file=.env scripts/user-api.mjs",
+    "promote-admin": "node scripts/promote-admin.mjs",
     "start:user-api": "node scripts/user-api.mjs",
     "publish:index": "node scripts/publish-standalone.mjs",
     "lint": "eslint .",

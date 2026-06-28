@@ -171,6 +171,22 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
     groups: [
       {
         title:         {
+          zh: "群岛地图",
+          en: "Island map",
+        },
+        additions:         [
+                    {
+            zh: "管理员登录后可在全屏地图绘制线路走线：左键加点、右键撤销，支持导出 JSON（放入 data/world-map-routes/ 后 rebuild 即可上线）。",
+            en: "Signed-in admins can draw route paths on the fullscreen map—left-click to add, right-click to undo—and export JSON for data/world-map-routes/.",
+          },
+                    {
+            zh: "绘制工具新增调色盘、预设色块，以及 #HEX / rgb() 颜色输入；所选颜色会记住并实时应用到走线。",
+            en: "Draw tools now include a color picker, preset swatches, and #HEX / rgb() input; the chosen color persists and updates the path live.",
+          },
+        ],
+      },
+      {
+        title:         {
           zh: "每日挑战",
           en: "Daily challenge",
         },

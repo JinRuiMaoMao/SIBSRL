@@ -15,9 +15,11 @@ import {
   verifyToken,
 } from './lib/user-auth.mjs'
 import {
+  buildUserProfileJson,
   createUser,
   deleteUser,
   deleteVerificationCode,
+  ensureDefaultAdmins,
   findUserByEmail,
   findUserById,
   findUserByOAuth,
@@ -25,6 +27,7 @@ import {
   getVerificationCode,
   insertRouteFeedback,
   isOAuthOnlyUser,
+  isUserAdmin,
   linkOAuthIdentity,
   openUserDatabase,
   parseUserProfileJson,
@@ -173,6 +176,15 @@ function countFavoriteRoutes(favorites) {
   return seen.size
 }
 
+function buildProfilePayload(user, row, email) {
+  return {
+    email,
+    oauthOnly: user ? isOAuthOnlyUser(user) : false,
+    isAdmin: user ? isUserAdmin(user) : false,
+    ...parseUserProfileJson(row?.profile_json),
+  }
+}
+
 async function handleSendCode(req, res) {
   let body
   try {
@@ -252,6 +264,7 @@ async function handleRegister(req, res) {
   const passwordHash = await hashPassword(password)
   createUser(db, { id: userId, email, passwordHash, createdAt: Date.now() })
   deleteVerificationCode(db, email, 'register')
+  ensureDefaultAdmins(db)
 
   const token = signToken(userId, email)
   json(req, res, 201, { token, email })
@@ -331,11 +344,7 @@ function handleGetUserData(req, res) {
     favorites,
     updatedAt: row?.updated_at ?? null,
     favoriteCount: favorites ? countFavoriteRoutes(favorites) : 0,
-    profile: {
-      email: session.email,
-      oauthOnly: user ? isOAuthOnlyUser(user) : false,
-      ...parseUserProfileJson(row?.profile_json),
-    },
+    profile: buildProfilePayload(user, row, session.email),
   })
 }
 
@@ -405,12 +414,7 @@ async function handlePatchUserProfile(req, res) {
   json(req, res, 200, {
     ok: true,
     updatedAt,
-    profile: {
-      email: session.email,
-      oauthOnly: user ? isOAuthOnlyUser(user) : false,
-      displayName,
-      avatarDataUrl,
-    },
+    profile: buildProfilePayload(user, { profile_json: buildUserProfileJson({ displayName, avatarDataUrl }) }, session.email),
   })
 }
 
@@ -541,6 +545,7 @@ async function resolveOAuthLogin(req, identity) {
       avatarDataUrl: null,
     })
   }
+  ensureDefaultAdmins(db)
   return { userId, email: identity.email }
 }
 

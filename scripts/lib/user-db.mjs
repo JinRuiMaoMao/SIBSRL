@@ -61,7 +61,35 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
     db.exec('ALTER TABLE user_data ADD COLUMN profile_json TEXT')
   }
 
+  const userColumns = db.prepare('PRAGMA table_info(users)').all()
+  if (!userColumns.some((column) => column.name === 'is_admin')) {
+    db.exec('ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0')
+  }
+
+  ensureDefaultAdmins(db)
+
   return db
+}
+
+const DEFAULT_ADMIN_EMAILS = ['gengyue_sun@outlook.com']
+
+/** @param {import('better-sqlite3').Database} db */
+export function ensureDefaultAdmins(db) {
+  const configured = String(process.env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((part) => part.trim().toLowerCase())
+    .filter(Boolean)
+  const emails = [...new Set([...DEFAULT_ADMIN_EMAILS, ...configured].map((email) => email.toLowerCase()))]
+  if (emails.length === 0) return
+
+  const stmt = db.prepare('UPDATE users SET is_admin = 1 WHERE email = ?')
+  for (const email of emails) {
+    stmt.run(email)
+  }
+}
+
+export function isUserAdmin(user) {
+  return Boolean(user?.is_admin)
 }
 
 /** @param {string | null | undefined} profileJson */
@@ -99,12 +127,16 @@ export function isOAuthOnlyUser(user) {
 
 /** @param {import('better-sqlite3').Database} db */
 export function findUserByEmail(db, email) {
-  return db.prepare('SELECT id, email, password_hash, created_at FROM users WHERE email = ?').get(email)
+  return db
+    .prepare('SELECT id, email, password_hash, created_at, is_admin FROM users WHERE email = ?')
+    .get(email)
 }
 
 /** @param {import('better-sqlite3').Database} db */
 export function findUserById(db, userId) {
-  return db.prepare('SELECT id, email, password_hash, created_at FROM users WHERE id = ?').get(userId)
+  return db
+    .prepare('SELECT id, email, password_hash, created_at, is_admin FROM users WHERE id = ?')
+    .get(userId)
 }
 
 /** @param {import('better-sqlite3').Database} db */
@@ -191,7 +223,7 @@ export function updateUserProfile(db, userId, profile) {
 export function findUserByOAuth(db, provider, providerUserId) {
   const row = db
     .prepare(
-      `SELECT u.id, u.email, u.password_hash, u.created_at
+      `SELECT u.id, u.email, u.password_hash, u.created_at, u.is_admin
        FROM oauth_identities o
        JOIN users u ON u.id = o.user_id
        WHERE o.provider = ? AND o.provider_user_id = ?`,
@@ -209,6 +241,11 @@ export function linkOAuthIdentity(db, { provider, providerUserId, userId, email,
       user_id = excluded.user_id,
       email = excluded.email
   `).run(provider, providerUserId, userId, email, createdAt)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function setUserAdminByEmail(db, email, isAdmin) {
+  return db.prepare('UPDATE users SET is_admin = ? WHERE email = ?').run(isAdmin ? 1 : 0, email)
 }
 
 /** @param {import('better-sqlite3').Database} db */

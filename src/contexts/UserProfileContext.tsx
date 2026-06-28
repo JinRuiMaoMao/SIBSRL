@@ -40,11 +40,12 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
         setProfile({
           email: data.profile.email ?? email ?? '',
           oauthOnly: Boolean(data.profile.oauthOnly),
+          isAdmin: Boolean(data.profile.isAdmin),
           displayName: data.profile.displayName ?? null,
           avatarDataUrl: data.profile.avatarDataUrl ?? null,
         })
       } else {
-        setProfile({ email: email ?? '', oauthOnly: false, displayName: null, avatarDataUrl: null })
+        setProfile({ email: email ?? '', oauthOnly: false, isAdmin: false, displayName: null, avatarDataUrl: null })
       }
     } catch {
       setProfile(null)

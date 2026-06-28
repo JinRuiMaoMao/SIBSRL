@@ -29,6 +29,11 @@ interface IslandMapPanZoomSurfaceProps {
     routeNumber: string
     points: readonly WorldMapPoint[]
   } | null
+  drawMode?: boolean
+  draftPoints?: readonly WorldMapPoint[]
+  draftStrokeColor?: string
+  onDraftPointAdd?: (point: WorldMapPoint) => void
+  onDraftPointUndo?: () => void
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
@@ -167,6 +172,23 @@ function readImageSize(image: HTMLImageElement): ImageSize | null {
   return { width: image.naturalWidth, height: image.naturalHeight }
 }
 
+export function viewportClientToNormalized(
+  clientX: number,
+  clientY: number,
+  viewportRect: DOMRect,
+  panZoom: PanZoomState,
+  imageSize: ImageSize,
+): WorldMapPoint {
+  const localX = clientX - viewportRect.left
+  const localY = clientY - viewportRect.top
+  const imageX = (localX - panZoom.x) / panZoom.scale
+  const imageY = (localY - panZoom.y) / panZoom.scale
+  return [
+    clamp(imageX / imageSize.width, 0, 1),
+    clamp(imageY / imageSize.height, 0, 1),
+  ]
+}
+
 export function IslandMapPanZoomSurface({
   src,
   mode,
@@ -174,6 +196,11 @@ export function IslandMapPanZoomSurface({
   view,
   onViewChange,
   routeOverlay = null,
+  drawMode = false,
+  draftPoints = [],
+  draftStrokeColor,
+  onDraftPointAdd,
+  onDraftPointUndo,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -391,7 +418,21 @@ export function IslandMapPanZoomSurface({
   }, [applyPanZoom, dragging, imageSize, panZoom, readViewportSize])
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0 || !panZoom) return
+    if (!panZoom || !imageSize) return
+
+    if (drawMode) {
+      event.preventDefault()
+      if (event.button === 2) {
+        onDraftPointUndo?.()
+        return
+      }
+      if (event.button !== 0) return
+      const rect = event.currentTarget.getBoundingClientRect()
+      onDraftPointAdd?.(viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize))
+      return
+    }
+
+    if (event.button !== 0) return
     event.preventDefault()
     dragOriginRef.current = {
       pointerX: event.clientX,
@@ -437,10 +478,11 @@ export function IslandMapPanZoomSurface({
   return (
     <div
       ref={viewportRef}
-      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''} ${className}`.trim()}
+      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''} ${className}`.trim()}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
+      onContextMenu={drawMode ? (event) => event.preventDefault() : undefined}
     >
       <img
         ref={imageRef}
@@ -459,6 +501,19 @@ export function IslandMapPanZoomSurface({
             imageHeight={imageSize.height}
             routeNumber={routeOverlay.routeNumber}
             points={routeOverlay.points}
+            variant="route"
+          />
+        </div>
+      ) : null}
+      {imageSize && draftPoints.length > 0 && overlayStyle ? (
+        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+          <IslandMapRouteOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            routeNumber=""
+            points={draftPoints}
+            variant="draft"
+            strokeColor={draftStrokeColor}
           />
         </div>
       ) : null}
