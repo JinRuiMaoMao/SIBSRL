@@ -38,6 +38,7 @@ interface IslandMapPanZoomSurfaceProps {
   draftPoints?: readonly WorldMapPoint[]
   draftStopPoints?: readonly WorldMapPoint[]
   draftStrokeColor?: string
+  draftRouteNumber?: string
   draftStops?: readonly WorldMapDrawStop[]
   draftVirtualNodes?: readonly WorldMapVirtualNode[]
   pendingStopPoint?: WorldMapPoint | null
@@ -219,6 +220,7 @@ export function IslandMapPanZoomSurface({
   draftPoints = [],
   draftStopPoints = [],
   draftStrokeColor,
+  draftRouteNumber = '',
   draftStops = [],
   draftVirtualNodes = [],
   pendingStopPoint = null,
@@ -540,7 +542,7 @@ export function IslandMapPanZoomSurface({
           <IslandMapRouteOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
-            routeNumber=""
+            routeNumber={draftRouteNumber}
             points={draftPoints}
             vertexPoints={draftStopPoints}
             variant="draft"

@@ -199,6 +199,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "虚拟节点支持上北罗盘八向（↑↓←→↖↗↙↘）、相对转向（↺左转 ↻右转 ↩掉头）及上桥/下桥/进隧/出隧。",
             en: "Virtual nodes support north-up compass (8 dirs), relative turns (↺ ↻ ↩ U-turn), and bridge/tunnel enter/exit.",
           },
+          {
+            zh: "普通用户可在全屏地图与小地图工具栏导入/导出 JSON，在地图上查看线路、站点或虚拟节点（无绘制功能）。",
+            en: "All users can import/export JSON from the fullscreen map and widget toolbar to view routes, stops, or virtual nodes—without draw tools.",
+          },
         ],
       },
       {

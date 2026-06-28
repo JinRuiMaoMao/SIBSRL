@@ -32,8 +32,10 @@ import type {
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawVirtualNodePanel } from './IslandMapDrawVirtualNodePanel'
+import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
+import { preloadGeneralMapRoadSnapIndex, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
 
 type MapLayer = 'general' | 'detailed'
 
@@ -102,6 +104,7 @@ function surfaceProps(
   pendingStopPoint: WorldMapPoint | null,
   pendingVirtualNode: { point: WorldMapPoint; kind: WorldMapVirtualNodeKind } | null,
   draftStrokeColor: string,
+  draftRouteNumber: string,
   onDrawMapClick: (point: WorldMapPoint) => void,
   onDrawUndo: () => void,
   maxZoomRatio: number,
@@ -121,6 +124,7 @@ function surfaceProps(
     pendingStopPoint,
     pendingVirtualNode,
     draftStrokeColor,
+    draftRouteNumber,
     onDrawMapClick,
     onDrawUndo,
     maxZoomRatio,
@@ -189,9 +193,6 @@ export function IslandMapWidget() {
   useEffect(() => {
     if (!isMapAdmin) {
       setDrawMode(false)
-      setDraftPoints([])
-      setDraftStops([])
-      setDraftVirtualNodes([])
       setPendingStop(null)
       setPendingVirtualNode(null)
     }
@@ -463,17 +464,23 @@ export function IslandMapWidget() {
         setDrawInteraction('route')
         setDrawRouteId(parsed.routeId)
         setDrawDirectionIndex(parsed.directionIndex)
-        setDraftStops(parsed.stops)
-        const nextPoints =
-          parsed.points.length >= 2
-            ? parsed.points
-            : rebuildDraftPathFromStops(
-                parsed.stops,
-                traceSegment,
-                draftVirtualNodes,
-                parsed.routeId,
-                (node) => roadSnap.toVirtualNodeConstraint(node.point, node.kind),
-              )
+        setDrawStops(parsed.stops)
+        let nextPoints = parsed.points
+        if (nextPoints.length < 2 && parsed.stops.length >= 2) {
+          const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
+          const traceSegment = (
+            from: WorldMapPoint,
+            to: WorldMapPoint,
+            via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
+          ) => traceGeneralMapRoadPath(index, from, to, via)
+          nextPoints = rebuildDraftPathFromStops(
+            parsed.stops,
+            traceSegment,
+            draftVirtualNodes,
+            parsed.routeId,
+            (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
+          )
+        }
         setDraftPoints(nextPoints)
         const fitPoints =
           nextPoints.length >= 2 ? nextPoints : parsed.stops.map((stop) => stop.point)
@@ -485,7 +492,7 @@ export function IslandMapWidget() {
         showExportHint(t('islandMapDrawImportInvalid'))
       }
     },
-    [draftVirtualNodes, expanded, roadSnap, showExportHint, t, traceSegment],
+    [draftVirtualNodes, expanded, roadSnap, showExportHint, t],
   )
 
   const mapSrc = MAP_URLS[layer]
@@ -500,6 +507,7 @@ export function IslandMapWidget() {
         : buildWorldMapRouteExportPayload(drawRouteId, drawDirectionIndex, draftPoints, draftStops) != null
   const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
+  const draftRouteNumber = drawRouteId.trim()
   const pendingVirtualNodeOverlay = pendingVirtualNode
     ? { point: pendingVirtualNode.point, kind: pendingVirtualNode.kind }
     : null
@@ -509,6 +517,31 @@ export function IslandMapWidget() {
     (drawInteraction === 'virtual' ? draftVirtualNodes.length > 0 : draftStops.length > 0)
   const canClear =
     draftStops.length > 0 || draftVirtualNodes.length > 0 || pendingStop != null || pendingVirtualNode != null
+
+  const importExportPanelProps = {
+    interaction: drawInteraction,
+    routeId: drawRouteId,
+    stopCount: draftStops.length,
+    virtualNodeCount: draftVirtualNodes.length,
+    canExport,
+    canClear,
+    exportHint,
+    onImport: () => importInputRef.current?.click(),
+    onExport: () => void handleExport(),
+    onClear: clearDraft,
+  }
+
+  const hiddenImportInput = (
+    <input
+      ref={importInputRef}
+      type="file"
+      accept=".json,application/json"
+      className="island-map-draw-import-input"
+      onChange={(event) => void handleImportFileChange(event)}
+    />
+  )
+
+  const userMapPanel = !isMapAdmin ? <IslandMapImportExportPanel {...importExportPanelProps} /> : null
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
   const closeFullscreen = useCallback(() => setExpanded(false), [])
@@ -583,13 +616,6 @@ export function IslandMapWidget() {
         >
           {t('islandMapDrawExport')}
         </button>
-        <input
-          ref={importInputRef}
-          type="file"
-          accept=".json,application/json"
-          className="island-map-draw-import-input"
-          onChange={(event) => void handleImportFileChange(event)}
-        />
       </div>
       {drawInteraction === 'route' ? (
         <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
@@ -700,13 +726,14 @@ export function IslandMapWidget() {
           pendingStop?.point ?? null,
           pendingVirtualNodeOverlay,
           drawColor,
+          draftRouteNumber,
           handleDrawMapClick,
           handleDrawUndo,
           surfaceMaxZoomRatio,
         )}
       />
       <div className="island-map-controls island-map-controls--fullscreen">
-        {drawPanel}
+        {isMapAdmin ? drawPanel : userMapPanel}
         <div className="island-map-controls-row">
           <button
             type="button"
@@ -752,6 +779,7 @@ export function IslandMapWidget() {
             pendingStop?.point ?? null,
             pendingVirtualNodeOverlay,
             drawColor,
+            draftRouteNumber,
             handleDrawMapClick,
             handleDrawUndo,
             surfaceMaxZoomRatio,
@@ -781,7 +809,27 @@ export function IslandMapWidget() {
               >
                 {drawMode ? t('islandMapDrawStop') : t('islandMapDraw')}
               </button>
-            ) : null}
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="island-map-btn island-map-btn--import"
+                  onClick={() => importInputRef.current?.click()}
+                  title={t('islandMapDrawImportHint')}
+                >
+                  {t('islandMapDrawImport')}
+                </button>
+                <button
+                  type="button"
+                  className="island-map-btn island-map-btn--export"
+                  onClick={() => void handleExport()}
+                  disabled={!canExport}
+                  title={t('islandMapDrawExportRouteHint')}
+                >
+                  {t('islandMapDrawExport')}
+                </button>
+              </>
+            )}
             <button
               type="button"
               className="island-map-btn island-map-btn--hide"
@@ -807,5 +855,11 @@ export function IslandMapWidget() {
   )
 
   if (typeof document === 'undefined') return node
-  return createPortal(node, document.body)
+  return createPortal(
+    <>
+      {hiddenImportInput}
+      {node}
+    </>,
+    document.body,
+  )
 }
