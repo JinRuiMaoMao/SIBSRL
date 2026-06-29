@@ -1,4 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import { buildLegPathD } from '../utils/worldMapDrawPathCurve'
+import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
 
 interface IslandMapRouteOverlayLayerProps {
   imageWidth: number
@@ -6,6 +8,8 @@ interface IslandMapRouteOverlayLayerProps {
   routeNumber: string
   points: readonly WorldMapPoint[]
   vertexPoints?: readonly WorldMapPoint[]
+  legStarts?: readonly number[]
+  legControls?: readonly (WorldMapPoint | null)[]
   variant?: 'route' | 'draft'
   strokeColor?: string
 }
@@ -20,12 +24,11 @@ export function IslandMapRouteOverlayLayer({
   routeNumber,
   points,
   vertexPoints,
+  legStarts,
+  legControls,
   variant = 'route',
   strokeColor,
 }: IslandMapRouteOverlayLayerProps) {
-  const polyline = points
-    .map(([x, y]) => `${x * imageWidth},${y * imageHeight}`)
-    .join(' ')
   const start = points[0]
   const end = points[points.length - 1]
   const strokeWidth = variant === 'draft' ? 1.25 : 1.75
@@ -35,6 +38,16 @@ export function IslandMapRouteOverlayLayer({
       : { strokeWidth, vectorEffect: 'non-scaling-stroke' as const }
   const markers = vertexPoints ?? (variant === 'route' ? points : [])
 
+  const legRanges =
+    variant === 'draft' && legStarts && points.length >= 2
+      ? getPathLegRanges(legStarts, points.length)
+      : []
+  const useCurvedLegs = legRanges.length > 0 && legControls
+
+  const polyline = points
+    .map(([x, y]) => `${x * imageWidth},${y * imageHeight}`)
+    .join(' ')
+
   return (
     <svg
       className={`island-map-route-overlay island-map-route-overlay--${variant}`.trim()}
@@ -43,14 +56,39 @@ export function IslandMapRouteOverlayLayer({
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
     >
-      <polyline
-        className="island-map-route-overlay-line"
-        points={polyline}
-        style={draftStyle}
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {useCurvedLegs
+        ? legRanges.map((leg, legIndex) => {
+            const legStart = points[leg.start]
+            const legEnd = points[leg.end]
+            if (!legStart || !legEnd) return null
+            return (
+              <path
+                key={`leg-line-${legIndex}-${leg.start}-${leg.end}`}
+                className="island-map-route-overlay-line"
+                d={buildLegPathD(
+                  legStart,
+                  legEnd,
+                  legControls[legIndex],
+                  imageWidth,
+                  imageHeight,
+                )}
+                style={draftStyle}
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )
+          })
+        : (
+          <polyline
+            className="island-map-route-overlay-line"
+            points={polyline}
+            style={draftStyle}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        )}
       {markers.map(([x, y], index) => (
         <circle
           key={`${index}-${x}-${y}`}

@@ -51,8 +51,13 @@ interface IslandMapPanZoomSurfaceProps {
   onStopClick?: (stopId: string) => void
   selectedStopId?: string | null
   onPathPointsChange?: (points: WorldMapPoint[]) => void
+  onLegControlChange?: (legIndex: number, control: WorldMapPoint | null) => void
+  onLegDelete?: (legIndex: number) => void
   pathEditable?: boolean
   pathLegStarts?: readonly number[]
+  pathLegControls?: readonly (WorldMapPoint | null)[]
+  snapPathPoint?: (point: WorldMapPoint) => WorldMapPoint
+  isPathOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
   traceSelectedVirtualNodeId?: string | null
   onVirtualNodeClick?: (nodeId: string) => void
@@ -243,8 +248,13 @@ export function IslandMapPanZoomSurface({
   onStopClick,
   selectedStopId = null,
   onPathPointsChange,
+  onLegControlChange,
+  onLegDelete,
   pathEditable = false,
   pathLegStarts = [0],
+  pathLegControls = [],
+  snapPathPoint,
+  isPathOnRoad,
   traceSelectedStopId = null,
   traceSelectedVirtualNodeId = null,
   onVirtualNodeClick,
@@ -692,18 +702,24 @@ export function IslandMapPanZoomSurface({
             routeNumber={draftRouteNumber}
             points={draftPoints}
             vertexPoints={draftStopPoints}
+            legStarts={pathLegStarts}
+            legControls={pathLegControls}
             variant="draft"
             strokeColor={draftStrokeColor}
           />
-          {drawMode && pathEditable && onPathPointsChange ? (
+          {drawMode && pathEditable && onLegControlChange && onLegDelete ? (
             <IslandMapDraftPathEditLayer
               imageWidth={imageSize.width}
               imageHeight={imageSize.height}
               points={draftPoints}
               legStarts={pathLegStarts}
+              legControls={pathLegControls}
               strokeColor={draftStrokeColor}
               editable
-              onPointsChange={onPathPointsChange}
+              snapPoint={snapPathPoint}
+              isOnRoad={isPathOnRoad}
+              onLegControlChange={onLegControlChange}
+              onLegDelete={onLegDelete}
               onInteractionActiveChange={(active) => {
                 pathEditActiveRef.current = active
               }}

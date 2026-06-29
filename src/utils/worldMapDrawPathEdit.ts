@@ -107,3 +107,41 @@ export function straightenPathLeg(
   }
   return next
 }
+
+export function deletePathLeg(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  legIndex: number,
+  legControls: readonly (WorldMapPoint | null)[],
+): {
+  points: WorldMapPoint[]
+  legStarts: number[]
+  legControls: (WorldMapPoint | null)[]
+  removedIndex: number
+} | null {
+  const legs = getPathLegRanges(legStarts, points.length)
+  const leg = legs[legIndex]
+  if (!leg) return null
+  if (points.length <= 2) return null
+
+  const removeIndex = leg.end
+  const nextPoints = points
+    .filter((_, index) => index !== removeIndex)
+    .map((point) => [point[0], point[1]] as WorldMapPoint)
+
+  const nextLegStarts = legStarts
+    .map((start) => (start > removeIndex ? start - 1 : start))
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  if (nextLegStarts.length === 0 || nextLegStarts[0] !== 0) {
+    nextLegStarts.unshift(0)
+  }
+
+  const nextLegControls = legControls.filter((_, index) => index !== legIndex)
+
+  return {
+    points: nextPoints,
+    legStarts: nextLegStarts,
+    legControls: nextLegControls,
+    removedIndex: removeIndex,
+  }
+}

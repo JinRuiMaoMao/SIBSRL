@@ -44,6 +44,27 @@ export function traceViaForAnchorTarget(
   return constraint ? [constraint] : []
 }
 
+/** Straight polyline through stops only (one segment per consecutive stop pair). */
+export function rebuildStopToStopPath(stops: readonly { point: WorldMapPoint }[]): WorldMapPoint[] {
+  return stops.map((stop) => [stop.point[0], stop.point[1]] as WorldMapPoint)
+}
+
+export function buildStopLegStarts(stopCount: number): number[] {
+  if (stopCount < 2) return stopCount > 0 ? [0] : []
+  return Array.from({ length: stopCount - 1 }, (_, index) => index)
+}
+
+/** One leg per consecutive stop pair when path anchors match stop count. */
+export function resolveEffectiveLegStarts(
+  legStarts: readonly number[],
+  pointCount: number,
+  stopCount: number,
+): number[] {
+  if (legStarts.length > 1) return [...legStarts]
+  if (stopCount >= 2 && pointCount === stopCount) return buildStopLegStarts(stopCount)
+  return legStarts.length > 0 ? [...legStarts] : [0]
+}
+
 export type TraceSegmentFn = (
   from: WorldMapPoint,
   to: WorldMapPoint,

@@ -295,6 +295,11 @@ class GeneralMapRoadSnapIndex {
     return [px / (this.width - 1), py / (this.height - 1)]
   }
 
+  isOnRoad(point: WorldMapPoint): boolean {
+    const { px, py } = this.toGridPoint(point)
+    return this.isRoadAtPixel(px, py)
+  }
+
   snap(point: WorldMapPoint): WorldMapPoint {
     const { px, py } = this.toGridPoint(point)
     if (this.isRoadAtPixel(px, py)) {
@@ -999,6 +1004,13 @@ export function snapPointToGeneralMapRoad(
   point: WorldMapPoint,
 ): WorldMapPoint {
   return index?.snap(point) ?? point
+}
+
+export function isPointOnGeneralMapRoad(
+  index: GeneralMapRoadSnapIndex | null,
+  point: WorldMapPoint,
+): boolean {
+  return index?.isOnRoad(point) ?? true
 }
 
 export function traceGeneralMapRoadPath(

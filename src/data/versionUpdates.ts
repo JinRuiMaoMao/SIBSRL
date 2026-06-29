@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-06-28'
+export const CURRENT_CHANGELOG_DATE = '2026-06-29'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -161,6 +161,48 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-06-29-summary",
+    date: "2026-06-29",
+    title: {
+      zh: "2026-06-29 更新",
+      en: "2026-06-29 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 6/29 每日挑战：大桥封路 Y370A。",
+            en: "Synced 6/29 daily challenge: Bridge Closure Y370A.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "群岛地图",
+          en: "Island map",
+        },
+        additions: [
+          {
+            zh: "站间走线可拖中点手柄弯曲（端点始终绑定站点，弯度限制在道路内）；曲率调错用撤销/重做。",
+            en: "Stop-to-stop legs bend via a midpoint handle (endpoints stay on stops, curve stays on roads); use Undo/Redo to fix curves.",
+          },
+          {
+            zh: "绘制工具栏新增重做按钮；撤销/重做支持曲率、连线、站点等操作（Ctrl+Z / Ctrl+Y）。",
+            en: "Draw toolbar adds Redo; Undo/Redo covers curves, segments, stops, and more (Ctrl+Z / Ctrl+Y).",
+          },
+          {
+            zh: "双击站间线段删除该段；导入线路 JSON 时走线为站间直线，虚拟节点不再自动串入路径。",
+            en: "Double-click a leg to delete it; imported route JSON uses straight stop-to-stop lines—virtual nodes are not auto-wired into the path.",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-06-28-summary",
     date: "2026-06-28",

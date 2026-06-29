@@ -1,9 +1,8 @@
-import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
+import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteStop } from '../types/route'
-import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
-import type { VirtualNodePathConstraint } from './generalMapRoadSnap'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { findBusRouteForDraw } from './worldMapDrawRouteLookup'
-import { rebuildDraftPathFromStops, type TraceSegmentFn } from './worldMapDrawPath'
+import { rebuildStopToStopPath } from './worldMapDrawPath'
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from './worldMapStopCatalog'
 
 function namesMatch(a: { zh: string; en: string }, b: { zh: string; en: string }): boolean {
@@ -106,10 +105,7 @@ export interface GenerateWorldMapRouteDraftOptions {
   routeId: string
   directionIndex: number
   existingStops?: readonly WorldMapDrawStop[]
-  virtualNodes: readonly WorldMapVirtualNode[]
   snap: (point: WorldMapPoint) => WorldMapPoint
-  toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null
-  traceSegment: TraceSegmentFn
   catalogStops?: readonly WorldMapCatalogStop[]
 }
 
@@ -152,14 +148,7 @@ export async function generateWorldMapRouteDraft(
     return null
   }
 
-  const canonicalRouteId = resolveWorldMapRouteId(trimmedRouteId) ?? trimmedRouteId
-  const points = rebuildDraftPathFromStops(
-    stops,
-    options.traceSegment,
-    options.virtualNodes,
-    canonicalRouteId,
-    options.toConstraint,
-  )
+  const points = rebuildStopToStopPath(stops)
   if (points.length < 2) return null
 
   return { stops, points, estimatedCount }

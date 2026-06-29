@@ -571,8 +571,27 @@ html.has-compact-tab-nav .island-map--widget {
 .island-map-draft-path-edit-segment-hit {
   stroke: transparent;
   pointer-events: stroke;
+  cursor: default;
+  vector-effect: non-scaling-stroke;
+}
+
+.island-map-draft-path-edit-curve-handle {
+  fill: #5ec8ff;
+  stroke: color-mix(in srgb, #000 55%, transparent);
+  stroke-width: 1;
+  pointer-events: all;
   cursor: grab;
   vector-effect: non-scaling-stroke;
+  opacity: 0.92;
+}
+
+.island-map-draft-path-edit-curve-handle--straight {
+  opacity: 0.55;
+}
+
+.island-map-draft-path-edit-curve-handle--active {
+  opacity: 1;
+  stroke: color-mix(in srgb, var(--accent, #f5b942) 70%, #000 30%);
 }
 
 .island-map-draft-path-edit-segment-hit--active {

@@ -3,6 +3,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import {
   preloadGeneralMapRoadSnapIndex,
   snapPointToGeneralMapRoad,
+  isPointOnGeneralMapRoad,
   traceGeneralMapRoadPath,
   type GeneralMapRoadSnapIndex,
   type TraceRoadPathOptions,
@@ -38,6 +39,9 @@ export function useGeneralMapRoadSnap(
       index,
       snap(point: WorldMapPoint): WorldMapPoint {
         return snapPointToGeneralMapRoad(index, point)
+      },
+      isOnRoad(point: WorldMapPoint): boolean {
+        return isPointOnGeneralMapRoad(index, point)
       },
       snapVirtualNode(point: WorldMapPoint, kind: VirtualNodePathConstraint['kind']): WorldMapPoint {
         return index?.snapVirtualNode(point, kind) ?? point
