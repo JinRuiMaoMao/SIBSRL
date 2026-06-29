@@ -1,4 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import { mergePathPoints } from './worldMapDrawPath'
 
 export function clampPathPoint(point: WorldMapPoint): WorldMapPoint {
   return [Math.min(1, Math.max(0, point[0])), Math.min(1, Math.max(0, point[1]))]
@@ -189,6 +190,151 @@ export function resizePathUserBends(bends: readonly boolean[], pointCount: numbe
     return [...bends, ...Array.from({ length: pointCount - bends.length }, () => false)]
   }
   return bends.slice(0, pointCount)
+}
+
+export type TraceTwoPointFn = (from: WorldMapPoint, to: WorldMapPoint) => WorldMapPoint[]
+
+function shiftLegStartsAfterMiddleReplace(
+  legStarts: readonly number[],
+  keepThrough: number,
+  replaceFrom: number,
+  replaceThrough: number,
+  insertedCount: number,
+): number[] {
+  const removedCount = replaceThrough - replaceFrom + 1
+  const delta = insertedCount - removedCount
+  let next = legStarts.length > 0 ? [...legStarts] : [0]
+  if (next[0] !== 0) next.unshift(0)
+  next = next
+    .map((start) => {
+      if (start <= keepThrough) return start
+      if (start > replaceThrough) return start + delta
+      return keepThrough + 1
+    })
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  return next
+}
+
+function shiftLegStartsAfterMiddleRemove(
+  legStarts: readonly number[],
+  keepThrough: number,
+  removeFrom: number,
+  removeThrough: number,
+): number[] {
+  const removedCount = removeThrough - removeFrom + 1
+  let next = legStarts.length > 0 ? [...legStarts] : [0]
+  if (next[0] !== 0) next.unshift(0)
+  next = next
+    .map((start) => {
+      if (start <= keepThrough) return start
+      if (start > removeThrough) return start - removedCount
+      return keepThrough + 1
+    })
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  return next
+}
+
+/** Rebuild A→bend→B along roads when the user drags a bend handle. */
+export function retacePathThroughUserBend(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  userBends: readonly boolean[],
+  vertexIndex: number,
+  bendTarget: WorldMapPoint,
+  traceSegment: TraceTwoPointFn,
+): {
+  points: WorldMapPoint[]
+  legStarts: number[]
+  userBends: boolean[]
+  bendIndex: number
+} | null {
+  if (!userBends[vertexIndex]) return null
+  const before = vertexIndex - 1
+  const after = vertexIndex + 1
+  if (before < 0 || after >= points.length) return null
+
+  const start = points[before]!
+  const end = points[after]!
+  const bend = clampPathPoint(bendTarget)
+  const legToBend = traceSegment(start, bend)
+  const legFromBend = traceSegment(bend, end)
+  const middle = mergePathPoints(
+    legToBend.length > 1 ? legToBend.slice(1) : [bend],
+    legFromBend.length > 1 ? legFromBend.slice(1) : [],
+  )
+  const replaceFrom = before + 1
+  const replaceThrough = after - 1
+  const newPoints = [
+    ...points.slice(0, replaceFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...middle.map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...points.slice(after).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  const bendIndex = before + Math.max(1, legToBend.length - 1)
+  const nextLegStarts = shiftLegStartsAfterMiddleReplace(
+    legStarts,
+    before,
+    replaceFrom,
+    replaceThrough,
+    middle.length,
+  )
+  const nextUserBends = Array.from({ length: newPoints.length }, () => false)
+  if (bendIndex >= 0 && bendIndex < nextUserBends.length) {
+    nextUserBends[bendIndex] = true
+  }
+  return {
+    points: newPoints,
+    legStarts: nextLegStarts,
+    userBends: nextUserBends,
+    bendIndex,
+  }
+}
+
+function anchorIndexBefore(
+  points: readonly WorldMapPoint[],
+  stops: readonly { point: WorldMapPoint }[],
+  index: number,
+): number {
+  for (let cursor = index - 1; cursor >= 0; cursor -= 1) {
+    if (isStopAnchorIndex(cursor, points, stops)) return cursor
+  }
+  return Math.max(0, index - 1)
+}
+
+function anchorIndexAfter(
+  points: readonly WorldMapPoint[],
+  stops: readonly { point: WorldMapPoint }[],
+  index: number,
+): number {
+  for (let cursor = index + 1; cursor < points.length; cursor += 1) {
+    if (isStopAnchorIndex(cursor, points, stops)) return cursor
+  }
+  return Math.min(points.length - 1, index + 1)
+}
+
+/** Remove a user bend and straighten back to a chord between neighboring stop anchors. */
+export function collapseUserBendToChord(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  userBends: readonly boolean[],
+  vertexIndex: number,
+  stops: readonly { point: WorldMapPoint }[],
+): { points: WorldMapPoint[]; legStarts: number[]; userBends: boolean[] } | null {
+  if (!userBends[vertexIndex]) return null
+  const left = anchorIndexBefore(points, stops, vertexIndex)
+  const right = anchorIndexAfter(points, stops, vertexIndex)
+  if (right <= left + 1) return removePathVertex(points, legStarts, vertexIndex)
+
+  const removeFrom = left + 1
+  const removeThrough = right - 1
+  const newPoints = [
+    ...points.slice(0, removeFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...points.slice(right).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  return {
+    points: newPoints,
+    legStarts: shiftLegStartsAfterMiddleRemove(legStarts, left, removeFrom, removeThrough),
+    userBends: Array.from({ length: newPoints.length }, () => false),
+  }
 }
 
 /** Leg boundaries at each stop anchor inside a dense road-traced path. */

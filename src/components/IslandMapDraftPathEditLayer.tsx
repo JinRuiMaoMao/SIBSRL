@@ -15,6 +15,7 @@ interface IslandMapDraftPathEditLayerProps {
   snapPoint?: (point: WorldMapPoint) => WorldMapPoint
   onBendInsert: (segmentIndex: number, point: WorldMapPoint) => void
   onBendMove: (vertexIndex: number, point: WorldMapPoint) => void
+  onBendDragStart?: () => void
   onBendRemove: (vertexIndex: number) => void
   onLegDelete: (legIndex: number) => void
   onInteractionActiveChange?: (active: boolean) => void
@@ -78,6 +79,7 @@ export function IslandMapDraftPathEditLayer({
   snapPoint = (point) => point,
   onBendInsert,
   onBendMove,
+  onBendDragStart,
   onBendRemove,
   onLegDelete,
   onInteractionActiveChange,
@@ -144,6 +146,7 @@ export function IslandMapDraftPathEditLayer({
       const deltaPx = Math.hypot(event.clientX - drag.startClientX, event.clientY - drag.startClientY)
       if (!drag.moved && deltaPx > DRAG_THRESHOLD_PX) {
         drag.moved = true
+        if (drag.kind === 'vertex') onBendDragStart?.()
         if (singleTapTimerRef.current != null) {
           window.clearTimeout(singleTapTimerRef.current)
           singleTapTimerRef.current = null
@@ -219,6 +222,7 @@ export function IslandMapDraftPathEditLayer({
     }
   }, [
     dragging,
+    onBendDragStart,
     onBendInsert,
     onBendMove,
     onBendRemove,

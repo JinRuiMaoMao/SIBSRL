@@ -50,6 +50,7 @@ interface IslandMapPanZoomSurfaceProps {
   onPathPointsChange?: (points: WorldMapPoint[]) => void
   onBendInsert?: (segmentIndex: number, point: WorldMapPoint) => void
   onBendMove?: (vertexIndex: number, point: WorldMapPoint) => void
+  onBendDragStart?: () => void
   onBendRemove?: (vertexIndex: number) => void
   onLegDelete?: (legIndex: number) => void
   pathEditable?: boolean
@@ -245,6 +246,7 @@ export function IslandMapPanZoomSurface({
   onPathPointsChange,
   onBendInsert,
   onBendMove,
+  onBendDragStart,
   onBendRemove,
   onLegDelete,
   pathEditable = false,
@@ -695,6 +697,7 @@ export function IslandMapPanZoomSurface({
             snapPoint={snapPathPoint}
             onBendInsert={onBendInsert}
             onBendMove={onBendMove}
+            onBendDragStart={onBendDragStart}
             onBendRemove={onBendRemove}
             onLegDelete={onLegDelete}
             onInteractionActiveChange={(active) => {

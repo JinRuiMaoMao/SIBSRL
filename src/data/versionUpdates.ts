@@ -188,6 +188,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "站间默认直线；单击线段插入折点手柄，拖动后才沿道路弯曲。",
+            en: "Legs stay straight by default; click a leg to add a bend handle, then drag to trace along roads.",
+          },
+          {
             zh: "道路拐角自动圆滑；自动生成沿道路寻路，道路结点不显示折点手柄（仅手动插入的折点可拖）。",
             en: "Road corners smooth automatically; auto-generate traces along roads without bend handles on road nodes—only manually inserted bends are draggable.",
           },

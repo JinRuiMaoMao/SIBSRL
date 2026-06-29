@@ -20,28 +20,25 @@ import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '.
 import {
   mergePathPoints,
   rebuildStopToStopPath,
-  rebuildDraftPathFromStops,
   buildStopLegStarts,
   resolveEffectiveLegStarts,
   resolveTraceAnchorPoint,
-  traceViaForAnchorTarget,
-  type TraceSegmentFn,
 } from '../utils/worldMapDrawPath'
 import {
   syncPathEndpointsToStops,
   getPathLegRanges,
+  collapseUserBendToChord,
   hidePathLeg,
   insertPathBendPoint,
   isStopAnchorIndex,
-  movePathVertex,
   removePathVertex,
+  retacePathThroughUserBend,
   resizeLegHidden,
-  buildLegStartsFromStopAnchors,
   resizePathUserBends,
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
-import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
+import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
@@ -166,6 +163,7 @@ function surfaceProps(
     userBends: readonly boolean[]
     onBendInsert: (segmentIndex: number, point: WorldMapPoint) => void
     onBendMove: (vertexIndex: number, point: WorldMapPoint) => void
+    onBendDragStart?: () => void
     onBendRemove: (vertexIndex: number) => void
     onLegDelete: (legIndex: number) => void
     snapPathPoint: (point: WorldMapPoint) => WorldMapPoint
@@ -203,6 +201,7 @@ function surfaceProps(
     pathUserBends: pathEdit?.userBends ?? [],
     onBendInsert: pathEdit?.onBendInsert,
     onBendMove: pathEdit?.onBendMove,
+    onBendDragStart: pathEdit?.onBendDragStart,
     onBendRemove: pathEdit?.onBendRemove,
     onLegDelete: pathEdit?.onLegDelete,
     snapPathPoint: pathEdit?.snapPathPoint,
@@ -466,13 +465,6 @@ export function IslandMapWidget() {
       if (!fromPoint || !toPoint) return false
       if (Math.hypot(fromPoint[0] - toPoint[0], fromPoint[1] - toPoint[1]) < 0.00005) return false
 
-      const via = traceViaForAnchorTarget(to, draftVirtualNodes, roadSnap.toVirtualNodeConstraint)
-      const traced = roadSnap.appendSegment(fromPoint, toPoint, via)
-      const mergeSegment =
-        traced.length > 1
-          ? traced.slice(draftPoints.length > 0 ? 1 : 0)
-          : [toPoint]
-
       pushDrawHistory()
       setDraftPoints((current) => {
         const start = current.length
@@ -484,8 +476,8 @@ export function IslandMapWidget() {
         })
         const merged =
           current.length === 0
-            ? traced.map((point) => [point[0], point[1]] as WorldMapPoint)
-            : mergePathPoints(current, mergeSegment)
+            ? ([fromPoint, toPoint] as WorldMapPoint[])
+            : mergePathPoints(current, [toPoint])
         setPathUserBends((bends) => {
           const next = resizePathUserBends(bends, current.length)
           const added = merged.length - current.length
@@ -496,7 +488,7 @@ export function IslandMapWidget() {
       setPathManuallyEdited(true)
       return true
     },
-    [draftPoints.length, draftStops, draftVirtualNodes, pushDrawHistory, roadSnap],
+    [draftStops, draftVirtualNodes, pushDrawHistory],
   )
 
   const handleTraceAnchorPick = useCallback(
@@ -712,16 +704,46 @@ export function IslandMapWidget() {
 
   const handleBendMove = useCallback(
     (vertexIndex: number, point: WorldMapPoint) => {
-      pushDrawHistory()
-      setDraftPoints(movePathVertex(draftPoints, vertexIndex, roadSnap.snap(point)))
+      if (!pathUserBends[vertexIndex]) return
+      const retaced = retacePathThroughUserBend(
+        draftPoints,
+        effectiveLegStarts,
+        pathUserBends,
+        vertexIndex,
+        point,
+        (from, to) => roadSnap.appendSegment(from, to, []),
+      )
+      if (!retaced) return
+      setDraftPoints(retaced.points)
+      setPathLegStarts(retaced.legStarts)
+      setPathUserBends(retaced.userBends)
       setPathManuallyEdited(true)
     },
-    [draftPoints, pushDrawHistory, roadSnap],
+    [draftPoints, effectiveLegStarts, pathUserBends, roadSnap],
   )
+
+  const handleBendDragStart = useCallback(() => {
+    pushDrawHistory()
+  }, [pushDrawHistory])
 
   const handleBendRemove = useCallback(
     (vertexIndex: number) => {
       if (isStopAnchorIndex(vertexIndex, draftPoints, draftStops)) return
+      const collapsed = collapseUserBendToChord(
+        draftPoints,
+        effectiveLegStarts,
+        pathUserBends,
+        vertexIndex,
+        draftStops,
+      )
+      if (collapsed) {
+        pushDrawHistory()
+        setDraftPoints(collapsed.points)
+        setPathLegStarts(collapsed.legStarts)
+        setPathUserBends(collapsed.userBends)
+        setPathManuallyEdited(true)
+        return
+      }
       const result = removePathVertex(draftPoints, effectiveLegStarts, vertexIndex)
       if (!result) return
       pushDrawHistory()
@@ -734,7 +756,7 @@ export function IslandMapWidget() {
       })
       setPathManuallyEdited(true)
     },
-    [draftPoints, draftStops, effectiveLegStarts, pushDrawHistory],
+    [draftPoints, draftStops, effectiveLegStarts, pathUserBends, pushDrawHistory],
   )
 
   const handlePathLegDelete = useCallback(
@@ -873,26 +895,14 @@ export function IslandMapWidget() {
       pushDrawHistory()
       setDrawInteraction('route')
       setDraftStops(result.stops)
-      const parallelSegments = listWorldMapRouteSegmentsExcept(routeId)
-      const traceSegment: TraceSegmentFn = (from, to, via) =>
-        traceGeneralMapRoadPath(index, from, to, via, {
-          avoidParallelSegments: parallelSegments,
-        })
-      let nextPoints: WorldMapPoint[]
-      let nextLegStarts: number[]
-      if (pathManuallyEdited && draftPoints.length >= 2) {
-        nextPoints = syncPathEndpointsToStops(draftPoints, result.stops)
-        nextLegStarts = pathLegStarts
-      } else {
-        nextPoints = rebuildDraftPathFromStops(
-          result.stops,
-          traceSegment,
-          draftVirtualNodes,
-          routeId,
-          (node) => index.toVirtualNodeConstraint(node.point, node.kind),
-        )
-        nextLegStarts = buildLegStartsFromStopAnchors(nextPoints, result.stops)
-      }
+      const nextPoints =
+        pathManuallyEdited && draftPoints.length >= 2
+          ? syncPathEndpointsToStops(draftPoints, result.stops)
+          : result.points
+      const nextLegStarts =
+        pathManuallyEdited && draftPoints.length >= 2
+          ? pathLegStarts
+          : buildStopLegStarts(result.stops.length)
       setDraftPoints(nextPoints)
       const legCount =
         nextPoints.length >= 2 ? getPathLegRanges(nextLegStarts, nextPoints.length).length : 0
@@ -1166,6 +1176,7 @@ export function IslandMapWidget() {
             userBends: pathUserBends,
             onBendInsert: handleBendInsert,
             onBendMove: handleBendMove,
+            onBendDragStart: handleBendDragStart,
             onBendRemove: handleBendRemove,
             onLegDelete: handlePathLegDelete,
             snapPathPoint: roadSnap.snap,
@@ -1176,6 +1187,7 @@ export function IslandMapWidget() {
       drawMode,
       draftPoints.length,
       effectiveLegStarts,
+      handleBendDragStart,
       handleBendInsert,
       handleBendMove,
       handleBendRemove,
