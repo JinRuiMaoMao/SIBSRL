@@ -503,7 +503,11 @@ class GeneralMapRoadSnapIndex {
     const end = this.toGridPoint(to)
     const startCell = this.findNearestRoadCell(start.gx, start.gy)
     const endCell = this.findNearestRoadCell(end.gx, end.gy)
-    if (!startCell || !endCell) return [this.ensureOnRoad(to)]
+    if (!startCell || !endCell) {
+      const snappedFrom = this.ensureOnRoad(from)
+      const snappedTo = this.ensureOnRoad(to)
+      return simplifyPath(this.densifyOnRoad([snappedFrom, snappedTo]), 0.00012)
+    }
 
     const chain: Array<{ gx: number; gy: number; endConstraint?: VirtualNodePathConstraint }> = [
       ...via.map((constraint) => ({
@@ -536,7 +540,9 @@ class GeneralMapRoadSnapIndex {
       })
       if (!segment || segment.length === 0) {
         if (mergedCells.length > 0) break
-        return [this.ensureOnRoad(from), this.ensureOnRoad(to)]
+        const snappedFrom = this.ensureOnRoad(from)
+        const snappedTo = this.ensureOnRoad(to)
+        return simplifyPath(this.densifyOnRoad([snappedFrom, snappedTo]), 0.00012)
       }
 
       if (mergedCells.length > 0 && segment.length > 0) {
@@ -549,7 +555,9 @@ class GeneralMapRoadSnapIndex {
         startViaKind = target.endConstraint.kind
         if (startStates.length === 0) {
           if (mergedCells.length > 0) break
-          return [this.ensureOnRoad(from), this.ensureOnRoad(to)]
+          const snappedFrom = this.ensureOnRoad(from)
+          const snappedTo = this.ensureOnRoad(to)
+          return simplifyPath(this.densifyOnRoad([snappedFrom, snappedTo]), 0.00012)
         }
       } else {
         startStates = undefined
@@ -567,8 +575,11 @@ class GeneralMapRoadSnapIndex {
 
     points[points.length - 1] = this.ensureOnRoad(to)
     const smoothed = this.smoothRoadCorners(points)
-    const onRoad = this.densifyOnRoad(smoothed)
-    return simplifyPath(onRoad, 0.00012)
+    return this.simplifyTracedPath(this.densifyOnRoad(smoothed))
+  }
+
+  private simplifyTracedPath(points: WorldMapPoint[]): WorldMapPoint[] {
+    return simplifyPath(points, 0.00012)
   }
 
   private densifyOnRoad(points: WorldMapPoint[]): WorldMapPoint[] {
@@ -1056,9 +1067,9 @@ export function traceGeneralMapRoadPath(
   via: VirtualNodePathConstraint[] = [],
   options: TraceRoadPathOptions = {},
 ): WorldMapPoint[] {
-  if (!index) return [to]
+  if (!index) return [from, to]
   const traced = index.trace(from, to, via, options)
-  return traced.length > 0 ? traced : [index.snap(to)]
+  return traced.length > 0 ? traced : [index.snap(from), index.snap(to)]
 }
 
 export type { GeneralMapRoadSnapIndex }

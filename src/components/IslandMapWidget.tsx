@@ -33,7 +33,7 @@ import {
   isStopAnchorIndex,
   movePathVertex,
   removePathVertex,
-  retacePathLegThroughUserBends,
+  retacePathSpanAroundUserBend,
   resizeLegHidden,
   resizePathUserBends,
   updatePathPointsForStopMove,
@@ -711,31 +711,34 @@ export function IslandMapWidget() {
 
   const handleBendDragEnd = useCallback(
     async (vertexIndex: number, point: WorldMapPoint) => {
-      if (!pathUserBends[vertexIndex]) return
       const index = roadSnap.index ?? (await preloadGeneralMapRoadSnapIndex())
       const snapped = index ? snapPointToGeneralMapRoad(index, point) : roadSnap.snap(point)
       const traceSegment = (from: WorldMapPoint, to: WorldMapPoint) => {
         if (!index) return [from, to]
-        const traced = traceGeneralMapRoadPath(index, from, to, [], {
-          avoidParallelSegments,
-        })
-        return traced.length >= 2 ? traced : [from, snapPointToGeneralMapRoad(index, to)]
+        return traceGeneralMapRoadPath(index, from, to)
       }
-      const retaced = retacePathLegThroughUserBends(
-        draftPoints,
-        pathLegStarts,
-        pathUserBends,
-        vertexIndex,
-        snapped,
-        traceSegment,
-      )
+
+      let retaced: ReturnType<typeof retacePathSpanAroundUserBend> = null
+      setDraftPoints((currentPoints) => {
+        setPathUserBends((currentUserBends) => {
+          if (!currentUserBends[vertexIndex]) return currentUserBends
+          retaced = retacePathSpanAroundUserBend(
+            currentPoints,
+            pathLegStarts,
+            currentUserBends,
+            vertexIndex,
+            snapped,
+            traceSegment,
+          )
+          return retaced?.userBends ?? currentUserBends
+        })
+        return retaced?.points ?? currentPoints
+      })
       if (!retaced) return
-      setDraftPoints(retaced.points)
       setPathLegStarts(retaced.legStarts)
-      setPathUserBends(retaced.userBends)
       setPathManuallyEdited(true)
     },
-    [avoidParallelSegments, draftPoints, pathLegStarts, pathUserBends, roadSnap],
+    [pathLegStarts, roadSnap],
   )
 
   const handleBendRemove = useCallback(

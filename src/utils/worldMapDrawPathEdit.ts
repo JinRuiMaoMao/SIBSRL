@@ -252,47 +252,6 @@ function shiftLegStartsAfterMiddleReplace(
   return next
 }
 
-function shiftLegStartsAfterRangeReplace(
-  legStarts: readonly number[],
-  rangeStart: number,
-  rangeEnd: number,
-  newRangeEnd: number,
-): number[] {
-  const delta = newRangeEnd - rangeEnd
-  let next = legStarts.length > 0 ? [...legStarts] : [0]
-  if (next[0] !== 0) next.unshift(0)
-  next = next
-    .map((start) => {
-      if (start < rangeStart) return start
-      if (start > rangeEnd) return start + delta
-      if (start === rangeStart) return rangeStart
-      return rangeStart
-    })
-    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
-  return next
-}
-
-function remapUserBendsAfterLegReplace(
-  userBends: readonly boolean[],
-  rangeStart: number,
-  rangeEnd: number,
-  newRangeLength: number,
-  bendRemap: ReadonlyMap<number, number>,
-): boolean[] {
-  const delta = newRangeLength - (rangeEnd - rangeStart + 1)
-  const nextLength = userBends.length + delta
-  const next = Array.from({ length: nextLength }, () => false)
-  for (const newIndex of bendRemap.values()) {
-    if (newIndex >= 0 && newIndex < nextLength) next[newIndex] = true
-  }
-  for (let index = 0; index < userBends.length; index += 1) {
-    if (!userBends[index] || (index >= rangeStart && index <= rangeEnd)) continue
-    const remapped = index < rangeStart ? index : index + delta
-    if (remapped >= 0 && remapped < nextLength) next[remapped] = true
-  }
-  return next
-}
-
 function shiftLegStartsAfterMiddleRemove(
   legStarts: readonly number[],
   keepThrough: number,
@@ -346,12 +305,12 @@ export function isolateUserBendForDrag(
   }
 }
 
-/** Rebuild a full leg along roads through every user bend waypoint (after drag). */
-export function retacePathLegThroughUserBends(
+/** Rebuild both segments beside a bend (prev → bend → next) along nearby roads. */
+export function retacePathSpanAroundUserBend(
   points: readonly WorldMapPoint[],
   legStarts: readonly number[],
   userBends: readonly boolean[],
-  movedBendIndex: number,
+  vertexIndex: number,
   bendTarget: WorldMapPoint,
   traceSegment: TraceTwoPointFn,
 ): {
@@ -360,66 +319,72 @@ export function retacePathLegThroughUserBends(
   userBends: boolean[]
   bendIndex: number
 } | null {
-  if (!userBends[movedBendIndex]) return null
+  if (!userBends[vertexIndex]) return null
+  const left = vertexIndex - 1
+  const right = vertexIndex + 1
+  if (left < 0 || right >= points.length) return null
 
-  const legs = getPathLegRanges(legStarts, points.length)
-  const leg = legs.find((entry) => movedBendIndex >= entry.start && movedBendIndex <= entry.end)
-  if (!leg) return null
-
-  const waypoints: number[] = []
-  for (let index = leg.start; index <= leg.end; index += 1) {
-    if (index === leg.start || index === leg.end || userBends[index]) {
-      waypoints.push(index)
-    }
-  }
-  if (waypoints.length < 2) return null
-
+  const start = points[left]!
+  const end = points[right]!
   const bend = clampPathPoint(bendTarget)
-  const bendRemap = new Map<number, number>()
-  let tracedLeg: WorldMapPoint[] = []
-  let cursor = points[leg.start]!
-  tracedLeg.push([cursor[0], cursor[1]])
 
-  for (let waypointIndex = 1; waypointIndex < waypoints.length; waypointIndex += 1) {
-    const pointIndex = waypoints[waypointIndex]!
-    const target =
-      pointIndex === movedBendIndex
-        ? bend
-        : ([points[pointIndex]![0], points[pointIndex]![1]] as WorldMapPoint)
-    const segment = traceSegment(cursor, target)
-    tracedLeg = mergePathPoints(tracedLeg, segment.length > 1 ? segment.slice(1) : [target])
-    cursor = tracedLeg[tracedLeg.length - 1]!
-    if (userBends[pointIndex]) {
-      bendRemap.set(pointIndex, leg.start + tracedLeg.length - 1)
-    }
-  }
-
-  const rangeStart = leg.start
-  const rangeEnd = leg.end
-  const newPoints = [
-    ...points.slice(0, rangeStart).map((point) => [point[0], point[1]] as WorldMapPoint),
-    ...tracedLeg,
-    ...points.slice(rangeEnd + 1).map((point) => [point[0], point[1]] as WorldMapPoint),
-  ]
-  const newRangeEnd = rangeStart + tracedLeg.length - 1
-  const nextLegStarts = shiftLegStartsAfterRangeReplace(legStarts, rangeStart, rangeEnd, newRangeEnd)
-  const nextUserBends = remapUserBendsAfterLegReplace(
-    userBends,
-    rangeStart,
-    rangeEnd,
-    tracedLeg.length,
-    bendRemap,
+  const legToBend = traceSegment(start, bend)
+  const bendOnRoad = legToBend[legToBend.length - 1] ?? bend
+  const legFromBend = traceSegment(bendOnRoad, end)
+  const middle = mergePathPoints(
+    legToBend.length > 1 ? legToBend.slice(1) : [bendOnRoad],
+    legFromBend.length > 1 ? legFromBend.slice(1) : [],
   )
 
+  const replaceFrom = left + 1
+  const replaceThrough = right - 1
+  const newPoints = [
+    ...points.slice(0, replaceFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...middle.map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...points.slice(right).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  const bendIndex = left + Math.max(1, legToBend.length - 1)
+  const nextLegStarts = shiftLegStartsAfterMiddleReplace(
+    legStarts,
+    left,
+    replaceFrom,
+    replaceThrough,
+    middle.length,
+  )
+  const nextUserBends = remapUserBendsAfterVertexReplace(
+    userBends,
+    vertexIndex,
+    middle.length,
+    bendIndex,
+  )
   return {
     points: newPoints,
     legStarts: nextLegStarts,
     userBends: nextUserBends,
-    bendIndex: bendRemap.get(movedBendIndex) ?? movedBendIndex,
+    bendIndex,
   }
 }
 
-/** @deprecated Use retacePathLegThroughUserBends — retraces the whole leg, not just adjacent hops. */
+/** @deprecated Prefer retacePathSpanAroundUserBend. */
+export function retacePathLegThroughUserBends(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  userBends: readonly boolean[],
+  movedBendIndex: number,
+  bendTarget: WorldMapPoint,
+  traceSegment: TraceTwoPointFn,
+): ReturnType<typeof retacePathSpanAroundUserBend> {
+  return retacePathSpanAroundUserBend(
+    points,
+    legStarts,
+    userBends,
+    movedBendIndex,
+    bendTarget,
+    traceSegment,
+  )
+}
+
+/** @deprecated Use retacePathSpanAroundUserBend. */
 export function retacePathThroughUserBend(
   points: readonly WorldMapPoint[],
   legStarts: readonly number[],
@@ -427,8 +392,8 @@ export function retacePathThroughUserBend(
   vertexIndex: number,
   bendTarget: WorldMapPoint,
   traceSegment: TraceTwoPointFn,
-): ReturnType<typeof retacePathLegThroughUserBends> {
-  return retacePathLegThroughUserBends(
+): ReturnType<typeof retacePathSpanAroundUserBend> {
+  return retacePathSpanAroundUserBend(
     points,
     legStarts,
     userBends,
