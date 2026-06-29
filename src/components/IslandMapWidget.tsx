@@ -23,9 +23,15 @@ import {
   buildStopLegStarts,
   resolveEffectiveLegStarts,
   resolveTraceAnchorPoint,
+  traceViaForAnchorTarget,
 } from '../utils/worldMapDrawPath'
 import { syncPathEndpointsToStops, getPathLegRanges, hidePathLeg, resizeLegHidden } from '../utils/worldMapDrawPathEdit'
-import { buildRoadSafeLegControls, flattenCurvedPath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
+import {
+  buildRoadSafeLegControls,
+  controlFromRoadTracedLeg,
+  flattenCurvedPath,
+  resizeLegControls,
+} from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
 import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
@@ -42,6 +48,10 @@ import type {
   DEFAULT_VIRTUAL_NODE_KIND,
 } from '../types/worldMapDraw'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
+import {
+  IslandMapDrawClearDialog,
+  type IslandMapDrawClearSelection,
+} from './IslandMapDrawClearDialog'
 import {
   IslandMapDrawPermissionDialogs,
   type IslandMapDrawPermissionDialogStep,
@@ -234,6 +244,7 @@ export function IslandMapWidget() {
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const [clearDialogOpen, setClearDialogOpen] = useState(false)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
   const [generatingRoute, setGeneratingRoute] = useState(false)
   const [permissionDialog, setPermissionDialog] = useState<IslandMapDrawPermissionDialogStep | null>(null)
@@ -440,23 +451,46 @@ export function IslandMapWidget() {
       const toPoint = resolveTraceAnchorPoint(to, draftStops, draftVirtualNodes)
       if (!fromPoint || !toPoint) return false
       if (Math.hypot(fromPoint[0] - toPoint[0], fromPoint[1] - toPoint[1]) < 0.00005) return false
-      const segment: WorldMapPoint[] = [fromPoint, toPoint]
+
+      const via = traceViaForAnchorTarget(to, draftVirtualNodes, roadSnap.toVirtualNodeConstraint)
+      const traced = roadSnap.appendSegment(fromPoint, toPoint, via)
+      const control = controlFromRoadTracedLeg(fromPoint, toPoint, traced, roadSnap.snap)
+
+      const legStart = draftPoints.length
+      const nextLegStarts =
+        legStart === 0
+          ? [0]
+          : (() => {
+              const base = pathLegStarts.length > 0 ? pathLegStarts : [0]
+              return base.includes(legStart) ? base : [...base, legStart]
+            })()
+      const mergedLength =
+        draftPoints.length === 0 ? 2 : mergePathPoints(draftPoints, [toPoint]).length
+      const newLegIndex = Math.max(0, getPathLegRanges(nextLegStarts, mergedLength).length - 1)
+
       pushDrawHistory()
       setDraftPoints((current) => {
-        const legStart = current.length
+        const start = current.length
         setPathLegStarts((legs) => {
-          if (legStart === 0) return [0]
+          if (start === 0) return [0]
           const base = legs.length > 0 ? legs : [0]
-          if (base.includes(legStart)) return base
-          return [...base, legStart]
+          if (base.includes(start)) return base
+          return [...base, start]
         })
-        if (current.length === 0) return [...segment]
-        return mergePathPoints(current, segment.slice(1))
+        if (current.length === 0) return [fromPoint, toPoint]
+        return mergePathPoints(current, [toPoint])
       })
+      if (control) {
+        setPathLegControls((controls) => {
+          const next = resizeLegControls(controls, newLegIndex + 1)
+          next[newLegIndex] = control
+          return next
+        })
+      }
       setPathManuallyEdited(true)
       return true
     },
-    [draftStops, draftVirtualNodes, pushDrawHistory],
+    [draftPoints, draftStops, draftVirtualNodes, pathLegStarts, pushDrawHistory, roadSnap],
   )
 
   const handleTraceAnchorPick = useCallback(
@@ -475,7 +509,7 @@ export function IslandMapWidget() {
         return
       }
       if (appendTracedSegment(pendingTraceAnchor, anchor)) {
-        setPendingTraceAnchor(anchor)
+        setPendingTraceAnchor(null)
       }
     },
     [appendTracedSegment, drawInteraction, pendingTraceAnchor],
@@ -489,6 +523,12 @@ export function IslandMapWidget() {
           point: roadSnap.snap(point),
           routeId: drawRouteId.trim() || '21A',
         })
+        return
+      }
+      if (drawInteraction === 'route') {
+        setPendingTraceAnchor(null)
+        setPendingStop(null)
+        setSelectedStopId(null)
         return
       }
       if (pendingStop) return
@@ -533,20 +573,38 @@ export function IslandMapWidget() {
     bumpHistory()
   }, [applyDrawSnapshot, bumpHistory, captureDrawSnapshot])
 
-  const clearDraft = useCallback(() => {
-    pushDrawHistory()
+  const clearDraftPath = useCallback(() => {
     setDraftPoints([])
     setPathLegStarts([])
     setPathLegControls([])
     setPathLegHidden([])
     setPathManuallyEdited(false)
-    setDraftStops([])
-    setDraftVirtualNodes([])
-    setPendingStop(null)
-    setSelectedStopId(null)
     setPendingTraceAnchor(null)
-    setPendingVirtualNode(null)
-  }, [pushDrawHistory])
+  }, [])
+
+  const applyClearSelection = useCallback(
+    (selection: IslandMapDrawClearSelection) => {
+      pushDrawHistory()
+      if (selection.path) {
+        clearDraftPath()
+      }
+      if (selection.stops) {
+        setDraftStops([])
+        setPendingStop(null)
+        setSelectedStopId(null)
+      }
+      if (selection.virtualNodes) {
+        setDraftVirtualNodes([])
+        setPendingVirtualNode(null)
+      }
+      setClearDialogOpen(false)
+    },
+    [clearDraftPath, pushDrawHistory],
+  )
+
+  const openClearDialog = useCallback(() => {
+    setClearDialogOpen(true)
+  }, [])
 
   const handleRemoveStop = useCallback(
     (id: string) => {
@@ -651,6 +709,10 @@ export function IslandMapWidget() {
   const handlePathLegDelete = useCallback(
     (legIndex: number) => {
       pushDrawHistory()
+      setDrawInteraction('route')
+      setPendingStop(null)
+      setSelectedStopId(null)
+      setPendingTraceAnchor(null)
       setPathLegHidden((hidden) => hidePathLeg(hidden, legIndex))
       setPathLegControls((controls) => {
         const next = [...controls]
@@ -1112,7 +1174,12 @@ export function IslandMapWidget() {
   void historyTick
   const canRedo = redoStackRef.current.length > 0
   const canClear =
-    draftStops.length > 0 || draftVirtualNodes.length > 0 || pendingStop != null || pendingVirtualNode != null
+    draftPoints.length >= 2 ||
+    draftStops.length > 0 ||
+    draftVirtualNodes.length > 0 ||
+    pendingStop != null ||
+    pendingVirtualNode != null
+  const hasDraftPath = draftPoints.length >= 2
 
   const exportSourceSlices = useMemo<WorldMapDrawDraftSlice[]>(
     () => [
@@ -1138,7 +1205,7 @@ export function IslandMapWidget() {
     exportHint,
     onImport: () => importInputRef.current?.click(),
     onExport: openExportDialog,
-    onClear: clearDraft,
+    onClear: openClearDialog,
     onDrawRequest: userApiEnabled && !isMapAdmin ? handleDrawEntryClick : undefined,
   }
 
@@ -1224,7 +1291,7 @@ export function IslandMapWidget() {
         <button
           type="button"
           className="island-map-btn"
-          onClick={clearDraft}
+          onClick={openClearDialog}
           disabled={!canClear}
           title={t('islandMapDrawClearHint')}
         >
@@ -1487,6 +1554,14 @@ export function IslandMapWidget() {
   return createPortal(
     <>
       {hiddenImportInput}
+      <IslandMapDrawClearDialog
+        open={clearDialogOpen}
+        stopCount={draftStops.length}
+        virtualNodeCount={draftVirtualNodes.length}
+        hasPath={hasDraftPath}
+        onCancel={() => setClearDialogOpen(false)}
+        onConfirm={applyClearSelection}
+      />
       <IslandMapDrawExportDialog
         open={exportDialogOpen}
         routeId={drawRouteId}

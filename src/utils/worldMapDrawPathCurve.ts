@@ -23,6 +23,28 @@ export function isLegStraight(
   return Math.hypot(control[0] - mid[0], control[1] - mid[1]) < 0.00004
 }
 
+/** Pick a bend handle from a road-traced polyline so the quadratic leg follows the road. */
+export function controlFromRoadTracedLeg(
+  start: WorldMapPoint,
+  end: WorldMapPoint,
+  traced: readonly WorldMapPoint[],
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+): WorldMapPoint | null {
+  if (traced.length < 2) return null
+  const mid = defaultLegControl(start, end)
+  let best = snap(mid)
+  let bestOffset = 0
+  for (const sample of traced) {
+    const snapped = snap(sample)
+    const offset = Math.hypot(snapped[0] - mid[0], snapped[1] - mid[1])
+    if (offset > bestOffset) {
+      bestOffset = offset
+      best = snapped
+    }
+  }
+  return bestOffset > 0.00002 ? best : snap(mid)
+}
+
 export function quadraticBezierPoint(
   start: WorldMapPoint,
   control: WorldMapPoint,

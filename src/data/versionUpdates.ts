@@ -205,6 +205,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "刷新页面更快、不易卡死：JS/CSS 改为独立缓存文件，地图组件延迟加载，道路索引分片构建。",
             en: "Faster refresh and fewer freezes: JS/CSS are separate cached files, the map widget loads lazily, and road indexing builds in chunks.",
           },
+          {
+            zh: "清空绘制时可分别移除站点、虚拟节点或走线；修复删除线段后误进添加站点、连线后无法结束选点等问题。",
+            en: "Clear dialog can remove stops, virtual nodes, or path separately; fixed leg delete opening stop form and trace selection not clearing.",
+          },
         ],
       },
     ],

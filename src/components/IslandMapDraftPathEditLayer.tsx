@@ -31,6 +31,17 @@ function toImageCoords(point: WorldMapPoint, imageWidth: number, imageHeight: nu
   return { x: point[0] * imageWidth, y: point[1] * imageHeight }
 }
 
+function pointerToNormalized(
+  event: PointerEvent<SVGElement> | globalThis.PointerEvent,
+  svg: SVGSVGElement,
+): WorldMapPoint {
+  const rect = svg.getBoundingClientRect()
+  if (rect.width <= 0 || rect.height <= 0) return [0.5, 0.5]
+  const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
+  const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height))
+  return [x, y]
+}
+
 function hitStrokeWidth(imageWidth: number): number {
   return Math.max(20, imageWidth * 0.012)
 }
@@ -54,18 +65,22 @@ export function IslandMapDraftPathEditLayer({
   onLegDelete,
   onInteractionActiveChange,
 }: IslandMapDraftPathEditLayerProps) {
+  const svgRef = useRef<SVGSVGElement>(null)
   const dragRef = useRef<{
     legIndex: number
     pointerId: number
     startClientX: number
     startClientY: number
     originControl: WorldMapPoint
+    clickPoint: WorldMapPoint
     start: WorldMapPoint
     end: WorldMapPoint
+    storedControl: WorldMapPoint | null
     moved: boolean
     captureTarget: SVGElement | null
   } | null>(null)
   const lastTapRef = useRef<{ legIndex: number; time: number } | null>(null)
+  const singleTapTimerRef = useRef<number | null>(null)
   const previewControlRef = useRef<WorldMapPoint | null>(null)
   const [previewTick, setPreviewTick] = useState(0)
   const [previewLegIndex, setPreviewLegIndex] = useState<number | null>(null)
@@ -91,6 +106,14 @@ export function IslandMapDraftPathEditLayer({
   }
 
   useEffect(() => {
+    return () => {
+      if (singleTapTimerRef.current != null) {
+        window.clearTimeout(singleTapTimerRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     if (!dragging) return
 
     const onPointerMove = (event: globalThis.PointerEvent) => {
@@ -99,6 +122,10 @@ export function IslandMapDraftPathEditLayer({
       const deltaPx = Math.hypot(event.clientX - drag.startClientX, event.clientY - drag.startClientY)
       if (!drag.moved && deltaPx > DRAG_THRESHOLD_PX) {
         drag.moved = true
+        if (singleTapTimerRef.current != null) {
+          window.clearTimeout(singleTapTimerRef.current)
+          singleTapTimerRef.current = null
+        }
         if (drag.captureTarget && !drag.captureTarget.hasPointerCapture(event.pointerId)) {
           drag.captureTarget.setPointerCapture(event.pointerId)
         }
@@ -131,14 +158,45 @@ export function IslandMapDraftPathEditLayer({
         const now = Date.now()
         const lastTap = lastTapRef.current
         if (lastTap && lastTap.legIndex === drag.legIndex && now - lastTap.time <= DOUBLE_TAP_MS) {
+          if (singleTapTimerRef.current != null) {
+            window.clearTimeout(singleTapTimerRef.current)
+            singleTapTimerRef.current = null
+          }
           lastTapRef.current = null
           onLegDelete(drag.legIndex)
         } else {
           lastTapRef.current = { legIndex: drag.legIndex, time: now }
+          const legIndex = drag.legIndex
+          const clickPoint = drag.clickPoint
+          const start = drag.start
+          const end = drag.end
+          const stored = drag.storedControl
+          if (singleTapTimerRef.current != null) {
+            window.clearTimeout(singleTapTimerRef.current)
+          }
+          singleTapTimerRef.current = window.setTimeout(() => {
+            singleTapTimerRef.current = null
+            if (lastTapRef.current?.legIndex !== legIndex) return
+            lastTapRef.current = null
+            if (isLegStraight(start, end, stored)) {
+              const control = constrainLegControlOnRoad(
+                start,
+                end,
+                clickPoint,
+                snapPoint,
+                isOnRoad,
+              )
+              onLegControlChange(legIndex, control)
+            }
+          }, DOUBLE_TAP_MS)
         }
       } else if (previewControlRef.current) {
         onLegControlChange(drag.legIndex, previewControlRef.current)
         lastTapRef.current = null
+        if (singleTapTimerRef.current != null) {
+          window.clearTimeout(singleTapTimerRef.current)
+          singleTapTimerRef.current = null
+        }
       }
 
       releaseCapture(event.pointerId)
@@ -181,18 +239,23 @@ export function IslandMapDraftPathEditLayer({
     start: WorldMapPoint,
     end: WorldMapPoint,
     control: WorldMapPoint,
+    stored: WorldMapPoint | null,
     event: PointerEvent<SVGElement>,
   ) => {
     event.stopPropagation()
     event.preventDefault()
+    const svg = svgRef.current ?? event.currentTarget.ownerSVGElement
+    const clickPoint = svg ? pointerToNormalized(event, svg) : control
     dragRef.current = {
       legIndex,
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startClientY: event.clientY,
       originControl: control,
+      clickPoint,
       start,
       end,
+      storedControl: stored,
       moved: false,
       captureTarget: event.currentTarget,
     }
@@ -203,6 +266,7 @@ export function IslandMapDraftPathEditLayer({
 
   return (
     <svg
+      ref={svgRef}
       className="island-map-draft-path-edit island-map-draft-path-edit--editable"
       width={imageWidth}
       height={imageHeight}
@@ -246,7 +310,9 @@ export function IslandMapDraftPathEditLayer({
             cy={y}
             r={ctrlRadius}
             style={strokeColor ? { fill: strokeColor } : undefined}
-            onPointerDown={(event) => beginLegInteraction(legIndex, start, end, control, event)}
+            onPointerDown={(event) =>
+              beginLegInteraction(legIndex, start, end, control, stored ?? null, event)
+            }
           />
         )
       })}
@@ -266,7 +332,9 @@ export function IslandMapDraftPathEditLayer({
             d={pathD}
             strokeWidth={hitWidth}
             fill="none"
-            onPointerDown={(event) => beginLegInteraction(legIndex, start, end, control, event)}
+            onPointerDown={(event) =>
+              beginLegInteraction(legIndex, start, end, control, stored ?? null, event)
+            }
           />
         )
       })}
