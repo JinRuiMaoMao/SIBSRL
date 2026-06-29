@@ -123,3 +123,61 @@ export function hidePathLeg(hidden: readonly boolean[], legIndex: number): boole
   next[legIndex] = true
   return next
 }
+
+/** Insert a bend vertex between points[segmentIndex] and points[segmentIndex + 1]. */
+export function insertPathBendPoint(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  segmentIndex: number,
+  bend: WorldMapPoint,
+): { points: WorldMapPoint[]; legStarts: number[] } {
+  const insertAt = segmentIndex + 1
+  const nextPoints = [
+    ...points.slice(0, insertAt).map((point) => [point[0], point[1]] as WorldMapPoint),
+    clampPathPoint(bend),
+    ...points.slice(insertAt).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  let nextLegStarts = legStarts.length > 0 ? [...legStarts] : [0]
+  if (nextLegStarts[0] !== 0) nextLegStarts.unshift(0)
+  nextLegStarts = nextLegStarts
+    .map((start) => (start > segmentIndex ? start + 1 : start))
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  return { points: nextPoints, legStarts: nextLegStarts }
+}
+
+export function removePathVertex(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  vertexIndex: number,
+): { points: WorldMapPoint[]; legStarts: number[] } | null {
+  if (vertexIndex <= 0 || vertexIndex >= points.length - 1) return null
+  const nextPoints = points
+    .filter((_, index) => index !== vertexIndex)
+    .map((point) => [point[0], point[1]] as WorldMapPoint)
+  let nextLegStarts = legStarts.length > 0 ? [...legStarts] : [0]
+  if (nextLegStarts[0] !== 0) nextLegStarts.unshift(0)
+  nextLegStarts = nextLegStarts
+    .map((start) => (start > vertexIndex ? start - 1 : start))
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  return { points: nextPoints, legStarts: nextLegStarts }
+}
+
+export function legIndexForSegment(
+  legStarts: readonly number[],
+  pointCount: number,
+  segmentIndex: number,
+): number {
+  const legs = getPathLegRanges(legStarts, pointCount)
+  return legs.findIndex((leg) => segmentIndex >= leg.start && segmentIndex < leg.end)
+}
+
+export function isStopAnchorIndex(
+  vertexIndex: number,
+  points: readonly WorldMapPoint[],
+  stops: readonly { point: WorldMapPoint }[],
+  epsilon = 0.00005,
+): boolean {
+  const point = points[vertexIndex]
+  if (!point) return false
+  return stops.some((stop) => Math.hypot(stop.point[0] - point[0], stop.point[1] - point[1]) <= epsilon)
+}

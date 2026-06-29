@@ -593,8 +593,9 @@ html.has-compact-tab-nav .island-map--widget {
   opacity: 0.92;
 }
 
-.island-map-draft-path-edit-curve-handle--straight {
-  opacity: 0.55;
+.island-map-draft-path-edit-curve-handle--node {
+  fill: #f5b942;
+  stroke: color-mix(in srgb, #000 45%, transparent);
 }
 
 .island-map-draft-path-edit-curve-handle--active {

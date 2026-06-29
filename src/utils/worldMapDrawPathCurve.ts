@@ -191,6 +191,33 @@ export function buildLegPathD(
   return `M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}`
 }
 
+export function flattenPolylinePath(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+  legHidden: readonly boolean[] = [],
+): WorldMapPoint[] {
+  if (points.length < 2) return [...points]
+  const legs = getPathLegRanges(legStarts, points.length)
+  const merged: WorldMapPoint[] = []
+
+  legs.forEach((leg, legIndex) => {
+    if (legHidden[legIndex]) return
+    for (let index = leg.start; index <= leg.end; index += 1) {
+      const point = points[index]
+      if (!point) continue
+      const onRoad = snap(point)
+      const prev = merged[merged.length - 1]
+      if (!prev || Math.hypot(onRoad[0] - prev[0], onRoad[1] - prev[1]) > 0.00003) {
+        merged.push(onRoad)
+      }
+    }
+  })
+
+  return merged.length >= 2 ? merged : [...points]
+}
+
+/** @deprecated Bend points live in draftPoints; use flattenPolylinePath. */
 export function flattenCurvedPath(
   points: readonly WorldMapPoint[],
   legStarts: readonly number[],

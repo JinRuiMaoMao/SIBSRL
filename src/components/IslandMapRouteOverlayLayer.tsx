@@ -1,5 +1,4 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import { buildLegPathD } from '../utils/worldMapDrawPathCurve'
 import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
 
 interface IslandMapRouteOverlayLayerProps {
@@ -9,7 +8,6 @@ interface IslandMapRouteOverlayLayerProps {
   points: readonly WorldMapPoint[]
   vertexPoints?: readonly WorldMapPoint[]
   legStarts?: readonly number[]
-  legControls?: readonly (WorldMapPoint | null)[]
   legHidden?: readonly boolean[]
   variant?: 'route' | 'draft'
   strokeColor?: string
@@ -26,7 +24,6 @@ export function IslandMapRouteOverlayLayer({
   points,
   vertexPoints,
   legStarts,
-  legControls,
   legHidden = [],
   variant = 'route',
   strokeColor,
@@ -44,7 +41,7 @@ export function IslandMapRouteOverlayLayer({
     variant === 'draft' && legStarts && points.length >= 2
       ? getPathLegRanges(legStarts, points.length)
       : []
-  const useCurvedLegs = legRanges.length > 0 && legControls
+  const useDraftLegPolylines = legRanges.length > 0
 
   const polyline = points
     .map(([x, y]) => `${x * imageWidth},${y * imageHeight}`)
@@ -58,23 +55,21 @@ export function IslandMapRouteOverlayLayer({
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
     >
-      {useCurvedLegs
+      {useDraftLegPolylines
         ? legRanges.map((leg, legIndex) => {
             if (legHidden[legIndex]) return null
-            const legStart = points[leg.start]
-            const legEnd = points[leg.end]
-            if (!legStart || !legEnd) return null
+            const segmentCoords: string[] = []
+            for (let index = leg.start; index <= leg.end; index += 1) {
+              const point = points[index]
+              if (!point) continue
+              segmentCoords.push(`${point[0] * imageWidth},${point[1] * imageHeight}`)
+            }
+            if (segmentCoords.length < 2) return null
             return (
-              <path
+              <polyline
                 key={`leg-line-${legIndex}-${leg.start}-${leg.end}`}
                 className="island-map-route-overlay-line"
-                d={buildLegPathD(
-                  legStart,
-                  legEnd,
-                  legControls[legIndex],
-                  imageWidth,
-                  imageHeight,
-                )}
+                points={segmentCoords.join(' ')}
                 style={draftStyle}
                 fill="none"
                 strokeLinecap="round"

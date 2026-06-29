@@ -3,9 +3,8 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapDraftPathEditLayer } from './IslandMapDraftPathEditLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
-import type { WorldMapDrawStop, WorldMapVirtualNode, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
-import { IslandMapVirtualNodeOverlayLayer } from './IslandMapVirtualNodeOverlayLayer'
 
 export interface PanZoomState {
   x: number
@@ -41,9 +40,7 @@ interface IslandMapPanZoomSurfaceProps {
   draftStrokeColor?: string
   draftRouteNumber?: string
   draftStops?: readonly WorldMapDrawStop[]
-  draftVirtualNodes?: readonly WorldMapVirtualNode[]
   pendingStopPoint?: WorldMapPoint | null
-  pendingVirtualNode?: { point: WorldMapPoint } | null
   onDrawMapClick?: (point: WorldMapPoint) => void
   onDrawUndo?: () => void
   onStopDrag?: (stopId: string, point: WorldMapPoint) => void
@@ -51,17 +48,15 @@ interface IslandMapPanZoomSurfaceProps {
   onStopClick?: (stopId: string) => void
   selectedStopId?: string | null
   onPathPointsChange?: (points: WorldMapPoint[]) => void
-  onLegControlChange?: (legIndex: number, control: WorldMapPoint | null) => void
+  onBendInsert?: (segmentIndex: number, point: WorldMapPoint) => void
+  onBendMove?: (vertexIndex: number, point: WorldMapPoint) => void
+  onBendRemove?: (vertexIndex: number) => void
   onLegDelete?: (legIndex: number) => void
   pathEditable?: boolean
   pathLegStarts?: readonly number[]
-  pathLegControls?: readonly (WorldMapPoint | null)[]
   pathLegHidden?: readonly boolean[]
   snapPathPoint?: (point: WorldMapPoint) => WorldMapPoint
-  isPathOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
-  traceSelectedVirtualNodeId?: string | null
-  onVirtualNodeClick?: (nodeId: string) => void
   maxZoomRatio?: number
 }
 
@@ -239,9 +234,7 @@ export function IslandMapPanZoomSurface({
   draftStrokeColor,
   draftRouteNumber = '',
   draftStops = [],
-  draftVirtualNodes = [],
   pendingStopPoint = null,
-  pendingVirtualNode = null,
   onDrawMapClick,
   onDrawUndo,
   onStopDrag,
@@ -249,17 +242,15 @@ export function IslandMapPanZoomSurface({
   onStopClick,
   selectedStopId = null,
   onPathPointsChange,
-  onLegControlChange,
+  onBendInsert,
+  onBendMove,
+  onBendRemove,
   onLegDelete,
   pathEditable = false,
   pathLegStarts = [0],
-  pathLegControls = [],
   pathLegHidden = [],
   snapPathPoint,
-  isPathOnRoad,
   traceSelectedStopId = null,
-  traceSelectedVirtualNodeId = null,
-  onVirtualNodeClick,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -282,13 +273,6 @@ export function IslandMapPanZoomSurface({
   } | null>(null)
   const [draggingStopId, setDraggingStopId] = useState<string | null>(null)
   const pathEditActiveRef = useRef(false)
-  const virtualNodeDragRef = useRef<{
-    nodeId: string
-    pointerId: number
-    startX: number
-    startY: number
-    moved: boolean
-  } | null>(null)
   const suppressPublishRef = useRef(false)
 
   viewRef.current = view
@@ -518,7 +502,6 @@ export function IslandMapPanZoomSurface({
 
     if (stopDragRef.current) return
     if (pathEditActiveRef.current) return
-    if (virtualNodeDragRef.current) return
 
     if (drawMode) {
       event.preventDefault()
@@ -616,53 +599,6 @@ export function IslandMapPanZoomSurface({
     }
   }, [draggingStopId, imageSize, onStopClick, onStopDrag, onStopDragEnd, panZoom])
 
-  const handleVirtualNodePointerDown = useCallback(
-    (nodeId: string, event: ReactPointerEvent<SVGGElement>) => {
-      if (!drawMode || drawInteraction !== 'route' || !onVirtualNodeClick) return
-      event.preventDefault()
-      event.stopPropagation()
-      virtualNodeDragRef.current = {
-        nodeId,
-        pointerId: event.pointerId,
-        startX: event.clientX,
-        startY: event.clientY,
-        moved: false,
-      }
-      event.currentTarget.setPointerCapture(event.pointerId)
-    },
-    [drawInteraction, drawMode, onVirtualNodeClick],
-  )
-
-  useEffect(() => {
-    if (!onVirtualNodeClick) return
-
-    const onPointerMove = (event: PointerEvent) => {
-      const drag = virtualNodeDragRef.current
-      if (!drag || event.pointerId !== drag.pointerId) return
-      if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 4) {
-        drag.moved = true
-      }
-    }
-
-    const finishDrag = (event: PointerEvent) => {
-      const drag = virtualNodeDragRef.current
-      if (!drag || event.pointerId !== drag.pointerId) return
-      if (!drag.moved) {
-        onVirtualNodeClick(drag.nodeId)
-      }
-      virtualNodeDragRef.current = null
-    }
-
-    window.addEventListener('pointermove', onPointerMove)
-    window.addEventListener('pointerup', finishDrag)
-    window.addEventListener('pointercancel', finishDrag)
-    return () => {
-      window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('pointerup', finishDrag)
-      window.removeEventListener('pointercancel', finishDrag)
-    }
-  }, [onVirtualNodeClick])
-
   const onImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
     adoptImage(displayedSrcRef.current, event.currentTarget)
   }
@@ -703,7 +639,6 @@ export function IslandMapPanZoomSurface({
             points={draftPoints}
             vertexPoints={draftStopPoints}
             legStarts={pathLegStarts}
-            legControls={pathLegControls}
             legHidden={pathLegHidden}
             variant="draft"
             strokeColor={draftStrokeColor}
@@ -734,57 +669,21 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
-      {draftVirtualNodes.length > 0 ? (
-        <div
-          className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--virtual-traceable' : ''}`.trim()}
-        >
-          <IslandMapVirtualNodeOverlayLayer
-            imageWidth={imageSize.width}
-            imageHeight={imageSize.height}
-            nodes={draftVirtualNodes}
-            pendingNode={
-              pendingVirtualNode
-                ? {
-                    x: pendingVirtualNode.point[0] * imageSize.width,
-                    y: pendingVirtualNode.point[1] * imageSize.height,
-                    kind: 'plain' as const,
-                  }
-                : null
-            }
-            traceable={drawMode && drawInteraction === 'route'}
-            traceSelectedNodeId={traceSelectedVirtualNodeId}
-            onNodePointerDown={handleVirtualNodePointerDown}
-          />
-        </div>
-      ) : null}
-      {pendingVirtualNode && draftVirtualNodes.length === 0 ? (
-        <div className="island-map-route-overlay-wrap">
-          <IslandMapVirtualNodeOverlayLayer
-            imageWidth={imageSize.width}
-            imageHeight={imageSize.height}
-            nodes={[]}
-            pendingNode={{
-              x: pendingVirtualNode.point[0] * imageSize.width,
-              y: pendingVirtualNode.point[1] * imageSize.height,
-              kind: 'plain',
-            }}
-          />
-        </div>
-      ) : null}
-      {drawMode && pathEditable && drawInteraction === 'route' && draftPoints.length >= 2 && onLegControlChange && onLegDelete ? (
+      {drawMode && pathEditable && drawInteraction === 'route' && draftPoints.length >= 2 && onBendInsert && onBendMove && onBendRemove && onLegDelete ? (
         <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--path-editable">
           <IslandMapDraftPathEditLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
             points={draftPoints}
+            stopAnchors={draftStops}
             legStarts={pathLegStarts}
-            legControls={pathLegControls}
             legHidden={pathLegHidden}
             strokeColor={draftStrokeColor}
             editable
             snapPoint={snapPathPoint}
-            isOnRoad={isPathOnRoad}
-            onLegControlChange={onLegControlChange}
+            onBendInsert={onBendInsert}
+            onBendMove={onBendMove}
+            onBendRemove={onBendRemove}
             onLegDelete={onLegDelete}
             onInteractionActiveChange={(active) => {
               pathEditActiveRef.current = active

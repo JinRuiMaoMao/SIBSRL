@@ -1,31 +1,38 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
 import {
-  buildLegPathD,
-  constrainLegControlOnRoad,
-  isLegStraight,
-  resolveLegControl,
-} from '../utils/worldMapDrawPathCurve'
+  getPathLegRanges,
+  isStopAnchorIndex,
+  legIndexForSegment,
+} from '../utils/worldMapDrawPathEdit'
+import { defaultLegControl } from '../utils/worldMapDrawPathCurve'
 
 interface IslandMapDraftPathEditLayerProps {
   imageWidth: number
   imageHeight: number
   points: readonly WorldMapPoint[]
+  stopAnchors?: readonly { point: WorldMapPoint }[]
   legStarts?: readonly number[]
-  legControls?: readonly (WorldMapPoint | null)[]
   legHidden?: readonly boolean[]
   strokeColor?: string
   editable?: boolean
   snapPoint?: (point: WorldMapPoint) => WorldMapPoint
-  isOnRoad?: (point: WorldMapPoint) => boolean
-  onLegControlChange: (legIndex: number, control: WorldMapPoint | null) => void
+  onBendInsert: (segmentIndex: number, point: WorldMapPoint) => void
+  onBendMove: (vertexIndex: number, point: WorldMapPoint) => void
+  onBendRemove: (vertexIndex: number) => void
   onLegDelete: (legIndex: number) => void
   onInteractionActiveChange?: (active: boolean) => void
 }
 
 const DOUBLE_TAP_MS = 420
 const DRAG_THRESHOLD_PX = 4
+
+interface PathSegmentRef {
+  legIndex: number
+  segmentIndex: number
+  start: WorldMapPoint
+  end: WorldMapPoint
+}
 
 function toImageCoords(point: WorldMapPoint, imageWidth: number, imageHeight: number) {
   return { x: point[0] * imageWidth, y: point[1] * imageHeight }
@@ -50,41 +57,51 @@ function handleRadius(imageWidth: number): number {
   return Math.max(5, imageWidth * 0.0018)
 }
 
+function segmentPathD(
+  start: WorldMapPoint,
+  end: WorldMapPoint,
+  imageWidth: number,
+  imageHeight: number,
+): string {
+  const sx = start[0] * imageWidth
+  const sy = start[1] * imageHeight
+  const ex = end[0] * imageWidth
+  const ey = end[1] * imageHeight
+  return `M ${sx} ${sy} L ${ex} ${ey}`
+}
+
 export function IslandMapDraftPathEditLayer({
   imageWidth,
   imageHeight,
   points,
+  stopAnchors = [],
   legStarts = [0],
-  legControls = [],
   legHidden = [],
   strokeColor,
   editable = false,
   snapPoint = (point) => point,
-  isOnRoad = () => true,
-  onLegControlChange,
+  onBendInsert,
+  onBendMove,
+  onBendRemove,
   onLegDelete,
   onInteractionActiveChange,
 }: IslandMapDraftPathEditLayerProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const dragRef = useRef<{
-    legIndex: number
+    kind: 'segment' | 'vertex'
+    legIndex?: number
+    segmentIndex: number
+    vertexIndex?: number
     pointerId: number
     startClientX: number
     startClientY: number
-    originControl: WorldMapPoint
     clickPoint: WorldMapPoint
-    start: WorldMapPoint
-    end: WorldMapPoint
-    storedControl: WorldMapPoint | null
     moved: boolean
     captureTarget: SVGElement | null
   } | null>(null)
-  const lastTapRef = useRef<{ legIndex: number; time: number } | null>(null)
+  const lastTapRef = useRef<{ key: string; time: number } | null>(null)
   const singleTapTimerRef = useRef<number | null>(null)
-  const previewControlRef = useRef<WorldMapPoint | null>(null)
-  const [previewTick, setPreviewTick] = useState(0)
-  const [previewLegIndex, setPreviewLegIndex] = useState<number | null>(null)
-  const [activeLegIndex, setActiveLegIndex] = useState<number | null>(null)
+  const [activeKey, setActiveKey] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
 
   const legRanges = useMemo(
@@ -92,24 +109,33 @@ export function IslandMapDraftPathEditLayer({
     [legStarts, points.length],
   )
 
-  const releaseCapture = (pointerId: number) => {
-    const drag = dragRef.current
-    if (!drag?.captureTarget) return
-    try {
-      if (drag.captureTarget.hasPointerCapture(pointerId)) {
-        drag.captureTarget.releasePointerCapture(pointerId)
+  const segments = useMemo(() => {
+    const list: PathSegmentRef[] = []
+    legRanges.forEach((leg, legIndex) => {
+      if (legHidden[legIndex]) return
+      for (let index = leg.start; index < leg.end; index += 1) {
+        const start = points[index]
+        const end = points[index + 1]
+        if (!start || !end) continue
+        list.push({ legIndex, segmentIndex: index, start, end })
       }
-    } catch {
-      // ignore if capture was already released
+    })
+    return list
+  }, [legHidden, legRanges, points])
+
+  const bendVertices = useMemo(() => {
+    const indices: number[] = []
+    for (let index = 1; index < points.length - 1; index += 1) {
+      if (!isStopAnchorIndex(index, points, stopAnchors)) {
+        indices.push(index)
+      }
     }
-    drag.captureTarget = null
-  }
+    return indices
+  }, [points, stopAnchors])
 
   useEffect(() => {
     return () => {
-      if (singleTapTimerRef.current != null) {
-        window.clearTimeout(singleTapTimerRef.current)
-      }
+      if (singleTapTimerRef.current != null) window.clearTimeout(singleTapTimerRef.current)
     }
   }, [])
 
@@ -130,24 +156,10 @@ export function IslandMapDraftPathEditLayer({
           drag.captureTarget.setPointerCapture(event.pointerId)
         }
       }
-      if (!drag.moved) return
-
-      const deltaX = (event.clientX - drag.startClientX) / imageWidth
-      const deltaY = (event.clientY - drag.startClientY) / imageHeight
-      const desired: WorldMapPoint = [
-        drag.originControl[0] + deltaX,
-        drag.originControl[1] + deltaY,
-      ]
-      const next = constrainLegControlOnRoad(
-        drag.start,
-        drag.end,
-        desired,
-        snapPoint,
-        isOnRoad,
-      )
-      previewControlRef.current = next
-      setPreviewLegIndex(drag.legIndex)
-      setPreviewTick((tick) => tick + 1)
+      if (!drag.moved || drag.kind !== 'vertex' || drag.vertexIndex == null) return
+      const svg = svgRef.current
+      if (!svg) return
+      onBendMove(drag.vertexIndex, snapPoint(pointerToNormalized(event, svg)))
     }
 
     const finishDrag = (event: globalThis.PointerEvent) => {
@@ -156,53 +168,47 @@ export function IslandMapDraftPathEditLayer({
 
       if (!drag.moved) {
         const now = Date.now()
+        const tapKey =
+          drag.kind === 'vertex'
+            ? `v-${drag.vertexIndex}`
+            : `s-${drag.segmentIndex}`
         const lastTap = lastTapRef.current
-        if (lastTap && lastTap.legIndex === drag.legIndex && now - lastTap.time <= DOUBLE_TAP_MS) {
+        if (lastTap && lastTap.key === tapKey && now - lastTap.time <= DOUBLE_TAP_MS) {
           if (singleTapTimerRef.current != null) {
             window.clearTimeout(singleTapTimerRef.current)
             singleTapTimerRef.current = null
           }
           lastTapRef.current = null
-          onLegDelete(drag.legIndex)
-        } else {
-          lastTapRef.current = { legIndex: drag.legIndex, time: now }
-          const legIndex = drag.legIndex
-          const clickPoint = drag.clickPoint
-          const start = drag.start
-          const end = drag.end
-          const stored = drag.storedControl
-          if (singleTapTimerRef.current != null) {
-            window.clearTimeout(singleTapTimerRef.current)
+          if (drag.kind === 'vertex' && drag.vertexIndex != null) {
+            onBendRemove(drag.vertexIndex)
+          } else if (drag.legIndex != null) {
+            onLegDelete(drag.legIndex)
           }
-          singleTapTimerRef.current = window.setTimeout(() => {
-            singleTapTimerRef.current = null
-            if (lastTapRef.current?.legIndex !== legIndex) return
-            lastTapRef.current = null
-            if (isLegStraight(start, end, stored)) {
-              const control = constrainLegControlOnRoad(
-                start,
-                end,
-                clickPoint,
-                snapPoint,
-                isOnRoad,
-              )
-              onLegControlChange(legIndex, control)
-            }
-          }, DOUBLE_TAP_MS)
-        }
-      } else if (previewControlRef.current) {
-        onLegControlChange(drag.legIndex, previewControlRef.current)
-        lastTapRef.current = null
-        if (singleTapTimerRef.current != null) {
-          window.clearTimeout(singleTapTimerRef.current)
-          singleTapTimerRef.current = null
+        } else {
+          lastTapRef.current = { key: tapKey, time: now }
+          if (drag.kind === 'segment') {
+            const segmentIndex = drag.segmentIndex
+            const clickPoint = drag.clickPoint
+            if (singleTapTimerRef.current != null) window.clearTimeout(singleTapTimerRef.current)
+            singleTapTimerRef.current = window.setTimeout(() => {
+              singleTapTimerRef.current = null
+              if (lastTapRef.current?.key !== tapKey) return
+              lastTapRef.current = null
+              onBendInsert(segmentIndex, snapPoint(clickPoint))
+            }, DOUBLE_TAP_MS)
+          }
         }
       }
 
-      releaseCapture(event.pointerId)
+      try {
+        if (drag.captureTarget?.hasPointerCapture(event.pointerId)) {
+          drag.captureTarget.releasePointerCapture(event.pointerId)
+        }
+      } catch {
+        // ignore
+      }
       dragRef.current = null
-      previewControlRef.current = null
-      setPreviewLegIndex(null)
+      setActiveKey(null)
       setDragging(false)
       onInteractionActiveChange?.(false)
     }
@@ -217,49 +223,62 @@ export function IslandMapDraftPathEditLayer({
     }
   }, [
     dragging,
-    imageHeight,
-    imageWidth,
-    isOnRoad,
+    onBendInsert,
+    onBendMove,
+    onBendRemove,
     onInteractionActiveChange,
-    onLegControlChange,
     onLegDelete,
     snapPoint,
   ])
 
-  const previewControl = previewControlRef.current
-  void previewTick
-
-  if (!editable || points.length < 2 || legRanges.length === 0) return null
+  if (!editable || points.length < 2 || segments.length === 0) return null
 
   const hitWidth = hitStrokeWidth(imageWidth)
   const ctrlRadius = handleRadius(imageWidth)
 
-  const beginLegInteraction = (
-    legIndex: number,
-    start: WorldMapPoint,
-    end: WorldMapPoint,
-    control: WorldMapPoint,
-    stored: WorldMapPoint | null,
+  const beginSegmentInteraction = (
+    segment: PathSegmentRef,
     event: PointerEvent<SVGElement>,
   ) => {
     event.stopPropagation()
     event.preventDefault()
     const svg = svgRef.current ?? event.currentTarget.ownerSVGElement
-    const clickPoint = svg ? pointerToNormalized(event, svg) : control
+    const clickPoint = svg ? pointerToNormalized(event, svg) : defaultLegControl(segment.start, segment.end)
     dragRef.current = {
-      legIndex,
+      kind: 'segment',
+      legIndex: segment.legIndex,
+      segmentIndex: segment.segmentIndex,
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startClientY: event.clientY,
-      originControl: control,
       clickPoint,
-      start,
-      end,
-      storedControl: stored,
       moved: false,
       captureTarget: event.currentTarget,
     }
-    setActiveLegIndex(legIndex)
+    setActiveKey(`s-${segment.segmentIndex}`)
+    setDragging(true)
+    onInteractionActiveChange?.(true)
+  }
+
+  const beginVertexInteraction = (vertexIndex: number, event: PointerEvent<SVGElement>) => {
+    event.stopPropagation()
+    event.preventDefault()
+    const point = points[vertexIndex]
+    if (!point) return
+    const svg = svgRef.current ?? event.currentTarget.ownerSVGElement
+    const clickPoint = svg ? pointerToNormalized(event, svg) : point
+    dragRef.current = {
+      kind: 'vertex',
+      vertexIndex,
+      segmentIndex: vertexIndex,
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      clickPoint,
+      moved: false,
+      captureTarget: event.currentTarget,
+    }
+    setActiveKey(`v-${vertexIndex}`)
     setDragging(true)
     onInteractionActiveChange?.(true)
   }
@@ -274,67 +293,34 @@ export function IslandMapDraftPathEditLayer({
       aria-hidden
       style={{ touchAction: 'none' }}
     >
-      {previewControl != null && previewLegIndex != null
-        ? (() => {
-            const leg = legRanges[previewLegIndex]
-            const start = leg ? points[leg.start] : null
-            const end = leg ? points[leg.end] : null
-            if (!leg || !start || !end) return null
-            return (
-              <path
-                className="island-map-draft-path-edit-preview"
-                d={buildLegPathD(start, end, previewControl, imageWidth, imageHeight)}
-                style={strokeColor ? { stroke: strokeColor } : undefined}
-                fill="none"
-              />
-            )
-          })()
-        : null}
-      {legRanges.map((leg, legIndex) => {
-        if (legHidden[legIndex]) return null
-        const start = points[leg.start]
-        const end = points[leg.end]
-        if (!start || !end) return null
-        const stored = legControls[legIndex]
-        const control =
-          previewLegIndex === legIndex && previewControl
-            ? previewControl
-            : resolveLegControl(start, end, stored)
-        const { x, y } = toImageCoords(control, imageWidth, imageHeight)
-        const straight = isLegStraight(start, end, stored) && previewLegIndex !== legIndex
-        return (
-          <circle
-            key={`curve-${legIndex}-${control[0]}-${control[1]}`}
-            className={`island-map-draft-path-edit-curve-handle${straight ? ' island-map-draft-path-edit-curve-handle--straight' : ''}${activeLegIndex === legIndex ? ' island-map-draft-path-edit-curve-handle--active' : ''}`.trim()}
-            cx={x}
-            cy={y}
-            r={ctrlRadius}
-            style={strokeColor ? { fill: strokeColor } : undefined}
-            onPointerDown={(event) =>
-              beginLegInteraction(legIndex, start, end, control, stored ?? null, event)
-            }
-          />
-        )
-      })}
-      {legRanges.map((leg, legIndex) => {
-        if (legHidden[legIndex]) return null
-        const start = points[leg.start]
-        const end = points[leg.end]
-        if (!start || !end) return null
-        const stored = legControls[legIndex]
-        const control = resolveLegControl(start, end, stored)
-        const pathD = buildLegPathD(start, end, stored, imageWidth, imageHeight)
-        const isActive = activeLegIndex === legIndex
+      {segments.map((segment) => {
+        const pathD = segmentPathD(segment.start, segment.end, imageWidth, imageHeight)
+        const isActive = activeKey === `s-${segment.segmentIndex}`
         return (
           <path
-            key={`leg-hit-${legIndex}-${leg.start}-${leg.end}`}
+            key={`leg-hit-${segment.legIndex}-${segment.segmentIndex}`}
             className={`island-map-draft-path-edit-segment-hit island-map-draft-path-edit-segment-hit--leg${isActive ? ' island-map-draft-path-edit-segment-hit--active' : ''}`.trim()}
             d={pathD}
             strokeWidth={hitWidth}
             fill="none"
-            onPointerDown={(event) =>
-              beginLegInteraction(legIndex, start, end, control, stored ?? null, event)
-            }
+            onPointerDown={(event) => beginSegmentInteraction(segment, event)}
+          />
+        )
+      })}
+      {bendVertices.map((vertexIndex) => {
+        const point = points[vertexIndex]
+        if (!point) return null
+        const { x, y } = toImageCoords(point, imageWidth, imageHeight)
+        const isActive = activeKey === `v-${vertexIndex}`
+        return (
+          <circle
+            key={`bend-${vertexIndex}-${point[0]}-${point[1]}`}
+            className={`island-map-draft-path-edit-curve-handle island-map-draft-path-edit-curve-handle--node${isActive ? ' island-map-draft-path-edit-curve-handle--active' : ''}`.trim()}
+            cx={x}
+            cy={y}
+            r={ctrlRadius}
+            style={strokeColor ? { fill: strokeColor } : undefined}
+            onPointerDown={(event) => beginVertexInteraction(vertexIndex, event)}
           />
         )
       })}
