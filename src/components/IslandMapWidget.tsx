@@ -24,11 +24,11 @@ import {
   resolveEffectiveLegStarts,
   resolveTraceAnchorPoint,
 } from '../utils/worldMapDrawPath'
-import { syncPathEndpointsToStops, getPathLegRanges, deletePathLeg } from '../utils/worldMapDrawPathEdit'
-import { flattenCurvedPath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
+import { syncPathEndpointsToStops, getPathLegRanges, hidePathLeg, resizeLegHidden } from '../utils/worldMapDrawPathEdit'
+import { buildRoadSafeLegControls, flattenCurvedPath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
 import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad } from '../utils/generalMapRoadSnap'
-import { nextVirtualNodeOrder, pointsNear } from '../utils/worldMapVirtualNodes'
+import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
@@ -39,7 +39,7 @@ import type {
   WorldMapTraceAnchor,
   WorldMapVirtualNode,
   WorldMapVirtualNodeDraft,
-  WorldMapVirtualNodeKind,
+  DEFAULT_VIRTUAL_NODE_KIND,
 } from '../types/worldMapDraw'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
 import {
@@ -132,7 +132,7 @@ function surfaceProps(
   draftStops: readonly WorldMapDrawStop[],
   draftVirtualNodes: readonly WorldMapVirtualNode[],
   pendingStopPoint: WorldMapPoint | null,
-  pendingVirtualNode: { point: WorldMapPoint; kind: WorldMapVirtualNodeKind } | null,
+  pendingVirtualNode: { point: WorldMapPoint } | null,
   draftStrokeColor: string,
   draftRouteNumber: string,
   onDrawMapClick: (point: WorldMapPoint) => void,
@@ -148,6 +148,7 @@ function surfaceProps(
     editable: boolean
     legStarts: readonly number[]
     legControls: readonly (WorldMapPoint | null)[]
+    legHidden: readonly boolean[]
     onLegControlChange: (legIndex: number, control: WorldMapPoint | null) => void
     onLegDelete: (legIndex: number) => void
     snapPathPoint: (point: WorldMapPoint) => WorldMapPoint
@@ -186,6 +187,7 @@ function surfaceProps(
     pathEditable: pathEdit?.editable ?? false,
     pathLegStarts: pathEdit?.legStarts ?? [0],
     pathLegControls: pathEdit?.legControls ?? [],
+    pathLegHidden: pathEdit?.legHidden ?? [],
     onLegControlChange: pathEdit?.onLegControlChange,
     onLegDelete: pathEdit?.onLegDelete,
     snapPathPoint: pathEdit?.snapPathPoint,
@@ -221,6 +223,7 @@ export function IslandMapWidget() {
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [pathLegStarts, setPathLegStarts] = useState<number[]>([])
   const [pathLegControls, setPathLegControls] = useState<(WorldMapPoint | null)[]>([])
+  const [pathLegHidden, setPathLegHidden] = useState<boolean[]>([])
   const [pathManuallyEdited, setPathManuallyEdited] = useState(false)
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
   const [draftVirtualNodes, setDraftVirtualNodes] = useState<WorldMapVirtualNode[]>([])
@@ -244,6 +247,7 @@ export function IslandMapWidget() {
     draftVirtualNodes,
     pathLegStarts,
     pathLegControls,
+    pathLegHidden,
     pathManuallyEdited,
   })
   const undoStackRef = useRef<DrawDraftSnapshot[]>([])
@@ -259,6 +263,7 @@ export function IslandMapWidget() {
       draftVirtualNodes,
       pathLegStarts,
       pathLegControls,
+      pathLegHidden,
       pathManuallyEdited,
     }
   }, [
@@ -266,6 +271,7 @@ export function IslandMapWidget() {
     draftStops,
     draftVirtualNodes,
     pathLegControls,
+    pathLegHidden,
     pathLegStarts,
     pathManuallyEdited,
   ])
@@ -278,6 +284,7 @@ export function IslandMapWidget() {
       draftVirtualNodes: state.draftVirtualNodes,
       pathLegStarts: state.pathLegStarts,
       pathLegControls: state.pathLegControls,
+      pathLegHidden: state.pathLegHidden,
       pathManuallyEdited: state.pathManuallyEdited,
     })
   }, [])
@@ -318,6 +325,7 @@ export function IslandMapWidget() {
           control ? ([control[0], control[1]] as WorldMapPoint) : null,
         ),
       )
+      setPathLegHidden([...snapshot.pathLegHidden])
       setPathManuallyEdited(snapshot.pathManuallyEdited)
   }, [])
 
@@ -365,14 +373,22 @@ export function IslandMapWidget() {
         ? getPathLegRanges(effectiveLegStarts, draftPoints.length).length
         : 0
     setPathLegControls((controls) => resizeLegControls(controls, legCount))
+    setPathLegHidden((hidden) => resizeLegHidden(hidden, legCount))
   }, [draftPoints.length, effectiveLegStarts])
 
   const flattenedDraftPoints = useMemo(
     () =>
       draftPoints.length >= 2
-        ? flattenCurvedPath(draftPoints, effectiveLegStarts, pathLegControls, roadSnap.snap)
+        ? flattenCurvedPath(
+            draftPoints,
+            effectiveLegStarts,
+            pathLegControls,
+            roadSnap.snap,
+            10,
+            pathLegHidden,
+          )
         : draftPoints,
-    [draftPoints, effectiveLegStarts, pathLegControls, roadSnap.snap],
+    [draftPoints, effectiveLegStarts, pathLegControls, pathLegHidden, roadSnap.snap],
   )
 
   useEffect(() => {
@@ -454,9 +470,8 @@ export function IslandMapWidget() {
       if (drawInteraction === 'virtual') {
         if (pendingVirtualNode) return
         setPendingVirtualNode({
-          point: roadSnap.snapVirtualNode(point, 'north'),
+          point: roadSnap.snap(point),
           routeId: drawRouteId.trim() || '21A',
-          kind: 'north',
         })
         return
       }
@@ -507,6 +522,7 @@ export function IslandMapWidget() {
     setDraftPoints([])
     setPathLegStarts([])
     setPathLegControls([])
+    setPathLegHidden([])
     setPathManuallyEdited(false)
     setDraftStops([])
     setDraftVirtualNodes([])
@@ -618,39 +634,17 @@ export function IslandMapWidget() {
 
   const handlePathLegDelete = useCallback(
     (legIndex: number) => {
-      const result = deletePathLeg(
-        draftPoints,
-        effectiveLegStarts,
-        legIndex,
-        pathLegControls,
-      )
-      if (!result) {
-        showExportHint(t('islandMapDrawPathLegDeleteFailed'))
-        return
-      }
-      const removedPoint = draftPoints[result.removedIndex]
-      if (!removedPoint) return
       pushDrawHistory()
-      setDraftPoints(result.points)
-      setPathLegStarts(result.legStarts)
-      setPathLegControls(result.legControls)
-      if (draftStops.length === draftPoints.length) {
-        setDraftStops((stops) => stops.filter((_, index) => index !== result.removedIndex))
-      } else {
-        setDraftStops((stops) => stops.filter((stop) => !pointsNear(stop.point, removedPoint)))
-        setDraftVirtualNodes((nodes) => nodes.filter((node) => !pointsNear(node.point, removedPoint)))
-      }
+      setPathLegHidden((hidden) => hidePathLeg(hidden, legIndex))
+      setPathLegControls((controls) => {
+        const next = [...controls]
+        while (next.length <= legIndex) next.push(null)
+        next[legIndex] = null
+        return next
+      })
       setPathManuallyEdited(true)
     },
-    [
-      draftPoints,
-      draftStops.length,
-      effectiveLegStarts,
-      pathLegControls,
-      pushDrawHistory,
-      showExportHint,
-      t,
-    ],
+    [pushDrawHistory],
   )
 
   const handleConfirmPendingStop = useCallback(() => {
@@ -697,7 +691,7 @@ export function IslandMapWidget() {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         point: pendingVirtualNode.point,
         routeId: nodeRouteId,
-        kind: pendingVirtualNode.kind,
+        kind: pendingVirtualNode.kind ?? DEFAULT_VIRTUAL_NODE_KIND,
         order: nextVirtualNodeOrder(nodes, nodeRouteId),
       },
     ])
@@ -780,12 +774,20 @@ export function IslandMapWidget() {
           ? syncPathEndpointsToStops(draftPoints, result.stops)
           : result.points
       setDraftPoints(nextPoints)
-      setPathLegStarts(
+      const nextLegStarts =
         pathManuallyEdited && draftPoints.length >= 2
           ? pathLegStarts
-          : buildStopLegStarts(result.points.length),
-      )
-      setPathLegControls([])
+          : buildStopLegStarts(nextPoints.length)
+      const legCount =
+        nextPoints.length >= 2 ? getPathLegRanges(nextLegStarts, nextPoints.length).length : 0
+      const snap = (point: WorldMapPoint) => snapPointToGeneralMapRoad(index, point)
+      const nextControls =
+        pathManuallyEdited && draftPoints.length >= 2
+          ? pathLegControls
+          : buildRoadSafeLegControls(nextPoints, nextLegStarts, snap, roadSnap.isOnRoad)
+      setPathLegStarts(nextLegStarts)
+      setPathLegControls(resizeLegControls(nextControls, legCount))
+      setPathLegHidden(Array.from({ length: legCount }, () => false))
       if (!pathManuallyEdited || draftPoints.length < 2) {
         setPathManuallyEdited(false)
       }
@@ -816,8 +818,11 @@ export function IslandMapWidget() {
     draftStops,
     draftVirtualNodes,
     expanded,
+    pathLegControls,
+    pathLegStarts,
     pathManuallyEdited,
     pushDrawHistory,
+    roadSnap.isOnRoad,
     showExportHint,
     t,
   ])
@@ -988,6 +993,7 @@ export function IslandMapWidget() {
         setDraftPoints(initialPoints)
         setPathLegStarts(legStarts)
         setPathLegControls([])
+        setPathLegHidden([])
         setPathManuallyEdited(false)
         resetDrawHistory()
         const fitPoints =
@@ -1045,6 +1051,7 @@ export function IslandMapWidget() {
             editable: true,
             legStarts: effectiveLegStarts,
             legControls: pathLegControls,
+            legHidden: pathLegHidden,
             onLegControlChange: handleLegControlChange,
             onLegDelete: handlePathLegDelete,
             snapPathPoint: roadSnap.snap,
@@ -1059,6 +1066,7 @@ export function IslandMapWidget() {
       handleLegControlChange,
       handlePathLegDelete,
       pathLegControls,
+      pathLegHidden,
       roadSnap.isOnRoad,
       roadSnap.snap,
     ],
@@ -1078,7 +1086,7 @@ export function IslandMapWidget() {
   )
   const draftRouteNumber = drawRouteId.trim()
   const pendingVirtualNodeOverlay = pendingVirtualNode
-    ? { point: pendingVirtualNode.point, kind: pendingVirtualNode.kind }
+    ? { point: pendingVirtualNode.point }
     : null
   const canUndo =
     pendingVirtualNode != null ||
@@ -1273,13 +1281,6 @@ export function IslandMapWidget() {
           pendingNode={drawMode ? pendingVirtualNode : null}
           onPendingRouteIdChange={(routeId) =>
             setPendingVirtualNode((current) => (current ? { ...current, routeId } : current))
-          }
-          onPendingKindChange={(kind) =>
-            setPendingVirtualNode((current) =>
-              current
-                ? { ...current, kind, point: roadSnap.snapVirtualNode(current.point, kind) }
-                : current,
-            )
           }
           onConfirmPendingNode={handleConfirmPendingVirtualNode}
           onCancelPendingNode={() => setPendingVirtualNode(null)}

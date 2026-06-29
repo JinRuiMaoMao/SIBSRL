@@ -24,10 +24,16 @@ export type WorldMapSurfaceVirtualNodeKind =
   | 'enter-tunnel'
   | 'exit-tunnel'
 
+/** Undirected junction marker (no compass / turn semantics). */
+export type WorldMapPlainVirtualNodeKind = 'plain'
+
 export type WorldMapVirtualNodeKind =
+  | WorldMapPlainVirtualNodeKind
   | WorldMapCompassDirectionKind
   | WorldMapRelativeDirectionKind
   | WorldMapSurfaceVirtualNodeKind
+
+export const DEFAULT_VIRTUAL_NODE_KIND: WorldMapPlainVirtualNodeKind = 'plain'
 
 export interface WorldMapVirtualNode {
   id: string
@@ -41,7 +47,7 @@ export interface WorldMapVirtualNode {
 export interface WorldMapVirtualNodeDraft {
   point: WorldMapPoint
   routeId: string
-  kind: WorldMapVirtualNodeKind
+  kind?: WorldMapVirtualNodeKind
 }
 
 export interface WorldMapDrawStop {

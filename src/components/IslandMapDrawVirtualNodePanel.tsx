@@ -1,57 +1,24 @@
 import { useLocale } from '../i18n/LocaleContext'
-import type { WorldMapVirtualNode, WorldMapVirtualNodeDraft, WorldMapVirtualNodeKind } from '../types/worldMapDraw'
-import {
-  COMPASS_ROSE_LAYOUT,
-  RELATIVE_DIRECTION_KINDS,
-  SURFACE_VIRTUAL_NODE_KINDS,
-  virtualNodeKindLabel,
-  virtualNodeKindSymbol,
-} from './IslandMapVirtualNodeOverlayLayer'
+import type { WorldMapVirtualNode, WorldMapVirtualNodeDraft } from '../types/worldMapDraw'
 
 interface IslandMapDrawVirtualNodePanelProps {
   nodes: readonly WorldMapVirtualNode[]
   pendingNode: WorldMapVirtualNodeDraft | null
   onPendingRouteIdChange: (routeId: string) => void
-  onPendingKindChange: (kind: WorldMapVirtualNodeKind) => void
   onConfirmPendingNode: () => void
   onCancelPendingNode: () => void
   onRemoveNode: (id: string) => void
-}
-
-function KindButton({
-  kind,
-  activeKind,
-  locale,
-  onSelect,
-}: {
-  kind: WorldMapVirtualNodeKind
-  activeKind: WorldMapVirtualNodeKind
-  locale: string
-  onSelect: (kind: WorldMapVirtualNodeKind) => void
-}) {
-  return (
-    <button
-      type="button"
-      className={`island-map-btn island-map-draw-virtual-kind${activeKind === kind ? ' island-map-btn--active' : ''}`.trim()}
-      onClick={() => onSelect(kind)}
-      title={virtualNodeKindLabel(kind, locale)}
-    >
-      <span className="island-map-draw-virtual-kind-symbol">{virtualNodeKindSymbol(kind)}</span>
-      <span className="island-map-draw-virtual-kind-text">{virtualNodeKindLabel(kind, locale)}</span>
-    </button>
-  )
 }
 
 export function IslandMapDrawVirtualNodePanel({
   nodes,
   pendingNode,
   onPendingRouteIdChange,
-  onPendingKindChange,
   onConfirmPendingNode,
   onCancelPendingNode,
   onRemoveNode,
 }: IslandMapDrawVirtualNodePanelProps) {
-  const { t, locale } = useLocale()
+  const { t } = useLocale()
 
   return (
     <div className="island-map-draw-stop-panel">
@@ -69,52 +36,6 @@ export function IslandMapDrawVirtualNodePanel({
               autoFocus
             />
           </label>
-          <div className="island-map-draw-field">
-            <span>{t('islandMapDrawVirtualCompassKind')}</span>
-            <div className="island-map-draw-compass-grid">
-              {COMPASS_ROSE_LAYOUT.map((kind, index) =>
-                kind ? (
-                  <KindButton
-                    key={kind}
-                    kind={kind}
-                    activeKind={pendingNode.kind}
-                    locale={locale}
-                    onSelect={onPendingKindChange}
-                  />
-                ) : (
-                  <span key={`gap-${index}`} className="island-map-draw-compass-gap" aria-hidden />
-                ),
-              )}
-            </div>
-          </div>
-          <div className="island-map-draw-field">
-            <span>{t('islandMapDrawVirtualTurnKind')}</span>
-            <div className="island-map-draw-panel-row island-map-draw-virtual-kinds">
-              {RELATIVE_DIRECTION_KINDS.map((kind) => (
-                <KindButton
-                  key={kind}
-                  kind={kind}
-                  activeKind={pendingNode.kind}
-                  locale={locale}
-                  onSelect={onPendingKindChange}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="island-map-draw-field">
-            <span>{t('islandMapDrawVirtualSurfaceKind')}</span>
-            <div className="island-map-draw-panel-row island-map-draw-virtual-kinds">
-              {SURFACE_VIRTUAL_NODE_KINDS.map((kind) => (
-                <KindButton
-                  key={kind}
-                  kind={kind}
-                  activeKind={pendingNode.kind}
-                  locale={locale}
-                  onSelect={onPendingKindChange}
-                />
-              ))}
-            </div>
-          </div>
           <div className="island-map-draw-panel-row">
             <button
               type="button"
@@ -136,21 +57,20 @@ export function IslandMapDrawVirtualNodePanel({
           {[...nodes]
             .sort((a, b) => a.order - b.order)
             .map((node) => (
-            <li key={node.id}>
-              <span>
-                #{node.order} · {node.routeId} · {virtualNodeKindSymbol(node.kind)}{' '}
-                {virtualNodeKindLabel(node.kind, locale)}
-              </span>
-              <button
-                type="button"
-                className="island-map-draw-stop-remove"
-                onClick={() => onRemoveNode(node.id)}
-                aria-label={t('islandMapDrawVirtualRemove')}
-              >
-                ×
-              </button>
-            </li>
-          ))}
+              <li key={node.id}>
+                <span>
+                  #{node.order} · {node.routeId}
+                </span>
+                <button
+                  type="button"
+                  className="island-map-draw-stop-remove"
+                  onClick={() => onRemoveNode(node.id)}
+                  aria-label={t('islandMapDrawVirtualRemove')}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
         </ul>
       ) : null}
     </div>

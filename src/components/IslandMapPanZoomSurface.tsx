@@ -43,7 +43,7 @@ interface IslandMapPanZoomSurfaceProps {
   draftStops?: readonly WorldMapDrawStop[]
   draftVirtualNodes?: readonly WorldMapVirtualNode[]
   pendingStopPoint?: WorldMapPoint | null
-  pendingVirtualNode?: { point: WorldMapPoint; kind: WorldMapVirtualNodeKind } | null
+  pendingVirtualNode?: { point: WorldMapPoint } | null
   onDrawMapClick?: (point: WorldMapPoint) => void
   onDrawUndo?: () => void
   onStopDrag?: (stopId: string, point: WorldMapPoint) => void
@@ -56,6 +56,7 @@ interface IslandMapPanZoomSurfaceProps {
   pathEditable?: boolean
   pathLegStarts?: readonly number[]
   pathLegControls?: readonly (WorldMapPoint | null)[]
+  pathLegHidden?: readonly boolean[]
   snapPathPoint?: (point: WorldMapPoint) => WorldMapPoint
   isPathOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
@@ -253,6 +254,7 @@ export function IslandMapPanZoomSurface({
   pathEditable = false,
   pathLegStarts = [0],
   pathLegControls = [],
+  pathLegHidden = [],
   snapPathPoint,
   isPathOnRoad,
   traceSelectedStopId = null,
@@ -693,9 +695,7 @@ export function IslandMapPanZoomSurface({
         </div>
       ) : null}
       {drawInteraction === 'route' && draftPoints.length > 0 ? (
-        <div
-          className={`island-map-route-overlay-wrap${drawMode && pathEditable ? ' island-map-route-overlay-wrap--path-editable' : ''}`.trim()}
-        >
+        <div className="island-map-route-overlay-wrap">
           <IslandMapRouteOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -704,27 +704,10 @@ export function IslandMapPanZoomSurface({
             vertexPoints={draftStopPoints}
             legStarts={pathLegStarts}
             legControls={pathLegControls}
+            legHidden={pathLegHidden}
             variant="draft"
             strokeColor={draftStrokeColor}
           />
-          {drawMode && pathEditable && onLegControlChange && onLegDelete ? (
-            <IslandMapDraftPathEditLayer
-              imageWidth={imageSize.width}
-              imageHeight={imageSize.height}
-              points={draftPoints}
-              legStarts={pathLegStarts}
-              legControls={pathLegControls}
-              strokeColor={draftStrokeColor}
-              editable
-              snapPoint={snapPathPoint}
-              isOnRoad={isPathOnRoad}
-              onLegControlChange={onLegControlChange}
-              onLegDelete={onLegDelete}
-              onInteractionActiveChange={(active) => {
-                pathEditActiveRef.current = active
-              }}
-            />
-          ) : null}
         </div>
       ) : null}
       {draftStops.length > 0 || pendingStopPoint ? (
@@ -764,7 +747,7 @@ export function IslandMapPanZoomSurface({
                 ? {
                     x: pendingVirtualNode.point[0] * imageSize.width,
                     y: pendingVirtualNode.point[1] * imageSize.height,
-                    kind: pendingVirtualNode.kind,
+                    kind: 'plain' as const,
                   }
                 : null
             }
@@ -783,7 +766,28 @@ export function IslandMapPanZoomSurface({
             pendingNode={{
               x: pendingVirtualNode.point[0] * imageSize.width,
               y: pendingVirtualNode.point[1] * imageSize.height,
-              kind: pendingVirtualNode.kind,
+              kind: 'plain',
+            }}
+          />
+        </div>
+      ) : null}
+      {drawMode && pathEditable && drawInteraction === 'route' && draftPoints.length >= 2 && onLegControlChange && onLegDelete ? (
+        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--path-editable">
+          <IslandMapDraftPathEditLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            points={draftPoints}
+            legStarts={pathLegStarts}
+            legControls={pathLegControls}
+            legHidden={pathLegHidden}
+            strokeColor={draftStrokeColor}
+            editable
+            snapPoint={snapPathPoint}
+            isOnRoad={isPathOnRoad}
+            onLegControlChange={onLegControlChange}
+            onLegDelete={onLegDelete}
+            onInteractionActiveChange={(active) => {
+              pathEditActiveRef.current = active
             }}
           />
         </div>

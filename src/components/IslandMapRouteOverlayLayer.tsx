@@ -10,6 +10,7 @@ interface IslandMapRouteOverlayLayerProps {
   vertexPoints?: readonly WorldMapPoint[]
   legStarts?: readonly number[]
   legControls?: readonly (WorldMapPoint | null)[]
+  legHidden?: readonly boolean[]
   variant?: 'route' | 'draft'
   strokeColor?: string
 }
@@ -26,6 +27,7 @@ export function IslandMapRouteOverlayLayer({
   vertexPoints,
   legStarts,
   legControls,
+  legHidden = [],
   variant = 'route',
   strokeColor,
 }: IslandMapRouteOverlayLayerProps) {
@@ -58,6 +60,7 @@ export function IslandMapRouteOverlayLayer({
     >
       {useCurvedLegs
         ? legRanges.map((leg, legIndex) => {
+            if (legHidden[legIndex]) return null
             const legStart = points[leg.start]
             const legEnd = points[leg.end]
             if (!legStart || !legEnd) return null

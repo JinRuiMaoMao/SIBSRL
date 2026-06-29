@@ -64,7 +64,7 @@ function readStopList(value: unknown): WorldMapDrawStop[] {
   return stops
 }
 
-function readVirtualNodeKind(value: unknown): WorldMapVirtualNode['kind'] | null {
+function readVirtualNodeKind(value: unknown): WorldMapVirtualNode['kind'] {
   return normalizeVirtualNodeKind(value)
 }
 
@@ -74,7 +74,7 @@ function readVirtualNodeEntry(value: unknown, index: number): WorldMapVirtualNod
   const kind = readVirtualNodeKind(value.kind)
   const order =
     typeof value.order === 'number' && Number.isFinite(value.order) ? Math.round(value.order) : index
-  if (!routeId || !kind) return null
+  if (!routeId) return null
   return {
     id: `import-vn-${index}-${Math.random().toString(36).slice(2, 8)}`,
     point: [value.point[0], value.point[1]],

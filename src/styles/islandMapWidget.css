@@ -617,6 +617,11 @@ html.has-compact-tab-nav .island-map--widget {
 
 .island-map-route-overlay-wrap--path-editable {
   pointer-events: none;
+  z-index: 6;
+}
+
+.island-map-route-overlay-wrap--path-editable .island-map-draft-path-edit--editable {
+  pointer-events: auto;
 }
 
 .island-map-btn--layers {
@@ -729,7 +734,9 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   font-weight: 800;
 }
 
-.island-map-virtual-node-overlay-item--north .island-map-virtual-node-overlay-marker,
+.island-map-virtual-node-overlay-item--plain .island-map-virtual-node-overlay-marker {
+  fill: color-mix(in srgb, #9ad4ff 85%, #fff);
+}
 .island-map-virtual-node-overlay-item--south .island-map-virtual-node-overlay-marker,
 .island-map-virtual-node-overlay-item--east .island-map-virtual-node-overlay-marker,
 .island-map-virtual-node-overlay-item--west .island-map-virtual-node-overlay-marker,

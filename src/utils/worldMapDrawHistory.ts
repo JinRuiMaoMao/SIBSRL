@@ -7,6 +7,7 @@ export interface DrawDraftSnapshot {
   draftVirtualNodes: WorldMapVirtualNode[]
   pathLegStarts: number[]
   pathLegControls: (WorldMapPoint | null)[]
+  pathLegHidden: boolean[]
   pathManuallyEdited: boolean
 }
 
@@ -26,6 +27,7 @@ export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnaps
     pathLegControls: state.pathLegControls.map((control) =>
       control ? ([control[0], control[1]] as WorldMapPoint) : null,
     ),
+    pathLegHidden: [...state.pathLegHidden],
     pathManuallyEdited: state.pathManuallyEdited,
   }
 }

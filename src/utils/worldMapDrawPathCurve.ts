@@ -49,9 +49,6 @@ export function sampleQuadraticBezier(
   return samples
 }
 
-function lerpPoint(a: WorldMapPoint, b: WorldMapPoint, t: number): WorldMapPoint {
-  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
-}
 
 function sampleOnRoadCorridor(
   sample: WorldMapPoint,
@@ -82,32 +79,62 @@ export function curveStaysOnRoad(
   return true
 }
 
-/** Keep curve endpoints fixed; snap control to road and limit bulge so samples stay on road. */
+/** Snap bend handle to road; endpoints stay on their anchors. */
 export function constrainLegControlOnRoad(
   start: WorldMapPoint,
   end: WorldMapPoint,
   desired: WorldMapPoint,
   snap: (point: WorldMapPoint) => WorldMapPoint,
-  isOnRoad: (point: WorldMapPoint) => boolean,
+  _isOnRoad: (point: WorldMapPoint) => boolean,
 ): WorldMapPoint {
-  const mid = defaultLegControl(start, end)
-  const snapped = snap(desired)
-  if (curveStaysOnRoad(start, snapped, end, isOnRoad, 10, snap)) return snapped
+  void start
+  void end
+  return snap(desired)
+}
 
-  let lo = 0
-  let hi = 1
-  let best = mid
-  for (let iteration = 0; iteration < 14; iteration += 1) {
-    const t = (lo + hi) / 2
-    const candidate = snap(lerpPoint(mid, snapped, t))
-    if (curveStaysOnRoad(start, candidate, end, isOnRoad, 10, snap)) {
-      best = candidate
-      lo = t
-    } else {
-      hi = t
-    }
+function chordStaysOnRoad(
+  start: WorldMapPoint,
+  end: WorldMapPoint,
+  isOnRoad: (point: WorldMapPoint) => boolean,
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+  steps = 12,
+): boolean {
+  for (let step = 0; step <= steps; step += 1) {
+    const t = step / steps
+    const sample: WorldMapPoint = [
+      start[0] + (end[0] - start[0]) * t,
+      start[1] + (end[1] - start[1]) * t,
+    ]
+    if (!sampleOnRoadCorridor(sample, snap, isOnRoad)) return false
   }
-  return best
+  return true
+}
+
+/** After generate, bend legs whose straight chord leaves the road corridor so dragging works. */
+export function buildRoadSafeLegControls(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+  isOnRoad: (point: WorldMapPoint) => boolean,
+): (WorldMapPoint | null)[] {
+  const legs = getPathLegRanges(legStarts, points.length)
+  return legs.map((leg) => {
+    const start = points[leg.start]
+    const end = points[leg.end]
+    if (!start || !end) return null
+    if (chordStaysOnRoad(start, end, isOnRoad, snap)) return null
+
+    const mid = defaultLegControl(start, end)
+    const candidates: WorldMapPoint[] = [
+      snap(mid),
+      snap([start[0] * 0.75 + end[0] * 0.25, start[1] * 0.75 + end[1] * 0.25]),
+      snap([start[0] * 0.25 + end[0] * 0.75, start[1] * 0.25 + end[1] * 0.75]),
+    ]
+    for (const candidate of candidates) {
+      if (curveStaysOnRoad(start, candidate, end, isOnRoad, 10, snap)) return candidate
+    }
+    return snap(mid)
+  })
 }
 
 export function resizeLegControls(
@@ -148,12 +175,14 @@ export function flattenCurvedPath(
   legControls: readonly (WorldMapPoint | null)[],
   snap: (point: WorldMapPoint) => WorldMapPoint,
   stepsPerLeg = 10,
+  legHidden: readonly boolean[] = [],
 ): WorldMapPoint[] {
   if (points.length < 2) return [...points]
   const legs = getPathLegRanges(legStarts, points.length)
   const merged: WorldMapPoint[] = []
 
   legs.forEach((leg, legIndex) => {
+    if (legHidden[legIndex]) return
     const start = points[leg.start]
     const end = points[leg.end]
     if (!start || !end) return

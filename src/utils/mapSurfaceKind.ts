@@ -85,9 +85,10 @@ export function absoluteExitDirForKind(kind: WorldMapVirtualNodeKind): number | 
   }
 }
 
-export function normalizeVirtualNodeKind(value: unknown): WorldMapVirtualNodeKind | null {
-  if (typeof value !== 'string') return null
+export function normalizeVirtualNodeKind(value: unknown): WorldMapVirtualNodeKind {
+  if (typeof value !== 'string') return 'plain'
   const key = value.trim()
+  if (!key || key === 'plain' || key === 'junction' || key === '节点') return 'plain'
   if (key === 'straight' || key === 'north' || key === '北') return 'north'
   if (key === 'south' || key === '南') return 'south'
   if (key === 'west' || key === '西') return 'west'
@@ -103,5 +104,5 @@ export function normalizeVirtualNodeKind(value: unknown): WorldMapVirtualNodeKin
   if (key === 'off-bridge' || key === '下桥') return 'off-bridge'
   if (key === 'enter-tunnel' || key === '进隧道' || key === '进隧') return 'enter-tunnel'
   if (key === 'exit-tunnel' || key === '出隧道' || key === '出隧') return 'exit-tunnel'
-  return null
+  return 'plain'
 }

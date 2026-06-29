@@ -14,6 +14,7 @@ interface IslandMapDraftPathEditLayerProps {
   points: readonly WorldMapPoint[]
   legStarts?: readonly number[]
   legControls?: readonly (WorldMapPoint | null)[]
+  legHidden?: readonly boolean[]
   strokeColor?: string
   editable?: boolean
   snapPoint?: (point: WorldMapPoint) => WorldMapPoint
@@ -31,7 +32,7 @@ function toImageCoords(point: WorldMapPoint, imageWidth: number, imageHeight: nu
 }
 
 function hitStrokeWidth(imageWidth: number): number {
-  return Math.max(14, imageWidth * 0.009)
+  return Math.max(20, imageWidth * 0.012)
 }
 
 function handleRadius(imageWidth: number): number {
@@ -44,6 +45,7 @@ export function IslandMapDraftPathEditLayer({
   points,
   legStarts = [0],
   legControls = [],
+  legHidden = [],
   strokeColor,
   editable = false,
   snapPoint = (point) => point,
@@ -182,6 +184,7 @@ export function IslandMapDraftPathEditLayer({
     event: PointerEvent<SVGElement>,
   ) => {
     event.stopPropagation()
+    event.preventDefault()
     dragRef.current = {
       legIndex,
       pointerId: event.pointerId,
@@ -205,6 +208,7 @@ export function IslandMapDraftPathEditLayer({
       height={imageHeight}
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
+      style={{ touchAction: 'none' }}
     >
       {previewControl != null && previewLegIndex != null
         ? (() => {
@@ -223,6 +227,7 @@ export function IslandMapDraftPathEditLayer({
           })()
         : null}
       {legRanges.map((leg, legIndex) => {
+        if (legHidden[legIndex]) return null
         const start = points[leg.start]
         const end = points[leg.end]
         if (!start || !end) return null
@@ -246,6 +251,7 @@ export function IslandMapDraftPathEditLayer({
         )
       })}
       {legRanges.map((leg, legIndex) => {
+        if (legHidden[legIndex]) return null
         const start = points[leg.start]
         const end = points[leg.end]
         if (!start || !end) return null

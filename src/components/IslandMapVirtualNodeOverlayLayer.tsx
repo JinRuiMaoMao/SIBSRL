@@ -36,6 +36,8 @@ export function virtualNodeKindSymbol(kind: WorldMapVirtualNodeKind): string {
       return '下桥'
     case 'enter-tunnel':
       return '进隧'
+    case 'plain':
+      return ''
     default:
       return '出隧'
   }
@@ -72,6 +74,8 @@ export function virtualNodeKindLabel(kind: WorldMapVirtualNodeKind, locale: stri
         return '下桥'
       case 'enter-tunnel':
         return '进隧道'
+      case 'plain':
+        return '节点'
       default:
         return '出隧道'
     }
@@ -105,6 +109,8 @@ export function virtualNodeKindLabel(kind: WorldMapVirtualNodeKind, locale: stri
       return 'Off bridge'
     case 'enter-tunnel':
       return 'Enter tunnel'
+    case 'plain':
+      return 'Node'
     default:
       return 'Exit tunnel'
   }
@@ -149,6 +155,7 @@ export function IslandMapVirtualNodeOverlayLayer({
         const x = node.point[0] * imageWidth
         const y = node.point[1] * imageHeight
         const surface = isBridgeTunnelVirtualKind(node.kind)
+        const isPlain = node.kind === 'plain'
         const isTraceSelected = traceSelectedNodeId === node.id
         return (
           <g
@@ -175,17 +182,19 @@ export function IslandMapVirtualNodeOverlayLayer({
               className="island-map-virtual-node-overlay-marker"
               cx={x}
               cy={y}
-              r={markerSize * (surface ? 0.62 : 0.55)}
+              r={markerSize * (isPlain ? 0.5 : surface ? 0.62 : 0.55)}
             />
-            <text
-              className={`island-map-virtual-node-overlay-symbol${surface ? ' island-map-virtual-node-overlay-symbol--surface' : ''}`.trim()}
-              x={x}
-              y={y + fontSize * 0.35}
-              textAnchor="middle"
-              style={{ fontSize: surface ? fontSize * 0.82 : fontSize }}
-            >
-              {virtualNodeKindSymbol(node.kind)}
-            </text>
+            {!isPlain ? (
+              <text
+                className={`island-map-virtual-node-overlay-symbol${surface ? ' island-map-virtual-node-overlay-symbol--surface' : ''}`.trim()}
+                x={x}
+                y={y + fontSize * 0.35}
+                textAnchor="middle"
+                style={{ fontSize: surface ? fontSize * 0.82 : fontSize }}
+              >
+                {virtualNodeKindSymbol(node.kind)}
+              </text>
+            ) : null}
             <text
               className="island-map-virtual-node-overlay-label"
               x={x}
@@ -200,16 +209,7 @@ export function IslandMapVirtualNodeOverlayLayer({
       })}
       {pendingNode ? (
         <g className="island-map-virtual-node-overlay-pending">
-          <circle cx={pendingNode.x} cy={pendingNode.y} r={markerSize * 0.45} />
-          <text
-            className="island-map-virtual-node-overlay-symbol"
-            x={pendingNode.x}
-            y={pendingNode.y + fontSize * 0.35}
-            textAnchor="middle"
-            style={{ fontSize }}
-          >
-            {virtualNodeKindSymbol(pendingNode.kind)}
-          </text>
+          <circle cx={pendingNode.x} cy={pendingNode.y} r={markerSize * 0.5} />
         </g>
       ) : null}
     </svg>
