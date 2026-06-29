@@ -33,14 +33,14 @@ import {
   isStopAnchorIndex,
   movePathVertex,
   removePathVertex,
-  retacePathThroughUserBend,
+  retacePathLegThroughUserBends,
   resizeLegHidden,
   resizePathUserBends,
   updatePathPointsForStopMove,
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
-import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad } from '../utils/generalMapRoadSnap'
+import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
@@ -710,15 +710,24 @@ export function IslandMapWidget() {
   }, [pushDrawHistory])
 
   const handleBendDragEnd = useCallback(
-    (vertexIndex: number, point: WorldMapPoint) => {
+    async (vertexIndex: number, point: WorldMapPoint) => {
       if (!pathUserBends[vertexIndex]) return
-      const retaced = retacePathThroughUserBend(
+      const index = roadSnap.index ?? (await preloadGeneralMapRoadSnapIndex())
+      const snapped = index ? snapPointToGeneralMapRoad(index, point) : roadSnap.snap(point)
+      const traceSegment = (from: WorldMapPoint, to: WorldMapPoint) => {
+        if (!index) return [from, to]
+        const traced = traceGeneralMapRoadPath(index, from, to, [], {
+          avoidParallelSegments,
+        })
+        return traced.length >= 2 ? traced : [from, snapPointToGeneralMapRoad(index, to)]
+      }
+      const retaced = retacePathLegThroughUserBends(
         draftPoints,
         pathLegStarts,
         pathUserBends,
         vertexIndex,
-        point,
-        (from, to) => roadSnap.appendSegment(from, to, []),
+        snapped,
+        traceSegment,
       )
       if (!retaced) return
       setDraftPoints(retaced.points)
@@ -726,7 +735,7 @@ export function IslandMapWidget() {
       setPathUserBends(retaced.userBends)
       setPathManuallyEdited(true)
     },
-    [draftPoints, pathLegStarts, pathUserBends, roadSnap],
+    [avoidParallelSegments, draftPoints, pathLegStarts, pathUserBends, roadSnap],
   )
 
   const handleBendRemove = useCallback(

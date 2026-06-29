@@ -211,6 +211,26 @@ export function resizePathUserBends(bends: readonly boolean[], pointCount: numbe
 
 export type TraceTwoPointFn = (from: WorldMapPoint, to: WorldMapPoint) => WorldMapPoint[]
 
+/** Remap user-bend flags after replacing points[vertexIndex] with middle.length road samples. */
+export function remapUserBendsAfterVertexReplace(
+  userBends: readonly boolean[],
+  vertexIndex: number,
+  middleLength: number,
+  movedBendIndex: number,
+): boolean[] {
+  const nextLength = userBends.length - 1 + middleLength
+  const next = Array.from({ length: nextLength }, () => false)
+  for (let index = 0; index < userBends.length; index += 1) {
+    if (!userBends[index] || index === vertexIndex) continue
+    const remapped = index < vertexIndex ? index : index - 1 + middleLength
+    if (remapped >= 0 && remapped < nextLength) next[remapped] = true
+  }
+  if (movedBendIndex >= 0 && movedBendIndex < nextLength) {
+    next[movedBendIndex] = true
+  }
+  return next
+}
+
 function shiftLegStartsAfterMiddleReplace(
   legStarts: readonly number[],
   keepThrough: number,
@@ -229,6 +249,47 @@ function shiftLegStartsAfterMiddleReplace(
       return keepThrough + 1
     })
     .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  return next
+}
+
+function shiftLegStartsAfterRangeReplace(
+  legStarts: readonly number[],
+  rangeStart: number,
+  rangeEnd: number,
+  newRangeEnd: number,
+): number[] {
+  const delta = newRangeEnd - rangeEnd
+  let next = legStarts.length > 0 ? [...legStarts] : [0]
+  if (next[0] !== 0) next.unshift(0)
+  next = next
+    .map((start) => {
+      if (start < rangeStart) return start
+      if (start > rangeEnd) return start + delta
+      if (start === rangeStart) return rangeStart
+      return rangeStart
+    })
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+  return next
+}
+
+function remapUserBendsAfterLegReplace(
+  userBends: readonly boolean[],
+  rangeStart: number,
+  rangeEnd: number,
+  newRangeLength: number,
+  bendRemap: ReadonlyMap<number, number>,
+): boolean[] {
+  const delta = newRangeLength - (rangeEnd - rangeStart + 1)
+  const nextLength = userBends.length + delta
+  const next = Array.from({ length: nextLength }, () => false)
+  for (const newIndex of bendRemap.values()) {
+    if (newIndex >= 0 && newIndex < nextLength) next[newIndex] = true
+  }
+  for (let index = 0; index < userBends.length; index += 1) {
+    if (!userBends[index] || (index >= rangeStart && index <= rangeEnd)) continue
+    const remapped = index < rangeStart ? index : index + delta
+    if (remapped >= 0 && remapped < nextLength) next[remapped] = true
+  }
   return next
 }
 
@@ -285,12 +346,12 @@ export function isolateUserBendForDrag(
   }
 }
 
-/** Rebuild A→bend→B along roads when the user drags a bend handle. */
-export function retacePathThroughUserBend(
+/** Rebuild a full leg along roads through every user bend waypoint (after drag). */
+export function retacePathLegThroughUserBends(
   points: readonly WorldMapPoint[],
   legStarts: readonly number[],
   userBends: readonly boolean[],
-  vertexIndex: number,
+  movedBendIndex: number,
   bendTarget: WorldMapPoint,
   traceSegment: TraceTwoPointFn,
 ): {
@@ -299,45 +360,82 @@ export function retacePathThroughUserBend(
   userBends: boolean[]
   bendIndex: number
 } | null {
-  if (!userBends[vertexIndex]) return null
-  const before = vertexIndex - 1
-  const after = vertexIndex + 1
-  if (before < 0 || after >= points.length) return null
+  if (!userBends[movedBendIndex]) return null
 
-  const start = points[before]!
-  const end = points[after]!
-  const bend = clampPathPoint(bendTarget)
-  const legToBend = traceSegment(start, bend)
-  const legFromBend = traceSegment(bend, end)
-  const middle = mergePathPoints(
-    legToBend.length > 1 ? legToBend.slice(1) : [bend],
-    legFromBend.length > 1 ? legFromBend.slice(1) : [],
-  )
-  const replaceFrom = before + 1
-  const replaceThrough = after - 1
-  const newPoints = [
-    ...points.slice(0, replaceFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
-    ...middle.map((point) => [point[0], point[1]] as WorldMapPoint),
-    ...points.slice(after).map((point) => [point[0], point[1]] as WorldMapPoint),
-  ]
-  const bendIndex = before + Math.max(1, legToBend.length - 1)
-  const nextLegStarts = shiftLegStartsAfterMiddleReplace(
-    legStarts,
-    before,
-    replaceFrom,
-    replaceThrough,
-    middle.length,
-  )
-  const nextUserBends = Array.from({ length: newPoints.length }, () => false)
-  if (bendIndex >= 0 && bendIndex < nextUserBends.length) {
-    nextUserBends[bendIndex] = true
+  const legs = getPathLegRanges(legStarts, points.length)
+  const leg = legs.find((entry) => movedBendIndex >= entry.start && movedBendIndex <= entry.end)
+  if (!leg) return null
+
+  const waypoints: number[] = []
+  for (let index = leg.start; index <= leg.end; index += 1) {
+    if (index === leg.start || index === leg.end || userBends[index]) {
+      waypoints.push(index)
+    }
   }
+  if (waypoints.length < 2) return null
+
+  const bend = clampPathPoint(bendTarget)
+  const bendRemap = new Map<number, number>()
+  let tracedLeg: WorldMapPoint[] = []
+  let cursor = points[leg.start]!
+  tracedLeg.push([cursor[0], cursor[1]])
+
+  for (let waypointIndex = 1; waypointIndex < waypoints.length; waypointIndex += 1) {
+    const pointIndex = waypoints[waypointIndex]!
+    const target =
+      pointIndex === movedBendIndex
+        ? bend
+        : ([points[pointIndex]![0], points[pointIndex]![1]] as WorldMapPoint)
+    const segment = traceSegment(cursor, target)
+    tracedLeg = mergePathPoints(tracedLeg, segment.length > 1 ? segment.slice(1) : [target])
+    cursor = tracedLeg[tracedLeg.length - 1]!
+    if (userBends[pointIndex]) {
+      bendRemap.set(pointIndex, leg.start + tracedLeg.length - 1)
+    }
+  }
+
+  const rangeStart = leg.start
+  const rangeEnd = leg.end
+  const newPoints = [
+    ...points.slice(0, rangeStart).map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...tracedLeg,
+    ...points.slice(rangeEnd + 1).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  const newRangeEnd = rangeStart + tracedLeg.length - 1
+  const nextLegStarts = shiftLegStartsAfterRangeReplace(legStarts, rangeStart, rangeEnd, newRangeEnd)
+  const nextUserBends = remapUserBendsAfterLegReplace(
+    userBends,
+    rangeStart,
+    rangeEnd,
+    tracedLeg.length,
+    bendRemap,
+  )
+
   return {
     points: newPoints,
     legStarts: nextLegStarts,
     userBends: nextUserBends,
-    bendIndex,
+    bendIndex: bendRemap.get(movedBendIndex) ?? movedBendIndex,
   }
+}
+
+/** @deprecated Use retacePathLegThroughUserBends — retraces the whole leg, not just adjacent hops. */
+export function retacePathThroughUserBend(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  userBends: readonly boolean[],
+  vertexIndex: number,
+  bendTarget: WorldMapPoint,
+  traceSegment: TraceTwoPointFn,
+): ReturnType<typeof retacePathLegThroughUserBends> {
+  return retacePathLegThroughUserBends(
+    points,
+    legStarts,
+    userBends,
+    vertexIndex,
+    bendTarget,
+    traceSegment,
+  )
 }
 
 function anchorIndexBefore(
@@ -373,6 +471,19 @@ export function collapseUserBendToChord(
   if (!userBends[vertexIndex]) return null
   const left = anchorIndexBefore(points, stops, vertexIndex)
   const right = anchorIndexAfter(points, stops, vertexIndex)
+  const otherBendsInSpan = userBends.reduce((count, isBend, index) => {
+    if (!isBend || index === vertexIndex || index <= left || index >= right) return count
+    return count + 1
+  }, 0)
+
+  if (otherBendsInSpan > 0) {
+    const result = removePathVertex(points, legStarts, vertexIndex)
+    if (!result) return null
+    const nextUserBends = resizePathUserBends(userBends, points.length)
+      .filter((_, index) => index !== vertexIndex)
+    return { ...result, userBends: nextUserBends }
+  }
+
   if (right <= left + 1) return removePathVertex(points, legStarts, vertexIndex)
 
   const removeFrom = left + 1
@@ -381,10 +492,17 @@ export function collapseUserBendToChord(
     ...points.slice(0, removeFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
     ...points.slice(right).map((point) => [point[0], point[1]] as WorldMapPoint),
   ]
+  const removedCount = removeThrough - removeFrom + 1
+  const nextUserBends = Array.from({ length: newPoints.length }, () => false)
+  for (let index = 0; index < userBends.length; index += 1) {
+    if (!userBends[index] || index <= left || index >= right) continue
+    const remapped = index < removeFrom ? index : index - removedCount
+    if (remapped >= 0 && remapped < nextUserBends.length) nextUserBends[remapped] = true
+  }
   return {
     points: newPoints,
     legStarts: shiftLegStartsAfterMiddleRemove(legStarts, left, removeFrom, removeThrough),
-    userBends: Array.from({ length: newPoints.length }, () => false),
+    userBends: nextUserBends,
   }
 }
 
