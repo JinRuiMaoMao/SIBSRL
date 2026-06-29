@@ -249,6 +249,7 @@ export function IslandMapPanZoomSurface({
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const viewRef = useRef(view)
   const modeRef = useRef(mode)
@@ -256,6 +257,8 @@ export function IslandMapPanZoomSurface({
   const onViewChangeRef = useRef(onViewChange)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
+  const panZoomRef = useRef<PanZoomState | null>(null)
+  const dragRafRef = useRef(0)
   const stopDragRef = useRef<{
     stopId: string
     pointerId: number
@@ -280,6 +283,7 @@ export function IslandMapPanZoomSurface({
   onViewChangeRef.current = onViewChange
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
+  const [incomingSrc, setIncomingSrc] = useState<string | null>(null)
   const [imageSize, setImageSize] = useState<ImageSize | null>(() => imageSizeCacheRef.current.get(src) ?? null)
   const [panZoom, setPanZoom] = useState<PanZoomState | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -288,6 +292,18 @@ export function IslandMapPanZoomSurface({
   )
 
   displayedSrcRef.current = displayedSrc
+  panZoomRef.current = panZoom
+
+  const applyTransformLive = useCallback((next: PanZoomState) => {
+    const content = contentRef.current
+    if (!content) return
+    content.style.transform = `translate3d(${next.x}px, ${next.y}px, 0) scale(${next.scale})`
+  }, [])
+
+  useEffect(() => {
+    if (dragging || !panZoom) return
+    applyTransformLive(panZoom)
+  }, [applyTransformLive, dragging, panZoom])
 
   const readViewportSize = useCallback((): ImageSize | null => {
     const viewport = viewportRef.current
@@ -355,57 +371,33 @@ export function IslandMapPanZoomSurface({
     [imageSize, readViewportSize],
   )
 
-  const commitImageSize = useCallback((nextSrc: string, size: ImageSize) => {
-    imageSizeCacheRef.current.set(nextSrc, size)
-    displayedSrcRef.current = nextSrc
-    setDisplayedSrc(nextSrc)
-    setImageSize(size)
-  }, [])
-
-  const adoptImage = useCallback(
+  const activateMapLayer = useCallback(
     (nextSrc: string, image: HTMLImageElement) => {
       const size = readImageSize(image)
       if (!size) return false
-      commitImageSize(nextSrc, size)
+      imageSizeCacheRef.current.set(nextSrc, size)
+      displayedSrcRef.current = nextSrc
+      setDisplayedSrc(nextSrc)
+      setImageSize(size)
+      setIncomingSrc(null)
       return true
     },
-    [commitImageSize],
+    [],
+  )
+
+  const adoptImage = useCallback(
+    (nextSrc: string, image: HTMLImageElement) => activateMapLayer(nextSrc, image),
+    [activateMapLayer],
   )
 
   useEffect(() => {
-    if (src === displayedSrcRef.current) return
-
-    const cached = imageSizeCacheRef.current.get(src)
-    if (cached) {
-      commitImageSize(src, cached)
+    if (src === displayedSrcRef.current) {
+      setIncomingSrc(null)
       return
     }
-
-    let cancelled = false
-    const preload = new Image()
-    preload.decoding = 'async'
-    preload.src = src
-
-    const finish = () => {
-      if (cancelled) return
-      const size = readImageSize(preload)
-      if (!size) return
-      commitImageSize(src, size)
-    }
-
-    if (preload.complete) {
-      finish()
-    } else {
-      preload.onload = finish
-      preload.onerror = finish
-    }
-
-    return () => {
-      cancelled = true
-      preload.onload = null
-      preload.onerror = null
-    }
-  }, [commitImageSize, src])
+    if (src === incomingSrc) return
+    setIncomingSrc(src)
+  }, [incomingSrc, src])
 
   useLayoutEffect(() => {
     const image = imageRef.current
@@ -460,14 +452,35 @@ export function IslandMapPanZoomSurface({
       const origin = dragOriginRef.current
       const viewport = readViewportSize()
       if (!origin || !viewport || !imageSize) return
-      applyPanZoom({
-        x: origin.panX + (event.clientX - origin.pointerX),
-        y: origin.panY + (event.clientY - origin.pointerY),
-        scale: panZoom.scale,
+      const next = clampPanZoom(
+        {
+          x: origin.panX + (event.clientX - origin.pointerX),
+          y: origin.panY + (event.clientY - origin.pointerY),
+          scale: panZoom.scale,
+        },
+        viewport,
+        imageSize,
+        maxZoomRatioRef.current,
+      )
+      panZoomRef.current = next
+      if (dragRafRef.current) return
+      dragRafRef.current = window.requestAnimationFrame(() => {
+        dragRafRef.current = 0
+        const live = panZoomRef.current
+        if (live) applyTransformLive(live)
       })
     }
 
     const onPointerUp = () => {
+      const live = panZoomRef.current
+      if (live) {
+        suppressPublishRef.current = false
+        setPanZoom(live)
+        const viewport = readViewportSize()
+        if (viewport && imageSize) {
+          onViewChangeRef.current(panZoomToNormalized(live, viewport, imageSize))
+        }
+      }
       dragOriginRef.current = null
       setDragging(false)
     }
@@ -479,8 +492,12 @@ export function IslandMapPanZoomSurface({
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
       window.removeEventListener('pointercancel', onPointerUp)
+      if (dragRafRef.current) {
+        window.cancelAnimationFrame(dragRafRef.current)
+        dragRafRef.current = 0
+      }
     }
-  }, [applyPanZoom, dragging, imageSize, panZoom, readViewportSize])
+  }, [applyTransformLive, dragging, imageSize, panZoom, readViewportSize])
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!panZoom || !imageSize) return
@@ -511,14 +528,13 @@ export function IslandMapPanZoomSurface({
       panX: panZoom.x,
       panY: panZoom.y,
     }
+    panZoomRef.current = panZoom
+    suppressPublishRef.current = true
     setDragging(true)
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragging) return
-    dragOriginRef.current = null
-    setDragging(false)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
@@ -554,7 +570,8 @@ export function IslandMapPanZoomSurface({
         drag.moved = true
       }
       const rect = viewport.getBoundingClientRect()
-      const point = viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize)
+      const livePanZoom = panZoomRef.current ?? panZoom
+      const point = viewportClientToNormalized(event.clientX, event.clientY, rect, livePanZoom, imageSize)
       onStopDrag?.(drag.stopId, point)
     }
 
@@ -564,7 +581,8 @@ export function IslandMapPanZoomSurface({
       const viewport = viewportRef.current
       if (!viewport) return
       const rect = viewport.getBoundingClientRect()
-      const point = viewportClientToNormalized(event.clientX, event.clientY, rect, panZoom, imageSize)
+      const livePanZoom = panZoomRef.current ?? panZoom
+      const point = viewportClientToNormalized(event.clientX, event.clientY, rect, livePanZoom, imageSize)
       if (drag.moved) {
         onStopDragEnd?.(drag.stopId, point)
       } else {
@@ -635,45 +653,24 @@ export function IslandMapPanZoomSurface({
     adoptImage(displayedSrcRef.current, event.currentTarget)
   }
 
-  const imageStyle: CSSProperties | undefined =
-    imageSize && panZoom
-      ? {
-          width: `${imageSize.width}px`,
-          height: `${imageSize.height}px`,
-          transform: `translate3d(${panZoom.x}px, ${panZoom.y}px, 0) scale(${panZoom.scale})`,
-        }
-      : undefined
+  const onIncomingImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    const layerSrc = incomingSrc
+    if (!layerSrc) return
+    if (activateMapLayer(layerSrc, event.currentTarget)) {
+      window.requestAnimationFrame(() => {
+        syncPanZoomRef.current({ publish: true })
+      })
+    }
+  }
 
-  const overlayStyle: CSSProperties | undefined =
-    imageSize && panZoom
-      ? {
-          width: `${imageSize.width}px`,
-          height: `${imageSize.height}px`,
-          transform: `translate3d(${panZoom.x}px, ${panZoom.y}px, 0) scale(${panZoom.scale})`,
-        }
-      : undefined
+  const layerSizeStyle: CSSProperties | undefined = imageSize
+    ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
+    : undefined
 
-  return (
-    <div
-      ref={viewportRef}
-      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''}${drawMode && drawInteraction === 'catalog' ? ' island-map-panzoom--draw-stop' : ''} ${className}`.trim()}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-      onContextMenu={drawMode ? (event) => event.preventDefault() : undefined}
-    >
-      <img
-        ref={imageRef}
-        src={displayedSrc}
-        alt=""
-        className="island-map-panzoom-image"
-        decoding="async"
-        draggable={false}
-        style={imageStyle}
-        onLoad={onImageLoad}
-      />
-      {imageSize && routeOverlay && overlayStyle ? (
-        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+  const overlayChildren = imageSize ? (
+    <>
+      {routeOverlay ? (
+        <div className="island-map-route-overlay-wrap">
           <IslandMapRouteOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -683,10 +680,9 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
-      {imageSize && drawInteraction === 'route' && draftPoints.length > 0 && overlayStyle ? (
+      {drawInteraction === 'route' && draftPoints.length > 0 ? (
         <div
           className={`island-map-route-overlay-wrap${drawMode && pathEditable ? ' island-map-route-overlay-wrap--path-editable' : ''}`.trim()}
-          style={overlayStyle}
         >
           <IslandMapRouteOverlayLayer
             imageWidth={imageSize.width}
@@ -712,10 +708,9 @@ export function IslandMapPanZoomSurface({
           ) : null}
         </div>
       ) : null}
-      {imageSize && (draftStops.length > 0 || pendingStopPoint) && overlayStyle ? (
+      {draftStops.length > 0 || pendingStopPoint ? (
         <div
           className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--stop-editable' : ''}`.trim()}
-          style={overlayStyle}
         >
           <IslandMapStopOverlayLayer
             imageWidth={imageSize.width}
@@ -737,10 +732,9 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
-      {imageSize && draftVirtualNodes.length > 0 && overlayStyle ? (
+      {draftVirtualNodes.length > 0 ? (
         <div
           className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--virtual-traceable' : ''}`.trim()}
-          style={overlayStyle}
         >
           <IslandMapVirtualNodeOverlayLayer
             imageWidth={imageSize.width}
@@ -761,8 +755,8 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
-      {imageSize && pendingVirtualNode && draftVirtualNodes.length === 0 && overlayStyle ? (
-        <div className="island-map-route-overlay-wrap" style={overlayStyle}>
+      {pendingVirtualNode && draftVirtualNodes.length === 0 ? (
+        <div className="island-map-route-overlay-wrap">
           <IslandMapVirtualNodeOverlayLayer
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -775,6 +769,56 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
+    </>
+  ) : null
+
+  return (
+    <div
+      ref={viewportRef}
+      className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''}${drawMode && drawInteraction === 'catalog' ? ' island-map-panzoom--draw-stop' : ''} ${className}`.trim()}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onContextMenu={drawMode ? (event) => event.preventDefault() : undefined}
+    >
+      {layerSizeStyle ? (
+        <div
+          ref={contentRef}
+          className={`island-map-panzoom-content${dragging ? ' island-map-panzoom-content--dragging' : ''}`.trim()}
+          style={layerSizeStyle}
+        >
+          <img
+            ref={imageRef}
+            src={displayedSrc}
+            alt=""
+            className="island-map-panzoom-image"
+            decoding="async"
+            draggable={false}
+            onLoad={onImageLoad}
+          />
+          {incomingSrc ? (
+            <img
+              src={incomingSrc}
+              alt=""
+              className="island-map-panzoom-image island-map-panzoom-image--incoming"
+              decoding="async"
+              draggable={false}
+              onLoad={onIncomingImageLoad}
+            />
+          ) : null}
+          {overlayChildren}
+        </div>
+      ) : (
+        <img
+          ref={imageRef}
+          src={displayedSrc}
+          alt=""
+          className="island-map-panzoom-image"
+          decoding="async"
+          draggable={false}
+          onLoad={onImageLoad}
+        />
+      )}
     </div>
   )
 }

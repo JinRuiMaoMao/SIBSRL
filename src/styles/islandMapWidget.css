@@ -66,6 +66,18 @@ html.has-compact-tab-nav .island-map--widget {
   background: var(--bg, #0f0f0f);
 }
 
+.island-map-panzoom-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  contain: layout style paint;
+}
+
+.island-map-panzoom-content--dragging {
+  will-change: transform;
+}
+
 .island-map-panzoom-image {
   position: absolute;
   top: 0;
@@ -73,18 +85,20 @@ html.has-compact-tab-nav .island-map--widget {
   display: block;
   max-width: none;
   max-height: none;
-  transform-origin: 0 0;
-  will-change: transform;
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
+}
+
+.island-map-panzoom-image--incoming {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .island-map-route-overlay-wrap {
   position: absolute;
   top: 0;
   left: 0;
-  transform-origin: 0 0;
   pointer-events: none;
 }
 

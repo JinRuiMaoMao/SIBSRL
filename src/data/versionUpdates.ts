@@ -235,6 +235,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "路线线段可拖动调整，双击线段删除拐点；手动编辑后的路线在再次生成时保留形状。",
             en: "Path segments can be dragged; double-click a segment to remove a corner. Manually edited paths keep their shape on regenerate.",
           },
+          {
+            zh: "修复切换 Layers 时黑屏及拖动卡顿：新图层解码完成前保留旧图，拖动时合并为单层 transform 减少重绘。",
+            en: "Fixed black screen when switching Layers and pan jank: keep the previous image until the new layer decodes; single transform layer while dragging.",
+          },
         ],
       },
       {
