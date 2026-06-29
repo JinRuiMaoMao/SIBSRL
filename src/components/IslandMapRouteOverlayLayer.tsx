@@ -1,6 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
-import { buildSmoothPolylinePathD } from '../utils/worldMapDrawPathCurve'
 
 interface IslandMapRouteOverlayLayerProps {
   imageWidth: number
@@ -55,24 +54,6 @@ export function IslandMapRouteOverlayLayer({
     legEnd: number,
   ) => {
     if (legPoints.length < 2) return null
-    const legUserBends = new Set<number>()
-    userBendIndices.forEach((index) => {
-      if (index > legStart && index < legEnd) legUserBends.add(index - legStart)
-    })
-    if (smoothRoadCorners && variant === 'draft') {
-      const pathD = buildSmoothPolylinePathD(legPoints, imageWidth, imageHeight, legUserBends)
-      return (
-        <path
-          key={`leg-line-${legIndex}-${legStart}-${legEnd}`}
-          className="island-map-route-overlay-line"
-          d={pathD}
-          style={draftStyle}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      )
-    }
     const segmentCoords = legPoints
       .map((point) => `${point[0] * imageWidth},${point[1] * imageHeight}`)
       .join(' ')

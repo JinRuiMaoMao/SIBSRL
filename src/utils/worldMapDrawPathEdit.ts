@@ -331,10 +331,23 @@ export function retacePathSpanAroundUserBend(
   const legToBend = traceSegment(start, bend)
   const bendOnRoad = legToBend[legToBend.length - 1] ?? bend
   const legFromBend = traceSegment(bendOnRoad, end)
-  const middle = mergePathPoints(
+  let middle = mergePathPoints(
     legToBend.length > 1 ? legToBend.slice(1) : [bendOnRoad],
     legFromBend.length > 1 ? legFromBend.slice(1) : [],
   )
+  if (middle.length === 0) middle = [bendOnRoad]
+
+  let bendIndexInMiddle = 0
+  let bestDistance = Number.POSITIVE_INFINITY
+  for (let index = 0; index < middle.length; index += 1) {
+    const point = middle[index]!
+    const distance = Math.hypot(point[0] - bend[0], point[1] - bend[1])
+    if (distance < bestDistance) {
+      bestDistance = distance
+      bendIndexInMiddle = index
+    }
+  }
+  middle[bendIndexInMiddle] = [bend[0], bend[1]]
 
   const replaceFrom = left + 1
   const replaceThrough = right - 1
@@ -343,7 +356,7 @@ export function retacePathSpanAroundUserBend(
     ...middle.map((point) => [point[0], point[1]] as WorldMapPoint),
     ...points.slice(right).map((point) => [point[0], point[1]] as WorldMapPoint),
   ]
-  const bendIndex = left + Math.max(1, legToBend.length - 1)
+  const bendIndex = left + 1 + bendIndexInMiddle
   const nextLegStarts = shiftLegStartsAfterMiddleReplace(
     legStarts,
     left,

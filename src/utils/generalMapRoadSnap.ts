@@ -151,8 +151,12 @@ interface FindPathOptions {
 
 export type WorldMapRouteSegmentRef = readonly [WorldMapPoint, WorldMapPoint]
 
+export const ROAD_CORRIDOR_MAX_DIST = 0.00028
+
 export interface TraceRoadPathOptions {
   avoidParallelSegments?: readonly WorldMapRouteSegmentRef[]
+  /** Skip quadratic corner smoothing that can cut outside the road corridor. */
+  skipCornerSmooth?: boolean
 }
 
 class GeneralMapRoadSnapIndex {
@@ -574,12 +578,24 @@ class GeneralMapRoadSnapIndex {
     }
 
     points[points.length - 1] = this.ensureOnRoad(to)
-    const smoothed = this.smoothRoadCorners(points)
-    return this.simplifyTracedPath(this.densifyOnRoad(smoothed))
+    const prepared = options.skipCornerSmooth
+      ? points.map((point) => this.clampToCorridor(point))
+      : this.smoothRoadCorners(points)
+    const densified = this.densifyOnRoad(prepared)
+    const guarded = options.skipCornerSmooth
+      ? densified.map((point) => this.clampToCorridor(point))
+      : densified
+    return this.simplifyTracedPath(guarded)
   }
 
   private simplifyTracedPath(points: WorldMapPoint[]): WorldMapPoint[] {
     return simplifyPath(points, 0.00012)
+  }
+
+  private clampToCorridor(point: WorldMapPoint): WorldMapPoint {
+    if (this.isOnRoad(point)) return point
+    const snapped = this.snap(point)
+    return snapped
   }
 
   private densifyOnRoad(points: WorldMapPoint[]): WorldMapPoint[] {
@@ -1044,6 +1060,39 @@ export function preloadGeneralMapRoadSnapIndex(): Promise<GeneralMapRoadSnapInde
     loadPromise = loadGeneralMapRoadSnapIndex()
   }
   return loadPromise
+}
+
+export function isPointInRoadCorridor(
+  index: GeneralMapRoadSnapIndex | null,
+  point: WorldMapPoint,
+  maxDist = ROAD_CORRIDOR_MAX_DIST,
+): boolean {
+  if (!index) return true
+  if (index.isOnRoad(point)) return true
+  const snapped = index.snap(point)
+  return Math.hypot(snapped[0] - point[0], snapped[1] - point[1]) <= maxDist
+}
+
+/** Pull a point inside the road guard corridor (on road or within max snap distance). */
+export function clampPointToRoadCorridor(
+  index: GeneralMapRoadSnapIndex | null,
+  point: WorldMapPoint,
+  maxDist = ROAD_CORRIDOR_MAX_DIST,
+): WorldMapPoint {
+  if (!index) return point
+  if (index.isOnRoad(point)) return point
+  const snapped = index.snap(point)
+  const offset = Math.hypot(snapped[0] - point[0], snapped[1] - point[1])
+  if (offset <= maxDist) return snapped
+  return snapped
+}
+
+export function constrainPathToRoadCorridor(
+  index: GeneralMapRoadSnapIndex | null,
+  points: readonly WorldMapPoint[],
+  maxDist = ROAD_CORRIDOR_MAX_DIST,
+): WorldMapPoint[] {
+  return points.map((point) => clampPointToRoadCorridor(index, point, maxDist))
 }
 
 export function snapPointToGeneralMapRoad(

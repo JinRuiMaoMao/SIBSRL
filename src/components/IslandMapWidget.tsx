@@ -40,7 +40,7 @@ import {
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
-import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
+import { preloadGeneralMapRoadSnapIndex, clampPointToRoadCorridor, constrainPathToRoadCorridor, snapPointToGeneralMapRoad, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
@@ -700,7 +700,10 @@ export function IslandMapWidget() {
   const handleBendMove = useCallback(
     (vertexIndex: number, point: WorldMapPoint) => {
       if (!pathUserBends[vertexIndex]) return
-      setDraftPoints(movePathVertex(draftPoints, vertexIndex, roadSnap.snap(point)))
+      const snapped = roadSnap.index
+        ? clampPointToRoadCorridor(roadSnap.index, point)
+        : roadSnap.snap(point)
+      setDraftPoints(movePathVertex(draftPoints, vertexIndex, snapped))
     },
     [draftPoints, pathUserBends, roadSnap],
   )
@@ -712,33 +715,36 @@ export function IslandMapWidget() {
   const handleBendDragEnd = useCallback(
     async (vertexIndex: number, point: WorldMapPoint) => {
       const index = roadSnap.index ?? (await preloadGeneralMapRoadSnapIndex())
-      const snapped = index ? snapPointToGeneralMapRoad(index, point) : roadSnap.snap(point)
+      const snapped = index ? clampPointToRoadCorridor(index, point) : roadSnap.snap(point)
       const traceSegment = (from: WorldMapPoint, to: WorldMapPoint) => {
         if (!index) return [from, to]
-        return traceGeneralMapRoadPath(index, from, to)
+        const traced = traceGeneralMapRoadPath(index, from, to, [], { skipCornerSmooth: true })
+        return constrainPathToRoadCorridor(index, traced.length >= 2 ? traced : [from, to])
       }
 
-      let retaced: ReturnType<typeof retacePathSpanAroundUserBend> = null
-      setDraftPoints((currentPoints) => {
-        setPathUserBends((currentUserBends) => {
-          if (!currentUserBends[vertexIndex]) return currentUserBends
-          retaced = retacePathSpanAroundUserBend(
-            currentPoints,
-            pathLegStarts,
-            currentUserBends,
-            vertexIndex,
-            snapped,
-            traceSegment,
-          )
-          return retaced?.userBends ?? currentUserBends
-        })
-        return retaced?.points ?? currentPoints
-      })
+      const snapshot = draftHistoryRef.current
+      const retaced = retacePathSpanAroundUserBend(
+        snapshot.draftPoints,
+        snapshot.pathLegStarts,
+        snapshot.pathUserBends,
+        vertexIndex,
+        snapped,
+        traceSegment,
+      )
       if (!retaced) return
+
+      const nextPoints = index ? constrainPathToRoadCorridor(index, retaced.points) : retaced.points
+      const nextUserBends = [...retaced.userBends]
+      if (retaced.bendIndex >= 0 && retaced.bendIndex < nextUserBends.length) {
+        nextUserBends[retaced.bendIndex] = true
+      }
+
+      setDraftPoints(nextPoints)
       setPathLegStarts(retaced.legStarts)
+      setPathUserBends(nextUserBends)
       setPathManuallyEdited(true)
     },
-    [pathLegStarts, roadSnap],
+    [roadSnap],
   )
 
   const handleBendRemove = useCallback(
