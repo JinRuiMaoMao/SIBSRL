@@ -17,9 +17,9 @@ import {
   type WorldMapRouteExportSelection,
 } from '../utils/worldMapRouteExport'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
-import { rebuildDraftPathFromStops, mergePathPoints, resolveTraceAnchorPoint, traceViaForAnchorTarget } from '../utils/worldMapDrawPath'
+import { rebuildDraftPathFromStops, mergePathPoints, resolveTraceAnchorPoint, straightTraceSegment } from '../utils/worldMapDrawPath'
 import { syncPathEndpointsToStops } from '../utils/worldMapDrawPathEdit'
-import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad, traceGeneralMapRoadPath, type GeneralMapRoadSnapIndex } from '../utils/generalMapRoadSnap'
+import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
@@ -55,24 +55,9 @@ async function traceImportedRoutePath(
   stops: readonly WorldMapDrawStop[],
   virtualNodes: readonly WorldMapVirtualNode[],
   routeId: string,
-  roadSnapReady: boolean,
-  roadSnapIndex: GeneralMapRoadSnapIndex | null,
 ): Promise<WorldMapPoint[]> {
   if (stops.length < 2) return []
-  const index = roadSnapReady ? roadSnapIndex : await preloadGeneralMapRoadSnapIndex()
-  const avoidParallelSegments = listWorldMapRouteSegmentsExcept(routeId)
-  const traceSegment = (
-    from: WorldMapPoint,
-    to: WorldMapPoint,
-    via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
-  ) => traceGeneralMapRoadPath(index, from, to, via, { avoidParallelSegments })
-  return rebuildDraftPathFromStops(
-    stops,
-    traceSegment,
-    virtualNodes,
-    routeId,
-    (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
-  )
+  return rebuildDraftPathFromStops(stops, straightTraceSegment, virtualNodes, routeId, () => null)
 }
 
 type MapLayer = 'general' | 'detailed'
@@ -298,21 +283,13 @@ export function IslandMapWidget() {
     }, 2600)
   }, [])
 
-  const traceSegment = useCallback(
-    (from: WorldMapPoint, to: WorldMapPoint, via: Parameters<typeof roadSnap.appendSegment>[2] = []) =>
-      roadSnap.appendSegment(from, to, via),
-    [roadSnap],
-  )
-
   const appendTracedSegment = useCallback(
     (from: WorldMapTraceAnchor, to: WorldMapTraceAnchor) => {
       const fromPoint = resolveTraceAnchorPoint(from, draftStops, draftVirtualNodes)
       const toPoint = resolveTraceAnchorPoint(to, draftStops, draftVirtualNodes)
       if (!fromPoint || !toPoint) return false
-      const via = traceViaForAnchorTarget(to, draftVirtualNodes, (node) =>
-        roadSnap.toVirtualNodeConstraint(node.point, node.kind),
-      )
-      const segment = traceSegment(fromPoint, toPoint, via)
+      if (Math.hypot(fromPoint[0] - toPoint[0], fromPoint[1] - toPoint[1]) < 0.00005) return false
+      const segment: WorldMapPoint[] = [fromPoint, toPoint]
       setDraftPoints((current) => {
         const legStart = current.length
         setPathLegStarts((legs) => {
@@ -321,20 +298,18 @@ export function IslandMapWidget() {
           if (base.includes(legStart)) return base
           return [...base, legStart]
         })
-        if (current.length === 0) {
-          return segment.length > 0 ? [...segment] : [fromPoint, toPoint]
-        }
-        return mergePathPoints(current, segment.length > 1 ? segment.slice(1) : segment)
+        if (current.length === 0) return [...segment]
+        return mergePathPoints(current, segment.slice(1))
       })
       setPathManuallyEdited(true)
       return true
     },
-    [draftStops, draftVirtualNodes, roadSnap, traceSegment],
+    [draftStops, draftVirtualNodes],
   )
 
   const handleTraceAnchorPick = useCallback(
     (anchor: WorldMapTraceAnchor) => {
-      if (drawInteraction !== 'route' || !roadSnap.ready) return
+      if (drawInteraction !== 'route') return
       if (
         pendingTraceAnchor &&
         pendingTraceAnchor.kind === anchor.kind &&
@@ -351,7 +326,7 @@ export function IslandMapWidget() {
         setPendingTraceAnchor(anchor)
       }
     },
-    [appendTracedSegment, drawInteraction, pendingTraceAnchor, roadSnap.ready],
+    [appendTracedSegment, drawInteraction, pendingTraceAnchor],
   )
 
   const handleDrawMapClick = useCallback(
@@ -573,14 +548,6 @@ export function IslandMapWidget() {
         return
       }
       setLayer('general')
-      const traceSeg = (
-        from: WorldMapPoint,
-        to: WorldMapPoint,
-        via: Parameters<typeof traceGeneralMapRoadPath>[3] = [],
-      ) =>
-        traceGeneralMapRoadPath(index, from, to, via, {
-          avoidParallelSegments: listWorldMapRouteSegmentsExcept(routeId),
-        })
       const result = await generateWorldMapRouteDraft({
         routeId,
         directionIndex: drawDirectionIndex,
@@ -588,7 +555,7 @@ export function IslandMapWidget() {
         virtualNodes: draftVirtualNodes,
         snap: (point) => snapPointToGeneralMapRoad(index, point),
         toConstraint: (node) => index.toVirtualNodeConstraint(node.point, node.kind) ?? null,
-        traceSegment: traceSeg,
+        traceSegment: straightTraceSegment,
       })
       if (!result) {
         showExportHint(t('islandMapDrawGenerateFailed'))
@@ -710,13 +677,12 @@ export function IslandMapWidget() {
 
       let pointsForExport = merged.points
       if (selection.includePath && pointsForExport.length < 2 && merged.stops.length >= 2) {
-        const index = roadSnap.ready ? roadSnap.index : await preloadGeneralMapRoadSnapIndex()
         pointsForExport = rebuildDraftPathFromStops(
           merged.stops,
-          (from, to, via = []) => traceGeneralMapRoadPath(index, from, to, via),
+          straightTraceSegment,
           merged.virtualNodes,
           resolvedRouteId,
-          (node) => index?.toVirtualNodeConstraint(node.point, node.kind) ?? null,
+          () => null,
         )
       }
 
@@ -815,13 +781,7 @@ export function IslandMapWidget() {
         }
         showExportHint(t('islandMapDrawImportRouteDone', { routeId: parsed.routeId }))
         if (initialPoints.length < 2 && parsed.stops.length >= 2) {
-          void traceImportedRoutePath(
-            parsed.stops,
-            importedVirtualNodes,
-            parsed.routeId,
-            roadSnap.ready,
-            roadSnap.index,
-          )
+          void traceImportedRoutePath(parsed.stops, importedVirtualNodes, parsed.routeId)
             .then((nextPoints) => {
               if (nextPoints.length >= 2) {
                 setDraftPoints(nextPoints)

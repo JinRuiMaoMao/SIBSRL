@@ -243,6 +243,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "手动画线时不再显示成百上千个编辑圆点；每次点击连接为一段，双击该段可拉直为直线。",
             en: "Manual route drawing no longer shows hundreds of edit dots; each click-connect is one leg—double-click to straighten.",
           },
+          {
+            zh: "站与站、站与节点之间改为仅一条直线连接，不再沿道路生成密集路径点。",
+            en: "Each stop-to-stop or stop-to-node hop is now a single straight segment—no dense road-traced points.",
+          },
         ],
       },
       {

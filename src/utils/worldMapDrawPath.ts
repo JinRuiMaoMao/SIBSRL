@@ -50,6 +50,9 @@ export type TraceSegmentFn = (
   via: VirtualNodePathConstraint[],
 ) => WorldMapPoint[]
 
+/** One straight segment between two anchors (no road densification). */
+export const straightTraceSegment: TraceSegmentFn = (from, to) => [from, to]
+
 function appendHop(
   points: WorldMapPoint[],
   cursor: WorldMapPoint,
@@ -86,12 +89,11 @@ export function buildRoutePathTargetQueue(
 }
 
 /**
- * Rebuild path: each step picks the next virtual node OR the next stop in the combined
- * travel list, road-traces directly to it (ignore road junctions), then repeats.
+ * Rebuild path: each hop is a single straight line to the next virtual node or stop.
  */
 export function rebuildDraftPathFromStops(
   stops: readonly { point: WorldMapPoint }[],
-  appendSegment: TraceSegmentFn,
+  appendSegment: TraceSegmentFn = straightTraceSegment,
   virtualNodes: readonly WorldMapVirtualNode[] = [],
   routeId = '',
   toConstraint: (node: WorldMapVirtualNode) => VirtualNodePathConstraint | null = () => null,
