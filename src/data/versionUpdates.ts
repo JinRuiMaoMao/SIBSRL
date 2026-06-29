@@ -239,6 +239,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复切换 Layers 时黑屏及拖动卡顿：新图层解码完成前保留旧图，拖动时合并为单层 transform 减少重绘。",
             en: "Fixed black screen when switching Layers and pan jank: keep the previous image until the new layer decodes; single transform layer while dragging.",
           },
+          {
+            zh: "手动画线时不再显示成百上千个编辑圆点；每次点击连接为一段，双击该段可拉直为直线。",
+            en: "Manual route drawing no longer shows hundreds of edit dots; each click-connect is one leg—double-click to straighten.",
+          },
         ],
       },
       {

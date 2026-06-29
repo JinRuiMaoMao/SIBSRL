@@ -52,6 +52,7 @@ interface IslandMapPanZoomSurfaceProps {
   selectedStopId?: string | null
   onPathPointsChange?: (points: WorldMapPoint[]) => void
   pathEditable?: boolean
+  pathLegStarts?: readonly number[]
   traceSelectedStopId?: string | null
   traceSelectedVirtualNodeId?: string | null
   onVirtualNodeClick?: (nodeId: string) => void
@@ -243,6 +244,7 @@ export function IslandMapPanZoomSurface({
   selectedStopId = null,
   onPathPointsChange,
   pathEditable = false,
+  pathLegStarts = [0],
   traceSelectedStopId = null,
   traceSelectedVirtualNodeId = null,
   onVirtualNodeClick,
@@ -698,6 +700,7 @@ export function IslandMapPanZoomSurface({
               imageWidth={imageSize.width}
               imageHeight={imageSize.height}
               points={draftPoints}
+              legStarts={pathLegStarts}
               strokeColor={draftStrokeColor}
               editable
               onPointsChange={onPathPointsChange}

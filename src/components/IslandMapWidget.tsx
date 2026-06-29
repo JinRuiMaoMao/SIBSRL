@@ -154,6 +154,7 @@ function surfaceProps(
   },
   pathEdit?: {
     editable: boolean
+    legStarts: readonly number[]
     onPathPointsChange: (points: WorldMapPoint[]) => void
   },
   traceEdit?: {
@@ -187,6 +188,7 @@ function surfaceProps(
     onStopDragEnd: stopEdit?.onStopDragEnd,
     onStopClick: stopEdit?.onStopClick,
     pathEditable: pathEdit?.editable ?? false,
+    pathLegStarts: pathEdit?.legStarts ?? [0],
     onPathPointsChange: pathEdit?.onPathPointsChange,
     traceSelectedStopId: traceEdit?.traceSelectedStopId ?? null,
     traceSelectedVirtualNodeId: traceEdit?.traceSelectedVirtualNodeId ?? null,
@@ -217,6 +219,7 @@ export function IslandMapWidget() {
   const drawBuildLabel = formatBuildLabel(readPublishedBuild() ?? 'development', locale)
   const roadSnap = useGeneralMapRoadSnap(isMapAdmin, { avoidParallelSegments })
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
+  const [pathLegStarts, setPathLegStarts] = useState<number[]>([])
   const [pathManuallyEdited, setPathManuallyEdited] = useState(false)
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
   const [draftVirtualNodes, setDraftVirtualNodes] = useState<WorldMapVirtualNode[]>([])
@@ -311,6 +314,13 @@ export function IslandMapWidget() {
       )
       const segment = traceSegment(fromPoint, toPoint, via)
       setDraftPoints((current) => {
+        const legStart = current.length
+        setPathLegStarts((legs) => {
+          if (legStart === 0) return [0]
+          const base = legs.length > 0 ? legs : [0]
+          if (base.includes(legStart)) return base
+          return [...base, legStart]
+        })
         if (current.length === 0) {
           return segment.length > 0 ? [...segment] : [fromPoint, toPoint]
         }
@@ -387,6 +397,7 @@ export function IslandMapWidget() {
 
   const clearDraft = useCallback(() => {
     setDraftPoints([])
+    setPathLegStarts([])
     setPathManuallyEdited(false)
     setDraftStops([])
     setDraftVirtualNodes([])
@@ -590,6 +601,7 @@ export function IslandMapWidget() {
           ? syncPathEndpointsToStops(draftPoints, result.stops)
           : result.points
       setDraftPoints(nextPoints)
+      setPathLegStarts([0])
       if (!pathManuallyEdited || draftPoints.length < 2) {
         setPathManuallyEdited(false)
       }
@@ -794,6 +806,7 @@ export function IslandMapWidget() {
         setDraftVirtualNodes(importedVirtualNodes)
         const initialPoints = parsed.points.length >= 2 ? parsed.points : []
         setDraftPoints(initialPoints)
+        setPathLegStarts(initialPoints.length >= 2 ? [0] : [])
         setPathManuallyEdited(initialPoints.length >= 2)
         const fitPoints =
           initialPoints.length >= 2 ? initialPoints : parsed.stops.map((stop) => stop.point)
@@ -812,6 +825,7 @@ export function IslandMapWidget() {
             .then((nextPoints) => {
               if (nextPoints.length >= 2) {
                 setDraftPoints(nextPoints)
+                setPathLegStarts([0])
                 setPathManuallyEdited(false)
               }
             })
@@ -861,15 +875,27 @@ export function IslandMapWidget() {
       selectedStopId,
     ],
   )
+const PATH_EDIT_POINT_LIMIT = 28
+
   const pathEdit = useMemo(
     () =>
-      drawMode && drawInteraction === 'route' && draftPoints.length >= 2
+      drawMode &&
+      drawInteraction === 'route' &&
+      draftPoints.length >= 2 &&
+      (pathLegStarts.length > 1 || draftPoints.length <= PATH_EDIT_POINT_LIMIT)
         ? {
             editable: true,
+            legStarts: pathLegStarts.length > 0 ? pathLegStarts : [0],
             onPathPointsChange: handlePathPointsChange,
           }
         : undefined,
-    [drawInteraction, drawMode, draftPoints.length, handlePathPointsChange],
+    [
+      drawInteraction,
+      drawMode,
+      draftPoints.length,
+      handlePathPointsChange,
+      pathLegStarts,
+    ],
   )
   const traceEdit = useMemo(
     () =>

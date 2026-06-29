@@ -52,3 +52,58 @@ export function syncPathEndpointsToStops(
   ]
   return next
 }
+
+export interface PathLegRange {
+  start: number
+  end: number
+}
+
+/** Each manual click-to-connect hop is one leg; defaults to a single leg for the whole path. */
+export function getPathLegRanges(
+  legStarts: readonly number[],
+  pointCount: number,
+): PathLegRange[] {
+  if (pointCount < 2) return []
+  const starts = legStarts.length > 0 ? [...legStarts].sort((a, b) => a - b) : [0]
+  if (starts[0] !== 0) starts.unshift(0)
+  const unique = starts.filter((value, index) => index === 0 || value > starts[index - 1]!)
+  return unique
+    .map((start, index) => ({
+      start,
+      end: Math.min((unique[index + 1] ?? pointCount) - 1, pointCount - 1),
+    }))
+    .filter((leg) => leg.end > leg.start || (leg.end === leg.start && leg.start === pointCount - 1))
+}
+
+export function translatePathLeg(
+  points: readonly WorldMapPoint[],
+  legStart: number,
+  legEnd: number,
+  delta: WorldMapPoint,
+): WorldMapPoint[] {
+  return points.map((point, index) => {
+    if (index >= legStart && index <= legEnd) {
+      return clampPathPoint([point[0] + delta[0], point[1] + delta[1]])
+    }
+    return [point[0], point[1]] as WorldMapPoint
+  })
+}
+
+/** Collapse a leg's interior road points into a straight line between its endpoints. */
+export function straightenPathLeg(
+  points: readonly WorldMapPoint[],
+  legStart: number,
+  legEnd: number,
+): WorldMapPoint[] | null {
+  if (legEnd <= legStart) return null
+  const next: WorldMapPoint[] = []
+  for (let index = 0; index < legStart; index += 1) {
+    next.push([points[index]![0], points[index]![1]])
+  }
+  next.push([points[legStart]![0], points[legStart]![1]])
+  next.push([points[legEnd]![0], points[legEnd]![1]])
+  for (let index = legEnd + 1; index < points.length; index += 1) {
+    next.push([points[index]![0], points[index]![1]])
+  }
+  return next
+}
