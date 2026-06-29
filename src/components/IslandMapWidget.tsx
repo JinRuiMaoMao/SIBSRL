@@ -334,10 +334,26 @@ export function IslandMapWidget() {
   }, [])
 
   useEffect(() => {
-    for (const url of Object.values(MAP_URLS)) {
-      const image = new Image()
-      image.decoding = 'async'
-      image.src = url
+    let cancelled = false
+    const preload = () => {
+      if (cancelled) return
+      for (const url of Object.values(MAP_URLS)) {
+        const image = new Image()
+        image.decoding = 'async'
+        image.src = url
+      }
+    }
+    const idleId =
+      typeof requestIdleCallback === 'function'
+        ? requestIdleCallback(preload, { timeout: 4000 })
+        : null
+    const timerId = idleId == null ? window.setTimeout(preload, 2000) : null
+    return () => {
+      cancelled = true
+      if (idleId != null && typeof cancelIdleCallback === 'function') {
+        cancelIdleCallback(idleId)
+      }
+      if (timerId != null) window.clearTimeout(timerId)
     }
   }, [])
 

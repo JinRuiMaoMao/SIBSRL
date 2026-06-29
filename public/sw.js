@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sibs-offline-v5'
+const CACHE_VERSION = 'sibs-offline-v6'
 const SHELL_URLS = ['./index.html', './routes.html', './account.html', './sibs-logo.png', './apple-touch-icon.png']
 
 self.addEventListener('install', (event) => {
@@ -25,9 +25,12 @@ function isCacheableGet(request) {
   return (
     url.pathname.endsWith('.html') ||
     url.pathname.includes('/routes/') ||
+    url.pathname.includes('/assets/') ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.mp3') ||
-    url.pathname.endsWith('.json')
+    url.pathname.endsWith('.json') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css')
   )
 }
 
@@ -36,12 +39,30 @@ function isHtmlShell(request) {
   return url.pathname.endsWith('.html') || url.pathname.endsWith('/')
 }
 
+function isHashedAsset(request) {
+  const url = new URL(request.url)
+  return url.pathname.includes('/assets/')
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event
   if (!isCacheableGet(request)) return
 
   event.respondWith(
     caches.open(CACHE_VERSION).then(async (cache) => {
+      if (isHashedAsset(request)) {
+        const cached = await cache.match(request)
+        if (cached) return cached
+        try {
+          const response = await fetch(request)
+          if (response.ok) cache.put(request, response.clone())
+          return response
+        } catch {
+          if (cached) return cached
+          throw new Error('offline')
+        }
+      }
+
       if (isHtmlShell(request)) {
         try {
           const response = await fetch(request)

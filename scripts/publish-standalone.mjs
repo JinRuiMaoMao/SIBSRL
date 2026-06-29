@@ -176,6 +176,12 @@ export function publishStandalone(options = {}) {
     cpSync(publicLogo, resolve(root, 'dist', 'apple-touch-icon.png'))
   }
 
+  const distAssets = resolve(root, 'dist', 'assets')
+  if (existsSync(distAssets)) {
+    cpSync(distAssets, resolve(root, 'assets'), { recursive: true })
+    console.log('[publish] 已复制构建资源到 assets/')
+  }
+
   const serviceWorker = resolve(root, 'dist', 'sw.js')
   if (existsSync(serviceWorker)) {
     cpSync(serviceWorker, resolve(root, 'sw.js'))

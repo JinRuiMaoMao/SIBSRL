@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import './App.css'
 import { AccountPage } from './components/AccountPage'
 import { BroadcastPage } from './components/BroadcastPage'
@@ -8,7 +8,6 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
 import { IslandMapOverlayProvider } from './contexts/IslandMapOverlayContext'
-import { IslandMapWidget } from './components/IslandMapWidget'
 import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
 import { SecretHeader } from './components/SecretHeader'
@@ -42,6 +41,18 @@ import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
+
+const IslandMapWidget = lazy(() =>
+  import('./components/IslandMapWidget').then((module) => ({ default: module.IslandMapWidget })),
+)
+
+function IslandMapWidgetLazy() {
+  return (
+    <Suspense fallback={null}>
+      <IslandMapWidget />
+    </Suspense>
+  )
+}
 
 function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean } {
   const showDailyChallenge =
@@ -311,7 +322,7 @@ function App() {
         </footer>
         </div>
         <IslandMapOverlayProvider>
-          <IslandMapWidget />
+          <IslandMapWidgetLazy />
         </IslandMapOverlayProvider>
       </>
     )
@@ -383,7 +394,7 @@ function App() {
         </p>
       </footer>
       </div>
-      {isRoutesPage() ? <IslandMapWidget /> : null}
+      {isRoutesPage() ? <IslandMapWidgetLazy /> : null}
       <AppTabBar activeTab={tabFromLocation} />
       </IslandMapOverlayProvider>
     </>

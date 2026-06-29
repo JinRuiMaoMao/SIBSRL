@@ -200,6 +200,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Double-click a leg to delete it; imported route JSON uses straight stop-to-stop lines—virtual nodes are not auto-wired into the path.",
           },
         ],
+        fixes: [
+          {
+            zh: "刷新页面更快、不易卡死：JS/CSS 改为独立缓存文件，地图组件延迟加载，道路索引分片构建。",
+            en: "Faster refresh and fewer freezes: JS/CSS are separate cached files, the map widget loads lazily, and road indexing builds in chunks.",
+          },
+        ],
       },
     ],
   },

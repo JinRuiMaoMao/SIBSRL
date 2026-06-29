@@ -166,7 +166,12 @@ class GeneralMapRoadSnapIndex {
   readonly tunnelGrid: Uint8Array
   readonly imageData: Uint8ClampedArray
 
-  constructor(width: number, height: number, imageData: Uint8ClampedArray) {
+  constructor(
+    width: number,
+    height: number,
+    imageData: Uint8ClampedArray,
+    options?: { deferGridBuild?: boolean },
+  ) {
     this.width = width
     this.height = height
     this.gridWidth = Math.ceil(width / ROAD_CELL_PX)
@@ -177,18 +182,49 @@ class GeneralMapRoadSnapIndex {
     this.bridgeGrid = new Uint8Array(this.gridWidth * this.gridHeight)
     this.tunnelGrid = new Uint8Array(this.gridWidth * this.gridHeight)
 
+    if (!options?.deferGridBuild) {
+      this.buildRoadGridsSync()
+    }
+  }
+
+  private buildRoadGridsSync(): void {
     for (let gy = 0; gy < this.gridHeight; gy += 1) {
-      for (let gx = 0; gx < this.gridWidth; gx += 1) {
-        const idx = cellIndex(this.gridWidth, gx, gy)
-        const plain = this.cellHasPlainRoad(gx, gy)
-        const bridge = this.cellHasBridge(gx, gy)
-        const tunnel = this.cellHasTunnel(gx, gy)
-        if (plain) this.plainRoadGrid[idx] = 1
-        if (bridge) this.bridgeGrid[idx] = 1
-        if (tunnel) this.tunnelGrid[idx] = 1
-        if (plain || bridge || tunnel) this.roadGrid[idx] = 1
+      this.buildRoadGridRow(gy)
+    }
+  }
+
+  private buildRoadGridRow(gy: number): void {
+    for (let gx = 0; gx < this.gridWidth; gx += 1) {
+      const idx = cellIndex(this.gridWidth, gx, gy)
+      const plain = this.cellHasPlainRoad(gx, gy)
+      const bridge = this.cellHasBridge(gx, gy)
+      const tunnel = this.cellHasTunnel(gx, gy)
+      if (plain) this.plainRoadGrid[idx] = 1
+      if (bridge) this.bridgeGrid[idx] = 1
+      if (tunnel) this.tunnelGrid[idx] = 1
+      if (plain || bridge || tunnel) this.roadGrid[idx] = 1
+    }
+  }
+
+  private async buildRoadGridsAsync(): Promise<void> {
+    for (let gy = 0; gy < this.gridHeight; gy += 1) {
+      this.buildRoadGridRow(gy)
+      if ((gy & 31) === 31) {
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, 0)
+        })
       }
     }
+  }
+
+  static async create(
+    width: number,
+    height: number,
+    imageData: Uint8ClampedArray,
+  ): Promise<GeneralMapRoadSnapIndex> {
+    const index = new GeneralMapRoadSnapIndex(width, height, imageData, { deferGridBuild: true })
+    await index.buildRoadGridsAsync()
+    return index
   }
 
   private pixelOffset(x: number, y: number): number {
@@ -986,7 +1022,7 @@ export async function loadGeneralMapRoadSnapIndex(): Promise<GeneralMapRoadSnapI
     if (!context) return null
     context.drawImage(image, 0, 0)
     const { data } = context.getImageData(0, 0, width, height)
-    return new GeneralMapRoadSnapIndex(width, height, data)
+    return GeneralMapRoadSnapIndex.create(width, height, data)
   } catch {
     return null
   }

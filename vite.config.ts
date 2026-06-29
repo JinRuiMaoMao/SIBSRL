@@ -3,7 +3,6 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
-import { viteSingleFile } from 'vite-plugin-singlefile'
 // @ts-expect-error publish script is plain .mjs without types
 import { publishStandalone } from './scripts/publish-standalone.mjs'
 // @ts-expect-error build helper is plain .mjs without types
@@ -235,7 +234,6 @@ export default defineConfig(() => {
   return {
     plugins: [
       react(),
-      viteSingleFile({ useRecommendedBuildConfig: true }),
       routeMapsManifestPlugin(),
       routeMapsManifestDevPlugin(),
       stopNameAudioManifestPlugin(),
