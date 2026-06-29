@@ -557,6 +557,63 @@ html.has-compact-tab-nav .island-map--widget {
   stroke-dasharray: 4 3;
 }
 
+.island-map-path-node-overlay {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.island-map-path-node-overlay--editable .island-map-path-node-overlay-item {
+  pointer-events: none;
+  cursor: default;
+}
+
+.island-map-path-node-overlay--editable .island-map-path-node-overlay-hit {
+  pointer-events: all;
+  cursor: grab;
+}
+
+.island-map-path-node-overlay-item--dragging {
+  cursor: grabbing;
+}
+
+.island-map-path-node-overlay-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.island-map-path-node-overlay-item--trace-selected .island-map-path-node-overlay-marker {
+  stroke: #5ec8ff;
+  stroke-width: 2.5;
+  fill: color-mix(in srgb, #7bdcb5 75%, #fff);
+}
+
+.island-map-path-node-overlay-item--dragging .island-map-path-node-overlay-marker {
+  fill: color-mix(in srgb, #7bdcb5 65%, #fff);
+}
+
+.island-map-path-node-overlay-marker {
+  fill: color-mix(in srgb, #7bdcb5 85%, #fff);
+  stroke: color-mix(in srgb, #000 55%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.island-map-path-node-overlay-label {
+  fill: var(--text, #f2f2f2);
+  stroke: color-mix(in srgb, #000 70%, transparent);
+  stroke-width: 3;
+  paint-order: stroke fill;
+  font-weight: 600;
+}
+
+.island-map-path-node-overlay-pending {
+  fill: none;
+  stroke: #7bdcb5;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 4 3;
+}
+
 .island-map-draft-path-edit {
   position: absolute;
   inset: 0;
@@ -579,9 +636,13 @@ html.has-compact-tab-nav .island-map--widget {
 
 .island-map-draft-path-edit-segment-hit {
   stroke: transparent;
-  pointer-events: stroke;
+  pointer-events: none;
   cursor: pointer;
   vector-effect: non-scaling-stroke;
+}
+
+.island-map-draft-path-edit--shift-held .island-map-draft-path-edit-segment-hit {
+  pointer-events: stroke;
 }
 
 .island-map-draft-path-edit-segment-hit--leg:active {
@@ -621,14 +682,15 @@ html.has-compact-tab-nav .island-map--widget {
   vector-effect: non-scaling-stroke;
 }
 
-.island-map-route-overlay-wrap--stop-editable {
-  pointer-events: none;
-  z-index: 7;
-}
-
 .island-map-route-overlay-wrap--path-editable {
   pointer-events: none;
-  z-index: 8;
+  z-index: 6;
+}
+
+.island-map-route-overlay-wrap--stop-editable,
+.island-map-route-overlay-wrap--node-editable {
+  pointer-events: none;
+  z-index: 9;
 }
 
 .island-map-btn--layers {

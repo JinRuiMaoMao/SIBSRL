@@ -1,10 +1,11 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 
-export type IslandMapDrawInteraction = 'route' | 'catalog' | 'virtual'
+export type IslandMapDrawInteraction = 'route' | 'catalog' | 'virtual' | 'path-node'
 
 export type WorldMapTraceAnchor =
   | { kind: 'stop'; id: string }
   | { kind: 'virtual-node'; id: string }
+  | { kind: 'path-node'; id: string }
 
 export type WorldMapCompassDirectionKind =
   | 'north'
@@ -48,6 +49,18 @@ export interface WorldMapVirtualNodeDraft {
   point: WorldMapPoint
   routeId: string
   kind?: WorldMapVirtualNodeKind
+}
+
+export interface WorldMapDrawPathNode {
+  id: string
+  point: WorldMapPoint
+  label?: string
+}
+
+export interface WorldMapDrawPathNodeDraft {
+  point: WorldMapPoint
+  label?: string
+  editingNodeId?: string
 }
 
 export interface WorldMapDrawStop {

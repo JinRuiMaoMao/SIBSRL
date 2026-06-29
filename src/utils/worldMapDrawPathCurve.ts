@@ -220,6 +220,60 @@ function turnRadians(prev: WorldMapPoint, curr: WorldMapPoint, next: WorldMapPoi
   return Math.acos(dot)
 }
 
+/** SVG path with corridor-safe quadratic fillets; user bends stay sharp. */
+export function buildCorridorSafeSmoothPathD(
+  points: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  userBendIndices: ReadonlySet<number>,
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+  isOnRoad: (point: WorldMapPoint) => boolean,
+): string {
+  const count = points.length
+  if (count < 2) return ''
+  const fmt = (point: WorldMapPoint) => `${point[0] * imageWidth} ${point[1] * imageHeight}`
+  if (count === 2) {
+    return `M ${fmt(points[0]!)} L ${fmt(points[1]!)}`
+  }
+
+  const minTurn = (10 * Math.PI) / 180
+  const filletRatio = 0.38
+  const parts: string[] = [`M ${fmt(points[0]!)}`]
+
+  for (let index = 1; index < count - 1; index += 1) {
+    const prev = points[index - 1]!
+    const curr = points[index]!
+    const next = points[index + 1]!
+    if (userBendIndices.has(index)) {
+      parts.push(`L ${fmt(curr)}`)
+      continue
+    }
+    const turn = turnRadians(prev, curr, next)
+    if (turn < minTurn) {
+      parts.push(`L ${fmt(curr)}`)
+      continue
+    }
+    const alongIn = dist2(prev, curr)
+    const alongOut = dist2(curr, next)
+    const trim = Math.min(alongIn, alongOut) * filletRatio
+    if (trim < 1e-7) {
+      parts.push(`L ${fmt(curr)}`)
+      continue
+    }
+    const p1 = add2(curr, scale2(norm2(sub2(prev, curr)), trim))
+    const p2 = add2(curr, scale2(norm2(sub2(next, curr)), trim))
+    if (curveStaysOnRoad(p1, curr, p2, isOnRoad, 8, snap)) {
+      parts.push(`L ${fmt(p1)}`)
+      parts.push(`Q ${fmt(curr)} ${fmt(p2)}`)
+    } else {
+      parts.push(`L ${fmt(curr)}`)
+    }
+  }
+
+  parts.push(`L ${fmt(points[count - 1]!)}`)
+  return parts.join(' ')
+}
+
 /** SVG path with quadratic fillets at road corners; user bends stay sharp pass-through vertices. */
 export function buildSmoothPolylinePathD(
   points: readonly WorldMapPoint[],

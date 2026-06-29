@@ -24,6 +24,14 @@ export function IslandMapDrawInteractionTabs({
       >
         {t('islandMapDrawRouteMode')}
       </button>
+      <button
+        type="button"
+        className={`island-map-btn${interaction === 'path-node' ? ' island-map-btn--active' : ''}`.trim()}
+        onClick={() => onInteractionChange('path-node')}
+        aria-pressed={interaction === 'path-node'}
+      >
+        {t('islandMapDrawPathNodeMode')}
+      </button>
       {hideVirtualTab ? null : (
         <button
           type="button"

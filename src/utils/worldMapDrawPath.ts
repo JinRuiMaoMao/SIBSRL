@@ -5,7 +5,7 @@ import {
   pickNextRoutePathTarget,
   type RoutePathTarget,
 } from './worldMapVirtualNodes'
-import type { WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { WorldMapTraceAnchor, WorldMapVirtualNode } from '../types/worldMapDraw'
 
 export function mergePathPoints(
   current: WorldMapPoint[],
@@ -22,12 +22,16 @@ export function mergePathPoints(
 }
 
 export function resolveTraceAnchorPoint(
-  anchor: { kind: 'stop' | 'virtual-node'; id: string },
+  anchor: WorldMapTraceAnchor,
   stops: readonly { id: string; point: WorldMapPoint }[],
   virtualNodes: readonly WorldMapVirtualNode[],
+  pathNodes: readonly { id: string; point: WorldMapPoint }[] = [],
 ): WorldMapPoint | null {
   if (anchor.kind === 'stop') {
     return stops.find((stop) => stop.id === anchor.id)?.point ?? null
+  }
+  if (anchor.kind === 'path-node') {
+    return pathNodes.find((node) => node.id === anchor.id)?.point ?? null
   }
   return virtualNodes.find((node) => node.id === anchor.id)?.point ?? null
 }
