@@ -54,14 +54,14 @@ export function buildStopLegStarts(stopCount: number): number[] {
   return Array.from({ length: stopCount - 1 }, (_, index) => index)
 }
 
-/** One leg per consecutive stop pair when path anchors match stop count. */
+/** One leg per consecutive anchor when only the default single leg is set. */
 export function resolveEffectiveLegStarts(
   legStarts: readonly number[],
   pointCount: number,
-  stopCount: number,
+  _stopCount: number,
 ): number[] {
   if (legStarts.length > 1) return [...legStarts]
-  if (stopCount >= 2 && pointCount === stopCount) return buildStopLegStarts(stopCount)
+  if (pointCount >= 2) return buildStopLegStarts(pointCount)
   return legStarts.length > 0 ? [...legStarts] : [0]
 }
 

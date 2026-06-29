@@ -28,7 +28,7 @@ import { syncPathEndpointsToStops, getPathLegRanges, deletePathLeg } from '../ut
 import { flattenCurvedPath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
 import { preloadGeneralMapRoadSnapIndex, snapPointToGeneralMapRoad } from '../utils/generalMapRoadSnap'
-import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
+import { nextVirtualNodeOrder, pointsNear } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
@@ -624,17 +624,33 @@ export function IslandMapWidget() {
         legIndex,
         pathLegControls,
       )
-      if (!result) return
+      if (!result) {
+        showExportHint(t('islandMapDrawPathLegDeleteFailed'))
+        return
+      }
+      const removedPoint = draftPoints[result.removedIndex]
+      if (!removedPoint) return
       pushDrawHistory()
       setDraftPoints(result.points)
       setPathLegStarts(result.legStarts)
       setPathLegControls(result.legControls)
       if (draftStops.length === draftPoints.length) {
         setDraftStops((stops) => stops.filter((_, index) => index !== result.removedIndex))
+      } else {
+        setDraftStops((stops) => stops.filter((stop) => !pointsNear(stop.point, removedPoint)))
+        setDraftVirtualNodes((nodes) => nodes.filter((node) => !pointsNear(node.point, removedPoint)))
       }
       setPathManuallyEdited(true)
     },
-    [draftPoints, draftStops.length, effectiveLegStarts, pathLegControls, pushDrawHistory],
+    [
+      draftPoints,
+      draftStops.length,
+      effectiveLegStarts,
+      pathLegControls,
+      pushDrawHistory,
+      showExportHint,
+      t,
+    ],
   )
 
   const handleConfirmPendingStop = useCallback(() => {
@@ -749,6 +765,7 @@ export function IslandMapWidget() {
         routeId,
         directionIndex: drawDirectionIndex,
         existingStops: draftStops,
+        virtualNodes: draftVirtualNodes,
         snap: (point) => snapPointToGeneralMapRoad(index, point),
       })
       if (!result) {
@@ -766,7 +783,7 @@ export function IslandMapWidget() {
       setPathLegStarts(
         pathManuallyEdited && draftPoints.length >= 2
           ? pathLegStarts
-          : buildStopLegStarts(result.stops.length),
+          : buildStopLegStarts(result.points.length),
       )
       setPathLegControls([])
       if (!pathManuallyEdited || draftPoints.length < 2) {

@@ -53,16 +53,31 @@ function lerpPoint(a: WorldMapPoint, b: WorldMapPoint, t: number): WorldMapPoint
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
 }
 
+function sampleOnRoadCorridor(
+  sample: WorldMapPoint,
+  snap: (point: WorldMapPoint) => WorldMapPoint,
+  isOnRoad: (point: WorldMapPoint) => boolean,
+  maxSnapDist = 0.00028,
+): boolean {
+  if (isOnRoad(sample)) return true
+  const snapped = snap(sample)
+  return isOnRoad(snapped) && Math.hypot(snapped[0] - sample[0], snapped[1] - sample[1]) <= maxSnapDist
+}
+
 export function curveStaysOnRoad(
   start: WorldMapPoint,
   control: WorldMapPoint,
   end: WorldMapPoint,
   isOnRoad: (point: WorldMapPoint) => boolean,
   steps = 10,
+  snap?: (point: WorldMapPoint) => WorldMapPoint,
 ): boolean {
+  const check = snap
+    ? (sample: WorldMapPoint) => sampleOnRoadCorridor(sample, snap, isOnRoad)
+    : isOnRoad
   for (let step = 0; step <= steps; step += 1) {
     const sample = quadraticBezierPoint(start, control, end, step / steps)
-    if (!isOnRoad(sample)) return false
+    if (!check(sample)) return false
   }
   return true
 }
@@ -77,7 +92,7 @@ export function constrainLegControlOnRoad(
 ): WorldMapPoint {
   const mid = defaultLegControl(start, end)
   const snapped = snap(desired)
-  if (curveStaysOnRoad(start, snapped, end, isOnRoad)) return snapped
+  if (curveStaysOnRoad(start, snapped, end, isOnRoad, 10, snap)) return snapped
 
   let lo = 0
   let hi = 1
@@ -85,7 +100,7 @@ export function constrainLegControlOnRoad(
   for (let iteration = 0; iteration < 14; iteration += 1) {
     const t = (lo + hi) / 2
     const candidate = snap(lerpPoint(mid, snapped, t))
-    if (curveStaysOnRoad(start, candidate, end, isOnRoad)) {
+    if (curveStaysOnRoad(start, candidate, end, isOnRoad, 10, snap)) {
       best = candidate
       lo = t
     } else {

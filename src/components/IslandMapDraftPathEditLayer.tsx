@@ -23,6 +23,9 @@ interface IslandMapDraftPathEditLayerProps {
   onInteractionActiveChange?: (active: boolean) => void
 }
 
+const DOUBLE_TAP_MS = 420
+const DRAG_THRESHOLD_PX = 4
+
 function toImageCoords(point: WorldMapPoint, imageWidth: number, imageHeight: number) {
   return { x: point[0] * imageWidth, y: point[1] * imageHeight }
 }
@@ -58,7 +61,9 @@ export function IslandMapDraftPathEditLayer({
     start: WorldMapPoint
     end: WorldMapPoint
     moved: boolean
+    captureTarget: SVGElement | null
   } | null>(null)
+  const lastTapRef = useRef<{ legIndex: number; time: number } | null>(null)
   const previewControlRef = useRef<WorldMapPoint | null>(null)
   const [previewTick, setPreviewTick] = useState(0)
   const [previewLegIndex, setPreviewLegIndex] = useState<number | null>(null)
@@ -70,17 +75,36 @@ export function IslandMapDraftPathEditLayer({
     [legStarts, points.length],
   )
 
+  const releaseCapture = (pointerId: number) => {
+    const drag = dragRef.current
+    if (!drag?.captureTarget) return
+    try {
+      if (drag.captureTarget.hasPointerCapture(pointerId)) {
+        drag.captureTarget.releasePointerCapture(pointerId)
+      }
+    } catch {
+      // ignore if capture was already released
+    }
+    drag.captureTarget = null
+  }
+
   useEffect(() => {
     if (!dragging) return
 
     const onPointerMove = (event: globalThis.PointerEvent) => {
       const drag = dragRef.current
       if (!drag || event.pointerId !== drag.pointerId) return
+      const deltaPx = Math.hypot(event.clientX - drag.startClientX, event.clientY - drag.startClientY)
+      if (!drag.moved && deltaPx > DRAG_THRESHOLD_PX) {
+        drag.moved = true
+        if (drag.captureTarget && !drag.captureTarget.hasPointerCapture(event.pointerId)) {
+          drag.captureTarget.setPointerCapture(event.pointerId)
+        }
+      }
+      if (!drag.moved) return
+
       const deltaX = (event.clientX - drag.startClientX) / imageWidth
       const deltaY = (event.clientY - drag.startClientY) / imageHeight
-      if (Math.hypot(event.clientX - drag.startClientX, event.clientY - drag.startClientY) > 4) {
-        drag.moved = true
-      }
       const desired: WorldMapPoint = [
         drag.originControl[0] + deltaX,
         drag.originControl[1] + deltaY,
@@ -100,9 +124,22 @@ export function IslandMapDraftPathEditLayer({
     const finishDrag = (event: globalThis.PointerEvent) => {
       const drag = dragRef.current
       if (!drag || event.pointerId !== drag.pointerId) return
-      if (drag.moved && previewControlRef.current) {
+
+      if (!drag.moved) {
+        const now = Date.now()
+        const lastTap = lastTapRef.current
+        if (lastTap && lastTap.legIndex === drag.legIndex && now - lastTap.time <= DOUBLE_TAP_MS) {
+          lastTapRef.current = null
+          onLegDelete(drag.legIndex)
+        } else {
+          lastTapRef.current = { legIndex: drag.legIndex, time: now }
+        }
+      } else if (previewControlRef.current) {
         onLegControlChange(drag.legIndex, previewControlRef.current)
+        lastTapRef.current = null
       }
+
+      releaseCapture(event.pointerId)
       dragRef.current = null
       previewControlRef.current = null
       setPreviewLegIndex(null)
@@ -125,6 +162,7 @@ export function IslandMapDraftPathEditLayer({
     isOnRoad,
     onInteractionActiveChange,
     onLegControlChange,
+    onLegDelete,
     snapPoint,
   ])
 
@@ -136,14 +174,13 @@ export function IslandMapDraftPathEditLayer({
   const hitWidth = hitStrokeWidth(imageWidth)
   const ctrlRadius = handleRadius(imageWidth)
 
-  const beginControlDrag = (
+  const beginLegInteraction = (
     legIndex: number,
     start: WorldMapPoint,
     end: WorldMapPoint,
     control: WorldMapPoint,
     event: PointerEvent<SVGElement>,
   ) => {
-    event.preventDefault()
     event.stopPropagation()
     dragRef.current = {
       legIndex,
@@ -154,23 +191,11 @@ export function IslandMapDraftPathEditLayer({
       start,
       end,
       moved: false,
+      captureTarget: event.currentTarget,
     }
     setActiveLegIndex(legIndex)
     setDragging(true)
     onInteractionActiveChange?.(true)
-    event.currentTarget.setPointerCapture(event.pointerId)
-  }
-
-  const handleLegDoubleClick = (legIndex: number, event: PointerEvent<SVGElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    dragRef.current = null
-    previewControlRef.current = null
-    setPreviewLegIndex(null)
-    setDragging(false)
-    onInteractionActiveChange?.(false)
-    onLegDelete(legIndex)
-    setActiveLegIndex(null)
   }
 
   return (
@@ -201,27 +226,6 @@ export function IslandMapDraftPathEditLayer({
         const start = points[leg.start]
         const end = points[leg.end]
         if (!start || !end) return null
-        const a = toImageCoords(start, imageWidth, imageHeight)
-        const b = toImageCoords(end, imageWidth, imageHeight)
-        const isActive = activeLegIndex === legIndex
-        return (
-          <line
-            key={`leg-hit-${legIndex}-${leg.start}-${leg.end}`}
-            className={`island-map-draft-path-edit-segment-hit island-map-draft-path-edit-segment-hit--leg${isActive ? ' island-map-draft-path-edit-segment-hit--active' : ''}`.trim()}
-            x1={a.x}
-            y1={a.y}
-            x2={b.x}
-            y2={b.y}
-            strokeWidth={hitWidth}
-            onPointerDown={() => setActiveLegIndex(legIndex)}
-            onDoubleClick={(event) => handleLegDoubleClick(legIndex, event)}
-          />
-        )
-      })}
-      {legRanges.map((leg, legIndex) => {
-        const start = points[leg.start]
-        const end = points[leg.end]
-        if (!start || !end) return null
         const stored = legControls[legIndex]
         const control =
           previewLegIndex === legIndex && previewControl
@@ -237,7 +241,26 @@ export function IslandMapDraftPathEditLayer({
             cy={y}
             r={ctrlRadius}
             style={strokeColor ? { fill: strokeColor } : undefined}
-            onPointerDown={(event) => beginControlDrag(legIndex, start, end, control, event)}
+            onPointerDown={(event) => beginLegInteraction(legIndex, start, end, control, event)}
+          />
+        )
+      })}
+      {legRanges.map((leg, legIndex) => {
+        const start = points[leg.start]
+        const end = points[leg.end]
+        if (!start || !end) return null
+        const stored = legControls[legIndex]
+        const control = resolveLegControl(start, end, stored)
+        const pathD = buildLegPathD(start, end, stored, imageWidth, imageHeight)
+        const isActive = activeLegIndex === legIndex
+        return (
+          <path
+            key={`leg-hit-${legIndex}-${leg.start}-${leg.end}`}
+            className={`island-map-draft-path-edit-segment-hit island-map-draft-path-edit-segment-hit--leg${isActive ? ' island-map-draft-path-edit-segment-hit--active' : ''}`.trim()}
+            d={pathD}
+            strokeWidth={hitWidth}
+            fill="none"
+            onPointerDown={(event) => beginLegInteraction(legIndex, start, end, control, event)}
           />
         )
       })}

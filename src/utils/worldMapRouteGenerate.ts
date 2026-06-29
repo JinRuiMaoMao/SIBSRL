@@ -2,7 +2,8 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteStop } from '../types/route'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { findBusRouteForDraw } from './worldMapDrawRouteLookup'
-import { rebuildStopToStopPath } from './worldMapDrawPath'
+import { rebuildDraftPathFromStops, straightTraceSegment } from './worldMapDrawPath'
+import type { WorldMapVirtualNode } from '../types/worldMapDraw'
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from './worldMapStopCatalog'
 
 function namesMatch(a: { zh: string; en: string }, b: { zh: string; en: string }): boolean {
@@ -105,6 +106,7 @@ export interface GenerateWorldMapRouteDraftOptions {
   routeId: string
   directionIndex: number
   existingStops?: readonly WorldMapDrawStop[]
+  virtualNodes?: readonly WorldMapVirtualNode[]
   snap: (point: WorldMapPoint) => WorldMapPoint
   catalogStops?: readonly WorldMapCatalogStop[]
 }
@@ -148,7 +150,12 @@ export async function generateWorldMapRouteDraft(
     return null
   }
 
-  const points = rebuildStopToStopPath(stops)
+  const points = rebuildDraftPathFromStops(
+    stops,
+    straightTraceSegment,
+    options.virtualNodes ?? [],
+    trimmedRouteId,
+  )
   if (points.length < 2) return null
 
   return { stops, points, estimatedCount }
