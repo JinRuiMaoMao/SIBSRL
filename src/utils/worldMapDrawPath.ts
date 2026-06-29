@@ -54,15 +54,17 @@ export function buildStopLegStarts(stopCount: number): number[] {
   return Array.from({ length: stopCount - 1 }, (_, index) => index)
 }
 
-/** One leg per consecutive anchor when only the default single leg is set. */
+/** One leg per consecutive stop when leg boundaries are explicit; otherwise keep [0] as a single leg. */
 export function resolveEffectiveLegStarts(
   legStarts: readonly number[],
   pointCount: number,
   _stopCount: number,
 ): number[] {
-  if (legStarts.length > 1) return [...legStarts]
-  if (pointCount >= 2) return buildStopLegStarts(pointCount)
-  return legStarts.length > 0 ? [...legStarts] : [0]
+  let normalized = legStarts.length > 0 ? [...legStarts] : [0]
+  if (normalized[0] !== 0) normalized.unshift(0)
+  if (normalized.length > 1) return normalized
+  if (pointCount >= 2) return [0]
+  return normalized
 }
 
 export type TraceSegmentFn = (

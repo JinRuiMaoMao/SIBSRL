@@ -31,10 +31,12 @@ import {
   hidePathLeg,
   insertPathBendPoint,
   isStopAnchorIndex,
+  movePathVertex,
   removePathVertex,
   retacePathThroughUserBend,
   resizeLegHidden,
   resizePathUserBends,
+  updatePathPointsForStopMove,
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
@@ -150,6 +152,9 @@ function surfaceProps(
   onDrawMapClick: (point: WorldMapPoint) => void,
   onDrawUndo: () => void,
   maxZoomRatio: number,
+  draftPathLegStarts: readonly number[],
+  draftPathLegHidden: readonly boolean[],
+  draftPathUserBends: readonly boolean[],
   stopEdit?: {
     selectedStopId: string | null
     onStopDrag: (stopId: string, point: WorldMapPoint) => void
@@ -158,12 +163,10 @@ function surfaceProps(
   },
   pathEdit?: {
     editable: boolean
-    legStarts: readonly number[]
-    legHidden: readonly boolean[]
-    userBends: readonly boolean[]
     onBendInsert: (segmentIndex: number, point: WorldMapPoint) => void
     onBendMove: (vertexIndex: number, point: WorldMapPoint) => void
     onBendDragStart?: () => void
+    onBendDragEnd?: (vertexIndex: number, point: WorldMapPoint) => void
     onBendRemove: (vertexIndex: number) => void
     onLegDelete: (legIndex: number) => void
     snapPathPoint: (point: WorldMapPoint) => WorldMapPoint
@@ -196,12 +199,13 @@ function surfaceProps(
     onStopDragEnd: stopEdit?.onStopDragEnd,
     onStopClick: stopEdit?.onStopClick,
     pathEditable: pathEdit?.editable ?? false,
-    pathLegStarts: pathEdit?.legStarts ?? [0],
-    pathLegHidden: pathEdit?.legHidden ?? [],
-    pathUserBends: pathEdit?.userBends ?? [],
+    pathLegStarts: draftPathLegStarts,
+    pathLegHidden: draftPathLegHidden,
+    pathUserBends: draftPathUserBends,
     onBendInsert: pathEdit?.onBendInsert,
     onBendMove: pathEdit?.onBendMove,
     onBendDragStart: pathEdit?.onBendDragStart,
+    onBendDragEnd: pathEdit?.onBendDragEnd,
     onBendRemove: pathEdit?.onBendRemove,
     onLegDelete: pathEdit?.onLegDelete,
     snapPathPoint: pathEdit?.snapPathPoint,
@@ -474,10 +478,17 @@ export function IslandMapWidget() {
           if (base.includes(start)) return base
           return [...base, start]
         })
+        let basePoints = current
+        if (basePoints.length > 0) {
+          const last = basePoints[basePoints.length - 1]!
+          if (Math.hypot(last[0] - fromPoint[0], last[1] - fromPoint[1]) > 0.00005) {
+            basePoints = mergePathPoints(basePoints, [fromPoint])
+          }
+        }
         const merged =
-          current.length === 0
+          basePoints.length === 0
             ? ([fromPoint, toPoint] as WorldMapPoint[])
-            : mergePathPoints(current, [toPoint])
+            : mergePathPoints(basePoints, [toPoint])
         setPathUserBends((bends) => {
           const next = resizePathUserBends(bends, current.length)
           const added = merged.length - current.length
@@ -639,16 +650,8 @@ export function IslandMapWidget() {
 
   const handleStopDrag = useCallback((stopId: string, point: WorldMapPoint) => {
     setDraftStops((stops) => {
-      const stopIndex = stops.findIndex((stop) => stop.id === stopId)
       const nextStops = stops.map((stop) => (stop.id === stopId ? { ...stop, point } : stop))
-      if (stopIndex >= 0) {
-        setDraftPoints((points) => {
-          if (points.length !== nextStops.length) return points
-          return points.map((pathPoint, index) =>
-            index === stopIndex ? ([point[0], point[1]] as WorldMapPoint) : pathPoint,
-          )
-        })
-      }
+      setDraftPoints((points) => updatePathPointsForStopMove(points, stops, stopId, point))
       return nextStops
     })
   }, [])
@@ -658,16 +661,8 @@ export function IslandMapWidget() {
       const snapped = roadSnap.snap(point)
       pushDrawHistory()
       setDraftStops((stops) => {
-        const stopIndex = stops.findIndex((stop) => stop.id === stopId)
         const next = stops.map((stop) => (stop.id === stopId ? { ...stop, point: snapped } : stop))
-        if (stopIndex >= 0) {
-          setDraftPoints((points) => {
-            if (points.length !== next.length) return points
-            return points.map((pathPoint, index) =>
-              index === stopIndex ? ([snapped[0], snapped[1]] as WorldMapPoint) : pathPoint,
-            )
-          })
-        }
+        setDraftPoints((points) => updatePathPointsForStopMove(points, stops, stopId, snapped))
         return next
       })
       if (pendingStop?.editingStopId === stopId) {
@@ -688,7 +683,7 @@ export function IslandMapWidget() {
     (segmentIndex: number, point: WorldMapPoint) => {
       pushDrawHistory()
       const snapped = roadSnap.snap(point)
-      const result = insertPathBendPoint(draftPoints, effectiveLegStarts, segmentIndex, snapped)
+      const result = insertPathBendPoint(draftPoints, pathLegStarts, segmentIndex, snapped)
       const insertAt = segmentIndex + 1
       setDraftPoints(result.points)
       setPathLegStarts(result.legStarts)
@@ -699,15 +694,27 @@ export function IslandMapWidget() {
       })
       setPathManuallyEdited(true)
     },
-    [draftPoints, effectiveLegStarts, pushDrawHistory, roadSnap],
+    [draftPoints, pathLegStarts, pushDrawHistory, roadSnap],
   )
 
   const handleBendMove = useCallback(
     (vertexIndex: number, point: WorldMapPoint) => {
       if (!pathUserBends[vertexIndex]) return
+      setDraftPoints(movePathVertex(draftPoints, vertexIndex, roadSnap.snap(point)))
+    },
+    [draftPoints, pathUserBends, roadSnap],
+  )
+
+  const handleBendDragStart = useCallback(() => {
+    pushDrawHistory()
+  }, [pushDrawHistory])
+
+  const handleBendDragEnd = useCallback(
+    (vertexIndex: number, point: WorldMapPoint) => {
+      if (!pathUserBends[vertexIndex]) return
       const retaced = retacePathThroughUserBend(
         draftPoints,
-        effectiveLegStarts,
+        pathLegStarts,
         pathUserBends,
         vertexIndex,
         point,
@@ -719,19 +726,15 @@ export function IslandMapWidget() {
       setPathUserBends(retaced.userBends)
       setPathManuallyEdited(true)
     },
-    [draftPoints, effectiveLegStarts, pathUserBends, roadSnap],
+    [draftPoints, pathLegStarts, pathUserBends, roadSnap],
   )
-
-  const handleBendDragStart = useCallback(() => {
-    pushDrawHistory()
-  }, [pushDrawHistory])
 
   const handleBendRemove = useCallback(
     (vertexIndex: number) => {
       if (isStopAnchorIndex(vertexIndex, draftPoints, draftStops)) return
       const collapsed = collapseUserBendToChord(
         draftPoints,
-        effectiveLegStarts,
+        pathLegStarts,
         pathUserBends,
         vertexIndex,
         draftStops,
@@ -744,7 +747,7 @@ export function IslandMapWidget() {
         setPathManuallyEdited(true)
         return
       }
-      const result = removePathVertex(draftPoints, effectiveLegStarts, vertexIndex)
+      const result = removePathVertex(draftPoints, pathLegStarts, vertexIndex)
       if (!result) return
       pushDrawHistory()
       setDraftPoints(result.points)
@@ -756,7 +759,7 @@ export function IslandMapWidget() {
       })
       setPathManuallyEdited(true)
     },
-    [draftPoints, draftStops, effectiveLegStarts, pathUserBends, pushDrawHistory],
+    [draftPoints, draftStops, pathLegStarts, pathUserBends, pushDrawHistory],
   )
 
   const handlePathLegDelete = useCallback(
@@ -1171,12 +1174,10 @@ export function IslandMapWidget() {
       drawMode && drawInteraction === 'route' && draftPoints.length >= 2
         ? {
             editable: true,
-            legStarts: effectiveLegStarts,
-            legHidden: pathLegHidden,
-            userBends: pathUserBends,
             onBendInsert: handleBendInsert,
             onBendMove: handleBendMove,
             onBendDragStart: handleBendDragStart,
+            onBendDragEnd: handleBendDragEnd,
             onBendRemove: handleBendRemove,
             onLegDelete: handlePathLegDelete,
             snapPathPoint: roadSnap.snap,
@@ -1186,7 +1187,7 @@ export function IslandMapWidget() {
       drawInteraction,
       drawMode,
       draftPoints.length,
-      effectiveLegStarts,
+      handleBendDragEnd,
       handleBendDragStart,
       handleBendInsert,
       handleBendMove,
@@ -1459,6 +1460,9 @@ export function IslandMapWidget() {
           handleDrawMapClick,
           handleDrawUndo,
           surfaceMaxZoomRatio,
+          effectiveLegStarts,
+          pathLegHidden,
+          pathUserBends,
           stopEdit,
           pathEdit,
           traceEdit,
@@ -1513,6 +1517,9 @@ export function IslandMapWidget() {
             handleDrawMapClick,
             handleDrawUndo,
             surfaceMaxZoomRatio,
+            effectiveLegStarts,
+            pathLegHidden,
+            pathUserBends,
             stopEdit,
             pathEdit,
             traceEdit,

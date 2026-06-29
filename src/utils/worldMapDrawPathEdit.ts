@@ -183,6 +183,23 @@ export function isStopAnchorIndex(
   return stops.some((stop) => Math.hypot(stop.point[0] - point[0], stop.point[1] - point[1]) <= epsilon)
 }
 
+export function updatePathPointsForStopMove(
+  points: readonly WorldMapPoint[],
+  stops: readonly { id: string; point: WorldMapPoint }[],
+  stopId: string,
+  nextPoint: WorldMapPoint,
+  epsilon = 0.00005,
+): WorldMapPoint[] {
+  const stop = stops.find((entry) => entry.id === stopId)
+  if (!stop) return [...points]
+  const oldPoint = stop.point
+  return points.map((point) =>
+    Math.hypot(point[0] - oldPoint[0], point[1] - oldPoint[1]) <= epsilon
+      ? ([nextPoint[0], nextPoint[1]] as WorldMapPoint)
+      : ([point[0], point[1]] as WorldMapPoint),
+  )
+}
+
 export function resizePathUserBends(bends: readonly boolean[], pointCount: number): boolean[] {
   if (pointCount <= 0) return []
   if (bends.length === pointCount) return [...bends]
@@ -232,6 +249,40 @@ function shiftLegStartsAfterMiddleRemove(
     })
     .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
   return next
+}
+
+/** Collapse road points between stop anchors to a straight chord with one bend (live drag preview). */
+export function isolateUserBendForDrag(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  userBends: readonly boolean[],
+  vertexIndex: number,
+  stops: readonly { point: WorldMapPoint }[],
+): { points: WorldMapPoint[]; legStarts: number[]; userBends: boolean[]; bendIndex: number } | null {
+  if (!userBends[vertexIndex]) return null
+  const left = anchorIndexBefore(points, stops, vertexIndex)
+  const right = anchorIndexAfter(points, stops, vertexIndex)
+  const bend = points[vertexIndex]
+  if (!bend) return null
+  const removeFrom = left + 1
+  const removeThrough = right - 1
+  const newPoints = [
+    ...points.slice(0, removeFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
+    [bend[0], bend[1]] as WorldMapPoint,
+    ...points.slice(right).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  const bendIndex = left + 1
+  const nextUserBends = Array.from({ length: newPoints.length }, () => false)
+  nextUserBends[bendIndex] = true
+  return {
+    points: newPoints,
+    legStarts:
+      removeThrough >= removeFrom
+        ? shiftLegStartsAfterMiddleRemove(legStarts, left, removeFrom, removeThrough)
+        : [...(legStarts.length > 0 ? legStarts : [0])],
+    userBends: nextUserBends,
+    bendIndex,
+  }
 }
 
 /** Rebuild A→bend→B along roads when the user drags a bend handle. */

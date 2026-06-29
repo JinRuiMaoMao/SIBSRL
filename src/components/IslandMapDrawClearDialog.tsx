@@ -60,13 +60,13 @@ export function IslandMapDrawClearDialog({
   }
 
   return (
-    <div className="island-map-draw-dialog-backdrop" role="presentation" onClick={onCancel}>
+    <div className="app-dialog-root island-map-export-dialog-root">
+      <button type="button" className="app-dialog-backdrop" aria-hidden onClick={onCancel} />
       <div
-        className="island-map-draw-dialog island-map-draw-clear-dialog"
+        className="app-dialog-panel island-map-export-dialog island-map-draw-clear-dialog"
         role="dialog"
         aria-modal="true"
         aria-labelledby="island-map-draw-clear-title"
-        onClick={(event) => event.stopPropagation()}
       >
         <h2 id="island-map-draw-clear-title" className="island-map-draw-dialog-title">
           {t('islandMapDrawClearDialogTitle')}

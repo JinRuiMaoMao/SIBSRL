@@ -188,6 +188,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "修复插入折点后半段消失、退出绘制走线乱飞、清空弹窗不显示、站点点击偏移与连线失败等问题；折点松手后才沿道路生成路径。",
+            en: "Fixed bend insert dropping half the leg, path jumping when exiting draw mode, missing clear dialog, stop click offset, and failed connections; road trace runs on bend release, not while dragging.",
+          },
+          {
             zh: "站间默认直线；单击线段插入折点手柄，拖动后才沿道路弯曲。",
             en: "Legs stay straight by default; click a leg to add a bend handle, then drag to trace along roads.",
           },

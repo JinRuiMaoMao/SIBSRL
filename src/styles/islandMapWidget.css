@@ -616,6 +616,15 @@ html.has-compact-tab-nav .island-map--widget {
   vector-effect: non-scaling-stroke;
 }
 
+.island-map-route-overlay-wrap--stop-editable {
+  pointer-events: none;
+  z-index: 8;
+}
+
+.island-map-route-overlay-wrap--stop-editable .island-map-stop-overlay--editable {
+  pointer-events: auto;
+}
+
 .island-map-route-overlay-wrap--path-editable {
   pointer-events: none;
   z-index: 6;
@@ -801,6 +810,28 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
 
 .island-map-export-dialog-root {
   z-index: 12050;
+}
+
+.island-map-export-dialog-root {
+  z-index: 12050;
+}
+
+.island-map-draw-clear-dialog .island-map-draw-dialog-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.island-map-draw-dialog-lead {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted, #aaa);
+  font-size: 0.9rem;
+}
+
+.island-map-draw-dialog-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
 }
 
 .island-map-export-dialog {
