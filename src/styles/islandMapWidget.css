@@ -501,6 +501,11 @@ html.has-compact-tab-nav .island-map--widget {
 }
 
 .island-map-stop-overlay--editable .island-map-stop-overlay-item {
+  pointer-events: none;
+  cursor: default;
+}
+
+.island-map-stop-overlay--editable .island-map-stop-overlay-hit {
   pointer-events: all;
   cursor: grab;
 }
@@ -560,7 +565,7 @@ html.has-compact-tab-nav .island-map--widget {
 }
 
 .island-map-draft-path-edit--editable {
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .island-map-draft-path-edit-preview {
@@ -575,7 +580,7 @@ html.has-compact-tab-nav .island-map--widget {
 .island-map-draft-path-edit-segment-hit {
   stroke: transparent;
   pointer-events: stroke;
-  cursor: grab;
+  cursor: pointer;
   vector-effect: non-scaling-stroke;
 }
 
@@ -618,20 +623,12 @@ html.has-compact-tab-nav .island-map--widget {
 
 .island-map-route-overlay-wrap--stop-editable {
   pointer-events: none;
-  z-index: 8;
-}
-
-.island-map-route-overlay-wrap--stop-editable .island-map-stop-overlay--editable {
-  pointer-events: auto;
+  z-index: 7;
 }
 
 .island-map-route-overlay-wrap--path-editable {
   pointer-events: none;
-  z-index: 6;
-}
-
-.island-map-route-overlay-wrap--path-editable .island-map-draft-path-edit--editable {
-  pointer-events: auto;
+  z-index: 8;
 }
 
 .island-map-btn--layers {
