@@ -181,3 +181,41 @@ export function isStopAnchorIndex(
   if (!point) return false
   return stops.some((stop) => Math.hypot(stop.point[0] - point[0], stop.point[1] - point[1]) <= epsilon)
 }
+
+export function resizePathUserBends(bends: readonly boolean[], pointCount: number): boolean[] {
+  if (pointCount <= 0) return []
+  if (bends.length === pointCount) return [...bends]
+  if (bends.length < pointCount) {
+    return [...bends, ...Array.from({ length: pointCount - bends.length }, () => false)]
+  }
+  return bends.slice(0, pointCount)
+}
+
+/** Leg boundaries at each stop anchor inside a dense road-traced path. */
+export function buildLegStartsFromStopAnchors(
+  points: readonly WorldMapPoint[],
+  stops: readonly { point: WorldMapPoint }[],
+  epsilon = 0.00005,
+): number[] {
+  if (stops.length === 0 || points.length === 0) return []
+  const legStarts = [0]
+  let searchFrom = 0
+  for (let stopIndex = 1; stopIndex < stops.length; stopIndex += 1) {
+    const target = stops[stopIndex]!.point
+    let anchorIndex = -1
+    for (let pointIndex = searchFrom; pointIndex < points.length; pointIndex += 1) {
+      const point = points[pointIndex]
+      if (!point) continue
+      if (Math.hypot(point[0] - target[0], point[1] - target[1]) <= epsilon) {
+        anchorIndex = pointIndex
+        break
+      }
+    }
+    if (anchorIndex < 0) anchorIndex = points.length - 1
+    if (anchorIndex > legStarts[legStarts.length - 1]!) {
+      legStarts.push(anchorIndex)
+    }
+    searchFrom = anchorIndex
+  }
+  return legStarts
+}

@@ -8,6 +8,7 @@ export interface DrawDraftSnapshot {
   pathLegStarts: number[]
   pathLegControls: (WorldMapPoint | null)[]
   pathLegHidden: boolean[]
+  pathUserBends: boolean[]
   pathManuallyEdited: boolean
 }
 
@@ -28,6 +29,7 @@ export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnaps
       control ? ([control[0], control[1]] as WorldMapPoint) : null,
     ),
     pathLegHidden: [...state.pathLegHidden],
+    pathUserBends: [...state.pathUserBends],
     pathManuallyEdited: state.pathManuallyEdited,
   }
 }

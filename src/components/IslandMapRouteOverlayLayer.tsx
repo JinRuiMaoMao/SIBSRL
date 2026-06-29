@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
+import { buildSmoothPolylinePathD } from '../utils/worldMapDrawPathCurve'
 
 interface IslandMapRouteOverlayLayerProps {
   imageWidth: number
@@ -9,6 +10,8 @@ interface IslandMapRouteOverlayLayerProps {
   vertexPoints?: readonly WorldMapPoint[]
   legStarts?: readonly number[]
   legHidden?: readonly boolean[]
+  userBendIndices?: ReadonlySet<number>
+  smoothRoadCorners?: boolean
   variant?: 'route' | 'draft'
   strokeColor?: string
 }
@@ -25,6 +28,8 @@ export function IslandMapRouteOverlayLayer({
   vertexPoints,
   legStarts,
   legHidden = [],
+  userBendIndices = new Set<number>(),
+  smoothRoadCorners = false,
   variant = 'route',
   strokeColor,
 }: IslandMapRouteOverlayLayerProps) {
@@ -43,6 +48,47 @@ export function IslandMapRouteOverlayLayer({
       : []
   const useDraftLegPolylines = legRanges.length > 0
 
+  const renderLegPath = (
+    legPoints: readonly WorldMapPoint[],
+    legIndex: number,
+    legStart: number,
+    legEnd: number,
+  ) => {
+    if (legPoints.length < 2) return null
+    const legUserBends = new Set<number>()
+    userBendIndices.forEach((index) => {
+      if (index > legStart && index < legEnd) legUserBends.add(index - legStart)
+    })
+    if (smoothRoadCorners && variant === 'draft') {
+      const pathD = buildSmoothPolylinePathD(legPoints, imageWidth, imageHeight, legUserBends)
+      return (
+        <path
+          key={`leg-line-${legIndex}-${legStart}-${legEnd}`}
+          className="island-map-route-overlay-line"
+          d={pathD}
+          style={draftStyle}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )
+    }
+    const segmentCoords = legPoints
+      .map((point) => `${point[0] * imageWidth},${point[1] * imageHeight}`)
+      .join(' ')
+    return (
+      <polyline
+        key={`leg-line-${legIndex}-${legStart}-${legEnd}`}
+        className="island-map-route-overlay-line"
+        points={segmentCoords}
+        style={draftStyle}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    )
+  }
+
   const polyline = points
     .map(([x, y]) => `${x * imageWidth},${y * imageHeight}`)
     .join(' ')
@@ -58,24 +104,13 @@ export function IslandMapRouteOverlayLayer({
       {useDraftLegPolylines
         ? legRanges.map((leg, legIndex) => {
             if (legHidden[legIndex]) return null
-            const segmentCoords: string[] = []
+            const legPoints: WorldMapPoint[] = []
             for (let index = leg.start; index <= leg.end; index += 1) {
               const point = points[index]
               if (!point) continue
-              segmentCoords.push(`${point[0] * imageWidth},${point[1] * imageHeight}`)
+              legPoints.push(point)
             }
-            if (segmentCoords.length < 2) return null
-            return (
-              <polyline
-                key={`leg-line-${legIndex}-${leg.start}-${leg.end}`}
-                className="island-map-route-overlay-line"
-                points={segmentCoords.join(' ')}
-                style={draftStyle}
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            )
+            return renderLegPath(legPoints, legIndex, leg.start, leg.end)
           })
         : (
           <polyline

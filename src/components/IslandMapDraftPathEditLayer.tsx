@@ -1,19 +1,15 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import {
-  getPathLegRanges,
-  isStopAnchorIndex,
-  legIndexForSegment,
-} from '../utils/worldMapDrawPathEdit'
+import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
 import { defaultLegControl } from '../utils/worldMapDrawPathCurve'
 
 interface IslandMapDraftPathEditLayerProps {
   imageWidth: number
   imageHeight: number
   points: readonly WorldMapPoint[]
-  stopAnchors?: readonly { point: WorldMapPoint }[]
   legStarts?: readonly number[]
   legHidden?: readonly boolean[]
+  userBendIndices?: ReadonlySet<number>
   strokeColor?: string
   editable?: boolean
   snapPoint?: (point: WorldMapPoint) => WorldMapPoint
@@ -74,9 +70,9 @@ export function IslandMapDraftPathEditLayer({
   imageWidth,
   imageHeight,
   points,
-  stopAnchors = [],
   legStarts = [0],
   legHidden = [],
+  userBendIndices = new Set<number>(),
   strokeColor,
   editable = false,
   snapPoint = (point) => point,
@@ -125,13 +121,13 @@ export function IslandMapDraftPathEditLayer({
 
   const bendVertices = useMemo(() => {
     const indices: number[] = []
-    for (let index = 1; index < points.length - 1; index += 1) {
-      if (!isStopAnchorIndex(index, points, stopAnchors)) {
+    userBendIndices.forEach((index) => {
+      if (index > 0 && index < points.length - 1) {
         indices.push(index)
       }
-    }
-    return indices
-  }, [points, stopAnchors])
+    })
+    return indices.sort((a, b) => a - b)
+  }, [points.length, userBendIndices])
 
   useEffect(() => {
     return () => {

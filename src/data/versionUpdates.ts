@@ -188,6 +188,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "道路拐角自动圆滑；自动生成沿道路寻路，道路结点不显示折点手柄（仅手动插入的折点可拖）。",
+            en: "Road corners smooth automatically; auto-generate traces along roads without bend handles on road nodes—only manually inserted bends are draggable.",
+          },
+          {
             zh: "折点作为路径顶点：线段经过折点（非贝塞尔离线路径）；地图上隐藏虚拟节点，数据仍保留可导出。",
             en: "Bend points are path vertices—the line passes through them (not off-path Bezier handles); virtual nodes are hidden on the map but kept in export data.",
           },

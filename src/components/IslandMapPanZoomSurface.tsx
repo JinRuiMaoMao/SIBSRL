@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapDraftPathEditLayer } from './IslandMapDraftPathEditLayer'
@@ -55,6 +55,7 @@ interface IslandMapPanZoomSurfaceProps {
   pathEditable?: boolean
   pathLegStarts?: readonly number[]
   pathLegHidden?: readonly boolean[]
+  pathUserBends?: readonly boolean[]
   snapPathPoint?: (point: WorldMapPoint) => WorldMapPoint
   traceSelectedStopId?: string | null
   maxZoomRatio?: number
@@ -249,6 +250,7 @@ export function IslandMapPanZoomSurface({
   pathEditable = false,
   pathLegStarts = [0],
   pathLegHidden = [],
+  pathUserBends = [],
   snapPathPoint,
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
@@ -617,6 +619,14 @@ export function IslandMapPanZoomSurface({
     ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
     : undefined
 
+  const userBendIndexSet = useMemo(() => {
+    const set = new Set<number>()
+    pathUserBends.forEach((isUser, index) => {
+      if (isUser) set.add(index)
+    })
+    return set
+  }, [pathUserBends])
+
   const overlayChildren = imageSize ? (
     <>
       {routeOverlay ? (
@@ -640,6 +650,8 @@ export function IslandMapPanZoomSurface({
             vertexPoints={draftStopPoints}
             legStarts={pathLegStarts}
             legHidden={pathLegHidden}
+            userBendIndices={userBendIndexSet}
+            smoothRoadCorners
             variant="draft"
             strokeColor={draftStrokeColor}
           />
@@ -675,9 +687,9 @@ export function IslandMapPanZoomSurface({
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
             points={draftPoints}
-            stopAnchors={draftStops}
             legStarts={pathLegStarts}
             legHidden={pathLegHidden}
+            userBendIndices={userBendIndexSet}
             strokeColor={draftStrokeColor}
             editable
             snapPoint={snapPathPoint}

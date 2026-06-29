@@ -191,6 +191,83 @@ export function buildLegPathD(
   return `M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}`
 }
 
+function dist2(a: WorldMapPoint, b: WorldMapPoint): number {
+  return Math.hypot(a[0] - b[0], a[1] - b[1])
+}
+
+function sub2(a: WorldMapPoint, b: WorldMapPoint): WorldMapPoint {
+  return [a[0] - b[0], a[1] - b[1]]
+}
+
+function norm2(v: WorldMapPoint): WorldMapPoint {
+  const len = Math.hypot(v[0], v[1])
+  if (len < 1e-9) return [0, 0]
+  return [v[0] / len, v[1] / len]
+}
+
+function scale2(v: WorldMapPoint, factor: number): WorldMapPoint {
+  return [v[0] * factor, v[1] * factor]
+}
+
+function add2(a: WorldMapPoint, b: WorldMapPoint): WorldMapPoint {
+  return [a[0] + b[0], a[1] + b[1]]
+}
+
+function turnRadians(prev: WorldMapPoint, curr: WorldMapPoint, next: WorldMapPoint): number {
+  const incoming = norm2(sub2(prev, curr))
+  const outgoing = norm2(sub2(next, curr))
+  const dot = Math.min(1, Math.max(-1, incoming[0] * outgoing[0] + incoming[1] * outgoing[1]))
+  return Math.acos(dot)
+}
+
+/** SVG path with quadratic fillets at road corners; user bends stay sharp pass-through vertices. */
+export function buildSmoothPolylinePathD(
+  points: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  userBendIndices: ReadonlySet<number> = new Set(),
+): string {
+  const count = points.length
+  if (count < 2) return ''
+  const fmt = (point: WorldMapPoint) => `${point[0] * imageWidth} ${point[1] * imageHeight}`
+  if (count === 2) {
+    return `M ${fmt(points[0]!)} L ${fmt(points[1]!)}`
+  }
+
+  const minTurn = (10 * Math.PI) / 180
+  const filletRatio = 0.42
+  const parts: string[] = [`M ${fmt(points[0]!)}`]
+
+  for (let index = 1; index < count - 1; index += 1) {
+    const prev = points[index - 1]!
+    const curr = points[index]!
+    const next = points[index + 1]!
+    if (userBendIndices.has(index)) {
+      parts.push(`L ${fmt(curr)}`)
+      continue
+    }
+    const turn = turnRadians(prev, curr, next)
+    if (turn < minTurn) {
+      parts.push(`L ${fmt(curr)}`)
+      continue
+    }
+    const alongIn = dist2(prev, curr)
+    const alongOut = dist2(curr, next)
+    const trim = Math.min(alongIn, alongOut) * filletRatio
+    if (trim < 1e-7) {
+      parts.push(`L ${fmt(curr)}`)
+      continue
+    }
+    const p1 = add2(curr, scale2(norm2(sub2(prev, curr)), trim))
+    const p2 = add2(curr, scale2(norm2(sub2(next, curr)), trim))
+    parts.push(`L ${fmt(p1)}`)
+    parts.push(`Q ${fmt(curr)} ${fmt(p2)}`)
+  }
+
+  parts.push(`L ${fmt(points[count - 1]!)}`)
+  return parts.join(' ')
+}
+
 export function flattenPolylinePath(
   points: readonly WorldMapPoint[],
   legStarts: readonly number[],
