@@ -1,0 +1,5 @@
+# No Co-authored-by in commits
+
+Never add `Co-authored-by: Cursor` or any `Co-authored-by:` trailer to git commit messages in this repo.
+
+Commit messages should contain only the subject and body written for the change itself.
