@@ -60,6 +60,8 @@ export function IslandMapDrawExportDialog({
   const [includeStops, setIncludeStops] = useState(false)
   const [includePathNodes, setIncludePathNodes] = useState(false)
   const [includePath, setIncludePath] = useState(false)
+  const [includeImage, setIncludeImage] = useState(false)
+  const [exportBaseName, setExportBaseName] = useState('')
   const [exportRouteId, setExportRouteId] = useState('')
   const [error, setError] = useState<string | null>(null)
 
@@ -97,8 +99,11 @@ export function IslandMapDrawExportDialog({
   useEffect(() => {
     if (!open) return
     const ids = collectWorldMapDrawRouteIds(sourceSlices)
-    setExportRouteId(preferredExportRouteId(routeId, ids))
+    const preferred = preferredExportRouteId(routeId, ids)
+    setExportRouteId(preferred)
+    setExportBaseName(preferred || routeId.trim())
     setIncludePath(points.length >= 2)
+    setIncludeImage(false)
     setError(null)
   }, [open, points.length, routeId, sourceSlices])
 
@@ -110,12 +115,14 @@ export function IslandMapDrawExportDialog({
 
   if (!open) return null
 
+  const canExportImage = filtered.points.length >= 2 || filtered.stops.length >= 1
+
   const handleConfirm = () => {
     if (!resolvedRouteId) {
       setError(t('islandMapDrawExportNeedRouteId'))
       return
     }
-    if (!includeStops && !includePathNodes && !includePath) {
+    if (!includeStops && !includePathNodes && !includePath && !includeImage) {
       setError(t('islandMapDrawExportNeedSelection'))
       return
     }
@@ -131,7 +138,20 @@ export function IslandMapDrawExportDialog({
       setError(t('islandMapDrawExportNoPath'))
       return
     }
-    onConfirm({ includeStops, includePathNodes, includePath }, filtered)
+    if (includeImage && !canExportImage) {
+      setError(t('islandMapDrawExportNoImage'))
+      return
+    }
+    onConfirm(
+      {
+        includeStops,
+        includePathNodes,
+        includePath,
+        includeImage,
+        exportBaseName: exportBaseName.trim() || resolvedRouteId,
+      },
+      filtered,
+    )
   }
 
   return (
@@ -147,6 +167,16 @@ export function IslandMapDrawExportDialog({
           {t('islandMapDrawExportDialogTitle')}
         </h2>
         <p className="app-dialog-message">{t('islandMapDrawExportDialogLead')}</p>
+
+        <label className="island-map-export-dialog-route-select">
+          <span>{t('islandMapDrawExportFileName')}</span>
+          <input
+            type="text"
+            value={exportBaseName}
+            onChange={(event) => setExportBaseName(event.target.value)}
+            placeholder={resolvedRouteId || routeId.trim() || 'route'}
+          />
+        </label>
 
         {routeIds.length > 1 ? (
           <label className="island-map-export-dialog-route-select">
@@ -203,6 +233,15 @@ export function IslandMapDrawExportDialog({
                 ? t('islandMapDrawExportIncludePathExisting', { count: filtered.points.length })
                 : t('islandMapDrawExportIncludePathTrace', { count: filtered.stops.length })}
             </span>
+          </label>
+          <label className="island-map-export-dialog-check">
+            <input
+              type="checkbox"
+              checked={includeImage}
+              disabled={!canExportImage}
+              onChange={(event) => setIncludeImage(event.target.checked)}
+            />
+            <span>{t('islandMapDrawExportIncludeImage')}</span>
           </label>
         </fieldset>
 

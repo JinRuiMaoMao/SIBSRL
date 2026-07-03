@@ -16,6 +16,14 @@ import {
   resolveWorldMapExportRouteId,
   type WorldMapRouteExportSelection,
 } from '../utils/worldMapRouteExport'
+import { exportWorldMapDrawImage } from '../utils/worldMapDrawImageExport'
+import {
+  detectPathConflicts,
+  mergeImportedDrawFiles,
+  type ImportedDrawFile,
+  type PathConflictGroup,
+  type PathConflictResolution,
+} from '../utils/worldMapDrawImportMerge'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
 import {
   mergePathPoints,
@@ -32,12 +40,10 @@ import {
   movePathVertex,
   removeLegInteriorPoints,
   removePathVertex,
-  resolveImportedRouteDraft,
   retacePathSpanAroundUserBend,
   retraceAdjacentLegsAtAnchor,
   resizeLegHidden,
   resizePathUserBends,
-  snapPathNodesOntoPath,
   updatePathPointsForStopMove,
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
@@ -54,6 +60,7 @@ import type {
   WorldMapTraceAnchor,
 } from '../types/worldMapDraw'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
+import { IslandMapDrawImportConflictDialog } from './IslandMapDrawImportConflictDialog'
 import {
   IslandMapDrawClearDialog,
   type IslandMapDrawClearSelection,
@@ -264,6 +271,10 @@ export function IslandMapWidget() {
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
+  const [importConflictState, setImportConflictState] = useState<{
+    files: ImportedDrawFile[]
+    conflict: PathConflictGroup
+  } | null>(null)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
   const [permissionDialog, setPermissionDialog] = useState<IslandMapDrawPermissionDialogStep | null>(null)
   const [permissionSending, setPermissionSending] = useState(false)
@@ -1113,35 +1124,89 @@ export function IslandMapWidget() {
         return
       }
 
-      const payload = buildWorldMapRouteExportPayload(
-        merged.routeId || drawRouteId,
-        merged.directionIndex ?? drawDirectionIndex,
-        pointsForExport,
-        merged.stops,
-        overlayRouteId,
-        selection,
-        {
-          legStarts: pathLegStarts,
-          pathLegHidden,
-          userBendIndices: pathUserBends.flatMap((isUser, index) => (isUser ? [index] : [])),
-        },
-        draftPathNodes,
-      )
-      if (!payload) {
-        showExportHint(t('islandMapDrawExportNeedRoute'))
-        return
+      const exportJson = selection.includeStops || selection.includePathNodes || selection.includePath
+      const usingCurrentDraftPath =
+        pointsForExport.length >= 2 &&
+        pointsForExport.length === draftPoints.length &&
+        pointsForExport.every(
+          (point, index) =>
+            Math.abs(point[0] - (draftPoints[index]?.[0] ?? -1)) < 0.0001 &&
+            Math.abs(point[1] - (draftPoints[index]?.[1] ?? -1)) < 0.0001,
+        )
+      const legStartsForExport = usingCurrentDraftPath ? pathLegStarts : [0]
+      const legHiddenForExport = usingCurrentDraftPath ? pathLegHidden : []
+
+      if (selection.includeImage) {
+        if (pointsForExport.length < 2 && merged.stops.length < 1) {
+          showExportHint(t('islandMapDrawExportNoImage'))
+          return
+        }
+        try {
+          await exportWorldMapDrawImage(
+            {
+              mapImageUrl: MAP_URLS.general,
+              routeId: resolvedRouteId,
+              points: pointsForExport.length >= 2 ? pointsForExport : rebuildStopToStopPath(merged.stops),
+              stops: merged.stops,
+              legStarts: legStartsForExport,
+              legHidden: legHiddenForExport,
+              strokeColor: drawColor,
+            },
+            selection.exportBaseName,
+          )
+        } catch (error) {
+          console.error('Route image export failed', error)
+          showExportHint(t('islandMapDrawExportImageFailed'))
+          return
+        }
+      }
+
+      if (exportJson) {
+        const payload = buildWorldMapRouteExportPayload(
+          merged.routeId || drawRouteId,
+          merged.directionIndex ?? drawDirectionIndex,
+          pointsForExport,
+          merged.stops,
+          overlayRouteId,
+          selection,
+          usingCurrentDraftPath
+            ? {
+                legStarts: pathLegStarts,
+                pathLegHidden,
+                userBendIndices: pathUserBends.flatMap((isUser, index) => (isUser ? [index] : [])),
+              }
+            : {},
+          usingCurrentDraftPath ? draftPathNodes : [],
+        )
+        if (!payload) {
+          showExportHint(t('islandMapDrawExportNeedRoute'))
+          return
+        }
+
+        downloadWorldMapRouteJson(payload, selection.exportBaseName)
+        const copied = await copyWorldMapRouteJson(payload)
+        showExportHint(
+          selection.includeImage
+            ? copied
+              ? t('islandMapDrawExportRouteAndImageDone')
+              : t('islandMapDrawExportRouteAndImageDownloaded')
+            : copied
+              ? t('islandMapDrawExportRouteDone')
+              : t('islandMapDrawExportRouteDownloaded'),
+        )
+      } else if (selection.includeImage) {
+        showExportHint(t('islandMapDrawExportImageDone'))
       }
 
       setExportDialogOpen(false)
       setExportMergeFiles([])
-      downloadWorldMapRouteJson(payload)
-      const copied = await copyWorldMapRouteJson(payload)
-      showExportHint(copied ? t('islandMapDrawExportRouteDone') : t('islandMapDrawExportRouteDownloaded'))
     },
     [
+      drawColor,
       drawDirectionIndex,
       drawRouteId,
       draftPathNodes,
+      draftPoints,
       overlayRouteId,
       pathLegHidden,
       pathLegStarts,
@@ -1151,79 +1216,116 @@ export function IslandMapWidget() {
     ],
   )
 
-  const handleImportFileChange = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0]
-      event.target.value = ''
-      if (!file) return
+  const applyImportedDrawFiles = useCallback(
+    (files: readonly ImportedDrawFile[], resolution: PathConflictResolution) => {
+      setPendingStop(null)
+      setPendingPathNode(null)
+      pushDrawHistory()
 
-      try {
-        const parsed = parseWorldMapDrawImportJson(readImportJsonText(await file.text()))
-        if (!parsed) {
-          showExportHint(t('islandMapDrawImportInvalid'))
-          return
-        }
-
-        if (parsed.kind === 'virtual') {
-          showExportHint(t('islandMapDrawImportInvalid'))
-          return
-        }
-
-        setPendingStop(null)
-        setPendingPathNode(null)
-        pushDrawHistory()
-
-        if (parsed.kind === 'catalog') {
-          setDrawInteraction('catalog')
-          setDraftPoints([])
-          setDraftStops(parsed.stops)
-          redoStackRef.current = []
-          setMapView(
-            fitNormalizedViewToRoutePoints(
-              parsed.stops.map((stop) => stop.point),
-              expanded ? 'fullscreen' : 'widget',
-            ),
-          )
-          showExportHint(t('islandMapDrawImportCatalogDone', { count: parsed.stops.length }))
-          return
-        }
-
-        setDrawInteraction('route')
-        setDrawRouteId(parsed.routeId)
-        setDrawDirectionIndex(parsed.directionIndex)
-        setDraftStops(parsed.stops)
-        const imported = resolveImportedRouteDraft({
-          points: parsed.points,
-          stops: parsed.stops,
-          pathNodes: parsed.pathNodes,
-          legStarts: parsed.legStarts,
-          pathLegHidden: parsed.pathLegHidden,
-          userBendIndices: parsed.userBendIndices,
-        })
-        setDraftPoints(imported.points)
-        setDraftPathNodes(snapPathNodesOntoPath(imported.points, parsed.pathNodes ?? []))
-        setPathLegStarts(imported.legStarts)
-        setPathLegControls([])
-        setPathLegHidden(imported.pathLegHidden)
-        setPathUserBends(imported.pathUserBends)
-        setPathManuallyEdited(imported.points.length >= 2)
-        redoStackRef.current = []
-        const fitPoints =
-          imported.points.length >= 2 ? imported.points : parsed.stops.map((stop) => stop.point)
-        if (fitPoints.length > 0) {
-          setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
-        }
-        showExportHint(t('islandMapDrawImportRouteDone', { routeId: parsed.routeId }))
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          showExportHint(t('islandMapDrawImportInvalid'))
-          return
-        }
-        console.error('Route import failed', error)
+      const merged = mergeImportedDrawFiles(files, resolution, draftStops)
+      if (!merged) {
         showExportHint(t('islandMapDrawImportInvalid'))
+        return
+      }
+
+      if ('kind' in merged && merged.kind === 'catalog') {
+        setDrawInteraction('catalog')
+        setDraftPoints([])
+        setDraftPathNodes([])
+        setPathLegStarts([0])
+        setPathLegControls([])
+        setPathLegHidden([])
+        setPathUserBends([])
+        setPathManuallyEdited(false)
+        setDraftStops(merged.stops)
+        redoStackRef.current = []
+        setMapView(
+          fitNormalizedViewToRoutePoints(
+            merged.stops.map((stop) => stop.point),
+            expanded ? 'fullscreen' : 'widget',
+          ),
+        )
+        showExportHint(
+          files.length > 1
+            ? t('islandMapDrawImportMultiCatalogDone', {
+                fileCount: files.length,
+                count: merged.stops.length,
+              })
+            : t('islandMapDrawImportCatalogDone', { count: merged.stops.length }),
+        )
+        return
+      }
+
+      setDrawInteraction('route')
+      setDrawRouteId(merged.routeId)
+      setDrawDirectionIndex(merged.directionIndex)
+      setDraftStops(merged.stops)
+      setDraftPoints(merged.points)
+      setDraftPathNodes(merged.pathNodes)
+      setPathLegStarts(merged.legStarts)
+      setPathLegControls([])
+      setPathLegHidden(merged.pathLegHidden)
+      setPathUserBends(merged.pathUserBends)
+      setPathManuallyEdited(merged.points.length >= 2)
+      redoStackRef.current = []
+      const fitPoints =
+        merged.points.length >= 2 ? merged.points : merged.stops.map((stop) => stop.point)
+      if (fitPoints.length > 0) {
+        setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
+      }
+      if (resolution.kind === 'clearPaths') {
+        showExportHint(
+          t('islandMapDrawImportConflictClearedDone', {
+            routeId: merged.routeId,
+            count: merged.stops.length,
+          }),
+        )
+      } else if (files.length > 1) {
+        showExportHint(
+          t('islandMapDrawImportMultiDone', {
+            fileCount: files.length,
+            routeId: merged.routeId,
+            count: merged.stops.length,
+          }),
+        )
+      } else {
+        showExportHint(t('islandMapDrawImportRouteDone', { routeId: merged.routeId }))
       }
     },
-    [expanded, pushDrawHistory, roadSnap, showExportHint, t],
+    [draftStops, expanded, pushDrawHistory, showExportHint, t],
+  )
+
+  const handleImportFileChange = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const fileList = event.target.files
+      event.target.value = ''
+      if (!fileList || fileList.length === 0) return
+
+      const importedFiles: ImportedDrawFile[] = []
+      for (const file of fileList) {
+        try {
+          const parsed = parseWorldMapDrawImportJson(readImportJsonText(await file.text()))
+          if (!parsed || parsed.kind === 'virtual') continue
+          importedFiles.push({ fileName: file.name, parsed })
+        } catch {
+          // skip invalid files
+        }
+      }
+
+      if (importedFiles.length === 0) {
+        showExportHint(t('islandMapDrawImportInvalid'))
+        return
+      }
+
+      const conflict = detectPathConflicts(importedFiles)
+      if (conflict) {
+        setImportConflictState({ files: importedFiles, conflict })
+        return
+      }
+
+      applyImportedDrawFiles(importedFiles, { kind: 'keepAll' })
+    },
+    [applyImportedDrawFiles, showExportHint, t],
   )
 
   const mapSrc = MAP_URLS[layer]
@@ -1362,6 +1464,7 @@ export function IslandMapWidget() {
       ref={importInputRef}
       type="file"
       accept=".json,application/json"
+      multiple
       className="island-map-draw-import-input"
       onChange={(event) => void handleImportFileChange(event)}
     />
@@ -1712,6 +1815,17 @@ export function IslandMapWidget() {
         hasPath={hasDraftPath}
         onCancel={() => setClearDialogOpen(false)}
         onConfirm={applyClearSelection}
+      />
+      <IslandMapDrawImportConflictDialog
+        open={importConflictState != null}
+        conflict={importConflictState?.conflict ?? null}
+        onCancel={() => setImportConflictState(null)}
+        onConfirm={(resolution) => {
+          const pending = importConflictState
+          setImportConflictState(null)
+          if (!pending) return
+          applyImportedDrawFiles(pending.files, resolution)
+        }}
       />
       <IslandMapDrawExportDialog
         open={exportDialogOpen}

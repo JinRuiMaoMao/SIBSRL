@@ -62,6 +62,13 @@ export interface WorldMapRouteExportSelection {
   includeStops: boolean
   includePathNodes: boolean
   includePath: boolean
+  includeImage: boolean
+  exportBaseName: string
+}
+
+export function resolveExportBaseName(name: string, fallback: string): string {
+  const trimmed = name.trim().replace(/[<>:"/\\|?*\u0000-\u001f]/g, '-').replace(/-+/g, '-')
+  return trimmed || fallback
 }
 
 export function buildWorldMapCatalogStopsExportPayload(
@@ -137,6 +144,8 @@ export function buildWorldMapRouteExportPayload(
     includeStops: true,
     includePathNodes: true,
     includePath: true,
+    includeImage: false,
+    exportBaseName: '',
   },
   editorMeta: WorldMapRouteExportEditorMeta = {},
   pathNodes: readonly WorldMapDrawPathNode[] = [],
@@ -213,12 +222,16 @@ export function downloadWorldMapStopsJson(payload: WorldMapStopsExportPayload): 
   URL.revokeObjectURL(url)
 }
 
-export function downloadWorldMapRouteJson(payload: WorldMapRouteExportPayload): void {
+export function downloadWorldMapRouteJson(
+  payload: WorldMapRouteExportPayload,
+  exportBaseName?: string,
+): void {
+  const baseName = resolveExportBaseName(exportBaseName ?? '', payload.routeId)
   const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url
-  anchor.download = `${payload.routeId}.json`
+  anchor.download = `${baseName}.json`
   anchor.click()
   URL.revokeObjectURL(url)
 }

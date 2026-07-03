@@ -922,7 +922,8 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   font-size: 0.9rem;
 }
 
-.island-map-export-dialog-route-select select {
+.island-map-export-dialog-route-select select,
+.island-map-export-dialog-route-select input[type='text'] {
   width: 100%;
   padding: 0.45rem 0.55rem;
   border-radius: 6px;
