@@ -177,9 +177,17 @@ export function publishStandalone(options = {}) {
   }
 
   const distAssets = resolve(root, 'dist', 'assets')
+  const rootAssets = resolve(root, 'assets')
   if (existsSync(distAssets)) {
-    cpSync(distAssets, resolve(root, 'assets'), { recursive: true })
+    if (existsSync(rootAssets)) rmSync(rootAssets, { recursive: true, force: true })
+    cpSync(distAssets, rootAssets, { recursive: true })
     console.log('[publish] 已复制构建资源到 assets/')
+  }
+
+  const noJekyllSource = resolve(root, 'public', '.nojekyll')
+  if (existsSync(noJekyllSource)) {
+    cpSync(noJekyllSource, resolve(root, '.nojekyll'))
+    cpSync(noJekyllSource, resolve(root, 'dist', '.nojekyll'))
   }
 
   const serviceWorker = resolve(root, 'dist', 'sw.js')
