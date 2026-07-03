@@ -2,13 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { fitNormalizedViewToRoutePoints, listWorldMapRouteSegmentsExcept, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
-import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useGeneralMapRoadSnap } from '../hooks/useGeneralMapRoadSnap'
 import { useLocale } from '../i18n/LocaleContext'
 import { useAuth } from '../contexts/AuthContext'
-import { useUserProfile } from '../contexts/UserProfileContext'
-import { isUserApiConfigured } from '../api/userApiConfig'
-import { requestMapDrawPermission, UserApiError } from '../api/userApi'
 import {
   buildWorldMapRouteExportPayload,
   copyWorldMapRouteJson,
@@ -67,7 +63,6 @@ import {
 } from './IslandMapDrawClearDialog'
 import {
   IslandMapDrawPermissionDialogs,
-  type IslandMapDrawPermissionDialogStep,
 } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
@@ -235,10 +230,7 @@ function surfaceProps(
 
 export function IslandMapWidget() {
   const { t, locale } = useLocale()
-  const { isLoggedIn, token, email } = useAuth()
-  const { refreshProfile } = useUserProfile()
-  const isMapAdmin = useIsMapAdmin()
-  const userApiEnabled = isUserApiConfigured()
+  const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const [expanded, setExpanded] = useState(false)
@@ -254,7 +246,7 @@ export function IslandMapWidget() {
     [drawRouteId],
   )
   const drawBuildLabel = formatBuildLabel(readPublishedBuild() ?? 'development', locale)
-  const roadSnap = useGeneralMapRoadSnap(isMapAdmin, { avoidParallelSegments })
+  const roadSnap = useGeneralMapRoadSnap(isLoggedIn, { avoidParallelSegments })
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [pathLegStarts, setPathLegStarts] = useState<number[]>([])
   const [pathLegControls, setPathLegControls] = useState<(WorldMapPoint | null)[]>([])
@@ -276,8 +268,7 @@ export function IslandMapWidget() {
     conflict: PathConflictGroup
   } | null>(null)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
-  const [permissionDialog, setPermissionDialog] = useState<IslandMapDrawPermissionDialogStep | null>(null)
-  const [permissionSending, setPermissionSending] = useState(false)
+  const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -466,11 +457,11 @@ export function IslandMapWidget() {
   }, [drawInteraction])
 
   useEffect(() => {
-    if (!isMapAdmin) {
+    if (!isLoggedIn) {
       setDrawMode(false)
       setPendingStop(null)
     }
-  }, [isMapAdmin])
+  }, [isLoggedIn])
 
   useEffect(() => {
     return () => {
@@ -1031,49 +1022,16 @@ export function IslandMapWidget() {
   }, [])
 
   const handleDrawEntryClick = useCallback(() => {
-    if (isMapAdmin) {
+    if (isLoggedIn) {
       toggleDrawMode()
       return
     }
-    if (!userApiEnabled) return
-    if (!isLoggedIn) {
-      setPermissionDialog('register')
-      return
-    }
-    setPermissionDialog('confirm')
-  }, [isLoggedIn, isMapAdmin, toggleDrawMode, userApiEnabled])
-
-  const handleSendDrawPermissionRequest = useCallback(async () => {
-    if (!token) {
-      setPermissionDialog('register')
-      return
-    }
-    setPermissionSending(true)
-    try {
-      await requestMapDrawPermission(token)
-      setPermissionDialog('sent')
-    } catch (error) {
-      const message =
-        error instanceof UserApiError && error.code === 'rate_limited'
-          ? t('islandMapDrawPermissionRateLimited')
-          : error instanceof UserApiError && error.code === 'already_admin'
-            ? t('islandMapDrawPermissionAlreadyAdmin')
-            : t('islandMapDrawPermissionSendFailed')
-      showExportHint(message)
-      setPermissionDialog(null)
-      if (error instanceof UserApiError && error.code === 'already_admin') {
-        void refreshProfile()
-      }
-    } finally {
-      setPermissionSending(false)
-    }
-  }, [refreshProfile, showExportHint, t, token])
+    setPermissionDialogOpen(true)
+  }, [isLoggedIn, toggleDrawMode])
 
   const closePermissionDialog = useCallback(() => {
-    setPermissionDialog(null)
-    setPermissionSending(false)
-    void refreshProfile()
-  }, [refreshProfile])
+    setPermissionDialogOpen(false)
+  }, [])
 
   const overlayRouteId = routeOverlay?.routeId
 
@@ -1456,7 +1414,7 @@ export function IslandMapWidget() {
     onImport: () => importInputRef.current?.click(),
     onExport: openExportDialog,
     onClear: openClearDialog,
-    onDrawRequest: userApiEnabled && !isMapAdmin ? handleDrawEntryClick : undefined,
+    onDrawRequest: !isLoggedIn ? handleDrawEntryClick : undefined,
   }
 
   const hiddenImportInput = (
@@ -1470,7 +1428,7 @@ export function IslandMapWidget() {
     />
   )
 
-  const userMapPanel = !isMapAdmin ? <IslandMapImportExportPanel {...importExportPanelProps} /> : null
+  const guestMapPanel = !isLoggedIn ? <IslandMapImportExportPanel {...importExportPanelProps} /> : null
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
   const closeFullscreen = useCallback(() => setExpanded(false), [])
@@ -1509,7 +1467,7 @@ export function IslandMapWidget() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [closeFullscreen, expanded])
 
-  const drawPanel = isMapAdmin ? (
+  const drawPanel = isLoggedIn ? (
     <div className="island-map-draw-panel">
       <div className="island-map-draw-panel-row">
         <button
@@ -1686,7 +1644,7 @@ export function IslandMapWidget() {
         )}
       />
       <div className="island-map-controls island-map-controls--fullscreen">
-        {isMapAdmin ? drawPanel : userMapPanel}
+        {isLoggedIn ? drawPanel : guestMapPanel}
         <div className="island-map-controls-row">
           <button
             type="button"
@@ -1760,26 +1718,21 @@ export function IslandMapWidget() {
           </button>
         ) : (
           <>
-            {isMapAdmin ? (
-              <button
-                type="button"
-                className={`island-map-btn island-map-btn--draw${drawMode ? ' island-map-btn--active' : ''}`.trim()}
-                onClick={handleDrawEntryClick}
-                aria-pressed={drawMode}
-                title={drawMode ? t('islandMapDrawStopHint') : t('islandMapDrawStartHint')}
-              >
-                {drawMode ? t('islandMapDrawStop') : t('islandMapDraw')}
-              </button>
-            ) : userApiEnabled ? (
-              <button
-                type="button"
-                className="island-map-btn island-map-btn--draw"
-                onClick={handleDrawEntryClick}
-                title={t('islandMapDrawPermissionButtonHint')}
-              >
-                {t('islandMapDraw')}
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className={`island-map-btn island-map-btn--draw${drawMode && isLoggedIn ? ' island-map-btn--active' : ''}`.trim()}
+              onClick={handleDrawEntryClick}
+              aria-pressed={drawMode && isLoggedIn}
+              title={
+                isLoggedIn
+                  ? drawMode
+                    ? t('islandMapDrawStopHint')
+                    : t('islandMapDrawStartHint')
+                  : t('islandMapDrawPermissionButtonHint')
+              }
+            >
+              {isLoggedIn && drawMode ? t('islandMapDrawStop') : t('islandMapDraw')}
+            </button>
             <button
               type="button"
               className="island-map-btn island-map-btn--hide"
@@ -1846,11 +1799,8 @@ export function IslandMapWidget() {
         onConfirm={(selection, merged) => void handleExportConfirm(selection, merged)}
       />
       <IslandMapDrawPermissionDialogs
-        step={permissionDialog}
-        applicantEmail={email}
-        sending={permissionSending}
+        open={permissionDialogOpen}
         onCancel={closePermissionDialog}
-        onConfirmSend={() => void handleSendDrawPermissionRequest()}
         onGoRegister={() => {
           window.location.href = './account.html'
         }}
