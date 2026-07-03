@@ -738,6 +738,7 @@ export function IslandMapPanZoomSurface({
             imageHeight={imageSize.height}
             routeNumber={routeOverlay.routeNumber}
             points={routeOverlay.points}
+            smoothRoadCorners
             variant="route"
           />
         </div>
@@ -756,8 +757,6 @@ export function IslandMapPanZoomSurface({
             smoothRoadCorners
             variant="draft"
             strokeColor={draftStrokeColor}
-            snapPathPoint={snapPathPoint}
-            isOnRoad={isOnRoad}
           />
         </div>
       ) : null}

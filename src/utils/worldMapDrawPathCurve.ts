@@ -220,6 +220,78 @@ function turnRadians(prev: WorldMapPoint, curr: WorldMapPoint, next: WorldMapPoi
   return Math.acos(dot)
 }
 
+/**
+ * SVG path with quadratic fillets at corners (pixel radius), matching the reference bus route editor.
+ * User bend vertices stay sharp; auto road samples get a default fillet radius.
+ */
+export function buildEditorCornerPathD(
+  points: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  options: {
+    userBendIndices?: ReadonlySet<number>
+    autoCornerRadiusPx?: number
+    minTurnRadians?: number
+  } = {},
+): string {
+  const count = points.length
+  if (count < 2) return ''
+  const userBends = options.userBendIndices ?? new Set<number>()
+  const autoRadiusPx = options.autoCornerRadiusPx ?? Math.max(10, imageWidth * 0.0038)
+  const minTurn = options.minTurnRadians ?? (8 * Math.PI) / 180
+
+  const px = points.map((point) => ({
+    x: point[0] * imageWidth,
+    y: point[1] * imageHeight,
+  }))
+
+  const parts: string[] = [`M ${px[0]!.x} ${px[0]!.y}`]
+
+  for (let index = 1; index < count - 1; index += 1) {
+    const prev = px[index - 1]!
+    const curr = px[index]!
+    const next = px[index + 1]!
+
+    const dx1 = curr.x - prev.x
+    const dy1 = curr.y - prev.y
+    const dx2 = next.x - curr.x
+    const dy2 = next.y - curr.y
+    const len1 = Math.hypot(dx1, dy1)
+    const len2 = Math.hypot(dx2, dy2)
+    if (len1 < 1e-6 || len2 < 1e-6) continue
+
+    const cornerRadiusPx = userBends.has(index) ? 0 : autoRadiusPx
+    const turn = turnRadians(
+      [prev.x / imageWidth, prev.y / imageHeight],
+      [curr.x / imageWidth, curr.y / imageHeight],
+      [next.x / imageWidth, next.y / imageHeight],
+    )
+
+    if (cornerRadiusPx > 0 && turn >= minTurn) {
+      const maxRadius = Math.min(cornerRadiusPx, len1 / 2, len2 / 2)
+      if (maxRadius > 0.5) {
+        const u1x = dx1 / len1
+        const u1y = dy1 / len1
+        const u2x = dx2 / len2
+        const u2y = dy2 / len2
+        const startX = curr.x - u1x * maxRadius
+        const startY = curr.y - u1y * maxRadius
+        const endX = curr.x + u2x * maxRadius
+        const endY = curr.y + u2y * maxRadius
+        parts.push(`L ${startX} ${startY}`)
+        parts.push(`Q ${curr.x} ${curr.y} ${endX} ${endY}`)
+        continue
+      }
+    }
+
+    parts.push(`L ${curr.x} ${curr.y}`)
+  }
+
+  const last = px[count - 1]!
+  parts.push(`L ${last.x} ${last.y}`)
+  return parts.join(' ')
+}
+
 /** SVG path with corridor-safe quadratic fillets; user bends stay sharp. */
 export function buildCorridorSafeSmoothPathD(
   points: readonly WorldMapPoint[],

@@ -1,6 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
-import { buildCorridorSafeSmoothPathD } from '../utils/worldMapDrawPathCurve'
+import { buildEditorCornerPathD } from '../utils/worldMapDrawPathCurve'
 
 interface IslandMapRouteOverlayLayerProps {
   imageWidth: number
@@ -14,8 +14,6 @@ interface IslandMapRouteOverlayLayerProps {
   smoothRoadCorners?: boolean
   variant?: 'route' | 'draft'
   strokeColor?: string
-  snapPathPoint?: (point: WorldMapPoint) => WorldMapPoint
-  isOnRoad?: (point: WorldMapPoint) => boolean
 }
 
 function markerRadius(imageWidth: number, ratio: number, min = 3): number {
@@ -34,8 +32,6 @@ export function IslandMapRouteOverlayLayer({
   smoothRoadCorners = false,
   variant = 'route',
   strokeColor,
-  snapPathPoint,
-  isOnRoad,
 }: IslandMapRouteOverlayLayerProps) {
   const start = points[0]
   const end = points[points.length - 1]
@@ -63,21 +59,11 @@ export function IslandMapRouteOverlayLayer({
     userBendIndices.forEach((index) => {
       if (index > legStart && index < legEnd) legUserBends.add(index - legStart)
     })
-    const canSmooth =
-      smoothRoadCorners &&
-      variant === 'draft' &&
-      snapPathPoint &&
-      isOnRoad &&
-      legPoints.length >= 3
-    if (canSmooth) {
-      const pathD = buildCorridorSafeSmoothPathD(
-        legPoints,
-        imageWidth,
-        imageHeight,
-        legUserBends,
-        snapPathPoint,
-        isOnRoad,
-      )
+    const useEditorPath = smoothRoadCorners && legPoints.length >= 2
+    if (useEditorPath) {
+      const pathD = buildEditorCornerPathD(legPoints, imageWidth, imageHeight, {
+        userBendIndices: legUserBends,
+      })
       return (
         <path
           key={`leg-line-${legIndex}-${legStart}-${legEnd}`}
@@ -86,7 +72,6 @@ export function IslandMapRouteOverlayLayer({
           style={draftStyle}
           fill="none"
           strokeLinecap="round"
-          strokeLinejoin="round"
         />
       )
     }
@@ -129,7 +114,15 @@ export function IslandMapRouteOverlayLayer({
             }
             return renderLegPath(legPoints, legIndex, leg.start, leg.end)
           })
-        : (
+        : smoothRoadCorners && points.length >= 2 ? (
+          <path
+            className="island-map-route-overlay-line"
+            d={buildEditorCornerPathD(points, imageWidth, imageHeight, { userBendIndices })}
+            style={draftStyle}
+            fill="none"
+            strokeLinecap="round"
+          />
+        ) : (
           <polyline
             className="island-map-route-overlay-line"
             points={polyline}
