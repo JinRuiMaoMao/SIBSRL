@@ -18,7 +18,6 @@ interface IslandMapImportExportPanelProps {
 }
 
 export function IslandMapImportExportPanel({
-  interaction,
   routeId,
   stopCount,
   pathNodeCount,

@@ -262,7 +262,7 @@ export function IslandMapPanZoomSurface({
   onPathNodeClick,
   selectedStopId = null,
   traceSelectedPathNodeId = null,
-  onPathPointsChange,
+  onPathPointsChange: _onPathPointsChange,
   onBendInsert,
   onBendMove,
   onBendDragStart,
@@ -274,7 +274,7 @@ export function IslandMapPanZoomSurface({
   pathLegHidden = [],
   pathUserBends = [],
   snapPathPoint,
-  isOnRoad,
+  isOnRoad: _isOnRoad,
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
 }: IslandMapPanZoomSurfaceProps) {

@@ -1,7 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
-import { canonicalVirtualNodeRouteId } from './worldMapVirtualNodes'
 import { buildLegStartsFromPathAnchors } from './worldMapDrawPathEdit'
 
 export interface WorldMapRouteExportEditorMeta {

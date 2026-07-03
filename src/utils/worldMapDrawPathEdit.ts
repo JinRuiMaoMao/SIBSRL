@@ -627,7 +627,14 @@ export function collapseUserBendToChord(
     return { ...result, userBends: nextUserBends }
   }
 
-  if (right <= left + 1) return removePathVertex(points, legStarts, vertexIndex)
+  if (right <= left + 1) {
+    const result = removePathVertex(points, legStarts, vertexIndex)
+    if (!result) return null
+    const nextUserBends = resizePathUserBends(userBends, points.length).filter(
+      (_, index) => index !== vertexIndex,
+    )
+    return { ...result, userBends: nextUserBends }
+  }
 
   const removeFrom = left + 1
   const removeThrough = right - 1

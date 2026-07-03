@@ -37,11 +37,22 @@ export interface MergedRouteImportDraft {
   pathUserBends: boolean[]
 }
 
+export type CatalogImportMergeResult = {
+  kind: 'catalog'
+  stops: WorldMapDrawStop[]
+}
+
+export type RouteImportMergeResult = {
+  kind: 'route'
+} & MergedRouteImportDraft
+
+export type MergedDrawImportResult = CatalogImportMergeResult | RouteImportMergeResult
+
 function stopKey(stop: WorldMapDrawStop): string {
   return `${stop.name.zh}|${stop.name.en}|${Math.round(stop.point[0] * 1000)}|${Math.round(stop.point[1] * 1000)}`
 }
 
-function mergeStops(stopsLists: readonly WorldMapDrawStop[][]): WorldMapDrawStop[] {
+function mergeStops(stopsLists: readonly (readonly WorldMapDrawStop[])[]): WorldMapDrawStop[] {
   const merged: WorldMapDrawStop[] = []
   const seen = new Set<string>()
   for (const stops of stopsLists) {
@@ -155,7 +166,7 @@ export function mergeImportedDrawFiles(
   files: readonly ImportedDrawFile[],
   resolution: PathConflictResolution | null,
   existingStops: readonly WorldMapDrawStop[] = [],
-): MergedRouteImportDraft | { kind: 'catalog'; stops: WorldMapDrawStop[] } | null {
+): MergedDrawImportResult | null {
   if (files.length === 0) return null
 
   const catalogOnly = files.every((file) => file.parsed.kind === 'catalog')
@@ -163,7 +174,7 @@ export function mergeImportedDrawFiles(
     return {
       kind: 'catalog',
       stops: mergeStops([
-        existingStops,
+        [...existingStops],
         ...files.map((file) => (file.parsed.kind === 'catalog' ? file.parsed.stops : [])),
       ]),
     }
@@ -238,6 +249,7 @@ export function mergeImportedDrawFiles(
   }
 
   return {
+    kind: 'route',
     routeId: resolveWorldMapRouteId(routeId) ?? routeId,
     directionIndex,
     stops: mergeStops([mergedStops]),

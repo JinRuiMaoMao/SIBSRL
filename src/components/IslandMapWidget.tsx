@@ -42,7 +42,7 @@ import {
   resizePathUserBends,
   updatePathPointsForStopMove,
 } from '../utils/worldMapDrawPathEdit'
-import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
+import { resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
 import { clampPointToRoadCorridor } from '../utils/generalMapRoadSnap'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
@@ -447,19 +447,6 @@ export function IslandMapWidget() {
     setPathLegControls((controls) => resizeLegControls(controls, legCount))
     setPathLegHidden((hidden) => resizeLegHidden(hidden, legCount))
   }, [draftPoints.length, effectiveLegStarts])
-
-  const flattenedDraftPoints = useMemo(
-    () =>
-      draftPoints.length >= 2
-        ? flattenPolylinePath(
-            draftPoints,
-            effectiveLegStarts,
-            roadSnap.snap,
-            pathLegHidden,
-          )
-        : draftPoints,
-    [draftPoints, effectiveLegStarts, pathLegHidden, roadSnap.snap],
-  )
 
   useEffect(() => {
     if (drawInteraction !== 'path-node') {
@@ -1203,7 +1190,7 @@ export function IslandMapWidget() {
         return
       }
 
-      if ('kind' in merged && merged.kind === 'catalog') {
+      if (merged.kind === 'catalog') {
         setDrawInteraction('catalog')
         setDraftPoints([])
         setDraftPathNodes([])

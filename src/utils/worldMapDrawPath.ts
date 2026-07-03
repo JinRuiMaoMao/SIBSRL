@@ -24,16 +24,13 @@ export function mergePathPoints(
 export function resolveTraceAnchorPoint(
   anchor: WorldMapTraceAnchor,
   stops: readonly { id: string; point: WorldMapPoint }[],
-  virtualNodes: readonly WorldMapVirtualNode[],
+  _virtualNodes: readonly WorldMapVirtualNode[],
   pathNodes: readonly { id: string; point: WorldMapPoint }[] = [],
 ): WorldMapPoint | null {
   if (anchor.kind === 'stop') {
     return stops.find((stop) => stop.id === anchor.id)?.point ?? null
   }
-  if (anchor.kind === 'path-node') {
-    return pathNodes.find((node) => node.id === anchor.id)?.point ?? null
-  }
-  return virtualNodes.find((node) => node.id === anchor.id)?.point ?? null
+  return pathNodes.find((node) => node.id === anchor.id)?.point ?? null
 }
 
 export function traceViaForAnchorTarget(

@@ -280,7 +280,6 @@ export function IslandMapDraftPathEditLayer({
   ) => {
     event.stopPropagation()
     event.preventDefault()
-    const svg = svgRef.current ?? event.currentTarget.ownerSVGElement
     const clickPoint = resolvePointer(
       event,
       svgRef.current ?? event.currentTarget.ownerSVGElement,
@@ -308,7 +307,6 @@ export function IslandMapDraftPathEditLayer({
     event.preventDefault()
     const point = points[vertexIndex]
     if (!point) return
-    const svg = svgRef.current ?? event.currentTarget.ownerSVGElement
     const clickPoint = resolvePointer(
       event,
       svgRef.current ?? event.currentTarget.ownerSVGElement,
