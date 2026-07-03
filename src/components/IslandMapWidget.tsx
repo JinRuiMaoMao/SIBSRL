@@ -23,15 +23,20 @@ import {
   buildStopLegStarts,
   resolveEffectiveLegStarts,
   resolveTraceAnchorPoint,
+  traceViaForAnchorTarget,
 } from '../utils/worldMapDrawPath'
 import {
   collapseUserBendToChord,
+  findPathAnchorIndexAfter,
+  findPathAnchorIndexBefore,
   getPathLegRanges,
   hidePathLeg,
   insertPathBendPoint,
   isStopAnchorIndex,
   movePathVertex,
   removePathVertex,
+  retacePathSpanAroundUserBend,
+  retacePathSpanBetweenAnchors,
   resizeLegHidden,
   resizePathUserBends,
   updatePathPointsForStopMove,
@@ -498,12 +503,25 @@ export function IslandMapWidget() {
     }, 2600)
   }, [])
 
+  const traceRoadSegment = useCallback(
+    (from: WorldMapPoint, to: WorldMapPoint, via: Parameters<typeof roadSnap.appendSegment>[2] = []) => {
+      if (!roadSnap.index) return [from, to]
+      const traced = roadSnap.appendSegment(from, to, via)
+      return traced.length >= 2 ? traced : [from, to]
+    },
+    [roadSnap],
+  )
+
   const appendTracedSegment = useCallback(
     (from: WorldMapTraceAnchor, to: WorldMapTraceAnchor) => {
       const fromPoint = resolveTraceAnchorPoint(from, draftStops, draftVirtualNodes, draftPathNodes)
       const toPoint = resolveTraceAnchorPoint(to, draftStops, draftVirtualNodes, draftPathNodes)
       if (!fromPoint || !toPoint) return false
       if (Math.hypot(fromPoint[0] - toPoint[0], fromPoint[1] - toPoint[1]) < 0.00005) return false
+
+      const toConstraint = (node: WorldMapVirtualNode) =>
+        roadSnap.toVirtualNodeConstraint(roadSnap.snapVirtualNode(node.point, node.kind), node.kind)
+      const via = traceViaForAnchorTarget(to, draftVirtualNodes, toConstraint)
 
       pushDrawHistory()
       setDraftPoints((current) => {
@@ -514,6 +532,7 @@ export function IslandMapWidget() {
           if (base.includes(start)) return base
           return [...base, start]
         })
+
         let basePoints = current
         if (basePoints.length > 0) {
           const last = basePoints[basePoints.length - 1]!
@@ -521,21 +540,61 @@ export function IslandMapWidget() {
             basePoints = mergePathPoints(basePoints, [fromPoint])
           }
         }
+
+        const cursor = basePoints.length > 0 ? basePoints[basePoints.length - 1]! : fromPoint
+        const traced = traceRoadSegment(cursor, toPoint, via)
         const merged =
           basePoints.length === 0
-            ? ([fromPoint, toPoint] as WorldMapPoint[])
-            : mergePathPoints(basePoints, [toPoint])
+            ? traced
+            : mergePathPoints(basePoints, traced.length > 1 ? traced.slice(1) : traced)
+
         setPathUserBends((bends) => {
           const next = resizePathUserBends(bends, current.length)
           const added = merged.length - current.length
-          return [...next, ...Array.from({ length: added }, () => false)]
+          return [...next, ...Array.from({ length: Math.max(0, added) }, () => false)]
         })
         return merged
       })
       setPathManuallyEdited(true)
       return true
     },
-    [draftPathNodes, draftStops, draftVirtualNodes, pushDrawHistory],
+    [
+      draftPathNodes,
+      draftStops,
+      draftVirtualNodes,
+      pushDrawHistory,
+      roadSnap,
+      traceRoadSegment,
+    ],
+  )
+
+  const retraceSpanAroundAnchor = useCallback(
+    (
+      points: WorldMapPoint[],
+      legStarts: number[],
+      anchorPoint: WorldMapPoint,
+      anchors: readonly { point: WorldMapPoint }[],
+    ): { points: WorldMapPoint[]; legStarts: number[] } => {
+      if (!roadSnap.index) return { points, legStarts }
+
+      let anchorIndex = -1
+      for (let index = 0; index < points.length; index += 1) {
+        const point = points[index]!
+        if (Math.hypot(point[0] - anchorPoint[0], point[1] - anchorPoint[1]) <= 0.00005) {
+          anchorIndex = index
+          break
+        }
+      }
+      if (anchorIndex < 0) return { points, legStarts }
+
+      const left = findPathAnchorIndexBefore(points, anchors, anchorIndex)
+      const right = findPathAnchorIndexAfter(points, anchors, anchorIndex)
+      if (left >= right) return { points, legStarts }
+
+      const retraced = retacePathSpanBetweenAnchors(points, legStarts, left, right, traceRoadSegment)
+      return retraced ?? { points, legStarts }
+    },
+    [roadSnap.index, traceRoadSegment],
   )
 
   const openPathNodeEditor = useCallback((node: WorldMapDrawPathNode) => {
@@ -726,16 +785,30 @@ export function IslandMapWidget() {
     (stopId: string, point: WorldMapPoint) => {
       const snapped = roadSnap.snap(point)
       pushDrawHistory()
-      setDraftStops((stops) => {
-        const next = stops.map((stop) => (stop.id === stopId ? { ...stop, point: snapped } : stop))
-        setDraftPoints((points) => updatePathPointsForStopMove(points, stops, stopId, snapped))
-        return next
-      })
+
+      const state = draftHistoryRef.current
+      const stop = state.draftStops.find((entry) => entry.id === stopId)
+      if (!stop) return
+
+      const nextStops = state.draftStops.map((entry) =>
+        entry.id === stopId ? { ...entry, point: snapped } : entry,
+      )
+      const moved = updatePathPointsForStopMove(state.draftPoints, state.draftStops, stopId, snapped)
+      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, snapped, [
+        ...nextStops,
+        ...state.draftPathNodes,
+      ])
+
+      setDraftStops(nextStops)
+      setDraftPoints(retraced.points)
+      setPathLegStarts(retraced.legStarts)
+      setPathUserBends(Array.from({ length: retraced.points.length }, () => false))
+      setPathManuallyEdited(true)
       if (pendingStop?.editingStopId === stopId) {
         setPendingStop((current) => (current ? { ...current, point: snapped } : current))
       }
     },
-    [pendingStop?.editingStopId, pushDrawHistory, roadSnap],
+    [pendingStop?.editingStopId, pushDrawHistory, retraceSpanAroundAnchor, roadSnap],
   )
 
   const handleStopClick = useCallback(
@@ -760,19 +833,30 @@ export function IslandMapWidget() {
     (nodeId: string, point: WorldMapPoint) => {
       const snapped = roadSnap.snap(point)
       pushDrawHistory()
-      setDraftPathNodes((nodes) => {
-        const node = nodes.find((entry) => entry.id === nodeId)
-        const next = nodes.map((entry) => (entry.id === nodeId ? { ...entry, point: snapped } : entry))
-        if (node) {
-          setDraftPoints((points) => updatePathPointsForStopMove(points, [node], nodeId, snapped))
-        }
-        return next
-      })
+
+      const state = draftHistoryRef.current
+      const node = state.draftPathNodes.find((entry) => entry.id === nodeId)
+      if (!node) return
+
+      const nextNodes = state.draftPathNodes.map((entry) =>
+        entry.id === nodeId ? { ...entry, point: snapped } : entry,
+      )
+      const moved = updatePathPointsForStopMove(state.draftPoints, [node], nodeId, snapped)
+      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, snapped, [
+        ...state.draftStops,
+        ...nextNodes,
+      ])
+
+      setDraftPathNodes(nextNodes)
+      setDraftPoints(retraced.points)
+      setPathLegStarts(retraced.legStarts)
+      setPathUserBends(Array.from({ length: retraced.points.length }, () => false))
+      setPathManuallyEdited(true)
       if (pendingPathNode?.editingNodeId === nodeId) {
         setPendingPathNode((current) => (current ? { ...current, point: snapped } : current))
       }
     },
-    [pendingPathNode?.editingNodeId, pushDrawHistory, roadSnap],
+    [pendingPathNode?.editingNodeId, pushDrawHistory, retraceSpanAroundAnchor, roadSnap],
   )
 
   const handleConfirmPendingPathNode = useCallback(() => {
@@ -852,10 +936,29 @@ export function IslandMapWidget() {
       const snapped = roadSnap.index
         ? clampPointToRoadCorridor(roadSnap.index, point)
         : roadSnap.snap(point)
+
+      if (pathUserBends[vertexIndex]) {
+        const retraced = retacePathSpanAroundUserBend(
+          draftPoints,
+          pathLegStarts,
+          pathUserBends,
+          vertexIndex,
+          snapped,
+          (from, to) => traceRoadSegment(from, to),
+        )
+        if (retraced) {
+          setDraftPoints(retraced.points)
+          setPathLegStarts(retraced.legStarts)
+          setPathUserBends(retraced.userBends)
+          setPathManuallyEdited(true)
+          return
+        }
+      }
+
       setDraftPoints((points) => movePathVertex(points, vertexIndex, snapped))
       setPathManuallyEdited(true)
     },
-    [roadSnap],
+    [draftPoints, pathLegStarts, pathUserBends, roadSnap, traceRoadSegment],
   )
 
   const handleBendRemove = useCallback(

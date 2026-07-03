@@ -59,7 +59,9 @@ export function IslandMapRouteOverlayLayer({
     userBendIndices.forEach((index) => {
       if (index > legStart && index < legEnd) legUserBends.add(index - legStart)
     })
-    const useEditorPath = smoothRoadCorners && legPoints.length >= 2
+    const usePolylinePath =
+      variant === 'draft' || legPoints.length > 12 || (legUserBends.size === 0 && legPoints.length > 3)
+    const useEditorPath = smoothRoadCorners && !usePolylinePath && legPoints.length >= 2
     if (useEditorPath) {
       const pathD = buildEditorCornerPathD(legPoints, imageWidth, imageHeight, {
         userBendIndices: legUserBends,

@@ -305,6 +305,54 @@ export function isolateUserBendForDrag(
   }
 }
 
+/** Replace path samples between two anchors with a fresh road trace. */
+export function retacePathSpanBetweenAnchors(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  leftAnchorIndex: number,
+  rightAnchorIndex: number,
+  traceSegment: TraceTwoPointFn,
+): { points: WorldMapPoint[]; legStarts: number[] } | null {
+  if (rightAnchorIndex <= leftAnchorIndex) return null
+  const start = points[leftAnchorIndex]!
+  const end = points[rightAnchorIndex]!
+  const traced = traceSegment(start, end)
+  const middle = traced.length > 2 ? traced.slice(1, -1) : []
+  const replaceFrom = leftAnchorIndex + 1
+  const replaceThrough = rightAnchorIndex - 1
+  const newPoints = [
+    ...points.slice(0, replaceFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...middle.map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...points.slice(rightAnchorIndex).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+  return {
+    points: newPoints,
+    legStarts: shiftLegStartsAfterMiddleReplace(
+      legStarts,
+      leftAnchorIndex,
+      replaceFrom,
+      replaceThrough,
+      middle.length,
+    ),
+  }
+}
+
+export function findPathAnchorIndexBefore(
+  points: readonly WorldMapPoint[],
+  anchors: readonly { point: WorldMapPoint }[],
+  index: number,
+): number {
+  return anchorIndexBefore(points, anchors, index)
+}
+
+export function findPathAnchorIndexAfter(
+  points: readonly WorldMapPoint[],
+  anchors: readonly { point: WorldMapPoint }[],
+  index: number,
+): number {
+  return anchorIndexAfter(points, anchors, index)
+}
+
 /** Rebuild both segments beside a bend (prev → bend → next) along nearby roads. */
 export function retacePathSpanAroundUserBend(
   points: readonly WorldMapPoint[],
