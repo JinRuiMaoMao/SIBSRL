@@ -25,25 +25,22 @@ import {
   resolveTraceAnchorPoint,
 } from '../utils/worldMapDrawPath'
 import {
-  syncPathEndpointsToStops,
-  getPathLegRanges,
   collapseUserBendToChord,
+  getPathLegRanges,
   hidePathLeg,
   insertPathBendPoint,
   isStopAnchorIndex,
   movePathVertex,
   removePathVertex,
-  retacePathSpanAroundUserBend,
   resizeLegHidden,
   resizePathUserBends,
   updatePathPointsForStopMove,
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
-import { preloadGeneralMapRoadSnapIndex, clampPointToRoadCorridor, constrainPathToRoadCorridor, snapPointToGeneralMapRoad, traceGeneralMapRoadPath } from '../utils/generalMapRoadSnap'
+import { clampPointToRoadCorridor } from '../utils/generalMapRoadSnap'
 import { nextVirtualNodeOrder } from '../utils/worldMapVirtualNodes'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
-import { generateWorldMapRouteDraft } from '../utils/worldMapRouteGenerate'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import type {
   IslandMapDrawInteraction,
@@ -277,7 +274,6 @@ export function IslandMapWidget() {
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
-  const [generatingRoute, setGeneratingRoute] = useState(false)
   const [permissionDialog, setPermissionDialog] = useState<IslandMapDrawPermissionDialogStep | null>(null)
   const [permissionSending, setPermissionSending] = useState(false)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
@@ -852,35 +848,11 @@ export function IslandMapWidget() {
   }, [pushDrawHistory])
 
   const handleBendDragEnd = useCallback(
-    async (vertexIndex: number, point: WorldMapPoint) => {
-      const index = roadSnap.index ?? (await preloadGeneralMapRoadSnapIndex())
-      const snapped = index ? clampPointToRoadCorridor(index, point) : roadSnap.snap(point)
-      const traceSegment = (from: WorldMapPoint, to: WorldMapPoint) => {
-        if (!index) return [from, to]
-        const traced = traceGeneralMapRoadPath(index, from, to, [], { skipCornerSmooth: true })
-        return constrainPathToRoadCorridor(index, traced.length >= 2 ? traced : [from, to])
-      }
-
-      const snapshot = draftHistoryRef.current
-      const retaced = retacePathSpanAroundUserBend(
-        snapshot.draftPoints,
-        snapshot.pathLegStarts,
-        snapshot.pathUserBends,
-        vertexIndex,
-        snapped,
-        traceSegment,
-      )
-      if (!retaced) return
-
-      const nextPoints = index ? constrainPathToRoadCorridor(index, retaced.points) : retaced.points
-      const nextUserBends = [...retaced.userBends]
-      if (retaced.bendIndex >= 0 && retaced.bendIndex < nextUserBends.length) {
-        nextUserBends[retaced.bendIndex] = true
-      }
-
-      setDraftPoints(nextPoints)
-      setPathLegStarts(retaced.legStarts)
-      setPathUserBends(nextUserBends)
+    (vertexIndex: number, point: WorldMapPoint) => {
+      const snapped = roadSnap.index
+        ? clampPointToRoadCorridor(roadSnap.index, point)
+        : roadSnap.snap(point)
+      setDraftPoints((points) => movePathVertex(points, vertexIndex, snapped))
       setPathManuallyEdited(true)
     },
     [roadSnap],
@@ -1027,88 +999,6 @@ export function IslandMapWidget() {
     }
     setPermissionDialog('confirm')
   }, [isLoggedIn, isMapAdmin, toggleDrawMode, userApiEnabled])
-
-  const handleGenerateRoute = useCallback(async () => {
-    const routeId = drawRouteId.trim()
-    if (!routeId) {
-      showExportHint(t('islandMapDrawGenerateNeedRouteId'))
-      return
-    }
-    setGeneratingRoute(true)
-    try {
-      const index = roadSnap.index ?? (await preloadGeneralMapRoadSnapIndex())
-      if (!index) {
-        showExportHint(t('islandMapDrawGenerateFailed'))
-        return
-      }
-      setLayer('general')
-      const result = await generateWorldMapRouteDraft({
-        routeId,
-        directionIndex: drawDirectionIndex,
-        existingStops: draftStops,
-        virtualNodes: draftVirtualNodes,
-        snap: (point) => snapPointToGeneralMapRoad(index, point),
-      })
-      if (!result) {
-        showExportHint(t('islandMapDrawGenerateFailed'))
-        return
-      }
-      pushDrawHistory()
-      setDrawInteraction('route')
-      setDraftStops(result.stops)
-      const nextPoints =
-        pathManuallyEdited && draftPoints.length >= 2
-          ? syncPathEndpointsToStops(draftPoints, result.stops)
-          : result.points
-      const nextLegStarts =
-        pathManuallyEdited && draftPoints.length >= 2
-          ? pathLegStarts
-          : buildStopLegStarts(result.stops.length)
-      setDraftPoints(nextPoints)
-      const legCount =
-        nextPoints.length >= 2 ? getPathLegRanges(nextLegStarts, nextPoints.length).length : 0
-      setPathLegStarts(nextLegStarts)
-      setPathLegControls([])
-      setPathLegHidden(Array.from({ length: legCount }, () => false))
-      setPathUserBends(Array.from({ length: nextPoints.length }, () => false))
-      if (!pathManuallyEdited || draftPoints.length < 2) {
-        setPathManuallyEdited(false)
-      }
-      const fitPoints =
-        nextPoints.length >= 2 ? nextPoints : result.stops.map((stop) => stop.point)
-      if (fitPoints.length > 0) {
-        setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
-      }
-      showExportHint(
-        result.estimatedCount > 0
-          ? t('islandMapDrawGenerateDoneEstimated', {
-              routeId,
-              points: nextPoints.length,
-              count: result.estimatedCount,
-            })
-          : t('islandMapDrawGenerateDone', { routeId, points: nextPoints.length }),
-      )
-    } catch (error) {
-      console.error('Route generate failed', error)
-      showExportHint(t('islandMapDrawGenerateFailed'))
-    } finally {
-      setGeneratingRoute(false)
-    }
-  }, [
-    drawDirectionIndex,
-    drawRouteId,
-    draftPoints,
-    draftStops,
-    draftPathNodes,
-    draftVirtualNodes,
-    expanded,
-    pathLegStarts,
-    pathManuallyEdited,
-    pushDrawHistory,
-    roadSnap.isOnRoad,
-    showExportHint,
-    t,
-  ])
 
   const handleSendDrawPermissionRequest = useCallback(async () => {
     if (!token) {
@@ -1520,15 +1410,6 @@ export function IslandMapWidget() {
           title={t('islandMapDrawClearHint')}
         >
           {t('islandMapDrawClear')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn island-map-btn--generate"
-          onClick={() => void handleGenerateRoute()}
-          disabled={generatingRoute || !drawRouteId.trim()}
-          title={t('islandMapDrawGenerateHint')}
-        >
-          {generatingRoute ? t('islandMapDrawGenerating') : t('islandMapDrawGenerate')}
         </button>
         <button
           type="button"
