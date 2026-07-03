@@ -30,7 +30,6 @@ const DEFAULT_MAX_PLANS = 12
 const TOPOLOGICAL_COLLECT_TARGET = 24
 const MAX_FRONTIER_STATES = 1200
 const MAX_RAW_COLLECTED = 96
-const MAX_LEGS_PER_EXPANSION = 72
 
 /** 至少被两条不同线路使用的站，才视为可转车站 */
 export function buildTransferHubStopKeys(displayRoutes: BusRoute[]): Set<string> {

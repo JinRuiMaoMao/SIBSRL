@@ -129,8 +129,14 @@ function publishStandalonePlugin(buildTag: string): Plugin {
 }
 
 /** 开发时 / 与 /index.html 为开始页；/routes.html 与 dev.html 为线路查询 */
+interface AppPageEntry {
+  tab: string
+  publishFile: string
+  devFile: string
+}
+
 function devEntryRedirectPlugin(): Plugin {
-  const devAppPages = APP_PAGES.filter((page) => page.tab !== 'routes')
+  const devAppPages = (APP_PAGES as AppPageEntry[]).filter((page) => page.tab !== 'routes')
 
   return {
     name: 'dev-entry-redirect',

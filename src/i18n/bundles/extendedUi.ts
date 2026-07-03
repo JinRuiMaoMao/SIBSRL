@@ -830,7 +830,7 @@ const extendedKeys = {
     pl: 'Jeśli UI jest nieaktualne, uruchom npm run build i odśwież Ctrl+F5.',
     sv: 'Om gränssnittet ser fel ut, kör npm run build och hård uppdatering (Ctrl+F5).',
   },
-} as const satisfies Record<MessageKey, Record<string, string>>
+} as const satisfies Partial<Record<MessageKey, Record<string, string>>>
 
 const EXTENDED_LOCALES = [
   'vi',

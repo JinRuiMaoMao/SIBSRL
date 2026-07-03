@@ -12,7 +12,7 @@ export interface SeasonalAvailabilityWindow {
 
 type SeasonalAvailabilityMap = Record<string, SeasonalAvailabilityWindow[]>
 
-const availabilityMap = seasonalAvailabilityJson as SeasonalAvailabilityMap & {
+const availabilityMap = seasonalAvailabilityJson as unknown as SeasonalAvailabilityMap & {
   _comment?: string
 }
 

@@ -115,10 +115,9 @@ function computeTooltipPosition(
     }
   }
 
-  const candidates: Array<'top' | 'bottom' | 'left' | 'right'> =
-    preferred && preferred !== 'center'
-      ? [preferred, 'bottom', 'top', 'right', 'left']
-      : ['bottom', 'top', 'right', 'left']
+  const candidates: Array<'top' | 'bottom' | 'left' | 'right'> = preferred
+    ? [preferred, 'bottom', 'top', 'right', 'left']
+    : ['bottom', 'top', 'right', 'left']
 
   for (const placement of candidates) {
     let top = 0

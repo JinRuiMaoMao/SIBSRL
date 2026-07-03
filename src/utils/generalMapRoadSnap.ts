@@ -289,10 +289,6 @@ class GeneralMapRoadSnapIndex {
     return false
   }
 
-  private cellHasRoad(gx: number, gy: number): boolean {
-    return this.cellHasSurface(gx, gy, (x, y) => this.isRoadAtPixel(x, y))
-  }
-
   private cellHasPlainRoad(gx: number, gy: number): boolean {
     return this.cellHasSurface(gx, gy, (x, y) => this.isPlainRoadAtPixel(x, y))
   }
@@ -375,7 +371,7 @@ class GeneralMapRoadSnapIndex {
   }
 
   snapVirtualNode(point: WorldMapPoint, kind: VirtualNodeKind): WorldMapPoint {
-    const { px, py, gx, gy } = this.toGridPoint(point)
+    const { gx, gy } = this.toGridPoint(point)
     let cell: { gx: number; gy: number } | null = null
 
     switch (kind) {
@@ -627,17 +623,6 @@ class GeneralMapRoadSnapIndex {
     const { px, py } = this.toGridPoint(point)
     if (this.isRoadAtPixel(px, py)) return point
     return this.snap(point)
-  }
-
-  private isJunctionCell(gx: number, gy: number): boolean {
-    return this.roadNeighborCount(gx, gy) !== 2
-  }
-
-  private isJunctionPoint(point: WorldMapPoint): boolean {
-    const { gx, gy } = this.toGridPoint(point)
-    const cell = this.findNearestRoadCell(gx, gy)
-    if (!cell) return false
-    return this.isJunctionCell(cell.gx, cell.gy)
   }
 
   private smoothRoadCorners(points: WorldMapPoint[]): WorldMapPoint[] {

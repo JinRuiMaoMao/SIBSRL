@@ -1,5 +1,5 @@
 import { routeIdToPageFilename } from './routeNavigation'
-import { listRouteMapKinds, resolveRouteMapRouteId, type RouteMapViewKind } from '../data/routeMapsManifest'
+import { resolveRouteMapRouteId, type RouteMapViewKind } from '../data/routeMapsManifest'
 
 export type { RouteMapViewKind }
 

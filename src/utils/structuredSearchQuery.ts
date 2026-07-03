@@ -151,7 +151,7 @@ export function stripOperatorTokens(query: string): string {
 }
 
 export function stripTypeFilterTokens(query: string): string {
-  let text = removeStructuredTokens(query, (negated, key, _value, shorthand) => {
+  let text = removeStructuredTokens(query, (_negated, key, _value, shorthand) => {
     if (shorthand) return true
     return key === 'type' || key === 'cat'
   })

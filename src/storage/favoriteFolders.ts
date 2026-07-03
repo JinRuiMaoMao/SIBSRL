@@ -51,7 +51,7 @@ export function readFavoriteFoldersState(): FavoriteFoldersState {
   try {
     const stored = JSON.parse(localStorage.getItem(FAVORITE_FOLDERS_STORAGE_KEY) ?? 'null')
     if (stored?.version === 2 && Array.isArray(stored.folders)) {
-      const folders = stored.folders
+      const folders = (stored.folders as unknown[])
         .map(normalizeFolder)
         .filter((folder): folder is FavoriteFolder => folder != null)
       if (folders.length === 0) return defaultState()

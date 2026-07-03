@@ -30,10 +30,7 @@ function groupKey(title: BilingualText): string {
   return `${title.zh}\0${title.en}`
 }
 
-function mergeGroupLists(
-  a: NonNullable<VersionUpdateEntry['groups']>,
-  b: NonNullable<VersionUpdateEntry['groups']>,
-): NonNullable<VersionUpdateEntry['groups']> {
+function mergeGroupLists(a: VersionUpdateGroup[], b: VersionUpdateGroup[]): VersionUpdateGroup[] {
   const merged = a.map((group) => ({
     title: group.title,
     items: group.items ? [...group.items] : undefined,
@@ -65,7 +62,7 @@ function mergeGroupLists(
   return merged
 }
 
-function itemsAsGroup(items: BilingualText[]): NonNullable<VersionUpdateEntry['groups']> {
+function itemsAsGroup(items: BilingualText[]): VersionUpdateGroup[] {
   return [{ title: { zh: '其他', en: 'Other' }, items: [...items] }]
 }
 
@@ -95,14 +92,7 @@ export function mergeVersionUpdatesByDate(entries: VersionUpdateEntry[]): Versio
     }
 
     const primary = sameDay[0]!
-    let groups = primary.groups
-      ? [...primary.groups.map((g) => ({
-          ...g,
-          items: g.items ? [...g.items] : undefined,
-          additions: g.additions ? [...g.additions] : undefined,
-          fixes: g.fixes ? [...g.fixes] : undefined,
-        }))]
-      : []
+    let groups: VersionUpdateGroup[] = primary.groups ? [...primary.groups] : []
     const items = primary.items ? [...primary.items] : []
     let easterEgg = primary.easterEgg
     let easterEggTitle = primary.easterEggTitle

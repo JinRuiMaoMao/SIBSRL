@@ -27,10 +27,6 @@ function gameStopTokens(stop: { nameCn: string; nameEn: string }): string[] {
   return stopTokens(stop.nameCn, stop.nameEn)
 }
 
-function legOriginTokens(leg: RouteLeg): string[] {
-  return stopTokens(leg.from.zh, leg.from.en)
-}
-
 function resolveBoundForDirection(
   route: BusRoute,
   directionIndex: number,

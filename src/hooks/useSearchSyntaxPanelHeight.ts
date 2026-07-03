@@ -81,8 +81,8 @@ export function useSearchSyntaxPanelHeight(
     window.addEventListener('resize', sync)
 
     const dock = panel.closest('.route-syntax-dock')
-    const onTransitionEnd = (event: TransitionEvent) => {
-      if (event.propertyName === 'grid-template-rows') sync()
+    const onTransitionEnd = (event: Event) => {
+      if ((event as TransitionEvent).propertyName === 'grid-template-rows') sync()
     }
     dock?.addEventListener('transitionend', onTransitionEnd)
 

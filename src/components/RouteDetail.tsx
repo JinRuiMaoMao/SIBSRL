@@ -31,7 +31,6 @@ import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { StopNameDisplay } from './StopNameDisplay'
-import { TextWithTurningPointMarkers } from './TextWithTurningPointMarkers'
 
 interface RouteDetailProps {
   route: BusRoute

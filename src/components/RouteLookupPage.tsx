@@ -64,7 +64,6 @@ import {
 import { shouldReduceMotion } from '../storage/appPreferences'
 import { canAutoStartGuidedTour, getGuidedTourAutoStartDelayMs } from '../storage/guidedTour'
 import {
-  buildRouteShareUrl,
   buildStopPairSearchQuery,
   clearRouteFromLocation,
   clearSearchFromLocation,

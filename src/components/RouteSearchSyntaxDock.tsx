@@ -1,4 +1,4 @@
-import { useRef, type RefObject } from 'react'
+import type { RefObject } from 'react'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 
 interface RouteSearchSyntaxDockProps {

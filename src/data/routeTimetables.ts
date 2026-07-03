@@ -3,7 +3,7 @@ import type { BusRoute } from '../types/route'
 import type { GameRouteTimetableRecord, RouteTimetablesFile } from '../types/routeTimetableData'
 import { DISPLAY_ONLY_RENAMES } from '../utils/routeMerge'
 
-const file = routeTimetablesJson as RouteTimetablesFile
+const file = routeTimetablesJson as unknown as RouteTimetablesFile
 
 const byRouteKey = new Map<string, GameRouteTimetableRecord>(
   file.data.map((entry) => [entry.route, entry]),

@@ -19,7 +19,7 @@ interface NavigatorWithConnection extends Navigator {
   connection?: NetworkInformationLike
 }
 
-interface WindowWithIdleCallback extends Window {
+interface WindowWithIdleCallback {
   requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number
 }
 

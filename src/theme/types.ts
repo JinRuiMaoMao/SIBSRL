@@ -1,6 +1,9 @@
 /** Stored on `<html data-theme>` — `system` follows OS via CSS media queries */
 export type ThemePreference = 'system' | 'dark' | 'light'
 
+/** Resolved appearance applied to `<html data-theme>` */
+export type ResolvedTheme = 'dark' | 'light'
+
 /** @deprecated Use ThemePreference */
 export type Theme = ThemePreference
 
