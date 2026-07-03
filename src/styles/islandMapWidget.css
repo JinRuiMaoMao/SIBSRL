@@ -636,13 +636,13 @@ html.has-compact-tab-nav .island-map--widget {
 
 .island-map-draft-path-edit-segment-hit {
   stroke: transparent;
-  pointer-events: none;
+  pointer-events: stroke;
   cursor: pointer;
   vector-effect: non-scaling-stroke;
 }
 
 .island-map-draft-path-edit--shift-held .island-map-draft-path-edit-segment-hit {
-  pointer-events: stroke;
+  cursor: crosshair;
 }
 
 .island-map-draft-path-edit-segment-hit--leg:active {

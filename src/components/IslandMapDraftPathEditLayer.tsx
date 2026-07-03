@@ -101,6 +101,7 @@ export function IslandMapDraftPathEditLayer({
     startClientY: number
     clickPoint: WorldMapPoint
     moved: boolean
+    shiftHeldAtDown?: boolean
     captureTarget: SVGElement | null
   } | null>(null)
   const lastTapRef = useRef<{ key: string; time: number } | null>(null)
@@ -210,13 +211,15 @@ export function IslandMapDraftPathEditLayer({
           if (drag.kind === 'segment') {
             const segmentIndex = drag.segmentIndex
             const clickPoint = drag.clickPoint
-            if (singleTapTimerRef.current != null) window.clearTimeout(singleTapTimerRef.current)
-            singleTapTimerRef.current = window.setTimeout(() => {
-              singleTapTimerRef.current = null
-              if (lastTapRef.current?.key !== tapKey) return
-              lastTapRef.current = null
-              onBendInsert(segmentIndex, snapPoint(clickPoint))
-            }, DOUBLE_TAP_MS)
+            if (drag.shiftHeldAtDown) {
+              if (singleTapTimerRef.current != null) window.clearTimeout(singleTapTimerRef.current)
+              singleTapTimerRef.current = window.setTimeout(() => {
+                singleTapTimerRef.current = null
+                if (lastTapRef.current?.key !== tapKey) return
+                lastTapRef.current = null
+                onBendInsert(segmentIndex, snapPoint(clickPoint))
+              }, DOUBLE_TAP_MS)
+            }
           }
         }
       } else if (drag.kind === 'vertex' && drag.vertexIndex != null) {
@@ -264,7 +267,6 @@ export function IslandMapDraftPathEditLayer({
 
   const hitWidth = hitStrokeWidth(imageWidth)
   const ctrlRadius = handleRadius(imageWidth)
-  const showSegmentHits = shiftHeld && bendVertices.length >= 0
 
   const resolvePointer = (
     event: PointerEvent<SVGElement> | globalThis.PointerEvent,
@@ -293,6 +295,7 @@ export function IslandMapDraftPathEditLayer({
       startClientY: event.clientY,
       clickPoint,
       moved: false,
+      shiftHeldAtDown: shiftHeld,
       captureTarget: event.currentTarget,
     }
     setActiveKey(`s-${segment.segmentIndex}`)
@@ -337,8 +340,7 @@ export function IslandMapDraftPathEditLayer({
       aria-hidden
       style={{ touchAction: 'none' }}
     >
-      {showSegmentHits
-        ? segments.map((segment) => {
+      {segments.map((segment) => {
             const pathD = segmentPathD(segment.start, segment.end, imageWidth, imageHeight)
             const isActive = activeKey === `s-${segment.segmentIndex}`
             return (
@@ -351,8 +353,7 @@ export function IslandMapDraftPathEditLayer({
                 onPointerDown={(event) => beginSegmentInteraction(segment, event)}
               />
             )
-          })
-        : null}
+          })}
       {bendVertices.map((vertexIndex) => {
         const point = points[vertexIndex]
         if (!point) return null
