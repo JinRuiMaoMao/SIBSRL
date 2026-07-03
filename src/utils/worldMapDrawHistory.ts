@@ -1,11 +1,10 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapDrawPathNode, WorldMapVirtualNode, IslandMapDrawInteraction } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapDrawPathNode, IslandMapDrawInteraction } from '../types/worldMapDraw'
 
 export interface DrawDraftSnapshot {
   draftPoints: WorldMapPoint[]
   draftStops: WorldMapDrawStop[]
   draftPathNodes: WorldMapDrawPathNode[]
-  draftVirtualNodes: WorldMapVirtualNode[]
   pathLegStarts: number[]
   pathLegControls: (WorldMapPoint | null)[]
   pathLegHidden: boolean[]
@@ -25,10 +24,6 @@ export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnaps
       name: { ...stop.name },
     })),
     draftPathNodes: (state.draftPathNodes ?? []).map((node) => ({
-      ...node,
-      point: [node.point[0], node.point[1]] as WorldMapPoint,
-    })),
-    draftVirtualNodes: state.draftVirtualNodes.map((node) => ({
       ...node,
       point: [node.point[0], node.point[1]] as WorldMapPoint,
     })),

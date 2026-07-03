@@ -3,14 +3,14 @@ import { useLocale } from '../i18n/LocaleContext'
 
 export interface IslandMapDrawClearSelection {
   stops: boolean
-  virtualNodes: boolean
+  pathNodes: boolean
   path: boolean
 }
 
 interface IslandMapDrawClearDialogProps {
   open: boolean
   stopCount: number
-  virtualNodeCount: number
+  pathNodeCount: number
   hasPath: boolean
   onCancel: () => void
   onConfirm: (selection: IslandMapDrawClearSelection) => void
@@ -19,42 +19,42 @@ interface IslandMapDrawClearDialogProps {
 export function IslandMapDrawClearDialog({
   open,
   stopCount,
-  virtualNodeCount,
+  pathNodeCount,
   hasPath,
   onCancel,
   onConfirm,
 }: IslandMapDrawClearDialogProps) {
   const { t } = useLocale()
   const [clearStops, setClearStops] = useState(false)
-  const [clearVirtualNodes, setClearVirtualNodes] = useState(false)
+  const [clearPathNodes, setClearPathNodes] = useState(false)
   const [clearPath, setClearPath] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!open) return
     setClearStops(stopCount > 0)
-    setClearVirtualNodes(virtualNodeCount > 0)
+    setClearPathNodes(pathNodeCount > 0)
     setClearPath(hasPath)
     setError(null)
-  }, [hasPath, open, stopCount, virtualNodeCount])
+  }, [hasPath, open, pathNodeCount, stopCount])
 
   if (!open) return null
 
   const handleConfirm = () => {
-    if (!clearStops && !clearVirtualNodes && !clearPath) {
+    if (!clearStops && !clearPathNodes && !clearPath) {
       setError(t('islandMapDrawClearNeedSelection'))
       return
     }
     onConfirm({
       stops: clearStops,
-      virtualNodes: clearVirtualNodes,
+      pathNodes: clearPathNodes,
       path: clearPath,
     })
   }
 
   const selectAll = () => {
     setClearStops(stopCount > 0)
-    setClearVirtualNodes(virtualNodeCount > 0)
+    setClearPathNodes(pathNodeCount > 0)
     setClearPath(hasPath)
     setError(null)
   }
@@ -86,11 +86,11 @@ export function IslandMapDrawClearDialog({
           <label className="island-map-draw-export-check">
             <input
               type="checkbox"
-              checked={clearVirtualNodes}
-              disabled={virtualNodeCount === 0}
-              onChange={(event) => setClearVirtualNodes(event.target.checked)}
+              checked={clearPathNodes}
+              disabled={pathNodeCount === 0}
+              onChange={(event) => setClearPathNodes(event.target.checked)}
             />
-            <span>{t('islandMapDrawClearIncludeVirtualNodes', { count: virtualNodeCount })}</span>
+            <span>{t('islandMapDrawClearIncludePathNodes', { count: pathNodeCount })}</span>
           </label>
           <label className="island-map-draw-export-check">
             <input
@@ -102,13 +102,11 @@ export function IslandMapDrawClearDialog({
             <span>{t('islandMapDrawClearIncludePath')}</span>
           </label>
         </fieldset>
-        <div className="island-map-draw-panel-row">
+        {error ? <p className="island-map-draw-export-error">{error}</p> : null}
+        <div className="app-dialog-actions">
           <button type="button" className="island-map-btn" onClick={selectAll}>
             {t('islandMapDrawClearSelectAll')}
           </button>
-        </div>
-        {error ? <p className="island-map-draw-export-error">{error}</p> : null}
-        <div className="island-map-draw-dialog-actions">
           <button type="button" className="island-map-btn" onClick={onCancel}>
             {t('islandMapDrawExportCancel')}
           </button>

@@ -5,7 +5,7 @@ interface IslandMapImportExportPanelProps {
   interaction: IslandMapDrawInteraction
   routeId: string
   stopCount: number
-  virtualNodeCount: number
+  pathNodeCount: number
   canExport: boolean
   canClear: boolean
   exportHint: string | null
@@ -21,7 +21,7 @@ export function IslandMapImportExportPanel({
   interaction,
   routeId,
   stopCount,
-  virtualNodeCount,
+  pathNodeCount,
   canExport,
   canClear,
   exportHint,
@@ -87,7 +87,7 @@ export function IslandMapImportExportPanel({
             {t('islandMapDrawStopCount', { count: stopCount })}
           </span>
           <span className="island-map-draw-count">
-            {t('islandMapDrawVirtualCount', { count: virtualNodeCount })}
+            {t('islandMapDrawPathNodeCount', { count: pathNodeCount })}
           </span>
         </div>
       ) : null}

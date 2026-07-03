@@ -60,7 +60,7 @@ export interface WorldMapRouteExportPayload {
 
 export interface WorldMapRouteExportSelection {
   includeStops: boolean
-  includeVirtualNodes: boolean
+  includePathNodes: boolean
   includePath: boolean
 }
 
@@ -132,17 +132,16 @@ export function buildWorldMapRouteExportPayload(
   directionIndex: number,
   points: readonly WorldMapPoint[],
   stops: readonly WorldMapDrawStop[] = [],
-  virtualNodes: readonly WorldMapVirtualNode[] = [],
   fallbackRouteId?: string,
   selection: WorldMapRouteExportSelection = {
     includeStops: true,
-    includeVirtualNodes: true,
+    includePathNodes: true,
     includePath: true,
   },
   editorMeta: WorldMapRouteExportEditorMeta = {},
   pathNodes: readonly WorldMapDrawPathNode[] = [],
 ): WorldMapRouteExportPayload | null {
-  const canonicalId = resolveWorldMapExportRouteId(routeId, virtualNodes, fallbackRouteId)
+  const canonicalId = resolveWorldMapExportRouteId(routeId, [], fallbackRouteId)
   const exportPoints =
     selection.includePath && points.length >= 2
       ? points.map(([x, y]) => [roundCoord(x), roundCoord(y)] as WorldMapPoint)
@@ -153,38 +152,27 @@ export function buildWorldMapRouteExportPayload(
         point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
       }))
     : []
-  const exportVirtualNodes = selection.includeVirtualNodes
-    ? [...virtualNodes]
-        .sort((a, b) => a.order - b.order)
+  const exportPathNodes = selection.includePathNodes
+    ? pathNodes
         .map((node) => ({
-          order: node.order,
-          routeId: canonicalVirtualNodeRouteId(node.routeId),
-          kind: node.kind,
+          ...(node.label?.trim() ? { label: node.label.trim() } : {}),
           point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
         }))
+        .filter((node) => node.point.length === 2)
     : []
 
-  if (!canonicalId || (exportPoints.length === 0 && exportStops.length === 0 && exportVirtualNodes.length === 0)) {
+  if (!canonicalId || (exportPoints.length === 0 && exportStops.length === 0 && exportPathNodes.length === 0)) {
     return null
   }
 
   const included: string[] = []
   if (exportStops.length > 0) included.push('stops')
-  if (exportVirtualNodes.length > 0) included.push('virtual nodes')
   if (exportPathNodes.length > 0) included.push('path nodes')
   if (exportPoints.length > 0) included.push('path')
 
   const direction: WorldMapRouteExportPayload['directions'][number] = { directionIndex }
   if (exportPoints.length > 0) direction.points = exportPoints
   if (exportStops.length > 0) direction.stops = exportStops
-  if (exportVirtualNodes.length > 0) direction.virtualNodes = exportVirtualNodes
-
-  const exportPathNodes = pathNodes
-    .map((node) => ({
-      ...(node.label?.trim() ? { label: node.label.trim() } : {}),
-      point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
-    }))
-    .filter((node) => node.point.length === 2)
   if (exportPathNodes.length > 0) direction.pathNodes = exportPathNodes
 
   if (exportPoints.length > 0) {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
 import {
   collectWorldMapDrawRouteIds,
   filterWorldMapDrawSliceForRoute,
@@ -22,7 +22,7 @@ interface IslandMapDrawExportDialogProps {
   routeId: string
   directionIndex: number
   stops: readonly WorldMapDrawStop[]
-  virtualNodes: readonly WorldMapVirtualNode[]
+  pathNodes: readonly WorldMapDrawPathNode[]
   points: readonly WorldMapPoint[]
   mergeFiles: readonly IslandMapDrawExportMergeFile[]
   sourceSlices: readonly WorldMapDrawDraftSlice[]
@@ -45,7 +45,7 @@ export function IslandMapDrawExportDialog({
   routeId,
   directionIndex,
   stops,
-  virtualNodes,
+  pathNodes,
   points,
   mergeFiles,
   sourceSlices,
@@ -58,7 +58,7 @@ export function IslandMapDrawExportDialog({
   const { t } = useLocale()
   const mergeInputRef = useRef<HTMLInputElement>(null)
   const [includeStops, setIncludeStops] = useState(false)
-  const [includeVirtualNodes, setIncludeVirtualNodes] = useState(false)
+  const [includePathNodes, setIncludePathNodes] = useState(false)
   const [includePath, setIncludePath] = useState(false)
   const [exportRouteId, setExportRouteId] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -66,10 +66,10 @@ export function IslandMapDrawExportDialog({
   const merged = useMemo(
     () =>
       mergeWorldMapDrawSlices([
-        { routeId, directionIndex, points: [...points], stops: [...stops], virtualNodes: [...virtualNodes] },
+        { routeId, directionIndex, points: [...points], stops: [...stops], virtualNodes: [] },
         ...mergeFiles.map((file) => file.slice),
       ]),
-    [directionIndex, mergeFiles, points, routeId, stops, virtualNodes],
+    [directionIndex, mergeFiles, points, routeId, stops],
   )
 
   const routeIds = useMemo(() => collectWorldMapDrawRouteIds(sourceSlices), [sourceSlices])
@@ -86,10 +86,10 @@ export function IslandMapDrawExportDialog({
     () =>
       resolveWorldMapExportRouteId(
         exportRouteId || routeId || filtered.routeId,
-        filtered.virtualNodes,
+        [],
         overlayRouteId,
       ),
-    [exportRouteId, filtered.routeId, filtered.virtualNodes, overlayRouteId, routeId],
+    [exportRouteId, filtered.routeId, overlayRouteId, routeId],
   )
 
   const canIncludePath = filtered.points.length >= 2 || filtered.stops.length >= 2
@@ -105,8 +105,8 @@ export function IslandMapDrawExportDialog({
   useEffect(() => {
     if (!open) return
     setIncludeStops(filtered.stops.length > 0)
-    setIncludeVirtualNodes(filtered.virtualNodes.length > 0)
-  }, [exportRouteId, filtered.stops.length, filtered.virtualNodes.length, open])
+    setIncludePathNodes(pathNodes.length > 0)
+  }, [exportRouteId, filtered.stops.length, open, pathNodes.length])
 
   if (!open) return null
 
@@ -115,7 +115,7 @@ export function IslandMapDrawExportDialog({
       setError(t('islandMapDrawExportNeedRouteId'))
       return
     }
-    if (!includeStops && !includeVirtualNodes && !includePath) {
+    if (!includeStops && !includePathNodes && !includePath) {
       setError(t('islandMapDrawExportNeedSelection'))
       return
     }
@@ -123,15 +123,15 @@ export function IslandMapDrawExportDialog({
       setError(t('islandMapDrawExportNoStops'))
       return
     }
-    if (includeVirtualNodes && filtered.virtualNodes.length === 0) {
-      setError(t('islandMapDrawExportNoVirtualNodes'))
+    if (includePathNodes && pathNodes.length === 0) {
+      setError(t('islandMapDrawExportNoPathNodes'))
       return
     }
     if (includePath && !canIncludePath) {
       setError(t('islandMapDrawExportNoPath'))
       return
     }
-    onConfirm({ includeStops, includeVirtualNodes, includePath }, filtered)
+    onConfirm({ includeStops, includePathNodes, includePath }, filtered)
   }
 
   return (
@@ -185,13 +185,11 @@ export function IslandMapDrawExportDialog({
           <label className="island-map-export-dialog-check">
             <input
               type="checkbox"
-              checked={includeVirtualNodes}
-              disabled={filtered.virtualNodes.length === 0}
-              onChange={(event) => setIncludeVirtualNodes(event.target.checked)}
+              checked={includePathNodes}
+              disabled={pathNodes.length === 0}
+              onChange={(event) => setIncludePathNodes(event.target.checked)}
             />
-            <span>
-              {t('islandMapDrawExportIncludeVirtualNodes', { count: filtered.virtualNodes.length })}
-            </span>
+            <span>{t('islandMapDrawExportIncludePathNodes', { count: pathNodes.length })}</span>
           </label>
           <label className="island-map-export-dialog-check">
             <input
@@ -251,13 +249,12 @@ export function IslandMapDrawExportDialog({
           )}
         </div>
 
-        {error ? <p className="island-map-export-dialog-error">{error}</p> : null}
-
+        {error ? <p className="island-map-draw-export-error">{error}</p> : null}
         <div className="app-dialog-actions">
-          <button type="button" className="app-dialog-btn" onClick={onCancel}>
+          <button type="button" className="island-map-btn" onClick={onCancel}>
             {t('islandMapDrawExportCancel')}
           </button>
-          <button type="button" className="app-dialog-btn app-dialog-btn--primary" onClick={handleConfirm}>
+          <button type="button" className="island-map-btn island-map-btn--export" onClick={handleConfirm}>
             {t('islandMapDrawExportConfirm')}
           </button>
         </div>

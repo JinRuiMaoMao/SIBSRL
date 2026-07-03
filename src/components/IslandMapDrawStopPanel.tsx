@@ -70,9 +70,7 @@ export function IslandMapDrawStopPanel({
       <p className="island-map-draw-help">
         {interaction === 'route'
           ? t('islandMapDrawRouteHelp')
-          : interaction === 'virtual'
-            ? t('islandMapDrawVirtualHelp')
-            : t('islandMapDrawCatalogHelp')}
+          : t('islandMapDrawCatalogHelp')}
       </p>
 
       {pendingStop ? (
