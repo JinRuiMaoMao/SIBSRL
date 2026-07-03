@@ -16,6 +16,8 @@ interface IslandMapStopOverlayLayerProps {
   showStopLabels?: boolean
   stopLabelScale?: number
   onStopPointerDown?: (stopId: string, event: PointerEvent<SVGGElement>) => void
+  /** When false, parent handles nearest-target picking (route draw mode). */
+  directPick?: boolean
 }
 
 export function IslandMapStopOverlayLayer({
@@ -30,12 +32,13 @@ export function IslandMapStopOverlayLayer({
   showStopLabels = true,
   stopLabelScale = 1,
   onStopPointerDown,
+  directPick = true,
 }: IslandMapStopOverlayLayerProps) {
   const { locale } = useLocale()
   const scale = normalizeStopLabelScale(stopLabelScale)
   const markerSize = Math.max(8, imageWidth * 0.0045 * scale)
   const fontSize = Math.max(11, imageWidth * 0.0032 * scale)
-  const hitSize = Math.max(markerSize * 2.2, 18)
+  const hitSize = markerSize * 1.6
 
   return (
     <svg
@@ -56,7 +59,7 @@ export function IslandMapStopOverlayLayer({
             key={stop.id}
             className={`island-map-stop-overlay-item${isSelected ? ' island-map-stop-overlay-item--selected' : ''}${isTraceSelected ? ' island-map-stop-overlay-item--trace-selected' : ''}${isDragging ? ' island-map-stop-overlay-item--dragging' : ''}`.trim()}
             onPointerDown={
-              editable && onStopPointerDown
+              editable && directPick && onStopPointerDown
                 ? (event) => {
                     event.stopPropagation()
                     onStopPointerDown(stop.id, event)

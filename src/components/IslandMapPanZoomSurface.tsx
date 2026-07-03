@@ -6,6 +6,7 @@ import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import { IslandMapPathNodeOverlayLayer } from './IslandMapPathNodeOverlayLayer'
 import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
+import { pickDrawRouteTarget } from '../utils/mapDrawPickTarget'
 
 export interface PanZoomState {
   x: number
@@ -696,6 +697,75 @@ export function IslandMapPanZoomSurface({
     }
   }, [draggingNodeId, imageSize, onPathNodeClick, onPathNodeDrag, onPathNodeDragEnd, panZoom])
 
+  const userBendIndexSet = useMemo(() => {
+    const set = new Set<number>()
+    pathUserBends.forEach((isUser, index) => {
+      if (isUser) set.add(index)
+    })
+    return set
+  }, [pathUserBends])
+
+  const routeDrawUsesParentPick = drawMode && drawInteraction === 'route'
+
+  const onPointerDownCapture = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!routeDrawUsesParentPick || event.button !== 0) return
+      if (stopDragRef.current || nodeDragRef.current || pathEditActiveRef.current) return
+      if (!panZoom || !imageSize) return
+
+      const rect = event.currentTarget.getBoundingClientRect()
+      const livePanZoom = panZoomRef.current ?? panZoom
+      const picked = pickDrawRouteTarget({
+        clientX: event.clientX,
+        clientY: event.clientY,
+        viewportRect: rect,
+        panZoom: livePanZoom,
+        imageSize,
+        stops: draftStops,
+        pathNodes: draftPathNodes,
+        bendPoints: draftPoints,
+        userBendIndices: userBendIndexSet,
+      })
+
+      if (!picked || picked.kind === 'bend') return
+
+      event.stopPropagation()
+      event.preventDefault()
+
+      if (picked.kind === 'stop') {
+        stopDragRef.current = {
+          stopId: picked.id,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          moved: false,
+        }
+        setDraggingStopId(picked.id)
+        event.currentTarget.setPointerCapture(event.pointerId)
+        return
+      }
+
+      nodeDragRef.current = {
+        nodeId: picked.id,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        moved: false,
+      }
+      setDraggingNodeId(picked.id)
+      event.currentTarget.setPointerCapture(event.pointerId)
+    },
+    [
+      draftPathNodes,
+      draftPoints,
+      draftStops,
+      imageSize,
+      panZoom,
+      routeDrawUsesParentPick,
+      userBendIndexSet,
+    ],
+  )
+
   const clientToNormalized = useCallback(
     (clientX: number, clientY: number) => {
       const viewport = viewportRef.current
@@ -724,14 +794,6 @@ export function IslandMapPanZoomSurface({
   const layerSizeStyle: CSSProperties | undefined = imageSize
     ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
     : undefined
-
-  const userBendIndexSet = useMemo(() => {
-    const set = new Set<number>()
-    pathUserBends.forEach((isUser, index) => {
-      if (isUser) set.add(index)
-    })
-    return set
-  }, [pathUserBends])
 
   const overlayChildren = imageSize ? (
     <>
@@ -786,6 +848,7 @@ export function IslandMapPanZoomSurface({
             onInteractionActiveChange={(active) => {
               pathEditActiveRef.current = active
             }}
+            interactionScale={panZoom?.scale ?? 1}
           />
         </div>
       ) : null}
@@ -811,6 +874,7 @@ export function IslandMapPanZoomSurface({
             draggingStopId={draggingStopId}
             showStopLabels={showStopLabels}
             stopLabelScale={stopLabelScale}
+            directPick={!routeDrawUsesParentPick}
             onStopPointerDown={handleStopPointerDown}
           />
         </div>
@@ -834,6 +898,7 @@ export function IslandMapPanZoomSurface({
             editable={drawMode && (drawInteraction === 'route' || drawInteraction === 'path-node')}
             traceSelectedNodeId={traceSelectedPathNodeId}
             draggingNodeId={draggingNodeId}
+            directPick={!routeDrawUsesParentPick}
             onNodePointerDown={handlePathNodePointerDown}
           />
         </div>
@@ -845,6 +910,7 @@ export function IslandMapPanZoomSurface({
     <div
       ref={viewportRef}
       className={`island-map-panzoom ${dragging ? 'island-map-panzoom--dragging' : ''}${drawMode ? ' island-map-panzoom--draw' : ''}${drawMode && drawInteraction === 'catalog' ? ' island-map-panzoom--draw-stop' : ''} ${className}`.trim()}
+      onPointerDownCapture={onPointerDownCapture}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}

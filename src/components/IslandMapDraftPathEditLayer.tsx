@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
 import { defaultLegControl } from '../utils/worldMapDrawPathCurve'
+import { imageHitRadiusForScreenPx } from '../utils/mapDrawHitRadius'
 
 interface IslandMapDraftPathEditLayerProps {
   imageWidth: number
@@ -21,6 +22,8 @@ interface IslandMapDraftPathEditLayerProps {
   onBendRemove: (vertexIndex: number) => void
   onLegDelete: (legIndex: number) => void
   onInteractionActiveChange?: (active: boolean) => void
+  /** Map pan-zoom scale — hit targets shrink when zoomed in. */
+  interactionScale?: number
 }
 
 const DOUBLE_TAP_MS = 420
@@ -50,12 +53,17 @@ function pointerToNormalized(
   return [x, y]
 }
 
-function hitStrokeWidth(imageWidth: number): number {
-  return Math.max(20, imageWidth * 0.012)
+function hitStrokeWidth(interactionScale: number): number {
+  const radius = imageHitRadiusForScreenPx(10, interactionScale)
+  return Math.max(8, radius * 2)
 }
 
 function handleRadius(imageWidth: number): number {
   return Math.max(5, imageWidth * 0.0018)
+}
+
+function bendHitRadius(interactionScale: number): number {
+  return imageHitRadiusForScreenPx(14, interactionScale)
 }
 
 function segmentPathD(
@@ -89,6 +97,7 @@ export function IslandMapDraftPathEditLayer({
   onBendRemove,
   onLegDelete,
   onInteractionActiveChange,
+  interactionScale = 1,
 }: IslandMapDraftPathEditLayerProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const dragRef = useRef<{
@@ -265,8 +274,9 @@ export function IslandMapDraftPathEditLayer({
 
   if (!editable || points.length < 2) return null
 
-  const hitWidth = hitStrokeWidth(imageWidth)
+  const hitWidth = hitStrokeWidth(interactionScale)
   const ctrlRadius = handleRadius(imageWidth)
+  const bendHitR = bendHitRadius(interactionScale)
 
   const resolvePointer = (
     event: PointerEvent<SVGElement> | globalThis.PointerEvent,
@@ -366,7 +376,7 @@ export function IslandMapDraftPathEditLayer({
               className="island-map-draft-path-edit-curve-handle-hit"
               cx={x}
               cy={y}
-              r={ctrlRadius * 2.4}
+              r={bendHitR}
               fill="transparent"
             />
             <circle

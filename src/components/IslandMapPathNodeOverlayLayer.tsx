@@ -10,6 +10,8 @@ interface IslandMapPathNodeOverlayLayerProps {
   traceSelectedNodeId?: string | null
   draggingNodeId?: string | null
   onNodePointerDown?: (nodeId: string, event: PointerEvent<SVGGElement>) => void
+  /** When false, parent handles nearest-target picking (route draw mode). */
+  directPick?: boolean
 }
 
 export function IslandMapPathNodeOverlayLayer({
@@ -21,10 +23,11 @@ export function IslandMapPathNodeOverlayLayer({
   traceSelectedNodeId = null,
   draggingNodeId = null,
   onNodePointerDown,
+  directPick = true,
 }: IslandMapPathNodeOverlayLayerProps) {
   const markerSize = Math.max(7, imageWidth * 0.0036)
   const fontSize = Math.max(10, imageWidth * 0.0028)
-  const hitSize = Math.max(markerSize * 2.4, 18)
+  const hitSize = markerSize * 1.6
 
   return (
     <svg
@@ -45,7 +48,7 @@ export function IslandMapPathNodeOverlayLayer({
             key={node.id}
             className={`island-map-path-node-overlay-item${isTraceSelected ? ' island-map-path-node-overlay-item--trace-selected' : ''}${isDragging ? ' island-map-path-node-overlay-item--dragging' : ''}`.trim()}
             onPointerDown={
-              editable && onNodePointerDown
+              editable && directPick && onNodePointerDown
                 ? (event) => {
                     event.stopPropagation()
                     onNodePointerDown(node.id, event)
@@ -53,7 +56,7 @@ export function IslandMapPathNodeOverlayLayer({
                 : undefined
             }
           >
-            {editable ? (
+            {editable && directPick ? (
               <rect
                 className="island-map-path-node-overlay-hit"
                 x={x - hitSize / 2}

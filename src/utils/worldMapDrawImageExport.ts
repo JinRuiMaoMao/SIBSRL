@@ -53,36 +53,58 @@ function computeCropRect(
   imageHeight: number,
   points: readonly WorldMapPoint[],
   stops: readonly WorldMapDrawStop[],
-  paddingRatio = 0.04,
+  options: {
+    showStopLabels: boolean
+    stopLabelScale: number
+    locale: Locale
+    strokeWidth: number
+  },
+  paddingRatio = 0.08,
 ) {
   const xs: number[] = []
   const ys: number[] = []
+  const labelScale = normalizeStopLabelScale(options.stopLabelScale)
+  const markerSize = Math.max(8, imageWidth * 0.0045 * labelScale)
+  const fontSize = Math.max(11, imageWidth * 0.0032 * labelScale)
+  const strokePad = Math.max(16, options.strokeWidth * 2)
+
   for (const point of points) {
     xs.push(point[0] * imageWidth)
     ys.push(point[1] * imageHeight)
   }
-  for (const stop of stops) {
-    xs.push(stop.point[0] * imageWidth)
-    ys.push(stop.point[1] * imageHeight)
+  for (const [index, stop] of stops.entries()) {
+    const x = stop.point[0] * imageWidth
+    const y = stop.point[1] * imageHeight
+    xs.push(x - markerSize / 2, x + markerSize / 2)
+    ys.push(y - markerSize / 2, y + markerSize / 2 + fontSize * 0.6)
+    if (options.showStopLabels) {
+      const label = formatDrawStopLabel(stop, index, options.locale)
+      const labelWidth = label.length * fontSize * 0.58 + markerSize * 0.7
+      xs.push(x + markerSize * 0.7 + labelWidth)
+    }
   }
   if (xs.length === 0) {
     return { x: 0, y: 0, width: imageWidth, height: imageHeight }
   }
-  let minX = Math.min(...xs)
-  let minY = Math.min(...ys)
-  let maxX = Math.max(...xs)
-  let maxY = Math.max(...ys)
-  const padX = Math.max(24, (maxX - minX) * paddingRatio)
-  const padY = Math.max(24, (maxY - minY) * paddingRatio)
+  let minX = Math.min(...xs) - strokePad
+  let minY = Math.min(...ys) - strokePad
+  let maxX = Math.max(...xs) + strokePad
+  let maxY = Math.max(...ys) + strokePad
+  const padX = Math.max(48, (maxX - minX) * paddingRatio)
+  const padY = Math.max(48, (maxY - minY) * paddingRatio)
   minX = Math.max(0, minX - padX)
   minY = Math.max(0, minY - padY)
   maxX = Math.min(imageWidth, maxX + padX)
   maxY = Math.min(imageHeight, maxY + padY)
+  const x0 = Math.floor(minX)
+  const y0 = Math.floor(minY)
+  const x1 = Math.min(imageWidth, Math.ceil(maxX))
+  const y1 = Math.min(imageHeight, Math.ceil(maxY))
   return {
-    x: Math.floor(minX),
-    y: Math.floor(minY),
-    width: Math.max(1, Math.ceil(maxX - minX)),
-    height: Math.max(1, Math.ceil(maxY - minY)),
+    x: x0,
+    y: y0,
+    width: Math.max(1, x1 - x0),
+    height: Math.max(1, y1 - y0),
   }
 }
 
@@ -158,9 +180,18 @@ export async function exportWorldMapDrawImage(
     options.legStarts,
     options.legHidden,
   )
+  const strokeWidth = Math.max(2, imageWidth * 0.0014)
+  const showStopLabels = options.showStopLabels !== false
+  const stopLabelScale = options.stopLabelScale ?? 1
+  const locale = options.locale ?? 'en'
 
   const crop = options.cropToRoute !== false
-    ? computeCropRect(imageWidth, imageHeight, visiblePoints, options.stops)
+    ? computeCropRect(imageWidth, imageHeight, visiblePoints, options.stops, {
+        showStopLabels,
+        stopLabelScale,
+        locale,
+        strokeWidth,
+      })
     : { x: 0, y: 0, width: imageWidth, height: imageHeight }
 
   const canvas = document.createElement('canvas')
@@ -182,9 +213,9 @@ export async function exportWorldMapDrawImage(
     options.strokeColor,
   )
   drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
-    showStopLabels: options.showStopLabels !== false,
-    stopLabelScale: options.stopLabelScale ?? 1,
-    locale: options.locale ?? 'en',
+    showStopLabels,
+    stopLabelScale,
+    locale,
   })
   ctx.restore()
 
