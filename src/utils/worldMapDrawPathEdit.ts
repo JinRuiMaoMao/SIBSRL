@@ -785,17 +785,29 @@ export function resolveImportedRouteDraft(options: {
 } {
   if (options.points.length >= 2) {
     const points = options.points.map((point) => [point[0], point[1]] as WorldMapPoint)
-    const pathNodes = options.pathNodes ?? []
-    const legStarts =
-      pathNodes.length > 0
-        ? buildLegStartsFromPathAnchors(points, options.stops, pathNodes)
-        : options.legStarts && options.legStarts.length > 0
-          ? normalizeImportedLegStarts(options.legStarts, points.length)
-          : options.stops.length >= 2
-            ? buildLegStartsFromStopAnchors(points, options.stops)
-            : [0]
+    const rawPathNodes = options.pathNodes ?? []
+    const snappedPathNodes =
+      rawPathNodes.length > 0
+        ? snapPathNodesOntoPath(
+            points,
+            rawPathNodes.map((node, index) => ({
+              id: `import-node-${index}`,
+              point: node.point,
+            })),
+          )
+        : []
+    const usedImportedLegStarts = Boolean(options.legStarts && options.legStarts.length > 0)
+    const legStarts = usedImportedLegStarts
+      ? normalizeImportedLegStarts(options.legStarts!, points.length)
+      : snappedPathNodes.length > 0
+        ? buildLegStartsFromPathAnchors(points, options.stops, snappedPathNodes)
+        : options.stops.length >= 2
+          ? buildLegStartsFromStopAnchors(points, options.stops)
+          : [0]
     const legCount = getPathLegRanges(legStarts, points.length).length
-    const pathLegHidden = resizeLegHidden(options.pathLegHidden ?? [], legCount)
+    const pathLegHidden = usedImportedLegStarts
+      ? resizeLegHidden(options.pathLegHidden ?? [], legCount)
+      : Array.from({ length: legCount }, () => false)
     const pathUserBends = Array.from({ length: points.length }, () => false)
     for (const index of options.userBendIndices ?? []) {
       if (index >= 0 && index < pathUserBends.length) pathUserBends[index] = true

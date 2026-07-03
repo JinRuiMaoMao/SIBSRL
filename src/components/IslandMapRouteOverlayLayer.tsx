@@ -46,7 +46,8 @@ export function IslandMapRouteOverlayLayer({
     variant === 'draft' && legStarts && points.length >= 2
       ? getPathLegRanges(legStarts, points.length)
       : []
-  const useDraftLegPolylines = legRanges.length > 0
+  // Split per leg only when some legs are hidden; otherwise one smooth path avoids gaps at leg joints.
+  const useDraftLegPolylines = legRanges.length > 0 && legHidden.some(Boolean)
 
   const renderLegPath = (
     legPoints: readonly WorldMapPoint[],

@@ -1,15 +1,10 @@
 # Static site is pre-built into repo root (index.html, assets/, …).
+# Deploy manually: Actions → Deploy static site to Pages → Run workflow.
 #
-# IMPORTANT — one-time repo setting (prevents duplicate deploy failures):
-#   Settings → Pages → Build and deployment → Source: GitHub Actions
-#   → select workflow "Deploy static site to Pages"
-# If Source stays on "Deploy from branch", the default pages-build-deployment
-# workflow also runs and races this one (deploy step fails, email: 页面配置失败).
+# Recommended Pages setting: Source = GitHub Actions, workflow below.
 name: Deploy static site to Pages
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
 
 permissions:
