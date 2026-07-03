@@ -66,12 +66,17 @@ import {
 } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
+import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
 import { IslandMapDrawPathNodePanel } from './IslandMapDrawPathNodePanel'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
+import {
+  readStoredMapDrawStopLabelScale,
+  readStoredMapDrawStopLabelVisible,
+} from '../utils/mapDrawStopLabel'
 function readImportJsonText(text: string): unknown {
   const trimmed = text.replace(/^\uFEFF/, '').trim()
   return JSON.parse(trimmed)
@@ -152,6 +157,8 @@ function surfaceProps(
   draftPathLegStarts: readonly number[],
   draftPathLegHidden: readonly boolean[],
   draftPathUserBends: readonly boolean[],
+  showStopLabels: boolean,
+  stopLabelScale: number,
   stopEdit?: {
     selectedStopId: string | null
     onStopDrag: (stopId: string, point: WorldMapPoint) => void
@@ -215,6 +222,8 @@ function surfaceProps(
     pathLegStarts: draftPathLegStarts,
     pathLegHidden: draftPathLegHidden,
     pathUserBends: draftPathUserBends,
+    showStopLabels,
+    stopLabelScale,
     onBendInsert: pathEdit?.onBendInsert,
     onBendMove: pathEdit?.onBendMove,
     onBendDragStart: pathEdit?.onBendDragStart,
@@ -260,6 +269,8 @@ export function IslandMapWidget() {
   const [pendingTraceAnchor, setPendingTraceAnchor] = useState<WorldMapTraceAnchor | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
+  const [showStopLabels, setShowStopLabels] = useState(readStoredMapDrawStopLabelVisible)
+  const [stopLabelScale, setStopLabelScale] = useState(readStoredMapDrawStopLabelScale)
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
@@ -1109,6 +1120,9 @@ export function IslandMapWidget() {
               legStarts: legStartsForExport,
               legHidden: legHiddenForExport,
               strokeColor: drawColor,
+              showStopLabels,
+              stopLabelScale,
+              locale,
             },
             selection.exportBaseName,
           )
@@ -1165,10 +1179,13 @@ export function IslandMapWidget() {
       drawRouteId,
       draftPathNodes,
       draftPoints,
+      locale,
       overlayRouteId,
       pathLegHidden,
       pathLegStarts,
       pathUserBends,
+      showStopLabels,
+      stopLabelScale,
       showExportHint,
       t,
     ],
@@ -1556,7 +1573,15 @@ export function IslandMapWidget() {
         </span>
       </div>
       {drawMode && drawInteraction === 'route' ? (
-        <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
+        <>
+          <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
+          <IslandMapDrawStopLabelSettings
+            visible={showStopLabels}
+            scale={stopLabelScale}
+            onVisibleChange={setShowStopLabels}
+            onScaleChange={setStopLabelScale}
+          />
+        </>
       ) : null}
       {drawMode && drawInteraction === 'path-node' ? (
         <IslandMapDrawPathNodePanel
@@ -1636,6 +1661,8 @@ export function IslandMapWidget() {
           effectiveLegStarts,
           pathLegHidden,
           pathUserBends,
+          showStopLabels,
+          stopLabelScale,
           stopEdit,
           nodeEdit,
           pathEdit,
@@ -1697,6 +1724,8 @@ export function IslandMapWidget() {
             effectiveLegStarts,
             pathLegHidden,
             pathUserBends,
+            showStopLabels,
+            stopLabelScale,
             stopEdit,
             nodeEdit,
             pathEdit,

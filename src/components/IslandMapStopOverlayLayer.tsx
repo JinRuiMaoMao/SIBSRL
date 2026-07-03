@@ -1,5 +1,8 @@
 import type { PointerEvent } from 'react'
+import { useLocale } from '../i18n/LocaleContext'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import { normalizeStopLabelScale } from '../utils/mapDrawStopLabel'
+import { formatDrawStopLabel } from '../utils/worldMapDrawStopDisplay'
 
 interface IslandMapStopOverlayLayerProps {
   imageWidth: number
@@ -10,6 +13,8 @@ interface IslandMapStopOverlayLayerProps {
   selectedStopId?: string | null
   traceSelectedStopId?: string | null
   draggingStopId?: string | null
+  showStopLabels?: boolean
+  stopLabelScale?: number
   onStopPointerDown?: (stopId: string, event: PointerEvent<SVGGElement>) => void
 }
 
@@ -22,10 +27,14 @@ export function IslandMapStopOverlayLayer({
   selectedStopId = null,
   traceSelectedStopId = null,
   draggingStopId = null,
+  showStopLabels = true,
+  stopLabelScale = 1,
   onStopPointerDown,
 }: IslandMapStopOverlayLayerProps) {
-  const markerSize = Math.max(8, imageWidth * 0.0045)
-  const fontSize = Math.max(11, imageWidth * 0.0032)
+  const { locale } = useLocale()
+  const scale = normalizeStopLabelScale(stopLabelScale)
+  const markerSize = Math.max(8, imageWidth * 0.0045 * scale)
+  const fontSize = Math.max(11, imageWidth * 0.0032 * scale)
   const hitSize = Math.max(markerSize * 2.2, 18)
 
   return (
@@ -73,14 +82,16 @@ export function IslandMapStopOverlayLayer({
               height={markerSize}
               rx={markerSize * 0.22}
             />
-            <text
-              className="island-map-stop-overlay-label"
-              x={x + markerSize * 0.7}
-              y={y + fontSize * 0.35}
-              style={{ fontSize }}
-            >
-              {index + 1}. {stop.name.zh || stop.name.en}
-            </text>
+            {showStopLabels ? (
+              <text
+                className="island-map-stop-overlay-label"
+                x={x + markerSize * 0.7}
+                y={y + fontSize * 0.35}
+                style={{ fontSize }}
+              >
+                {formatDrawStopLabel(stop, index, locale)}
+              </text>
+            ) : null}
           </g>
         )
       })}

@@ -317,6 +317,25 @@ html.has-compact-tab-nav .island-map--widget {
   gap: 0.35rem;
 }
 
+.island-map-draw-stop-label-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.island-map-draw-stop-label-check {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+}
+
+.island-map-draw-field--stop-label-size input[type='range'] {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
 .island-map-draw-color-label {
   font-size: 0.72rem;
   color: var(--text-muted, #aaa);

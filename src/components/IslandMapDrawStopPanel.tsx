@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { IslandMapDrawInteraction, WorldMapDrawStop, WorldMapDrawStopDraft } from '../types/worldMapDraw'
 import { findDrawStopSuggestions } from '../utils/worldMapDrawRouteLookup'
@@ -148,8 +149,7 @@ export function IslandMapDrawStopPanel({
                 disabled={!onEditStop || interaction !== 'route'}
               >
                 {interaction === 'route' ? `${index + 1}. ` : ''}
-                {stop.name.zh}
-                {stop.name.en && stop.name.en !== stop.name.zh ? ` / ${stop.name.en}` : ''}
+                {getPrimaryText(stop.name, locale)}
               </button>
               <button
                 type="button"

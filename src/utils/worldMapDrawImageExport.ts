@@ -1,7 +1,10 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { Locale } from '../i18n/types'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { getPathLegRanges } from './worldMapDrawPathEdit'
+import { normalizeStopLabelScale } from './mapDrawStopLabel'
 import { resolveExportBaseName } from './worldMapRouteExport'
+import { formatDrawStopLabel } from './worldMapDrawStopDisplay'
 
 export interface WorldMapDrawImageExportOptions {
   mapImageUrl: string
@@ -11,6 +14,9 @@ export interface WorldMapDrawImageExportOptions {
   legStarts: readonly number[]
   legHidden: readonly boolean[]
   strokeColor: string
+  showStopLabels?: boolean
+  stopLabelScale?: number
+  locale?: Locale
   cropToRoute?: boolean
 }
 
@@ -117,10 +123,15 @@ function drawStopsOnCanvas(
   imageHeight: number,
   stops: readonly WorldMapDrawStop[],
   strokeColor: string,
+  options: {
+    showStopLabels: boolean
+    stopLabelScale: number
+    locale: Locale
+  },
 ) {
-  const markerSize = Math.max(8, imageWidth * 0.0045)
-  const fontSize = Math.max(11, imageWidth * 0.0032)
-  ctx.font = `${fontSize}px sans-serif`
+  const scale = normalizeStopLabelScale(options.stopLabelScale)
+  const markerSize = Math.max(8, imageWidth * 0.0045 * scale)
+  const fontSize = Math.max(11, imageWidth * 0.0032 * scale)
   ctx.textBaseline = 'middle'
 
   stops.forEach((stop, index) => {
@@ -128,9 +139,10 @@ function drawStopsOnCanvas(
     const y = stop.point[1] * imageHeight
     ctx.fillStyle = strokeColor
     ctx.fillRect(x - markerSize / 2, y - markerSize / 2, markerSize, markerSize)
+    if (!options.showStopLabels) return
+    ctx.font = `${fontSize}px sans-serif`
     ctx.fillStyle = '#111'
-    const label = `${index + 1}. ${stop.name.zh || stop.name.en}`
-    ctx.fillText(label, x + markerSize * 0.7, y)
+    ctx.fillText(formatDrawStopLabel(stop, index, options.locale), x + markerSize * 0.7, y)
   })
 }
 
@@ -169,7 +181,11 @@ export async function exportWorldMapDrawImage(
     options.legHidden,
     options.strokeColor,
   )
-  drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor)
+  drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
+    showStopLabels: options.showStopLabels !== false,
+    stopLabelScale: options.stopLabelScale ?? 1,
+    locale: options.locale ?? 'en',
+  })
   ctx.restore()
 
   const blob = await new Promise<Blob | null>((resolve) => {

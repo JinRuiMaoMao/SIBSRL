@@ -42,6 +42,8 @@ interface IslandMapPanZoomSurfaceProps {
   draftRouteNumber?: string
   draftStops?: readonly WorldMapDrawStop[]
   draftPathNodes?: readonly WorldMapDrawPathNode[]
+  showStopLabels?: boolean
+  stopLabelScale?: number
   pendingStopPoint?: WorldMapPoint | null
   pendingPathNodePoint?: WorldMapPoint | null
   onDrawMapClick?: (point: WorldMapPoint) => void
@@ -246,6 +248,8 @@ export function IslandMapPanZoomSurface({
   draftRouteNumber = '',
   draftStops = [],
   draftPathNodes = [],
+  showStopLabels = true,
+  stopLabelScale = 1,
   pendingStopPoint = null,
   pendingPathNodePoint = null,
   onDrawMapClick,
@@ -805,6 +809,8 @@ export function IslandMapPanZoomSurface({
             selectedStopId={selectedStopId}
             traceSelectedStopId={traceSelectedStopId}
             draggingStopId={draggingStopId}
+            showStopLabels={showStopLabels}
+            stopLabelScale={stopLabelScale}
             onStopPointerDown={handleStopPointerDown}
           />
         </div>
