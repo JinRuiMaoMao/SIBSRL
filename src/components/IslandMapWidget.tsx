@@ -20,7 +20,6 @@ import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '.
 import {
   mergePathPoints,
   rebuildStopToStopPath,
-  buildStopLegStarts,
   resolveEffectiveLegStarts,
   resolveTraceAnchorPoint,
   traceViaForAnchorTarget,
@@ -34,6 +33,7 @@ import {
   movePathVertex,
   removeLegInteriorPoints,
   removePathVertex,
+  resolveImportedRouteDraft,
   retacePathSpanAroundUserBend,
   retraceAdjacentLegsAtAnchor,
   resizeLegHidden,
@@ -79,13 +79,6 @@ function readImportJsonText(text: string): unknown {
   return JSON.parse(trimmed)
 }
 
-function resolveImportedRoutePath(stops: readonly WorldMapDrawStop[]): {
-  points: WorldMapPoint[]
-  legStarts: number[]
-} {
-  const points = rebuildStopToStopPath(stops)
-  return { points, legStarts: buildStopLegStarts(stops.length) }
-}
 
 type MapLayer = 'general' | 'detailed'
 
@@ -1196,6 +1189,12 @@ export function IslandMapWidget() {
         merged.virtualNodes,
         overlayRouteId,
         selection,
+        {
+          legStarts: pathLegStarts,
+          pathLegHidden,
+          userBendIndices: pathUserBends.flatMap((isUser, index) => (isUser ? [index] : [])),
+        },
+        draftPathNodes,
       )
       if (!payload) {
         showExportHint(t('islandMapDrawExportNeedRoute'))
@@ -1211,8 +1210,11 @@ export function IslandMapWidget() {
     [
       drawDirectionIndex,
       drawRouteId,
+      draftPathNodes,
       overlayRouteId,
-      roadSnap,
+      pathLegHidden,
+      pathLegStarts,
+      pathUserBends,
       showExportHint,
       t,
     ],
@@ -1269,16 +1271,23 @@ export function IslandMapWidget() {
         setDraftStops(parsed.stops)
         const importedVirtualNodes = parsed.virtualNodes ?? []
         setDraftVirtualNodes(importedVirtualNodes)
-        const { points: initialPoints, legStarts } = resolveImportedRoutePath(parsed.stops)
-        setDraftPoints(initialPoints)
-        setPathLegStarts(legStarts)
+        setDraftPathNodes(parsed.pathNodes ?? [])
+        const imported = resolveImportedRouteDraft({
+          points: parsed.points,
+          stops: parsed.stops,
+          legStarts: parsed.legStarts,
+          pathLegHidden: parsed.pathLegHidden,
+          userBendIndices: parsed.userBendIndices,
+        })
+        setDraftPoints(imported.points)
+        setPathLegStarts(imported.legStarts)
         setPathLegControls([])
-        setPathLegHidden([])
-        setPathUserBends(Array.from({ length: initialPoints.length }, () => false))
-        setPathManuallyEdited(false)
+        setPathLegHidden(imported.pathLegHidden)
+        setPathUserBends(imported.pathUserBends)
+        setPathManuallyEdited(imported.points.length >= 2)
         resetDrawHistory()
         const fitPoints =
-          initialPoints.length >= 2 ? initialPoints : parsed.stops.map((stop) => stop.point)
+          imported.points.length >= 2 ? imported.points : parsed.stops.map((stop) => stop.point)
         if (fitPoints.length > 0) {
           setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
         }
@@ -1407,13 +1416,13 @@ export function IslandMapWidget() {
       {
         routeId: drawRouteId,
         directionIndex: drawDirectionIndex,
-        points: [...flattenedDraftPoints],
+        points: [...draftPoints],
         stops: [...draftStops],
         virtualNodes: [...draftVirtualNodes],
       },
       ...exportMergeFiles.map((file) => file.slice),
     ],
-    [drawDirectionIndex, drawRouteId, draftStops, draftVirtualNodes, exportMergeFiles, flattenedDraftPoints],
+    [drawDirectionIndex, drawRouteId, draftPoints, draftStops, draftVirtualNodes, exportMergeFiles],
   )
 
   const importExportPanelProps = {
@@ -1796,7 +1805,7 @@ export function IslandMapWidget() {
         directionIndex={drawDirectionIndex}
         stops={draftStops}
         virtualNodes={draftVirtualNodes}
-        points={flattenedDraftPoints}
+        points={draftPoints}
         mergeFiles={exportMergeFiles}
         sourceSlices={exportSourceSlices}
         overlayRouteId={overlayRouteId}

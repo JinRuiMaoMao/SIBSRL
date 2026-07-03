@@ -1,5 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import { normalizeVirtualNodeKind } from './mapSurfaceKind'
 
 export type WorldMapDrawImportResult =
@@ -18,6 +18,10 @@ export type WorldMapDrawImportResult =
       points: WorldMapPoint[]
       stops: WorldMapDrawStop[]
       virtualNodes: WorldMapVirtualNode[]
+      pathNodes: WorldMapDrawPathNode[]
+      legStarts: number[]
+      pathLegHidden: boolean[]
+      userBendIndices: number[]
     }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -103,11 +107,62 @@ function readPointList(value: unknown): WorldMapPoint[] {
   return points
 }
 
+function readPathNodeEntry(value: unknown, index: number): WorldMapDrawPathNode | null {
+  if (!isRecord(value) || !isWorldMapPoint(value.point)) return null
+  const label = typeof value.label === 'string' ? value.label.trim() : ''
+  return {
+    id: `import-pn-${index}-${Math.random().toString(36).slice(2, 8)}`,
+    point: [value.point[0], value.point[1]],
+    ...(label ? { label } : {}),
+  }
+}
+
+function readPathNodeList(value: unknown): WorldMapDrawPathNode[] {
+  if (!Array.isArray(value)) return []
+  const nodes: WorldMapDrawPathNode[] = []
+  for (let index = 0; index < value.length; index += 1) {
+    const node = readPathNodeEntry(value[index], index)
+    if (node) nodes.push(node)
+  }
+  return nodes
+}
+
+function readIndexList(value: unknown): number[] {
+  if (!Array.isArray(value)) return []
+  const indices: number[] = []
+  for (const entry of value) {
+    if (typeof entry === 'number' && Number.isFinite(entry)) {
+      indices.push(Math.round(entry))
+    }
+  }
+  return indices
+}
+
+function readBooleanList(value: unknown): boolean[] {
+  if (!Array.isArray(value)) return []
+  return value.map((entry) => entry === true)
+}
+
+function readLegStarts(value: unknown): number[] {
+  if (!Array.isArray(value)) return []
+  const starts: number[] = []
+  for (const entry of value) {
+    if (typeof entry === 'number' && Number.isFinite(entry)) {
+      starts.push(Math.round(entry))
+    }
+  }
+  return starts
+}
+
 function readDirection(value: unknown): {
   directionIndex: number
   points: WorldMapPoint[]
   stops: WorldMapDrawStop[]
   virtualNodes: WorldMapVirtualNode[]
+  pathNodes: WorldMapDrawPathNode[]
+  legStarts: number[]
+  pathLegHidden: boolean[]
+  userBendIndices: number[]
 } | null {
   if (!isRecord(value)) return null
   const directionIndex =
@@ -119,6 +174,10 @@ function readDirection(value: unknown): {
     points: readPointList(value.points),
     stops: readStopList(value.stops),
     virtualNodes: readVirtualNodeList(value.virtualNodes),
+    pathNodes: readPathNodeList(value.pathNodes),
+    legStarts: readLegStarts(value.legStarts),
+    pathLegHidden: readBooleanList(value.pathLegHidden),
+    userBendIndices: readIndexList(value.userBendIndices),
   }
 }
 
@@ -150,11 +209,16 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
   const stops = direction.stops
   const points = direction.points
   const virtualNodes = direction.virtualNodes
+  const pathNodes = direction.pathNodes
+  const legStarts = direction.legStarts
+  const pathLegHidden = direction.pathLegHidden
+  const userBendIndices = direction.userBendIndices
 
   const hasPath = points.length >= 2
   const hasStops = stops.length > 0
   const hasVirtualNodes = virtualNodes.length > 0
-  if (!hasPath && !hasStops && !hasVirtualNodes) return null
+  const hasPathNodes = pathNodes.length > 0
+  if (!hasPath && !hasStops && !hasVirtualNodes && !hasPathNodes) return null
 
   return {
     kind: 'route',
@@ -163,5 +227,9 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
     points: hasPath ? points : [],
     stops,
     virtualNodes,
+    pathNodes,
+    legStarts,
+    pathLegHidden,
+    userBendIndices,
   }
 }

@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import { mergePathPoints } from './worldMapDrawPath'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import { buildStopLegStarts, mergePathPoints } from './worldMapDrawPath'
 
 export function clampPathPoint(point: WorldMapPoint): WorldMapPoint {
   return [Math.min(1, Math.max(0, point[0])), Math.min(1, Math.max(0, point[1]))]
@@ -675,4 +676,56 @@ export function buildLegStartsFromStopAnchors(
     searchFrom = anchorIndex
   }
   return legStarts
+}
+
+export function normalizeImportedLegStarts(
+  legStarts: readonly number[],
+  pointCount: number,
+): number[] {
+  let normalized = legStarts.length > 0 ? [...legStarts] : [0]
+  if (normalized[0] !== 0) normalized.unshift(0)
+  normalized = normalized.filter(
+    (start, index) => start >= 0 && start < pointCount && (index === 0 || start > normalized[index - 1]!),
+  )
+  if (normalized.length === 0) return pointCount >= 2 ? [0] : []
+  if (normalized[0] !== 0) normalized.unshift(0)
+  return normalized
+}
+
+export function resolveImportedRouteDraft(options: {
+  points: readonly WorldMapPoint[]
+  stops: readonly WorldMapDrawStop[]
+  legStarts?: readonly number[]
+  pathLegHidden?: readonly boolean[]
+  userBendIndices?: readonly number[]
+}): {
+  points: WorldMapPoint[]
+  legStarts: number[]
+  pathLegHidden: boolean[]
+  pathUserBends: boolean[]
+} {
+  if (options.points.length >= 2) {
+    const points = options.points.map((point) => [point[0], point[1]] as WorldMapPoint)
+    const legStarts =
+      options.legStarts && options.legStarts.length > 0
+        ? normalizeImportedLegStarts(options.legStarts, points.length)
+        : options.stops.length >= 2
+          ? buildLegStartsFromStopAnchors(points, options.stops)
+          : [0]
+    const legCount = getPathLegRanges(legStarts, points.length).length
+    const pathLegHidden = resizeLegHidden(options.pathLegHidden ?? [], legCount)
+    const pathUserBends = Array.from({ length: points.length }, () => false)
+    for (const index of options.userBendIndices ?? []) {
+      if (index >= 0 && index < pathUserBends.length) pathUserBends[index] = true
+    }
+    return { points, legStarts, pathLegHidden, pathUserBends }
+  }
+
+  const points = options.stops.map((stop) => [stop.point[0], stop.point[1]] as WorldMapPoint)
+  return {
+    points,
+    legStarts: buildStopLegStarts(options.stops.length),
+    pathLegHidden: [],
+    pathUserBends: Array.from({ length: points.length }, () => false),
+  }
 }

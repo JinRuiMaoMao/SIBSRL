@@ -1,7 +1,14 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import { canonicalVirtualNodeRouteId } from './worldMapVirtualNodes'
+
+export interface WorldMapRouteExportEditorMeta {
+  pathNodes?: Array<{ label?: string; point: WorldMapPoint }>
+  legStarts?: number[]
+  pathLegHidden?: boolean[]
+  userBendIndices?: number[]
+}
 
 export interface WorldMapStopsExportPayload {
   routeId: string
@@ -40,6 +47,13 @@ export interface WorldMapRouteExportPayload {
       kind: WorldMapVirtualNode['kind']
       point: WorldMapPoint
     }>
+    pathNodes?: Array<{
+      label?: string
+      point: WorldMapPoint
+    }>
+    legStarts?: number[]
+    pathLegHidden?: boolean[]
+    userBendIndices?: number[]
   }>
 }
 
@@ -124,6 +138,8 @@ export function buildWorldMapRouteExportPayload(
     includeVirtualNodes: true,
     includePath: true,
   },
+  editorMeta: WorldMapRouteExportEditorMeta = {},
+  pathNodes: readonly WorldMapDrawPathNode[] = [],
 ): WorldMapRouteExportPayload | null {
   const canonicalId = resolveWorldMapExportRouteId(routeId, virtualNodes, fallbackRouteId)
   const exportPoints =
@@ -160,6 +176,24 @@ export function buildWorldMapRouteExportPayload(
   if (exportPoints.length > 0) direction.points = exportPoints
   if (exportStops.length > 0) direction.stops = exportStops
   if (exportVirtualNodes.length > 0) direction.virtualNodes = exportVirtualNodes
+
+  const exportPathNodes = pathNodes
+    .map((node) => ({
+      ...(node.label?.trim() ? { label: node.label.trim() } : {}),
+      point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
+    }))
+    .filter((node) => node.point.length === 2)
+  if (exportPathNodes.length > 0) direction.pathNodes = exportPathNodes
+
+  if (editorMeta.legStarts && editorMeta.legStarts.length > 0 && exportPoints.length > 0) {
+    direction.legStarts = [...editorMeta.legStarts]
+  }
+  if (editorMeta.pathLegHidden?.some(Boolean) && exportPoints.length > 0) {
+    direction.pathLegHidden = [...editorMeta.pathLegHidden]
+  }
+  if (editorMeta.userBendIndices && editorMeta.userBendIndices.length > 0 && exportPoints.length > 0) {
+    direction.userBendIndices = [...editorMeta.userBendIndices]
+  }
 
   return {
     routeId: canonicalId,
