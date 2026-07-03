@@ -331,20 +331,153 @@ function remapUserBendIndices(
   return remapped
 }
 
-function circularFilletRadius(
-  autoRadiusPx: number,
-  turn: number,
+function circumradiusPx(
+  prev: { x: number; y: number },
+  curr: { x: number; y: number },
+  next: { x: number; y: number },
+): number {
+  const ax = prev.x - curr.x
+  const ay = prev.y - curr.y
+  const bx = next.x - curr.x
+  const by = next.y - curr.y
+  const cross = Math.abs(ax * by - ay * bx)
+  if (cross < 1e-4) return Number.POSITIVE_INFINITY
+  const lenA = Math.hypot(ax, ay)
+  const lenB = Math.hypot(bx, by)
+  const lenC = Math.hypot(next.x - prev.x, next.y - prev.y)
+  return (lenA * lenB * lenC) / (2 * cross)
+}
+
+function toPxPoint(point: WorldMapPoint, imageWidth: number, imageHeight: number) {
+  return { x: point[0] * imageWidth, y: point[1] * imageHeight }
+}
+
+function findNearestSourceIndex(point: WorldMapPoint, source: readonly WorldMapPoint[]): number {
+  let bestIndex = 0
+  let bestDistance = Infinity
+  for (let index = 0; index < source.length; index += 1) {
+    const distance = dist2(point, source[index]!)
+    if (distance < bestDistance) {
+      bestDistance = distance
+      bestIndex = index
+    }
+  }
+  return bestIndex
+}
+
+/** Median circumradius over a window in the source polyline — local radius of curvature. */
+function estimateLocalCurvatureRadiusPx(
+  source: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  vertex: WorldMapPoint,
+  fallbackPrev: { x: number; y: number },
+  fallbackCurr: { x: number; y: number },
+  fallbackNext: { x: number; y: number },
+): number {
+  if (source.length < 3) {
+    return circumradiusPx(fallbackPrev, fallbackCurr, fallbackNext)
+  }
+
+  const centerIndex = findNearestSourceIndex(vertex, source)
+  const window = Math.min(5, Math.max(2, Math.floor(source.length / 8)))
+  const radii: number[] = []
+
+  for (let offset = -window; offset <= window - 2; offset += 1) {
+    const start = centerIndex + offset
+    if (start < 0 || start + 2 >= source.length) continue
+    const radius = circumradiusPx(
+      toPxPoint(source[start]!, imageWidth, imageHeight),
+      toPxPoint(source[start + 1]!, imageWidth, imageHeight),
+      toPxPoint(source[start + 2]!, imageWidth, imageHeight),
+    )
+    if (Number.isFinite(radius) && radius > 0.5 && radius < imageWidth * 0.45) {
+      radii.push(radius)
+    }
+  }
+
+  if (radii.length === 0) {
+    return circumradiusPx(fallbackPrev, fallbackCurr, fallbackNext)
+  }
+
+  radii.sort((left, right) => left - right)
+  return radii[Math.floor(radii.length / 2)]!
+}
+
+function filletRadiusFromCurvature(
+  curvatureRadiusPx: number,
   len1: number,
   len2: number,
-): number {
-  const turnRatio = Math.min(1, turn / ((72 * Math.PI) / 180))
-  const scaled = autoRadiusPx * (0.72 + 0.28 * turnRatio)
-  return Math.min(scaled, len1 * 0.48, len2 * 0.48)
+): number | null {
+  if (!Number.isFinite(curvatureRadiusPx) || curvatureRadiusPx <= 0.5) return null
+  const fit = Math.min(curvatureRadiusPx, len1 * 0.49, len2 * 0.49)
+  return fit > 0.5 ? fit : null
+}
+
+function medianCurvatureInSpan(
+  source: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  startIndex: number,
+  endIndex: number,
+): number | null {
+  const lo = Math.min(startIndex, endIndex)
+  const hi = Math.max(startIndex, endIndex)
+  if (hi - lo < 2) return null
+  const radii: number[] = []
+  for (let index = lo; index <= hi - 2; index += 1) {
+    const radius = circumradiusPx(
+      toPxPoint(source[index]!, imageWidth, imageHeight),
+      toPxPoint(source[index + 1]!, imageWidth, imageHeight),
+      toPxPoint(source[index + 2]!, imageWidth, imageHeight),
+    )
+    if (Number.isFinite(radius) && radius > 0.5 && radius < imageWidth * 0.45) {
+      radii.push(radius)
+    }
+  }
+  if (radii.length === 0) return null
+  radii.sort((left, right) => left - right)
+  return radii[Math.floor(radii.length / 2)]!
+}
+
+function circularArcD(
+  start: { x: number; y: number },
+  end: { x: number; y: number },
+  guide: { x: number; y: number },
+  radius: number,
+): string | null {
+  const chord = Math.hypot(end.x - start.x, end.y - start.y)
+  const fit = Math.min(radius, chord * 0.49)
+  if (fit <= 0.5 || chord < 1e-3) return null
+  const cross = (end.x - start.x) * (guide.y - start.y) - (end.y - start.y) * (guide.x - start.x)
+  const sweep = cross > 0 ? 1 : 0
+  return `A ${fit} ${fit} 0 0 ${sweep} ${end.x} ${end.y}`
+}
+
+function buildSpanArcPathD(
+  start: WorldMapPoint,
+  end: WorldMapPoint,
+  source: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+): string | null {
+  const startIndex = findNearestSourceIndex(start, source)
+  const endIndex = findNearestSourceIndex(end, source)
+  const radius = medianCurvatureInSpan(source, imageWidth, imageHeight, startIndex, endIndex)
+  if (radius == null) return null
+  const lo = Math.min(startIndex, endIndex)
+  const hi = Math.max(startIndex, endIndex)
+  const guide = toPxPoint(source[Math.floor((lo + hi) / 2)]!, imageWidth, imageHeight)
+  const from = toPxPoint(start, imageWidth, imageHeight)
+  const to = toPxPoint(end, imageWidth, imageHeight)
+  const arc = circularArcD(from, to, guide, radius)
+  if (!arc) return null
+  return `M ${from.x} ${from.y} ${arc}`
 }
 
 /**
- * SVG path with circular-arc fillets at corners. Dense road samples are simplified first.
- * User bend vertices stay sharp; auto corners use true circular arcs (SVG A).
+ * SVG path with circular-arc fillets sized to local path curvature.
+ * Dense road samples are simplified first; arc radius follows the segment bend.
  */
 export function buildEditorCornerPathD(
   points: readonly WorldMapPoint[],
@@ -358,8 +491,7 @@ export function buildEditorCornerPathD(
   } = {},
 ): string {
   const sourceUserBends = options.userBendIndices ?? new Set<number>()
-  const autoRadiusPx = options.autoCornerRadiusPx ?? Math.max(16, imageWidth * 0.0055)
-  const minTurn = options.minTurnRadians ?? (5 * Math.PI) / 180
+  const minTurn = options.minTurnRadians ?? (4 * Math.PI) / 180
   const simplifyEpsilonPx = options.simplifyEpsilonPx ?? Math.max(3.5, imageWidth * 0.0011)
 
   const simplified =
@@ -371,6 +503,13 @@ export function buildEditorCornerPathD(
 
   const count = simplified.length
   if (count < 2) return ''
+
+  if (count === 2) {
+    return (
+      buildSpanArcPathD(simplified[0]!, simplified[1]!, points, imageWidth, imageHeight) ??
+      `M ${simplified[0]![0] * imageWidth} ${simplified[0]![1] * imageHeight} L ${simplified[1]![0] * imageWidth} ${simplified[1]![1] * imageHeight}`
+    )
+  }
 
   const px = simplified.map((point) => ({
     x: point[0] * imageWidth,
@@ -399,8 +538,17 @@ export function buildEditorCornerPathD(
     )
 
     if (!userBends.has(index) && turn >= minTurn) {
-      const maxRadius = circularFilletRadius(autoRadiusPx, turn, len1, len2)
-      if (maxRadius > 0.5) {
+      const curvatureRadius = estimateLocalCurvatureRadiusPx(
+        points,
+        imageWidth,
+        imageHeight,
+        simplified[index]!,
+        prev,
+        curr,
+        next,
+      )
+      const maxRadius = filletRadiusFromCurvature(curvatureRadius, len1, len2)
+      if (maxRadius != null) {
         const u1x = dx1 / len1
         const u1y = dy1 / len1
         const u2x = dx2 / len2
