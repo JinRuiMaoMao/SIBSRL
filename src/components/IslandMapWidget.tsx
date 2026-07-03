@@ -297,6 +297,9 @@ export function IslandMapWidget() {
     pathLegHidden,
     pathUserBends,
     pathManuallyEdited,
+    drawRouteId,
+    drawDirectionIndex,
+    drawInteraction,
   })
   const undoStackRef = useRef<DrawDraftSnapshot[]>([])
   const redoStackRef = useRef<DrawDraftSnapshot[]>([])
@@ -315,12 +318,18 @@ export function IslandMapWidget() {
       pathLegHidden,
       pathUserBends,
       pathManuallyEdited,
+      drawRouteId,
+      drawDirectionIndex,
+      drawInteraction,
     }
   }, [
     draftPoints,
     draftStops,
     draftPathNodes,
     draftVirtualNodes,
+    drawDirectionIndex,
+    drawInteraction,
+    drawRouteId,
     pathLegControls,
     pathLegHidden,
     pathLegStarts,
@@ -340,6 +349,9 @@ export function IslandMapWidget() {
       pathLegHidden: state.pathLegHidden,
       pathUserBends: state.pathUserBends,
       pathManuallyEdited: state.pathManuallyEdited,
+      drawRouteId: state.drawRouteId,
+      drawDirectionIndex: state.drawDirectionIndex,
+      drawInteraction: state.drawInteraction,
     })
   }, [])
 
@@ -351,12 +363,6 @@ export function IslandMapWidget() {
     redoStackRef.current = []
     bumpHistory()
   }, [bumpHistory, captureDrawSnapshot])
-
-  const resetDrawHistory = useCallback(() => {
-    undoStackRef.current = []
-    redoStackRef.current = []
-    bumpHistory()
-  }, [bumpHistory])
 
   const applyDrawSnapshot = useCallback((snapshot: DrawDraftSnapshot) => {
       setDraftPoints(snapshot.draftPoints.map((point) => [point[0], point[1]] as WorldMapPoint))
@@ -388,6 +394,9 @@ export function IslandMapWidget() {
       setPathLegHidden([...snapshot.pathLegHidden])
       setPathUserBends(resizePathUserBends(snapshot.pathUserBends ?? [], snapshot.draftPoints.length))
       setPathManuallyEdited(snapshot.pathManuallyEdited)
+      setDrawRouteId(snapshot.drawRouteId)
+      setDrawDirectionIndex(snapshot.drawDirectionIndex)
+      setDrawInteraction(snapshot.drawInteraction)
   }, [])
 
   const handleViewChange = useCallback((next: NormalizedMapView) => {
@@ -1254,12 +1263,14 @@ export function IslandMapWidget() {
 
         setPendingStop(null)
         setPendingVirtualNode(null)
+        setPendingPathNode(null)
+        pushDrawHistory()
 
         if (parsed.kind === 'catalog') {
           setDrawInteraction('catalog')
           setDraftPoints([])
           setDraftStops(parsed.stops)
-          resetDrawHistory()
+          redoStackRef.current = []
           setMapView(
             fitNormalizedViewToRoutePoints(
               parsed.stops.map((stop) => stop.point),
@@ -1273,7 +1284,7 @@ export function IslandMapWidget() {
         if (parsed.kind === 'virtual') {
           setDrawInteraction('virtual')
           setDraftVirtualNodes(parsed.nodes)
-          resetDrawHistory()
+          redoStackRef.current = []
           setMapView(
             fitNormalizedViewToRoutePoints(
               parsed.nodes.map((node) => node.point),
@@ -1305,7 +1316,7 @@ export function IslandMapWidget() {
         setPathLegHidden(imported.pathLegHidden)
         setPathUserBends(imported.pathUserBends)
         setPathManuallyEdited(imported.points.length >= 2)
-        resetDrawHistory()
+        redoStackRef.current = []
         const fitPoints =
           imported.points.length >= 2 ? imported.points : parsed.stops.map((stop) => stop.point)
         if (fitPoints.length > 0) {
@@ -1321,7 +1332,7 @@ export function IslandMapWidget() {
         showExportHint(t('islandMapDrawImportInvalid'))
       }
     },
-    [expanded, resetDrawHistory, roadSnap, showExportHint, t],
+    [expanded, pushDrawHistory, roadSnap, showExportHint, t],
   )
 
   const mapSrc = MAP_URLS[layer]

@@ -1,5 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapDrawPathNode, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapDrawPathNode, WorldMapVirtualNode, IslandMapDrawInteraction } from '../types/worldMapDraw'
 
 export interface DrawDraftSnapshot {
   draftPoints: WorldMapPoint[]
@@ -11,6 +11,9 @@ export interface DrawDraftSnapshot {
   pathLegHidden: boolean[]
   pathUserBends: boolean[]
   pathManuallyEdited: boolean
+  drawRouteId: string
+  drawDirectionIndex: number
+  drawInteraction: IslandMapDrawInteraction
 }
 
 export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnapshot {
@@ -36,6 +39,9 @@ export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnaps
     pathLegHidden: [...state.pathLegHidden],
     pathUserBends: [...state.pathUserBends],
     pathManuallyEdited: state.pathManuallyEdited,
+    drawRouteId: state.drawRouteId,
+    drawDirectionIndex: state.drawDirectionIndex,
+    drawInteraction: state.drawInteraction,
   }
 }
 
