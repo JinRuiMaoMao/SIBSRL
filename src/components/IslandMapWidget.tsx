@@ -1039,8 +1039,9 @@ export function IslandMapWidget() {
   }, [])
 
   const handleAddExportMergeFiles = useCallback(async (files: FileList) => {
+    const fileArray = Array.from(files)
     const next: IslandMapDrawExportMergeFile[] = []
-    for (const file of Array.from(files)) {
+    for (const file of fileArray) {
       try {
         const parsed = parseWorldMapDrawImportJson(readImportJsonText(await file.text()))
         if (!parsed) continue
@@ -1190,6 +1191,9 @@ export function IslandMapWidget() {
         return
       }
 
+      setDrawMode(true)
+      setLayer('general')
+
       if (merged.kind === 'catalog') {
         setDrawInteraction('catalog')
         setDraftPoints([])
@@ -1259,12 +1263,12 @@ export function IslandMapWidget() {
 
   const handleImportFileChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const fileList = event.target.files
+      const files = Array.from(event.target.files ?? [])
       event.target.value = ''
-      if (!fileList || fileList.length === 0) return
+      if (files.length === 0) return
 
       const importedFiles: ImportedDrawFile[] = []
-      for (const file of fileList) {
+      for (const file of files) {
         try {
           const parsed = parseWorldMapDrawImportJson(readImportJsonText(await file.text()))
           if (!parsed || parsed.kind === 'virtual') continue

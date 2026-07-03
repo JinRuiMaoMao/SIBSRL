@@ -262,7 +262,8 @@ export function IslandMapDrawExportDialog({
               multiple
               className="island-map-draw-import-input"
               onChange={(event) => {
-                if (event.target.files?.length) onAddMergeFiles(event.target.files)
+                const selected = event.target.files
+                if (selected?.length) onAddMergeFiles(selected)
                 event.target.value = ''
               }}
             />
