@@ -4,7 +4,8 @@ import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapDraftPathEditLayer } from './IslandMapDraftPathEditLayer'
 import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import { IslandMapPathNodeOverlayLayer } from './IslandMapPathNodeOverlayLayer'
-import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDraw'
+import { IslandMapVirtualNodeOverlayLayer } from './IslandMapVirtualNodeOverlayLayer'
+import type { WorldMapDrawStop, WorldMapDrawPathNode, WorldMapVirtualNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 
 export interface PanZoomState {
@@ -42,8 +43,11 @@ interface IslandMapPanZoomSurfaceProps {
   draftRouteNumber?: string
   draftStops?: readonly WorldMapDrawStop[]
   draftPathNodes?: readonly WorldMapDrawPathNode[]
+  draftVirtualNodes?: readonly WorldMapVirtualNode[]
   pendingStopPoint?: WorldMapPoint | null
   pendingPathNodePoint?: WorldMapPoint | null
+  pendingVirtualNodePoint?: WorldMapPoint | null
+  pendingVirtualNodeKind?: WorldMapVirtualNode['kind']
   onDrawMapClick?: (point: WorldMapPoint) => void
   onDrawUndo?: () => void
   onStopDrag?: (stopId: string, point: WorldMapPoint) => void
@@ -52,8 +56,10 @@ interface IslandMapPanZoomSurfaceProps {
   onPathNodeDrag?: (nodeId: string, point: WorldMapPoint) => void
   onPathNodeDragEnd?: (nodeId: string, point: WorldMapPoint) => void
   onPathNodeClick?: (nodeId: string) => void
+  onVirtualNodeClick?: (nodeId: string) => void
   selectedStopId?: string | null
   traceSelectedPathNodeId?: string | null
+  traceSelectedVirtualNodeId?: string | null
   onPathPointsChange?: (points: WorldMapPoint[]) => void
   onBendInsert?: (segmentIndex: number, point: WorldMapPoint) => void
   onBendMove?: (vertexIndex: number, point: WorldMapPoint) => void
@@ -246,8 +252,11 @@ export function IslandMapPanZoomSurface({
   draftRouteNumber = '',
   draftStops = [],
   draftPathNodes = [],
+  draftVirtualNodes = [],
   pendingStopPoint = null,
   pendingPathNodePoint = null,
+  pendingVirtualNodePoint = null,
+  pendingVirtualNodeKind = 'plain',
   onDrawMapClick,
   onDrawUndo,
   onStopDrag,
@@ -256,8 +265,10 @@ export function IslandMapPanZoomSurface({
   onPathNodeDrag,
   onPathNodeDragEnd,
   onPathNodeClick,
+  onVirtualNodeClick,
   selectedStopId = null,
   traceSelectedPathNodeId = null,
+  traceSelectedVirtualNodeId = null,
   onPathPointsChange,
   onBendInsert,
   onBendMove,
@@ -806,6 +817,29 @@ export function IslandMapPanZoomSurface({
             traceSelectedStopId={traceSelectedStopId}
             draggingStopId={draggingStopId}
             onStopPointerDown={handleStopPointerDown}
+          />
+        </div>
+      ) : null}
+      {draftVirtualNodes.length > 0 || pendingVirtualNodePoint ? (
+        <div
+          className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--virtual-editable' : ''}`.trim()}
+        >
+          <IslandMapVirtualNodeOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            nodes={draftVirtualNodes}
+            pendingNode={
+              pendingVirtualNodePoint
+                ? {
+                    x: pendingVirtualNodePoint[0] * imageSize.width,
+                    y: pendingVirtualNodePoint[1] * imageSize.height,
+                    kind: pendingVirtualNodeKind,
+                  }
+                : null
+            }
+            traceable={drawMode && drawInteraction === 'route'}
+            traceSelectedNodeId={traceSelectedVirtualNodeId}
+            onNodePointerDown={onVirtualNodeClick}
           />
         </div>
       ) : null}

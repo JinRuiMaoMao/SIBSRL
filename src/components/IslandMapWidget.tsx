@@ -145,8 +145,11 @@ function surfaceProps(
   draftStopPoints: readonly WorldMapPoint[],
   draftStops: readonly WorldMapDrawStop[],
   draftPathNodes: readonly WorldMapDrawPathNode[],
+  draftVirtualNodes: readonly WorldMapVirtualNode[],
   pendingStopPoint: WorldMapPoint | null,
   pendingPathNodePoint: WorldMapPoint | null,
+  pendingVirtualNodePoint: WorldMapPoint | null,
+  pendingVirtualNodeKind: WorldMapVirtualNode['kind'],
   draftStrokeColor: string,
   draftRouteNumber: string,
   onDrawMapClick: (point: WorldMapPoint) => void,
@@ -179,8 +182,10 @@ function surfaceProps(
   traceEdit?: {
     traceSelectedStopId: string | null
     traceSelectedPathNodeId: string | null
+    traceSelectedVirtualNodeId: string | null
     onStopClick: (stopId: string) => void
     onPathNodeClick: (nodeId: string) => void
+    onVirtualNodeClick: (nodeId: string) => void
   },
   roadSnap?: {
     snap: (point: WorldMapPoint) => WorldMapPoint
@@ -199,8 +204,11 @@ function surfaceProps(
     draftStopPoints,
     draftStops,
     draftPathNodes,
+    draftVirtualNodes,
     pendingStopPoint,
     pendingPathNodePoint,
+    pendingVirtualNodePoint,
+    pendingVirtualNodeKind,
     draftStrokeColor,
     draftRouteNumber,
     onDrawMapClick,
@@ -214,6 +222,7 @@ function surfaceProps(
     onPathNodeDrag: nodeEdit?.onPathNodeDrag,
     onPathNodeDragEnd: nodeEdit?.onPathNodeDragEnd,
     onPathNodeClick: nodeEdit?.onPathNodeClick ?? traceEdit?.onPathNodeClick,
+    onVirtualNodeClick: traceEdit?.onVirtualNodeClick,
     pathEditable: pathEdit?.editable ?? false,
     pathLegStarts: draftPathLegStarts,
     pathLegHidden: draftPathLegHidden,
@@ -228,6 +237,7 @@ function surfaceProps(
     isOnRoad: roadSnap?.isOnRoad,
     traceSelectedStopId: traceEdit?.traceSelectedStopId ?? null,
     traceSelectedPathNodeId: traceEdit?.traceSelectedPathNodeId ?? null,
+    traceSelectedVirtualNodeId: traceEdit?.traceSelectedVirtualNodeId ?? null,
   }
 }
 
@@ -610,6 +620,14 @@ export function IslandMapWidget() {
       }
     },
     [appendTracedSegment, drawInteraction, pendingTraceAnchor],
+  )
+
+  const handleVirtualNodeClick = useCallback(
+    (nodeId: string) => {
+      if (drawInteraction !== 'route') return
+      handleTraceAnchorPick({ kind: 'virtual-node', id: nodeId })
+    },
+    [drawInteraction, handleTraceAnchorPick],
   )
 
   const handlePathNodeClick = useCallback(
@@ -1373,11 +1391,21 @@ export function IslandMapWidget() {
               pendingTraceAnchor?.kind === 'stop' ? pendingTraceAnchor.id : null,
             traceSelectedPathNodeId:
               pendingTraceAnchor?.kind === 'path-node' ? pendingTraceAnchor.id : null,
+            traceSelectedVirtualNodeId:
+              pendingTraceAnchor?.kind === 'virtual-node' ? pendingTraceAnchor.id : null,
             onStopClick: handleStopClick,
             onPathNodeClick: handlePathNodeClick,
+            onVirtualNodeClick: handleVirtualNodeClick,
           }
         : undefined,
-    [drawInteraction, drawMode, handlePathNodeClick, handleStopClick, pendingTraceAnchor],
+    [
+      drawInteraction,
+      drawMode,
+      handlePathNodeClick,
+      handleStopClick,
+      handleVirtualNodeClick,
+      pendingTraceAnchor,
+    ],
   )
   const nodeEdit = useMemo(
     () =>
@@ -1653,8 +1681,11 @@ export function IslandMapWidget() {
           draftStopPoints,
           draftStops,
           draftPathNodes,
+          draftVirtualNodes,
           pendingStop?.point ?? null,
           pendingPathNode?.point ?? null,
+          pendingVirtualNode?.point ?? null,
+          pendingVirtualNode?.kind ?? DEFAULT_VIRTUAL_NODE_KIND,
           drawColor,
           draftRouteNumber,
           handleDrawMapClick,
@@ -1714,8 +1745,11 @@ export function IslandMapWidget() {
             draftStopPoints,
             draftStops,
             draftPathNodes,
+            draftVirtualNodes,
             pendingStop?.point ?? null,
             pendingPathNode?.point ?? null,
+            pendingVirtualNode?.point ?? null,
+            pendingVirtualNode?.kind ?? DEFAULT_VIRTUAL_NODE_KIND,
             drawColor,
             draftRouteNumber,
             handleDrawMapClick,
