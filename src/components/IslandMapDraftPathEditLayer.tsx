@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { getPathLegRanges } from '../utils/worldMapDrawPathEdit'
 import { defaultLegControl } from '../utils/worldMapDrawPathCurve'
-import { imageHitRadiusForScreenPx } from '../utils/mapDrawHitRadius'
+import { imageHitRadiusForScreenPx, DRAW_BEND_HIT_PX } from '../utils/mapDrawHitRadius'
 
 interface IslandMapDraftPathEditLayerProps {
   imageWidth: number
@@ -24,6 +24,9 @@ interface IslandMapDraftPathEditLayerProps {
   onInteractionActiveChange?: (active: boolean) => void
   /** Map pan-zoom scale — hit targets shrink when zoomed in. */
   interactionScale?: number
+  /** Stop / path-node anchors — block leg delete clicks near these. */
+  pathAnchorPoints?: readonly WorldMapPoint[]
+  isNearPathAnchor?: (clientX: number, clientY: number) => boolean
 }
 
 const DOUBLE_TAP_MS = 420
@@ -63,7 +66,7 @@ function handleRadius(imageWidth: number): number {
 }
 
 function bendHitRadius(interactionScale: number): number {
-  return imageHitRadiusForScreenPx(14, interactionScale)
+  return imageHitRadiusForScreenPx(DRAW_BEND_HIT_PX, interactionScale)
 }
 
 function segmentPathD(
@@ -94,10 +97,11 @@ export function IslandMapDraftPathEditLayer({
   onBendMove,
   onBendDragStart,
   onBendDragEnd,
-  onBendRemove,
+  onBendRemove: _onBendRemove,
   onLegDelete,
   onInteractionActiveChange,
   interactionScale = 1,
+  isNearPathAnchor,
 }: IslandMapDraftPathEditLayerProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const dragRef = useRef<{
@@ -210,10 +214,10 @@ export function IslandMapDraftPathEditLayer({
             singleTapTimerRef.current = null
           }
           lastTapRef.current = null
-          if (drag.kind === 'vertex' && drag.vertexIndex != null) {
-            onBendRemove(drag.vertexIndex)
-          } else if (drag.legIndex != null) {
-            onLegDelete(drag.legIndex)
+          if (drag.kind === 'segment' && drag.legIndex != null) {
+            if (!isNearPathAnchor?.(drag.startClientX, drag.startClientY)) {
+              onLegDelete(drag.legIndex)
+            }
           }
         } else {
           lastTapRef.current = { key: tapKey, time: now }
@@ -265,11 +269,11 @@ export function IslandMapDraftPathEditLayer({
     onBendDragStart,
     onBendInsert,
     onBendMove,
-    onBendRemove,
     onInteractionActiveChange,
     onLegDelete,
     clientToNormalized,
     snapPoint,
+    isNearPathAnchor,
   ])
 
   if (!editable || points.length < 2) return null
@@ -288,6 +292,7 @@ export function IslandMapDraftPathEditLayer({
     segment: PathSegmentRef,
     event: PointerEvent<SVGElement>,
   ) => {
+    if (isNearPathAnchor?.(event.clientX, event.clientY)) return
     event.stopPropagation()
     event.preventDefault()
     const clickPoint = resolvePointer(
@@ -313,6 +318,7 @@ export function IslandMapDraftPathEditLayer({
   }
 
   const beginVertexInteraction = (vertexIndex: number, event: PointerEvent<SVGElement>) => {
+    if (isNearPathAnchor?.(event.clientX, event.clientY)) return
     event.stopPropagation()
     event.preventDefault()
     const point = points[vertexIndex]

@@ -6,7 +6,7 @@ import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import { IslandMapPathNodeOverlayLayer } from './IslandMapPathNodeOverlayLayer'
 import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
-import { pickDrawRouteTarget } from '../utils/mapDrawPickTarget'
+import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
 
 export interface PanZoomState {
   x: number
@@ -707,6 +707,31 @@ export function IslandMapPanZoomSurface({
 
   const routeDrawUsesParentPick = drawMode && drawInteraction === 'route'
 
+  const pathAnchorPoints = useMemo(
+    () => [
+      ...draftStops.map((stop) => stop.point),
+      ...draftPathNodes.map((node) => node.point),
+    ],
+    [draftPathNodes, draftStops],
+  )
+
+  const isNearPathAnchor = useCallback(
+    (clientX: number, clientY: number) => {
+      const viewport = viewportRef.current
+      const livePanZoom = panZoomRef.current ?? panZoom
+      if (!viewport || !imageSize || !livePanZoom) return false
+      return isNearDrawAnchor(
+        clientX,
+        clientY,
+        pathAnchorPoints,
+        viewport.getBoundingClientRect(),
+        livePanZoom,
+        imageSize,
+      )
+    },
+    [imageSize, panZoom, pathAnchorPoints],
+  )
+
   const onPointerDownCapture = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (!routeDrawUsesParentPick || event.button !== 0) return
@@ -723,11 +748,9 @@ export function IslandMapPanZoomSurface({
         imageSize,
         stops: draftStops,
         pathNodes: draftPathNodes,
-        bendPoints: draftPoints,
-        userBendIndices: userBendIndexSet,
       })
 
-      if (!picked || picked.kind === 'bend') return
+      if (!picked) return
 
       event.stopPropagation()
       event.preventDefault()
@@ -757,12 +780,10 @@ export function IslandMapPanZoomSurface({
     },
     [
       draftPathNodes,
-      draftPoints,
       draftStops,
       imageSize,
       panZoom,
       routeDrawUsesParentPick,
-      userBendIndexSet,
     ],
   )
 
@@ -849,6 +870,7 @@ export function IslandMapPanZoomSurface({
               pathEditActiveRef.current = active
             }}
             interactionScale={panZoom?.scale ?? 1}
+            isNearPathAnchor={isNearPathAnchor}
           />
         </div>
       ) : null}

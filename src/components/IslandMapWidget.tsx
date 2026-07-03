@@ -28,7 +28,6 @@ import {
   resolveTraceAnchorPoint,
 } from '../utils/worldMapDrawPath'
 import {
-  collapseUserBendToChord,
   getPathLegRanges,
   hidePathLeg,
   insertPathBendPoint,
@@ -909,21 +908,7 @@ export function IslandMapWidget() {
   const handleBendRemove = useCallback(
     (vertexIndex: number) => {
       if (isStopAnchorIndex(vertexIndex, draftPoints, [...draftStops, ...draftPathNodes])) return
-      const collapsed = collapseUserBendToChord(
-        draftPoints,
-        pathLegStarts,
-        pathUserBends,
-        vertexIndex,
-        [...draftStops, ...draftPathNodes],
-      )
-      if (collapsed) {
-        pushDrawHistory()
-        setDraftPoints(collapsed.points)
-        setPathLegStarts(collapsed.legStarts)
-        setPathUserBends(collapsed.userBends)
-        setPathManuallyEdited(true)
-        return
-      }
+      if (!pathUserBends[vertexIndex]) return
       const result = removePathVertex(draftPoints, pathLegStarts, vertexIndex)
       if (!result) return
       pushDrawHistory()
@@ -1107,6 +1092,7 @@ export function IslandMapWidget() {
               stops: merged.stops,
               legStarts: legStartsForExport,
               legHidden: legHiddenForExport,
+              pathUserBends: usingCurrentDraftPath ? pathUserBends : [],
               strokeColor: drawColor,
               showStopLabels,
               stopLabelScale,

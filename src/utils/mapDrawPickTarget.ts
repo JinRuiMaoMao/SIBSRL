@@ -1,6 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
-import { DRAW_HIT_SCREEN_PX } from './mapDrawHitRadius'
+import { DRAW_STOP_NODE_HIT_PX } from './mapDrawHitRadius'
 
 interface PanZoomState {
   x: number
@@ -16,7 +16,6 @@ interface ImageSize {
 export type DrawRoutePickTarget =
   | { kind: 'stop'; id: string }
   | { kind: 'pathNode'; id: string }
-  | { kind: 'bend'; vertexIndex: number }
 
 interface PickDrawRouteTargetOptions {
   clientX: number
@@ -26,12 +25,10 @@ interface PickDrawRouteTargetOptions {
   imageSize: ImageSize
   stops: readonly WorldMapDrawStop[]
   pathNodes: readonly WorldMapDrawPathNode[]
-  bendPoints?: readonly WorldMapPoint[]
-  userBendIndices?: ReadonlySet<number>
   maxDistancePx?: number
 }
 
-function normalizedToClientPoint(
+export function normalizedToClientPoint(
   point: WorldMapPoint,
   viewportRect: DOMRect,
   panZoom: PanZoomState,
@@ -57,8 +54,9 @@ function distancePx(
   return Math.hypot(clientX - screen.x, clientY - screen.y)
 }
 
+/** Nearest stop or path node within screen radius — bends are handled by the path edit layer. */
 export function pickDrawRouteTarget(options: PickDrawRouteTargetOptions): DrawRoutePickTarget | null {
-  const maxDistancePx = options.maxDistancePx ?? DRAW_HIT_SCREEN_PX
+  const maxDistancePx = options.maxDistancePx ?? DRAW_STOP_NODE_HIT_PX
   const candidates: Array<{ target: DrawRoutePickTarget; distancePx: number }> = []
 
   for (const stop of options.stops) {
@@ -89,25 +87,27 @@ export function pickDrawRouteTarget(options: PickDrawRouteTargetOptions): DrawRo
     }
   }
 
-  const bendPoints = options.bendPoints ?? []
-  options.userBendIndices?.forEach((vertexIndex) => {
-    if (vertexIndex <= 0 || vertexIndex >= bendPoints.length - 1) return
-    const point = bendPoints[vertexIndex]
-    if (!point) return
-    const distance = distancePx(
-      options.clientX,
-      options.clientY,
-      options.viewportRect,
-      options.panZoom,
-      options.imageSize,
-      point,
-    )
-    if (distance <= maxDistancePx) {
-      candidates.push({ target: { kind: 'bend', vertexIndex }, distancePx: distance })
-    }
-  })
-
   if (candidates.length === 0) return null
-  candidates.sort((left, right) => left.distancePx - right.distancePx)
+  candidates.sort((left, right) => {
+    if (left.distancePx !== right.distancePx) return left.distancePx - right.distancePx
+    if (left.target.kind === right.target.kind) return 0
+    return left.target.kind === 'stop' ? -1 : 1
+  })
   return candidates[0]!.target
+}
+
+export function isNearDrawAnchor(
+  clientX: number,
+  clientY: number,
+  anchors: readonly WorldMapPoint[],
+  viewportRect: DOMRect,
+  panZoom: PanZoomState,
+  imageSize: ImageSize,
+  radiusPx = DRAW_STOP_NODE_HIT_PX,
+): boolean {
+  for (const point of anchors) {
+    const screen = normalizedToClientPoint(point, viewportRect, panZoom, imageSize)
+    if (Math.hypot(clientX - screen.x, clientY - screen.y) <= radiusPx) return true
+  }
+  return false
 }

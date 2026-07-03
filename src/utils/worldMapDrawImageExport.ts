@@ -2,6 +2,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { Locale } from '../i18n/types'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { getPathLegRanges } from './worldMapDrawPathEdit'
+import { buildEditorCornerPathD } from './worldMapDrawPathCurve'
 import { normalizeStopLabelScale } from './mapDrawStopLabel'
 import { resolveExportBaseName } from './worldMapRouteExport'
 import { formatDrawStopLabel } from './worldMapDrawStopDisplay'
@@ -13,6 +14,7 @@ export interface WorldMapDrawImageExportOptions {
   stops: readonly WorldMapDrawStop[]
   legStarts: readonly number[]
   legHidden: readonly boolean[]
+  pathUserBends?: readonly boolean[]
   strokeColor: string
   showStopLabels?: boolean
   stopLabelScale?: number
@@ -115,6 +117,7 @@ function drawRouteOnCanvas(
   points: readonly WorldMapPoint[],
   legStarts: readonly number[],
   legHidden: readonly boolean[],
+  pathUserBends: readonly boolean[],
   strokeColor: string,
 ) {
   if (points.length < 2) return
@@ -126,16 +129,19 @@ function drawRouteOnCanvas(
 
   legs.forEach((leg, legIndex) => {
     if (legHidden[legIndex]) return
-    ctx.beginPath()
+    const legPoints: WorldMapPoint[] = []
+    const legUserBends = new Set<number>()
     for (let index = leg.start; index <= leg.end; index += 1) {
       const point = points[index]
       if (!point) continue
-      const x = point[0] * imageWidth
-      const y = point[1] * imageHeight
-      if (index === leg.start) ctx.moveTo(x, y)
-      else ctx.lineTo(x, y)
+      legPoints.push(point)
+      if (pathUserBends[index]) legUserBends.add(index - leg.start)
     }
-    ctx.stroke()
+    if (legPoints.length < 2) return
+    const pathD = buildEditorCornerPathD(legPoints, imageWidth, imageHeight, {
+      userBendIndices: legUserBends,
+    })
+    ctx.stroke(new Path2D(pathD))
   })
 }
 
@@ -210,6 +216,7 @@ export async function exportWorldMapDrawImage(
     options.points,
     options.legStarts,
     options.legHidden,
+    options.pathUserBends ?? [],
     options.strokeColor,
   )
   drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
