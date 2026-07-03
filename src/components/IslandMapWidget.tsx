@@ -38,6 +38,7 @@ import {
   retraceAdjacentLegsAtAnchor,
   resizeLegHidden,
   resizePathUserBends,
+  snapPathNodesOntoPath,
   updatePathPointsForStopMove,
 } from '../utils/worldMapDrawPathEdit'
 import { flattenPolylinePath, resizeLegControls } from '../utils/worldMapDrawPathCurve'
@@ -1271,15 +1272,16 @@ export function IslandMapWidget() {
         setDraftStops(parsed.stops)
         const importedVirtualNodes = parsed.virtualNodes ?? []
         setDraftVirtualNodes(importedVirtualNodes)
-        setDraftPathNodes(parsed.pathNodes ?? [])
         const imported = resolveImportedRouteDraft({
           points: parsed.points,
           stops: parsed.stops,
+          pathNodes: parsed.pathNodes,
           legStarts: parsed.legStarts,
           pathLegHidden: parsed.pathLegHidden,
           userBendIndices: parsed.userBendIndices,
         })
         setDraftPoints(imported.points)
+        setDraftPathNodes(snapPathNodesOntoPath(imported.points, parsed.pathNodes ?? []))
         setPathLegStarts(imported.legStarts)
         setPathLegControls([])
         setPathLegHidden(imported.pathLegHidden)

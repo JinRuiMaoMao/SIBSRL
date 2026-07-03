@@ -98,9 +98,9 @@ export function IslandMapDrawExportDialog({
     if (!open) return
     const ids = collectWorldMapDrawRouteIds(sourceSlices)
     setExportRouteId(preferredExportRouteId(routeId, ids))
-    setIncludePath(false)
+    setIncludePath(points.length >= 2)
     setError(null)
-  }, [open, routeId, sourceSlices])
+  }, [open, points.length, routeId, sourceSlices])
 
   useEffect(() => {
     if (!open) return

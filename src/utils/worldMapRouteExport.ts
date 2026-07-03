@@ -2,6 +2,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import { canonicalVirtualNodeRouteId } from './worldMapVirtualNodes'
+import { buildLegStartsFromPathAnchors } from './worldMapDrawPathEdit'
 
 export interface WorldMapRouteExportEditorMeta {
   pathNodes?: Array<{ label?: string; point: WorldMapPoint }>
@@ -170,6 +171,7 @@ export function buildWorldMapRouteExportPayload(
   const included: string[] = []
   if (exportStops.length > 0) included.push('stops')
   if (exportVirtualNodes.length > 0) included.push('virtual nodes')
+  if (exportPathNodes.length > 0) included.push('path nodes')
   if (exportPoints.length > 0) included.push('path')
 
   const direction: WorldMapRouteExportPayload['directions'][number] = { directionIndex }
@@ -185,8 +187,9 @@ export function buildWorldMapRouteExportPayload(
     .filter((node) => node.point.length === 2)
   if (exportPathNodes.length > 0) direction.pathNodes = exportPathNodes
 
-  if (editorMeta.legStarts && editorMeta.legStarts.length > 0 && exportPoints.length > 0) {
-    direction.legStarts = [...editorMeta.legStarts]
+  if (exportPoints.length > 0) {
+    const exportLegStarts = buildLegStartsFromPathAnchors(exportPoints, exportStops, exportPathNodes)
+    if (exportLegStarts.length > 0) direction.legStarts = exportLegStarts
   }
   if (editorMeta.pathLegHidden?.some(Boolean) && exportPoints.length > 0) {
     direction.pathLegHidden = [...editorMeta.pathLegHidden]

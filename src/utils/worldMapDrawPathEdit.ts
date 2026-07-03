@@ -649,6 +649,54 @@ export function collapseUserBendToChord(
   }
 }
 
+export function findClosestPointIndex(
+  points: readonly WorldMapPoint[],
+  target: WorldMapPoint,
+): number {
+  let bestIndex = -1
+  let bestDistance = Infinity
+  for (let index = 0; index < points.length; index += 1) {
+    const point = points[index]!
+    const distance = Math.hypot(point[0] - target[0], point[1] - target[1])
+    if (distance < bestDistance) {
+      bestDistance = distance
+      bestIndex = index
+    }
+  }
+  return bestIndex
+}
+
+/** Leg boundaries at stop and path-node anchors inside a dense road-traced path. */
+export function buildLegStartsFromPathAnchors(
+  points: readonly WorldMapPoint[],
+  stops: readonly { point: WorldMapPoint }[],
+  pathNodes: readonly { point: WorldMapPoint }[] = [],
+  epsilon = 0.00005,
+): number[] {
+  if (points.length === 0) return []
+  const anchors = [
+    ...stops.map((stop) => stop.point),
+    ...pathNodes.map((node) => node.point),
+  ]
+  if (anchors.length === 0) return points.length >= 2 ? [0] : []
+
+  const orderedIndices = anchors
+    .map((point) => {
+      const exact = findPointIndexNear(points, point, epsilon)
+      return exact >= 0 ? exact : findClosestPointIndex(points, point)
+    })
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)
+
+  const legStarts = [0]
+  for (const pathIndex of orderedIndices) {
+    if (pathIndex > legStarts[legStarts.length - 1]!) {
+      legStarts.push(pathIndex)
+    }
+  }
+  return legStarts
+}
+
 /** Leg boundaries at each stop anchor inside a dense road-traced path. */
 export function buildLegStartsFromStopAnchors(
   points: readonly WorldMapPoint[],
@@ -692,9 +740,33 @@ export function normalizeImportedLegStarts(
   return normalized
 }
 
+export function snapPathNodesOntoPath(
+  points: readonly WorldMapPoint[],
+  pathNodes: readonly { id: string; point: WorldMapPoint; label?: string }[],
+  epsilon = 0.00005,
+): { id: string; point: WorldMapPoint; label?: string }[] {
+  if (points.length < 2 || pathNodes.length === 0) {
+    return pathNodes.map((node) => ({
+      ...node,
+      point: [node.point[0], node.point[1]] as WorldMapPoint,
+    }))
+  }
+
+  return pathNodes.map((node) => {
+    const exact = findPointIndexNear(points, node.point, epsilon)
+    const pathIndex = exact >= 0 ? exact : findClosestPointIndex(points, node.point)
+    if (pathIndex < 0) {
+      return { ...node, point: [node.point[0], node.point[1]] as WorldMapPoint }
+    }
+    const snapped = points[pathIndex]!
+    return { ...node, point: [snapped[0], snapped[1]] as WorldMapPoint }
+  })
+}
+
 export function resolveImportedRouteDraft(options: {
   points: readonly WorldMapPoint[]
   stops: readonly WorldMapDrawStop[]
+  pathNodes?: readonly { point: WorldMapPoint }[]
   legStarts?: readonly number[]
   pathLegHidden?: readonly boolean[]
   userBendIndices?: readonly number[]
@@ -706,12 +778,15 @@ export function resolveImportedRouteDraft(options: {
 } {
   if (options.points.length >= 2) {
     const points = options.points.map((point) => [point[0], point[1]] as WorldMapPoint)
+    const pathNodes = options.pathNodes ?? []
     const legStarts =
-      options.legStarts && options.legStarts.length > 0
-        ? normalizeImportedLegStarts(options.legStarts, points.length)
-        : options.stops.length >= 2
-          ? buildLegStartsFromStopAnchors(points, options.stops)
-          : [0]
+      pathNodes.length > 0
+        ? buildLegStartsFromPathAnchors(points, options.stops, pathNodes)
+        : options.legStarts && options.legStarts.length > 0
+          ? normalizeImportedLegStarts(options.legStarts, points.length)
+          : options.stops.length >= 2
+            ? buildLegStartsFromStopAnchors(points, options.stops)
+            : [0]
     const legCount = getPathLegRanges(legStarts, points.length).length
     const pathLegHidden = resizeLegHidden(options.pathLegHidden ?? [], legCount)
     const pathUserBends = Array.from({ length: points.length }, () => false)
