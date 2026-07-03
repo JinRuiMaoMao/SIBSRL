@@ -122,6 +122,7 @@ export function IslandMapRouteOverlayLayer({
             style={draftStyle}
             fill="none"
             strokeLinecap="round"
+            strokeLinejoin="round"
           />
         ) : (
           <polyline

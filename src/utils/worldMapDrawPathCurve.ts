@@ -317,6 +317,18 @@ function simplifyPathForDisplay(
   return simplified.length >= 2 ? simplified : [...points]
 }
 
+function collapseNearDuplicatePoints(points: readonly WorldMapPoint[], minNormDist = 1e-7): WorldMapPoint[] {
+  const collapsed: WorldMapPoint[] = []
+  for (const point of points) {
+    const last = collapsed[collapsed.length - 1]
+    if (last && Math.hypot(point[0] - last[0], point[1] - last[1]) < minNormDist) continue
+    collapsed.push([point[0], point[1]])
+  }
+  if (collapsed.length >= 2) return collapsed
+  if (points.length >= 2) return [points[0]!, points[points.length - 1]!]
+  return [...points]
+}
+
 function remapUserBendIndices(
   simplified: readonly WorldMapPoint[],
   userBends: ReadonlySet<number>,
@@ -607,7 +619,7 @@ export function buildEditorCornerPathD(
   const minTurn = options.minTurnRadians ?? (4 * Math.PI) / 180
   const simplifyEpsilonPx = options.simplifyEpsilonPx ?? Math.max(3.5, imageWidth * 0.0011)
 
-  const simplified =
+  const simplifiedRaw =
     points.length > 12
       ? simplifyPathForDisplay(
           points,
@@ -618,6 +630,7 @@ export function buildEditorCornerPathD(
           minTurn,
         )
       : [...points]
+  const simplified = collapseNearDuplicatePoints(simplifiedRaw)
   const userBends =
     sourceUserBends.size > 0 ? remapUserBendIndices(simplified, sourceUserBends, points) : sourceUserBends
 
@@ -649,7 +662,11 @@ export function buildEditorCornerPathD(
     const dy2 = next.y - curr.y
     const len1 = Math.hypot(dx1, dy1)
     const len2 = Math.hypot(dx2, dy2)
-    if (len1 < 1e-6 || len2 < 1e-6) continue
+    if (len1 < 1e-6) continue
+    if (len2 < 1e-6) {
+      parts.push(`L ${curr.x} ${curr.y}`)
+      continue
+    }
 
     const turn = estimateLocalTurnRadians(
       points,

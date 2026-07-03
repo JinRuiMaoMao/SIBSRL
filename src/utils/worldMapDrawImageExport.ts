@@ -107,11 +107,25 @@ function drawRouteOnCanvas(
   strokeColor: string,
 ) {
   if (points.length < 2) return
-  const legs = getPathLegRanges(legStarts, points.length)
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
   ctx.strokeStyle = strokeColor
   ctx.lineWidth = Math.max(2, imageWidth * 0.0014)
+
+  const anyLegHidden = legHidden.some(Boolean)
+  if (!anyLegHidden) {
+    const userBends = new Set<number>()
+    pathUserBends.forEach((isUser, index) => {
+      if (isUser) userBends.add(index)
+    })
+    const pathD = buildEditorCornerPathD(points, imageWidth, imageHeight, {
+      userBendIndices: userBends,
+    })
+    if (pathD) ctx.stroke(new Path2D(pathD))
+    return
+  }
+
+  const legs = getPathLegRanges(legStarts, points.length)
 
   legs.forEach((leg, legIndex) => {
     if (legHidden[legIndex]) return
