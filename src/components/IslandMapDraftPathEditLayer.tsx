@@ -193,7 +193,7 @@ export function IslandMapDraftPathEditLayer({
         const tapKey =
           drag.kind === 'vertex'
             ? `v-${drag.vertexIndex}`
-            : `s-${drag.segmentIndex}`
+            : `l-${drag.legIndex ?? drag.segmentIndex}`
         const lastTap = lastTapRef.current
         if (lastTap && lastTap.key === tapKey && now - lastTap.time <= DOUBLE_TAP_MS) {
           if (singleTapTimerRef.current != null) {
@@ -360,15 +360,25 @@ export function IslandMapDraftPathEditLayer({
         const { x, y } = toImageCoords(point, imageWidth, imageHeight)
         const isActive = activeKey === `v-${vertexIndex}`
         return (
-          <circle
+          <g
             key={`bend-${vertexIndex}-${point[0]}-${point[1]}`}
-            className={`island-map-draft-path-edit-curve-handle island-map-draft-path-edit-curve-handle--node${isActive ? ' island-map-draft-path-edit-curve-handle--active' : ''}`.trim()}
-            cx={x}
-            cy={y}
-            r={ctrlRadius}
-            style={strokeColor ? { fill: strokeColor } : undefined}
             onPointerDown={(event) => beginVertexInteraction(vertexIndex, event)}
-          />
+          >
+            <circle
+              className="island-map-draft-path-edit-curve-handle-hit"
+              cx={x}
+              cy={y}
+              r={ctrlRadius * 2.4}
+              fill="transparent"
+            />
+            <circle
+              className={`island-map-draft-path-edit-curve-handle island-map-draft-path-edit-curve-handle--node${isActive ? ' island-map-draft-path-edit-curve-handle--active' : ''}`.trim()}
+              cx={x}
+              cy={y}
+              r={ctrlRadius}
+              style={strokeColor ? { fill: strokeColor } : undefined}
+            />
+          </g>
         )
       })}
     </svg>

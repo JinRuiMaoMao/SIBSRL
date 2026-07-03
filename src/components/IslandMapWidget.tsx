@@ -27,16 +27,15 @@ import {
 } from '../utils/worldMapDrawPath'
 import {
   collapseUserBendToChord,
-  findPathAnchorIndexAfter,
-  findPathAnchorIndexBefore,
   getPathLegRanges,
   hidePathLeg,
   insertPathBendPoint,
   isStopAnchorIndex,
   movePathVertex,
+  removeLegInteriorPoints,
   removePathVertex,
   retacePathSpanAroundUserBend,
-  retacePathSpanBetweenAnchors,
+  retraceAdjacentLegsAtAnchor,
   resizeLegHidden,
   resizePathUserBends,
   updatePathPointsForStopMove,
@@ -572,27 +571,19 @@ export function IslandMapWidget() {
     (
       points: WorldMapPoint[],
       legStarts: number[],
+      legHidden: readonly boolean[],
       anchorPoint: WorldMapPoint,
       anchors: readonly { point: WorldMapPoint }[],
     ): { points: WorldMapPoint[]; legStarts: number[] } => {
       if (!roadSnap.index) return { points, legStarts }
-
-      let anchorIndex = -1
-      for (let index = 0; index < points.length; index += 1) {
-        const point = points[index]!
-        if (Math.hypot(point[0] - anchorPoint[0], point[1] - anchorPoint[1]) <= 0.00005) {
-          anchorIndex = index
-          break
-        }
-      }
-      if (anchorIndex < 0) return { points, legStarts }
-
-      const left = findPathAnchorIndexBefore(points, anchors, anchorIndex)
-      const right = findPathAnchorIndexAfter(points, anchors, anchorIndex)
-      if (left >= right) return { points, legStarts }
-
-      const retraced = retacePathSpanBetweenAnchors(points, legStarts, left, right, traceRoadSegment)
-      return retraced ?? { points, legStarts }
+      return retraceAdjacentLegsAtAnchor(
+        points,
+        legStarts,
+        legHidden,
+        anchorPoint,
+        anchors,
+        traceRoadSegment,
+      )
     },
     [roadSnap.index, traceRoadSegment],
   )
@@ -794,7 +785,7 @@ export function IslandMapWidget() {
         entry.id === stopId ? { ...entry, point: snapped } : entry,
       )
       const moved = updatePathPointsForStopMove(state.draftPoints, state.draftStops, stopId, snapped)
-      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, snapped, [
+      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, state.pathLegHidden, snapped, [
         ...nextStops,
         ...state.draftPathNodes,
       ])
@@ -842,7 +833,7 @@ export function IslandMapWidget() {
         entry.id === nodeId ? { ...entry, point: snapped } : entry,
       )
       const moved = updatePathPointsForStopMove(state.draftPoints, [node], nodeId, snapped)
-      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, snapped, [
+      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, state.pathLegHidden, snapped, [
         ...state.draftStops,
         ...nextNodes,
       ])
@@ -1001,6 +992,19 @@ export function IslandMapWidget() {
       setPendingStop(null)
       setSelectedStopId(null)
       setPendingTraceAnchor(null)
+
+      const state = draftHistoryRef.current
+      const removed = removeLegInteriorPoints(
+        state.draftPoints,
+        state.pathLegStarts,
+        state.pathUserBends,
+        legIndex,
+      )
+      if (!removed) return
+
+      setDraftPoints(removed.points)
+      setPathLegStarts(removed.legStarts)
+      setPathUserBends(removed.userBends)
       setPathLegHidden((hidden) => hidePathLeg(hidden, legIndex))
       setPathManuallyEdited(true)
     },

@@ -125,6 +125,122 @@ export function hidePathLeg(hidden: readonly boolean[], legIndex: number): boole
   return next
 }
 
+export function findPointIndexNear(
+  points: readonly WorldMapPoint[],
+  target: WorldMapPoint,
+  epsilon = 0.00005,
+): number {
+  for (let index = 0; index < points.length; index += 1) {
+    const point = points[index]!
+    if (Math.hypot(point[0] - target[0], point[1] - target[1]) <= epsilon) return index
+  }
+  return -1
+}
+
+/** Drop road samples inside a leg but keep its endpoint anchors for later re-connect. */
+export function removeLegInteriorPoints(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  userBends: readonly boolean[],
+  legIndex: number,
+): { points: WorldMapPoint[]; legStarts: number[]; userBends: boolean[] } | null {
+  const legs = getPathLegRanges(legStarts, points.length)
+  const leg = legs[legIndex]
+  if (!leg) return null
+
+  const removeFrom = leg.start + 1
+  const removeThrough = leg.end - 1
+  if (removeThrough < removeFrom) {
+    return {
+      points: points.map((point) => [point[0], point[1]] as WorldMapPoint),
+      legStarts: legStarts.length > 0 ? [...legStarts] : [0],
+      userBends: resizePathUserBends(userBends, points.length),
+    }
+  }
+
+  const removedCount = removeThrough - removeFrom + 1
+  const newPoints = [
+    ...points.slice(0, removeFrom).map((point) => [point[0], point[1]] as WorldMapPoint),
+    ...points.slice(leg.end).map((point) => [point[0], point[1]] as WorldMapPoint),
+  ]
+
+  let nextLegStarts = legStarts.length > 0 ? [...legStarts] : [0]
+  if (nextLegStarts[0] !== 0) nextLegStarts.unshift(0)
+  nextLegStarts = nextLegStarts
+    .map((start) => (start > removeThrough ? start - removedCount : start))
+    .filter((start, index, arr) => index === 0 || start > arr[index - 1]!)
+
+  const nextUserBends = resizePathUserBends(userBends, points.length).filter(
+    (_, index) => index < removeFrom || index > removeThrough,
+  )
+
+  return { points: newPoints, legStarts: nextLegStarts, userBends: nextUserBends }
+}
+
+/** Retrace only the visible legs touching a moved anchor, not the whole anchor span. */
+export function retraceAdjacentLegsAtAnchor(
+  points: readonly WorldMapPoint[],
+  legStarts: readonly number[],
+  legHidden: readonly boolean[],
+  anchorPoint: WorldMapPoint,
+  anchors: readonly { point: WorldMapPoint }[],
+  traceSegment: TraceTwoPointFn,
+): { points: WorldMapPoint[]; legStarts: number[] } {
+  let nextPoints = points.map((point) => [point[0], point[1]] as WorldMapPoint)
+  let nextLegStarts = legStarts.length > 0 ? [...legStarts] : [0]
+
+  let anchorIndex = findPointIndexNear(nextPoints, anchorPoint)
+  if (anchorIndex < 0) return { points: nextPoints, legStarts: nextLegStarts }
+
+  const left = findPathAnchorIndexBefore(nextPoints, anchors, anchorIndex)
+  const right = findPathAnchorIndexAfter(nextPoints, anchors, anchorIndex)
+
+  const incomingLegs = getPathLegRanges(nextLegStarts, nextPoints.length)
+  for (let legIndex = 0; legIndex < incomingLegs.length; legIndex += 1) {
+    if (legHidden[legIndex]) continue
+    const leg = incomingLegs[legIndex]!
+    if (leg.end === anchorIndex && left < anchorIndex) {
+      const retraced = retacePathSpanBetweenAnchors(
+        nextPoints,
+        nextLegStarts,
+        left,
+        anchorIndex,
+        traceSegment,
+      )
+      if (retraced) {
+        nextPoints = retraced.points
+        nextLegStarts = retraced.legStarts
+      }
+      break
+    }
+  }
+
+  anchorIndex = findPointIndexNear(nextPoints, anchorPoint)
+  if (anchorIndex < 0) return { points: nextPoints, legStarts: nextLegStarts }
+
+  const outgoingLegs = getPathLegRanges(nextLegStarts, nextPoints.length)
+  for (let legIndex = 0; legIndex < outgoingLegs.length; legIndex += 1) {
+    if (legHidden[legIndex]) continue
+    const leg = outgoingLegs[legIndex]!
+    if (leg.start === anchorIndex && anchorIndex < right) {
+      const retraced = retacePathSpanBetweenAnchors(
+        nextPoints,
+        nextLegStarts,
+        anchorIndex,
+        right,
+        traceSegment,
+      )
+      if (retraced) {
+        nextPoints = retraced.points
+        nextLegStarts = retraced.legStarts
+      }
+      break
+    }
+  }
+
+  return { points: nextPoints, legStarts: nextLegStarts }
+}
+
 /** Insert a bend vertex between points[segmentIndex] and points[segmentIndex + 1]. */
 export function insertPathBendPoint(
   points: readonly WorldMapPoint[],

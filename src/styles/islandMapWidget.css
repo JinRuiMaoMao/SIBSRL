@@ -649,6 +649,11 @@ html.has-compact-tab-nav .island-map--widget {
   cursor: grabbing;
 }
 
+.island-map-draft-path-edit-curve-handle-hit {
+  pointer-events: all;
+  cursor: grab;
+}
+
 .island-map-draft-path-edit-curve-handle {
   fill: #5ec8ff;
   stroke: color-mix(in srgb, #000 55%, transparent);
