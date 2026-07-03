@@ -22,6 +22,13 @@ export interface WorldMapDrawImageExportOptions {
   cropToRoute?: boolean
 }
 
+interface PixelBounds {
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+}
+
 function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image()
@@ -31,77 +38,56 @@ function loadImage(url: string): Promise<HTMLImageElement> {
   })
 }
 
-function collectVisiblePathPoints(
-  points: readonly WorldMapPoint[],
-  legStarts: readonly number[],
-  legHidden: readonly boolean[],
-): WorldMapPoint[] {
-  if (points.length < 2) return [...points]
-  const legs = getPathLegRanges(legStarts, points.length)
-  const merged: WorldMapPoint[] = []
-  legs.forEach((leg, legIndex) => {
-    if (legHidden[legIndex]) return
-    for (let index = leg.start; index <= leg.end; index += 1) {
-      const point = points[index]
-      if (!point) continue
-      merged.push(point)
+function measurePaintedBounds(
+  imageWidth: number,
+  imageHeight: number,
+  paint: (ctx: CanvasRenderingContext2D) => void,
+): PixelBounds | null {
+  const canvas = document.createElement('canvas')
+  canvas.width = imageWidth
+  canvas.height = imageHeight
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })
+  if (!ctx) return null
+
+  paint(ctx)
+
+  const { data } = ctx.getImageData(0, 0, imageWidth, imageHeight)
+  let minX = imageWidth
+  let minY = imageHeight
+  let maxX = -1
+  let maxY = -1
+
+  for (let y = 0; y < imageHeight; y += 1) {
+    for (let x = 0; x < imageWidth; x += 1) {
+      const alpha = data[(y * imageWidth + x) * 4 + 3]!
+      if (alpha <= 8) continue
+      if (x < minX) minX = x
+      if (y < minY) minY = y
+      if (x > maxX) maxX = x
+      if (y > maxY) maxY = y
     }
-  })
-  return merged.length >= 2 ? merged : [...points]
+  }
+
+  if (maxX < minX || maxY < minY) return null
+  return { minX, minY, maxX, maxY }
 }
 
 function computeCropRect(
   imageWidth: number,
   imageHeight: number,
-  points: readonly WorldMapPoint[],
-  stops: readonly WorldMapDrawStop[],
-  options: {
-    showStopLabels: boolean
-    stopLabelScale: number
-    locale: Locale
-    strokeWidth: number
-  },
-  paddingRatio = 0.08,
+  content: PixelBounds,
+  paddingRatio = 0.1,
 ) {
-  const xs: number[] = []
-  const ys: number[] = []
-  const labelScale = normalizeStopLabelScale(options.stopLabelScale)
-  const markerSize = Math.max(8, imageWidth * 0.0045 * labelScale)
-  const fontSize = Math.max(11, imageWidth * 0.0032 * labelScale)
-  const strokePad = Math.max(16, options.strokeWidth * 2)
+  const contentWidth = content.maxX - content.minX + 1
+  const contentHeight = content.maxY - content.minY + 1
+  const padX = Math.max(64, contentWidth * paddingRatio)
+  const padY = Math.max(64, contentHeight * paddingRatio)
 
-  for (const point of points) {
-    xs.push(point[0] * imageWidth)
-    ys.push(point[1] * imageHeight)
-  }
-  for (const [index, stop] of stops.entries()) {
-    const x = stop.point[0] * imageWidth
-    const y = stop.point[1] * imageHeight
-    xs.push(x - markerSize / 2, x + markerSize / 2)
-    ys.push(y - markerSize / 2, y + markerSize / 2 + fontSize * 0.6)
-    if (options.showStopLabels) {
-      const label = formatDrawStopLabel(stop, index, options.locale)
-      const labelWidth = label.length * fontSize * 0.58 + markerSize * 0.7
-      xs.push(x + markerSize * 0.7 + labelWidth)
-    }
-  }
-  if (xs.length === 0) {
-    return { x: 0, y: 0, width: imageWidth, height: imageHeight }
-  }
-  let minX = Math.min(...xs) - strokePad
-  let minY = Math.min(...ys) - strokePad
-  let maxX = Math.max(...xs) + strokePad
-  let maxY = Math.max(...ys) + strokePad
-  const padX = Math.max(48, (maxX - minX) * paddingRatio)
-  const padY = Math.max(48, (maxY - minY) * paddingRatio)
-  minX = Math.max(0, minX - padX)
-  minY = Math.max(0, minY - padY)
-  maxX = Math.min(imageWidth, maxX + padX)
-  maxY = Math.min(imageHeight, maxY + padY)
-  const x0 = Math.floor(minX)
-  const y0 = Math.floor(minY)
-  const x1 = Math.min(imageWidth, Math.ceil(maxX))
-  const y1 = Math.min(imageHeight, Math.ceil(maxY))
+  const x0 = Math.max(0, Math.floor(content.minX - padX))
+  const y0 = Math.max(0, Math.floor(content.minY - padY))
+  const x1 = Math.min(imageWidth, Math.ceil(content.maxX + padX + 1))
+  const y1 = Math.min(imageHeight, Math.ceil(content.maxY + padY + 1))
+
   return {
     x: x0,
     y: y0,
@@ -174,6 +160,40 @@ function drawStopsOnCanvas(
   })
 }
 
+function measureExportContentBounds(
+  imageWidth: number,
+  imageHeight: number,
+  options: {
+    points: readonly WorldMapPoint[]
+    legStarts: readonly number[]
+    legHidden: readonly boolean[]
+    pathUserBends: readonly boolean[]
+    strokeColor: string
+    stops: readonly WorldMapDrawStop[]
+    showStopLabels: boolean
+    stopLabelScale: number
+    locale: Locale
+  },
+): PixelBounds | null {
+  return measurePaintedBounds(imageWidth, imageHeight, (ctx) => {
+    drawRouteOnCanvas(
+      ctx,
+      imageWidth,
+      imageHeight,
+      options.points,
+      options.legStarts,
+      options.legHidden,
+      options.pathUserBends,
+      options.strokeColor,
+    )
+    drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
+      showStopLabels: options.showStopLabels,
+      stopLabelScale: options.stopLabelScale,
+      locale: options.locale,
+    })
+  })
+}
+
 export async function exportWorldMapDrawImage(
   options: WorldMapDrawImageExportOptions,
   exportBaseName: string,
@@ -181,24 +201,27 @@ export async function exportWorldMapDrawImage(
   const image = await loadImage(options.mapImageUrl)
   const imageWidth = image.naturalWidth
   const imageHeight = image.naturalHeight
-  const visiblePoints = collectVisiblePathPoints(
-    options.points,
-    options.legStarts,
-    options.legHidden,
-  )
-  const strokeWidth = Math.max(2, imageWidth * 0.0014)
   const showStopLabels = options.showStopLabels !== false
   const stopLabelScale = options.stopLabelScale ?? 1
   const locale = options.locale ?? 'en'
+  const pathUserBends = options.pathUserBends ?? []
 
-  const crop = options.cropToRoute !== false
-    ? computeCropRect(imageWidth, imageHeight, visiblePoints, options.stops, {
-        showStopLabels,
-        stopLabelScale,
-        locale,
-        strokeWidth,
-      })
-    : { x: 0, y: 0, width: imageWidth, height: imageHeight }
+  const contentBounds = measureExportContentBounds(imageWidth, imageHeight, {
+    points: options.points,
+    legStarts: options.legStarts,
+    legHidden: options.legHidden,
+    pathUserBends,
+    strokeColor: options.strokeColor,
+    stops: options.stops,
+    showStopLabels,
+    stopLabelScale,
+    locale,
+  })
+
+  const crop =
+    options.cropToRoute !== false && contentBounds
+      ? computeCropRect(imageWidth, imageHeight, contentBounds)
+      : { x: 0, y: 0, width: imageWidth, height: imageHeight }
 
   const canvas = document.createElement('canvas')
   canvas.width = crop.width
@@ -216,7 +239,7 @@ export async function exportWorldMapDrawImage(
     options.points,
     options.legStarts,
     options.legHidden,
-    options.pathUserBends ?? [],
+    pathUserBends,
     options.strokeColor,
   )
   drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
