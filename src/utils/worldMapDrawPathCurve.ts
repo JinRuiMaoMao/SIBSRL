@@ -279,10 +279,16 @@ function simplifyPathForDisplay(
   imageHeight: number,
   userBends: ReadonlySet<number>,
   epsilonPx: number,
+  minTurn: number,
 ): WorldMapPoint[] {
   if (points.length <= 3) return [...points]
 
-  const pinned = [...userBends, 0, points.length - 1]
+  const pinned = [
+    ...userBends,
+    0,
+    points.length - 1,
+    ...collectSignificantTurnIndices(points, minTurn),
+  ]
     .filter((index) => index >= 0 && index < points.length)
     .sort((left, right) => left - right)
     .filter((index, pos, arr) => pos === 0 || index > arr[pos - 1]!)
@@ -404,14 +410,89 @@ function estimateLocalCurvatureRadiusPx(
   return radii[Math.floor(radii.length / 2)]!
 }
 
-function filletRadiusFromCurvature(
+function turnRadiansFromPx(
+  prev: { x: number; y: number },
+  curr: { x: number; y: number },
+  next: { x: number; y: number },
+  imageWidth: number,
+  imageHeight: number,
+): number {
+  return turnRadians(
+    [prev.x / imageWidth, prev.y / imageHeight],
+    [curr.x / imageWidth, curr.y / imageHeight],
+    [next.x / imageWidth, next.y / imageHeight],
+  )
+}
+
+/** Median bend angle (deflection) sampled on the source road near a vertex. */
+function estimateLocalTurnRadians(
+  source: readonly WorldMapPoint[],
+  vertex: WorldMapPoint,
+  imageWidth: number,
+  imageHeight: number,
+  fallbackPrev: { x: number; y: number },
+  fallbackCurr: { x: number; y: number },
+  fallbackNext: { x: number; y: number },
+): number {
+  if (source.length < 3) {
+    return turnRadiansFromPx(fallbackPrev, fallbackCurr, fallbackNext, imageWidth, imageHeight)
+  }
+
+  const centerIndex = findNearestSourceIndex(vertex, source)
+  const window = Math.min(5, Math.max(2, Math.floor(source.length / 8)))
+  const turns: number[] = []
+
+  for (let offset = -window; offset <= window - 2; offset += 1) {
+    const start = centerIndex + offset
+    if (start < 0 || start + 2 >= source.length) continue
+    const turn = turnRadians(source[start]!, source[start + 1]!, source[start + 2]!)
+    if (Number.isFinite(turn) && turn > 0.001) turns.push(turn)
+  }
+
+  if (turns.length === 0) {
+    return turnRadiansFromPx(fallbackPrev, fallbackCurr, fallbackNext, imageWidth, imageHeight)
+  }
+
+  turns.sort((left, right) => left - right)
+  return turns[Math.floor(turns.length / 2)]!
+}
+
+function interiorHalfAngle(turn: number): number {
+  return Math.max(0.01, (Math.PI - turn) / 2)
+}
+
+function maxFilletRadiusForTurn(len1: number, len2: number, turn: number): number {
+  return Math.min(len1, len2) * Math.tan(interiorHalfAngle(turn))
+}
+
+function filletTrimForRadius(radius: number, turn: number): number {
+  return radius / Math.tan(interiorHalfAngle(turn))
+}
+
+function filletRadiusFromRoadBend(
   curvatureRadiusPx: number,
+  turn: number,
   len1: number,
   len2: number,
 ): number | null {
   if (!Number.isFinite(curvatureRadiusPx) || curvatureRadiusPx <= 0.5) return null
-  const fit = Math.min(curvatureRadiusPx, len1 * 0.49, len2 * 0.49)
-  return fit > 0.5 ? fit : null
+  const maxByAngle = maxFilletRadiusForTurn(len1, len2, turn)
+  if (maxByAngle <= 0.5) return null
+  const radius = Math.min(curvatureRadiusPx, maxByAngle)
+  return radius > 0.5 ? radius : null
+}
+
+function collectSignificantTurnIndices(
+  points: readonly WorldMapPoint[],
+  minTurn: number,
+): number[] {
+  const indices: number[] = []
+  for (let index = 1; index < points.length - 1; index += 1) {
+    if (turnRadians(points[index - 1]!, points[index]!, points[index + 1]!) >= minTurn) {
+      indices.push(index)
+    }
+  }
+  return indices
 }
 
 function medianCurvatureInSpan(
@@ -454,30 +535,62 @@ function circularArcD(
   return `A ${fit} ${fit} 0 0 ${sweep} ${end.x} ${end.y}`
 }
 
+function spanTurnRadians(
+  source: readonly WorldMapPoint[],
+  startIndex: number,
+  endIndex: number,
+): number | null {
+  const lo = Math.min(startIndex, endIndex)
+  const hi = Math.max(startIndex, endIndex)
+  if (hi - lo < 2) return null
+  const start = source[lo]!
+  const next = source[lo + 1]!
+  const prev = source[hi - 1]!
+  const end = source[hi]!
+  const startDir = norm2(sub2(next, start))
+  const endDir = norm2(sub2(end, prev))
+  const dot = Math.min(1, Math.max(-1, startDir[0] * endDir[0] + startDir[1] * endDir[1]))
+  return Math.acos(dot)
+}
+
 function buildSpanArcPathD(
   start: WorldMapPoint,
   end: WorldMapPoint,
   source: readonly WorldMapPoint[],
   imageWidth: number,
   imageHeight: number,
+  minTurn: number,
 ): string | null {
   const startIndex = findNearestSourceIndex(start, source)
   const endIndex = findNearestSourceIndex(end, source)
-  const radius = medianCurvatureInSpan(source, imageWidth, imageHeight, startIndex, endIndex)
-  if (radius == null) return null
   const lo = Math.min(startIndex, endIndex)
   const hi = Math.max(startIndex, endIndex)
-  const guide = toPxPoint(source[Math.floor((lo + hi) / 2)]!, imageWidth, imageHeight)
+  const turn = spanTurnRadians(source, startIndex, endIndex)
+  if (turn == null || turn < minTurn) return null
+
   const from = toPxPoint(start, imageWidth, imageHeight)
   const to = toPxPoint(end, imageWidth, imageHeight)
+  const chord = Math.hypot(to.x - from.x, to.y - from.y)
+  if (chord < 1e-3) return null
+
+  const radiusFromTurn = chord / (2 * Math.sin(turn / 2))
+  const radiusFromCurvature = medianCurvatureInSpan(source, imageWidth, imageHeight, lo, hi)
+  const radius = Math.min(
+    radiusFromTurn,
+    radiusFromCurvature ?? radiusFromTurn,
+    imageWidth * 0.45,
+  )
+  if (radius <= 0.5) return null
+
+  const guide = toPxPoint(source[Math.floor((lo + hi) / 2)]!, imageWidth, imageHeight)
   const arc = circularArcD(from, to, guide, radius)
   if (!arc) return null
   return `M ${from.x} ${from.y} ${arc}`
 }
 
 /**
- * SVG path with circular-arc fillets sized to local path curvature.
- * Dense road samples are simplified first; arc radius follows the segment bend.
+ * SVG path with circular-arc fillets matched to local road bend angles.
+ * Arc radius and tangent length follow each corner's measured deflection.
  */
 export function buildEditorCornerPathD(
   points: readonly WorldMapPoint[],
@@ -496,7 +609,14 @@ export function buildEditorCornerPathD(
 
   const simplified =
     points.length > 12
-      ? simplifyPathForDisplay(points, imageWidth, imageHeight, sourceUserBends, simplifyEpsilonPx)
+      ? simplifyPathForDisplay(
+          points,
+          imageWidth,
+          imageHeight,
+          sourceUserBends,
+          simplifyEpsilonPx,
+          minTurn,
+        )
       : [...points]
   const userBends =
     sourceUserBends.size > 0 ? remapUserBendIndices(simplified, sourceUserBends, points) : sourceUserBends
@@ -506,7 +626,7 @@ export function buildEditorCornerPathD(
 
   if (count === 2) {
     return (
-      buildSpanArcPathD(simplified[0]!, simplified[1]!, points, imageWidth, imageHeight) ??
+      buildSpanArcPathD(simplified[0]!, simplified[1]!, points, imageWidth, imageHeight, minTurn) ??
       `M ${simplified[0]![0] * imageWidth} ${simplified[0]![1] * imageHeight} L ${simplified[1]![0] * imageWidth} ${simplified[1]![1] * imageHeight}`
     )
   }
@@ -531,10 +651,14 @@ export function buildEditorCornerPathD(
     const len2 = Math.hypot(dx2, dy2)
     if (len1 < 1e-6 || len2 < 1e-6) continue
 
-    const turn = turnRadians(
-      [prev.x / imageWidth, prev.y / imageHeight],
-      [curr.x / imageWidth, curr.y / imageHeight],
-      [next.x / imageWidth, next.y / imageHeight],
+    const turn = estimateLocalTurnRadians(
+      points,
+      simplified[index]!,
+      imageWidth,
+      imageHeight,
+      prev,
+      curr,
+      next,
     )
 
     if (!userBends.has(index) && turn >= minTurn) {
@@ -547,21 +671,24 @@ export function buildEditorCornerPathD(
         curr,
         next,
       )
-      const maxRadius = filletRadiusFromCurvature(curvatureRadius, len1, len2)
-      if (maxRadius != null) {
-        const u1x = dx1 / len1
-        const u1y = dy1 / len1
-        const u2x = dx2 / len2
-        const u2y = dy2 / len2
-        const startX = curr.x - u1x * maxRadius
-        const startY = curr.y - u1y * maxRadius
-        const endX = curr.x + u2x * maxRadius
-        const endY = curr.y + u2y * maxRadius
-        const cross = u1x * u2y - u1y * u2x
-        const sweep = cross > 0 ? 1 : 0
-        parts.push(`L ${startX} ${startY}`)
-        parts.push(`A ${maxRadius} ${maxRadius} 0 0 ${sweep} ${endX} ${endY}`)
-        continue
+      const radius = filletRadiusFromRoadBend(curvatureRadius, turn, len1, len2)
+      if (radius != null) {
+        const trim = filletTrimForRadius(radius, turn)
+        if (trim > 0.5 && trim <= len1 && trim <= len2) {
+          const u1x = dx1 / len1
+          const u1y = dy1 / len1
+          const u2x = dx2 / len2
+          const u2y = dy2 / len2
+          const startX = curr.x - u1x * trim
+          const startY = curr.y - u1y * trim
+          const endX = curr.x + u2x * trim
+          const endY = curr.y + u2y * trim
+          const cross = u1x * u2y - u1y * u2x
+          const sweep = cross > 0 ? 1 : 0
+          parts.push(`L ${startX} ${startY}`)
+          parts.push(`A ${radius} ${radius} 0 0 ${sweep} ${endX} ${endY}`)
+          continue
+        }
       }
     }
 
