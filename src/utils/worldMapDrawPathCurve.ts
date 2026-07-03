@@ -220,9 +220,131 @@ function turnRadians(prev: WorldMapPoint, curr: WorldMapPoint, next: WorldMapPoi
   return Math.acos(dot)
 }
 
+function perpendicularDistancePx(
+  point: WorldMapPoint,
+  lineStart: WorldMapPoint,
+  lineEnd: WorldMapPoint,
+  imageWidth: number,
+  imageHeight: number,
+): number {
+  const x0 = point[0] * imageWidth
+  const y0 = point[1] * imageHeight
+  const x1 = lineStart[0] * imageWidth
+  const y1 = lineStart[1] * imageHeight
+  const x2 = lineEnd[0] * imageWidth
+  const y2 = lineEnd[1] * imageHeight
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const lenSq = dx * dx + dy * dy
+  if (lenSq < 1e-9) return Math.hypot(x0 - x1, y0 - y1)
+  const t = Math.min(1, Math.max(0, ((x0 - x1) * dx + (y0 - y1) * dy) / lenSq))
+  const projX = x1 + t * dx
+  const projY = y1 + t * dy
+  return Math.hypot(x0 - projX, y0 - projY)
+}
+
+function collectDouglasPeuckerIndices(
+  points: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  epsilonPx: number,
+  start: number,
+  end: number,
+): number[] {
+  if (end <= start + 1) return [start]
+  let maxDistance = 0
+  let maxIndex = start
+  for (let index = start + 1; index < end; index += 1) {
+    const distance = perpendicularDistancePx(
+      points[index]!,
+      points[start]!,
+      points[end]!,
+      imageWidth,
+      imageHeight,
+    )
+    if (distance > maxDistance) {
+      maxDistance = distance
+      maxIndex = index
+    }
+  }
+  if (maxDistance <= epsilonPx) return [start, end]
+  const left = collectDouglasPeuckerIndices(points, imageWidth, imageHeight, epsilonPx, start, maxIndex)
+  const right = collectDouglasPeuckerIndices(points, imageWidth, imageHeight, epsilonPx, maxIndex, end)
+  return [...left, ...right.slice(1)]
+}
+
+function simplifyPathForDisplay(
+  points: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+  userBends: ReadonlySet<number>,
+  epsilonPx: number,
+): WorldMapPoint[] {
+  if (points.length <= 3) return [...points]
+
+  const pinned = [...userBends, 0, points.length - 1]
+    .filter((index) => index >= 0 && index < points.length)
+    .sort((left, right) => left - right)
+    .filter((index, pos, arr) => pos === 0 || index > arr[pos - 1]!)
+
+  const simplified: WorldMapPoint[] = []
+  for (let segment = 0; segment < pinned.length - 1; segment += 1) {
+    const start = pinned[segment]!
+    const end = pinned[segment + 1]!
+    const slice = points.slice(start, end + 1)
+    if (slice.length <= 2) {
+      if (simplified.length === 0) simplified.push(...slice.map((point) => [point[0], point[1]] as WorldMapPoint))
+      else simplified.push([slice[slice.length - 1]![0], slice[slice.length - 1]![1]])
+      continue
+    }
+    const indices = collectDouglasPeuckerIndices(slice, imageWidth, imageHeight, epsilonPx, 0, slice.length - 1)
+    const segmentPoints = indices.map((index) => slice[index]!)
+    if (simplified.length === 0) {
+      simplified.push(...segmentPoints.map((point) => [point[0], point[1]] as WorldMapPoint))
+    } else {
+      simplified.push(
+        ...segmentPoints.slice(1).map((point) => [point[0], point[1]] as WorldMapPoint),
+      )
+    }
+  }
+
+  return simplified.length >= 2 ? simplified : [...points]
+}
+
+function remapUserBendIndices(
+  simplified: readonly WorldMapPoint[],
+  userBends: ReadonlySet<number>,
+  source: readonly WorldMapPoint[],
+): Set<number> {
+  const remapped = new Set<number>()
+  userBends.forEach((sourceIndex) => {
+    const point = source[sourceIndex]
+    if (!point) return
+    for (let index = 0; index < simplified.length; index += 1) {
+      const candidate = simplified[index]!
+      if (Math.hypot(candidate[0] - point[0], candidate[1] - point[1]) <= 0.00002) {
+        remapped.add(index)
+        break
+      }
+    }
+  })
+  return remapped
+}
+
+function circularFilletRadius(
+  autoRadiusPx: number,
+  turn: number,
+  len1: number,
+  len2: number,
+): number {
+  const turnRatio = Math.min(1, turn / ((72 * Math.PI) / 180))
+  const scaled = autoRadiusPx * (0.72 + 0.28 * turnRatio)
+  return Math.min(scaled, len1 * 0.48, len2 * 0.48)
+}
+
 /**
- * SVG path with quadratic fillets at corners (pixel radius), matching the reference bus route editor.
- * User bend vertices stay sharp; auto road samples get a default fillet radius.
+ * SVG path with circular-arc fillets at corners. Dense road samples are simplified first.
+ * User bend vertices stay sharp; auto corners use true circular arcs (SVG A).
  */
 export function buildEditorCornerPathD(
   points: readonly WorldMapPoint[],
@@ -232,15 +354,25 @@ export function buildEditorCornerPathD(
     userBendIndices?: ReadonlySet<number>
     autoCornerRadiusPx?: number
     minTurnRadians?: number
+    simplifyEpsilonPx?: number
   } = {},
 ): string {
-  const count = points.length
-  if (count < 2) return ''
-  const userBends = options.userBendIndices ?? new Set<number>()
-  const autoRadiusPx = options.autoCornerRadiusPx ?? Math.max(10, imageWidth * 0.0038)
-  const minTurn = options.minTurnRadians ?? (8 * Math.PI) / 180
+  const sourceUserBends = options.userBendIndices ?? new Set<number>()
+  const autoRadiusPx = options.autoCornerRadiusPx ?? Math.max(16, imageWidth * 0.0055)
+  const minTurn = options.minTurnRadians ?? (5 * Math.PI) / 180
+  const simplifyEpsilonPx = options.simplifyEpsilonPx ?? Math.max(3.5, imageWidth * 0.0011)
 
-  const px = points.map((point) => ({
+  const simplified =
+    points.length > 12
+      ? simplifyPathForDisplay(points, imageWidth, imageHeight, sourceUserBends, simplifyEpsilonPx)
+      : [...points]
+  const userBends =
+    sourceUserBends.size > 0 ? remapUserBendIndices(simplified, sourceUserBends, points) : sourceUserBends
+
+  const count = simplified.length
+  if (count < 2) return ''
+
+  const px = simplified.map((point) => ({
     x: point[0] * imageWidth,
     y: point[1] * imageHeight,
   }))
@@ -260,15 +392,14 @@ export function buildEditorCornerPathD(
     const len2 = Math.hypot(dx2, dy2)
     if (len1 < 1e-6 || len2 < 1e-6) continue
 
-    const cornerRadiusPx = userBends.has(index) ? 0 : autoRadiusPx
     const turn = turnRadians(
       [prev.x / imageWidth, prev.y / imageHeight],
       [curr.x / imageWidth, curr.y / imageHeight],
       [next.x / imageWidth, next.y / imageHeight],
     )
 
-    if (cornerRadiusPx > 0 && turn >= minTurn) {
-      const maxRadius = Math.min(cornerRadiusPx, len1 / 2, len2 / 2)
+    if (!userBends.has(index) && turn >= minTurn) {
+      const maxRadius = circularFilletRadius(autoRadiusPx, turn, len1, len2)
       if (maxRadius > 0.5) {
         const u1x = dx1 / len1
         const u1y = dy1 / len1
@@ -278,8 +409,10 @@ export function buildEditorCornerPathD(
         const startY = curr.y - u1y * maxRadius
         const endX = curr.x + u2x * maxRadius
         const endY = curr.y + u2y * maxRadius
+        const cross = u1x * u2y - u1y * u2x
+        const sweep = cross > 0 ? 1 : 0
         parts.push(`L ${startX} ${startY}`)
-        parts.push(`Q ${curr.x} ${curr.y} ${endX} ${endY}`)
+        parts.push(`A ${maxRadius} ${maxRadius} 0 0 ${sweep} ${endX} ${endY}`)
         continue
       }
     }
