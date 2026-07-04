@@ -137,8 +137,10 @@ export class RouteEditorDataManager {
   ): RouteEditorNode {
     let nodeNames = { chi_name: '', eng_name: '' }
     if (type === 'stop') {
-      if (name?.chi_name?.trim()) {
-        nodeNames = { chi_name: name.chi_name.trim(), eng_name: name.eng_name?.trim() || '' }
+      const chi = name?.chi_name?.trim() || ''
+      const eng = name?.eng_name?.trim() || ''
+      if (chi || eng) {
+        nodeNames = { chi_name: chi || eng, eng_name: eng || chi }
       } else {
         nodeNames = this.generateRandomName(type)
       }

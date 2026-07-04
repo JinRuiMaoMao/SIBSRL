@@ -103,6 +103,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [editChiName, setEditChiName] = useState('')
   const [editEngName, setEditEngName] = useState('')
   const [editCornerRadius, setEditCornerRadius] = useState(0)
+  const [newStopChiName, setNewStopChiName] = useState('')
+  const [newStopEngName, setNewStopEngName] = useState('')
 
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -183,6 +185,10 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
   const enterEditorMode = useCallback((mode: RouteEditorMode) => {
     setEditorMode(mode)
+    if (mode === 'addStop') {
+      setNewStopChiName('')
+      setNewStopEngName('')
+    }
     if (mode !== 'select') {
       setSelectedNodeId(null)
       setConnectPendingNodeId(null)
@@ -222,7 +228,9 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (!imageSize) return
       const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
       if (editorMode === 'addStop') {
-        editor.addNode('stop', x, y)
+        const chi = newStopChiName.trim()
+        const eng = newStopEngName.trim()
+        editor.addNode('stop', x, y, chi || eng ? { chi_name: chi, eng_name: eng } : undefined)
         return
       }
       if (editorMode === 'addPoint') {
@@ -234,7 +242,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         setConnectPreview(null)
       }
     },
-    [editor, editorMode, imageSize],
+    [editor, editorMode, imageSize, newStopChiName, newStopEngName],
   )
 
   const handleMapPointerMove = useCallback(
@@ -719,7 +727,28 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
               </section>
 
               <section className="route-editor-panel">
-                {selectedNode ? (
+                {editorMode === 'addStop' ? (
+                  <div className="reference-node-info-panel">
+                    <h4>{t('mapDrawAddStopNames')}</h4>
+                    <label className="route-editor-field">
+                      <span>{t('mapDrawNodeChiName')}</span>
+                      <input
+                        value={newStopChiName}
+                        onChange={(event) => setNewStopChiName(event.target.value)}
+                        placeholder={t('mapDrawAddStopChiPlaceholder')}
+                      />
+                    </label>
+                    <label className="route-editor-field">
+                      <span>{t('mapDrawNodeEngName')}</span>
+                      <input
+                        value={newStopEngName}
+                        onChange={(event) => setNewStopEngName(event.target.value)}
+                        placeholder={t('mapDrawAddStopEngPlaceholder')}
+                      />
+                    </label>
+                    <p className="island-map-draw-help">{t('mapDrawAddStopHelp')}</p>
+                  </div>
+                ) : selectedNode ? (
                   <div className="reference-node-info-panel">
                     <h4>{selectedNode.type === 'stop' ? t('mapDrawNodeInfoStop') : t('mapDrawNodeInfoPoint')}</h4>
                     {selectedNode.type === 'stop' ? (

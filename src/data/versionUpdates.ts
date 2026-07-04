@@ -203,6 +203,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 导入合并追加到当前画布：支持多选 SIBS JSON 与参考 JSON 同时导入，合并站点/节点/线段（同位置节点自动去重）。",
             en: "Map-draw import merge appends to the canvas: multi-select SIBS and reference JSON together; stops, nodes, and segments merge with deduped positions.",
           },
+          {
+            zh: "map-draw 添加站点时可在侧栏输入中/英文站名，留空则仍自动命名。",
+            en: "Map-draw add-stop mode lets you enter Chinese/English stop names in the sidebar before clicking the map; blank fields still auto-name.",
+          },
         ],
       },
     ],
