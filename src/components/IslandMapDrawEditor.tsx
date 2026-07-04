@@ -20,38 +20,25 @@ import {
   type PathConflictResolution,
 } from '../utils/worldMapDrawImportMerge'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
-import {
-  mergePathPoints,
-  rebuildStopToStopPath,
-  resolveEffectiveLegStarts,
-  resolveTraceAnchorPoint,
-} from '../utils/worldMapDrawPath'
-import {
-  getPathLegRanges,
-  hidePathLeg,
-  insertPathBendPoint,
-  isStopAnchorIndex,
-  movePathVertex,
-  removeLegInteriorPoints,
-  removePathVertex,
-  retacePathSpanAroundUserBend,
-  retraceAdjacentLegsAtAnchor,
-  resizeLegHidden,
-  resizePathUserBends,
-  updatePathPointsForStopMove,
-} from '../utils/worldMapDrawPathEdit'
+import { rebuildStopToStopPath, resolveEffectiveLegStarts } from '../utils/worldMapDrawPath'
+import { getPathLegRanges, resizeLegHidden, resizePathUserBends } from '../utils/worldMapDrawPathEdit'
 import { resizeLegControls } from '../utils/worldMapDrawPathCurve'
 import { cloneDrawDraftSnapshot, DRAW_HISTORY_LIMIT, type DrawDraftSnapshot } from '../utils/worldMapDrawHistory'
-import { clampPointToRoadCorridor } from '../utils/generalMapRoadSnap'
+import {
+  inferNodeOrderFromDraft,
+  rebuildPathFromNodeOrder,
+  removeNodeFromOrder,
+} from '../utils/worldMapDrawNodeOrder'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import type {
   IslandMapDrawInteraction,
+  RouteEditorMode,
   WorldMapDrawStop,
   WorldMapDrawStopDraft,
   WorldMapDrawPathNode,
-  WorldMapDrawPathNodeDraft,
-  WorldMapTraceAnchor,
+  WorldMapOrderedNodeRef,
+  WorldMapSelectedNodeRef,
 } from '../types/worldMapDraw'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
 import { IslandMapDrawImportConflictDialog } from './IslandMapDrawImportConflictDialog'
@@ -62,14 +49,11 @@ import {
 import {
   IslandMapDrawPermissionDialogs,
 } from './IslandMapDrawPermissionDialogs'
-import { IslandMapDrawInteractionTabs } from './IslandMapDrawInteractionTabs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapDrawStopPanel } from './IslandMapDrawStopPanel'
-import { IslandMapDrawPathNodePanel } from './IslandMapDrawPathNodePanel'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
-import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
 import {
   readStoredMapDrawStopLabelScale,
@@ -198,15 +182,14 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
-  const [drawMode, setDrawMode] = useState(false)
-  const [drawInteraction, setDrawInteraction] = useState<IslandMapDrawInteraction>('route')
+  const [editorMode, setEditorMode] = useState<RouteEditorMode>('select')
+  const [nodeOrder, setNodeOrder] = useState<WorldMapOrderedNodeRef[]>([])
   const [drawRouteId, setDrawRouteId] = useState('')
   const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
   const avoidParallelSegments = useMemo(
     () => listWorldMapRouteSegmentsExcept(drawRouteId),
     [drawRouteId],
   )
-  const drawBuildLabel = formatBuildLabel(readPublishedBuild() ?? 'development', locale)
   const roadSnap = useGeneralMapRoadSnap(isLoggedIn, { avoidParallelSegments })
   const [draftPoints, setDraftPoints] = useState<WorldMapPoint[]>([])
   const [pathLegStarts, setPathLegStarts] = useState<number[]>([])
@@ -217,8 +200,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [draftStops, setDraftStops] = useState<WorldMapDrawStop[]>([])
   const [draftPathNodes, setDraftPathNodes] = useState<WorldMapDrawPathNode[]>([])
   const [pendingStop, setPendingStop] = useState<WorldMapDrawStopDraft | null>(null)
-  const [pendingPathNode, setPendingPathNode] = useState<WorldMapDrawPathNodeDraft | null>(null)
-  const [pendingTraceAnchor, setPendingTraceAnchor] = useState<WorldMapTraceAnchor | null>(null)
+  const [selectedNode, setSelectedNode] = useState<WorldMapSelectedNodeRef | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
   const [showStopLabels, setShowStopLabels] = useState(readStoredMapDrawStopLabelVisible)
@@ -246,7 +228,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     pathManuallyEdited,
     drawRouteId,
     drawDirectionIndex,
-    drawInteraction,
+    editorMode,
+    nodeOrder,
   })
   const undoStackRef = useRef<DrawDraftSnapshot[]>([])
   const redoStackRef = useRef<DrawDraftSnapshot[]>([])
@@ -267,15 +250,17 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       pathManuallyEdited,
       drawRouteId,
       drawDirectionIndex,
-      drawInteraction,
+      editorMode,
+      nodeOrder,
     }
   }, [
     draftPoints,
     draftStops,
     draftPathNodes,
     drawDirectionIndex,
-    drawInteraction,
+    editorMode,
     drawRouteId,
+    nodeOrder,
     pathLegControls,
     pathLegHidden,
     pathLegStarts,
@@ -296,7 +281,14 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       pathManuallyEdited: state.pathManuallyEdited,
       drawRouteId: state.drawRouteId,
       drawDirectionIndex: state.drawDirectionIndex,
-      drawInteraction: state.drawInteraction,
+      drawInteraction:
+        state.editorMode === 'addStop'
+          ? 'catalog'
+          : state.editorMode === 'addPoint'
+            ? 'path-node'
+            : 'route',
+      editorMode: state.editorMode,
+      nodeOrder: state.nodeOrder.map((entry) => ({ ...entry })),
     })
   }, [])
 
@@ -335,7 +327,18 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       setPathManuallyEdited(snapshot.pathManuallyEdited)
       setDrawRouteId(snapshot.drawRouteId)
       setDrawDirectionIndex(snapshot.drawDirectionIndex)
-      setDrawInteraction(snapshot.drawInteraction)
+      setEditorMode(snapshot.editorMode ?? 'select')
+      setNodeOrder(
+        snapshot.nodeOrder?.map((entry) => ({ ...entry })) ??
+          inferNodeOrderFromDraft(
+            snapshot.draftStops,
+            snapshot.draftPathNodes ?? [],
+            snapshot.draftPoints,
+          ),
+      )
+      setSelectedNode(null)
+      setPendingStop(null)
+      setSelectedStopId(null)
   }, [])
 
   const handleViewChange = useCallback((next: NormalizedMapView) => {
@@ -402,15 +405,10 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   }, [draftPoints.length, effectiveLegStarts])
 
   useEffect(() => {
-    if (drawInteraction !== 'path-node') {
-      setPendingPathNode(null)
-    }
-  }, [drawInteraction])
-
-  useEffect(() => {
     if (!isLoggedIn) {
-      setDrawMode(false)
+      setEditorMode('select')
       setPendingStop(null)
+      setSelectedNode(null)
     }
   }, [isLoggedIn])
 
@@ -433,154 +431,101 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     }, 2600)
   }, [])
 
-  const traceRoadSegment = useCallback(
-    (from: WorldMapPoint, to: WorldMapPoint, via: Parameters<typeof roadSnap.appendSegment>[2] = []) => {
-      if (!roadSnap.index) return [from, to]
-      const traced = roadSnap.appendSegment(from, to, via)
-      return traced.length >= 2 ? traced : [from, to]
-    },
-    [roadSnap],
-  )
-
-  const appendTracedSegment = useCallback(
-    (from: WorldMapTraceAnchor, to: WorldMapTraceAnchor) => {
-      const fromPoint = resolveTraceAnchorPoint(from, draftStops, [], draftPathNodes)
-      const toPoint = resolveTraceAnchorPoint(to, draftStops, [], draftPathNodes)
-      if (!fromPoint || !toPoint) return false
-      if (Math.hypot(fromPoint[0] - toPoint[0], fromPoint[1] - toPoint[1]) < 0.00005) return false
-
-      pushDrawHistory()
-      setDraftPoints((current) => {
-        const start = current.length
-        setPathLegStarts((legs) => {
-          if (start === 0) return [0]
-          const base = legs.length > 0 ? legs : [0]
-          if (base.includes(start)) return base
-          return [...base, start]
-        })
-
-        let basePoints = current
-        if (basePoints.length > 0) {
-          const last = basePoints[basePoints.length - 1]!
-          if (Math.hypot(last[0] - fromPoint[0], last[1] - fromPoint[1]) > 0.00005) {
-            basePoints = mergePathPoints(basePoints, [fromPoint])
-          }
-        }
-
-        const cursor = basePoints.length > 0 ? basePoints[basePoints.length - 1]! : fromPoint
-        const traced = traceRoadSegment(cursor, toPoint, [])
-        const merged =
-          basePoints.length === 0
-            ? traced
-            : mergePathPoints(basePoints, traced.length > 1 ? traced.slice(1) : traced)
-
-        setPathUserBends((bends) => {
-          const next = resizePathUserBends(bends, current.length)
-          const added = merged.length - current.length
-          return [...next, ...Array.from({ length: Math.max(0, added) }, () => false)]
-        })
-        return merged
-      })
-      setPathManuallyEdited(true)
-      return true
-    },
-    [draftPathNodes, draftStops, pushDrawHistory, traceRoadSegment],
-  )
-
-  const retraceSpanAroundAnchor = useCallback(
+  const applyPathFromOrder = useCallback(
     (
-      points: WorldMapPoint[],
-      legStarts: number[],
-      legHidden: readonly boolean[],
-      anchorPoint: WorldMapPoint,
-      anchors: readonly { point: WorldMapPoint }[],
-    ): { points: WorldMapPoint[]; legStarts: number[] } => {
-      if (!roadSnap.index) return { points, legStarts }
-      return retraceAdjacentLegsAtAnchor(
-        points,
-        legStarts,
-        legHidden,
-        anchorPoint,
-        anchors,
-        traceRoadSegment,
-      )
+      order: readonly WorldMapOrderedNodeRef[],
+      stops: readonly WorldMapDrawStop[],
+      pathNodes: readonly WorldMapDrawPathNode[],
+    ) => {
+      const rebuilt = rebuildPathFromNodeOrder(order, stops, pathNodes)
+      setDraftPoints(rebuilt.points.map((point) => [point[0], point[1]] as WorldMapPoint))
+      setPathLegStarts([...rebuilt.legStarts])
+      setPathLegHidden([...rebuilt.legHidden])
+      setPathUserBends([...rebuilt.userBends])
+      setPathLegControls([...rebuilt.legControls])
+      setPathManuallyEdited(rebuilt.points.length >= 2)
     },
-    [roadSnap.index, traceRoadSegment],
+    [],
   )
 
-  const openPathNodeEditor = useCallback((node: WorldMapDrawPathNode) => {
-    setPendingPathNode({
-      point: node.point,
-      label: node.label,
-      editingNodeId: node.id,
-    })
-  }, [])
-
-  const handleTraceAnchorPick = useCallback(
-    (anchor: WorldMapTraceAnchor) => {
-      if (drawInteraction !== 'route') return
-      if (
-        pendingTraceAnchor &&
-        pendingTraceAnchor.kind === anchor.kind &&
-        pendingTraceAnchor.id === anchor.id
-      ) {
-        setPendingTraceAnchor(null)
-        return
+  const addStopAt = useCallback(
+    (point: WorldMapPoint) => {
+      pushDrawHistory()
+      const snapped = roadSnap.snap(point)
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      const stopNumber = draftHistoryRef.current.draftStops.length + 1
+      const stop: WorldMapDrawStop = {
+        id,
+        point: snapped,
+        name: { zh: `站点${stopNumber}`, en: `Stop ${stopNumber}` },
       }
-      if (!pendingTraceAnchor) {
-        setPendingTraceAnchor(anchor)
-        return
-      }
-      if (appendTracedSegment(pendingTraceAnchor, anchor)) {
-        setPendingTraceAnchor(null)
-      }
+      const nextStops = [...draftHistoryRef.current.draftStops, stop]
+      const nextOrder: WorldMapOrderedNodeRef[] = [
+        ...draftHistoryRef.current.nodeOrder,
+        { kind: 'stop', id },
+      ]
+      setDraftStops(nextStops)
+      setNodeOrder(nextOrder)
+      applyPathFromOrder(nextOrder, nextStops, draftHistoryRef.current.draftPathNodes)
     },
-    [appendTracedSegment, drawInteraction, pendingTraceAnchor],
+    [applyPathFromOrder, pushDrawHistory, roadSnap],
   )
 
-  const handlePathNodeClick = useCallback(
-    (nodeId: string) => {
-      if (drawInteraction === 'path-node') {
-        const node = draftPathNodes.find((entry) => entry.id === nodeId)
-        if (node) openPathNodeEditor(node)
-        return
-      }
-      handleTraceAnchorPick({ kind: 'path-node', id: nodeId })
+  const addPathNodeAt = useCallback(
+    (point: WorldMapPoint) => {
+      pushDrawHistory()
+      const snapped = roadSnap.snap(point)
+      const id = `node-${Date.now().toString(36)}`
+      const node: WorldMapDrawPathNode = { id, point: snapped }
+      const nextNodes = [...draftHistoryRef.current.draftPathNodes, node]
+      const nextOrder: WorldMapOrderedNodeRef[] = [
+        ...draftHistoryRef.current.nodeOrder,
+        { kind: 'path-node', id },
+      ]
+      setDraftPathNodes(nextNodes)
+      setNodeOrder(nextOrder)
+      applyPathFromOrder(nextOrder, draftHistoryRef.current.draftStops, nextNodes)
     },
-    [draftPathNodes, drawInteraction, handleTraceAnchorPick, openPathNodeEditor],
+    [applyPathFromOrder, pushDrawHistory, roadSnap],
   )
+
+  const deleteSelectedNode = useCallback(() => {
+    if (!selectedNode) return
+    pushDrawHistory()
+    const nextOrder = removeNodeFromOrder(draftHistoryRef.current.nodeOrder, selectedNode)
+    let nextStops = draftHistoryRef.current.draftStops
+    let nextNodes = draftHistoryRef.current.draftPathNodes
+    if (selectedNode.kind === 'stop') {
+      nextStops = nextStops.filter((stop) => stop.id !== selectedNode.id)
+      setDraftStops(nextStops)
+      if (pendingStop?.editingStopId === selectedNode.id) setPendingStop(null)
+      if (selectedStopId === selectedNode.id) setSelectedStopId(null)
+    } else {
+      nextNodes = nextNodes.filter((node) => node.id !== selectedNode.id)
+      setDraftPathNodes(nextNodes)
+    }
+    setNodeOrder(nextOrder)
+    setSelectedNode(null)
+    applyPathFromOrder(nextOrder, nextStops, nextNodes)
+  }, [applyPathFromOrder, pendingStop?.editingStopId, pushDrawHistory, selectedNode, selectedStopId])
 
   const handleDrawMapClick = useCallback(
     (point: WorldMapPoint) => {
-      if (drawInteraction === 'path-node') {
-        if (pendingPathNode) return
-        setPendingPathNode({ point: roadSnap.snap(point) })
+      if (editorMode === 'addStop') {
+        addStopAt(point)
         return
       }
-      if (drawInteraction === 'route') {
-        setPendingTraceAnchor(null)
-        setPendingStop(null)
-        setSelectedStopId(null)
-        return
+      if (editorMode === 'addPoint') {
+        addPathNodeAt(point)
       }
-      if (pendingStop) return
-      setPendingStop({ point: roadSnap.snap(point), query: '' })
     },
-    [drawInteraction, pendingPathNode, pendingStop, roadSnap],
+    [addPathNodeAt, addStopAt, editorMode],
   )
 
   const handleDrawUndo = useCallback(() => {
-    if (pendingPathNode) {
-      setPendingPathNode(null)
-      return
-    }
-    if (pendingStop) {
+    if (pendingStop && !pendingStop.editingStopId) {
       setPendingStop(null)
       setSelectedStopId(null)
-      return
-    }
-    if (pendingTraceAnchor) {
-      setPendingTraceAnchor(null)
       return
     }
     const previous = undoStackRef.current.pop()
@@ -588,14 +533,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     redoStackRef.current.push(captureDrawSnapshot())
     applyDrawSnapshot(previous)
     bumpHistory()
-  }, [
-    applyDrawSnapshot,
-    bumpHistory,
-    captureDrawSnapshot,
-    pendingPathNode,
-    pendingStop,
-    pendingTraceAnchor,
-  ])
+  }, [applyDrawSnapshot, bumpHistory, captureDrawSnapshot, pendingStop])
 
   const handleDrawRedo = useCallback(() => {
     const next = redoStackRef.current.pop()
@@ -612,7 +550,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     setPathLegHidden([])
     setPathUserBends([])
     setPathManuallyEdited(false)
-    setPendingTraceAnchor(null)
+    setNodeOrder([])
   }, [])
 
   const applyClearSelection = useCallback(
@@ -625,10 +563,13 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         setDraftStops([])
         setPendingStop(null)
         setSelectedStopId(null)
+        setSelectedNode(null)
+        setNodeOrder((order) => order.filter((entry) => entry.kind !== 'stop'))
       }
       if (selection.pathNodes) {
         setDraftPathNodes([])
-        setPendingPathNode(null)
+        setSelectedNode(null)
+        setNodeOrder((order) => order.filter((entry) => entry.kind !== 'path-node'))
       }
       setClearDialogOpen(false)
     },
@@ -648,20 +589,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (selectedStopId === id) {
         setSelectedStopId(null)
       }
-      setDraftStops((stops) => stops.filter((stop) => stop.id !== id))
-      setDraftPoints((points) => {
-        if (points.length !== draftStops.length) return points
-        const removeIndex = draftStops.findIndex((stop) => stop.id === id)
-        if (removeIndex < 0) return points
-        return points.filter((_, index) => index !== removeIndex)
-      })
+      if (selectedNode?.kind === 'stop' && selectedNode.id === id) {
+        setSelectedNode(null)
+      }
+      const nextStops = draftHistoryRef.current.draftStops.filter((stop) => stop.id !== id)
+      const nextOrder = removeNodeFromOrder(draftHistoryRef.current.nodeOrder, { kind: 'stop', id })
+      setDraftStops(nextStops)
+      setNodeOrder(nextOrder)
+      applyPathFromOrder(nextOrder, nextStops, draftHistoryRef.current.draftPathNodes)
     },
-    [draftStops, pushDrawHistory, selectedStopId, pendingStop?.editingStopId],
+    [applyPathFromOrder, pendingStop?.editingStopId, pushDrawHistory, selectedNode, selectedStopId],
   )
 
   const openStopEditor = useCallback(
     (stop: WorldMapDrawStop) => {
       setSelectedStopId(stop.id)
+      setSelectedNode({ kind: 'stop', id: stop.id })
       setPendingStop({
         point: stop.point,
         query: locale.startsWith('zh') ? stop.name.zh : stop.name.en || stop.name.zh,
@@ -671,241 +614,84 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     [locale],
   )
 
-  const handleStopDrag = useCallback((stopId: string, point: WorldMapPoint) => {
-    setDraftStops((stops) => {
-      const nextStops = stops.map((stop) => (stop.id === stopId ? { ...stop, point } : stop))
-      setDraftPoints((points) => updatePathPointsForStopMove(points, stops, stopId, point))
-      return nextStops
-    })
-  }, [])
+  const handleStopDrag = useCallback(
+    (stopId: string, point: WorldMapPoint) => {
+      setDraftStops((stops) => {
+        const nextStops = stops.map((stop) => (stop.id === stopId ? { ...stop, point } : stop))
+        applyPathFromOrder(nodeOrder, nextStops, draftPathNodes)
+        return nextStops
+      })
+    },
+    [applyPathFromOrder, draftPathNodes, nodeOrder],
+  )
 
   const handleStopDragEnd = useCallback(
     (stopId: string, point: WorldMapPoint) => {
       const snapped = roadSnap.snap(point)
       pushDrawHistory()
-
-      const state = draftHistoryRef.current
-      const stop = state.draftStops.find((entry) => entry.id === stopId)
-      if (!stop) return
-
-      const nextStops = state.draftStops.map((entry) =>
+      const nextStops = draftHistoryRef.current.draftStops.map((entry) =>
         entry.id === stopId ? { ...entry, point: snapped } : entry,
       )
-      const moved = updatePathPointsForStopMove(state.draftPoints, state.draftStops, stopId, snapped)
-      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, state.pathLegHidden, snapped, [
-        ...nextStops,
-        ...state.draftPathNodes,
-      ])
-
       setDraftStops(nextStops)
-      setDraftPoints(retraced.points)
-      setPathLegStarts(retraced.legStarts)
-      setPathUserBends(Array.from({ length: retraced.points.length }, () => false))
-      setPathManuallyEdited(true)
+      applyPathFromOrder(
+        draftHistoryRef.current.nodeOrder,
+        nextStops,
+        draftHistoryRef.current.draftPathNodes,
+      )
       if (pendingStop?.editingStopId === stopId) {
         setPendingStop((current) => (current ? { ...current, point: snapped } : current))
       }
     },
-    [pendingStop?.editingStopId, pushDrawHistory, retraceSpanAroundAnchor, roadSnap],
+    [applyPathFromOrder, pendingStop?.editingStopId, pushDrawHistory, roadSnap],
   )
 
   const handleStopClick = useCallback(
     (stopId: string) => {
-      handleTraceAnchorPick({ kind: 'stop', id: stopId })
+      if (editorMode !== 'select') return
+      const stop = draftStops.find((entry) => entry.id === stopId)
+      if (stop) openStopEditor(stop)
     },
-    [handleTraceAnchorPick],
+    [draftStops, editorMode, openStopEditor],
   )
 
-  const handlePathNodeDrag = useCallback((nodeId: string, point: WorldMapPoint) => {
-    setDraftPathNodes((nodes) => {
-      const nextNodes = nodes.map((node) => (node.id === nodeId ? { ...node, point } : node))
-      const node = nodes.find((entry) => entry.id === nodeId)
-      if (node) {
-        setDraftPoints((points) => updatePathPointsForStopMove(points, [node], nodeId, point))
-      }
-      return nextNodes
-    })
-  }, [])
+  const handlePathNodeClick = useCallback(
+    (nodeId: string) => {
+      if (editorMode !== 'select') return
+      setSelectedNode({ kind: 'path-node', id: nodeId })
+    },
+    [editorMode],
+  )
+
+  const handlePathNodeDrag = useCallback(
+    (nodeId: string, point: WorldMapPoint) => {
+      setDraftPathNodes((nodes) => {
+        const nextNodes = nodes.map((node) => (node.id === nodeId ? { ...node, point } : node))
+        applyPathFromOrder(nodeOrder, draftStops, nextNodes)
+        return nextNodes
+      })
+    },
+    [applyPathFromOrder, draftStops, nodeOrder],
+  )
 
   const handlePathNodeDragEnd = useCallback(
     (nodeId: string, point: WorldMapPoint) => {
       const snapped = roadSnap.snap(point)
       pushDrawHistory()
-
-      const state = draftHistoryRef.current
-      const node = state.draftPathNodes.find((entry) => entry.id === nodeId)
-      if (!node) return
-
-      const nextNodes = state.draftPathNodes.map((entry) =>
+      const nextNodes = draftHistoryRef.current.draftPathNodes.map((entry) =>
         entry.id === nodeId ? { ...entry, point: snapped } : entry,
       )
-      const moved = updatePathPointsForStopMove(state.draftPoints, [node], nodeId, snapped)
-      const retraced = retraceSpanAroundAnchor(moved, state.pathLegStarts, state.pathLegHidden, snapped, [
-        ...state.draftStops,
-        ...nextNodes,
-      ])
-
       setDraftPathNodes(nextNodes)
-      setDraftPoints(retraced.points)
-      setPathLegStarts(retraced.legStarts)
-      setPathUserBends(Array.from({ length: retraced.points.length }, () => false))
-      setPathManuallyEdited(true)
-      if (pendingPathNode?.editingNodeId === nodeId) {
-        setPendingPathNode((current) => (current ? { ...current, point: snapped } : current))
-      }
-    },
-    [pendingPathNode?.editingNodeId, pushDrawHistory, retraceSpanAroundAnchor, roadSnap],
-  )
-
-  const handleConfirmPendingPathNode = useCallback(() => {
-    if (!pendingPathNode) return
-    pushDrawHistory()
-    if (pendingPathNode.editingNodeId) {
-      setDraftPathNodes((nodes) =>
-        nodes.map((node) =>
-          node.id === pendingPathNode.editingNodeId
-            ? {
-                ...node,
-                point: pendingPathNode.point,
-                label: pendingPathNode.label?.trim() || node.label,
-              }
-            : node,
-        ),
+      applyPathFromOrder(
+        draftHistoryRef.current.nodeOrder,
+        draftHistoryRef.current.draftStops,
+        nextNodes,
       )
-      setPendingPathNode(null)
-      return
-    }
-    const id = `node-${Date.now().toString(36)}`
-    setDraftPathNodes((nodes) => [
-      ...nodes,
-      {
-        id,
-        point: pendingPathNode.point,
-        label: pendingPathNode.label?.trim() || undefined,
-      },
-    ])
-    setPendingPathNode(null)
-  }, [pendingPathNode, pushDrawHistory])
-
-  const handleRemovePendingPathNode = useCallback(() => {
-    if (pendingPathNode?.editingNodeId) {
-      pushDrawHistory()
-      const nodeId = pendingPathNode.editingNodeId
-      setDraftPathNodes((nodes) => nodes.filter((node) => node.id !== nodeId))
-    }
-    setPendingPathNode(null)
-  }, [pendingPathNode, pushDrawHistory])
-
-  const handleBendInsert = useCallback(
-    (segmentIndex: number, point: WorldMapPoint) => {
-      pushDrawHistory()
-      const snapped = roadSnap.snap(point)
-      const result = insertPathBendPoint(draftPoints, pathLegStarts, segmentIndex, snapped)
-      const insertAt = segmentIndex + 1
-      setDraftPoints(result.points)
-      setPathLegStarts(result.legStarts)
-      setPathUserBends((bends) => {
-        const next = resizePathUserBends(bends, draftPoints.length)
-        next.splice(insertAt, 0, true)
-        return next
-      })
-      setPathManuallyEdited(true)
     },
-    [draftPoints, pathLegStarts, pushDrawHistory, roadSnap],
-  )
-
-  const handleBendMove = useCallback(
-    (vertexIndex: number, point: WorldMapPoint) => {
-      if (!pathUserBends[vertexIndex]) return
-      const snapped = roadSnap.index
-        ? clampPointToRoadCorridor(roadSnap.index, point)
-        : roadSnap.snap(point)
-      setDraftPoints(movePathVertex(draftPoints, vertexIndex, snapped))
-    },
-    [draftPoints, pathUserBends, roadSnap],
-  )
-
-  const handleBendDragStart = useCallback(() => {
-    pushDrawHistory()
-  }, [pushDrawHistory])
-
-  const handleBendDragEnd = useCallback(
-    (vertexIndex: number, point: WorldMapPoint) => {
-      const snapped = roadSnap.index
-        ? clampPointToRoadCorridor(roadSnap.index, point)
-        : roadSnap.snap(point)
-
-      if (pathUserBends[vertexIndex]) {
-        const retraced = retacePathSpanAroundUserBend(
-          draftPoints,
-          pathLegStarts,
-          pathUserBends,
-          vertexIndex,
-          snapped,
-          (from, to) => traceRoadSegment(from, to),
-        )
-        if (retraced) {
-          setDraftPoints(retraced.points)
-          setPathLegStarts(retraced.legStarts)
-          setPathUserBends(retraced.userBends)
-          setPathManuallyEdited(true)
-          return
-        }
-      }
-
-      setDraftPoints((points) => movePathVertex(points, vertexIndex, snapped))
-      setPathManuallyEdited(true)
-    },
-    [draftPoints, pathLegStarts, pathUserBends, roadSnap, traceRoadSegment],
-  )
-
-  const handleBendRemove = useCallback(
-    (vertexIndex: number) => {
-      if (isStopAnchorIndex(vertexIndex, draftPoints, [...draftStops, ...draftPathNodes])) return
-      if (!pathUserBends[vertexIndex]) return
-      const result = removePathVertex(draftPoints, pathLegStarts, vertexIndex)
-      if (!result) return
-      pushDrawHistory()
-      setDraftPoints(result.points)
-      setPathLegStarts(result.legStarts)
-      setPathUserBends((bends) => {
-        const next = resizePathUserBends(bends, draftPoints.length)
-        next.splice(vertexIndex, 1)
-        return next
-      })
-      setPathManuallyEdited(true)
-    },
-    [draftPathNodes, draftPoints, draftStops, pathLegStarts, pathUserBends, pushDrawHistory],
-  )
-
-  const handlePathLegDelete = useCallback(
-    (legIndex: number) => {
-      pushDrawHistory()
-      setDrawInteraction('route')
-      setPendingStop(null)
-      setSelectedStopId(null)
-      setPendingTraceAnchor(null)
-
-      const state = draftHistoryRef.current
-      const removed = removeLegInteriorPoints(
-        state.draftPoints,
-        state.pathLegStarts,
-        state.pathUserBends,
-        legIndex,
-      )
-      if (!removed) return
-
-      setDraftPoints(removed.points)
-      setPathLegStarts(removed.legStarts)
-      setPathUserBends(removed.userBends)
-      setPathLegHidden((hidden) => hidePathLeg(hidden, legIndex))
-      setPathManuallyEdited(true)
-    },
-    [pushDrawHistory],
+    [applyPathFromOrder, pushDrawHistory, roadSnap],
   )
 
   const handleConfirmPendingStop = useCallback(() => {
-    if (!pendingStop) return
+    if (!pendingStop?.editingStopId) return
     const query = pendingStop.query.trim()
     if (!query) return
     pushDrawHistory()
@@ -913,58 +699,28 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     const name = matched
       ? { zh: matched.zh, en: matched.en || matched.zh }
       : { zh: query, en: query }
-    if (pendingStop.editingStopId) {
-      setDraftStops((stops) =>
-        stops.map((stop) =>
-          stop.id === pendingStop.editingStopId
-            ? { ...stop, point: pendingStop.point, name }
-            : stop,
-        ),
-      )
-    } else {
-      setDraftStops((stops) => [
-        ...stops,
-        {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          point: pendingStop.point,
-          name,
-        },
-      ])
-    }
+    setDraftStops((stops) =>
+      stops.map((stop) =>
+        stop.id === pendingStop.editingStopId ? { ...stop, point: pendingStop.point, name } : stop,
+      ),
+    )
     setPendingStop(null)
-    setSelectedStopId(null)
   }, [pendingStop, pushDrawHistory])
 
-  const handleInteractionChange = useCallback((interaction: IslandMapDrawInteraction) => {
-    setDrawInteraction(interaction)
-    setPendingStop(null)
-    setSelectedStopId(null)
-    setPendingTraceAnchor(null)
-    setPendingPathNode(null)
-    if (interaction === 'catalog') {
-      setDraftPoints([])
-      setPathUserBends([])
-      setPathManuallyEdited(false)
+  const enterEditorMode = useCallback((mode: RouteEditorMode) => {
+    setEditorMode(mode)
+    if (mode !== 'select') {
+      setPendingStop(null)
+      setSelectedStopId(null)
+      setSelectedNode(null)
     }
-  }, [])
-
-  const toggleDrawMode = useCallback(() => {
-    setDrawMode((current) => {
-      const next = !current
-      if (next) {
-        setLayer('general')
-      }
-      return next
-    })
   }, [])
 
   const handleDrawEntryClick = useCallback(() => {
-    if (isLoggedIn) {
-      toggleDrawMode()
-      return
+    if (!isLoggedIn) {
+      setPermissionDialogOpen(true)
     }
-    setPermissionDialogOpen(true)
-  }, [isLoggedIn, toggleDrawMode])
+  }, [isLoggedIn])
 
   const closePermissionDialog = useCallback(() => {
     setPermissionDialogOpen(false)
@@ -1122,7 +878,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const applyImportedDrawFiles = useCallback(
     (files: readonly ImportedDrawFile[], resolution: PathConflictResolution) => {
       setPendingStop(null)
-      setPendingPathNode(null)
+      setSelectedNode(null)
       pushDrawHistory()
 
       const merged = mergeImportedDrawFiles(files, resolution, draftStops)
@@ -1131,11 +887,11 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         return
       }
 
-      setDrawMode(true)
+      setEditorMode('select')
       setLayer('general')
 
       if (merged.kind === 'catalog') {
-        setDrawInteraction('catalog')
+        const order = merged.stops.map((stop) => ({ kind: 'stop' as const, id: stop.id }))
         setDraftPoints([])
         setDraftPathNodes([])
         setPathLegStarts([0])
@@ -1144,6 +900,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         setPathUserBends([])
         setPathManuallyEdited(false)
         setDraftStops(merged.stops)
+        setNodeOrder(order)
         redoStackRef.current = []
         setMapView(
           fitNormalizedViewToRoutePoints(
@@ -1162,12 +919,13 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         return
       }
 
-      setDrawInteraction('route')
+      const order = inferNodeOrderFromDraft(merged.stops, merged.pathNodes, merged.points)
       setDrawRouteId(merged.routeId)
       setDrawDirectionIndex(merged.directionIndex)
       setDraftStops(merged.stops)
       setDraftPoints(merged.points)
       setDraftPathNodes(merged.pathNodes)
+      setNodeOrder(order)
       setPathLegStarts(merged.legStarts)
       setPathLegControls([])
       setPathLegHidden(merged.pathLegHidden)
@@ -1242,11 +1000,16 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     draftStops.length > 0 ||
     draftPoints.length >= 2 ||
     resolveWorldMapExportRouteId(drawRouteId, [], overlayRouteId) !== ''
-  const surfaceMaxZoomRatio = drawMode ? DRAW_MAX_ZOOM_RATIO : 8
+  const mapDrawInteraction: IslandMapDrawInteraction =
+    editorMode === 'addStop' ? 'catalog' : editorMode === 'addPoint' ? 'path-node' : 'route'
+  const mapDrawMode = editorMode === 'addStop' || editorMode === 'addPoint'
+  const mapAddPreviewStop = editorMode === 'addStop' ? pointerPoint : null
+  const mapAddPreviewNode = editorMode === 'addPoint' ? pointerPoint : null
+  const surfaceMaxZoomRatio = isLoggedIn ? DRAW_MAX_ZOOM_RATIO : 8
   const draftStopPoints = draftStops.map((stop) => stop.point)
   const stopEdit = useMemo(
     () =>
-      drawMode && drawInteraction === 'route'
+      isLoggedIn && editorMode === 'select'
         ? {
             selectedStopId,
             onStopDrag: handleStopDrag,
@@ -1254,87 +1017,45 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
             onStopClick: handleStopClick,
           }
         : undefined,
-    [
-      drawInteraction,
-      drawMode,
-      handleStopClick,
-      handleStopDrag,
-      handleStopDragEnd,
-      selectedStopId,
-    ],
-  )
-  const pathEdit = useMemo(
-    () =>
-      drawMode && drawInteraction === 'route' && draftPoints.length >= 2
-        ? {
-            editable: true,
-            onBendInsert: handleBendInsert,
-            onBendMove: handleBendMove,
-            onBendDragStart: handleBendDragStart,
-            onBendDragEnd: handleBendDragEnd,
-            onBendRemove: handleBendRemove,
-            onLegDelete: handlePathLegDelete,
-            snapPathPoint: roadSnap.snap,
-          }
-        : undefined,
-    [
-      drawInteraction,
-      drawMode,
-      draftPoints.length,
-      handleBendDragEnd,
-      handleBendDragStart,
-      handleBendInsert,
-      handleBendMove,
-      handleBendRemove,
-      handlePathLegDelete,
-      pathLegHidden,
-      pathUserBends,
-      roadSnap.snap,
-    ],
-  )
-  const traceEdit = useMemo(
-    () =>
-      drawMode && drawInteraction === 'route'
-        ? {
-            traceSelectedStopId:
-              pendingTraceAnchor?.kind === 'stop' ? pendingTraceAnchor.id : null,
-            traceSelectedPathNodeId:
-              pendingTraceAnchor?.kind === 'path-node' ? pendingTraceAnchor.id : null,
-            onStopClick: handleStopClick,
-            onPathNodeClick: handlePathNodeClick,
-          }
-        : undefined,
-    [drawInteraction, drawMode, handlePathNodeClick, handleStopClick, pendingTraceAnchor],
+    [editorMode, handleStopClick, handleStopDrag, handleStopDragEnd, isLoggedIn, selectedStopId],
   )
   const nodeEdit = useMemo(
     () =>
-      drawMode && (drawInteraction === 'route' || drawInteraction === 'path-node')
+      isLoggedIn && editorMode === 'select'
         ? {
             onPathNodeDrag: handlePathNodeDrag,
             onPathNodeDragEnd: handlePathNodeDragEnd,
             onPathNodeClick: handlePathNodeClick,
           }
         : undefined,
-    [drawInteraction, drawMode, handlePathNodeClick, handlePathNodeDrag, handlePathNodeDragEnd],
+    [editorMode, handlePathNodeClick, handlePathNodeDrag, handlePathNodeDragEnd, isLoggedIn],
+  )
+  const selectionHighlight = useMemo(
+    () =>
+      isLoggedIn && editorMode === 'select'
+        ? {
+            traceSelectedStopId: selectedNode?.kind === 'stop' ? selectedNode.id : null,
+            traceSelectedPathNodeId:
+              selectedNode?.kind === 'path-node' ? selectedNode.id : null,
+            onStopClick: handleStopClick,
+            onPathNodeClick: handlePathNodeClick,
+          }
+        : undefined,
+    [editorMode, handlePathNodeClick, handleStopClick, isLoggedIn, selectedNode],
   )
   const roadSnapSurface = useMemo(
     () => ({ snap: roadSnap.snap, isOnRoad: roadSnap.isOnRoad }),
     [roadSnap.isOnRoad, roadSnap.snap],
   )
   const draftRouteNumber = drawRouteId.trim()
-  const canUndo =
-    pendingPathNode != null ||
-    pendingStop != null ||
-    pendingTraceAnchor != null ||
-    undoStackRef.current.length > 0
+  const canUndo = undoStackRef.current.length > 0
   void historyTick
   const canRedo = redoStackRef.current.length > 0
   const canClear =
     draftPoints.length >= 2 ||
     draftStops.length > 0 ||
     draftPathNodes.length > 0 ||
-    pendingStop != null ||
-    pendingPathNode != null
+    nodeOrder.length > 0
   const hasDraftPath = draftPoints.length >= 2
 
   const exportSourceSlices = useMemo<WorldMapDrawDraftSlice[]>(
@@ -1352,7 +1073,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   )
 
   const importExportPanelProps = {
-    interaction: drawInteraction,
+    interaction: mapDrawInteraction,
     routeId: drawRouteId,
     stopCount: draftStops.length,
     pathNodeCount: draftPathNodes.length,
@@ -1426,13 +1147,12 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         y: Math.round(pointerPoint[1] * 10000) / 100,
       })
     : t('mapDrawStatusCoords', { x: 0, y: 0 })
-  const statusMode = !drawMode
-    ? t('mapDrawStatusSelect')
-    : drawInteraction === 'route'
-      ? t('islandMapDrawRouteMode')
-      : drawInteraction === 'path-node'
-        ? t('islandMapDrawPathNodeMode')
-        : t('islandMapDrawCatalogMode')
+  const statusMode =
+    editorMode === 'select'
+      ? t('mapDrawStatusSelect')
+      : editorMode === 'addStop'
+        ? t('mapDrawStatusAddStop')
+        : t('mapDrawStatusAddPoint')
 
   useEffect(() => {
     document.documentElement.classList.add('island-map-fullscreen-open')
@@ -1440,8 +1160,17 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   }, [])
 
   useEffect(() => {
-    if (!drawMode) return
+    if (!isLoggedIn) return
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        enterEditorMode('select')
+        return
+      }
+      if (event.key === 'Delete' && selectedNode) {
+        event.preventDefault()
+        deleteSelectedNode()
+        return
+      }
       const mod = event.ctrlKey || event.metaKey
       if (!mod) return
       if (event.key === 'z' && !event.shiftKey) {
@@ -1454,7 +1183,14 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [drawMode, handleDrawRedo, handleDrawUndo])
+  }, [
+    deleteSelectedNode,
+    enterEditorMode,
+    handleDrawRedo,
+    handleDrawUndo,
+    isLoggedIn,
+    selectedNode,
+  ])
 
   const headerActions = isLoggedIn ? (
     <>
@@ -1509,21 +1245,45 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     <>
       <section className="route-editor-panel">
         <h3>{t('mapDrawPanelNodes')}</h3>
-        <div className="route-editor-btn-row">
+        <div className="route-editor-btn-row route-editor-btn-row--stack">
           <button
             type="button"
-            className={`route-editor-btn route-editor-btn--primary${drawMode ? ' route-editor-btn--active' : ''}`.trim()}
-            onClick={toggleDrawMode}
-            aria-pressed={drawMode}
-            title={drawMode ? t('islandMapDrawStopHint') : t('islandMapDrawStartHint')}
+            className={`route-editor-btn route-editor-btn--primary${editorMode === 'addStop' ? ' route-editor-btn--active' : ''}`.trim()}
+            onClick={() => enterEditorMode('addStop')}
+            aria-pressed={editorMode === 'addStop'}
+            title={t('mapDrawAddStopHint')}
           >
-            {drawMode ? t('islandMapDrawStop') : t('islandMapDrawStart')}
+            {t('mapDrawAddStop')}
           </button>
+          <button
+            type="button"
+            className={`route-editor-btn route-editor-btn--primary${editorMode === 'addPoint' ? ' route-editor-btn--active' : ''}`.trim()}
+            onClick={() => enterEditorMode('addPoint')}
+            aria-pressed={editorMode === 'addPoint'}
+            title={t('mapDrawAddPointHint')}
+          >
+            {t('mapDrawAddPoint')}
+          </button>
+          <button
+            type="button"
+            className={`route-editor-btn${editorMode === 'select' ? ' route-editor-btn--active' : ''}`.trim()}
+            onClick={() => enterEditorMode('select')}
+            aria-pressed={editorMode === 'select'}
+            title={t('mapDrawModeSelectHint')}
+          >
+            {t('mapDrawModeSelect')}
+          </button>
+          {selectedNode ? (
+            <button
+              type="button"
+              className="route-editor-btn route-editor-btn--danger"
+              onClick={deleteSelectedNode}
+              title={t('mapDrawDeleteNodeHint')}
+            >
+              {t('mapDrawDeleteNode')}
+            </button>
+          ) : null}
         </div>
-        <IslandMapDrawInteractionTabs
-          interaction={drawInteraction}
-          onInteractionChange={handleInteractionChange}
-        />
       </section>
 
       <section className="route-editor-panel">
@@ -1550,37 +1310,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
             {t('mapDrawZoomFit')}
           </button>
         </div>
-        {drawMode && drawInteraction === 'route' ? (
-          <>
-            <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
-            <IslandMapDrawStopLabelSettings
-              visible={showStopLabels}
-              scale={stopLabelScale}
-              onVisibleChange={setShowStopLabels}
-              onScaleChange={setStopLabelScale}
-            />
-          </>
-        ) : null}
+        <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
+        <IslandMapDrawStopLabelSettings
+          visible={showStopLabels}
+          scale={stopLabelScale}
+          onVisibleChange={setShowStopLabels}
+          onScaleChange={setStopLabelScale}
+        />
       </section>
 
       <section className="route-editor-panel">
-        {drawMode && drawInteraction === 'path-node' ? (
-          <IslandMapDrawPathNodePanel
-            pendingNode={pendingPathNode}
-            nodeCount={draftPathNodes.length}
-            onLabelChange={(label) =>
-              setPendingPathNode((current) => (current ? { ...current, label } : current))
-            }
-            onConfirm={handleConfirmPendingPathNode}
-            onRemove={handleRemovePendingPathNode}
-          />
-        ) : null}
         <IslandMapDrawStopPanel
-          interaction={drawInteraction}
+          interaction="route"
           routeId={drawRouteId}
           directionIndex={drawDirectionIndex}
           stops={draftStops}
-          pendingStop={drawMode ? pendingStop : null}
+          pendingStop={pendingStop}
           onPendingQueryChange={(query) =>
             setPendingStop((current) => (current ? { ...current, query } : current))
           }
@@ -1588,23 +1333,23 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
           onCancelPendingStop={() => {
             setPendingStop(null)
             setSelectedStopId(null)
+            setSelectedNode(null)
           }}
           onRemoveStop={handleRemoveStop}
           selectedStopId={selectedStopId}
           onEditStop={openStopEditor}
         />
-        {drawMode && drawInteraction === 'route' ? (
+        {selectedNode?.kind === 'path-node' ? (
+          <p className="island-map-draw-help">{t('mapDrawSelectedPathNode')}</p>
+        ) : null}
+        {editorMode === 'addStop' ? (
           <p className="island-map-draw-help">
-            {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawHelp')}
-            <span className="island-map-draw-build-tag">{t('buildTag', { time: drawBuildLabel })}</span>
+            {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('mapDrawAddStopHelp')}
           </p>
         ) : null}
-        {drawMode && drawInteraction === 'route' && pendingTraceAnchor ? (
-          <p className="island-map-draw-trace-pending">{t('islandMapDrawTracePending')}</p>
-        ) : null}
-        {drawMode && drawInteraction === 'path-node' ? (
+        {editorMode === 'addPoint' ? (
           <p className="island-map-draw-help">
-            {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawPathNodeModeHelp')}
+            {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('mapDrawAddPointHelp')}
           </p>
         ) : null}
         {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}
@@ -1623,7 +1368,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
   const node = ready ? (
     <div
-      className={`route-editor-app${drawMode ? ' route-editor-app--draw-mode' : ''}`.trim()}
+      className={`route-editor-app${mapDrawMode ? ' route-editor-app--draw-mode' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
       <header className="route-editor-header">
@@ -1672,14 +1417,14 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                 mapView,
                 handleViewChange,
                 surfaceRouteOverlay,
-                drawMode,
-                drawInteraction,
+                mapDrawMode,
+                mapDrawInteraction,
                 draftPoints,
                 draftStopPoints,
                 draftStops,
                 draftPathNodes,
-                pendingStop?.point ?? null,
-                pendingPathNode?.point ?? null,
+                mapAddPreviewStop,
+                mapAddPreviewNode,
                 drawColor,
                 draftRouteNumber,
                 handleDrawMapClick,
@@ -1692,8 +1437,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                 stopLabelScale,
                 stopEdit,
                 nodeEdit,
-                pathEdit,
-                traceEdit,
+                undefined,
+                selectionHighlight,
                 roadSnapSurface,
               )}
               onMapPointerMove={setPointerPoint}

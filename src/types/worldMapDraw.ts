@@ -2,6 +2,15 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 
 export type IslandMapDrawInteraction = 'route' | 'catalog' | 'path-node'
 
+/** map-draw.html 参考编辑器的交互模式 */
+export type RouteEditorMode = 'select' | 'addStop' | 'addPoint'
+
+export type WorldMapOrderedNodeRef =
+  | { kind: 'stop'; id: string }
+  | { kind: 'path-node'; id: string }
+
+export type WorldMapSelectedNodeRef = WorldMapOrderedNodeRef
+
 export type WorldMapTraceAnchor =
   | { kind: 'stop'; id: string }
   | { kind: 'path-node'; id: string }

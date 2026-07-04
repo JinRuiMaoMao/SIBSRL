@@ -631,7 +631,7 @@ export function IslandMapPanZoomSurface({
 
   const handleStopPointerDown = useCallback(
     (stopId: string, event: ReactPointerEvent<SVGGElement>) => {
-      if (!drawMode || drawInteraction !== 'route' || !panZoom || !imageSize) return
+      if (!onStopDrag || !panZoom || !imageSize) return
       event.preventDefault()
       event.stopPropagation()
       stopDragRef.current = {
@@ -644,7 +644,7 @@ export function IslandMapPanZoomSurface({
       setDraggingStopId(stopId)
       event.currentTarget.setPointerCapture(event.pointerId)
     },
-    [drawInteraction, drawMode, imageSize, panZoom],
+    [imageSize, onStopDrag, panZoom],
   )
 
   useEffect(() => {
@@ -693,7 +693,7 @@ export function IslandMapPanZoomSurface({
 
   const handlePathNodePointerDown = useCallback(
     (nodeId: string, event: ReactPointerEvent<SVGGElement>) => {
-      if (!drawMode || drawInteraction !== 'route' || !panZoom || !imageSize) return
+      if (!onPathNodeDrag || !panZoom || !imageSize) return
       event.preventDefault()
       event.stopPropagation()
       nodeDragRef.current = {
@@ -706,7 +706,7 @@ export function IslandMapPanZoomSurface({
       setDraggingNodeId(nodeId)
       event.currentTarget.setPointerCapture(event.pointerId)
     },
-    [drawInteraction, drawMode, imageSize, panZoom],
+    [imageSize, onPathNodeDrag, panZoom],
   )
 
   useEffect(() => {
@@ -932,7 +932,7 @@ export function IslandMapPanZoomSurface({
       ) : null}
       {draftStops.length > 0 || pendingStopPoint ? (
         <div
-          className={`island-map-route-overlay-wrap${drawMode && drawInteraction === 'route' ? ' island-map-route-overlay-wrap--stop-editable' : ''}`.trim()}
+          className={`island-map-route-overlay-wrap${onStopDrag ? ' island-map-route-overlay-wrap--stop-editable' : ''}`.trim()}
         >
           <IslandMapStopOverlayLayer
             imageWidth={imageSize.width}
@@ -946,7 +946,7 @@ export function IslandMapPanZoomSurface({
                   }
                 : null
             }
-            editable={drawMode && drawInteraction === 'route'}
+            editable={Boolean(onStopDrag)}
             selectedStopId={selectedStopId}
             traceSelectedStopId={traceSelectedStopId}
             draggingStopId={draggingStopId}
@@ -959,7 +959,7 @@ export function IslandMapPanZoomSurface({
       ) : null}
       {draftPathNodes.length > 0 || pendingPathNodePoint ? (
         <div
-          className={`island-map-route-overlay-wrap${drawMode && (drawInteraction === 'route' || drawInteraction === 'path-node') ? ' island-map-route-overlay-wrap--node-editable' : ''}`.trim()}
+          className={`island-map-route-overlay-wrap${onPathNodeDrag ? ' island-map-route-overlay-wrap--node-editable' : ''}`.trim()}
         >
           <IslandMapPathNodeOverlayLayer
             imageWidth={imageSize.width}
@@ -973,7 +973,7 @@ export function IslandMapPanZoomSurface({
                   }
                 : null
             }
-            editable={drawMode && (drawInteraction === 'route' || drawInteraction === 'path-node')}
+            editable={Boolean(onPathNodeDrag)}
             traceSelectedNodeId={traceSelectedPathNodeId}
             draggingNodeId={draggingNodeId}
             directPick={!routeDrawUsesParentPick}

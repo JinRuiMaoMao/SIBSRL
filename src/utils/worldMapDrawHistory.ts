@@ -1,5 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import type { WorldMapDrawStop, WorldMapDrawPathNode, IslandMapDrawInteraction } from '../types/worldMapDraw'
+import type { WorldMapDrawStop, WorldMapDrawPathNode, IslandMapDrawInteraction, RouteEditorMode, WorldMapOrderedNodeRef } from '../types/worldMapDraw'
 
 export interface DrawDraftSnapshot {
   draftPoints: WorldMapPoint[]
@@ -13,6 +13,8 @@ export interface DrawDraftSnapshot {
   drawRouteId: string
   drawDirectionIndex: number
   drawInteraction: IslandMapDrawInteraction
+  editorMode: RouteEditorMode
+  nodeOrder: WorldMapOrderedNodeRef[]
 }
 
 export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnapshot {
@@ -37,6 +39,8 @@ export function cloneDrawDraftSnapshot(state: DrawDraftSnapshot): DrawDraftSnaps
     drawRouteId: state.drawRouteId,
     drawDirectionIndex: state.drawDirectionIndex,
     drawInteraction: state.drawInteraction,
+    editorMode: state.editorMode,
+    nodeOrder: state.nodeOrder.map((entry) => ({ ...entry })),
   }
 }
 

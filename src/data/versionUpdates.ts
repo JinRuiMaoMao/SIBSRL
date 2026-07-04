@@ -191,6 +191,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复绘制器放大后拖地图回弹：拖拽期间不再用旧 view 重置，并保留平移精度。",
             en: "Fixed map snap-back after zoomed pan in the draw editor by skipping stale view sync while dragging.",
           },
+          {
+            zh: "map-draw 绘制逻辑对齐参考编辑器：选择/添加站点/添加拐点，点击即添加，按节点顺序连线；Esc 与 Delete 快捷键。",
+            en: "Aligned map-draw interaction with the reference editor: select/add stop/add bend, click-to-add, ordered straight path, Esc and Delete shortcuts.",
+          },
         ],
       },
     ],
