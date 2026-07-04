@@ -202,6 +202,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Route detail stop list names are clickable—expand to show full bilingual name and routes via the stop.",
           },
           {
+            zh: "走向图页（route-map.html）可点击地图站点，显示全称与经过此站的线路。",
+            en: "Path map page (route-map.html) stop markers are clickable—full name and routes via the stop.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },

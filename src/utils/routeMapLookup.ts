@@ -25,3 +25,12 @@ export function routeMapIdsMatch(left: string, right: string): boolean {
   if (a === b) return true
   return resolveRouteMapLookupIds(a).includes(b) || resolveRouteMapLookupIds(b).includes(a)
 }
+
+/** Resolve a published route record from a route-map URL id (e.g. 21 → 21A). */
+export function findRouteForMapPage(routeId: string, routesList: readonly { id: string }[]): { id: string } | undefined {
+  for (const id of resolveRouteMapLookupIds(routeId)) {
+    const match = routesList.find((route) => route.id === id)
+    if (match) return match
+  }
+  return undefined
+}

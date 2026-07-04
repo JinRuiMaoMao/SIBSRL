@@ -66,6 +66,28 @@
   position: relative;
 }
 
+.route-map-page-stop-popover {
+  position: absolute;
+  right: max(0.85rem, env(safe-area-inset-right, 0px));
+  bottom: max(0.85rem, env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: min(24rem, 50vh);
+  pointer-events: auto;
+}
+
+.route-map-page-stop-popover .stop-detail-panel {
+  max-height: inherit;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 28%, transparent);
+  border-radius: 0.65rem;
+  box-shadow: 0 10px 28px color-mix(in srgb, #000 28%, transparent);
+}
+
+.route-map-page-stop-popover .stop-detail-panel-route-list {
+  max-height: 12rem;
+}
+
 .route-map-page-map {
   width: 100%;
   height: 100%;

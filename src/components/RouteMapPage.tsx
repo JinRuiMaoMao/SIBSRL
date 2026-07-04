@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { fetchRouteMapImport, saveRouteMapImport, UserApiError } from '../api/userApi'
+import { routes } from '../data/routes'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useAuth } from '../contexts/AuthContext'
 import { fitNormalizedViewToRoutePoints, getWorldMapRoutePoints } from '../data/worldMapRoutes'
@@ -10,16 +11,28 @@ import {
   readCachedRouteMapImport,
   writeCachedRouteMapImport,
 } from '../storage/routeMapImportCache'
+import type { RouteStop } from '../types/route'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { getRouteMapImageUrl } from '../utils/routeMapImages'
 import { isRouteMapImportPayload, parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
-import { resolveRouteMapLookupIds, routeMapIdsMatch } from '../utils/routeMapLookup'
+import { findRouteForMapPage, resolveRouteMapLookupIds, routeMapIdsMatch } from '../utils/routeMapLookup'
+import {
+  buildRouteDetailMapStops,
+  routeDetailMapStopToDrawStop,
+  type RouteDetailMapStop,
+} from '../utils/routeDetailMapStops'
+import { resolveActiveStopGroup } from '../utils/routeLoopView'
+import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
+import { readDirectionQueryFromLocation } from '../utils/routeNavigation'
 import {
   buildRouteMapViewerDisplay,
   buildSimpleRouteMapViewerDisplay,
   userBendIndicesToFlags,
   type RouteMapViewerDisplay,
 } from '../utils/routeMapViewerDisplay'
+import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
+import { StopDetailPanel } from './StopDetailPanel'
 import '../styles/routeMapPage.css'
 
 type MapLayer = 'general' | 'detailed'
@@ -42,6 +55,16 @@ function buildBackHref(routeId: string): string {
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
+}
+
+function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): RouteDetailMapStop {
+  const routeStop: RouteStop = { name: stop.name }
+  return {
+    id: stop.id,
+    seq: stop.seq ?? index + 1,
+    stop: routeStop,
+    point: stop.point,
+  }
 }
 
 async function resolveImportPayload(routeId: string): Promise<unknown | null> {
@@ -82,9 +105,16 @@ export function RouteMapPage() {
   const [staticImageVisible, setStaticImageVisible] = useState(false)
   const [importing, setImporting] = useState(false)
   const [importInvalid, setImportInvalid] = useState(false)
+  const [catalogStops, setCatalogStops] = useState<RouteDetailMapStop[]>([])
+  const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
 
   const mapSrc = MAP_URLS[layer]
   const title = routeId ? `${routeId} · ${t('routeMapViewPath')}` : t('routeMapViewPath')
+  const resolvedRoute = useMemo(
+    () => findRouteForMapPage(routeId, mergeRoutesByBaseNumber(routes)),
+    [routeId],
+  )
+  const directionIndex = readDirectionQueryFromLocation() ?? 0
 
   const beginStaticFallback = useCallback(() => {
     setImportPayload(null)
@@ -186,6 +216,50 @@ export function RouteMapPage() {
       beginStaticFallback()
     }
   }, [beginStaticFallback, imageSize, importPayload, routeId])
+
+  useEffect(() => {
+    if (!resolvedRoute) {
+      setCatalogStops([])
+      return
+    }
+
+    let cancelled = false
+    void loadWorldMapStopCatalog().then((catalog) => {
+      if (cancelled) return
+      const activeGroup = resolveActiveStopGroup(resolvedRoute, directionIndex, false)
+      const stops = activeGroup?.list ? buildRouteDetailMapStops(activeGroup.list, catalog) : []
+      setCatalogStops(stops)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [directionIndex, resolvedRoute])
+
+  useEffect(() => {
+    setSelectedStopId(null)
+  }, [directionIndex, display, routeId])
+
+  const interactiveDrawStops = useMemo((): WorldMapDrawStop[] => {
+    if (display?.stops.length) return display.stops
+    return catalogStops.map(routeDetailMapStopToDrawStop)
+  }, [catalogStops, display?.stops])
+
+  const interactiveStopDetails = useMemo((): RouteDetailMapStop[] => {
+    if (display?.stops.length) {
+      return display.stops.map((stop, index) => drawStopToRouteDetailMapStop(stop, index))
+    }
+    return catalogStops
+  }, [catalogStops, display?.stops])
+
+  const selectedStop = useMemo(() => {
+    if (!selectedStopId) return null
+    return interactiveStopDetails.find((stop) => stop.id === selectedStopId) ?? null
+  }, [interactiveStopDetails, selectedStopId])
+
+  const handleStopClick = useCallback((stopId: string) => {
+    setSelectedStopId((current) => (current === stopId ? null : stopId))
+  }, [])
 
   useEffect(() => {
     applyFitView(display)
@@ -320,10 +394,9 @@ export function RouteMapPage() {
               className="route-map-page-map"
               view={mapView}
               onViewChange={setMapView}
-              drawInteraction="route"
               draftPoints={display.referenceEditor ? [] : display.points}
               draftStopPoints={display.referenceEditor ? [] : display.stopPoints}
-              draftStops={display.stops}
+              draftStops={interactiveDrawStops}
               draftPathNodes={display.pathNodes}
               draftRouteNumber={display.routeNumber}
               pathLegStarts={display.legStarts}
@@ -331,6 +404,8 @@ export function RouteMapPage() {
               pathUserBends={userBendIndicesToFlags(display.userBendIndices, display.points.length)}
               showStopLabels
               stopLabelScale={1}
+              selectedStopId={selectedStopId}
+              onStopClick={interactiveDrawStops.length ? handleStopClick : undefined}
               maxZoomRatio={8}
               onImageSizeChange={setImageSize}
               referenceEditor={
@@ -348,6 +423,16 @@ export function RouteMapPage() {
                   : null
               }
             />
+            {selectedStop && resolvedRoute ? (
+              <div className="route-map-page-stop-popover">
+                <StopDetailPanel
+                  stop={selectedStop.stop}
+                  seq={selectedStop.seq}
+                  currentRouteId={resolvedRoute.id}
+                  onClose={() => setSelectedStopId(null)}
+                />
+              </div>
+            ) : null}
           </div>
         ) : null}
 

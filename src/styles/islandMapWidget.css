@@ -661,6 +661,16 @@ html[data-app-page='map-draw'] #root {
   cursor: pointer;
 }
 
+.island-map-stop-overlay-item--clickable {
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.island-map-stop-overlay-item--clickable .island-map-stop-overlay-label {
+  pointer-events: all;
+  cursor: pointer;
+}
+
 .island-map-stop-overlay-item--clickable.island-map-stop-overlay-item--selected .island-map-stop-overlay-marker {
   stroke: var(--accent, #f5b942);
   stroke-width: 2.5;
