@@ -26,6 +26,10 @@ function strokeDashArray(style: RouteEditorLineStyle['style']): string {
   return ''
 }
 
+function stopSegmentPointer(event: React.PointerEvent) {
+  event.stopPropagation()
+}
+
 export function ReferenceRouteEditorOverlay({
   imageWidth,
   imageHeight,
@@ -67,12 +71,14 @@ export function ReferenceRouteEditorOverlay({
               x2={to.x}
               y2={to.y}
               stroke="transparent"
-              strokeWidth={12}
+              strokeWidth={16}
               vectorEffect="non-scaling-stroke"
+              onPointerDown={stopSegmentPointer}
               onDoubleClick={
                 onSegmentDoubleClick
                   ? (event) => {
                       event.stopPropagation()
+                      event.preventDefault()
                       onSegmentDoubleClick(segment.id)
                     }
                   : undefined
@@ -141,6 +147,7 @@ export function ReferenceRouteEditorOverlay({
               <g
                 className={`reference-route-editor-label reference-route-editor-label--${node.labelPosition}`}
                 transform={`translate(${node.x + node.labelOffsetX}, ${node.y + node.labelOffsetY - 18})`}
+                pointerEvents="none"
               >
                 <rect
                   x={-4}

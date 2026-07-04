@@ -87,6 +87,7 @@ interface IslandMapPanZoomSurfaceProps {
     previewNode?: { type: 'stop' | 'point'; x: number; y: number } | null
     onNodeClick?: (nodeId: number) => void
     onSegmentDoubleClick?: (segmentId: number) => void
+    onBackgroundClick?: () => void
   } | null
 }
 
@@ -608,7 +609,14 @@ export function IslandMapPanZoomSurface({
       })
     }
 
-    const onPointerUp = () => {
+    const onPointerUp = (event: PointerEvent) => {
+      const origin = dragOriginRef.current
+      if (origin && referenceEditorRef.current?.onBackgroundClick) {
+        const moved = Math.hypot(event.clientX - origin.pointerX, event.clientY - origin.pointerY)
+        if (moved < 6) {
+          referenceEditorRef.current.onBackgroundClick()
+        }
+      }
       const live = panZoomRef.current
       if (live) {
         const viewport = readViewportSize()

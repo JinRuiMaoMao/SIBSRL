@@ -219,6 +219,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 切换 Layers 后站点/线段错位：概览图(4000²)与详细图(8000²)切换时自动按比例换算节点坐标。",
             en: "Fixed map-draw stop/path misalignment when switching Layers—node coords now rescale between overview (4000²) and detailed (8000²) maps.",
           },
+          {
+            zh: "修复 map-draw 连线与线段交互：连接后可继续连下一段、点击空白取消选中、双击线段删除。",
+            en: "Fixed map-draw segment UX: chain connections, clear selection on empty-map click, and double-click segment delete.",
+          },
         ],
       },
     ],

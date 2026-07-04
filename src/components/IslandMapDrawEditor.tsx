@@ -115,6 +115,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const importInputRef = useRef<HTMLInputElement>(null)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
   const prevImageSizeRef = useRef<MapImageSize | null>(null)
+  const connectPendingRef = useRef<number | null>(null)
 
   const selectedNode = selectedNodeId != null ? editor.manager.getNodeById(selectedNodeId) : null
 
@@ -219,24 +220,39 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     }
   }, [])
 
+  const clearMapSelection = useCallback(() => {
+    setSelectedNodeId(null)
+    setConnectPendingNodeId(null)
+    connectPendingRef.current = null
+    setConnectPreview(null)
+  }, [])
+
+  useEffect(() => {
+    connectPendingRef.current = connectPendingNodeId
+  }, [connectPendingNodeId])
+
   const handleNodeClick = useCallback(
     (nodeId: number) => {
       if (editorMode !== 'select') return
       setSelectedNodeId(nodeId)
-      if (connectPendingNodeId == null) {
+      const pending = connectPendingRef.current
+      if (pending == null) {
         setConnectPendingNodeId(nodeId)
+        connectPendingRef.current = nodeId
         return
       }
-      if (connectPendingNodeId === nodeId) {
+      if (pending === nodeId) {
         setConnectPendingNodeId(null)
+        connectPendingRef.current = null
         setConnectPreview(null)
         return
       }
-      editor.addSegment(connectPendingNodeId, nodeId)
-      setConnectPendingNodeId(null)
+      editor.addSegment(pending, nodeId)
+      setConnectPendingNodeId(nodeId)
+      connectPendingRef.current = nodeId
       setConnectPreview(null)
     },
-    [connectPendingNodeId, editor, editorMode],
+    [editor, editorMode],
   )
 
   const handleSegmentDoubleClick = useCallback(
@@ -623,9 +639,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     if (!isLoggedIn) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        if (connectPendingNodeId != null) {
-          setConnectPendingNodeId(null)
-          setConnectPreview(null)
+        if (connectPendingNodeId != null || selectedNodeId != null) {
+          clearMapSelection()
           return
         }
         enterEditorMode('select')
@@ -648,7 +663,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [connectPendingNodeId, deleteSelectedNode, editor, enterEditorMode, isLoggedIn, selectedNodeId])
+  }, [clearMapSelection, connectPendingNodeId, deleteSelectedNode, editor, enterEditorMode, isLoggedIn, selectedNodeId])
 
   const statusMode =
     editorMode === 'select'
@@ -908,6 +923,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                       previewNode: pointerPreview,
                       onNodeClick: editorMode === 'select' ? handleNodeClick : undefined,
                       onSegmentDoubleClick: editorMode === 'select' ? handleSegmentDoubleClick : undefined,
+                      onBackgroundClick: editorMode === 'select' ? clearMapSelection : undefined,
                     }
                   : null
               }
