@@ -533,7 +533,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       ...(selectedNode.type === 'stop'
         ? {
             stopSeq:
-              parsedSeq != null && Number.isFinite(parsedSeq) && parsedSeq > 0 ? parsedSeq : undefined,
+              parsedSeq != null && Number.isFinite(parsedSeq) && parsedSeq > 0 ? parsedSeq : null,
           }
         : {}),
     })

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RouteEditorDataManager } from './RouteEditorDataManager'
-import type { RouteEditorMode, RouteEditorNode } from './types'
+import type { RouteEditorMode, RouteEditorNodeUpdates } from './types'
 
 export function useRouteEditor(initialLineName = '默认线路') {
   const managerRef = useRef<RouteEditorDataManager | null>(null)
@@ -42,7 +42,7 @@ export function useRouteEditor(initialLineName = '默认线路') {
         y: number,
         name?: { chi_name?: string; eng_name?: string },
       ) => manager.addNode(type, x, y, name ?? null),
-      updateNode: (nodeId: number, updates: Partial<RouteEditorNode>) =>
+      updateNode: (nodeId: number, updates: RouteEditorNodeUpdates) =>
         manager.updateNode(nodeId, updates),
       deleteNode: (nodeId: number) => manager.deleteNode(nodeId),
       addSegment: (fromNodeId: number, toNodeId: number) => manager.addSegment(fromNodeId, toNodeId),

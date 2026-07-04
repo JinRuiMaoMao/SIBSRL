@@ -271,6 +271,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 各模式下均支持双击线段删除（不再仅限画线模式）。",
             en: "Map-draw double-click segment delete works in every mode, not only Connect lines.",
           },
+          {
+            zh: "修复 map-draw 清空站序后保存无效（留空站序输入框可清除编号前缀）。",
+            en: "Fixed map-draw stop number not clearing when the optional seq field is saved empty.",
+          },
         ],
       },
     ],

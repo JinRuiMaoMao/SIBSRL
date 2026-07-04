@@ -7,6 +7,7 @@ import {
   type RouteEditorLineStyle,
   type RouteEditorNode,
   type RouteEditorNodeType,
+  type RouteEditorNodeUpdates,
 } from './types'
 import { normalizeRouteEditorLine } from './routeEditorPath'
 import { mergeRouteEditorLines } from './routeEditorMerge'
@@ -172,7 +173,7 @@ export class RouteEditorDataManager {
     return node ? clone(node) : null
   }
 
-  updateNode(nodeId: number, updates: Partial<RouteEditorNode>): boolean {
+  updateNode(nodeId: number, updates: RouteEditorNodeUpdates): boolean {
     const node = this.line.nodes.find((entry) => entry.id === nodeId)
     if (!node) return false
 
@@ -184,7 +185,7 @@ export class RouteEditorDataManager {
       if (updates.labelOffsetY !== undefined) node.labelOffsetY = updates.labelOffsetY
       if (updates.labelWidth !== undefined) node.labelWidth = updates.labelWidth
       if (updates.labelHeight !== undefined) node.labelHeight = updates.labelHeight
-      if (updates.stopSeq !== undefined) {
+      if ('stopSeq' in updates) {
         const seq = updates.stopSeq
         node.stopSeq = seq != null && seq > 0 ? Math.round(seq) : undefined
       }

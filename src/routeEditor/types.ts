@@ -31,6 +31,10 @@ export interface RouteEditorNode {
   stopSeq?: number
 }
 
+export type RouteEditorNodeUpdates = Omit<Partial<RouteEditorNode>, 'stopSeq'> & {
+  stopSeq?: number | null
+}
+
 export interface RouteEditorSegment {
   id: number
   fromNodeId: number
