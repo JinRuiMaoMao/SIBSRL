@@ -146,7 +146,7 @@ export function IslandMapDrawEditor({
   const connectPendingRef = useRef<number | null>(null)
   const lastPlacedStopIdRef = useRef<number | null>(null)
   const pendingNewStopSeqRef = useRef<number | null>(null)
-  const stopSeqFormDirtyRef = useRef(false)
+  const stopFormDirtyRef = useRef(false)
   const prevSelectedNodeIdRef = useRef<number | null>(null)
 
   const selectedNode = selectedNodeId != null ? editor.manager.getNodeById(selectedNodeId) : null
@@ -190,7 +190,7 @@ export function IslandMapDrawEditor({
 
   useEffect(() => {
     if (selectedNodeId !== prevSelectedNodeIdRef.current) {
-      stopSeqFormDirtyRef.current = false
+      stopFormDirtyRef.current = false
       prevSelectedNodeIdRef.current = selectedNodeId
     }
     if (selectedNodeId == null) {
@@ -203,11 +203,13 @@ export function IslandMapDrawEditor({
     }
     const node = editor.manager.getNodeById(selectedNodeId)
     if (!node) return
-    setEditChiName(node.chi_name)
-    setEditEngName(node.eng_name)
-    setEditCornerRadius(node.cornerRadius)
+    if (!stopFormDirtyRef.current) {
+      setEditChiName(node.chi_name)
+      setEditEngName(node.eng_name)
+      setEditCornerRadius(node.cornerRadius)
+    }
     if (node.type === 'stop') {
-      if (!stopSeqFormDirtyRef.current) {
+      if (!stopFormDirtyRef.current) {
         if (node.stopSeq != null && node.stopSeq > 0) {
           setEditStopSeq(String(node.stopSeq))
         } else {
@@ -223,7 +225,7 @@ export function IslandMapDrawEditor({
       setEditLabelPosition(node.labelPosition)
       return
     }
-    if (!stopSeqFormDirtyRef.current) {
+    if (!stopFormDirtyRef.current) {
       setEditStopSeq('')
     }
     setEditLabelPosition('top')
@@ -392,6 +394,7 @@ export function IslandMapDrawEditor({
 
   const applyStopNameSelection = useCallback(
     (selection: MapDrawStopNameSelection) => {
+      stopFormDirtyRef.current = false
       setEditChiName(selection.zh)
       setEditEngName(selection.en)
       if (selectedNodeId != null) {
@@ -604,7 +607,7 @@ export function IslandMapDrawEditor({
           }
         : {}),
     })
-    stopSeqFormDirtyRef.current = false
+    stopFormDirtyRef.current = false
     if (editorMode === 'addStop' && selectedNode.type === 'stop') {
       showExportHint(t('mapDrawStopNameApplied'))
       setSelectedNodeId(null)
@@ -1128,8 +1131,14 @@ export function IslandMapDrawEditor({
                       catalog={stopCatalog}
                       chiPlaceholder={t('mapDrawAddStopChiPlaceholder')}
                       engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
-                      onChiNameChange={setEditChiName}
-                      onEngNameChange={setEditEngName}
+                      onChiNameChange={(value) => {
+                        stopFormDirtyRef.current = true
+                        setEditChiName(value)
+                      }}
+                      onEngNameChange={(value) => {
+                        stopFormDirtyRef.current = true
+                        setEditEngName(value)
+                      }}
                       onSelectSuggestion={applyStopNameSelection}
                       onEnter={saveSelectedNodeEdits}
                     />
@@ -1142,7 +1151,7 @@ export function IslandMapDrawEditor({
                         value={editStopSeq}
                         placeholder={t('mapDrawStopSeqPlaceholder')}
                         onChange={(event) => {
-                          stopSeqFormDirtyRef.current = true
+                          stopFormDirtyRef.current = true
                           setEditStopSeq(event.target.value)
                         }}
                         onKeyDown={(event) => {
