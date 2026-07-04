@@ -218,6 +218,18 @@ function readImageSize(image: HTMLImageElement): ImageSize | null {
   return { width: image.naturalWidth, height: image.naturalHeight }
 }
 
+function viewsEqual(a: NormalizedMapView, b: NormalizedMapView): boolean {
+  return (
+    Math.abs(a.centerX - b.centerX) < 1e-9 &&
+    Math.abs(a.centerY - b.centerY) < 1e-9 &&
+    Math.abs(a.zoomRatio - b.zoomRatio) < 1e-9
+  )
+}
+
+function panZoomEqual(a: PanZoomState, b: PanZoomState): boolean {
+  return a.x === b.x && a.y === b.y && a.scale === b.scale
+}
+
 export function viewportClientToNormalized(
   clientX: number,
   clientY: number,
@@ -312,6 +324,7 @@ export function IslandMapPanZoomSurface({
   const pathEditActiveRef = useRef(false)
   const suppressPublishRef = useRef(false)
   const draggingRef = useRef(false)
+  const publishedViewRef = useRef<NormalizedMapView | null>(null)
 
   viewRef.current = view
   modeRef.current = mode
@@ -343,6 +356,11 @@ export function IslandMapPanZoomSurface({
 
   useEffect(() => {
     if (dragging || !panZoom) return
+    const live = panZoomRef.current
+    if (live && !panZoomEqual(live, panZoom)) {
+      applyTransformLive(live)
+      return
+    }
     applyTransformLive(panZoom)
   }, [applyTransformLive, dragging, panZoom])
 
@@ -357,6 +375,7 @@ export function IslandMapPanZoomSurface({
   const publishPanZoom = useCallback((next: PanZoomState, viewport: ImageSize, size: ImageSize) => {
     const normalized = panZoomToNormalized(next, viewport, size)
     viewRef.current = normalized
+    publishedViewRef.current = normalized
     onViewChangeRef.current(normalized)
   }, [])
 
@@ -470,6 +489,14 @@ export function IslandMapPanZoomSurface({
 
   useLayoutEffect(() => {
     if (draggingRef.current || !imageSize) return
+    if (view && publishedViewRef.current && viewsEqual(view, publishedViewRef.current)) {
+      viewRef.current = view
+      return
+    }
+    if (view) {
+      viewRef.current = view
+      publishedViewRef.current = null
+    }
     syncPanZoomRef.current({ publish: false })
   }, [view, imageSize])
 
@@ -569,6 +596,7 @@ export function IslandMapPanZoomSurface({
         }
       }
       dragOriginRef.current = null
+      draggingRef.current = false
       setDragging(false)
     }
 
@@ -619,6 +647,7 @@ export function IslandMapPanZoomSurface({
     }
     panZoomRef.current = livePanZoom
     suppressPublishRef.current = true
+    draggingRef.current = true
     setDragging(true)
     event.currentTarget.setPointerCapture(event.pointerId)
   }

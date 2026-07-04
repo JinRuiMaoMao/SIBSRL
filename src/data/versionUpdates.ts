@@ -188,8 +188,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed blank map-draw.html by removing stale expanded variable references on the draw page.",
           },
           {
-            zh: "修复绘制器放大后拖地图回弹：拖拽期间不再用旧 view 重置，并保留平移精度。",
-            en: "Fixed map snap-back after zoomed pan in the draw editor by skipping stale view sync while dragging.",
+            zh: "修复 map-draw 放大后拖地图松手回弹：拖拽期间不再用旧 pan 状态覆盖 transform，并避免 view 回同步重置位置。",
+            en: "Fixed map-draw pan snap-back after zoomed drag: stop applying stale pan state on release and skip redundant view resync.",
           },
           {
             zh: "map-draw 绘制逻辑对齐参考编辑器：选择/添加站点/添加拐点，点击即添加，按节点顺序连线；Esc 与 Delete 快捷键。",
