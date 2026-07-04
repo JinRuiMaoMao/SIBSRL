@@ -1093,6 +1093,8 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
+        </>
+      )}
       {trajectoryPath.length >= 2 ? (
         <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--trajectory">
           <RouteMapTrajectoryBall
@@ -1102,8 +1104,6 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
-        </>
-      )}
     </>
   ) : null
 

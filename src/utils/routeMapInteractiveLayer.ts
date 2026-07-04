@@ -107,7 +107,7 @@ export function buildRouteMapInteractiveLayerState(
       : interactiveStopDetails
 
   const trajectoryPath =
-    imageSize && trajectoryStops.length > 0
+    imageSize
       ? buildRouteMapTrajectoryPath(display, imageSize, trajectoryStops, {
           preserveStopOrder: Boolean(display.referenceEditor),
         })

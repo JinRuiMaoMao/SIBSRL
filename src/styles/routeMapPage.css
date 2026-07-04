@@ -68,6 +68,7 @@
 
 .island-map-route-overlay-wrap--trajectory {
   pointer-events: none;
+  z-index: 3;
 }
 
 .route-map-trajectory-ball-layer {

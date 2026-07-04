@@ -11,7 +11,10 @@ interface RouteMapTrajectoryBallProps {
 const LOOP_DURATION_MS = 24_000
 
 export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteMapTrajectoryBallProps) {
-  const [position, setPosition] = useState<[number, number]>([0, 0])
+  const [position, setPosition] = useState<[number, number]>(() => {
+    if (path.length === 0 || imageWidth <= 0 || imageHeight <= 0) return [0, 0]
+    return interpolateRouteMapTrajectoryPoint(path, 0, imageWidth, imageHeight)
+  })
 
   useEffect(() => {
     if (path.length < 2 || imageWidth <= 0 || imageHeight <= 0) return
