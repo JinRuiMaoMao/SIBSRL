@@ -1,5 +1,7 @@
 import { routes } from '../data/routes'
 import type { RouteStop } from '../types/route'
+import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { WorldMapCatalogStop } from './worldMapStopCatalog'
 import { DISPLAY_ONLY_RENAMES, findDisplayRouteByQuery, mergeRoutesByBaseNumber } from './routeMerge'
 import { findStopsMatchingQuery } from './routeStopLookup'
 
@@ -35,13 +37,58 @@ export interface DrawStopSuggestion {
   zh: string
   en: string
   fromRouteDetail: boolean
+  fromCatalog?: boolean
+  point?: WorldMapPoint
+}
+
+function suggestionKey(zh: string, en: string): string {
+  return `${zh}|${en || zh}`
+}
+
+function scoreNameMatch(query: string, zh: string, en: string): number {
+  const raw = query.trim()
+  if (!raw) return -1
+  const q = raw.toLowerCase()
+  if (zh === raw || en.toLowerCase() === q) return 100
+  if (zh.startsWith(raw) || en.toLowerCase().startsWith(q)) return 80
+  if (zh.includes(raw) || en.toLowerCase().includes(q)) return 70
+  return -1
 }
 
 function matchesStopQuery(query: string, zh: string, en: string): boolean {
+  return scoreNameMatch(query, zh, en) >= 0
+}
+
+function findCatalogStopSuggestions(
+  query: string,
+  catalog: readonly WorldMapCatalogStop[] | null | undefined,
+): DrawStopSuggestion[] {
+  if (!catalog?.length) return []
   const raw = query.trim()
-  if (!raw) return true
-  const q = raw.toLowerCase()
-  return zh.includes(raw) || en.toLowerCase().includes(q)
+  if (!raw) return []
+
+  const scored: Array<{ suggestion: DrawStopSuggestion; score: number }> = []
+  for (const stop of catalog) {
+    const zh = stop.name.zh.trim()
+    const en = (stop.name.en || stop.name.zh).trim()
+    const score = scoreNameMatch(raw, zh, en)
+    if (score < 0) continue
+    scored.push({
+      score,
+      suggestion: {
+        zh,
+        en,
+        fromRouteDetail: false,
+        fromCatalog: true,
+        point: [stop.point[0], stop.point[1]],
+      },
+    })
+  }
+
+  return scored
+    .sort((a, b) => b.score - a.score || a.suggestion.zh.localeCompare(b.suggestion.zh, 'zh-Hans'))
+    .slice(0, 8)
+    .map((entry) => entry.suggestion)
 }
 
 /** Prefer stop names from the route detail page when drawing a route. */
@@ -57,7 +104,7 @@ export function findDrawStopSuggestions(
   for (const stop of routeStops) {
     const zh = stop.name.zh.trim()
     const en = (stop.name.en || stop.name.zh).trim()
-    const key = `${zh}|${en}`
+    const key = suggestionKey(zh, en)
     if (addedStopKeys.has(key)) continue
     if (!matchesStopQuery(query, zh, en)) continue
     routeSuggestions.push({ zh, en, fromRouteDetail: true })
@@ -70,7 +117,48 @@ export function findDrawStopSuggestions(
   if (query.trim().length < 2) return []
 
   return findStopsMatchingQuery(query)
-    .filter((stop) => !addedStopKeys.has(`${stop.zh}|${stop.en}`))
+    .filter((stop) => !addedStopKeys.has(suggestionKey(stop.zh, stop.en)))
     .slice(0, 8)
     .map((stop) => ({ zh: stop.zh, en: stop.en, fromRouteDetail: false }))
+}
+
+/** 地图编辑器站名输入：线路站点 → 地图 catalog → 全库站点 */
+export function findMapDrawStopNameSuggestions(
+  query: string,
+  routeQuery: string,
+  directionIndex: number,
+  catalog?: readonly WorldMapCatalogStop[] | null,
+): DrawStopSuggestion[] {
+  const raw = query.trim()
+  if (!raw) return []
+
+  const merged = new Map<string, DrawStopSuggestion>()
+  const insert = (suggestion: DrawStopSuggestion, priority: number) => {
+    const key = suggestionKey(suggestion.zh, suggestion.en)
+    const existing = merged.get(key)
+    if (!existing || priority > rankSuggestion(existing)) {
+      merged.set(key, suggestion)
+    }
+  }
+
+  for (const suggestion of findDrawStopSuggestions(raw, routeQuery, directionIndex, new Set())) {
+    insert(suggestion, suggestion.fromRouteDetail ? 3 : 1)
+  }
+  for (const suggestion of findCatalogStopSuggestions(raw, catalog)) {
+    insert(suggestion, 2)
+  }
+
+  return [...merged.values()]
+    .sort((a, b) => {
+      const scoreDiff = rankSuggestion(b) - rankSuggestion(a)
+      if (scoreDiff !== 0) return scoreDiff
+      return scoreNameMatch(raw, b.zh, b.en) - scoreNameMatch(raw, a.zh, a.en)
+    })
+    .slice(0, 8)
+}
+
+function rankSuggestion(suggestion: DrawStopSuggestion): number {
+  if (suggestion.fromRouteDetail) return 3
+  if (suggestion.fromCatalog) return 2
+  return 1
 }

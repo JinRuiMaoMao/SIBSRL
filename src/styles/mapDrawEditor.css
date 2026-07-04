@@ -428,6 +428,52 @@ html[data-app-page='map-draw'] #root {
   font-size: 0.88rem;
 }
 
+.map-draw-stop-name-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.map-draw-stop-name-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  border-radius: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
+  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+}
+
+.map-draw-stop-name-suggestions li button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.map-draw-stop-name-suggestions li button:hover {
+  background: color-mix(in srgb, var(--accent, #f5b942) 18%, transparent);
+}
+
+.map-draw-stop-name-suggestion-en {
+  font-size: 0.78rem;
+  opacity: 0.72;
+}
+
+.map-draw-stop-name-suggestion-tag {
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
 .island-map-route-overlay-wrap--reference-editor {
   pointer-events: none;
 }

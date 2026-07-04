@@ -39,6 +39,8 @@ import {
 } from './IslandMapDrawClearDialog'
 import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
+import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
+import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
@@ -106,12 +108,21 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [editCornerRadius, setEditCornerRadius] = useState(0)
   const [newStopChiName, setNewStopChiName] = useState('')
   const [newStopEngName, setNewStopEngName] = useState('')
+  const [newStopSnapPoint, setNewStopSnapPoint] = useState<WorldMapPoint | null>(null)
+  const [stopCatalog, setStopCatalog] = useState<WorldMapCatalogStop[] | null>(null)
 
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
 
   const selectedNode = selectedNodeId != null ? editor.manager.getNodeById(selectedNodeId) : null
+
+  useEffect(() => {
+    if (!isLoggedIn) return
+    void loadWorldMapStopCatalog()
+      .then(setStopCatalog)
+      .catch(() => setStopCatalog([]))
+  }, [isLoggedIn])
 
   useEffect(() => {
     if (!selectedNode) {
@@ -189,6 +200,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     if (mode === 'addStop') {
       setNewStopChiName('')
       setNewStopEngName('')
+      setNewStopSnapPoint(null)
     }
     if (mode !== 'select') {
       setSelectedNodeId(null)
@@ -224,18 +236,32 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     [editor],
   )
 
+  const applyStopNameSelection = useCallback((selection: MapDrawStopNameSelection) => {
+    setEditChiName(selection.zh)
+    setEditEngName(selection.en)
+  }, [])
+
+  const applyNewStopNameSelection = useCallback((selection: MapDrawStopNameSelection) => {
+    setNewStopChiName(selection.zh)
+    setNewStopEngName(selection.en)
+    setNewStopSnapPoint(selection.point ?? null)
+  }, [])
+
   const handleMapClick = useCallback(
     (point: WorldMapPoint) => {
       if (!imageSize) return
-      const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
+      const placement = newStopSnapPoint ?? point
+      const { x, y } = normalizedToPixel(placement, imageSize.width, imageSize.height)
       if (editorMode === 'addStop') {
         const chi = newStopChiName.trim()
         const eng = newStopEngName.trim()
         editor.addNode('stop', x, y, chi || eng ? { chi_name: chi, eng_name: eng } : undefined)
+        setNewStopSnapPoint(null)
         return
       }
+      const clickPixel = normalizedToPixel(point, imageSize.width, imageSize.height)
       if (editorMode === 'addPoint') {
-        editor.addNode('point', x, y)
+        editor.addNode('point', clickPixel.x, clickPixel.y)
         return
       }
       if (editorMode === 'select') {
@@ -243,12 +269,23 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         setConnectPreview(null)
       }
     },
-    [editor, editorMode, imageSize, newStopChiName, newStopEngName],
+    [editor, editorMode, imageSize, newStopChiName, newStopEngName, newStopSnapPoint],
   )
 
   const handleMapPointerMove = useCallback(
     (point: WorldMapPoint | null) => {
-      if (!point || !imageSize) {
+      if (!imageSize) {
+        setPointerPreview(null)
+        setConnectPreview(null)
+        return
+      }
+      if (editorMode === 'addStop' && newStopSnapPoint) {
+        const pixel = normalizedToPixel(newStopSnapPoint, imageSize.width, imageSize.height)
+        setPointerPreview({ type: 'stop', x: pixel.x, y: pixel.y })
+        setConnectPreview(null)
+        return
+      }
+      if (!point) {
         setPointerPreview(null)
         setConnectPreview(null)
         return
@@ -278,7 +315,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         y: pixel.y,
       })
     },
-    [connectPendingNodeId, editor.manager, editorMode, imageSize],
+    [connectPendingNodeId, editor.manager, editorMode, imageSize, newStopSnapPoint],
   )
 
   const deleteSelectedNode = useCallback(() => {
@@ -743,37 +780,43 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                 {editorMode === 'addStop' ? (
                   <div className="reference-node-info-panel">
                     <h4>{t('mapDrawAddStopNames')}</h4>
-                    <label className="route-editor-field">
-                      <span>{t('mapDrawNodeChiName')}</span>
-                      <input
-                        value={newStopChiName}
-                        onChange={(event) => setNewStopChiName(event.target.value)}
-                        placeholder={t('mapDrawAddStopChiPlaceholder')}
-                      />
-                    </label>
-                    <label className="route-editor-field">
-                      <span>{t('mapDrawNodeEngName')}</span>
-                      <input
-                        value={newStopEngName}
-                        onChange={(event) => setNewStopEngName(event.target.value)}
-                        placeholder={t('mapDrawAddStopEngPlaceholder')}
-                      />
-                    </label>
-                    <p className="island-map-draw-help">{t('mapDrawAddStopHelp')}</p>
+                    <MapDrawStopNameFields
+                      chiName={newStopChiName}
+                      engName={newStopEngName}
+                      routeId={drawRouteId}
+                      directionIndex={drawDirectionIndex}
+                      catalog={stopCatalog}
+                      chiPlaceholder={t('mapDrawAddStopChiPlaceholder')}
+                      engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
+                      onChiNameChange={(value) => {
+                        setNewStopChiName(value)
+                        setNewStopSnapPoint(null)
+                      }}
+                      onEngNameChange={(value) => {
+                        setNewStopEngName(value)
+                        setNewStopSnapPoint(null)
+                      }}
+                      onSelectSuggestion={applyNewStopNameSelection}
+                    />
+                    <p className="island-map-draw-help">
+                      {newStopSnapPoint ? t('mapDrawAddStopCatalogSnapHint') : t('mapDrawAddStopHelp')}
+                    </p>
                   </div>
                 ) : selectedNode ? (
                   <div className="reference-node-info-panel">
                     <h4>{selectedNode.type === 'stop' ? t('mapDrawNodeInfoStop') : t('mapDrawNodeInfoPoint')}</h4>
                     {selectedNode.type === 'stop' ? (
                       <>
-                        <label className="route-editor-field">
-                          <span>{t('mapDrawNodeChiName')}</span>
-                          <input value={editChiName} onChange={(event) => setEditChiName(event.target.value)} />
-                        </label>
-                        <label className="route-editor-field">
-                          <span>{t('mapDrawNodeEngName')}</span>
-                          <input value={editEngName} onChange={(event) => setEditEngName(event.target.value)} />
-                        </label>
+                        <MapDrawStopNameFields
+                          chiName={editChiName}
+                          engName={editEngName}
+                          routeId={drawRouteId}
+                          directionIndex={drawDirectionIndex}
+                          catalog={stopCatalog}
+                          onChiNameChange={setEditChiName}
+                          onEngNameChange={setEditEngName}
+                          onSelectSuggestion={applyStopNameSelection}
+                        />
                       </>
                     ) : (
                       <label className="route-editor-field">

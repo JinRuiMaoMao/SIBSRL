@@ -211,6 +211,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw PNG 导出：站点为白底黑边圆点，走线使用绘制颜色，并支持编辑器线段导出。",
             en: "Map-draw PNG export: white stops with black outlines, route in draw color, using editor segment lines when present.",
           },
+          {
+            zh: "map-draw 站名输入支持自动匹配（当前线路站点、world-map-stops catalog、全库站点）；匹配 catalog 后点击地图可定位到坐标。",
+            en: "Map-draw stop name inputs autocomplete from route stops, world-map-stops catalog, and the full stop index; catalog matches snap placement on click.",
+          },
         ],
       },
     ],
