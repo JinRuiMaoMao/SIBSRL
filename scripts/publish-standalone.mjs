@@ -17,6 +17,8 @@ import {
   injectThemeBootstrap,
   injectAppSurfaceBootstrap,
   injectUserApiMeta,
+  injectBootFailureGuard,
+  relocateAppBundleScript,
   syncFaviconLink,
 } from './lib/app-page-html.mjs'
 import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
@@ -64,19 +66,23 @@ export function publishStandalone(options = {}) {
     throw new Error('未找到 dist/dev.html，请先运行 vite build')
   }
 
-  const baseHtml = injectServiceWorkerBootstrap(
-    injectAppSurfaceBootstrap(
-      syncFaviconLink(
-        injectUserApiMeta(
-          injectLocaleBootstrap(
-            injectThemeBootstrap(
-              injectDevToolsBlock(
-                injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+  const baseHtml = relocateAppBundleScript(
+    injectBootFailureGuard(
+      injectServiceWorkerBootstrap(
+        injectAppSurfaceBootstrap(
+          syncFaviconLink(
+            injectUserApiMeta(
+              injectLocaleBootstrap(
+                injectThemeBootstrap(
+                  injectDevToolsBlock(
+                    injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+                  ),
+                ),
               ),
             ),
+            buildTag,
           ),
         ),
-        buildTag,
       ),
     ),
   )

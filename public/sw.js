@@ -1,5 +1,5 @@
-const CACHE_VERSION = 'sibs-offline-v8'
-const SHELL_URLS = ['./index.html', './routes.html', './account.html', './sibs-logo.png', './apple-touch-icon.png']
+const CACHE_VERSION = 'sibs-offline-v9'
+const SHELL_URLS = ['./sibs-logo.png', './apple-touch-icon.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -50,29 +50,29 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.open(CACHE_VERSION).then(async (cache) => {
-      if (isHashedAsset(request)) {
-        const cached = await cache.match(request)
-        if (cached) return cached
-        try {
-          const response = await fetch(request)
-          if (response.ok) cache.put(request, response.clone())
-          return response
-        } catch {
-          if (cached) return cached
-          throw new Error('offline')
-        }
-      }
-
       if (isHtmlShell(request)) {
         try {
-          const response = await fetch(request)
-          if (response.ok) cache.put(request, response.clone())
-          return response
+          const response = await fetch(request, { cache: 'no-store' })
+          if (response.ok) return response
         } catch {
           const cached = await cache.match(request)
           if (cached) return cached
-          throw new Error('offline')
         }
+        throw new Error('offline')
+      }
+
+      if (isHashedAsset(request)) {
+        try {
+          const response = await fetch(request, { cache: 'no-store' })
+          if (response.ok) {
+            cache.put(request, response.clone())
+            return response
+          }
+        } catch {
+          const cached = await cache.match(request)
+          if (cached) return cached
+        }
+        throw new Error('offline')
       }
 
       const cached = await cache.match(request)

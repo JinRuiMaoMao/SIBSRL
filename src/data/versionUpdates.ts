@@ -327,6 +327,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "开始页启动屏去掉进度条：站点 Logo 旋转，下方显示加载步骤与百分比，首次访问固定展示 5 秒。",
             en: "Start-page boot splash drops the progress bar—spinning site logo with step label and percent below, fixed 5-second first visit.",
           },
+          {
+            zh: "修复 routes.html 等页面偶发一直停在「本站加载中」：开发模式改为经 Vite 注入 React；发布页脚本移至 body 末尾，并加强 SW/加载失败提示。",
+            en: "Fixed routes.html and other pages stuck on “Loading site…”—dev routes now use Vite React injection; published bundle script moved to body end with SW and boot-failure hints.",
+          },
         ],
       },
     ],

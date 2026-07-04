@@ -138,6 +138,12 @@ interface AppPageEntry {
   devFile: string
 }
 
+function normalizeDevRequestPath(url: string | undefined): string {
+  const pathOnly = url?.split('?')[0]?.split('#')[0] ?? '/'
+  const normalized = pathOnly.replace(/\/+$/, '') || '/'
+  return normalized.toLowerCase()
+}
+
 function serveTransformedDevHtml(
   server: ViteDevServer,
   _req: IncomingMessage,
@@ -174,7 +180,8 @@ function devEntryRedirectPlugin(): Plugin {
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const pathOnly = req.url?.split('?')[0] ?? ''
+        const pathOnly = normalizeDevRequestPath(req.url)
+
         const routePage = pathOnly.match(/^\/routes\/(.+)\.html$/)
         if (routePage) {
           const routeId = pageFilenameToRouteId(decodeURIComponent(routePage[1]!))
@@ -205,9 +212,10 @@ function devEntryRedirectPlugin(): Plugin {
           return
         }
 
-        if (pathOnly === '/routes.html') {
-          const qs = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
-          req.url = `/dev.html${qs}`
+        if (pathOnly === '/routes.html' || pathOnly === '/dev.html') {
+          const file = resolve(root, 'dev.html')
+          serveTransformedDevHtml(server, req, res, next, file, '/dev.html')
+          return
         }
 
         if (pathOnly === '/secret.html') {

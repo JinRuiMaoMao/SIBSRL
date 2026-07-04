@@ -416,6 +416,62 @@ if ('serviceWorker' in navigator) {
 }
 </script>`
 
+const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
+(function () {
+  var root = document.getElementById('root');
+  if (!root || document.getElementById('start-boot-splash')) return;
+  function showFailure(title, detail) {
+    if (!root.querySelector('.boot-hint')) return;
+    root.innerHTML =
+      '<div class="boot-failure" style="margin:2rem auto;max-width:28rem;padding:1.25rem;font-family:system-ui,sans-serif;color:#eef2f8;line-height:1.6">' +
+      '<h1 style="font-size:1.05rem;margin:0 0 .75rem">' + title + '</h1>' +
+      '<p style="margin:0 0 .5rem;opacity:.9">' + detail + '</p>' +
+      '<p style="margin:0;font-size:.82rem;opacity:.65">开发调试请运行 npm run dev，并访问 http://localhost:5173/routes.html</p>' +
+      '</div>';
+  }
+  if (location.protocol === 'file:') {
+    showFailure('无法直接打开 HTML 文件', '请在本项目目录运行 npm run dev，或通过站点服务器访问页面。');
+    return;
+  }
+  window.addEventListener('error', function (event) {
+    var target = event.target;
+    if (target && target.tagName === 'SCRIPT') {
+      var src = String(target.src || target.getAttribute('src') || '');
+      if (src.indexOf('/assets/') >= 0 || src.indexOf('/src/main.tsx') >= 0) {
+        showFailure('应用脚本加载失败', '请 Ctrl+F5 强制刷新；若仍失败，请清除浏览器站点数据后重试。');
+      }
+    }
+  }, true);
+  window.addEventListener('unhandledrejection', function (event) {
+    var reason = event.reason;
+    var message = reason && reason.message ? reason.message : String(reason || '');
+    if (/preamble|Failed to fetch dynamically imported module|Loading chunk/i.test(message)) {
+      showFailure('应用启动失败', message);
+    }
+  });
+  window.setTimeout(function () {
+    if (root.querySelector('.boot-hint')) {
+      showFailure('页面加载时间过长', '请 Ctrl+F5 强制刷新；若刚更新过站点，请清除缓存或注销 Service Worker。');
+    }
+  }, 15000);
+})();
+</script>`
+
+/** @param {string} html */
+export function relocateAppBundleScript(html) {
+  const scriptMatch = html.match(/\s*<script type="module" crossorigin src="\.\/assets\/[^"]+\.js"><\/script>\s*/)
+  if (!scriptMatch) return html
+  const scriptTag = scriptMatch[0].trim()
+  const withoutScript = html.replace(scriptMatch[0], '\n')
+  return withoutScript.replace('</body>', `    ${scriptTag}\n  </body>`)
+}
+
+/** @param {string} html */
+export function injectBootFailureGuard(html) {
+  if (html.includes('id="boot-failure-guard"')) return html
+  return html.replace('</body>', `    ${BOOT_FAILURE_GUARD_SCRIPT}\n  </body>`)
+}
+
 /** @param {string} html */
 export function injectServiceWorkerBootstrap(html) {
   if (html.includes('id="sw-register"')) return html
