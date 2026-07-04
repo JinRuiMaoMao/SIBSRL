@@ -77,7 +77,6 @@ interface MapImageSize {
 }
 
 interface IslandMapDrawEditorProps {
-  ready?: boolean
   variant?: 'page' | 'overlay'
   onClose?: () => void
   initialMapView?: NormalizedMapView | null
@@ -85,7 +84,6 @@ interface IslandMapDrawEditorProps {
 }
 
 export function IslandMapDrawEditor({
-  ready = true,
   variant = 'page',
   onClose,
   initialMapView = null,
@@ -939,7 +937,7 @@ export function IslandMapDrawEditor({
     />
   ) : null
 
-  const node = ready ? (
+  const node = (
     <div
       className={`route-editor-app${isOverlay ? ' route-editor-app--overlay' : ''}${mapDrawMode ? ' route-editor-app--draw-mode' : ''}${exportPngPreview ? ' route-editor-app--export-preview' : ''}`.trim()}
       aria-label={t('islandMapAria')}
@@ -1258,7 +1256,7 @@ export function IslandMapDrawEditor({
         </div>
       </div>
     </div>
-  ) : null
+  )
 
   return (
     <>

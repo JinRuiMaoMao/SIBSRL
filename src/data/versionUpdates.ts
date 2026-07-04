@@ -303,6 +303,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "说明：map-draw 群岛地图绘制器仍处于 Beta 测试阶段，功能与交互可能继续调整，遇到问题欢迎反馈。",
             en: "Note: the map-draw island route editor is still in beta—features and UX may change; feedback is welcome.",
           },
+          {
+            zh: "map-draw.html 取消 5 秒启动加载屏，打开页面直接进入编辑器。",
+            en: "map-draw.html no longer shows a 5-second boot splash—opens straight into the editor.",
+          },
         ],
       },
     ],
