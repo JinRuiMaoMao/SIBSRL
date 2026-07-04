@@ -326,7 +326,6 @@ export function IslandMapPanZoomSurface({
   const draggingRef = useRef(false)
   const publishedViewRef = useRef<NormalizedMapView | null>(null)
 
-  viewRef.current = view
   modeRef.current = mode
   maxZoomRatioRef.current = maxZoomRatio
   onViewChangeRef.current = onViewChange
@@ -346,7 +345,9 @@ export function IslandMapPanZoomSurface({
   }, [dragging])
 
   displayedSrcRef.current = displayedSrc
-  panZoomRef.current = panZoom
+  if (!draggingRef.current && panZoom) {
+    panZoomRef.current = panZoom
+  }
 
   const applyTransformLive = useCallback((next: PanZoomState) => {
     const content = contentRef.current
@@ -495,6 +496,9 @@ export function IslandMapPanZoomSurface({
     }
     if (view) {
       viewRef.current = view
+      publishedViewRef.current = null
+    } else {
+      viewRef.current = null
       publishedViewRef.current = null
     }
     syncPanZoomRef.current({ publish: false })
