@@ -187,6 +187,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw.html 空白：绘制页移除已删除的 expanded 变量引用。",
             en: "Fixed blank map-draw.html by removing stale expanded variable references on the draw page.",
           },
+          {
+            zh: "修复绘制器放大后拖地图回弹：拖拽期间不再用旧 view 重置，并保留平移精度。",
+            en: "Fixed map snap-back after zoomed pan in the draw editor by skipping stale view sync while dragging.",
+          },
         ],
       },
     ],

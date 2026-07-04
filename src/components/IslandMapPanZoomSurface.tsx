@@ -116,8 +116,8 @@ export function panZoomToNormalized(
   const centerX = scaledWidth > 0 ? (viewport.width / 2 - panZoom.x) / scaledWidth : 0.5
   const centerY = scaledHeight > 0 ? (viewport.height / 2 - panZoom.y) / scaledHeight : 0.5
   return {
-    centerX: clamp(centerX, 0, 1),
-    centerY: clamp(centerY, 0, 1),
+    centerX,
+    centerY,
     zoomRatio: fitScale > 0 ? panZoom.scale / fitScale : 1,
   }
 }
@@ -311,6 +311,7 @@ export function IslandMapPanZoomSurface({
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null)
   const pathEditActiveRef = useRef(false)
   const suppressPublishRef = useRef(false)
+  const draggingRef = useRef(false)
 
   viewRef.current = view
   modeRef.current = mode
@@ -326,6 +327,10 @@ export function IslandMapPanZoomSurface({
   const dragOriginRef = useRef<{ pointerX: number; pointerY: number; panX: number; panY: number } | null>(
     null,
   )
+
+  useEffect(() => {
+    draggingRef.current = dragging
+  }, [dragging])
 
   displayedSrcRef.current = displayedSrc
   panZoomRef.current = panZoom
@@ -349,24 +354,39 @@ export function IslandMapPanZoomSurface({
     return { width: rect.width, height: rect.height }
   }, [])
 
+  const publishPanZoom = useCallback((next: PanZoomState, viewport: ImageSize, size: ImageSize) => {
+    const normalized = panZoomToNormalized(next, viewport, size)
+    viewRef.current = normalized
+    onViewChangeRef.current(normalized)
+  }, [])
+
   const syncPanZoom = useCallback(
-    (options: { publish?: boolean } = {}): boolean => {
+    (options: { publish?: boolean; preferLivePan?: boolean } = {}): boolean => {
+      if (draggingRef.current) return false
+
       const viewport = readViewportSize()
       const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
       if (!viewport || !size) return false
 
-      const next = resolvePanZoom(viewRef.current, viewport, size, modeRef.current, maxZoomRatioRef.current)
+      const live = panZoomRef.current
+      const next =
+        options.preferLivePan && live
+          ? clampPanZoom(live, viewport, size, maxZoomRatioRef.current)
+          : resolvePanZoom(viewRef.current, viewport, size, modeRef.current, maxZoomRatioRef.current)
+
       suppressPublishRef.current = true
+      panZoomRef.current = next
       setPanZoom(next)
+      applyTransformLive(next)
       suppressPublishRef.current = false
 
       if (options.publish !== false && !viewRef.current) {
-        onViewChangeRef.current(panZoomToNormalized(next, viewport, size))
+        publishPanZoom(next, viewport, size)
       }
 
       return true
     },
-    [imageSize, readViewportSize],
+    [applyTransformLive, imageSize, publishPanZoom, readViewportSize],
   )
 
   const syncPanZoomRef = useRef(syncPanZoom)
@@ -398,13 +418,14 @@ export function IslandMapPanZoomSurface({
         if (!viewport || !size || !current) return current
         const resolved = typeof next === 'function' ? next(current) : next
         const clamped = clampPanZoom(resolved, viewport, size, maxZoomRatioRef.current)
+        panZoomRef.current = clamped
         if (!suppressPublishRef.current) {
-          onViewChangeRef.current(panZoomToNormalized(clamped, viewport, size))
+          publishPanZoom(clamped, viewport, size)
         }
         return clamped
       })
     },
-    [imageSize, readViewportSize],
+    [imageSize, publishPanZoom, readViewportSize],
   )
 
   const activateMapLayer = useCallback(
@@ -447,12 +468,17 @@ export function IslandMapPanZoomSurface({
     return scheduleSync({ publish: !viewRef.current })
   }, [displayedSrc, imageSize, mode, scheduleSync])
 
+  useLayoutEffect(() => {
+    if (draggingRef.current || !imageSize) return
+    syncPanZoomRef.current({ publish: false })
+  }, [view, imageSize])
+
   useEffect(() => {
     const viewport = viewportRef.current
     if (!viewport || !imageSize) return
 
     const observer = new ResizeObserver(() => {
-      syncPanZoomRef.current({ publish: false })
+      syncPanZoomRef.current({ publish: false, preferLivePan: true })
     })
     observer.observe(viewport)
     return () => observer.disconnect()
@@ -508,12 +534,13 @@ export function IslandMapPanZoomSurface({
     const onPointerMove = (event: PointerEvent) => {
       const origin = dragOriginRef.current
       const viewport = readViewportSize()
+      const liveScale = panZoomRef.current?.scale ?? panZoom.scale
       if (!origin || !viewport || !imageSize) return
       const next = clampPanZoom(
         {
           x: origin.panX + (event.clientX - origin.pointerX),
           y: origin.panY + (event.clientY - origin.pointerY),
-          scale: panZoom.scale,
+          scale: liveScale,
         },
         viewport,
         imageSize,
@@ -531,11 +558,14 @@ export function IslandMapPanZoomSurface({
     const onPointerUp = () => {
       const live = panZoomRef.current
       if (live) {
-        suppressPublishRef.current = false
-        setPanZoom(live)
         const viewport = readViewportSize()
         if (viewport && imageSize) {
-          onViewChangeRef.current(panZoomToNormalized(live, viewport, imageSize))
+          const clamped = clampPanZoom(live, viewport, imageSize, maxZoomRatioRef.current)
+          panZoomRef.current = clamped
+          suppressPublishRef.current = false
+          publishPanZoom(clamped, viewport, imageSize)
+          setPanZoom(clamped)
+          applyTransformLive(clamped)
         }
       }
       dragOriginRef.current = null
@@ -554,7 +584,7 @@ export function IslandMapPanZoomSurface({
         dragRafRef.current = 0
       }
     }
-  }, [applyTransformLive, dragging, imageSize, panZoom, readViewportSize])
+  }, [applyTransformLive, dragging, imageSize, panZoom, publishPanZoom, readViewportSize])
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!panZoom || !imageSize) return
@@ -580,13 +610,14 @@ export function IslandMapPanZoomSurface({
 
     if (event.button !== 0) return
     event.preventDefault()
+    const livePanZoom = panZoomRef.current ?? panZoom
     dragOriginRef.current = {
       pointerX: event.clientX,
       pointerY: event.clientY,
-      panX: panZoom.x,
-      panY: panZoom.y,
+      panX: livePanZoom.x,
+      panY: livePanZoom.y,
     }
-    panZoomRef.current = panZoom
+    panZoomRef.current = livePanZoom
     suppressPublishRef.current = true
     setDragging(true)
     event.currentTarget.setPointerCapture(event.pointerId)
