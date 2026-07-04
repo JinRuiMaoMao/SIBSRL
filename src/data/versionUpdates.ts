@@ -251,6 +251,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 编辑/选站名时节点被拉到 catalog 坐标（如白鸽邨）：改站名不再移动位置，仅位置列表中主动选择 catalog 才移动。",
             en: "Fixed map-draw stops jumping to catalog coords when picking a name (e.g. Dove Estate)—renaming no longer moves the node; only an explicit catalog pick in the location list repositions it.",
           },
+          {
+            zh: "修复 map-draw 位置列表「在地图上点击放置」无法切回：编辑站点时可切换 manual/catalog，manual 模式下点击地图可移动站点。",
+            en: "Fixed map-draw location picker stuck on catalog—Click the map to place works again when editing a stop; manual mode lets you reposition by clicking the map.",
+          },
         ],
       },
     ],
