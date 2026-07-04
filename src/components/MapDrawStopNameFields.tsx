@@ -9,6 +9,7 @@ export interface MapDrawStopNameSelection {
   zh: string
   en: string
   point?: WorldMapPoint
+  seq?: number
 }
 
 interface MapDrawStopNameFieldsProps {
@@ -53,6 +54,7 @@ export function MapDrawStopNameFields({
       zh: suggestion.zh,
       en: suggestion.en,
       point: suggestion.point,
+      seq: suggestion.seq,
     })
     setShowSuggestions(false)
   }
@@ -116,6 +118,8 @@ export function MapDrawStopNameFields({
           {suggestions.map((suggestion) => {
             const tag = suggestionTag(suggestion)
             const primary = chiFirst ? suggestion.zh : suggestion.en || suggestion.zh
+            const primaryLabel =
+              suggestion.seq != null && suggestion.seq > 0 ? `${suggestion.seq}. ${primary}` : primary
             const secondary = chiFirst
               ? suggestion.en && suggestion.en !== suggestion.zh
                 ? suggestion.en
@@ -131,7 +135,7 @@ export function MapDrawStopNameFields({
                   onClick={() => applySuggestion(suggestion)}
                 >
                   <span className="map-draw-stop-name-suggestion-primary">
-                    {primary}
+                    {primaryLabel}
                     {tag ? <span className="map-draw-stop-name-suggestion-tag">{tag}</span> : null}
                   </span>
                   {secondary ? (

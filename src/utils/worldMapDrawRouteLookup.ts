@@ -33,12 +33,38 @@ export function getDrawRouteStops(routeQuery: string, directionIndex: number): r
   return route?.stops?.[directionIndex]?.list ?? route?.stops?.[0]?.list ?? []
 }
 
+/** Detail-page stop sequence (1-based) for a stop name on the active route direction. */
+export function findDrawRouteStopSeq(
+  routeQuery: string,
+  directionIndex: number,
+  zh: string,
+  en: string,
+): number | null {
+  const routeStops = getDrawRouteStops(routeQuery, directionIndex)
+  const queryZh = zh.trim()
+  const queryEn = en.trim()
+  if (!queryZh && !queryEn) return null
+
+  for (let index = 0; index < routeStops.length; index += 1) {
+    const stop = routeStops[index]!
+    const stopZh = stop.name.zh.trim()
+    const stopEn = (stop.name.en || stop.name.zh).trim()
+    if (queryZh && stopZh && queryZh === stopZh) return index + 1
+    if (queryEn && stopEn && queryEn.toLowerCase() === stopEn.toLowerCase()) return index + 1
+    if (queryZh && stopEn && queryZh === stopEn) return index + 1
+    if (queryEn && stopZh && queryEn === stopZh) return index + 1
+  }
+  return null
+}
+
 export interface DrawStopSuggestion {
   zh: string
   en: string
   fromRouteDetail: boolean
   fromCatalog?: boolean
   point?: WorldMapPoint
+  /** Detail-page stop sequence (1-based) when fromRouteDetail. */
+  seq?: number
 }
 
 function suggestionKey(zh: string, en: string): string {
@@ -101,13 +127,14 @@ export function findDrawStopSuggestions(
   const routeStops = getDrawRouteStops(routeQuery, directionIndex)
   const routeSuggestions: DrawStopSuggestion[] = []
 
-  for (const stop of routeStops) {
+  for (let index = 0; index < routeStops.length; index += 1) {
+    const stop = routeStops[index]!
     const zh = stop.name.zh.trim()
     const en = (stop.name.en || stop.name.zh).trim()
     const key = suggestionKey(zh, en)
     if (addedStopKeys.has(key)) continue
     if (!matchesStopQuery(query, zh, en)) continue
-    routeSuggestions.push({ zh, en, fromRouteDetail: true })
+    routeSuggestions.push({ zh, en, fromRouteDetail: true, seq: index + 1 })
   }
 
   if (routeSuggestions.length > 0) {

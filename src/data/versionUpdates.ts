@@ -222,6 +222,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Path map stop numbers match the detail page sequence; added a trajectory ball animating from start via each stop to the end.",
           },
           {
+            zh: "map-draw 从线路详情匹配站名时自动填入 Stop number，地图标签同步显示站序（可手动修改）。",
+            en: "map-draw auto-fills Stop number from the route detail stop list when a stop name matches; map labels show the sequence and remain editable.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },
