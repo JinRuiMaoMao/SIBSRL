@@ -212,7 +212,12 @@ export function IslandMapDrawEditor({
           setEditStopSeq(String(node.stopSeq))
         } else {
           const suggestedSeq = resolveRouteStopSeq(node.chi_name, node.eng_name)
-          setEditStopSeq(suggestedSeq != null ? String(suggestedSeq) : '')
+          if (suggestedSeq != null) {
+            editor.updateNode(selectedNodeId, { stopSeq: suggestedSeq })
+            setEditStopSeq(String(suggestedSeq))
+          } else {
+            setEditStopSeq('')
+          }
         }
       }
       setEditLabelPosition(node.labelPosition)
@@ -222,7 +227,7 @@ export function IslandMapDrawEditor({
       setEditStopSeq('')
     }
     setEditLabelPosition('top')
-  }, [editor.manager, resolveRouteStopSeq, selectedNodeId])
+  }, [editor, editor.manager, resolveRouteStopSeq, selectedNodeId])
 
   useEffect(() => {
     if (!isLoggedIn) return
