@@ -1,4 +1,5 @@
-import type { BilingualText } from '../types/route'
+import { applyStopNameSubToStop } from '../data/stopNameSubs'
+import type { BilingualText, RouteStop } from '../types/route'
 import type { RouteEditorNode } from '../routeEditor/types'
 import type { RouteDetailMapStop } from './routeDetailMapStops'
 
@@ -21,6 +22,31 @@ export function matchCatalogStopForEditorNode(
   )
 }
 
+export function matchRouteStopForEditorNode(
+  node: Pick<RouteEditorNode, 'chi_name' | 'eng_name'>,
+  routeStops: readonly RouteStop[],
+): RouteStop | undefined {
+  return routeStops.find((stop) =>
+    routeMapStopNamesMatch(stop.name, { zh: node.chi_name, en: node.eng_name }),
+  )
+}
+
+export function resolveReferenceStopFromEditorNode(
+  node: Pick<RouteEditorNode, 'chi_name' | 'eng_name'>,
+  catalogStops: readonly RouteDetailMapStop[],
+  routeStops: readonly RouteStop[] = [],
+): RouteStop {
+  const matchedCatalog = matchCatalogStopForEditorNode(node, catalogStops)
+  if (matchedCatalog) return applyStopNameSubToStop(matchedCatalog.stop)
+
+  const matchedRoute = matchRouteStopForEditorNode(node, routeStops)
+  if (matchedRoute) return applyStopNameSubToStop(matchedRoute)
+
+  return applyStopNameSubToStop({
+    name: { zh: node.chi_name, en: node.eng_name },
+  })
+}
+
 export function applyCatalogStopSeqToEditorNodes(
   nodes: readonly RouteEditorNode[],
   catalogStops: readonly RouteDetailMapStop[],
@@ -38,6 +64,7 @@ export function buildReferenceStopDetailsFromCatalog(
   nodes: readonly RouteEditorNode[],
   imageSize: { width: number; height: number },
   catalogStops: readonly RouteDetailMapStop[],
+  routeStops: readonly RouteStop[] = [],
 ): RouteDetailMapStop[] {
   const stopNodes = nodes.filter((node) => node.type === 'stop')
   return stopNodes.map((node, index) => {
@@ -45,7 +72,7 @@ export function buildReferenceStopDetailsFromCatalog(
     return {
       id: `ref-stop-${node.id}`,
       seq: node.stopSeq ?? matched?.seq ?? index + 1,
-      stop: matched?.stop ?? { name: { zh: node.chi_name, en: node.eng_name } },
+      stop: resolveReferenceStopFromEditorNode(node, catalogStops, routeStops),
       point: [node.x / imageSize.width, node.y / imageSize.height],
     }
   })

@@ -63,10 +63,16 @@ export function buildRouteMapInteractiveLayerState(
   catalogStops: readonly RouteDetailMapStop[],
   selectedStopId: string | null,
   onReferenceStopNodeClick?: (nodeId: number) => void,
+  routeStops: readonly RouteStop[] = [],
 ): RouteMapInteractiveLayerState {
   const referenceStopDetails =
     display.referenceEditor && imageSize
-      ? buildReferenceStopDetailsFromCatalog(display.referenceEditor.nodes, imageSize, catalogStops)
+      ? buildReferenceStopDetailsFromCatalog(
+          display.referenceEditor.nodes,
+          imageSize,
+          catalogStops,
+          routeStops,
+        )
       : []
 
   const interactiveDrawStops = display.referenceEditor

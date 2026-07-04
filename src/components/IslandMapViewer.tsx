@@ -56,6 +56,11 @@ export function IslandMapViewer() {
     [handleStopClick],
   )
 
+  const routeStops = useMemo(
+    () => catalogStops.map((entry) => entry.stop),
+    [catalogStops],
+  )
+
   const interactiveLayer = useMemo(() => {
     if (!importedPath) return null
     return buildRouteMapInteractiveLayerState(
@@ -64,6 +69,7 @@ export function IslandMapViewer() {
       catalogStops,
       selectedStopId,
       handleReferenceStopNodeClick,
+      routeStops,
     )
   }, [
     catalogStops,
@@ -71,6 +77,7 @@ export function IslandMapViewer() {
     imageSize,
     importedPath,
     routeOverlay?.points,
+    routeStops,
     selectedStopId,
   ])
 

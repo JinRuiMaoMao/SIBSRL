@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { routes } from '../data/routes'
-import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { RouteStop } from '../types/route'
 import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
 import { buildRouteHref } from '../utils/routeNavigation'
 import { findRoutesPassingStop } from '../utils/routeStopLookup'
 import { resolveStopDisplay } from '../utils/stopTurningPoint'
+import { StopNameDisplay } from './StopNameDisplay'
 import { StopTurningPointBadge } from './StopTurningPointBadge'
 
 interface StopDetailPanelProps {
@@ -24,9 +24,8 @@ export function StopDetailPanel({
   className = '',
   onClose,
 }: StopDetailPanelProps) {
-  const { locale, t } = useLocale()
+  const { t } = useLocale()
   const display = resolveStopDisplay(stop)
-  const nameSub = display.nameSub ? getPrimaryText(display.nameSub, locale) : null
 
   const passingRoutes = useMemo(() => {
     const displayRoutes = mergeRoutesByBaseNumber(routes)
@@ -47,9 +46,11 @@ export function StopDetailPanel({
         <div className="stop-detail-panel-title">
           <span className="stop-detail-panel-seq">{seq}</span>
           <div className="stop-detail-panel-names">
-            <p className="stop-detail-panel-name-zh">{display.name.zh}</p>
+            <StopNameDisplay stop={display} className="stop-detail-panel-name-zh" />
             <p className="stop-detail-panel-name-en detail-en">{display.name.en}</p>
-            {nameSub ? <p className="stop-detail-panel-name-sub detail-en">{nameSub}</p> : null}
+            {display.nameSub ? (
+              <p className="stop-detail-panel-name-sub detail-en">{display.nameSub.en}</p>
+            ) : null}
             {display.turningPoint ? <StopTurningPointBadge /> : null}
           </div>
         </div>

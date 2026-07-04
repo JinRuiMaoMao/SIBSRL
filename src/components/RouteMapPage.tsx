@@ -88,6 +88,11 @@ export function RouteMapPage() {
     [routeId],
   )
   const directionIndex = readDirectionQueryFromLocation() ?? 0
+  const routeStops = useMemo(() => {
+    if (!resolvedRoute) return []
+    const activeGroup = resolveActiveStopGroup(resolvedRoute, directionIndex, false)
+    return activeGroup?.list ?? []
+  }, [directionIndex, resolvedRoute])
 
   const beginStaticFallback = useCallback(() => {
     setImportPayload(null)
@@ -227,8 +232,9 @@ export function RouteMapPage() {
       catalogStops,
       selectedStopId,
       (nodeId) => handleStopClick(`ref-stop-${nodeId}`),
+      routeStops,
     )
-  }, [catalogStops, display, handleStopClick, imageSize, selectedStopId])
+  }, [catalogStops, display, handleStopClick, imageSize, routeStops, selectedStopId])
 
   const interactiveStopDetails = interactiveLayer?.interactiveStopDetails ?? catalogStops
   const selectedStop = useMemo(() => {
