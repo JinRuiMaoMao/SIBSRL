@@ -10,16 +10,14 @@ import {
   clearCachedRouteMapImport,
   writeCachedRouteMapImport,
 } from '../storage/routeMapImportCache'
-import type { RouteStop } from '../types/route'
-import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import {
+  buildRouteDetailMapStops,
+  type RouteDetailMapStop,
+} from '../utils/routeDetailMapStops'
+import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { getRouteMapImageUrl } from '../utils/routeMapImages'
 import { isRouteMapImportPayload, parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
 import { findRouteForMapPage, routeMapIdsMatch } from '../utils/routeMapLookup'
-import {
-  buildRouteDetailMapStops,
-  routeDetailMapStopToDrawStop,
-  type RouteDetailMapStop,
-} from '../utils/routeDetailMapStops'
 import { resolveRouteMapImportRaw } from '../utils/routeMapOverlaySource'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
 import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
@@ -56,16 +54,6 @@ function buildBackHref(routeId: string): string {
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
-}
-
-function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): RouteDetailMapStop {
-  const routeStop: RouteStop = { name: stop.name }
-  return {
-    id: stop.id,
-    seq: stop.seq ?? index + 1,
-    stop: routeStop,
-    point: stop.point,
-  }
 }
 
 async function resolveImportPayload(routeId: string): Promise<unknown | null> {
@@ -227,49 +215,28 @@ export function RouteMapPage() {
     setSelectedStopId(null)
   }, [directionIndex, display, routeId])
 
-  const referenceStopDetails = useMemo((): RouteDetailMapStop[] => {
-    if (!display?.referenceEditor || !imageSize) return []
-    const stopNodes = display.referenceEditor.nodes.filter((node) => node.type === 'stop')
-    return stopNodes.map((node, index) => ({
-      id: `ref-stop-${node.id}`,
-      seq: node.stopSeq ?? index + 1,
-      stop: { name: { zh: node.chi_name, en: node.eng_name } },
-      point: [node.x / imageSize.width, node.y / imageSize.height],
-    }))
-  }, [display?.referenceEditor, imageSize])
+  const handleStopClick = useCallback((stopId: string) => {
+    setSelectedStopId((current) => (current === stopId ? null : stopId))
+  }, [])
 
-  const interactiveDrawStops = useMemo((): WorldMapDrawStop[] => {
-    if (display?.referenceEditor) return []
-    if (display?.stops.length) return display.stops
-    return catalogStops.map(routeDetailMapStopToDrawStop)
-  }, [catalogStops, display?.referenceEditor, display?.stops])
+  const interactiveLayer = useMemo(() => {
+    if (!display) return null
+    return buildRouteMapInteractiveLayerState(
+      display,
+      imageSize,
+      catalogStops,
+      selectedStopId,
+      (nodeId) => handleStopClick(`ref-stop-${nodeId}`),
+    )
+  }, [catalogStops, display, handleStopClick, imageSize, selectedStopId])
 
-  const interactiveStopDetails = useMemo((): RouteDetailMapStop[] => {
-    if (display?.referenceEditor) return referenceStopDetails
-    if (display?.stops.length) {
-      return display.stops.map((stop, index) => drawStopToRouteDetailMapStop(stop, index))
-    }
-    return catalogStops
-  }, [catalogStops, display?.referenceEditor, display?.stops, referenceStopDetails])
-
+  const interactiveStopDetails = interactiveLayer?.interactiveStopDetails ?? catalogStops
   const selectedStop = useMemo(() => {
     if (!selectedStopId) return null
     return interactiveStopDetails.find((stop) => stop.id === selectedStopId) ?? null
   }, [interactiveStopDetails, selectedStopId])
 
-  const handleStopClick = useCallback((stopId: string) => {
-    setSelectedStopId((current) => (current === stopId ? null : stopId))
-  }, [])
-
-  const handleReferenceStopNodeClick = useCallback(
-    (nodeId: number) => {
-      const stopId = `ref-stop-${nodeId}`
-      handleStopClick(stopId)
-    },
-    [handleStopClick],
-  )
-
-  const stopClickEnabled = interactiveDrawStops.length > 0 || referenceStopDetails.length > 0
+  const stopClickEnabled = interactiveLayer?.stopClickEnabled ?? false
 
   useEffect(() => {
     applyFitView(display)
@@ -404,37 +371,35 @@ export function RouteMapPage() {
               className="route-map-page-map"
               view={mapView}
               onViewChange={setMapView}
-              draftPoints={display.referenceEditor ? [] : display.points}
-              draftStopPoints={display.referenceEditor ? [] : display.stopPoints}
-              draftStops={interactiveDrawStops}
-              draftPathNodes={display.referenceEditor ? [] : display.pathNodes}
+              draftPoints={interactiveLayer?.draftPoints ?? display.points}
+              draftStopPoints={interactiveLayer?.draftStopPoints ?? display.stopPoints}
+              draftStops={interactiveLayer?.interactiveDrawStops ?? []}
+              draftPathNodes={interactiveLayer?.draftPathNodes ?? []}
               draftRouteNumber={display.routeNumber}
               pathLegStarts={display.legStarts}
               pathLegHidden={display.pathLegHidden}
-              pathUserBends={userBendIndicesToFlags(display.userBendIndices, display.points.length)}
+              pathUserBends={interactiveLayer?.pathUserBends ?? userBendIndicesToFlags(display.userBendIndices, display.points.length)}
               showStopLabels
               stopLabelScale={1}
               selectedStopId={selectedStopId}
               onStopClick={stopClickEnabled ? handleStopClick : undefined}
+              trajectoryPath={interactiveLayer?.trajectoryPath ?? []}
               maxZoomRatio={8}
               onImageSizeChange={setImageSize}
               referenceEditor={
-                display.referenceEditor
+                interactiveLayer?.referenceEditorProps
                   ? {
-                      nodes: display.referenceEditor.nodes,
-                      segments: display.referenceEditor.segments,
-                      lineStyle: display.referenceEditor.lineStyle,
-                      config: display.referenceEditor.config,
-                      selectedNodeId:
-                        selectedStopId?.startsWith('ref-stop-')
-                          ? Number.parseInt(selectedStopId.slice('ref-stop-'.length), 10)
-                          : null,
+                      nodes: interactiveLayer.referenceEditorProps.nodes,
+                      segments: interactiveLayer.referenceEditorProps.segments,
+                      lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
+                      config: interactiveLayer.referenceEditorProps.config,
+                      selectedNodeId: interactiveLayer.referenceEditorProps.selectedNodeId,
                       connectPendingNodeId: null,
                       connectPreview: null,
                       previewNode: null,
-                      segmentPassthrough: true,
-                      allowSegmentDelete: false,
-                      onNodeClick: referenceStopDetails.length ? handleReferenceStopNodeClick : undefined,
+                      segmentPassthrough: interactiveLayer.referenceEditorProps.segmentPassthrough,
+                      allowSegmentDelete: interactiveLayer.referenceEditorProps.allowSegmentDelete,
+                      onNodeClick: interactiveLayer.referenceEditorProps.onNodeClick,
                     }
                   : null
               }

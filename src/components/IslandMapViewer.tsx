@@ -99,6 +99,7 @@ export function IslandMapViewer() {
         pathLegStarts: importedPath!.legStarts,
         pathLegHidden: importedPath!.pathLegHidden,
         pathUserBends: interactiveLayer.pathUserBends,
+        trajectoryPath: interactiveLayer.trajectoryPath,
         referenceEditor: interactiveLayer.referenceEditorProps
           ? {
               nodes: interactiveLayer.referenceEditorProps.nodes,

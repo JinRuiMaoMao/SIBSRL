@@ -43,6 +43,7 @@ import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { resolveRouteMapOverlaySource, resolveImportedRouteMapDisplay, loadGeneralMapImageSize } from '../utils/routeMapOverlaySource'
+import { buildRouteDetailMapStops } from '../utils/routeDetailMapStops'
 import { isChineseLocale } from '../i18n/types'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
@@ -594,12 +595,14 @@ export function RouteLookupPage({
       if (cancelled) return
 
       if (importedDisplay) {
+        const catalogStops = activeGroup?.list ? buildRouteDetailMapStops(activeGroup.list, catalog) : []
         setRouteOverlay({
           routeId: overlayRoute.id,
           routeNumber: overlayRoute.number,
           directionIndex: overlayDirectionIndex,
           points: importedDisplay.fitPoints.length >= 2 ? importedDisplay.fitPoints : importedDisplay.points,
           importedPath: importedDisplay,
+          ...(catalogStops.length ? { stops: catalogStops } : {}),
         })
         return
       }

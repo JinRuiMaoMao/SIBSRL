@@ -8,6 +8,7 @@ import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDr
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode, RouteEditorSegment } from '../routeEditor/types'
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
+import { RouteMapTrajectoryBall } from './RouteMapTrajectoryBall'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
 
 export interface PanZoomState {
@@ -76,6 +77,7 @@ interface IslandMapPanZoomSurfaceProps {
   maxZoomRatio?: number
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
+  trajectoryPath?: readonly WorldMapPoint[]
   referenceEditor?: {
     nodes: readonly RouteEditorNode[]
     segments: readonly RouteEditorSegment[]
@@ -312,6 +314,7 @@ export function IslandMapPanZoomSurface({
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
   onMapPointerMove,
   onImageSizeChange,
+  trajectoryPath = [],
   referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -1087,6 +1090,15 @@ export function IslandMapPanZoomSurface({
             draggingNodeId={draggingNodeId}
             directPick={!routeDrawUsesParentPick}
             onNodePointerDown={handlePathNodePointerDown}
+          />
+        </div>
+      ) : null}
+      {trajectoryPath.length >= 2 ? (
+        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--trajectory">
+          <RouteMapTrajectoryBall
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            path={trajectoryPath}
           />
         </div>
       ) : null}

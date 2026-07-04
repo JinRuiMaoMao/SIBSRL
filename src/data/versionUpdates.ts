@@ -218,6 +218,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Read-only imported routes on the path map and mini-map hide path bend nodes; only the route line and stop labels remain visible.",
           },
           {
+            zh: "走向图站点编号与详情页站序一致；新增沿导入走线经各站至终点的轨迹球动画。",
+            en: "Path map stop numbers match the detail page sequence; added a trajectory ball animating from start via each stop to the end.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },

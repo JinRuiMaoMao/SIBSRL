@@ -1211,3 +1211,26 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   color: var(--text-muted, #aaa);
   word-break: break-all;
 }
+
+.island-map-route-overlay-wrap--trajectory {
+  pointer-events: none;
+}
+
+.route-map-trajectory-ball-layer {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.route-map-trajectory-ball-glow {
+  fill: color-mix(in srgb, var(--accent, #f5b942) 45%, transparent);
+  filter: blur(2px);
+}
+
+.route-map-trajectory-ball {
+  fill: var(--accent, #f5b942);
+  stroke: color-mix(in srgb, #fff 70%, var(--accent, #f5b942));
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent, #f5b942) 65%, transparent));
+}
