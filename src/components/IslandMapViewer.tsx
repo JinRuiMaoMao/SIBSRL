@@ -1,15 +1,13 @@
-import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useLocale } from '../i18n/LocaleContext'
+import { getMapDrawPageHref } from '../utils/appPage'
+import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
 import { ExpandIcon, HideIcon, MinimizeIcon, ShowIcon } from './islandMapControlIcons'
 import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
-
-const IslandMapDrawEditor = lazy(() =>
-  import('./IslandMapDrawEditor').then((module) => ({ default: module.IslandMapDrawEditor })),
-)
 
 type MapLayer = 'general' | 'detailed'
 
@@ -18,14 +16,13 @@ const MAP_URLS: Record<MapLayer, string> = {
   detailed: './maps/SIMap.png',
 }
 
-/** 线路查询页小地图：缩放、图层、走线展示；全屏下已登录用户可打开绘制工具。 */
+/** 线路查询页小地图：缩放、图层、走线展示；全屏下已登录用户可跳转 map-draw.html。 */
 export function IslandMapViewer() {
   const { t } = useLocale()
   const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const [expanded, setExpanded] = useState(false)
-  const [drawOpen, setDrawOpen] = useState(false)
   const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
@@ -42,17 +39,18 @@ export function IslandMapViewer() {
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
   const closeFullscreen = useCallback(() => {
-    setDrawOpen(false)
     setExpanded(false)
   }, [])
   const openDraw = useCallback(() => {
-    if (isLoggedIn) {
-      setDrawOpen(true)
+    if (!isLoggedIn) {
+      setPermissionDialogOpen(true)
       return
     }
-    setPermissionDialogOpen(true)
-  }, [isLoggedIn])
-  const closeDraw = useCallback(() => setDrawOpen(false), [])
+    if (routeOverlay) {
+      stashMapDrawRouteHandoff(routeOverlay)
+    }
+    window.location.href = getMapDrawPageHref()
+  }, [isLoggedIn, routeOverlay])
   const toggleLayer = useCallback(() => {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
   }, [])
@@ -66,32 +64,13 @@ export function IslandMapViewer() {
     if (!expanded) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
-      if (drawOpen) {
-        closeDraw()
-        return
-      }
       closeFullscreen()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [closeDraw, closeFullscreen, drawOpen, expanded])
-
-  useEffect(() => {
-    if (!expanded) setDrawOpen(false)
-  }, [expanded])
+  }, [closeFullscreen, expanded])
 
   const node = expanded ? (
-    drawOpen && isLoggedIn ? (
-      <Suspense fallback={null}>
-        <IslandMapDrawEditor
-          ready
-          variant="overlay"
-          initialMapView={mapView}
-          initialLayer={layer}
-          onClose={closeDraw}
-        />
-      </Suspense>
-    ) : (
     <div
       className="island-map island-map--fullscreen"
       role="dialog"
@@ -138,7 +117,6 @@ export function IslandMapViewer() {
         </div>
       </div>
     </div>
-    )
   ) : (
     <div
       className={`island-map island-map--widget${widgetHidden ? ' island-map--widget-collapsed' : ''}${routeOverlay ? ' island-map--widget-route' : ''}`.trim()}

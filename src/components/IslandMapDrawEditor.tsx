@@ -58,6 +58,7 @@ import {
   findCatalogLocationIndexByPoint,
   findMapDrawCatalogLocationsForName,
 } from '../utils/worldMapDrawRouteLookup'
+import { consumeMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
@@ -199,6 +200,12 @@ export function IslandMapDrawEditor({
     }
     prevImageSizeRef.current = imageSize
   }, [editor.manager, imageSize])
+
+  useEffect(() => {
+    if (isOverlay || !overlayContext) return
+    const handoff = consumeMapDrawRouteHandoff()
+    if (handoff) overlayContext.setRouteOverlay(handoff)
+  }, [isOverlay, overlayContext])
 
   useEffect(() => {
     if (!routeOverlay) {

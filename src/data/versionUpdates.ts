@@ -292,8 +292,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed map-draw PNG export ignoring stop label position—exported image matches the editor placement.",
           },
           {
-            zh: "线路查询全屏地图：已登录用户可直接打开绘制工具；未登录点击「绘制」仍提示前往注册。",
-            en: "Route lookup fullscreen map: signed-in users can open draw tools in place; guests still see the register prompt when tapping Draw.",
+            zh: "线路查询全屏地图：已登录用户点击「绘制」跳转 map-draw.html；未登录仍提示前往注册。",
+            en: "Route lookup fullscreen map: signed-in users tap Draw to open map-draw.html; guests still see the register prompt.",
           },
         ],
       },
