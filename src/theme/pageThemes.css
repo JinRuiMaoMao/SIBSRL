@@ -201,6 +201,26 @@ html[data-app-page='secret'] {
     linear-gradient(160deg, #0a0612 0%, #120e1e 26%, #0e0a18 52%, #18122e 76%, #080510 100%);
 }
 
+/* —— 地图绘制 map-draw（与线路查询 routes 同系） —— */
+html[data-app-page='map-draw'] {
+  --accent: #f5b942;
+  --accent-soft: rgba(245, 185, 66, 0.15);
+  --accent-glow: rgba(245, 185, 66, 0.4);
+  --border: color-mix(in srgb, var(--accent) 18%, transparent);
+  --border-strong: color-mix(in srgb, var(--accent) 38%, transparent);
+  --panel-base-deep: #0c1222;
+  --panel-base-surface: #141c2e;
+  --panel-base-elevated: #1a2540;
+  --panel-base-card: #1e2d4a;
+  --page-background:
+    radial-gradient(ellipse 100% 80% at 12% -8%, rgba(245, 185, 66, 0.24), transparent 58%),
+    radial-gradient(ellipse 85% 70% at 100% 12%, rgba(45, 212, 160, 0.16), transparent 54%),
+    radial-gradient(ellipse 78% 58% at 48% 108%, rgba(96, 132, 220, 0.18), transparent 60%),
+    radial-gradient(ellipse 65% 50% at 72% 42%, rgba(167, 139, 250, 0.1), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 8% 72%, rgba(251, 146, 60, 0.08), transparent 52%),
+    linear-gradient(160deg, #070b14 0%, #101829 24%, #0d1524 48%, #14102a 72%, #0a101c 100%);
+}
+
 /* —— 浅色主题：低饱和强调色 + 中性面板 + 柔和多层渐变 —— */
 html[data-theme='light'],
 html[data-theme='light'][data-app-tab='routes'] {
@@ -391,4 +411,23 @@ html[data-theme='light'][data-app-page='secret'] {
     radial-gradient(ellipse 68% 52% at 70% 44%, rgba(56, 150, 200, 0.07), transparent 50%),
     radial-gradient(ellipse 64% 48% at 14% 68%, rgba(232, 228, 248, 0.5), transparent 52%),
     linear-gradient(165deg, #f4f2f8 0%, #eeeaf4 22%, #e4e0ee 46%, #f2f0f8 70%, #e8e4f0 100%);
+}
+
+html[data-theme='light'][data-app-page='map-draw'] {
+  --accent: #9a6700;
+  --accent-soft: rgba(154, 103, 0, 0.1);
+  --accent-glow: rgba(154, 103, 0, 0.16);
+  --border: color-mix(in srgb, var(--accent) 14%, #c8cdd6);
+  --border-strong: color-mix(in srgb, var(--accent) 26%, #b8bec8);
+  --panel-base-deep: #e4e8ef;
+  --panel-base-surface: #eaedf3;
+  --panel-base-elevated: #dfe3eb;
+  --panel-base-card: #d4dae4;
+  --page-background:
+    radial-gradient(ellipse 92% 72% at 4% -4%, rgba(217, 168, 46, 0.2), transparent 54%),
+    radial-gradient(ellipse 78% 64% at 96% 8%, rgba(16, 138, 100, 0.14), transparent 52%),
+    radial-gradient(ellipse 82% 60% at 52% 106%, rgba(99, 102, 241, 0.1), transparent 56%),
+    radial-gradient(ellipse 68% 52% at 70% 44%, rgba(244, 114, 82, 0.08), transparent 50%),
+    radial-gradient(ellipse 64% 48% at 18% 72%, rgba(56, 189, 248, 0.07), transparent 48%),
+    linear-gradient(165deg, #f4f6fa 0%, #eef2f7 22%, #e8edf4 46%, #f0f3f8 70%, #e6ebf2 100%);
 }

@@ -1,5 +1,19 @@
 /* 参考 Downloads/index 编辑器布局，适配 SIBS 主题 */
 
+html[data-app-page='map-draw'] {
+  --map-draw-field-bg: var(--bg-card);
+  --map-draw-field-border: color-mix(in srgb, var(--text-muted) 24%, transparent);
+  --map-draw-control-bg: var(--bg-elevated);
+}
+
+html[data-theme='light'][data-app-page='map-draw'] {
+  --map-draw-field-bg: #ffffff;
+  --map-draw-field-border: color-mix(in srgb, var(--border) 72%, #8a929e);
+  --map-draw-control-bg: color-mix(in srgb, var(--bg-surface) 82%, #ffffff);
+  --island-map-control-bg: color-mix(in srgb, var(--bg-surface) 88%, #ffffff);
+  --island-map-control-border: var(--border);
+}
+
 .route-editor-page-root {
   height: 100%;
   min-height: 100dvh;
@@ -209,7 +223,7 @@ html[data-app-page='map-draw'] #root {
   position: relative;
   flex: 1;
   min-height: 0;
-  background: var(--bg, #0f0f0f);
+  background: var(--bg-deep);
 }
 
 .route-editor-map-viewport {
@@ -299,11 +313,23 @@ html[data-app-page='map-draw'] #root {
   min-width: 5rem;
   padding: 0.28rem 0.45rem;
   border-radius: 0.4rem;
-  border: 1px solid color-mix(in srgb, var(--text-muted, #94a3b8) 22%, transparent);
-  background: color-mix(in srgb, var(--bg, #111) 88%, transparent);
-  color: var(--text, #eef2f8);
+  border: 1px solid var(--map-draw-field-border);
+  background: var(--map-draw-field-bg);
+  color: var(--text);
   font: inherit;
   font-size: 0.8rem;
+}
+
+.route-editor-field input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.72;
+}
+
+.route-editor-field input:focus-visible,
+.route-editor-field select:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
 .route-editor-back {
@@ -468,9 +494,14 @@ html[data-app-page='map-draw'] #root {
   display: flex;
   flex-direction: column;
   border-radius: 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
-  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  border: 1px solid var(--map-draw-field-border);
+  background: var(--map-draw-field-bg);
   overflow: hidden;
+}
+
+.map-draw-stop-name-stack:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
 .map-draw-stop-name-stack-input {
@@ -484,7 +515,7 @@ html[data-app-page='map-draw'] #root {
 }
 
 .map-draw-stop-name-stack-input + .map-draw-stop-name-stack-input {
-  border-top: 1px solid color-mix(in srgb, var(--text-muted, #888) 28%, transparent);
+  border-top: 1px solid var(--map-draw-field-border);
 }
 
 .map-draw-stop-name-stack-input--primary {
@@ -497,12 +528,13 @@ html[data-app-page='map-draw'] #root {
 }
 
 .map-draw-stop-name-stack-input::placeholder {
-  opacity: 0.55;
+  color: var(--text-muted);
+  opacity: 0.72;
 }
 
 .map-draw-stop-name-stack-input:focus {
   outline: none;
-  background: color-mix(in srgb, var(--accent, #f5b942) 10%, transparent);
+  background: var(--accent-soft);
 }
 
 .map-draw-stop-name-suggestions {
@@ -512,8 +544,8 @@ html[data-app-page='map-draw'] #root {
   max-height: 10rem;
   overflow-y: auto;
   border-radius: 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
-  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  border: 1px solid var(--map-draw-field-border);
+  background: var(--map-draw-field-bg);
 }
 
 .map-draw-stop-name-suggestions li button {
@@ -582,8 +614,8 @@ html[data-app-page='map-draw'] #root {
   width: 100%;
   padding: 0.42rem 0.55rem;
   border-radius: 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
-  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  border: 1px solid var(--map-draw-field-border);
+  background: var(--map-draw-control-bg);
   color: inherit;
   text-align: left;
   cursor: pointer;
@@ -640,8 +672,8 @@ html[data-app-page='map-draw'] #root {
 .map-draw-stop-label-position-btn {
   padding: 0.38rem 0.35rem;
   border-radius: 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
-  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  border: 1px solid var(--map-draw-field-border);
+  background: var(--map-draw-control-bg);
   color: inherit;
   font: inherit;
   font-size: 0.82rem;

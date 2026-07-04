@@ -295,6 +295,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "线路查询全屏地图：已登录用户点击「绘制」跳转 map-draw.html；未登录仍提示前往注册。",
             en: "Route lookup fullscreen map: signed-in users tap Draw to open map-draw.html; guests still see the register prompt.",
           },
+          {
+            zh: "map-draw.html 浅色主题适配：页面配色与输入框、下拉、站名编辑区在浅色模式下可读。",
+            en: "map-draw.html light theme: page palette and inputs (fields, selects, stop name editor) readable in light mode.",
+          },
         ],
       },
     ],

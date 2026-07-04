@@ -342,11 +342,22 @@ html[data-app-page='map-draw'] #root {
   min-width: 5.5rem;
   padding: 0.28rem 0.45rem;
   border-radius: 0.45rem;
-  border: 1px solid var(--island-map-control-border);
-  background: color-mix(in srgb, var(--bg, #111) 88%, transparent);
-  color: var(--text, #f2f2f2);
+  border: 1px solid var(--map-draw-field-border, var(--island-map-control-border));
+  background: var(--map-draw-field-bg, var(--bg-card));
+  color: var(--text);
   font: inherit;
   font-size: 0.82rem;
+}
+
+.island-map-draw-field input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.72;
+}
+
+.island-map-draw-field input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
 .island-map-draw-field--direction input {
@@ -507,7 +518,7 @@ html[data-app-page='map-draw'] #root {
   overflow-y: auto;
   border-radius: 0.45rem;
   border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
-  background: color-mix(in srgb, var(--surface, #1a1a1a) 92%, #000);
+  background: var(--map-draw-field-bg, var(--bg-card));
 }
 
 .island-map-draw-stop-suggestions li button {
@@ -1028,9 +1039,16 @@ html.route-detail-open .island-map--widget.island-map--widget-route {
   width: 100%;
   padding: 0.45rem 0.55rem;
   border-radius: 6px;
-  border: 1px solid var(--island-map-control-border);
-  background: var(--island-map-control-bg, rgba(0, 0, 0, 0.35));
-  color: inherit;
+  border: 1px solid var(--map-draw-field-border, var(--island-map-control-border));
+  background: var(--map-draw-field-bg, var(--bg-card));
+  color: var(--text);
+}
+
+.island-map-export-dialog-route-select select:focus-visible,
+.island-map-export-dialog-route-select input[type='text']:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
 .island-map-btn--generate {
