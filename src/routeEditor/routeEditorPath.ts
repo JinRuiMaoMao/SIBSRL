@@ -127,3 +127,151 @@ export function sampleRouteEditorPathPoints(
 
   return points
 }
+
+/** Walk segment graph from a route endpoint so sampling follows the drawn polyline order. */
+export function orderRouteEditorSegmentChain(
+  nodes: readonly RouteEditorNode[],
+  segments: readonly RouteEditorSegment[],
+): RouteEditorSegment[] {
+  if (segments.length <= 1) return [...segments]
+
+  const adjacency = new Map<number, { segment: RouteEditorSegment; other: number }[]>()
+  for (const segment of segments) {
+    const fromLinks = adjacency.get(segment.fromNodeId) ?? []
+    fromLinks.push({ segment, other: segment.toNodeId })
+    adjacency.set(segment.fromNodeId, fromLinks)
+    const toLinks = adjacency.get(segment.toNodeId) ?? []
+    toLinks.push({ segment, other: segment.fromNodeId })
+    adjacency.set(segment.toNodeId, toLinks)
+  }
+
+  const pickStartNodeId = (): number => {
+    for (const node of nodes) {
+      if (node.type !== 'stop') continue
+      if ((adjacency.get(node.id)?.length ?? 0) === 1) return node.id
+    }
+    for (const node of nodes) {
+      if ((adjacency.get(node.id)?.length ?? 0) === 1) return node.id
+    }
+    for (const node of nodes) {
+      if (node.type === 'stop') return node.id
+    }
+    return segments[0]!.fromNodeId
+  }
+
+  const ordered: RouteEditorSegment[] = []
+  const used = new Set<number>()
+  let current = pickStartNodeId()
+  let previous: number | null = null
+
+  while (ordered.length < segments.length) {
+    const links = (adjacency.get(current) ?? []).filter((link) => !used.has(link.segment.id))
+    const next =
+      links.find((link) => link.other !== previous) ??
+      links[0]
+    if (!next) break
+    ordered.push(next.segment)
+    used.add(next.segment.id)
+    previous = current
+    current = next.other
+  }
+
+  return ordered.length === segments.length ? ordered : [...segments]
+}
+
+function sampleSegmentPoints(
+  from: RouteEditorNode,
+  to: RouteEditorNode,
+  imageWidth: number,
+  imageHeight: number,
+  samplesPerSegment: number,
+  pushPoint: (point: [number, number]) => void,
+) {
+  const a: [number, number] = [from.x / imageWidth, from.y / imageHeight]
+  const b: [number, number] = [to.x / imageWidth, to.y / imageHeight]
+  pushPoint(a)
+  if (samplesPerSegment <= 1) {
+    pushPoint(b)
+    return
+  }
+  for (let step = 1; step < samplesPerSegment; step += 1) {
+    const t = step / samplesPerSegment
+    pushPoint([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t])
+  }
+  pushPoint(b)
+}
+
+/** Sample every drawn segment in chain order for trajectory playback (matches overlay lines). */
+export function sampleRouteEditorTrajectoryPathPoints(
+  line: RouteEditorLine,
+  imageWidth: number,
+  imageHeight: number,
+  samplesPerSegment = 16,
+): [number, number][] {
+  if (imageWidth <= 0 || imageHeight <= 0) return []
+
+  const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
+  const segments = line.segments ?? []
+  if (segments.length === 0) return []
+
+  const adjacency = new Map<number, { segment: RouteEditorSegment; other: number }[]>()
+  for (const segment of segments) {
+    const fromLinks = adjacency.get(segment.fromNodeId) ?? []
+    fromLinks.push({ segment, other: segment.toNodeId })
+    adjacency.set(segment.fromNodeId, fromLinks)
+    const toLinks = adjacency.get(segment.toNodeId) ?? []
+    toLinks.push({ segment, other: segment.fromNodeId })
+    adjacency.set(segment.toNodeId, toLinks)
+  }
+
+  const pickStartNodeId = (): number => {
+    for (const node of line.nodes) {
+      if (node.type !== 'stop') continue
+      if ((adjacency.get(node.id)?.length ?? 0) === 1) return node.id
+    }
+    for (const node of line.nodes) {
+      if ((adjacency.get(node.id)?.length ?? 0) === 1) return node.id
+    }
+    for (const node of line.nodes) {
+      if (node.type === 'stop') return node.id
+    }
+    return segments[0]!.fromNodeId
+  }
+
+  const points: [number, number][] = []
+  const pushPoint = (point: [number, number]) => {
+    const last = points[points.length - 1]
+    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
+    points.push(point)
+  }
+
+  const used = new Set<number>()
+  let current = pickStartNodeId()
+  let previous: number | null = null
+
+  while (used.size < segments.length) {
+    const links = (adjacency.get(current) ?? []).filter((link) => !used.has(link.segment.id))
+    const next = links.find((link) => link.other !== previous) ?? links[0]
+    if (!next) break
+
+    const fromNode = nodeById.get(current)
+    const toNode = nodeById.get(next.other)
+    if (!fromNode || !toNode) break
+
+    sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+    used.add(next.segment.id)
+    previous = current
+    current = next.other
+  }
+
+  if (points.length >= 2) return points
+
+  for (const segment of segments) {
+    const from = nodeById.get(segment.fromNodeId)
+    const to = nodeById.get(segment.toNodeId)
+    if (!from || !to) continue
+    sampleSegmentPoints(from, to, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+  }
+
+  return points
+}

@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import { ROUTE_MAP_VIEWER_EDITOR_CONFIG } from '../routeEditor/types'
+import { mapDrawNodeScaleFactor, mapDrawStopIconRadius } from '../utils/mapDrawNodeScale'
 import { interpolateRouteMapTrajectoryPoint } from '../utils/routeMapTrajectory'
 
 interface RouteMapTrajectoryBallProps {
@@ -11,6 +13,11 @@ interface RouteMapTrajectoryBallProps {
 const LOOP_DURATION_MS = 24_000
 
 export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteMapTrajectoryBallProps) {
+  const radius = useMemo(() => {
+    const nodeScale = mapDrawNodeScaleFactor(imageWidth, imageHeight)
+    return mapDrawStopIconRadius(ROUTE_MAP_VIEWER_EDITOR_CONFIG.stopIconSize, nodeScale)
+  }, [imageHeight, imageWidth])
+
   const [position, setPosition] = useState<[number, number]>(() => {
     if (path.length === 0 || imageWidth <= 0 || imageHeight <= 0) return [0, 0]
     return interpolateRouteMapTrajectoryPoint(path, 0, imageWidth, imageHeight)
@@ -35,8 +42,6 @@ export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteM
 
   if (path.length < 2) return null
 
-  const radius = Math.max(6, imageWidth * 0.0045)
-
   return (
     <svg
       className="route-map-trajectory-ball-layer"
@@ -49,7 +54,7 @@ export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteM
         className="route-map-trajectory-ball-glow"
         cx={position[0]}
         cy={position[1]}
-        r={radius * 1.8}
+        r={radius * 1.45}
       />
       <circle className="route-map-trajectory-ball" cx={position[0]} cy={position[1]} r={radius} />
     </svg>

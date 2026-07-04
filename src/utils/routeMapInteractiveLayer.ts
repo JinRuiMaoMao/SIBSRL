@@ -8,7 +8,7 @@ import {
   buildReferenceStopDetailsFromCatalog,
   routeMapStopNamesMatch,
 } from './routeMapStopMatching'
-import { buildRouteMapTrajectoryPath } from './routeMapTrajectory'
+import { resolveRouteMapDisplayPathPoints } from './routeMapTrajectory'
 import { userBendIndicesToFlags, type RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): RouteDetailMapStop {
@@ -101,17 +101,7 @@ export function buildRouteMapInteractiveLayerState(
       ? Number.parseInt(selectedStopId.slice('ref-stop-'.length), 10)
       : null
 
-  const trajectoryStops =
-    display.referenceEditor && referenceStopDetails.length > 0
-      ? referenceStopDetails
-      : interactiveStopDetails
-
-  const trajectoryPath =
-    imageSize
-      ? buildRouteMapTrajectoryPath(display, imageSize, trajectoryStops, {
-          preserveStopOrder: Boolean(display.referenceEditor),
-        })
-      : []
+  const trajectoryPath = imageSize ? resolveRouteMapDisplayPathPoints(display, imageSize) : []
 
   const editorNodes =
     display.referenceEditor && catalogStops.length

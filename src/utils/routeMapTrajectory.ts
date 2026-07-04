@@ -1,6 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import { sampleRouteEditorPathPoints } from '../routeEditor/routeEditorPath'
-import type { RouteDetailMapStop } from './routeDetailMapStops'
+import { sampleRouteEditorTrajectoryPathPoints } from '../routeEditor/routeEditorPath'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 function distance(a: WorldMapPoint, b: WorldMapPoint): number {
@@ -17,25 +16,12 @@ function dedupePoints(points: readonly WorldMapPoint[]): WorldMapPoint[] {
   return out
 }
 
-function closestPathIndex(path: readonly WorldMapPoint[], point: WorldMapPoint): number {
-  let best = 0
-  let bestDist = Infinity
-  for (let index = 0; index < path.length; index += 1) {
-    const dist = distance(path[index]!, point)
-    if (dist < bestDist) {
-      bestDist = dist
-      best = index
-    }
-  }
-  return best
-}
-
 export function resolveRouteMapDisplayPathPoints(
   display: RouteMapViewerDisplay,
   imageSize: { width: number; height: number },
 ): WorldMapPoint[] {
   if (display.referenceEditor?.segments.length) {
-    const sampled = sampleRouteEditorPathPoints(
+    const sampled = sampleRouteEditorTrajectoryPathPoints(
       {
         id: 1,
         name: display.routeNumber,
@@ -44,44 +30,10 @@ export function resolveRouteMapDisplayPathPoints(
       },
       imageSize.width,
       imageSize.height,
-      false,
     )
     if (sampled.length >= 2) return sampled
   }
-  return display.points.length >= 2 ? [...display.points] : []
-}
-
-/** Path from route start through each detail-page stop in order, then to route end. */
-export function buildRouteMapTrajectoryPath(
-  display: RouteMapViewerDisplay,
-  imageSize: { width: number; height: number },
-  catalogStops: readonly RouteDetailMapStop[],
-  options?: { preserveStopOrder?: boolean },
-): WorldMapPoint[] {
-  const path = resolveRouteMapDisplayPathPoints(display, imageSize)
-  if (path.length < 2) return path
-
-  const orderedStops = options?.preserveStopOrder
-    ? [...catalogStops]
-    : [...catalogStops].sort((a, b) => a.seq - b.seq)
-  if (orderedStops.length === 0) return path
-
-  const stopIndices = orderedStops.map((stop) => closestPathIndex(path, stop.point))
-  for (let index = 1; index < stopIndices.length; index += 1) {
-    stopIndices[index] = Math.max(stopIndices[index]!, stopIndices[index - 1]!)
-  }
-
-  const endIndex = path.length - 1
-  const waypointIndices = [...new Set([0, ...stopIndices, endIndex])].sort((a, b) => a - b)
-
-  const result: WorldMapPoint[] = []
-  for (let index = 0; index < waypointIndices.length - 1; index += 1) {
-    const from = waypointIndices[index]!
-    const to = waypointIndices[index + 1]!
-    result.push(...path.slice(from, to + 1))
-  }
-
-  return dedupePoints(result)
+  return display.points.length >= 2 ? dedupePoints(display.points) : []
 }
 
 export function interpolateRouteMapTrajectoryPoint(
