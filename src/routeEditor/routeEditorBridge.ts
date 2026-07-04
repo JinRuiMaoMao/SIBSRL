@@ -4,6 +4,7 @@ import type { WorldMapDrawImportResult } from '../utils/worldMapRouteImport'
 import type { RouteImportMergeResult } from '../utils/worldMapDrawImportMerge'
 import { RouteEditorDataManager } from './RouteEditorDataManager'
 import { inferSegmentsFromOrderedNodes, sampleRouteEditorPathPoints } from './routeEditorPath'
+import { mergeManyRouteEditorLines } from './routeEditorMerge'
 import type { RouteEditorLine, RouteEditorLineStyle, RouteEditorNode } from './types'
 
 export function pixelToNormalized(
@@ -121,7 +122,7 @@ export function sibsImportToRouteEditorLine(
   if (parsed.kind === 'catalog') {
     for (const stop of parsed.stops) appendStop(stop)
     return {
-      line: { id: 1, name: '导入线路', nodes, segments: inferSegmentsFromOrderedNodes(nodes) },
+      line: { id: 1, name: '导入线路', nodes, segments: [] },
       routeId: '',
       directionIndex: 0,
     }
@@ -206,9 +207,39 @@ export function isReferenceEditorExportJson(value: unknown): value is { version:
   )
 }
 
+export function parseReferenceJsonToLine(jsonText: string): RouteEditorLine | null {
+  try {
+    const parsed = JSON.parse(jsonText) as {
+      version?: string
+      lines?: RouteEditorLine[]
+    }
+    if (!parsed.version || !Array.isArray(parsed.lines) || parsed.lines.length === 0) {
+      return null
+    }
+    const line = normalizeRouteEditorLine(JSON.parse(JSON.stringify(parsed.lines[0]!)) as RouteEditorLine)
+    for (const node of line.nodes) {
+      if (node.type === 'point') {
+        node.chi_name = ''
+        node.eng_name = ''
+      }
+      node.cornerRadius = node.cornerRadius ?? 0
+    }
+    return line
+  } catch {
+    return null
+  }
+}
+
 export function loadReferenceJsonIntoManager(
   manager: RouteEditorDataManager,
   jsonText: string,
 ): boolean {
   return manager.importReferenceJson(jsonText)
+}
+
+export function mergeReferenceJsonFiles(jsonTexts: readonly string[]): RouteEditorLine | null {
+  const lines = jsonTexts
+    .map((json) => parseReferenceJsonToLine(json))
+    .filter((line): line is RouteEditorLine => line != null)
+  return mergeManyRouteEditorLines(lines)
 }

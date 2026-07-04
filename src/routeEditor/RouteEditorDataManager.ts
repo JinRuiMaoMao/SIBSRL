@@ -9,6 +9,7 @@ import {
   type RouteEditorNodeType,
 } from './types'
 import { inferSegmentsFromOrderedNodes, normalizeRouteEditorLine } from './routeEditorPath'
+import { mergeRouteEditorLines } from './routeEditorMerge'
 
 type RouteEditorEvent = 'change' | 'historyChange'
 
@@ -261,6 +262,16 @@ export class RouteEditorDataManager {
     const maxSegmentId = this.line.segments.reduce((max, segment) => Math.max(max, segment.id), 0)
     this.nextNodeId = maxNodeId + 1
     this.nextSegmentId = maxSegmentId + 1
+    this.saveHistory()
+    this.emit('change')
+  }
+
+  mergeLine(incoming: RouteEditorLine) {
+    this.line = mergeRouteEditorLines(this.line, incoming)
+    const maxNodeId = this.line.nodes.reduce((max, node) => Math.max(max, node.id), 0)
+    const maxSegmentId = this.line.segments.reduce((max, segment) => Math.max(max, segment.id), 0)
+    this.nextNodeId = Math.max(this.nextNodeId, maxNodeId + 1)
+    this.nextSegmentId = Math.max(this.nextSegmentId, maxSegmentId + 1)
     this.saveHistory()
     this.emit('change')
   }

@@ -57,6 +57,10 @@ export function useRouteEditor(initialLineName = '默认线路') {
         manager.replaceLine(importedLine)
         if (routeId?.trim()) manager.setLineName(routeId.trim())
       },
+      mergeFromImport: (importedLine: typeof line, routeId?: string) => {
+        manager.mergeLine(importedLine)
+        if (routeId?.trim()) manager.setLineName(routeId.trim())
+      },
     }),
     [config, history, line, lineStyle, manager],
   )

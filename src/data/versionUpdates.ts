@@ -199,6 +199,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 线段需手动连接：选择模式下依次点击两个节点创建线段，双击线段删除；添加节点不再自动连线。",
             en: "Map-draw segments connect manually: in Select mode click two nodes to link, double-click a segment to remove; adding nodes no longer auto-connects.",
           },
+          {
+            zh: "map-draw 导入合并追加到当前画布：支持多选 SIBS JSON 与参考 JSON 同时导入，合并站点/节点/线段（同位置节点自动去重）。",
+            en: "Map-draw import merge appends to the canvas: multi-select SIBS and reference JSON together; stops, nodes, and segments merge with deduped positions.",
+          },
         ],
       },
     ],

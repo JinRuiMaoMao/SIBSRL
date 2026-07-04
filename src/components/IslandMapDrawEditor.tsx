@@ -23,11 +23,12 @@ import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
 import type { RouteEditorMode } from '../routeEditor/types'
 import {
   isReferenceEditorExportJson,
-  loadReferenceJsonIntoManager,
+  mergeReferenceJsonFiles,
   normalizedToPixel,
   routeEditorLineToSibsDraft,
   sibsImportToRouteEditorLine,
 } from '../routeEditor/routeEditorBridge'
+import type { RouteEditorLine } from '../routeEditor/types'
 import { useRouteEditor } from '../routeEditor/useRouteEditor'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
 import { IslandMapDrawImportConflictDialog } from './IslandMapDrawImportConflictDialog'
@@ -91,6 +92,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
   const [importConflictState, setImportConflictState] = useState<{
     files: ImportedDrawFile[]
+    referenceJsonTexts: string[]
     conflict: PathConflictGroup
   } | null>(null)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
@@ -415,44 +417,81 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   )
 
   const applyImportedDrawFiles = useCallback(
-    (files: readonly ImportedDrawFile[], resolution: PathConflictResolution) => {
+    (
+      files: readonly ImportedDrawFile[],
+      resolution: PathConflictResolution,
+      referenceJsonTexts: readonly string[] = [],
+    ) => {
       if (!imageSize) return
 
-      const merged = mergeImportedDrawFiles(files, resolution, sibsDraft?.stops ?? [])
-      if (!merged) {
+      const referenceLine = mergeReferenceJsonFiles(referenceJsonTexts)
+      const merged = files.length > 0 ? mergeImportedDrawFiles(files, resolution, sibsDraft?.stops ?? []) : null
+
+      const importLines: RouteEditorLine[] = []
+      if (referenceLine) importLines.push(referenceLine)
+
+      if (merged) {
+        if (merged.kind === 'catalog') {
+          const imported = sibsImportToRouteEditorLine(
+            { kind: 'catalog', stops: merged.stops },
+            imageSize.width,
+            imageSize.height,
+          )
+          if (imported) importLines.push(imported.line)
+        } else {
+          const imported = sibsImportToRouteEditorLine(merged, imageSize.width, imageSize.height)
+          if (!imported) {
+            showExportHint(t('islandMapDrawImportInvalid'))
+            return
+          }
+          importLines.push(imported.line)
+          setDrawRouteId(imported.routeId)
+          setDrawDirectionIndex(imported.directionIndex)
+          const fitPoints = merged.points.length >= 2 ? merged.points : merged.stops.map((stop) => stop.point)
+          if (fitPoints.length > 0) {
+            setMapView(fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen'))
+          }
+        }
+      }
+
+      const importLine = mergeManyRouteEditorLines(importLines)
+      if (!importLine) {
         showExportHint(t('islandMapDrawImportInvalid'))
         return
       }
 
-      if (merged.kind === 'catalog') {
-        const imported = sibsImportToRouteEditorLine(
-          { kind: 'catalog', stops: merged.stops },
-          imageSize.width,
-          imageSize.height,
-        )
-        if (imported) editor.replaceFromImport(imported.line)
-        setSelectedNodeId(null)
-        showExportHint(t('islandMapDrawImportCatalogDone', { count: merged.stops.length }))
-        return
-      }
-
-      const imported = sibsImportToRouteEditorLine(merged, imageSize.width, imageSize.height)
-      if (!imported) {
-        showExportHint(t('islandMapDrawImportInvalid'))
-        return
-      }
-      editor.replaceFromImport(imported.line, imported.routeId)
-      setDrawRouteId(imported.routeId)
-      setDrawDirectionIndex(imported.directionIndex)
+      editor.mergeFromImport(importLine, merged?.kind === 'route' ? importLine.name : undefined)
       setSelectedNodeId(null)
+      setConnectPendingNodeId(null)
+      setConnectPreview(null)
       setEditorMode('select')
-      const fitPoints = merged.points.length >= 2 ? merged.points : merged.stops.map((stop) => stop.point)
-      if (fitPoints.length > 0) {
-        setMapView(fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen'))
+
+      if (merged?.kind === 'catalog') {
+        showExportHint(
+          t('mapDrawImportMergeDone', {
+            stops: importLine.nodes.filter((node) => node.type === 'stop').length,
+            segments: importLine.segments.length,
+          }),
+        )
+        return
       }
-      showExportHint(t('islandMapDrawImportRouteDone', { routeId: imported.routeId }))
+      if (merged?.kind === 'route') {
+        showExportHint(
+          t('mapDrawImportMergeDone', {
+            stops: importLine.nodes.filter((node) => node.type === 'stop').length,
+            segments: importLine.segments.length,
+          }),
+        )
+        return
+      }
+      showExportHint(
+        t('mapDrawImportMergeDone', {
+          stops: importLine.nodes.filter((node) => node.type === 'stop').length,
+          segments: importLine.segments.length,
+        }),
+      )
     },
-    [drawRouteId, editor, imageSize, showExportHint, sibsDraft?.stops, t],
+    [editor, imageSize, showExportHint, sibsDraft?.stops, t],
   )
 
   const handleImportFileChange = useCallback(
@@ -462,13 +501,13 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (files.length === 0) return
 
       const importedFiles: ImportedDrawFile[] = []
-      const referenceFiles: { fileName: string; json: string }[] = []
+      const referenceJsonTexts: string[] = []
       for (const file of files) {
         try {
           const text = await file.text()
           const raw = readImportJsonText(text)
           if (isReferenceEditorExportJson(raw)) {
-            referenceFiles.push({ fileName: file.name, json: JSON.stringify(raw) })
+            referenceJsonTexts.push(JSON.stringify(raw))
             continue
           }
           const parsed = parseWorldMapDrawImportJson(raw)
@@ -479,29 +518,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         }
       }
 
-      if (importedFiles.length === 0 && referenceFiles.length === 0) {
+      if (importedFiles.length === 0 && referenceJsonTexts.length === 0) {
         showExportHint(t('islandMapDrawImportInvalid'))
         return
       }
 
-      if (importedFiles.length === 0 && referenceFiles.length === 1) {
-        const ok = loadReferenceJsonIntoManager(editor.manager, referenceFiles[0]!.json)
-        if (!ok) {
-          showExportHint(t('islandMapDrawImportInvalid'))
-          return
-        }
-        setSelectedNodeId(null)
-        setEditorMode('select')
-        showExportHint(t('islandMapDrawImportRouteDone', { routeId: drawRouteId || editor.line.name }))
+      if (importedFiles.length === 0) {
+        applyImportedDrawFiles([], { kind: 'keepAll' }, referenceJsonTexts)
         return
       }
 
       const conflict = detectPathConflicts(importedFiles)
       if (conflict) {
-        setImportConflictState({ files: importedFiles, conflict })
+        setImportConflictState({ files: importedFiles, referenceJsonTexts, conflict })
         return
       }
-      applyImportedDrawFiles(importedFiles, { kind: 'keepAll' })
+      applyImportedDrawFiles(importedFiles, { kind: 'keepAll' }, referenceJsonTexts)
     },
     [applyImportedDrawFiles, editor, showExportHint, t],
   )
@@ -824,7 +856,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
           const pending = importConflictState
           setImportConflictState(null)
           if (!pending) return
-          applyImportedDrawFiles(pending.files, resolution)
+          applyImportedDrawFiles(pending.files, resolution, pending.referenceJsonTexts)
         }}
       />
       <IslandMapDrawExportDialog
