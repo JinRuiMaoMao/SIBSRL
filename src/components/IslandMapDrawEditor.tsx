@@ -290,25 +290,6 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     setNewStopSnapPoint(selection.point ?? null)
   }, [])
 
-  const applyNewStopNames = useCallback(() => {
-    const chi = newStopChiName.trim()
-    const eng = newStopEngName.trim()
-    if (!chi && !eng) return
-
-    const targetId = lastPlacedStopIdRef.current ?? selectedNodeId
-    if (targetId == null) return
-
-    const node = editor.manager.getNodeById(targetId)
-    if (!node || node.type !== 'stop') return
-
-    editor.updateNode(targetId, {
-      chi_name: chi || eng,
-      eng_name: eng || chi,
-    })
-    setSelectedNodeId(targetId)
-    showExportHint(t('mapDrawStopNameApplied'))
-  }, [editor, newStopChiName, newStopEngName, selectedNodeId, showExportHint, t])
-
   const handleMapClick = useCallback(
     (point: WorldMapPoint) => {
       if (!imageSize) return
@@ -382,16 +363,38 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     if (selectedNodeId == null) return
     editor.deleteNode(selectedNodeId)
     setSelectedNodeId(null)
+    lastPlacedStopIdRef.current = null
+    setNewStopChiName('')
+    setNewStopEngName('')
   }, [editor, selectedNodeId])
 
   const saveSelectedNodeEdits = useCallback(() => {
     if (selectedNodeId == null || !selectedNode) return
+    const chi = editChiName.trim()
+    const eng = editEngName.trim()
     editor.updateNode(selectedNodeId, {
-      chi_name: editChiName,
-      eng_name: editEngName,
+      chi_name: selectedNode.type === 'stop' ? chi || eng : editChiName,
+      eng_name: selectedNode.type === 'stop' ? eng || chi : editEngName,
       cornerRadius: selectedNode.type === 'point' ? editCornerRadius : selectedNode.cornerRadius,
     })
-  }, [editChiName, editCornerRadius, editEngName, editor, selectedNode, selectedNodeId])
+    if (editorMode === 'addStop' && selectedNode.type === 'stop') {
+      showExportHint(t('mapDrawStopNameApplied'))
+      setSelectedNodeId(null)
+      lastPlacedStopIdRef.current = null
+      setNewStopChiName('')
+      setNewStopEngName('')
+    }
+  }, [
+    editChiName,
+    editCornerRadius,
+    editEngName,
+    editor,
+    editorMode,
+    selectedNode,
+    selectedNodeId,
+    showExportHint,
+    t,
+  ])
 
   const applyClearSelection = useCallback(
     (selection: IslandMapDrawClearSelection) => {
@@ -663,6 +666,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     : null
   const zoomPercent = Math.round((mapView?.zoomRatio ?? 1) * 100)
   const pointerLabel = t('mapDrawStatusCoords', { x: 0, y: 0 })
+  const showStopEditPanel =
+    selectedNode?.type === 'stop' && (editorMode === 'select' || editorMode === 'addStop')
 
   useEffect(() => {
     document.documentElement.classList.add('island-map-fullscreen-open')
@@ -831,7 +836,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                   <button type="button" className={`route-editor-btn${editorMode === 'connectLine' ? ' route-editor-btn--active' : ''}`.trim()} onClick={() => enterEditorMode('connectLine')}>
                     {t('mapDrawModeConnectLine')}
                   </button>
-                  {editorMode === 'select' && selectedNodeId != null ? (
+                  {selectedNodeId != null && (editorMode === 'select' || editorMode === 'addStop') ? (
                     <button type="button" className="route-editor-btn route-editor-btn--danger" onClick={deleteSelectedNode}>
                       {t('mapDrawDeleteNode')}
                     </button>
@@ -856,7 +861,59 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
               </section>
 
               <section className="route-editor-panel">
-                {editorMode === 'addStop' ? (
+                {showStopEditPanel && selectedNode ? (
+                  <div className="reference-node-info-panel">
+                    <h4>{t('mapDrawNodeInfoStop')}</h4>
+                    <MapDrawStopNameFields
+                      chiName={editChiName}
+                      engName={editEngName}
+                      routeId={drawRouteId}
+                      directionIndex={drawDirectionIndex}
+                      catalog={stopCatalog}
+                      chiPlaceholder={t('mapDrawAddStopChiPlaceholder')}
+                      engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
+                      onChiNameChange={setEditChiName}
+                      onEngNameChange={setEditEngName}
+                      onSelectSuggestion={applyStopNameSelection}
+                      onEnter={saveSelectedNodeEdits}
+                    />
+                    <p className="island-map-draw-help">
+                      X: {selectedNode.x}, Y: {selectedNode.y}
+                    </p>
+                    <button type="button" className="route-editor-btn route-editor-btn--primary" onClick={saveSelectedNodeEdits}>
+                      {t('mapDrawNodeSave')}
+                    </button>
+                    {editorMode === 'addStop' ? (
+                      <p className="island-map-draw-help">{t('mapDrawAddStopAfterPlaceHelp')}</p>
+                    ) : null}
+                  </div>
+                ) : editorMode === 'select' && selectedNode?.type === 'point' ? (
+                  <div className="reference-node-info-panel">
+                    <h4>{t('mapDrawNodeInfoPoint')}</h4>
+                    <label className="route-editor-field">
+                      <span>{t('mapDrawNodeCornerRadius')}</span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        value={editCornerRadius}
+                        onChange={(event) => setEditCornerRadius(Number(event.target.value) || 0)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+                            event.preventDefault()
+                            saveSelectedNodeEdits()
+                          }
+                        }}
+                      />
+                    </label>
+                    <p className="island-map-draw-help">
+                      X: {selectedNode.x}, Y: {selectedNode.y}
+                    </p>
+                    <button type="button" className="route-editor-btn route-editor-btn--primary" onClick={saveSelectedNodeEdits}>
+                      {t('mapDrawNodeSave')}
+                    </button>
+                  </div>
+                ) : editorMode === 'addStop' ? (
                   <div className="reference-node-info-panel">
                     <h4>{t('mapDrawAddStopNames')}</h4>
                     <MapDrawStopNameFields
@@ -876,53 +933,10 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                         setNewStopSnapPoint(null)
                       }}
                       onSelectSuggestion={applyNewStopNameSelection}
-                      onEnter={applyNewStopNames}
                     />
                     <p className="island-map-draw-help">
                       {newStopSnapPoint ? t('mapDrawAddStopCatalogSnapHint') : t('mapDrawAddStopHelp')}
                     </p>
-                  </div>
-                ) : editorMode === 'select' && selectedNode ? (
-                  <div className="reference-node-info-panel">
-                    <h4>{selectedNode.type === 'stop' ? t('mapDrawNodeInfoStop') : t('mapDrawNodeInfoPoint')}</h4>
-                    {selectedNode.type === 'stop' ? (
-                      <>
-                        <MapDrawStopNameFields
-                          chiName={editChiName}
-                          engName={editEngName}
-                          routeId={drawRouteId}
-                          directionIndex={drawDirectionIndex}
-                          catalog={stopCatalog}
-                          onChiNameChange={setEditChiName}
-                          onEngNameChange={setEditEngName}
-                          onSelectSuggestion={applyStopNameSelection}
-                          onEnter={saveSelectedNodeEdits}
-                        />
-                      </>
-                    ) : (
-                      <label className="route-editor-field">
-                        <span>{t('mapDrawNodeCornerRadius')}</span>
-                        <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={editCornerRadius}
-                          onChange={(event) => setEditCornerRadius(Number(event.target.value) || 0)}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-                              event.preventDefault()
-                              saveSelectedNodeEdits()
-                            }
-                          }}
-                        />
-                      </label>
-                    )}
-                    <p className="island-map-draw-help">
-                      X: {selectedNode.x}, Y: {selectedNode.y}
-                    </p>
-                    <button type="button" className="route-editor-btn route-editor-btn--primary" onClick={saveSelectedNodeEdits}>
-                      {t('mapDrawNodeSave')}
-                    </button>
                   </div>
                 ) : editorMode === 'connectLine' && connectPendingNodeId != null ? (
                   <p className="island-map-draw-help">{t('mapDrawConnectPendingHint')}</p>

@@ -434,6 +434,47 @@ html[data-app-page='map-draw'] #root {
   gap: 0.55rem;
 }
 
+.map-draw-stop-name-stack {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
+  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  overflow: hidden;
+}
+
+.map-draw-stop-name-stack-input {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.map-draw-stop-name-stack-input + .map-draw-stop-name-stack-input {
+  border-top: 1px solid color-mix(in srgb, var(--text-muted, #888) 28%, transparent);
+}
+
+.map-draw-stop-name-stack-input--primary {
+  font-size: 0.92rem;
+}
+
+.map-draw-stop-name-stack-input--secondary {
+  font-size: 0.8rem;
+  opacity: 0.82;
+}
+
+.map-draw-stop-name-stack-input::placeholder {
+  opacity: 0.55;
+}
+
+.map-draw-stop-name-stack-input:focus {
+  outline: none;
+  background: color-mix(in srgb, var(--accent, #f5b942) 10%, transparent);
+}
+
 .map-draw-stop-name-suggestions {
   list-style: none;
   margin: 0;
@@ -464,6 +505,15 @@ html[data-app-page='map-draw'] #root {
 }
 
 .map-draw-stop-name-suggestion-en {
+  font-size: 0.78rem;
+  opacity: 0.72;
+}
+
+.map-draw-stop-name-suggestion-primary {
+  font-size: 0.9rem;
+}
+
+.map-draw-stop-name-suggestion-secondary {
   font-size: 0.78rem;
   opacity: 0.72;
 }

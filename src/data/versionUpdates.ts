@@ -198,6 +198,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Map-draw add/edit stop fields accept Chinese/English names with autocomplete; press Enter to apply names after placing a stop.",
           },
           {
+            zh: "map-draw 放置站点后立即显示保存面板；站名输入框上主语言下副语言堆叠显示。",
+            en: "Map-draw shows the save panel right after placing a stop; name fields stack primary locale on top and secondary below.",
+          },
+          {
             zh: "map-draw PNG 导出：站点白底黑边圆点，走线使用绘制颜色，支持编辑器线段导出。",
             en: "Map-draw PNG export: white stops with black outlines, route in draw color, using editor segment lines when present.",
           },
