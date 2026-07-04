@@ -3,24 +3,24 @@ import { fetchRouteMapImport, saveRouteMapImport, UserApiError } from '../api/us
 import { routes } from '../data/routes'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useAuth } from '../contexts/AuthContext'
-import { fitNormalizedViewToRoutePoints, getWorldMapRoutePoints } from '../data/worldMapRoutes'
+import { fitNormalizedViewToRoutePoints } from '../data/worldMapRoutes'
 import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useLocale } from '../i18n/LocaleContext'
 import {
   clearCachedRouteMapImport,
-  readCachedRouteMapImport,
   writeCachedRouteMapImport,
 } from '../storage/routeMapImportCache'
 import type { RouteStop } from '../types/route'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { getRouteMapImageUrl } from '../utils/routeMapImages'
 import { isRouteMapImportPayload, parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
-import { findRouteForMapPage, resolveRouteMapLookupIds, routeMapIdsMatch } from '../utils/routeMapLookup'
+import { findRouteForMapPage, routeMapIdsMatch } from '../utils/routeMapLookup'
 import {
   buildRouteDetailMapStops,
   routeDetailMapStopToDrawStop,
   type RouteDetailMapStop,
 } from '../utils/routeDetailMapStops'
+import { resolveRouteMapImportPayload } from '../utils/routeMapOverlaySource'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
 import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
 import { readDirectionQueryFromLocation } from '../utils/routeNavigation'
@@ -30,6 +30,7 @@ import {
   userBendIndicesToFlags,
   type RouteMapViewerDisplay,
 } from '../utils/routeMapViewerDisplay'
+import { resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
 import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { StopDetailPanel } from './StopDetailPanel'
@@ -68,23 +69,8 @@ function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): Ro
 }
 
 async function resolveImportPayload(routeId: string): Promise<unknown | null> {
-  for (const id of resolveRouteMapLookupIds(routeId)) {
-    const response = await fetchRouteMapImport(id)
-    if (response?.payload && isRouteMapImportPayload(response.payload)) {
-      return response.payload
-    }
-  }
-
-  const cached = readCachedRouteMapImport(routeId)
-  if (cached && isRouteMapImportPayload(cached)) {
-    return cached
-  }
-
-  if (cached) {
-    clearCachedRouteMapImport(routeId)
-  }
-
-  return null
+  const parsed = await resolveRouteMapImportPayload(routeId)
+  return parsed ?? null
 }
 
 export function RouteMapPage() {
@@ -165,9 +151,11 @@ export function RouteMapPage() {
         return
       }
 
-      const worldPoints = routeId ? getWorldMapRoutePoints(routeId, 0) : null
-      if (worldPoints && worldPoints.length >= 2) {
-        setDisplay(buildSimpleRouteMapViewerDisplay(routeId, worldPoints))
+      const worldOverlay = routeId
+        ? await resolveRouteMapOverlaySource(routeId, directionIndex)
+        : null
+      if (worldOverlay && worldOverlay.points.length >= 2) {
+        setDisplay(buildSimpleRouteMapViewerDisplay(routeId, worldOverlay.points))
         setLoading(false)
         return
       }
@@ -179,7 +167,7 @@ export function RouteMapPage() {
     return () => {
       cancelled = true
     }
-  }, [beginStaticFallback, routeId])
+  }, [beginStaticFallback, directionIndex, routeId])
 
   useEffect(() => {
     if (!importPayload || !imageSize) return
@@ -240,17 +228,30 @@ export function RouteMapPage() {
     setSelectedStopId(null)
   }, [directionIndex, display, routeId])
 
+  const referenceStopDetails = useMemo((): RouteDetailMapStop[] => {
+    if (!display?.referenceEditor || !imageSize) return []
+    const stopNodes = display.referenceEditor.nodes.filter((node) => node.type === 'stop')
+    return stopNodes.map((node, index) => ({
+      id: `ref-stop-${node.id}`,
+      seq: node.stopSeq ?? index + 1,
+      stop: { name: { zh: node.chi_name, en: node.eng_name } },
+      point: [node.x / imageSize.width, node.y / imageSize.height],
+    }))
+  }, [display?.referenceEditor, imageSize])
+
   const interactiveDrawStops = useMemo((): WorldMapDrawStop[] => {
+    if (display?.referenceEditor) return []
     if (display?.stops.length) return display.stops
     return catalogStops.map(routeDetailMapStopToDrawStop)
-  }, [catalogStops, display?.stops])
+  }, [catalogStops, display?.referenceEditor, display?.stops])
 
   const interactiveStopDetails = useMemo((): RouteDetailMapStop[] => {
+    if (display?.referenceEditor) return referenceStopDetails
     if (display?.stops.length) {
       return display.stops.map((stop, index) => drawStopToRouteDetailMapStop(stop, index))
     }
     return catalogStops
-  }, [catalogStops, display?.stops])
+  }, [catalogStops, display?.referenceEditor, display?.stops, referenceStopDetails])
 
   const selectedStop = useMemo(() => {
     if (!selectedStopId) return null
@@ -260,6 +261,16 @@ export function RouteMapPage() {
   const handleStopClick = useCallback((stopId: string) => {
     setSelectedStopId((current) => (current === stopId ? null : stopId))
   }, [])
+
+  const handleReferenceStopNodeClick = useCallback(
+    (nodeId: number) => {
+      const stopId = `ref-stop-${nodeId}`
+      handleStopClick(stopId)
+    },
+    [handleStopClick],
+  )
+
+  const stopClickEnabled = interactiveDrawStops.length > 0 || referenceStopDetails.length > 0
 
   useEffect(() => {
     applyFitView(display)
@@ -405,7 +416,7 @@ export function RouteMapPage() {
               showStopLabels
               stopLabelScale={1}
               selectedStopId={selectedStopId}
-              onStopClick={interactiveDrawStops.length ? handleStopClick : undefined}
+              onStopClick={stopClickEnabled ? handleStopClick : undefined}
               maxZoomRatio={8}
               onImageSizeChange={setImageSize}
               referenceEditor={
@@ -415,10 +426,16 @@ export function RouteMapPage() {
                       segments: display.referenceEditor.segments,
                       lineStyle: display.referenceEditor.lineStyle,
                       config: display.referenceEditor.config,
-                      selectedNodeId: null,
+                      selectedNodeId:
+                        selectedStopId?.startsWith('ref-stop-')
+                          ? Number.parseInt(selectedStopId.slice('ref-stop-'.length), 10)
+                          : null,
                       connectPendingNodeId: null,
                       connectPreview: null,
                       previewNode: null,
+                      segmentPassthrough: true,
+                      allowSegmentDelete: false,
+                      onNodeClick: referenceStopDetails.length ? handleReferenceStopNodeClick : undefined,
                     }
                   : null
               }

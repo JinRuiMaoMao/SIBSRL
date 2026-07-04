@@ -42,12 +42,11 @@ import { getPrimaryText } from '../i18n/displayText'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
-import { getWorldMapRoutePoints } from '../data/worldMapRoutes'
+import { resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
 import { isChineseLocale } from '../i18n/types'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { loadRoutePageData } from '../utils/loadRoutePageData'
-import { buildRouteDetailMapStops } from '../utils/routeDetailMapStops'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
 import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
 import { lockPageScroll } from '../utils/pageScrollLock'
@@ -573,35 +572,35 @@ export function RouteLookupPage({
       return
     }
 
-    const points = getWorldMapRoutePoints(overlayRoute.id, overlayDirectionIndex)
-    if (!points) {
-      setRouteOverlay(null)
-      return
-    }
-
-    const baseOverlay = {
-      routeId: overlayRoute.id,
-      routeNumber: overlayRoute.number,
-      directionIndex: overlayDirectionIndex,
-      points,
-    }
-
-    setRouteOverlay(baseOverlay)
-
     let cancelled = false
     const routeForStops =
       routePageDetail?.route.id === overlayRoute.id ? routePageDetail.route : overlayRoute
     const loopView = getLoopView(routeForStops)
+    const activeGroup = resolveActiveStopGroup(routeForStops, overlayDirectionIndex, loopView)
 
-    void loadWorldMapStopCatalog().then((catalog) => {
+    void (async () => {
+      const catalog = await loadWorldMapStopCatalog()
       if (cancelled) return
-      const activeGroup = resolveActiveStopGroup(routeForStops, overlayDirectionIndex, loopView)
-      const stops = activeGroup?.list ? buildRouteDetailMapStops(activeGroup.list, catalog) : []
-      setRouteOverlay({
-        ...baseOverlay,
-        ...(stops.length ? { stops } : {}),
+
+      const overlaySource = await resolveRouteMapOverlaySource(overlayRoute.id, overlayDirectionIndex, {
+        catalog,
+        catalogStops: activeGroup?.list,
       })
-    })
+      if (cancelled) return
+
+      if (!overlaySource) {
+        setRouteOverlay(null)
+        return
+      }
+
+      setRouteOverlay({
+        routeId: overlayRoute.id,
+        routeNumber: overlayRoute.number,
+        directionIndex: overlayDirectionIndex,
+        points: overlaySource.points,
+        ...(overlaySource.stops.length ? { stops: overlaySource.stops } : {}),
+      })
+    })()
 
     return () => {
       cancelled = true

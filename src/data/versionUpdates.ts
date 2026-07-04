@@ -206,6 +206,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Path map page (route-map.html) stop markers are clickable—full name and routes via the stop.",
           },
           {
+            zh: "左下角小地图与走向图页共用同一条导入走线；导入路线上的站点标签可直接点击查看详情。",
+            en: "Mini-map and path map page share the same imported route path; stop labels on imported paths are clickable.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },
