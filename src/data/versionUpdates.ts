@@ -207,6 +207,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 添加站点时可在侧栏输入中/英文站名，留空则仍自动命名。",
             en: "Map-draw add-stop mode lets you enter Chinese/English stop names in the sidebar before clicking the map; blank fields still auto-name.",
           },
+          {
+            zh: "map-draw PNG 导出：站点为白底黑边圆点，走线使用绘制颜色，并支持编辑器线段导出。",
+            en: "Map-draw PNG export: white stops with black outlines, route in draw color, using editor segment lines when present.",
+          },
         ],
       },
     ],

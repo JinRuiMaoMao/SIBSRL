@@ -7,6 +7,11 @@ import { normalizeStopLabelScale } from './mapDrawStopLabel'
 import { resolveExportBaseName } from './worldMapRouteExport'
 import { formatDrawStopLabel } from './worldMapDrawStopDisplay'
 
+export interface WorldMapDrawImageSegment {
+  from: WorldMapPoint
+  to: WorldMapPoint
+}
+
 export interface WorldMapDrawImageExportOptions {
   mapImageUrl: string
   routeId: string
@@ -15,7 +20,10 @@ export interface WorldMapDrawImageExportOptions {
   legStarts: readonly number[]
   legHidden: readonly boolean[]
   pathUserBends?: readonly boolean[]
+  /** 编辑器线段；提供时优先于 points 折线绘制 */
+  segmentLines?: readonly WorldMapDrawImageSegment[]
   strokeColor: string
+  strokeWidth?: number
   showStopLabels?: boolean
   stopLabelScale?: number
   locale?: Locale
@@ -96,6 +104,28 @@ function computeCropRect(
   }
 }
 
+function drawSegmentLinesOnCanvas(
+  ctx: CanvasRenderingContext2D,
+  imageWidth: number,
+  imageHeight: number,
+  segmentLines: readonly WorldMapDrawImageSegment[],
+  strokeColor: string,
+  strokeWidth?: number,
+) {
+  if (segmentLines.length === 0) return
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+  ctx.strokeStyle = strokeColor
+  ctx.lineWidth = strokeWidth ?? Math.max(2, imageWidth * 0.0014)
+
+  for (const segment of segmentLines) {
+    ctx.beginPath()
+    ctx.moveTo(segment.from[0] * imageWidth, segment.from[1] * imageHeight)
+    ctx.lineTo(segment.to[0] * imageWidth, segment.to[1] * imageHeight)
+    ctx.stroke()
+  }
+}
+
 function drawRouteOnCanvas(
   ctx: CanvasRenderingContext2D,
   imageWidth: number,
@@ -150,7 +180,6 @@ function drawStopsOnCanvas(
   imageWidth: number,
   imageHeight: number,
   stops: readonly WorldMapDrawStop[],
-  strokeColor: string,
   options: {
     showStopLabels: boolean
     stopLabelScale: number
@@ -158,20 +187,63 @@ function drawStopsOnCanvas(
   },
 ) {
   const scale = normalizeStopLabelScale(options.stopLabelScale)
-  const markerSize = Math.max(8, imageWidth * 0.0045 * scale)
+  const radius = Math.max(4, imageWidth * 0.0022 * scale)
+  const outlineWidth = Math.max(1.5, imageWidth * 0.0009 * scale)
   const fontSize = Math.max(11, imageWidth * 0.0032 * scale)
   ctx.textBaseline = 'middle'
 
   stops.forEach((stop, index) => {
     const x = stop.point[0] * imageWidth
     const y = stop.point[1] * imageHeight
-    ctx.fillStyle = strokeColor
-    ctx.fillRect(x - markerSize / 2, y - markerSize / 2, markerSize, markerSize)
+    ctx.beginPath()
+    ctx.arc(x, y, radius, 0, Math.PI * 2)
+    ctx.fillStyle = '#ffffff'
+    ctx.fill()
+    ctx.strokeStyle = '#000000'
+    ctx.lineWidth = outlineWidth
+    ctx.stroke()
     if (!options.showStopLabels) return
     ctx.font = `${fontSize}px sans-serif`
-    ctx.fillStyle = '#111'
-    ctx.fillText(formatDrawStopLabel(stop, index, options.locale), x + markerSize * 0.7, y)
+    ctx.fillStyle = '#111111'
+    ctx.fillText(formatDrawStopLabel(stop, index, options.locale), x + radius * 1.4, y)
   })
+}
+
+function drawRouteContentOnCanvas(
+  ctx: CanvasRenderingContext2D,
+  imageWidth: number,
+  imageHeight: number,
+  options: {
+    points: readonly WorldMapPoint[]
+    legStarts: readonly number[]
+    legHidden: readonly boolean[]
+    pathUserBends: readonly boolean[]
+    segmentLines: readonly WorldMapDrawImageSegment[]
+    strokeColor: string
+    strokeWidth?: number
+  },
+) {
+  if (options.segmentLines.length > 0) {
+    drawSegmentLinesOnCanvas(
+      ctx,
+      imageWidth,
+      imageHeight,
+      options.segmentLines,
+      options.strokeColor,
+      options.strokeWidth,
+    )
+    return
+  }
+  drawRouteOnCanvas(
+    ctx,
+    imageWidth,
+    imageHeight,
+    options.points,
+    options.legStarts,
+    options.legHidden,
+    options.pathUserBends,
+    options.strokeColor,
+  )
 }
 
 function measureExportContentBounds(
@@ -182,7 +254,9 @@ function measureExportContentBounds(
     legStarts: readonly number[]
     legHidden: readonly boolean[]
     pathUserBends: readonly boolean[]
+    segmentLines: readonly WorldMapDrawImageSegment[]
     strokeColor: string
+    strokeWidth?: number
     stops: readonly WorldMapDrawStop[]
     showStopLabels: boolean
     stopLabelScale: number
@@ -190,17 +264,16 @@ function measureExportContentBounds(
   },
 ): PixelBounds | null {
   return measurePaintedBounds(imageWidth, imageHeight, (ctx) => {
-    drawRouteOnCanvas(
-      ctx,
-      imageWidth,
-      imageHeight,
-      options.points,
-      options.legStarts,
-      options.legHidden,
-      options.pathUserBends,
-      options.strokeColor,
-    )
-    drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
+    drawRouteContentOnCanvas(ctx, imageWidth, imageHeight, {
+      points: options.points,
+      legStarts: options.legStarts,
+      legHidden: options.legHidden,
+      pathUserBends: options.pathUserBends,
+      segmentLines: options.segmentLines,
+      strokeColor: options.strokeColor,
+      strokeWidth: options.strokeWidth,
+    })
+    drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, {
       showStopLabels: options.showStopLabels,
       stopLabelScale: options.stopLabelScale,
       locale: options.locale,
@@ -219,13 +292,20 @@ export async function exportWorldMapDrawImage(
   const stopLabelScale = options.stopLabelScale ?? 1
   const locale = options.locale ?? 'en'
   const pathUserBends = options.pathUserBends ?? []
+  const segmentLines = options.segmentLines ?? []
+  const strokeWidth =
+    options.strokeWidth != null && imageWidth > 0
+      ? Math.max(2, (options.strokeWidth / 3) * imageWidth * 0.0014)
+      : undefined
 
   const contentBounds = measureExportContentBounds(imageWidth, imageHeight, {
     points: options.points,
     legStarts: options.legStarts,
     legHidden: options.legHidden,
     pathUserBends,
+    segmentLines,
     strokeColor: options.strokeColor,
+    strokeWidth,
     stops: options.stops,
     showStopLabels,
     stopLabelScale,
@@ -246,17 +326,16 @@ export async function exportWorldMapDrawImage(
   ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height)
   ctx.save()
   ctx.translate(-crop.x, -crop.y)
-  drawRouteOnCanvas(
-    ctx,
-    imageWidth,
-    imageHeight,
-    options.points,
-    options.legStarts,
-    options.legHidden,
+  drawRouteContentOnCanvas(ctx, imageWidth, imageHeight, {
+    points: options.points,
+    legStarts: options.legStarts,
+    legHidden: options.legHidden,
     pathUserBends,
-    options.strokeColor,
-  )
-  drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, options.strokeColor, {
+    segmentLines,
+    strokeColor: options.strokeColor,
+    strokeWidth,
+  })
+  drawStopsOnCanvas(ctx, imageWidth, imageHeight, options.stops, {
     showStopLabels,
     stopLabelScale,
     locale,

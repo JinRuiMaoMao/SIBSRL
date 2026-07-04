@@ -24,6 +24,7 @@ interface IslandMapDrawExportDialogProps {
   stops: readonly WorldMapDrawStop[]
   pathNodes: readonly WorldMapDrawPathNode[]
   points: readonly WorldMapPoint[]
+  segmentCount?: number
   mergeFiles: readonly IslandMapDrawExportMergeFile[]
   sourceSlices: readonly WorldMapDrawDraftSlice[]
   overlayRouteId?: string
@@ -47,6 +48,7 @@ export function IslandMapDrawExportDialog({
   stops,
   pathNodes,
   points,
+  segmentCount = 0,
   mergeFiles,
   sourceSlices,
   overlayRouteId,
@@ -115,7 +117,7 @@ export function IslandMapDrawExportDialog({
 
   if (!open) return null
 
-  const canExportImage = filtered.points.length >= 2 || filtered.stops.length >= 1
+  const canExportImage = filtered.points.length >= 2 || filtered.stops.length >= 1 || segmentCount >= 1
 
   const handleConfirm = () => {
     if (!resolvedRouteId) {

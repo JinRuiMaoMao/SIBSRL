@@ -2,6 +2,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
 import type { WorldMapDrawImportResult } from '../utils/worldMapRouteImport'
 import type { RouteImportMergeResult } from '../utils/worldMapDrawImportMerge'
+import type { WorldMapDrawImageSegment } from '../utils/worldMapDrawImageExport'
 import { RouteEditorDataManager } from './RouteEditorDataManager'
 import { inferSegmentsFromOrderedNodes, sampleRouteEditorPathPoints } from './routeEditorPath'
 import { mergeManyRouteEditorLines } from './routeEditorMerge'
@@ -195,6 +196,28 @@ export function sibsImportToRouteEditorLine(
     routeId: parsed.routeId,
     directionIndex: parsed.directionIndex,
   }
+}
+
+export function routeEditorLineToExportSegmentLines(
+  line: RouteEditorLine,
+  imageWidth: number,
+  imageHeight: number,
+  showPointLines = false,
+): WorldMapDrawImageSegment[] {
+  if (imageWidth <= 0 || imageHeight <= 0) return []
+  const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
+  const segments: WorldMapDrawImageSegment[] = []
+  for (const segment of line.segments) {
+    const from = nodeById.get(segment.fromNodeId)
+    const to = nodeById.get(segment.toNodeId)
+    if (!from || !to) continue
+    if (!showPointLines && from.type === 'point' && to.type === 'point') continue
+    segments.push({
+      from: pixelToNormalized(from.x, from.y, imageWidth, imageHeight),
+      to: pixelToNormalized(to.x, to.y, imageWidth, imageHeight),
+    })
+  }
+  return segments
 }
 
 export function isReferenceEditorExportJson(value: unknown): value is { version: string; lines: unknown[] } {

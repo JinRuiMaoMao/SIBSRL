@@ -25,6 +25,7 @@ import {
   isReferenceEditorExportJson,
   mergeReferenceJsonFiles,
   normalizedToPixel,
+  routeEditorLineToExportSegmentLines,
   routeEditorLineToSibsDraft,
   sibsImportToRouteEditorLine,
 } from '../routeEditor/routeEditorBridge'
@@ -352,16 +353,24 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
       if (selection.includeImage && imageSize) {
         try {
+          const segmentLines = routeEditorLineToExportSegmentLines(
+            editor.line,
+            imageSize.width,
+            imageSize.height,
+            editor.config.showPointLines,
+          )
           await exportWorldMapDrawImage(
             {
-              mapImageUrl: MAP_URLS.general,
+              mapImageUrl: MAP_URLS[layer],
               routeId: resolvedRouteId,
               points: pointsForExport,
               stops: merged.stops.length > 0 ? merged.stops : sibsDraft.stops,
               legStarts: [0],
               legHidden: [],
               pathUserBends: [],
+              segmentLines,
               strokeColor: drawColor,
+              strokeWidth: editor.lineStyle.width,
               showStopLabels,
               stopLabelScale,
               locale,
@@ -413,7 +422,11 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       drawColor,
       drawDirectionIndex,
       drawRouteId,
+      editor.config.showPointLines,
+      editor.line,
+      editor.lineStyle.width,
       imageSize,
+      layer,
       locale,
       overlayRouteId,
       showExportHint,
@@ -895,6 +908,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         stops={sibsDraft?.stops ?? []}
         pathNodes={sibsDraft?.pathNodes ?? []}
         points={sibsDraft?.points ?? []}
+        segmentCount={editor.line.segments.length}
         sourceSlices={exportSourceSlices}
         mergeFiles={exportMergeFiles}
         overlayRouteId={overlayRouteId}
