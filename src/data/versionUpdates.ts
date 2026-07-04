@@ -202,6 +202,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Map-draw shows the save panel right after placing a stop; name fields stack primary locale on top and secondary below.",
           },
           {
+            zh: "map-draw 添加站点时可选择 catalog 位置或手动在地图上点击放置（同名多位置可选）。",
+            en: "Map-draw add-stop mode supports picking a catalog location or placing manually on the map (multiple coords for the same name when present).",
+          },
+          {
             zh: "map-draw PNG 导出：站点白底黑边圆点，走线使用绘制颜色，支持编辑器线段导出。",
             en: "Map-draw PNG export: white stops with black outlines, route in draw color, using editor segment lines when present.",
           },

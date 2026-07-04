@@ -162,3 +162,54 @@ function rankSuggestion(suggestion: DrawStopSuggestion): number {
   if (suggestion.fromCatalog) return 2
   return 1
 }
+
+function catalogStopNameMatches(zh: string, en: string, stop: WorldMapCatalogStop): boolean {
+  const queryZh = zh.trim()
+  const queryEn = en.trim()
+  if (!queryZh && !queryEn) return false
+  const stopZh = stop.name.zh.trim()
+  const stopEn = (stop.name.en || stop.name.zh).trim()
+  if (queryZh && (stopZh === queryZh || stopEn === queryZh)) return true
+  if (queryEn && (stopEn.toLowerCase() === queryEn.toLowerCase() || stopZh === queryEn)) return true
+  return false
+}
+
+/** All catalog entries matching the current stop name (may share a name at different points). */
+export function findMapDrawCatalogLocationsForName(
+  zh: string,
+  en: string,
+  catalog: readonly WorldMapCatalogStop[] | null | undefined,
+): WorldMapCatalogStop[] {
+  if (!catalog?.length) return []
+  const matches = catalog.filter((stop) => catalogStopNameMatches(zh, en, stop))
+  if (matches.length > 0) return matches
+
+  const query = zh.trim() || en.trim()
+  if (query.length < 2) return []
+
+  const seen = new Set<string>()
+  const fuzzy: WorldMapCatalogStop[] = []
+  for (const suggestion of findCatalogStopSuggestions(query, catalog)) {
+    if (!suggestion.point) continue
+    const key = `${suggestion.point[0]}|${suggestion.point[1]}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    fuzzy.push({
+      name: { zh: suggestion.zh, en: suggestion.en },
+      point: suggestion.point,
+    })
+  }
+  return fuzzy
+}
+
+export function findCatalogLocationIndexByPoint(
+  locations: readonly WorldMapCatalogStop[],
+  point: WorldMapPoint | null | undefined,
+): number | null {
+  if (!point || locations.length === 0) return null
+  const index = locations.findIndex(
+    (entry) =>
+      Math.abs(entry.point[0] - point[0]) < 0.0005 && Math.abs(entry.point[1] - point[1]) < 0.0005,
+  )
+  return index >= 0 ? index : null
+}

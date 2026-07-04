@@ -524,6 +524,70 @@ html[data-app-page='map-draw'] #root {
   opacity: 0.65;
 }
 
+.map-draw-stop-location-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.map-draw-stop-location-picker-title {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.map-draw-stop-location-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.map-draw-stop-location-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  width: 100%;
+  padding: 0.42rem 0.55rem;
+  border-radius: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
+  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.map-draw-stop-location-option:hover {
+  border-color: color-mix(in srgb, var(--accent, #f5b942) 45%, transparent);
+}
+
+.map-draw-stop-location-option--active {
+  border-color: color-mix(in srgb, var(--accent, #f5b942) 70%, transparent);
+  background: color-mix(in srgb, var(--accent, #f5b942) 12%, transparent);
+}
+
+.map-draw-stop-location-option-name {
+  font-size: 0.88rem;
+}
+
+.map-draw-stop-location-option-coords {
+  font-size: 0.76rem;
+  opacity: 0.72;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.map-draw-stop-location-option-tag {
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
+.map-draw-stop-location-option--manual {
+  font-size: 0.88rem;
+}
+
 .island-map-route-overlay-wrap--reference-editor {
   pointer-events: none;
 }
