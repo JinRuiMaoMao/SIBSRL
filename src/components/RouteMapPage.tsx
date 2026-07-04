@@ -14,6 +14,7 @@ import {
   type RouteMapViewerDisplay,
 } from '../utils/routeMapViewerDisplay'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
+import { readCachedRouteMapImport, writeCachedRouteMapImport } from '../storage/routeMapImportCache'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import '../styles/routeMapPage.css'
 
@@ -71,6 +72,19 @@ export function RouteMapPage() {
 
   useEffect(() => {
     let cancelled = false
+    const img = new Image()
+    img.onload = () => {
+      if (cancelled || img.naturalWidth <= 0 || img.naturalHeight <= 0) return
+      setImageSize({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+    img.src = mapSrc
+    return () => {
+      cancelled = true
+    }
+  }, [mapSrc])
+
+  useEffect(() => {
+    let cancelled = false
     setLoading(true)
     setImportPayload(null)
     setDisplay(null)
@@ -87,6 +101,10 @@ export function RouteMapPage() {
           payload = response.payload
           break
         }
+      }
+
+      if (!payload) {
+        payload = readCachedRouteMapImport(routeId)
       }
 
       if (cancelled) return
@@ -186,6 +204,7 @@ export function RouteMapPage() {
       }
 
       await saveRouteMapImport(token, routeId, raw)
+      writeCachedRouteMapImport(routeId, raw)
       setImportPayload(raw)
       setStaticImageUrl(null)
       setStaticImageVisible(false)
@@ -199,8 +218,14 @@ export function RouteMapPage() {
     }
   }
 
-  const showInteractiveMap = Boolean(display && (display.points.length >= 2 || display.referenceEditor))
-  const showEmpty = !loading && !showInteractiveMap && !staticImageVisible
+  const showInteractiveMap = Boolean(
+    display &&
+      (display.points.length >= 2 ||
+        display.referenceEditor ||
+        display.stops.length > 0),
+  )
+  const preparingDisplay = Boolean(importPayload && !display)
+  const showEmpty = !loading && !preparingDisplay && !showInteractiveMap && !staticImageVisible
 
   return (
     <div className="route-map-page-root">
@@ -232,9 +257,11 @@ export function RouteMapPage() {
       </header>
 
       <div className="route-map-page-body">
-        {loading ? <p className="route-map-page-status">{t('routeMapLoading')}</p> : null}
+        {loading || preparingDisplay ? (
+          <p className="route-map-page-status">{t('routeMapLoading')}</p>
+        ) : null}
 
-        {!loading && showInteractiveMap && display ? (
+        {!loading && !preparingDisplay && showInteractiveMap && display ? (
           <div className="route-map-page-viewport">
             <IslandMapPanZoomSurface
               src={mapSrc}

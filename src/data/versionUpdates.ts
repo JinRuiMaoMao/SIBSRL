@@ -178,6 +178,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "修复走向图页导入 JSON 后刷新显示「暂无走向图」：预加载地图尺寸后再渲染走线。",
+            en: "Fixed path map page showing empty after refresh when JSON was imported—map dimensions preload before rendering paths.",
+          },
+          {
             zh: "线路详情移除「高度」按钮；「走向」改为交互式地图页，支持缩放与图层切换。",
             en: "Route details no longer show Elevation; Path opens an interactive map with zoom and layer toggle.",
           },
