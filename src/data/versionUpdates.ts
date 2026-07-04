@@ -255,6 +255,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 位置列表「在地图上点击放置」无法切回：编辑站点时可切换 manual/catalog，manual 模式下点击地图可移动站点。",
             en: "Fixed map-draw location picker stuck on catalog—Click the map to place works again when editing a stop; manual mode lets you reposition by clicking the map.",
           },
+          {
+            zh: "map-draw 导出 JSON 新增 editorGraph（节点 id + 线段 from/to），导入时按手动连线恢复，单文件导入替换画布避免重复节点与乱连环线。",
+            en: "Map-draw JSON export adds editorGraph (node ids + segment from/to links) so import restores manual connections; single-file import replaces the canvas to avoid duplicate nodes and spurious loop segments.",
+          },
         ],
       },
     ],

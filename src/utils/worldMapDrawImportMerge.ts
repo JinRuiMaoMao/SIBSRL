@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
+import type { RouteEditorGraphExport } from '../routeEditor/types'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
 import type { WorldMapDrawImportResult } from './worldMapRouteImport'
 import { resolveImportedRouteDraft, snapPathNodesOntoPath } from './worldMapDrawPathEdit'
@@ -35,6 +36,7 @@ export interface MergedRouteImportDraft {
   legStarts: number[]
   pathLegHidden: boolean[]
   pathUserBends: boolean[]
+  editorGraph?: RouteEditorGraphExport
 }
 
 export type CatalogImportMergeResult = {
@@ -144,6 +146,7 @@ function routeDraftFromParsed(
     legStarts: imported.legStarts,
     pathLegHidden: imported.pathLegHidden,
     pathUserBends: imported.pathUserBends,
+    editorGraph: parsed.editorGraph,
   }
 }
 
@@ -207,6 +210,7 @@ export function mergeImportedDrawFiles(
   let legStarts: number[] = [0]
   let pathLegHidden: boolean[] = []
   let pathUserBends: boolean[] = []
+  let editorGraph: RouteEditorGraphExport | undefined
 
   const conflictRouteId = conflict?.routeId
   const conflictGroup = conflictRouteId
@@ -229,6 +233,7 @@ export function mergeImportedDrawFiles(
     legStarts = draft.legStarts
     pathLegHidden = draft.pathLegHidden
     pathUserBends = draft.pathUserBends
+    editorGraph = draft.editorGraph
   } else {
     const pathSource =
       conflictGroup.length > 0 ? pickLongestRouteFile(conflictGroup) : pickLongestRouteFile(routeFiles)
@@ -241,6 +246,7 @@ export function mergeImportedDrawFiles(
       legStarts = draft.legStarts
       pathLegHidden = draft.pathLegHidden
       pathUserBends = draft.pathUserBends
+      editorGraph = draft.editorGraph
     } else {
       const slice = worldMapDrawDraftSliceFromImport(routeFiles[0]!.parsed)
       routeId = slice.routeId
@@ -258,5 +264,6 @@ export function mergeImportedDrawFiles(
     legStarts,
     pathLegHidden,
     pathUserBends,
+    editorGraph,
   }
 }

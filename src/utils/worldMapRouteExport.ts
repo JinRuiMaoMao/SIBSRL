@@ -1,6 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { RouteEditorGraphExport } from '../routeEditor/types'
 import { buildLegStartsFromPathAnchors } from './worldMapDrawPathEdit'
 
 export interface WorldMapRouteExportEditorMeta {
@@ -54,6 +55,8 @@ export interface WorldMapRouteExportPayload {
     legStarts?: number[]
     pathLegHidden?: boolean[]
     userBendIndices?: number[]
+    /** Preserves map-draw editor node links (from/to by editor node id). */
+    editorGraph?: RouteEditorGraphExport
   }>
 }
 
@@ -148,6 +151,7 @@ export function buildWorldMapRouteExportPayload(
   },
   editorMeta: WorldMapRouteExportEditorMeta = {},
   pathNodes: readonly WorldMapDrawPathNode[] = [],
+  editorGraph?: RouteEditorGraphExport,
 ): WorldMapRouteExportPayload | null {
   const canonicalId = resolveWorldMapExportRouteId(routeId, [], fallbackRouteId)
   const exportPoints =
@@ -192,6 +196,22 @@ export function buildWorldMapRouteExportPayload(
   }
   if (editorMeta.userBendIndices && editorMeta.userBendIndices.length > 0 && exportPoints.length > 0) {
     direction.userBendIndices = [...editorMeta.userBendIndices]
+  }
+  if (editorGraph && editorGraph.nodes.length > 0 && editorGraph.segments.length > 0) {
+    direction.editorGraph = {
+      nodes: editorGraph.nodes.map((node) => ({
+        id: node.id,
+        type: node.type,
+        point: [roundCoord(node.point[0]), roundCoord(node.point[1])] as WorldMapPoint,
+        ...(node.chi_name ? { chi_name: node.chi_name } : {}),
+        ...(node.eng_name ? { eng_name: node.eng_name } : {}),
+        ...(node.cornerRadius ? { cornerRadius: node.cornerRadius } : {}),
+      })),
+      segments: editorGraph.segments.map((segment) => ({
+        from: segment.from,
+        to: segment.to,
+      })),
+    }
   }
 
   return {

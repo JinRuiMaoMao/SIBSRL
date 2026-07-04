@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
+import type { RouteEditorGraphExport, RouteEditorGraphExportNode, RouteEditorNodeType } from '../routeEditor/types'
 import { normalizeVirtualNodeKind } from './mapSurfaceKind'
 
 export type WorldMapDrawImportResult =
@@ -22,6 +23,7 @@ export type WorldMapDrawImportResult =
       legStarts: number[]
       pathLegHidden: boolean[]
       userBendIndices: number[]
+      editorGraph?: RouteEditorGraphExport
     }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -154,6 +156,48 @@ function readLegStarts(value: unknown): number[] {
   return starts
 }
 
+function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null {
+  if (!isRecord(value) || !isWorldMapPoint(value.point)) return null
+  const id = typeof value.id === 'number' && Number.isFinite(value.id) ? Math.round(value.id) : null
+  const type: RouteEditorNodeType | null =
+    value.type === 'stop' || value.type === 'point' ? value.type : null
+  if (id == null || !type) return null
+  const chi_name = typeof value.chi_name === 'string' ? value.chi_name : undefined
+  const eng_name = typeof value.eng_name === 'string' ? value.eng_name : undefined
+  const cornerRadius =
+    typeof value.cornerRadius === 'number' && Number.isFinite(value.cornerRadius)
+      ? value.cornerRadius
+      : undefined
+  return {
+    id,
+    type,
+    point: [value.point[0], value.point[1]],
+    ...(chi_name ? { chi_name } : {}),
+    ...(eng_name ? { eng_name } : {}),
+    ...(cornerRadius ? { cornerRadius } : {}),
+  }
+}
+
+function readEditorGraph(value: unknown): RouteEditorGraphExport | null {
+  if (!isRecord(value) || !Array.isArray(value.nodes) || !Array.isArray(value.segments)) return null
+  const nodes: RouteEditorGraphExportNode[] = []
+  for (const entry of value.nodes) {
+    const node = readEditorGraphNode(entry)
+    if (node) nodes.push(node)
+  }
+  if (nodes.length === 0) return null
+  const segments: RouteEditorGraphExport['segments'] = []
+  for (const entry of value.segments) {
+    if (!isRecord(entry)) continue
+    const from = typeof entry.from === 'number' && Number.isFinite(entry.from) ? Math.round(entry.from) : null
+    const to = typeof entry.to === 'number' && Number.isFinite(entry.to) ? Math.round(entry.to) : null
+    if (from == null || to == null) continue
+    segments.push({ from, to })
+  }
+  if (segments.length === 0) return null
+  return { nodes, segments }
+}
+
 function readDirection(value: unknown): {
   directionIndex: number
   points: WorldMapPoint[]
@@ -163,6 +207,7 @@ function readDirection(value: unknown): {
   legStarts: number[]
   pathLegHidden: boolean[]
   userBendIndices: number[]
+  editorGraph?: RouteEditorGraphExport
 } | null {
   if (!isRecord(value)) return null
   const directionIndex =
@@ -178,6 +223,7 @@ function readDirection(value: unknown): {
     legStarts: readLegStarts(value.legStarts),
     pathLegHidden: readBooleanList(value.pathLegHidden),
     userBendIndices: readIndexList(value.userBendIndices),
+    editorGraph: readEditorGraph(value.editorGraph) ?? undefined,
   }
 }
 
@@ -213,12 +259,14 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
   const legStarts = direction.legStarts
   const pathLegHidden = direction.pathLegHidden
   const userBendIndices = direction.userBendIndices
+  const editorGraph = direction.editorGraph
 
   const hasPath = points.length >= 2
   const hasStops = stops.length > 0
   const hasVirtualNodes = virtualNodes.length > 0
   const hasPathNodes = pathNodes.length > 0
-  if (!hasPath && !hasStops && !hasVirtualNodes && !hasPathNodes) return null
+  const hasEditorGraph = Boolean(editorGraph)
+  if (!hasPath && !hasStops && !hasVirtualNodes && !hasPathNodes && !hasEditorGraph) return null
 
   return {
     kind: 'route',
@@ -231,5 +279,6 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
     legStarts,
     pathLegHidden,
     userBendIndices,
+    editorGraph,
   }
 }

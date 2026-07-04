@@ -1,5 +1,7 @@
 /** 参考 Downloads/index 编辑器的数据模型 */
 
+import type { WorldMapPoint } from '../data/worldMapRoutes'
+
 export type RouteEditorNodeType = 'stop' | 'point'
 
 export type RouteEditorMode = 'select' | 'addStop' | 'addPoint' | 'connectLine'
@@ -31,6 +33,21 @@ export interface RouteEditorSegment {
   id: number
   fromNodeId: number
   toNodeId: number
+}
+
+/** Normalized editor graph for SIBS JSON round-trip (preserves manual segment links). */
+export interface RouteEditorGraphExportNode {
+  id: number
+  type: RouteEditorNodeType
+  point: WorldMapPoint
+  chi_name?: string
+  eng_name?: string
+  cornerRadius?: number
+}
+
+export interface RouteEditorGraphExport {
+  nodes: RouteEditorGraphExportNode[]
+  segments: Array<{ from: number; to: number }>
 }
 
 export interface RouteEditorLine {

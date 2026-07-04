@@ -645,6 +645,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
           selection,
           {},
           merged.stops.length > 0 ? sibsDraft.pathNodes : [],
+          sibsDraft.editorGraph,
         )
         if (!payload) {
           showExportHint(t('islandMapDrawExportNeedRoute'))
@@ -695,13 +696,16 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     ) => {
       if (!imageSize) return
 
+      const importSourceCount = files.length + referenceJsonTexts.length
+      const shouldReplaceCanvas = importSourceCount === 1
+
       const referenceLine = mergeReferenceJsonFiles(referenceJsonTexts)
       const merged = files.length > 0 ? mergeImportedDrawFiles(files, resolution, sibsDraft?.stops ?? []) : null
 
       const importLines: RouteEditorLine[] = []
-      if (referenceLine) importLines.push(referenceLine)
-
-      if (merged) {
+      if (referenceLine) {
+        importLines.push(referenceLine)
+      } else if (merged) {
         if (merged.kind === 'catalog') {
           const imported = sibsImportToRouteEditorLine(
             { kind: 'catalog', stops: merged.stops },
@@ -725,13 +729,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         }
       }
 
-      const importLine = mergeManyRouteEditorLines(importLines)
+      const importLine =
+        importLines.length === 0
+          ? null
+          : importLines.length === 1
+            ? importLines[0]!
+            : mergeManyRouteEditorLines(importLines)
       if (!importLine) {
         showExportHint(t('islandMapDrawImportInvalid'))
         return
       }
 
-      editor.mergeFromImport(importLine, merged?.kind === 'route' ? importLine.name : undefined)
+      if (shouldReplaceCanvas) {
+        editor.replaceFromImport(importLine, merged?.kind === 'route' ? importLine.name : undefined)
+      } else {
+        editor.mergeFromImport(importLine, merged?.kind === 'route' ? importLine.name : undefined)
+      }
       setSelectedNodeId(null)
       setConnectPendingNodeId(null)
       setConnectPreview(null)

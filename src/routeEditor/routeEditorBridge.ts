@@ -10,7 +10,7 @@ import {
   sampleRouteEditorPathPoints,
 } from './routeEditorPath'
 import { mergeManyRouteEditorLines } from './routeEditorMerge'
-import type { RouteEditorLine, RouteEditorLineStyle, RouteEditorNode } from './types'
+import type { RouteEditorLine, RouteEditorLineStyle, RouteEditorNode, RouteEditorGraphExport } from './types'
 
 export function pixelToNormalized(
   x: number,
@@ -65,6 +65,105 @@ export interface RouteEditorSibsDraft {
   legStarts: number[]
   pathLegHidden: boolean[]
   userBendIndices: number[]
+  editorGraph?: RouteEditorGraphExport
+}
+
+export function routeEditorLineToEditorGraphExport(
+  line: RouteEditorLine,
+  imageWidth: number,
+  imageHeight: number,
+): RouteEditorGraphExport {
+  return {
+    nodes: line.nodes.map((node) => ({
+      id: node.id,
+      type: node.type,
+      point: pixelToNormalized(node.x, node.y, imageWidth, imageHeight),
+      ...(node.type === 'stop'
+        ? { chi_name: node.chi_name, eng_name: node.eng_name }
+        : node.cornerRadius > 0
+          ? { cornerRadius: node.cornerRadius }
+          : {}),
+    })),
+    segments: line.segments.map((segment) => ({
+      from: segment.fromNodeId,
+      to: segment.toNodeId,
+    })),
+  }
+}
+
+function defaultRouteEditorNodeFields(
+  type: RouteEditorNode['type'],
+  chi_name = '',
+  eng_name = '',
+  cornerRadius = 0,
+): Pick<
+  RouteEditorNode,
+  | 'chi_name'
+  | 'eng_name'
+  | 'labelPosition'
+  | 'labelOffsetX'
+  | 'labelOffsetY'
+  | 'labelWidth'
+  | 'labelHeight'
+  | 'cornerRadius'
+> {
+  return {
+    chi_name: type === 'stop' ? chi_name : '',
+    eng_name: type === 'stop' ? eng_name : '',
+    labelPosition: 'top',
+    labelOffsetX: 0,
+    labelOffsetY: 0,
+    labelWidth: 80,
+    labelHeight: 'auto',
+    cornerRadius: type === 'point' ? cornerRadius : 0,
+  }
+}
+
+export function editorGraphToRouteEditorLine(
+  graph: RouteEditorGraphExport,
+  imageWidth: number,
+  imageHeight: number,
+  routeId: string,
+): RouteEditorLine | null {
+  if (imageWidth <= 0 || imageHeight <= 0 || graph.nodes.length === 0) return null
+
+  const idMap = new Map<number, number>()
+  let nextNodeId = 1
+  const nodes: RouteEditorNode[] = []
+
+  for (const node of graph.nodes) {
+    const pixel = normalizedToPixel(node.point, imageWidth, imageHeight)
+    const mappedId = nextNodeId++
+    idMap.set(node.id, mappedId)
+    nodes.push({
+      id: mappedId,
+      type: node.type,
+      x: pixel.x,
+      y: pixel.y,
+      ...defaultRouteEditorNodeFields(
+        node.type,
+        node.chi_name ?? '',
+        node.eng_name ?? '',
+        node.cornerRadius ?? 0,
+      ),
+    })
+  }
+
+  const segments = graph.segments
+    .map((segment, index) => {
+      const fromNodeId = idMap.get(segment.from)
+      const toNodeId = idMap.get(segment.to)
+      if (fromNodeId == null || toNodeId == null || fromNodeId === toNodeId) return null
+      return { id: index + 1, fromNodeId, toNodeId }
+    })
+    .filter((segment): segment is NonNullable<typeof segment> => segment != null)
+
+  return {
+    id: 1,
+    name: routeId || '导入线路',
+    nodes,
+    segments,
+  }
 }
 
 export function routeEditorLineToSibsDraft(
@@ -83,6 +182,10 @@ export function routeEditorLineToSibsDraft(
     .filter((node) => node.type === 'point')
     .map((node) => routeEditorNodeToPathNode(node, imageWidth, imageHeight))
   const points = sampleRouteEditorPathPoints(line, imageWidth, imageHeight, showPointLines)
+  const editorGraph =
+    line.segments.length > 0
+      ? routeEditorLineToEditorGraphExport(line, imageWidth, imageHeight)
+      : undefined
   void style
   return {
     routeId,
@@ -93,6 +196,7 @@ export function routeEditorLineToSibsDraft(
     legStarts: [0],
     pathLegHidden: [],
     userBendIndices: [],
+    editorGraph,
   }
 }
 
@@ -130,6 +234,22 @@ export function sibsImportToRouteEditorLine(
       line: { id: 1, name: '导入线路', nodes, segments: [] },
       routeId: '',
       directionIndex: 0,
+    }
+  }
+
+  if (parsed.editorGraph) {
+    const line = editorGraphToRouteEditorLine(
+      parsed.editorGraph,
+      imageWidth,
+      imageHeight,
+      parsed.routeId || '导入线路',
+    )
+    if (line) {
+      return {
+        line,
+        routeId: parsed.routeId,
+        directionIndex: parsed.directionIndex,
+      }
     }
   }
 
