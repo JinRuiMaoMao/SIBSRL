@@ -178,16 +178,6 @@ export function IslandMapDrawEditor({
     [drawDirectionIndex, drawRouteId],
   )
 
-  const applyStopSeqToNode = useCallback(
-    (nodeId: number, zh: string, en: string, explicitSeq?: number) => {
-      const seq = resolveRouteStopSeq(zh, en, explicitSeq)
-      if (seq == null) return
-      editor.updateNode(nodeId, { stopSeq: seq })
-      setEditStopSeq(String(seq))
-    },
-    [editor, resolveRouteStopSeq],
-  )
-
   useEffect(() => {
     if (selectedNodeId !== prevSelectedNodeIdRef.current) {
       stopFormDirtyRef.current = false
@@ -394,16 +384,38 @@ export function IslandMapDrawEditor({
 
   const applyStopNameSelection = useCallback(
     (selection: MapDrawStopNameSelection) => {
-      stopFormDirtyRef.current = false
       setEditChiName(selection.zh)
       setEditEngName(selection.en)
-      if (selectedNodeId != null) {
-        applyStopSeqToNode(selectedNodeId, selection.zh, selection.en, selection.seq)
-      } else if (selection.seq != null && selection.seq > 0) {
-        setEditStopSeq(String(selection.seq))
+      const seq = resolveRouteStopSeq(selection.zh, selection.en, selection.seq)
+      if (seq != null && seq > 0) {
+        setEditStopSeq(String(seq))
+      } else {
+        setEditStopSeq('')
       }
+
+      if (selectedNodeId != null) {
+        const updates: {
+          chi_name: string
+          eng_name: string
+          stopSeq?: number | null
+          x?: number
+          y?: number
+        } = {
+          chi_name: selection.zh,
+          eng_name: selection.en,
+          stopSeq: seq != null && seq > 0 ? seq : null,
+        }
+        if (selection.point && imageSize) {
+          const { x, y } = normalizedToPixel(selection.point, imageSize.width, imageSize.height)
+          updates.x = x
+          updates.y = y
+        }
+        editor.updateNode(selectedNodeId, updates)
+      }
+
+      stopFormDirtyRef.current = false
     },
-    [applyStopSeqToNode, selectedNodeId],
+    [editor, imageSize, resolveRouteStopSeq, selectedNodeId],
   )
 
   const resetNewStopCatalogSnap = useCallback(() => {
@@ -429,6 +441,10 @@ export function IslandMapDrawEditor({
       if (!entry) return
       const { x, y } = normalizedToPixel(entry.point, imageSize.width, imageSize.height)
       editor.updateNode(selectedNodeId, { x, y })
+      if (!stopFormDirtyRef.current) {
+        setEditChiName(entry.name.zh)
+        setEditEngName(entry.name.en)
+      }
     },
     [editCatalogLocations, editor, imageSize, selectedNodeId],
   )

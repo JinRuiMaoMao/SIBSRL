@@ -463,6 +463,8 @@ html[data-app-page='map-draw'] #root {
   border-radius: 0.45rem;
   border: 1px solid var(--map-draw-field-border);
   background: var(--map-draw-field-bg);
+  position: relative;
+  z-index: 4;
 }
 
 .map-draw-stop-name-suggestions li button {

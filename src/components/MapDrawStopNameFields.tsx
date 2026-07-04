@@ -59,6 +59,15 @@ export function MapDrawStopNameFields({
     setShowSuggestions(false)
   }
 
+  const handleSuggestionPointerDown = (
+    event: React.PointerEvent<HTMLButtonElement>,
+    suggestion: DrawStopSuggestion,
+  ) => {
+    event.preventDefault()
+    event.stopPropagation()
+    applySuggestion(suggestion)
+  }
+
   const handleEnter = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter' || event.nativeEvent.isComposing) return
     event.preventDefault()
@@ -96,7 +105,7 @@ export function MapDrawStopNameFields({
           setActiveField(field)
           setShowSuggestions(true)
         }}
-        onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
+        onBlur={() => window.setTimeout(() => setShowSuggestions(false), 180)}
         onKeyDown={handleEnter}
         placeholder={placeholder}
         spellCheck={false}
@@ -131,8 +140,7 @@ export function MapDrawStopNameFields({
               <li key={`${suggestion.zh}|${suggestion.en}`} role="option">
                 <button
                   type="button"
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => applySuggestion(suggestion)}
+                  onPointerDown={(event) => handleSuggestionPointerDown(event, suggestion)}
                 >
                   <span className="map-draw-stop-name-suggestion-primary">
                     {primaryLabel}
