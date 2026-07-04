@@ -9,7 +9,10 @@ import {
   mapDrawPointIconRadius,
   mapDrawStopIconRadius,
 } from '../utils/mapDrawNodeScale'
-import { formatRouteEditorStopLabel, routeEditorStopLabelShowsSeq } from '../utils/routeEditorStopLabel'
+import {
+  formatRouteEditorStopLabel,
+  measureRouteEditorStopLabelBoxWidth,
+} from '../utils/routeEditorStopLabel'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -144,13 +147,17 @@ export function ReferenceRouteEditorOverlay({
         const radius = node.type === 'stop' ? stopRadius : pointRadius
         const labelOffsetY = (node.labelOffsetY - 18) * nodeScale
         const stopLabel = node.type === 'stop' ? formatRouteEditorStopLabel(node) : ''
-        const stopLabelHasSeq = node.type === 'stop' && routeEditorStopLabelShowsSeq(node)
-        const labelBoxWidth =
-          Math.max(56, node.labelWidth === 'resize' ? 80 : Number(node.labelWidth) || 80) *
-          nodeScale *
-          (stopLabelHasSeq ? 1 : 0.82)
         const labelBoxHeight = 28 * nodeScale
         const labelPadding = 4 * nodeScale
+        const textInsetX = 2 * nodeScale
+        const labelBoxWidth =
+          node.labelWidth === 'resize'
+            ? measureRouteEditorStopLabelBoxWidth(stopLabel, config.labelFontSize, nodeScale, {
+                minWidth: 56,
+                textInsetX: 2,
+                labelPadding: 4,
+              })
+            : Math.max(56, Number(node.labelWidth) || 80) * nodeScale
 
         return (
           <g
@@ -191,7 +198,7 @@ export function ReferenceRouteEditorOverlay({
                 />
                 <text
                   className="reference-route-editor-label-name"
-                  x={2 * nodeScale}
+                  x={textInsetX}
                   y={-labelBoxHeight / 2 + labelPadding / 2}
                   fontSize={config.labelFontSize}
                   dominantBaseline="middle"

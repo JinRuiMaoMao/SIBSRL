@@ -157,7 +157,7 @@ export class RouteEditorDataManager {
       labelPosition: labelPosition || this.config.defaultLabelPosition,
       labelOffsetX: 0,
       labelOffsetY: 0,
-      labelWidth: 80,
+      labelWidth: 'resize',
       labelHeight: 'auto',
       cornerRadius: 0,
     }

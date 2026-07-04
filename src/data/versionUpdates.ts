@@ -279,6 +279,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 放置站点/节点或手动设置站位置时，走线不再挡住地图点击；设置站点期间禁用双击删线。",
             en: "Map-draw route lines no longer block placing stops or nodes on a line; double-click segment delete is disabled while configuring stop placement.",
           },
+          {
+            zh: "map-draw 站点名标签背景框随站名长短自动调整宽度。",
+            en: "Map-draw stop name label boxes now auto-size to fit each stop name length.",
+          },
         ],
       },
     ],

@@ -118,7 +118,7 @@ function defaultRouteEditorNodeFields(
     labelPosition: 'top',
     labelOffsetX: 0,
     labelOffsetY: 0,
-    labelWidth: 80,
+    labelWidth: 'resize',
     labelHeight: 'auto',
     cornerRadius: type === 'point' ? cornerRadius : 0,
   }
@@ -228,7 +228,7 @@ export function sibsImportToRouteEditorLine(
       labelPosition: 'top',
       labelOffsetX: 0,
       labelOffsetY: 0,
-      labelWidth: 80,
+      labelWidth: 'resize',
       labelHeight: 'auto',
       cornerRadius: 0,
     })
@@ -350,7 +350,7 @@ export function sibsImportToRouteEditorLine(
         labelPosition: 'top',
         labelOffsetX: 0,
         labelOffsetY: 0,
-        labelWidth: 80,
+        labelWidth: 'resize',
         labelHeight: 'auto',
         cornerRadius: 0,
         ...(anchor.stop.seq != null && anchor.stop.seq > 0 ? { stopSeq: anchor.stop.seq } : {}),
@@ -368,7 +368,7 @@ export function sibsImportToRouteEditorLine(
       labelPosition: 'top',
       labelOffsetX: 0,
       labelOffsetY: 0,
-      labelWidth: 80,
+      labelWidth: 'resize',
       labelHeight: 'auto',
       cornerRadius: Number(anchor.pathNode?.label) || 0,
     })
