@@ -49,6 +49,7 @@ import {
   readStoredMapDrawStopLabelScale,
   readStoredMapDrawStopLabelVisible,
 } from '../utils/mapDrawStopLabel'
+import { mapDrawNodeScaleFactor } from '../utils/mapDrawNodeScale'
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
@@ -177,14 +178,15 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   }, [])
 
   useEffect(() => {
+    const scale = imageSize ? mapDrawNodeScaleFactor(imageSize.width, imageSize.height) : 1
     editor.manager.updateConfig({
       showLabelsAlways: showStopLabels,
-      labelFontSize: Math.round(11 * stopLabelScale),
+      labelFontSize: Math.max(8, Math.round(11 * stopLabelScale * scale)),
       showPointLines: true,
       showPointIcons: true,
       showStopIcons: true,
     })
-  }, [editor.manager, showStopLabels, stopLabelScale])
+  }, [editor.manager, imageSize, showStopLabels, stopLabelScale])
 
   useEffect(() => {
     editor.manager.updateLineStyle({ color: drawColor })

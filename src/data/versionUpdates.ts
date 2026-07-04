@@ -224,6 +224,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed map-draw stop rename not sticking—edit fields no longer reset while the canvas updates.",
           },
           {
+            zh: "修复 map-draw 概览图层上站点/拐点显示过大：按细节图(8000²)比例缩放节点与标签。",
+            en: "Fixed oversized stops/nodes on the overview layer—node and label sizes now scale to match the detailed (8000²) map.",
+          },
+          {
             zh: "修复 map-draw 导出：填写导出文件名后仍无法导出（文件名亦作为线路 ID 回退）。",
             en: "Fixed map-draw export blocked after entering a filename—the export name now also resolves the route ID when the header field is empty.",
           },

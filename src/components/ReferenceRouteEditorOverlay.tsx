@@ -4,6 +4,11 @@ import type {
   RouteEditorNode,
   RouteEditorSegment,
 } from '../routeEditor/types'
+import {
+  mapDrawNodeScaleFactor,
+  mapDrawPointIconRadius,
+  mapDrawStopIconRadius,
+} from '../utils/mapDrawNodeScale'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -47,6 +52,10 @@ export function ReferenceRouteEditorOverlay({
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const stops = nodes.filter((node) => node.type === 'stop')
   const dash = strokeDashArray(lineStyle.style)
+  const nodeScale = mapDrawNodeScaleFactor(imageWidth, imageHeight)
+  const stopRadius = mapDrawStopIconRadius(config.stopIconSize, nodeScale)
+  const pointRadius = mapDrawPointIconRadius(config.pointIconSize, nodeScale)
+  const segmentHitWidth = 16 * nodeScale
 
   return (
     <svg
@@ -70,7 +79,7 @@ export function ReferenceRouteEditorOverlay({
               x2={to.x}
               y2={to.y}
               stroke="transparent"
-              strokeWidth={16}
+              strokeWidth={segmentHitWidth}
               vectorEffect="non-scaling-stroke"
               onPointerDown={stopSegmentPointer}
               onDoubleClick={
@@ -123,10 +132,12 @@ export function ReferenceRouteEditorOverlay({
         const isLastStop = node.type === 'stop' && stopIndex === stops.length - 1 && stops.length > 1
         const selected = selectedNodeId === node.id
         const connectPending = connectPendingNodeId === node.id
-        const radius =
-          node.type === 'stop'
-            ? Math.max(6, config.stopIconSize / 2)
-            : Math.max(5, config.pointIconSize / 2)
+        const radius = node.type === 'stop' ? stopRadius : pointRadius
+        const labelOffsetY = (node.labelOffsetY - 18) * nodeScale
+        const labelBoxWidth =
+          Math.max(56, node.labelWidth === 'resize' ? 80 : Number(node.labelWidth) || 80) * nodeScale
+        const labelBoxHeight = 28 * nodeScale
+        const labelPadding = 4 * nodeScale
 
         return (
           <g
@@ -145,21 +156,33 @@ export function ReferenceRouteEditorOverlay({
             {node.type === 'stop' && config.showLabelsAlways && (node.chi_name || node.eng_name) ? (
               <g
                 className={`reference-route-editor-label reference-route-editor-label--${node.labelPosition}`}
-                transform={`translate(${node.x + node.labelOffsetX}, ${node.y + node.labelOffsetY - 18})`}
+                transform={`translate(${node.x + node.labelOffsetX * nodeScale}, ${node.y + labelOffsetY})`}
                 pointerEvents="none"
               >
                 <rect
-                  x={-4}
-                  y={-14}
-                  width={Math.max(56, node.labelWidth === 'resize' ? 80 : Number(node.labelWidth) || 80)}
-                  height={28}
-                  rx={4}
+                  x={-labelPadding}
+                  y={-labelBoxHeight + labelPadding}
+                  width={labelBoxWidth}
+                  height={labelBoxHeight}
+                  rx={4 * nodeScale}
                   className="reference-route-editor-label-bg"
                 />
-                <text className="reference-route-editor-label-seq" x={2} y={-1}>
+                <text
+                  className="reference-route-editor-label-seq"
+                  x={2 * nodeScale}
+                  y={-labelBoxHeight / 2 + labelPadding / 2}
+                  fontSize={config.labelFontSize}
+                  dominantBaseline="middle"
+                >
                   {stopIndex + 1}
                 </text>
-                <text className="reference-route-editor-label-name" x={16} y={-1}>
+                <text
+                  className="reference-route-editor-label-name"
+                  x={16 * nodeScale}
+                  y={-labelBoxHeight / 2 + labelPadding / 2}
+                  fontSize={config.labelFontSize}
+                  dominantBaseline="middle"
+                >
                   {node.chi_name || node.eng_name}
                 </text>
               </g>
@@ -172,7 +195,7 @@ export function ReferenceRouteEditorOverlay({
         <circle
           cx={previewNode.x}
           cy={previewNode.y}
-          r={previewNode.type === 'stop' ? 8 : 6}
+          r={previewNode.type === 'stop' ? stopRadius : pointRadius}
           className={`reference-route-editor-preview reference-route-editor-preview--${previewNode.type}`}
         />
       ) : null}
