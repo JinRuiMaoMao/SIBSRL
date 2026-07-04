@@ -5,8 +5,8 @@ import type {
   RouteEditorLineStyle,
 } from '../routeEditor/types'
 import {
-  DEFAULT_ROUTE_EDITOR_CONFIG,
   DEFAULT_ROUTE_EDITOR_LINE_STYLE,
+  ROUTE_MAP_VIEWER_EDITOR_CONFIG,
 } from '../routeEditor/types'
 import { sibsImportToRouteEditorLine } from '../routeEditor/routeEditorBridge'
 import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
@@ -62,7 +62,7 @@ export function buildRouteMapViewerDisplay(
         nodes: editorImport.line.nodes,
         segments: editorImport.line.segments,
         lineStyle: DEFAULT_ROUTE_EDITOR_LINE_STYLE,
-        config: DEFAULT_ROUTE_EDITOR_CONFIG,
+        config: ROUTE_MAP_VIEWER_EDITOR_CONFIG,
       },
     }
     return { ...display, fitPoints: collectFitPoints(display) }

@@ -214,6 +214,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed path map reverting to legacy route after refresh when imported JSON was present; mini-map now renders the same imported path as the path map page.",
           },
           {
+            zh: "走向图/小地图只读查看导入路线时隐藏路径折点节点，仅保留走线与站点标签。",
+            en: "Read-only imported routes on the path map and mini-map hide path bend nodes; only the route line and stop labels remain visible.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },

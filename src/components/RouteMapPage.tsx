@@ -407,7 +407,7 @@ export function RouteMapPage() {
               draftPoints={display.referenceEditor ? [] : display.points}
               draftStopPoints={display.referenceEditor ? [] : display.stopPoints}
               draftStops={interactiveDrawStops}
-              draftPathNodes={display.pathNodes}
+              draftPathNodes={display.referenceEditor ? [] : display.pathNodes}
               draftRouteNumber={display.routeNumber}
               pathLegStarts={display.legStarts}
               pathLegHidden={display.pathLegHidden}

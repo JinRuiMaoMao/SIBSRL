@@ -111,3 +111,9 @@ export const DEFAULT_ROUTE_EDITOR_LINE_STYLE: RouteEditorLineStyle = {
   width: 3,
   style: 'solid',
 }
+
+/** Read-only route-map / mini-map: hide path bend nodes, keep route line and stop labels. */
+export const ROUTE_MAP_VIEWER_EDITOR_CONFIG: RouteEditorConfig = {
+  ...DEFAULT_ROUTE_EDITOR_CONFIG,
+  showPointIcons: false,
+}

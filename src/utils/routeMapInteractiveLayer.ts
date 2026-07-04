@@ -1,7 +1,8 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteStop } from '../types/route'
-import type { WorldMapDrawStop } from '../types/worldMapDraw'
+import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
 import type { RouteDetailMapStop } from './routeDetailMapStops'
+import { ROUTE_MAP_VIEWER_EDITOR_CONFIG } from '../routeEditor/types'
 import { userBendIndicesToFlags, type RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): RouteDetailMapStop {
@@ -36,6 +37,7 @@ export interface RouteMapInteractiveLayerState {
   selectedReferenceNodeId: number | null
   draftPoints: WorldMapPoint[]
   draftStopPoints: RouteMapViewerDisplay['stopPoints']
+  draftPathNodes: WorldMapDrawPathNode[]
   pathUserBends: boolean[]
   referenceEditorProps: {
     nodes: NonNullable<RouteMapViewerDisplay['referenceEditor']>['nodes']
@@ -91,13 +93,14 @@ export function buildRouteMapInteractiveLayerState(
     selectedReferenceNodeId: Number.isFinite(selectedReferenceNodeId) ? selectedReferenceNodeId : null,
     draftPoints: display.referenceEditor ? [] : display.points,
     draftStopPoints: display.referenceEditor ? [] : display.stopPoints,
+    draftPathNodes: [],
     pathUserBends: userBendIndicesToFlags(display.userBendIndices, display.points.length),
     referenceEditorProps: display.referenceEditor
       ? {
           nodes: display.referenceEditor.nodes,
           segments: display.referenceEditor.segments,
           lineStyle: display.referenceEditor.lineStyle,
-          config: display.referenceEditor.config,
+          config: ROUTE_MAP_VIEWER_EDITOR_CONFIG,
           segmentPassthrough: true,
           allowSegmentDelete: false,
           onNodeClick: referenceStopDetails.length ? onReferenceStopNodeClick : undefined,

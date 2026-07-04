@@ -94,7 +94,7 @@ export function IslandMapViewer() {
         draftPoints: interactiveLayer.draftPoints,
         draftStopPoints: importedPath!.stopPoints,
         draftStops: interactiveLayer.interactiveDrawStops,
-        draftPathNodes: importedPath!.pathNodes,
+        draftPathNodes: interactiveLayer.draftPathNodes,
         draftRouteNumber: importedPath!.routeNumber,
         pathLegStarts: importedPath!.legStarts,
         pathLegHidden: importedPath!.pathLegHidden,
