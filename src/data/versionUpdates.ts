@@ -215,6 +215,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 站名输入支持自动匹配（当前线路站点、world-map-stops catalog、全库站点）；匹配 catalog 后点击地图可定位到坐标。",
             en: "Map-draw stop name inputs autocomplete from route stops, world-map-stops catalog, and the full stop index; catalog matches snap placement on click.",
           },
+          {
+            zh: "修复 map-draw 切换 Layers 后站点/线段错位：概览图(4000²)与详细图(8000²)切换时自动按比例换算节点坐标。",
+            en: "Fixed map-draw stop/path misalignment when switching Layers—node coords now rescale between overview (4000²) and detailed (8000²) maps.",
+          },
         ],
       },
     ],

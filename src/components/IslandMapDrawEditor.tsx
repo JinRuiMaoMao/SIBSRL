@@ -114,6 +114,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const savedViewRef = useRef<NormalizedMapView | null>(null)
+  const prevImageSizeRef = useRef<MapImageSize | null>(null)
 
   const selectedNode = selectedNodeId != null ? editor.manager.getNodeById(selectedNodeId) : null
 
@@ -123,6 +124,15 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       .then(setStopCatalog)
       .catch(() => setStopCatalog([]))
   }, [isLoggedIn])
+
+  useEffect(() => {
+    if (!imageSize) return
+    const prev = prevImageSizeRef.current
+    if (prev && (prev.width !== imageSize.width || prev.height !== imageSize.height)) {
+      editor.manager.rescaleNodes(imageSize.width / prev.width, imageSize.height / prev.height)
+    }
+    prevImageSizeRef.current = imageSize
+  }, [editor.manager, imageSize])
 
   useEffect(() => {
     if (!selectedNode) {

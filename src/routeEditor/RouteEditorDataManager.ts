@@ -197,6 +197,21 @@ export class RouteEditorDataManager {
     return true
   }
 
+  /** 切换地图图层时按分辨率比例缩放节点坐标（不写入撤销栈） */
+  rescaleNodes(scaleX: number, scaleY: number) {
+    if (scaleX === 1 && scaleY === 1) return
+    if (this.line.nodes.length === 0) return
+    const scale = Math.min(Math.abs(scaleX), Math.abs(scaleY))
+    for (const node of this.line.nodes) {
+      node.x = Math.round(node.x * scaleX)
+      node.y = Math.round(node.y * scaleY)
+      if (node.cornerRadius > 0) {
+        node.cornerRadius = Math.max(0, Math.min(100, Math.round(node.cornerRadius * scale)))
+      }
+    }
+    this.emit('change')
+  }
+
   private removeSegmentsForNode(nodeId: number) {
     this.line.segments = this.line.segments.filter(
       (segment) => segment.fromNodeId !== nodeId && segment.toNodeId !== nodeId,
