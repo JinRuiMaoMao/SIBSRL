@@ -28,7 +28,9 @@ function applyCatalogSeqToDrawStops(
   if (!catalogStops.length) return [...stops]
   return stops.map((stop, index) => {
     const matched = catalogStops.find((entry) => routeMapStopNamesMatch(entry.stop.name, stop.name))
-    return matched ? { ...stop, seq: matched.seq } : { ...stop, seq: stop.seq ?? index + 1 }
+    return matched
+      ? { ...stop, seq: stop.seq ?? matched.seq }
+      : { ...stop, seq: stop.seq ?? index + 1 }
   })
 }
 
@@ -93,9 +95,16 @@ export function buildRouteMapInteractiveLayerState(
       ? Number.parseInt(selectedStopId.slice('ref-stop-'.length), 10)
       : null
 
+  const trajectoryStops =
+    display.referenceEditor && referenceStopDetails.length > 0
+      ? referenceStopDetails
+      : interactiveStopDetails
+
   const trajectoryPath =
-    imageSize && catalogStops.length > 0
-      ? buildRouteMapTrajectoryPath(display, imageSize, catalogStops)
+    imageSize && trajectoryStops.length > 0
+      ? buildRouteMapTrajectoryPath(display, imageSize, trajectoryStops, {
+          preserveStopOrder: Boolean(display.referenceEditor),
+        })
       : []
 
   const editorNodes =

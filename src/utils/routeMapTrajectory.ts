@@ -56,11 +56,14 @@ export function buildRouteMapTrajectoryPath(
   display: RouteMapViewerDisplay,
   imageSize: { width: number; height: number },
   catalogStops: readonly RouteDetailMapStop[],
+  options?: { preserveStopOrder?: boolean },
 ): WorldMapPoint[] {
   const path = resolveRouteMapDisplayPathPoints(display, imageSize)
   if (path.length < 2) return path
 
-  const orderedStops = [...catalogStops].sort((a, b) => a.seq - b.seq)
+  const orderedStops = options?.preserveStopOrder
+    ? [...catalogStops]
+    : [...catalogStops].sort((a, b) => a.seq - b.seq)
   if (orderedStops.length === 0) return path
 
   const stopIndices = orderedStops.map((stop) => closestPathIndex(path, stop.point))

@@ -27,6 +27,7 @@ export function applyCatalogStopSeqToEditorNodes(
 ): RouteEditorNode[] {
   return nodes.map((node) => {
     if (node.type !== 'stop') return node
+    if (node.stopSeq != null && node.stopSeq > 0) return node
     const matched = matchCatalogStopForEditorNode(node, catalogStops)
     if (!matched) return node
     return { ...node, stopSeq: matched.seq }
@@ -43,7 +44,7 @@ export function buildReferenceStopDetailsFromCatalog(
     const matched = matchCatalogStopForEditorNode(node, catalogStops)
     return {
       id: `ref-stop-${node.id}`,
-      seq: matched?.seq ?? node.stopSeq ?? index + 1,
+      seq: node.stopSeq ?? matched?.seq ?? index + 1,
       stop: matched?.stop ?? { name: { zh: node.chi_name, en: node.eng_name } },
       point: [node.x / imageSize.width, node.y / imageSize.height],
     }

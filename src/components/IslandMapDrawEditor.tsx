@@ -146,6 +146,8 @@ export function IslandMapDrawEditor({
   const connectPendingRef = useRef<number | null>(null)
   const lastPlacedStopIdRef = useRef<number | null>(null)
   const pendingNewStopSeqRef = useRef<number | null>(null)
+  const stopSeqFormDirtyRef = useRef(false)
+  const prevSelectedNodeIdRef = useRef<number | null>(null)
 
   const selectedNode = selectedNodeId != null ? editor.manager.getNodeById(selectedNodeId) : null
   const showStopEditPanel =
@@ -187,6 +189,10 @@ export function IslandMapDrawEditor({
   )
 
   useEffect(() => {
+    if (selectedNodeId !== prevSelectedNodeIdRef.current) {
+      stopSeqFormDirtyRef.current = false
+      prevSelectedNodeIdRef.current = selectedNodeId
+    }
     if (selectedNodeId == null) {
       setEditChiName('')
       setEditEngName('')
@@ -200,18 +206,23 @@ export function IslandMapDrawEditor({
     setEditChiName(node.chi_name)
     setEditEngName(node.eng_name)
     setEditCornerRadius(node.cornerRadius)
-    if (node.type === 'stop' && (node.stopSeq == null || node.stopSeq <= 0)) {
-      const seq = resolveRouteStopSeq(node.chi_name, node.eng_name)
-      if (seq != null) {
-        editor.updateNode(selectedNodeId, { stopSeq: seq })
-        setEditStopSeq(String(seq))
-        setEditLabelPosition(node.labelPosition)
-        return
+    if (node.type === 'stop') {
+      if (!stopSeqFormDirtyRef.current) {
+        if (node.stopSeq != null && node.stopSeq > 0) {
+          setEditStopSeq(String(node.stopSeq))
+        } else {
+          const suggestedSeq = resolveRouteStopSeq(node.chi_name, node.eng_name)
+          setEditStopSeq(suggestedSeq != null ? String(suggestedSeq) : '')
+        }
       }
+      setEditLabelPosition(node.labelPosition)
+      return
     }
-    setEditStopSeq(node.stopSeq != null && node.stopSeq > 0 ? String(node.stopSeq) : '')
-    setEditLabelPosition(node.type === 'stop' ? node.labelPosition : 'top')
-  }, [editor, editor.manager, resolveRouteStopSeq, selectedNodeId])
+    if (!stopSeqFormDirtyRef.current) {
+      setEditStopSeq('')
+    }
+    setEditLabelPosition('top')
+  }, [editor.manager, resolveRouteStopSeq, selectedNodeId])
 
   useEffect(() => {
     if (!isLoggedIn) return
@@ -588,6 +599,7 @@ export function IslandMapDrawEditor({
           }
         : {}),
     })
+    stopSeqFormDirtyRef.current = false
     if (editorMode === 'addStop' && selectedNode.type === 'stop') {
       showExportHint(t('mapDrawStopNameApplied'))
       setSelectedNodeId(null)
@@ -1124,7 +1136,10 @@ export function IslandMapDrawEditor({
                         step={1}
                         value={editStopSeq}
                         placeholder={t('mapDrawStopSeqPlaceholder')}
-                        onChange={(event) => setEditStopSeq(event.target.value)}
+                        onChange={(event) => {
+                          stopSeqFormDirtyRef.current = true
+                          setEditStopSeq(event.target.value)
+                        }}
                         onKeyDown={(event) => {
                           if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
                             event.preventDefault()
