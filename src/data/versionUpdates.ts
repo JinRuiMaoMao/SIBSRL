@@ -205,6 +205,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "双击站间线段删除该段；导入线路 JSON 时走线为站间直线，虚拟节点不再自动串入路径。",
             en: "Double-click a leg to delete it; imported route JSON uses straight stop-to-stop lines—virtual nodes are not auto-wired into the path.",
           },
+          {
+            zh: "道路拐角圆角按弯折角度与局部曲率绘制；导入完整走线时保留路径点与 leg 边界并沿道路圆滑显示。",
+            en: "Road corners use fillets sized from bend angle and local curvature; imports with a full trace keep path points and leg boundaries with smooth display.",
+          },
+          {
+            zh: "PNG 导出裁剪范围按实际绘制像素计算，包含圆角外凸、线帽与站名文字。",
+            en: "PNG export crop bounds follow painted pixels, including arc bulge, stroke caps, and stop labels.",
+          },
         ],
         fixes: [
           {
@@ -214,6 +222,40 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: "清空绘制时可分别移除站点、虚拟节点或走线；修复删除线段后误进添加站点、连线后无法结束选点等问题。",
             en: "Clear dialog can remove stops, virtual nodes, or path separately; fixed leg delete opening stop form and trace selection not clearing.",
+          },
+          {
+            zh: "修复地图放大后容易误点邻近站点/节点的问题。",
+            en: "Fixed mis-clicks on nearby stops or nodes when the map is zoomed in.",
+          },
+          {
+            zh: "修复导入带完整走线的 JSON 后出现断线：保留导出 leg 边界与路径点，圆角渲染不再因重复点或分段绘制而断开。",
+            en: "Fixed broken path segments after importing JSON with a full trace—exported leg boundaries and points are kept, and corner smoothing no longer gaps on duplicate points or per-leg splits.",
+          },
+          {
+            zh: "修复 PNG 导出裁剪过紧、切掉圆角弧线、线帽与站名的问题。",
+            en: "Fixed PNG export cropping too tightly and clipping corner arcs, stroke caps, and stop labels.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "网站",
+          en: "Site",
+        },
+        additions: [
+          {
+            zh: "已注册并登录的用户可直接使用地图绘制全套工具；未登录点击「绘制」会提示注册。",
+            en: "Registered signed-in users get full map draw tools; guests who tap Draw see a sign-in prompt.",
+          },
+          {
+            zh: "地图绘制支持一次选择多个 JSON 导入合并（catalog 站点与线路走线，路径冲突时可选择保留方案）。",
+            en: "Map draw supports multi-file JSON import merge (catalog stops plus route paths, with conflict resolution when paths differ).",
+          },
+        ],
+        fixes: [
+          {
+            zh: "GitHub Pages 改为手动部署：在 Actions 中运行「Deploy static site to Pages」，避免连续推送触发部署冲突通知。",
+            en: "GitHub Pages deploy is manual only—run Deploy static site to Pages under Actions to avoid conflict emails from rapid pushes.",
           },
         ],
       },
