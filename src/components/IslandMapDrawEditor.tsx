@@ -430,12 +430,12 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     async (selection: WorldMapRouteExportSelection, merged: WorldMapDrawDraftSlice) => {
       if (!sibsDraft) return
       const resolvedRouteId = resolveWorldMapExportRouteId(
-        merged.routeId || drawRouteId,
+        merged.routeId || drawRouteId || selection.exportBaseName,
         [],
         overlayRouteId,
       )
       if (!resolvedRouteId) {
-        showExportHint(t('islandMapDrawExportNeedRouteId'))
+        showExportHint(t('islandMapDrawExportNeedFileName'))
         return
       }
 
@@ -484,7 +484,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       const exportJson = selection.includeStops || selection.includePathNodes || selection.includePath
       if (exportJson) {
         const payload = buildWorldMapRouteExportPayload(
-          merged.routeId || drawRouteId,
+          resolvedRouteId,
           merged.directionIndex ?? drawDirectionIndex,
           pointsForExport,
           merged.stops.length > 0 ? merged.stops : sibsDraft.stops,

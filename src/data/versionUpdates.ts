@@ -231,6 +231,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 新增「画线」模式：仅在该模式下点击节点连线；选择模式用于编辑节点。修复站名无法保存/改名，添加站点后按 Enter 应用站名。",
             en: "Map-draw adds Connect lines mode for node linking only in that mode; Select mode is for editing. Fixed stop rename not sticking; press Enter to apply stop names after placing.",
           },
+          {
+            zh: "修复 map-draw 导出：填写导出文件名后仍提示无法导出的问题（文件名亦作为线路 ID 回退）。",
+            en: "Fixed map-draw export blocked after entering a filename—the export name now also resolves the route ID when the header field is empty.",
+          },
         ],
       },
     ],

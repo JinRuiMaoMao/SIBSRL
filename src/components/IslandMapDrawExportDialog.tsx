@@ -89,11 +89,11 @@ export function IslandMapDrawExportDialog({
   const resolvedRouteId = useMemo(
     () =>
       resolveWorldMapExportRouteId(
-        exportRouteId || routeId || filtered.routeId,
+        exportRouteId || routeId || filtered.routeId || exportBaseName.trim(),
         [],
         overlayRouteId,
       ),
-    [exportRouteId, filtered.routeId, overlayRouteId, routeId],
+    [exportBaseName, exportRouteId, filtered.routeId, overlayRouteId, routeId],
   )
 
   const canIncludePath = filtered.points.length >= 2 || filtered.stops.length >= 2
@@ -120,8 +120,9 @@ export function IslandMapDrawExportDialog({
   const canExportImage = filtered.points.length >= 2 || filtered.stops.length >= 1 || segmentCount >= 1
 
   const handleConfirm = () => {
+    const trimmedFileName = exportBaseName.trim()
     if (!resolvedRouteId) {
-      setError(t('islandMapDrawExportNeedRouteId'))
+      setError(t('islandMapDrawExportNeedFileName'))
       return
     }
     if (!includeStops && !includePathNodes && !includePath && !includeImage) {
@@ -150,7 +151,7 @@ export function IslandMapDrawExportDialog({
         includePathNodes,
         includePath,
         includeImage,
-        exportBaseName: exportBaseName.trim() || resolvedRouteId,
+        exportBaseName: trimmedFileName || resolvedRouteId,
       },
       filtered,
     )
@@ -199,7 +200,7 @@ export function IslandMapDrawExportDialog({
           </p>
         ) : (
           <p className="island-map-export-dialog-route island-map-export-dialog-route--missing">
-            {t('islandMapDrawExportNeedRouteId')}
+            {t('islandMapDrawExportNeedFileName')}
           </p>
         )}
 
