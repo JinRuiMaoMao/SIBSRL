@@ -1,5 +1,5 @@
-# GitHub Pages: build with /SIBSRL/ base, deploy static artifact.
-# Also: Actions → Deploy static site to Pages → Run workflow (manual).
+# GitHub Pages: push verifies the /SIBSRL/ build; branch Pages deploy publishes master.
+# Manual run still uploads the prepared _site artifact via GitHub Actions Pages.
 name: Deploy static site to Pages
 
 on:
@@ -13,15 +13,12 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: pages-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,15 +40,24 @@ jobs:
       - name: Prepare Pages artifact
         run: node scripts/prepare-gh-pages-artifact.mjs _site
 
+      - name: Upload site artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
+    steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
-      - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
