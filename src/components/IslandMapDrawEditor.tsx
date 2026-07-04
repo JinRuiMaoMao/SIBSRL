@@ -177,6 +177,9 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     editor.manager.updateConfig({
       showLabelsAlways: showStopLabels,
       labelFontSize: Math.round(11 * stopLabelScale),
+      showPointLines: true,
+      showPointIcons: true,
+      showStopIcons: true,
     })
   }, [editor.manager, showStopLabels, stopLabelScale])
 
@@ -204,7 +207,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       drawDirectionIndex,
       editor.config.showPointLines,
     )
-  }, [drawColor, drawDirectionIndex, drawRouteId, editor.config.showPointLines, editor.line, editor.lineStyle, imageSize])
+  }, [drawColor, drawDirectionIndex, drawRouteId, editor.line, editor.lineStyle, imageSize])
 
   const enterEditorMode = useCallback((mode: RouteEditorMode) => {
     setEditorMode(mode)

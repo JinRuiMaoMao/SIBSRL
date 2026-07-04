@@ -60,7 +60,6 @@ export function ReferenceRouteEditorOverlay({
         const from = nodeById.get(segment.fromNodeId)
         const to = nodeById.get(segment.toNodeId)
         if (!from || !to) return null
-        if (!config.showPointLines && from.type === 'point' && to.type === 'point') return null
 
         return (
           <g key={segment.id} className="reference-route-editor-segment">

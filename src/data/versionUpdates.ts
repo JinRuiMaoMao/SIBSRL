@@ -223,6 +223,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 连线与线段交互：连接后可继续连下一段、点击空白取消选中、双击线段删除。",
             en: "Fixed map-draw segment UX: chain connections, clear selection on empty-map click, and double-click segment delete.",
           },
+          {
+            zh: "map-draw 拐点与站点均可互连，编辑器始终显示拐点线段。",
+            en: "Map-draw bend points link to stops and each other; point segments always show in the editor.",
+          },
         ],
       },
     ],
