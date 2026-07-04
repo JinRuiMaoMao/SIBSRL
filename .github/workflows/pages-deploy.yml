@@ -1,5 +1,5 @@
-# GitHub Pages: push verifies the /SIBSRL/ build; branch Pages deploy publishes master.
-# Manual run still uploads the prepared _site artifact via GitHub Actions Pages.
+# GitHub Pages: build with /SIBSRL/ base and deploy via GitHub Actions.
+# If "pages build and deployment" also fails on push, set repo Pages source to GitHub Actions only.
 name: Deploy static site to Pages
 
 on:
@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-${{ github.workflow }}-${{ github.ref }}
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -41,38 +41,49 @@ jobs:
         run: node scripts/prepare-gh-pages-artifact.mjs _site
 
       - name: Upload site artifact
-        if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
   deploy:
-    if: github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry2.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
+      - name: Wait for competing Pages deploy
+        run: sleep 60
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         continue-on-error: true
 
-      - name: Wait for competing Pages deploy
+      - name: Wait before retry
         if: steps.deployment.outcome == 'failure'
-        run: sleep 45
+        run: sleep 60
 
-      - name: Deploy to GitHub Pages (retry)
+      - name: Deploy to GitHub Pages (retry 1)
         id: deployment_retry
         if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before final retry
+        if: steps.deployment.outcome == 'failure' && steps.deployment_retry.outcome == 'failure'
+        run: sleep 60
+
+      - name: Deploy to GitHub Pages (retry 2)
+        id: deployment_retry2
+        if: steps.deployment.outcome == 'failure' && steps.deployment_retry.outcome == 'failure'
+        uses: actions/deploy-pages@v4
 
       - name: Fail if all deploy attempts failed
-        if: steps.deployment.outcome == 'failure' && steps.deployment_retry.outcome == 'failure'
+        if: steps.deployment.outcome == 'failure' && steps.deployment_retry.outcome == 'failure' && steps.deployment_retry2.outcome == 'failure'
         run: exit 1
