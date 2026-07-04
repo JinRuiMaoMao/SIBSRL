@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getMapDrawPageHref } from '../utils/appPage'
 import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
+import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { routeDetailMapStopToDrawStop } from '../utils/routeDetailMapStops'
 import { ExpandIcon, HideIcon, MinimizeIcon, ShowIcon } from './islandMapControlIcons'
 import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
@@ -24,36 +25,107 @@ export function IslandMapViewer() {
   const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
+  const importedPath = routeOverlay?.importedPath ?? null
   const [expanded, setExpanded] = useState(false)
   const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
+  const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
 
   const mapSrc = MAP_URLS[layer]
-  const surfaceRouteOverlay = routeOverlay
-    ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
-    : null
+  const surfaceRouteOverlay =
+    routeOverlay && !importedPath
+      ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
+      : null
 
-  const draftStops = useMemo(
-    () => (routeOverlay?.stops?.length ? routeOverlay.stops.map(routeDetailMapStopToDrawStop) : []),
+  const catalogStops = useMemo(
+    () => (routeOverlay?.stops?.length ? routeOverlay.stops : []),
     [routeOverlay?.stops],
   )
-
-  const selectedStop = useMemo(() => {
-    if (!selectedStopId || !routeOverlay?.stops?.length) return null
-    return routeOverlay.stops.find((stop) => stop.id === selectedStopId) ?? null
-  }, [routeOverlay?.stops, selectedStopId])
 
   const handleStopClick = useCallback((stopId: string) => {
     setSelectedStopId((current) => (current === stopId ? null : stopId))
   }, [])
 
+  const handleReferenceStopNodeClick = useCallback(
+    (nodeId: number) => {
+      handleStopClick(`ref-stop-${nodeId}`)
+    },
+    [handleStopClick],
+  )
+
+  const interactiveLayer = useMemo(() => {
+    if (!importedPath) return null
+    return buildRouteMapInteractiveLayerState(
+      { ...importedPath, fitPoints: routeOverlay?.points ?? importedPath.points },
+      imageSize,
+      catalogStops,
+      selectedStopId,
+      handleReferenceStopNodeClick,
+    )
+  }, [
+    catalogStops,
+    handleReferenceStopNodeClick,
+    imageSize,
+    importedPath,
+    routeOverlay?.points,
+    selectedStopId,
+  ])
+
+  const draftStops = useMemo(() => {
+    if (interactiveLayer) return interactiveLayer.interactiveDrawStops
+    return catalogStops.length ? catalogStops.map(routeDetailMapStopToDrawStop) : []
+  }, [catalogStops, interactiveLayer])
+
+  const selectedStop = useMemo(() => {
+    if (!selectedStopId) return null
+    if (interactiveLayer) {
+      return interactiveLayer.interactiveStopDetails.find((stop) => stop.id === selectedStopId) ?? null
+    }
+    return catalogStops.find((stop) => stop.id === selectedStopId) ?? null
+  }, [catalogStops, interactiveLayer, selectedStopId])
+
   const closeStopDetail = useCallback(() => setSelectedStopId(null), [])
 
-  const stopSurfaceProps =
-    draftStops.length > 0
+  const importedSurfaceProps = interactiveLayer
+    ? {
+        draftPoints: interactiveLayer.draftPoints,
+        draftStopPoints: importedPath!.stopPoints,
+        draftStops: interactiveLayer.interactiveDrawStops,
+        draftPathNodes: importedPath!.pathNodes,
+        draftRouteNumber: importedPath!.routeNumber,
+        pathLegStarts: importedPath!.legStarts,
+        pathLegHidden: importedPath!.pathLegHidden,
+        pathUserBends: interactiveLayer.pathUserBends,
+        referenceEditor: interactiveLayer.referenceEditorProps
+          ? {
+              nodes: interactiveLayer.referenceEditorProps.nodes,
+              segments: interactiveLayer.referenceEditorProps.segments,
+              lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
+              config: interactiveLayer.referenceEditorProps.config,
+              selectedNodeId: interactiveLayer.referenceEditorProps.selectedNodeId,
+              connectPendingNodeId: null,
+              connectPreview: null,
+              previewNode: null,
+              segmentPassthrough: interactiveLayer.referenceEditorProps.segmentPassthrough,
+              allowSegmentDelete: interactiveLayer.referenceEditorProps.allowSegmentDelete,
+              onNodeClick: interactiveLayer.referenceEditorProps.onNodeClick,
+            }
+          : null,
+      }
+    : {}
+
+  const stopSurfaceProps = importedPath
+    ? {
+        ...importedSurfaceProps,
+        draftStops,
+        selectedStopId,
+        onStopClick: interactiveLayer?.stopClickEnabled ? handleStopClick : undefined,
+        showStopLabels: true,
+      }
+    : draftStops.length > 0
       ? {
           draftStops,
           selectedStopId,
@@ -73,7 +145,7 @@ export function IslandMapViewer() {
 
   useEffect(() => {
     setSelectedStopId(null)
-  }, [routeOverlay?.directionIndex, routeOverlay?.routeId])
+  }, [routeOverlay?.directionIndex, routeOverlay?.importedPath, routeOverlay?.routeId])
 
   const handleViewChange = useCallback((next: NormalizedMapView) => {
     setMapView(next)
@@ -112,6 +184,20 @@ export function IslandMapViewer() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [closeFullscreen, expanded])
 
+  const renderSurface = (mode: 'widget' | 'fullscreen', className: string) => (
+    <IslandMapPanZoomSurface
+      src={mapSrc}
+      mode={mode}
+      className={className}
+      view={mapView}
+      onViewChange={handleViewChange}
+      routeOverlay={surfaceRouteOverlay}
+      maxZoomRatio={8}
+      onImageSizeChange={setImageSize}
+      {...stopSurfaceProps}
+    />
+  )
+
   const node = expanded ? (
     <div
       className="island-map island-map--fullscreen"
@@ -120,16 +206,7 @@ export function IslandMapViewer() {
       aria-label={t('islandMapAria')}
     >
       <div className="island-map-viewport-shell island-map-viewport-shell--fullscreen">
-        <IslandMapPanZoomSurface
-          src={mapSrc}
-          mode="fullscreen"
-          className="island-map-viewport island-map-viewport--fullscreen"
-          view={mapView}
-          onViewChange={handleViewChange}
-          routeOverlay={surfaceRouteOverlay}
-          maxZoomRatio={8}
-          {...stopSurfaceProps}
-        />
+        {renderSurface('fullscreen', 'island-map-viewport island-map-viewport--fullscreen')}
         {stopDetailPopover}
       </div>
       <div className="island-map-controls island-map-controls--fullscreen">
@@ -170,16 +247,7 @@ export function IslandMapViewer() {
     >
       {widgetHidden ? null : (
         <div className="island-map-viewport-shell">
-          <IslandMapPanZoomSurface
-            src={mapSrc}
-            mode="widget"
-            className="island-map-viewport island-map-viewport--widget"
-            view={mapView}
-            onViewChange={handleViewChange}
-            routeOverlay={surfaceRouteOverlay}
-            maxZoomRatio={8}
-            {...stopSurfaceProps}
-          />
+          {renderSurface('widget', 'island-map-viewport island-map-viewport--widget')}
           {stopDetailPopover}
         </div>
       )}

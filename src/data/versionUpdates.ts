@@ -210,6 +210,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Mini-map and path map page share the same imported route path; stop labels on imported paths are clickable.",
           },
           {
+            zh: "修复走向图页刷新后导入 JSON 失效、回退旧走线的问题；小地图与走向页现渲染同一份导入路线。",
+            en: "Fixed path map reverting to legacy route after refresh when imported JSON was present; mini-map now renders the same imported path as the path map page.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },

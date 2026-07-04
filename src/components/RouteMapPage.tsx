@@ -20,7 +20,7 @@ import {
   routeDetailMapStopToDrawStop,
   type RouteDetailMapStop,
 } from '../utils/routeDetailMapStops'
-import { resolveRouteMapImportPayload } from '../utils/routeMapOverlaySource'
+import { resolveRouteMapImportRaw } from '../utils/routeMapOverlaySource'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
 import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
 import { readDirectionQueryFromLocation } from '../utils/routeNavigation'
@@ -69,8 +69,7 @@ function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): Ro
 }
 
 async function resolveImportPayload(routeId: string): Promise<unknown | null> {
-  const parsed = await resolveRouteMapImportPayload(routeId)
-  return parsed ?? null
+  return resolveRouteMapImportRaw(routeId)
 }
 
 export function RouteMapPage() {

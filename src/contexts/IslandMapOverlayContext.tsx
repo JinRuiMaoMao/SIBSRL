@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteDetailMapStop } from '../utils/routeDetailMapStops'
+import type { RouteMapViewerDisplay } from '../utils/routeMapViewerDisplay'
 
 export interface IslandMapRouteOverlay {
   routeId: string
@@ -8,6 +9,8 @@ export interface IslandMapRouteOverlay {
   directionIndex: number
   points: readonly WorldMapPoint[]
   stops?: readonly RouteDetailMapStop[]
+  /** Imported path display shared with route-map.html (reference editor, bends, etc.). */
+  importedPath?: Omit<RouteMapViewerDisplay, 'fitPoints'> | null
 }
 
 interface IslandMapOverlayContextValue {

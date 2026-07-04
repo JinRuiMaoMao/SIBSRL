@@ -16,6 +16,7 @@ import {
 import { isRouteMapImportPayload, parseRouteMapImportPayload, type RouteMapImportPayload } from './routeMapImportPayload'
 import { resolveRouteMapLookupIds } from './routeMapLookup'
 import type { WorldMapCatalogStop } from './worldMapStopCatalog'
+import { buildRouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 export interface RouteMapOverlaySource {
   points: readonly WorldMapPoint[]
@@ -47,18 +48,18 @@ export async function loadGeneralMapImageSize(): Promise<{ width: number; height
   return generalMapSizePromise
 }
 
-export async function resolveRouteMapImportPayload(routeId: string): Promise<RouteMapImportPayload | null> {
+export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown | null> {
   for (const id of resolveRouteMapLookupIds(routeId)) {
     const response = await fetchRouteMapImport(id)
     if (response?.payload && isRouteMapImportPayload(response.payload)) {
-      return parseRouteMapImportPayload(response.payload)
+      return response.payload
     }
   }
 
   for (const id of resolveRouteMapLookupIds(routeId)) {
     const cached = readCachedRouteMapImport(id)
     if (cached && isRouteMapImportPayload(cached)) {
-      return parseRouteMapImportPayload(cached)
+      return cached
     }
     if (cached) {
       clearCachedRouteMapImport(id)
@@ -66,6 +67,27 @@ export async function resolveRouteMapImportPayload(routeId: string): Promise<Rou
   }
 
   return null
+}
+
+export async function resolveRouteMapImportPayload(routeId: string): Promise<RouteMapImportPayload | null> {
+  const raw = await resolveRouteMapImportRaw(routeId)
+  return raw ? parseRouteMapImportPayload(raw) : null
+}
+
+export async function resolveImportedRouteMapDisplay(
+  routeId: string,
+  directionIndex: number,
+  routeNumber: string,
+  imageSize: { width: number; height: number } | null,
+): Promise<RouteMapViewerDisplay | null> {
+  const raw = await resolveRouteMapImportRaw(routeId)
+  if (!raw) return null
+
+  const parsed = parseRouteMapImportPayload(raw)
+  if (!parsed || !importMatchesDirection(parsed, directionIndex)) return null
+  if (!imageSize || imageSize.width <= 0 || imageSize.height <= 0) return null
+
+  return buildRouteMapViewerDisplay(parsed, imageSize.width, imageSize.height, routeNumber || parsed.routeId)
 }
 
 function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): RouteDetailMapStop {

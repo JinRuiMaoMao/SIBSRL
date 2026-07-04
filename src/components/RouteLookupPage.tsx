@@ -42,7 +42,7 @@ import { getPrimaryText } from '../i18n/displayText'
 import { useGuidedTourControl } from '../contexts/GuidedTourContext'
 import { useIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
-import { resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
+import { resolveRouteMapOverlaySource, resolveImportedRouteMapDisplay, loadGeneralMapImageSize } from '../utils/routeMapOverlaySource'
 import { isChineseLocale } from '../i18n/types'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
@@ -582,9 +582,32 @@ export function RouteLookupPage({
       const catalog = await loadWorldMapStopCatalog()
       if (cancelled) return
 
+      const imageSize = await loadGeneralMapImageSize()
+      if (cancelled) return
+
+      const importedDisplay = await resolveImportedRouteMapDisplay(
+        overlayRoute.id,
+        overlayDirectionIndex,
+        overlayRoute.number,
+        imageSize,
+      )
+      if (cancelled) return
+
+      if (importedDisplay) {
+        setRouteOverlay({
+          routeId: overlayRoute.id,
+          routeNumber: overlayRoute.number,
+          directionIndex: overlayDirectionIndex,
+          points: importedDisplay.fitPoints.length >= 2 ? importedDisplay.fitPoints : importedDisplay.points,
+          importedPath: importedDisplay,
+        })
+        return
+      }
+
       const overlaySource = await resolveRouteMapOverlaySource(overlayRoute.id, overlayDirectionIndex, {
         catalog,
         catalogStops: activeGroup?.list,
+        imageSize,
       })
       if (cancelled) return
 
