@@ -27,10 +27,17 @@ export interface RouteEditorNode {
   cornerRadius: number
 }
 
+export interface RouteEditorSegment {
+  id: number
+  fromNodeId: number
+  toNodeId: number
+}
+
 export interface RouteEditorLine {
   id: number
   name: string
   nodes: RouteEditorNode[]
+  segments: RouteEditorSegment[]
 }
 
 export interface RouteEditorLineStyle {

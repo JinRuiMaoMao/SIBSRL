@@ -3,7 +3,7 @@ import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDr
 import type { WorldMapDrawImportResult } from '../utils/worldMapRouteImport'
 import type { RouteImportMergeResult } from '../utils/worldMapDrawImportMerge'
 import { RouteEditorDataManager } from './RouteEditorDataManager'
-import { sampleRouteEditorPathPoints } from './routeEditorPath'
+import { inferSegmentsFromOrderedNodes, sampleRouteEditorPathPoints } from './routeEditorPath'
 import type { RouteEditorLine, RouteEditorLineStyle, RouteEditorNode } from './types'
 
 export function pixelToNormalized(
@@ -76,7 +76,7 @@ export function routeEditorLineToSibsDraft(
   const pathNodes = line.nodes
     .filter((node) => node.type === 'point')
     .map((node) => routeEditorNodeToPathNode(node, imageWidth, imageHeight))
-  const points = sampleRouteEditorPathPoints(line.nodes, imageWidth, imageHeight, showPointLines)
+  const points = sampleRouteEditorPathPoints(line, imageWidth, imageHeight, showPointLines)
   void style
   return {
     routeId,
@@ -120,7 +120,11 @@ export function sibsImportToRouteEditorLine(
 
   if (parsed.kind === 'catalog') {
     for (const stop of parsed.stops) appendStop(stop)
-    return { line: { id: 1, name: '导入线路', nodes }, routeId: '', directionIndex: 0 }
+    return {
+      line: { id: 1, name: '导入线路', nodes, segments: inferSegmentsFromOrderedNodes(nodes) },
+      routeId: '',
+      directionIndex: 0,
+    }
   }
 
   const stopByKey = new Map<string, WorldMapDrawStop>()
@@ -181,7 +185,12 @@ export function sibsImportToRouteEditorLine(
   }
 
   return {
-    line: { id: 1, name: parsed.routeId || '导入线路', nodes },
+    line: {
+      id: 1,
+      name: parsed.routeId || '导入线路',
+      nodes,
+      segments: inferSegmentsFromOrderedNodes(nodes),
+    },
     routeId: parsed.routeId,
     directionIndex: parsed.directionIndex,
   }

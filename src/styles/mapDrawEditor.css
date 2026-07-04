@@ -365,6 +365,30 @@ html[data-app-page='map-draw'] #root {
   fill: #ef4444;
 }
 
+.reference-route-editor-node--connect-pending .reference-route-editor-node-dot {
+  stroke: #a855f7;
+  stroke-width: 3px;
+}
+
+.reference-route-editor-segment {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.reference-route-editor-segment-hit {
+  pointer-events: stroke;
+}
+
+.reference-route-editor-segment-line {
+  pointer-events: none;
+}
+
+.reference-route-editor-connect-preview {
+  pointer-events: none;
+  stroke-dasharray: 6 4;
+  opacity: 0.75;
+}
+
 .reference-route-editor-path {
   pointer-events: none;
 }

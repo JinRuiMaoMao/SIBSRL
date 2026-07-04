@@ -195,6 +195,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 绘制逻辑完全改用参考编辑器（Downloads/index）：有序节点、点击即添加、拐点圆角路径、节点信息面板与参考 JSON 导入。",
             en: "Replaced map-draw drawing logic with the reference editor (Downloads/index): ordered nodes, click-to-add, bend corner paths, node info panel, and reference JSON import.",
           },
+          {
+            zh: "map-draw 线段需手动连接：选择模式下依次点击两个节点创建线段，双击线段删除；添加节点不再自动连线。",
+            en: "Map-draw segments connect manually: in Select mode click two nodes to link, double-click a segment to remove; adding nodes no longer auto-connects.",
+          },
         ],
       },
     ],

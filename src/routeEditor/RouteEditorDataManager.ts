@@ -8,12 +8,14 @@ import {
   type RouteEditorNode,
   type RouteEditorNodeType,
 } from './types'
+import { inferSegmentsFromOrderedNodes, normalizeRouteEditorLine } from './routeEditorPath'
 
 type RouteEditorEvent = 'change' | 'historyChange'
 
 interface RouteEditorHistoryState {
   line: RouteEditorLine
   nextNodeId: number
+  nextSegmentId: number
   lineStyle: RouteEditorLineStyle
   config: RouteEditorConfig
 }
@@ -22,18 +24,23 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
-/** 参考 Downloads/index/route-data-manager.js（单线路版） */
+function createEmptyLine(lineName: string): RouteEditorLine {
+  return { id: 1, name: lineName, nodes: [], segments: [] }
+}
+
+/** 参考 Downloads/index/route-data-manager.js（单线路版，线段需手动连接） */
 export class RouteEditorDataManager {
   private line: RouteEditorLine
   private lineStyle: RouteEditorLineStyle
   private config: RouteEditorConfig
   private nextNodeId = 1
+  private nextSegmentId = 1
   private history: RouteEditorHistoryState[] = []
   private historyIndex = -1
   private listeners = new Map<RouteEditorEvent, Set<() => void>>()
 
   constructor(lineName = '默认线路') {
-    this.line = { id: 1, name: lineName, nodes: [] }
+    this.line = createEmptyLine(lineName)
     this.lineStyle = { ...DEFAULT_ROUTE_EDITOR_LINE_STYLE }
     this.config = { ...DEFAULT_ROUTE_EDITOR_CONFIG }
     this.saveHistory()
@@ -53,6 +60,7 @@ export class RouteEditorDataManager {
     const state: RouteEditorHistoryState = {
       line: clone(this.line),
       nextNodeId: this.nextNodeId,
+      nextSegmentId: this.nextSegmentId,
       lineStyle: clone(this.lineStyle),
       config: clone(this.config),
     }
@@ -186,27 +194,73 @@ export class RouteEditorDataManager {
     return true
   }
 
+  private removeSegmentsForNode(nodeId: number) {
+    this.line.segments = this.line.segments.filter(
+      (segment) => segment.fromNodeId !== nodeId && segment.toNodeId !== nodeId,
+    )
+  }
+
   deleteNode(nodeId: number): boolean {
     const index = this.line.nodes.findIndex((entry) => entry.id === nodeId)
     if (index < 0) return false
     this.line.nodes.splice(index, 1)
+    this.removeSegmentsForNode(nodeId)
     this.saveHistory()
     this.emit('change')
     return true
   }
 
+  addSegment(fromNodeId: number, toNodeId: number): boolean {
+    if (fromNodeId === toNodeId) return false
+    const fromNode = this.line.nodes.find((node) => node.id === fromNodeId)
+    const toNode = this.line.nodes.find((node) => node.id === toNodeId)
+    if (!fromNode || !toNode) return false
+    const exists = this.line.segments.some(
+      (segment) => segment.fromNodeId === fromNodeId && segment.toNodeId === toNodeId,
+    )
+    if (exists) return false
+
+    this.line.segments.push({
+      id: this.nextSegmentId++,
+      fromNodeId,
+      toNodeId,
+    })
+    this.saveHistory()
+    this.emit('change')
+    return true
+  }
+
+  deleteSegment(segmentId: number): boolean {
+    const index = this.line.segments.findIndex((segment) => segment.id === segmentId)
+    if (index < 0) return false
+    this.line.segments.splice(index, 1)
+    this.saveHistory()
+    this.emit('change')
+    return true
+  }
+
+  clearSegments() {
+    if (this.line.segments.length === 0) return
+    this.line.segments = []
+    this.saveHistory()
+    this.emit('change')
+  }
+
   clearNodes() {
-    if (this.line.nodes.length === 0) return
+    if (this.line.nodes.length === 0 && this.line.segments.length === 0) return
     this.line.nodes = []
+    this.line.segments = []
     this.saveHistory()
     this.emit('change')
   }
 
   replaceLine(line: RouteEditorLine, style?: RouteEditorLineStyle) {
-    this.line = clone(line)
+    this.line = normalizeRouteEditorLine(clone(line))
     if (style) this.lineStyle = clone(style)
-    const maxId = this.line.nodes.reduce((max, node) => Math.max(max, node.id), 0)
-    this.nextNodeId = maxId + 1
+    const maxNodeId = this.line.nodes.reduce((max, node) => Math.max(max, node.id), 0)
+    const maxSegmentId = this.line.segments.reduce((max, segment) => Math.max(max, segment.id), 0)
+    this.nextNodeId = maxNodeId + 1
+    this.nextSegmentId = maxSegmentId + 1
     this.saveHistory()
     this.emit('change')
   }
@@ -232,6 +286,7 @@ export class RouteEditorDataManager {
   private restoreHistory(state: RouteEditorHistoryState) {
     this.line = clone(state.line)
     this.nextNodeId = state.nextNodeId
+    this.nextSegmentId = state.nextSegmentId
     this.lineStyle = clone(state.lineStyle)
     this.config = clone(state.config)
   }
@@ -245,6 +300,7 @@ export class RouteEditorDataManager {
       currentLineId: this.line.id,
       nextLineId: 2,
       nextNodeId: this.nextNodeId,
+      nextSegmentId: this.nextSegmentId,
     }
     return JSON.stringify(payload, null, 2)
   }
@@ -256,11 +312,12 @@ export class RouteEditorDataManager {
         lines?: RouteEditorLine[]
         lineStyles?: Record<string, RouteEditorLineStyle>
         config?: Partial<RouteEditorConfig>
+        nextSegmentId?: number
       }
       if (!parsed.version || !Array.isArray(parsed.lines) || parsed.lines.length === 0) {
         return false
       }
-      const line = clone(parsed.lines[0]!)
+      const line = normalizeRouteEditorLine(clone(parsed.lines[0]!))
       for (const node of line.nodes) {
         if (node.type === 'point') {
           node.chi_name = ''
@@ -276,8 +333,10 @@ export class RouteEditorDataManager {
       if (parsed.config) {
         this.config = { ...DEFAULT_ROUTE_EDITOR_CONFIG, ...parsed.config }
       }
-      this.nextNodeId =
-        line.nodes.reduce((max, node) => Math.max(max, node.id), 0) + 1
+      this.nextNodeId = line.nodes.reduce((max, node) => Math.max(max, node.id), 0) + 1
+      this.nextSegmentId =
+        parsed.nextSegmentId ??
+        line.segments.reduce((max, segment) => Math.max(max, segment.id), 0) + 1
       this.history = []
       this.historyIndex = -1
       this.saveHistory()

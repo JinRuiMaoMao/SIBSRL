@@ -45,6 +45,9 @@ export function useRouteEditor(initialLineName = '默认线路') {
       updateNode: (nodeId: number, updates: Partial<RouteEditorNode>) =>
         manager.updateNode(nodeId, updates),
       deleteNode: (nodeId: number) => manager.deleteNode(nodeId),
+      addSegment: (fromNodeId: number, toNodeId: number) => manager.addSegment(fromNodeId, toNodeId),
+      deleteSegment: (segmentId: number) => manager.deleteSegment(segmentId),
+      clearSegments: () => manager.clearSegments(),
       clearNodes: () => manager.clearNodes(),
       undo: () => manager.undo(),
       redo: () => manager.redo(),

@@ -74,6 +74,13 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [imageSize, setImageSize] = useState<MapImageSize | null>(null)
   const [editorMode, setEditorMode] = useState<RouteEditorMode>('select')
   const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null)
+  const [connectPendingNodeId, setConnectPendingNodeId] = useState<number | null>(null)
+  const [connectPreview, setConnectPreview] = useState<{
+    fromX: number
+    fromY: number
+    toX: number
+    toY: number
+  } | null>(null)
   const [drawRouteId, setDrawRouteId] = useState('')
   const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
@@ -176,8 +183,37 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     setEditorMode(mode)
     if (mode !== 'select') {
       setSelectedNodeId(null)
+      setConnectPendingNodeId(null)
+      setConnectPreview(null)
     }
   }, [])
+
+  const handleNodeClick = useCallback(
+    (nodeId: number) => {
+      if (editorMode !== 'select') return
+      setSelectedNodeId(nodeId)
+      if (connectPendingNodeId == null) {
+        setConnectPendingNodeId(nodeId)
+        return
+      }
+      if (connectPendingNodeId === nodeId) {
+        setConnectPendingNodeId(null)
+        setConnectPreview(null)
+        return
+      }
+      editor.addSegment(connectPendingNodeId, nodeId)
+      setConnectPendingNodeId(null)
+      setConnectPreview(null)
+    },
+    [connectPendingNodeId, editor, editorMode],
+  )
+
+  const handleSegmentDoubleClick = useCallback(
+    (segmentId: number) => {
+      editor.deleteSegment(segmentId)
+    },
+    [editor],
+  )
 
   const handleMapClick = useCallback(
     (point: WorldMapPoint) => {
@@ -189,6 +225,11 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       }
       if (editorMode === 'addPoint') {
         editor.addNode('point', x, y)
+        return
+      }
+      if (editorMode === 'select') {
+        setConnectPendingNodeId(null)
+        setConnectPreview(null)
       }
     },
     [editor, editorMode, imageSize],
@@ -196,18 +237,37 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
   const handleMapPointerMove = useCallback(
     (point: WorldMapPoint | null) => {
-      if (!point || !imageSize || editorMode === 'select') {
+      if (!point || !imageSize) {
         setPointerPreview(null)
+        setConnectPreview(null)
         return
       }
       const pixel = normalizedToPixel(point, imageSize.width, imageSize.height)
+      if (editorMode === 'select' && connectPendingNodeId != null) {
+        const pendingNode = editor.manager.getNodeById(connectPendingNodeId)
+        if (pendingNode) {
+          setConnectPreview({
+            fromX: pendingNode.x,
+            fromY: pendingNode.y,
+            toX: pixel.x,
+            toY: pixel.y,
+          })
+        }
+        setPointerPreview(null)
+        return
+      }
+      if (editorMode === 'select') {
+        setPointerPreview(null)
+        setConnectPreview(null)
+        return
+      }
       setPointerPreview({
         type: editorMode === 'addStop' ? 'stop' : 'point',
         x: pixel.x,
         y: pixel.y,
       })
     },
-    [editorMode, imageSize],
+    [connectPendingNodeId, editor.manager, editorMode, imageSize],
   )
 
   const deleteSelectedNode = useCallback(() => {
@@ -227,10 +287,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
   const applyClearSelection = useCallback(
     (selection: IslandMapDrawClearSelection) => {
-      if (selection.stops || selection.pathNodes || selection.path) {
-        editor.clearNodes()
+      if (selection.path) {
+        editor.clearSegments()
+      }
+      if (selection.stops || selection.pathNodes) {
+        const typesToRemove = new Set<'stop' | 'point'>()
+        if (selection.stops) typesToRemove.add('stop')
+        if (selection.pathNodes) typesToRemove.add('point')
+        for (const node of [...editor.line.nodes]) {
+          if (typesToRemove.has(node.type)) {
+            editor.deleteNode(node.id)
+          }
+        }
       }
       setSelectedNodeId(null)
+      setConnectPendingNodeId(null)
+      setConnectPreview(null)
       setClearDialogOpen(false)
     },
     [editor],
@@ -241,8 +313,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     (sibsDraft?.stops.length ?? 0) > 0 ||
     (sibsDraft?.points.length ?? 0) >= 2 ||
     resolveWorldMapExportRouteId(drawRouteId, [], overlayRouteId) !== ''
-  const canClear = editor.line.nodes.length > 0
-  const hasDraftPath = (sibsDraft?.points.length ?? 0) >= 2
+  const canClear = editor.line.nodes.length > 0 || editor.line.segments.length > 0
+  const hasDraftPath = editor.line.segments.length > 0
   const stopCount = editor.line.nodes.filter((node) => node.type === 'stop').length
   const pathNodeCount = editor.line.nodes.filter((node) => node.type === 'point').length
 
@@ -451,6 +523,11 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     if (!isLoggedIn) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        if (connectPendingNodeId != null) {
+          setConnectPendingNodeId(null)
+          setConnectPreview(null)
+          return
+        }
         enterEditorMode('select')
         return
       }
@@ -471,11 +548,13 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [deleteSelectedNode, editor, enterEditorMode, isLoggedIn, selectedNodeId])
+  }, [connectPendingNodeId, deleteSelectedNode, editor, enterEditorMode, isLoggedIn, selectedNodeId])
 
   const statusMode =
     editorMode === 'select'
-      ? t('mapDrawStatusSelect')
+      ? connectPendingNodeId != null
+        ? t('mapDrawStatusConnectPending')
+        : t('mapDrawStatusSelect')
       : editorMode === 'addStop'
         ? t('mapDrawStatusAddStop')
         : t('mapDrawStatusAddPoint')
@@ -641,6 +720,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                       {t('mapDrawNodeSave')}
                     </button>
                   </div>
+                ) : connectPendingNodeId != null ? (
+                  <p className="island-map-draw-help">{t('mapDrawConnectPendingHint')}</p>
                 ) : (
                   <p className="island-map-draw-help">{t('mapDrawNodeSelectHint')}</p>
                 )}
@@ -691,11 +772,15 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                 isLoggedIn && imageSize
                   ? {
                       nodes: editor.line.nodes,
+                      segments: editor.line.segments,
                       lineStyle: { ...editor.lineStyle, color: drawColor },
                       config: editor.config,
                       selectedNodeId,
+                      connectPendingNodeId,
+                      connectPreview,
                       previewNode: pointerPreview,
-                      onNodeClick: editorMode === 'select' ? setSelectedNodeId : undefined,
+                      onNodeClick: editorMode === 'select' ? handleNodeClick : undefined,
+                      onSegmentDoubleClick: editorMode === 'select' ? handleSegmentDoubleClick : undefined,
                     }
                   : null
               }

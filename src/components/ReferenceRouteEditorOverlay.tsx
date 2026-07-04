@@ -1,15 +1,23 @@
-import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode } from '../routeEditor/types'
-import { buildRouteEditorPathD } from '../routeEditor/routeEditorPath'
+import type {
+  RouteEditorConfig,
+  RouteEditorLineStyle,
+  RouteEditorNode,
+  RouteEditorSegment,
+} from '../routeEditor/types'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
   imageHeight: number
   nodes: readonly RouteEditorNode[]
+  segments: readonly RouteEditorSegment[]
   lineStyle: RouteEditorLineStyle
   config: RouteEditorConfig
   selectedNodeId: number | null
+  connectPendingNodeId?: number | null
+  connectPreview?: { fromX: number; fromY: number; toX: number; toY: number } | null
   previewNode?: { type: 'stop' | 'point'; x: number; y: number } | null
   onNodePointerDown?: (nodeId: number, event: React.PointerEvent<SVGGElement>) => void
+  onSegmentDoubleClick?: (segmentId: number) => void
 }
 
 function strokeDashArray(style: RouteEditorLineStyle['style']): string {
@@ -22,14 +30,19 @@ export function ReferenceRouteEditorOverlay({
   imageWidth,
   imageHeight,
   nodes,
+  segments,
   lineStyle,
   config,
   selectedNodeId,
+  connectPendingNodeId = null,
+  connectPreview = null,
   previewNode = null,
   onNodePointerDown,
+  onSegmentDoubleClick,
 }: ReferenceRouteEditorOverlayProps) {
-  const pathD = buildRouteEditorPathD(nodes, config.showPointLines)
+  const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const stops = nodes.filter((node) => node.type === 'stop')
+  const dash = strokeDashArray(lineStyle.style)
 
   return (
     <svg
@@ -39,15 +52,59 @@ export function ReferenceRouteEditorOverlay({
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
     >
-      {pathD ? (
-        <path
-          className="reference-route-editor-path"
-          d={pathD}
-          fill="none"
+      {segments.map((segment) => {
+        const from = nodeById.get(segment.fromNodeId)
+        const to = nodeById.get(segment.toNodeId)
+        if (!from || !to) return null
+        if (!config.showPointLines && from.type === 'point' && to.type === 'point') return null
+
+        return (
+          <g key={segment.id} className="reference-route-editor-segment">
+            <line
+              className="reference-route-editor-segment-hit"
+              x1={from.x}
+              y1={from.y}
+              x2={to.x}
+              y2={to.y}
+              stroke="transparent"
+              strokeWidth={12}
+              vectorEffect="non-scaling-stroke"
+              onDoubleClick={
+                onSegmentDoubleClick
+                  ? (event) => {
+                      event.stopPropagation()
+                      onSegmentDoubleClick(segment.id)
+                    }
+                  : undefined
+              }
+            />
+            <line
+              className="reference-route-editor-segment-line"
+              x1={from.x}
+              y1={from.y}
+              x2={to.x}
+              y2={to.y}
+              stroke={lineStyle.color}
+              strokeWidth={lineStyle.width}
+              strokeLinecap="round"
+              strokeDasharray={dash}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="none"
+            />
+          </g>
+        )
+      })}
+
+      {connectPreview ? (
+        <line
+          className="reference-route-editor-connect-preview"
+          x1={connectPreview.fromX}
+          y1={connectPreview.fromY}
+          x2={connectPreview.toX}
+          y2={connectPreview.toY}
           stroke={lineStyle.color}
           strokeWidth={lineStyle.width}
           strokeLinecap="round"
-          strokeDasharray={strokeDashArray(lineStyle.style)}
           vectorEffect="non-scaling-stroke"
         />
       ) : null}
@@ -60,6 +117,7 @@ export function ReferenceRouteEditorOverlay({
         const isFirstStop = node.type === 'stop' && stopIndex === 0
         const isLastStop = node.type === 'stop' && stopIndex === stops.length - 1 && stops.length > 1
         const selected = selectedNodeId === node.id
+        const connectPending = connectPendingNodeId === node.id
         const radius =
           node.type === 'stop'
             ? Math.max(6, config.stopIconSize / 2)
@@ -68,7 +126,7 @@ export function ReferenceRouteEditorOverlay({
         return (
           <g
             key={node.id}
-            className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${isFirstStop ? ' reference-route-editor-node--first' : ''}${isLastStop ? ' reference-route-editor-node--last' : ''}`.trim()}
+            className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${connectPending ? ' reference-route-editor-node--connect-pending' : ''}${isFirstStop ? ' reference-route-editor-node--first' : ''}${isLastStop ? ' reference-route-editor-node--last' : ''}`.trim()}
             onPointerDown={
               onNodePointerDown
                 ? (event) => {

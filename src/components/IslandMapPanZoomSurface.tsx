@@ -6,7 +6,7 @@ import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import { IslandMapPathNodeOverlayLayer } from './IslandMapPathNodeOverlayLayer'
 import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
-import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode } from '../routeEditor/types'
+import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode, RouteEditorSegment } from '../routeEditor/types'
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
 
@@ -78,11 +78,15 @@ interface IslandMapPanZoomSurfaceProps {
   onImageSizeChange?: (size: ImageSize) => void
   referenceEditor?: {
     nodes: readonly RouteEditorNode[]
+    segments: readonly RouteEditorSegment[]
     lineStyle: RouteEditorLineStyle
     config: RouteEditorConfig
     selectedNodeId: number | null
+    connectPendingNodeId?: number | null
+    connectPreview?: { fromX: number; fromY: number; toX: number; toY: number } | null
     previewNode?: { type: 'stop' | 'point'; x: number; y: number } | null
     onNodeClick?: (nodeId: number) => void
+    onSegmentDoubleClick?: (segmentId: number) => void
   } | null
 }
 
@@ -943,13 +947,21 @@ export function IslandMapPanZoomSurface({
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
             nodes={referenceEditor.nodes}
+            segments={referenceEditor.segments}
             lineStyle={referenceEditor.lineStyle}
             config={referenceEditor.config}
             selectedNodeId={referenceEditor.selectedNodeId}
+            connectPendingNodeId={referenceEditor.connectPendingNodeId}
+            connectPreview={referenceEditor.connectPreview}
             previewNode={referenceEditor.previewNode}
             onNodePointerDown={
               referenceEditor.onNodeClick
                 ? (nodeId) => referenceEditorRef.current?.onNodeClick?.(nodeId)
+                : undefined
+            }
+            onSegmentDoubleClick={
+              referenceEditor.onSegmentDoubleClick
+                ? (segmentId) => referenceEditorRef.current?.onSegmentDoubleClick?.(segmentId)
                 : undefined
             }
           />
