@@ -272,7 +272,7 @@ export default defineConfig(() => {
       devEntryRedirectPlugin(),
       publishStandalonePlugin(appBuild),
     ],
-    base: './',
+    base: process.env.VITE_BASE ?? './',
     define: {
       __APP_BUILD__: JSON.stringify(appBuild),
     },

@@ -420,17 +420,32 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
 (function () {
   var root = document.getElementById('root');
   if (!root || document.getElementById('start-boot-splash')) return;
-  function showFailure(title, detail) {
+  var ghPagesHint = 'GitHub Pages 请访问 https://jinruimaomao.github.io/SIBSRL/routes.html ，并 Ctrl+F5 强制刷新。';
+  function showFailure(title, detail, extra) {
     if (!root.querySelector('.boot-hint')) return;
     root.innerHTML =
       '<div class="boot-failure" style="margin:2rem auto;max-width:28rem;padding:1.25rem;font-family:system-ui,sans-serif;color:#eef2f8;line-height:1.6">' +
       '<h1 style="font-size:1.05rem;margin:0 0 .75rem">' + title + '</h1>' +
       '<p style="margin:0 0 .5rem;opacity:.9">' + detail + '</p>' +
-      '<p style="margin:0;font-size:.82rem;opacity:.65">开发调试请运行 npm run dev，并访问 http://localhost:5173/routes.html</p>' +
+      '<p style="margin:0;font-size:.82rem;opacity:.65">' + (extra || ghPagesHint) + '</p>' +
       '</div>';
   }
+  function clearSiteCaches() {
+    var tasks = [];
+    if ('serviceWorker' in navigator) {
+      tasks.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+        return Promise.all(regs.map(function (r) { return r.unregister(); }));
+      }));
+    }
+    if ('caches' in window) {
+      tasks.push(caches.keys().then(function (keys) {
+        return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+      }));
+    }
+    return Promise.all(tasks);
+  }
   if (location.protocol === 'file:') {
-    showFailure('无法直接打开 HTML 文件', '请在本项目目录运行 npm run dev，或通过站点服务器访问页面。');
+    showFailure('无法直接打开 HTML 文件', '请使用 npm run dev 或 GitHub Pages 在线地址访问。', ghPagesHint);
     return;
   }
   window.addEventListener('error', function (event) {
@@ -438,7 +453,11 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
     if (target && target.tagName === 'SCRIPT') {
       var src = String(target.src || target.getAttribute('src') || '');
       if (src.indexOf('/assets/') >= 0 || src.indexOf('/src/main.tsx') >= 0) {
-        showFailure('应用脚本加载失败', '请 Ctrl+F5 强制刷新；若仍失败，请清除浏览器站点数据后重试。');
+        showFailure('应用脚本加载失败', '可能是缓存了旧版本资源。正在尝试清除 Service Worker 缓存…');
+        if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
+          sessionStorage.setItem('sibs-boot-cache-reload', '1');
+          clearSiteCaches().finally(function () { location.reload(); });
+        }
       }
     }
   }, true);
@@ -446,20 +465,58 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
     var reason = event.reason;
     var message = reason && reason.message ? reason.message : String(reason || '');
     if (/preamble|Failed to fetch dynamically imported module|Loading chunk/i.test(message)) {
-      showFailure('应用启动失败', message);
+      showFailure('应用启动失败', message, ghPagesHint);
     }
   });
   window.setTimeout(function () {
-    if (root.querySelector('.boot-hint')) {
-      showFailure('页面加载时间过长', '请 Ctrl+F5 强制刷新；若刚更新过站点，请清除缓存或注销 Service Worker。');
+    if (!root.querySelector('.boot-hint')) return;
+    if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
+      sessionStorage.setItem('sibs-boot-cache-reload', '1');
+      clearSiteCaches().finally(function () { location.reload(); });
+      return;
     }
+    showFailure('页面加载时间过长', '请 Ctrl+F5 强制刷新；若刚更新过站点，请清除浏览器站点数据。', ghPagesHint);
   }, 15000);
 })();
 </script>`
 
+/** @param {string} html @param {string} swVersion */
+export function injectSwVersionBootstrap(html, swVersion) {
+  if (html.includes('id="sw-version-bootstrap"')) return html
+  const script = `<script id="sw-version-bootstrap">
+(function () {
+  var VERSION = ${JSON.stringify(swVersion)};
+  var KEY = 'sibs-sw-version';
+  try {
+    var prev = localStorage.getItem(KEY);
+    if (prev && prev !== VERSION) {
+      localStorage.setItem(KEY, VERSION);
+      var tasks = [];
+      if ('serviceWorker' in navigator) {
+        tasks.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all(regs.map(function (r) { return r.unregister(); }));
+        }));
+      }
+      if ('caches' in window) {
+        tasks.push(caches.keys().then(function (keys) {
+          return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+        }));
+      }
+      Promise.all(tasks).finally(function () { location.reload(); });
+      return;
+    }
+    localStorage.setItem(KEY, VERSION);
+  } catch (e) {}
+})();
+</script>`
+  return html.replace('</head>', `    ${script}\n  </head>`)
+}
+
 /** @param {string} html */
 export function relocateAppBundleScript(html) {
-  const scriptMatch = html.match(/\s*<script type="module" crossorigin src="\.\/assets\/[^"]+\.js"><\/script>\s*/)
+  const scriptMatch = html.match(
+    /\s*<script type="module" crossorigin src="[^"]*\/assets\/[^"]+\.js"><\/script>\s*/,
+  )
   if (!scriptMatch) return html
   const scriptTag = scriptMatch[0].trim()
   const withoutScript = html.replace(scriptMatch[0], '\n')

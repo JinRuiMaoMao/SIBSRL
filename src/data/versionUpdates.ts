@@ -331,6 +331,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 routes.html 等页面偶发一直停在「本站加载中」：开发模式改为经 Vite 注入 React；发布页脚本移至 body 末尾，并加强 SW/加载失败提示。",
             en: "Fixed routes.html and other pages stuck on “Loading site…”—dev routes now use Vite React injection; published bundle script moved to body end with SW and boot-failure hints.",
           },
+          {
+            zh: "GitHub Pages：CI 构建时使用 /SIBSRL/ 资源路径；Service Worker 版本变更时自动清缓存并刷新，加载失败时也会尝试清除旧 SW。",
+            en: "GitHub Pages: CI builds with /SIBSRL/ asset base; SW version bumps auto-clear caches, and boot failures attempt to unregister stale workers.",
+          },
         ],
       },
     ],

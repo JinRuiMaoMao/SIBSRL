@@ -18,6 +18,7 @@ import {
   injectAppSurfaceBootstrap,
   injectUserApiMeta,
   injectBootFailureGuard,
+  injectSwVersionBootstrap,
   relocateAppBundleScript,
   syncFaviconLink,
 } from './lib/app-page-html.mjs'
@@ -32,6 +33,13 @@ const built = resolve(root, 'dist', 'dev.html')
 const publicAudio = resolve(root, 'public', 'audio')
 const distAudio = resolve(root, 'dist', 'audio')
 const rootAudio = resolve(root, 'audio')
+
+function readSwCacheVersion() {
+  const swPath = resolve(root, 'public', 'sw.js')
+  if (!existsSync(swPath)) return 'unknown'
+  const match = readFileSync(swPath, 'utf8').match(/CACHE_VERSION = '([^']+)'/)
+  return match?.[1] ?? 'unknown'
+}
 
 function prepareStandaloneHtml(html, buildTag) {
   let out = html
@@ -69,19 +77,22 @@ export function publishStandalone(options = {}) {
   const baseHtml = relocateAppBundleScript(
     injectBootFailureGuard(
       injectServiceWorkerBootstrap(
-        injectAppSurfaceBootstrap(
-          syncFaviconLink(
-            injectUserApiMeta(
-              injectLocaleBootstrap(
-                injectThemeBootstrap(
-                  injectDevToolsBlock(
-                    injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+        injectSwVersionBootstrap(
+          injectAppSurfaceBootstrap(
+            syncFaviconLink(
+              injectUserApiMeta(
+                injectLocaleBootstrap(
+                  injectThemeBootstrap(
+                    injectDevToolsBlock(
+                      injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+                    ),
                   ),
                 ),
               ),
+              buildTag,
             ),
-            buildTag,
           ),
+          readSwCacheVersion(),
         ),
       ),
     ),

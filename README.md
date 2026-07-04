@@ -246,14 +246,18 @@ npm run dev
 
 ## GitHub Pages 子路径
 
-若站点地址为 `https://用户名.github.io/仓库名/`，构建前设置环境变量：
+站点地址：`https://jinruimaomao.github.io/SIBSRL/`（项目页，含 `/SIBSRL/` 前缀）。
+
+推送到 `master` 后，GitHub Actions 会自动以 `VITE_BASE=/SIBSRL/` 构建并部署。也可在 Actions 里手动运行 **Deploy static site to Pages**。
+
+本地模拟 GitHub Pages 构建：
 
 ```bash
 # PowerShell
-$env:VITE_BASE="/仓库名/"; npm run build
+$env:VITE_BASE='/SIBSRL/'; npm run build:only
 ```
 
-并在 `vite.config.ts` 中将 `base` 改为 `process.env.VITE_BASE ?? './'`（按需）。
+若页面一直停在「本站加载中」，请 **Ctrl+F5** 强制刷新；仍无效时清除 `jinruimaomao.github.io` 的站点数据（旧 Service Worker 可能缓存了过期 JS）。
 
 ## 免责声明
 
