@@ -329,3 +329,85 @@ html[data-app-page='map-draw'] #root {
     border-bottom: 1px solid color-mix(in srgb, var(--text-muted, #94a3b8) 16%, transparent);
   }
 }
+
+.reference-route-editor-overlay {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.reference-route-editor-node {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.reference-route-editor-node-dot {
+  fill: #2563eb;
+  stroke: #fff;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.reference-route-editor-node--point .reference-route-editor-node-dot {
+  fill: #f59e0b;
+}
+
+.reference-route-editor-node--selected .reference-route-editor-node-dot {
+  stroke: #fde047;
+  stroke-width: 3px;
+}
+
+.reference-route-editor-node--first .reference-route-editor-node-dot {
+  fill: #22c55e;
+}
+
+.reference-route-editor-node--last .reference-route-editor-node-dot {
+  fill: #ef4444;
+}
+
+.reference-route-editor-path {
+  pointer-events: none;
+}
+
+.reference-route-editor-label-bg {
+  fill: rgba(15, 23, 42, 0.88);
+  stroke: rgba(148, 163, 184, 0.35);
+}
+
+.reference-route-editor-label-seq,
+.reference-route-editor-label-name {
+  fill: #f8fafc;
+  font-size: 11px;
+}
+
+.reference-route-editor-preview {
+  fill: rgba(37, 99, 235, 0.35);
+  stroke: #2563eb;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.reference-route-editor-preview--point {
+  fill: rgba(245, 158, 11, 0.35);
+  stroke: #f59e0b;
+}
+
+.reference-node-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.reference-node-info-panel h4 {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.island-map-route-overlay-wrap--reference-editor {
+  pointer-events: none;
+}
+
+.island-map-route-overlay-wrap--reference-editor .reference-route-editor-node {
+  pointer-events: auto;
+}

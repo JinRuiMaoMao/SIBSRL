@@ -192,8 +192,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed map-draw pan snap-back after zoomed drag: stop applying stale pan state on release and skip redundant view resync.",
           },
           {
-            zh: "map-draw 绘制逻辑对齐参考编辑器：选择/添加站点/添加拐点，点击即添加，按节点顺序连线；Esc 与 Delete 快捷键。",
-            en: "Aligned map-draw interaction with the reference editor: select/add stop/add bend, click-to-add, ordered straight path, Esc and Delete shortcuts.",
+            zh: "map-draw 绘制逻辑完全改用参考编辑器（Downloads/index）：有序节点、点击即添加、拐点圆角路径、节点信息面板与参考 JSON 导入。",
+            en: "Replaced map-draw drawing logic with the reference editor (Downloads/index): ordered nodes, click-to-add, bend corner paths, node info panel, and reference JSON import.",
           },
         ],
       },

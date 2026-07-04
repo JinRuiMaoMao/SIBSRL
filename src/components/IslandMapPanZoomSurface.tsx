@@ -6,6 +6,8 @@ import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import { IslandMapPathNodeOverlayLayer } from './IslandMapPathNodeOverlayLayer'
 import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
+import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode } from '../routeEditor/types'
+import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
 
 export interface PanZoomState {
@@ -73,6 +75,15 @@ interface IslandMapPanZoomSurfaceProps {
   traceSelectedStopId?: string | null
   maxZoomRatio?: number
   onMapPointerMove?: (point: WorldMapPoint | null) => void
+  onImageSizeChange?: (size: ImageSize) => void
+  referenceEditor?: {
+    nodes: readonly RouteEditorNode[]
+    lineStyle: RouteEditorLineStyle
+    config: RouteEditorConfig
+    selectedNodeId: number | null
+    previewNode?: { type: 'stop' | 'point'; x: number; y: number } | null
+    onNodeClick?: (nodeId: number) => void
+  } | null
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
@@ -292,6 +303,8 @@ export function IslandMapPanZoomSurface({
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
   onMapPointerMove,
+  onImageSizeChange,
+  referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -301,6 +314,8 @@ export function IslandMapPanZoomSurface({
   const maxZoomRatioRef = useRef(maxZoomRatio)
   const onViewChangeRef = useRef(onViewChange)
   const onMapPointerMoveRef = useRef(onMapPointerMove)
+  const onImageSizeChangeRef = useRef(onImageSizeChange)
+  const referenceEditorRef = useRef(referenceEditor)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
   const panZoomRef = useRef<PanZoomState | null>(null)
@@ -330,6 +345,8 @@ export function IslandMapPanZoomSurface({
   maxZoomRatioRef.current = maxZoomRatio
   onViewChangeRef.current = onViewChange
   onMapPointerMoveRef.current = onMapPointerMove
+  onImageSizeChangeRef.current = onImageSizeChange
+  referenceEditorRef.current = referenceEditor
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
   const [incomingSrc, setIncomingSrc] = useState<string | null>(null)
@@ -457,6 +474,7 @@ export function IslandMapPanZoomSurface({
       setDisplayedSrc(nextSrc)
       setImageSize(size)
       setIncomingSrc(null)
+      onImageSizeChangeRef.current?.(size)
       return true
     },
     [],
@@ -919,6 +937,25 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
+      {referenceEditor ? (
+        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--reference-editor">
+          <ReferenceRouteEditorOverlay
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            nodes={referenceEditor.nodes}
+            lineStyle={referenceEditor.lineStyle}
+            config={referenceEditor.config}
+            selectedNodeId={referenceEditor.selectedNodeId}
+            previewNode={referenceEditor.previewNode}
+            onNodePointerDown={
+              referenceEditor.onNodeClick
+                ? (nodeId) => referenceEditorRef.current?.onNodeClick?.(nodeId)
+                : undefined
+            }
+          />
+        </div>
+      ) : (
+        <>
       {drawInteraction === 'route' && draftPoints.length > 0 ? (
         <div className="island-map-route-overlay-wrap">
           <IslandMapRouteOverlayLayer
@@ -1014,6 +1051,8 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
+        </>
+      )}
     </>
   ) : null
 
