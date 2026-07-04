@@ -8,7 +8,7 @@ import {
   type RouteEditorNode,
   type RouteEditorNodeType,
 } from './types'
-import { inferSegmentsFromOrderedNodes, normalizeRouteEditorLine } from './routeEditorPath'
+import { normalizeRouteEditorLine } from './routeEditorPath'
 import { mergeRouteEditorLines } from './routeEditorMerge'
 
 type RouteEditorEvent = 'change' | 'historyChange'

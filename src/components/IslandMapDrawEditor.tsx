@@ -30,7 +30,8 @@ import {
   routeEditorLineToSibsDraft,
   sibsImportToRouteEditorLine,
 } from '../routeEditor/routeEditorBridge'
-import type { RouteEditorLine } from '../routeEditor/types'
+import { mergeManyRouteEditorLines } from '../routeEditor/routeEditorMerge'
+import type { RouteEditorLine, RouteEditorNode } from '../routeEditor/types'
 import { useRouteEditor } from '../routeEditor/useRouteEditor'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
 import { IslandMapDrawImportConflictDialog } from './IslandMapDrawImportConflictDialog'
@@ -708,7 +709,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (merged?.kind === 'catalog') {
         showExportHint(
           t('mapDrawImportMergeDone', {
-            stops: importLine.nodes.filter((node) => node.type === 'stop').length,
+            stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
             segments: importLine.segments.length,
           }),
         )
@@ -717,7 +718,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (merged?.kind === 'route') {
         showExportHint(
           t('mapDrawImportMergeDone', {
-            stops: importLine.nodes.filter((node) => node.type === 'stop').length,
+            stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
             segments: importLine.segments.length,
           }),
         )
@@ -725,7 +726,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       }
       showExportHint(
         t('mapDrawImportMergeDone', {
-          stops: importLine.nodes.filter((node) => node.type === 'stop').length,
+          stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
           segments: importLine.segments.length,
         }),
       )

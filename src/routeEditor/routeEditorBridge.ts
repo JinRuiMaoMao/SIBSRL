@@ -4,7 +4,11 @@ import type { WorldMapDrawImportResult } from '../utils/worldMapRouteImport'
 import type { RouteImportMergeResult } from '../utils/worldMapDrawImportMerge'
 import type { WorldMapDrawImageSegment } from '../utils/worldMapDrawImageExport'
 import { RouteEditorDataManager } from './RouteEditorDataManager'
-import { inferSegmentsFromOrderedNodes, sampleRouteEditorPathPoints } from './routeEditorPath'
+import {
+  inferSegmentsFromOrderedNodes,
+  normalizeRouteEditorLine,
+  sampleRouteEditorPathPoints,
+} from './routeEditorPath'
 import { mergeManyRouteEditorLines } from './routeEditorMerge'
 import type { RouteEditorLine, RouteEditorLineStyle, RouteEditorNode } from './types'
 
