@@ -347,12 +347,15 @@ html[data-app-page='map-draw'] #root {
 .reference-route-editor-label-bg {
   fill: rgba(15, 23, 42, 0.88);
   stroke: rgba(148, 163, 184, 0.35);
+  pointer-events: all;
+  cursor: pointer;
 }
 
 .reference-route-editor-label-seq,
 .reference-route-editor-label-name {
   fill: #f8fafc;
   font-size: 11px;
+  pointer-events: none;
 }
 
 .reference-route-editor-preview {

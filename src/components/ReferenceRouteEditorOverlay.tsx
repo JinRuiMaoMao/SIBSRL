@@ -199,7 +199,6 @@ export function ReferenceRouteEditorOverlay({
               <g
                 className={`reference-route-editor-label reference-route-editor-label--${node.labelPosition}`}
                 transform={`translate(${node.x + labelLayout.translateX}, ${node.y + labelLayout.translateY})`}
-                pointerEvents="none"
               >
                 <rect
                   x={labelLayout.rectX}
@@ -216,6 +215,7 @@ export function ReferenceRouteEditorOverlay({
                   fontSize={config.labelFontSize}
                   textAnchor={labelLayout.textAnchor}
                   dominantBaseline="middle"
+                  pointerEvents="none"
                 >
                   {stopLabel}
                 </text>

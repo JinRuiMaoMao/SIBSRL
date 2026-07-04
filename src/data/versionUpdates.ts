@@ -307,6 +307,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw.html 取消 5 秒启动加载屏，打开页面直接进入编辑器。",
             en: "map-draw.html no longer shows a 5-second boot splash—opens straight into the editor.",
           },
+          {
+            zh: "map-draw 显示站名时，点击站名标签框也可选中/连接站点；隐藏站名时不参与点击判定。",
+            en: "Map-draw: when stop labels are visible, clicking the label box selects or connects the stop; hidden labels are not hit-tested.",
+          },
         ],
       },
     ],
