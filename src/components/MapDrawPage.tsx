@@ -1,26 +1,18 @@
+import { useState } from 'react'
+import '../styles/mapDrawEditor.css'
 import { IslandMapDrawEditor } from './IslandMapDrawEditor'
-import { useLocale } from '../i18n/LocaleContext'
+import { MapDrawBootSplash } from './MapDrawBootSplash'
 
-/** 独立路线图编辑器页（map-draw.html）。 */
+/** 独立路线图编辑器页（map-draw.html），布局参考 Downloads/index。 */
 export function MapDrawPage() {
-  const { t } = useLocale()
+  const [bootDone, setBootDone] = useState(false)
 
   return (
-    <div className="map-draw-app">
-      <header className="map-draw-app-header">
-        <div className="map-draw-app-header-left">
-          <h1 className="map-draw-app-title">{t('mapDrawPageTitle')}</h1>
-          <p className="map-draw-app-subtitle">{t('mapDrawPageSubtitle')}</p>
-        </div>
-        <div className="map-draw-app-header-actions">
-          <a className="map-draw-app-back" href="./routes.html">
-            {t('mapDrawPageBack')}
-          </a>
-        </div>
-      </header>
-      <div className="map-draw-app-body">
-        <IslandMapDrawEditor />
+    <>
+      {!bootDone ? <MapDrawBootSplash onDone={() => setBootDone(true)} /> : null}
+      <div className={bootDone ? 'route-editor-page-root' : 'route-editor-page-root route-editor-page-root--booting'}>
+        <IslandMapDrawEditor ready={bootDone} />
       </div>
-    </div>
+    </>
   )
 }

@@ -169,6 +169,20 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "同步 7/4 每日挑战：马拉松封路 240A（竞速）。",
             en: "Synced 7/4 daily challenge: Marathon Road Closure 240A (race).",
           },
+        ],
+      },
+      {
+        title: {
+          zh: "群岛地图",
+          en: "Island map",
+        },
+        additions: [
+          {
+            zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
+            en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
+          },
+        ],
+        fixes: [
           {
             zh: "修复 map-draw.html 空白：绘制页移除已删除的 expanded 变量引用。",
             en: "Fixed blank map-draw.html by removing stale expanded variable references on the draw page.",
@@ -194,6 +208,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: "同步 6/29 每日挑战：大桥封路 Y370A。",
             en: "Synced 6/29 daily challenge: Bridge Closure Y370A.",
+          },
+        ],
+        fixes: [
+          {
+            zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
+            en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },
         ],
       },

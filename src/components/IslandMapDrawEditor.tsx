@@ -191,7 +191,7 @@ function surfaceProps(
   }
 }
 
-export function IslandMapDrawEditor() {
+export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const { t, locale } = useLocale()
   const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
@@ -251,6 +251,7 @@ export function IslandMapDrawEditor() {
   const undoStackRef = useRef<DrawDraftSnapshot[]>([])
   const redoStackRef = useRef<DrawDraftSnapshot[]>([])
   const [historyTick, setHistoryTick] = useState(0)
+  const [pointerPoint, setPointerPoint] = useState<WorldMapPoint | null>(null)
 
   const bumpHistory = useCallback(() => setHistoryTick((tick) => tick + 1), [])
 
@@ -1381,6 +1382,58 @@ export function IslandMapDrawEditor() {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
   }, [])
 
+  const handleZoomIn = useCallback(() => {
+    setMapView((current) => {
+      const base = current ?? { centerX: 0.5, centerY: 0.5, zoomRatio: 1 }
+      return {
+        ...base,
+        zoomRatio: Math.min(surfaceMaxZoomRatio, base.zoomRatio * 1.25),
+      }
+    })
+  }, [surfaceMaxZoomRatio])
+
+  const handleZoomOut = useCallback(() => {
+    setMapView((current) => {
+      const base = current ?? { centerX: 0.5, centerY: 0.5, zoomRatio: 1 }
+      return {
+        ...base,
+        zoomRatio: Math.max(0.45, base.zoomRatio / 1.25),
+      }
+    })
+  }, [])
+
+  const handleZoomReset = useCallback(() => setMapView(null), [])
+
+  const handleFitView = useCallback(() => {
+    const fitPoints = [
+      ...draftStops.map((stop) => stop.point),
+      ...draftPathNodes.map((node) => node.point),
+      ...draftPoints,
+    ]
+    if (fitPoints.length === 0) {
+      setMapView(null)
+      return
+    }
+    setMapView(fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen'))
+  }, [draftPathNodes, draftPoints, draftStops])
+
+  const undoCount = undoStackRef.current.length
+  const redoCount = redoStackRef.current.length
+  const zoomPercent = Math.round((mapView?.zoomRatio ?? 1) * 100)
+  const pointerLabel = pointerPoint
+    ? t('mapDrawStatusCoords', {
+        x: Math.round(pointerPoint[0] * 10000) / 100,
+        y: Math.round(pointerPoint[1] * 10000) / 100,
+      })
+    : t('mapDrawStatusCoords', { x: 0, y: 0 })
+  const statusMode = !drawMode
+    ? t('mapDrawStatusSelect')
+    : drawInteraction === 'route'
+      ? t('islandMapDrawRouteMode')
+      : drawInteraction === 'path-node'
+        ? t('islandMapDrawPathNodeMode')
+        : t('islandMapDrawCatalogMode')
+
   useEffect(() => {
     document.documentElement.classList.add('island-map-fullscreen-open')
     return () => document.documentElement.classList.remove('island-map-fullscreen-open')
@@ -1403,117 +1456,126 @@ export function IslandMapDrawEditor() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [drawMode, handleDrawRedo, handleDrawUndo])
 
-  const drawPanel = isLoggedIn ? (
-    <div className="island-map-draw-panel">
-      <div className="island-map-draw-panel-row">
-        <button
-          type="button"
-          className={`island-map-btn island-map-btn--draw${drawMode ? ' island-map-btn--active' : ''}`.trim()}
-          onClick={toggleDrawMode}
-          aria-pressed={drawMode}
-          title={drawMode ? t('islandMapDrawStopHint') : t('islandMapDrawStartHint')}
-        >
-          {drawMode ? t('islandMapDrawStop') : t('islandMapDrawStart')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn"
-          onClick={handleDrawUndo}
-          disabled={!canUndo}
-          title={t('islandMapDrawUndoHint')}
-        >
-          {t('islandMapDrawUndo')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn"
-          onClick={handleDrawRedo}
-          disabled={!canRedo}
-          title={t('islandMapDrawRedoHint')}
-        >
-          {t('islandMapDrawRedo')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn"
-          onClick={openClearDialog}
-          disabled={!canClear}
-          title={t('islandMapDrawClearHint')}
-        >
-          {t('islandMapDrawClear')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn island-map-btn--import"
-          onClick={() => importInputRef.current?.click()}
-          title={t('islandMapDrawImportHint')}
-        >
-          {t('islandMapDrawImport')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn island-map-btn--export"
-          onClick={openExportDialog}
-          disabled={!canExport}
-          title={t('islandMapDrawExportRouteHint')}
-        >
-          {t('islandMapDrawExport')}
-        </button>
-      </div>
-      <IslandMapDrawInteractionTabs
-        interaction={drawInteraction}
-        onInteractionChange={handleInteractionChange}
-      />
-      <div className="island-map-draw-panel-row island-map-draw-panel-row--meta">
-        <label className="island-map-draw-field">
-          <span>{t('islandMapDrawRouteId')}</span>
-          <input
-            value={drawRouteId}
-            onChange={(event) => setDrawRouteId(event.target.value.trim())}
-            placeholder={resolveWorldMapRouteId('21A') ?? '21'}
-            spellCheck={false}
-          />
-        </label>
-        <label className="island-map-draw-field island-map-draw-field--direction">
-          <span>{t('islandMapDrawDirection')}</span>
-          <input
-            type="number"
-            min={0}
-            max={9}
-            value={drawDirectionIndex}
-            onChange={(event) => setDrawDirectionIndex(Number(event.target.value) || 0)}
-          />
-        </label>
-        <span className="island-map-draw-count">
-          {t('islandMapDrawStopCount', { count: draftStops.length })}
-        </span>
-        <span className="island-map-draw-count">
-          {t('islandMapDrawPathNodeCount', { count: draftPathNodes.length })}
-        </span>
-      </div>
-      {drawMode && drawInteraction === 'route' ? (
-        <>
-          <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
-          <IslandMapDrawStopLabelSettings
-            visible={showStopLabels}
-            scale={stopLabelScale}
-            onVisibleChange={setShowStopLabels}
-            onScaleChange={setStopLabelScale}
-          />
-        </>
-      ) : null}
-      {drawMode && drawInteraction === 'path-node' ? (
-        <IslandMapDrawPathNodePanel
-          pendingNode={pendingPathNode}
-          nodeCount={draftPathNodes.length}
-          onLabelChange={(label) =>
-            setPendingPathNode((current) => (current ? { ...current, label } : current))
-          }
-          onConfirm={handleConfirmPendingPathNode}
-          onRemove={handleRemovePendingPathNode}
+  const headerActions = isLoggedIn ? (
+    <>
+      <button
+        type="button"
+        className="route-editor-btn"
+        onClick={handleDrawUndo}
+        disabled={!canUndo}
+        title={t('islandMapDrawUndoHint')}
+      >
+        {t('islandMapDrawUndo')}
+      </button>
+      <button
+        type="button"
+        className="route-editor-btn"
+        onClick={handleDrawRedo}
+        disabled={!canRedo}
+        title={t('islandMapDrawRedoHint')}
+      >
+        {t('islandMapDrawRedo')}
+      </button>
+      <button
+        type="button"
+        className="route-editor-btn"
+        onClick={() => importInputRef.current?.click()}
+        title={t('islandMapDrawImportHint')}
+      >
+        {t('islandMapDrawImport')}
+      </button>
+      <button
+        type="button"
+        className="route-editor-btn"
+        onClick={openExportDialog}
+        disabled={!canExport}
+        title={t('islandMapDrawExportRouteHint')}
+      >
+        {t('islandMapDrawExport')}
+      </button>
+      <button
+        type="button"
+        className="route-editor-btn route-editor-btn--danger"
+        onClick={openClearDialog}
+        disabled={!canClear}
+        title={t('islandMapDrawClearHint')}
+      >
+        {t('islandMapDrawClear')}
+      </button>
+    </>
+  ) : null
+
+  const sidebar = isLoggedIn ? (
+    <>
+      <section className="route-editor-panel">
+        <h3>{t('mapDrawPanelNodes')}</h3>
+        <div className="route-editor-btn-row">
+          <button
+            type="button"
+            className={`route-editor-btn route-editor-btn--primary${drawMode ? ' route-editor-btn--active' : ''}`.trim()}
+            onClick={toggleDrawMode}
+            aria-pressed={drawMode}
+            title={drawMode ? t('islandMapDrawStopHint') : t('islandMapDrawStartHint')}
+          >
+            {drawMode ? t('islandMapDrawStop') : t('islandMapDrawStart')}
+          </button>
+        </div>
+        <IslandMapDrawInteractionTabs
+          interaction={drawInteraction}
+          onInteractionChange={handleInteractionChange}
         />
-      ) : null}
-      <IslandMapDrawStopPanel
+      </section>
+
+      <section className="route-editor-panel">
+        <h3>{t('mapDrawPanelMap')}</h3>
+        <div className="route-editor-btn-row route-editor-btn-row--stack">
+          <button
+            type="button"
+            className="route-editor-btn"
+            onClick={toggleLayer}
+            title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
+          >
+            {t('islandMapLayers')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={handleZoomIn}>
+            {t('mapDrawZoomIn')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={handleZoomOut}>
+            {t('mapDrawZoomOut')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={handleZoomReset}>
+            {t('mapDrawZoomReset')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={handleFitView}>
+            {t('mapDrawZoomFit')}
+          </button>
+        </div>
+        {drawMode && drawInteraction === 'route' ? (
+          <>
+            <IslandMapDrawColorPicker color={drawColor} onColorChange={setDrawColor} />
+            <IslandMapDrawStopLabelSettings
+              visible={showStopLabels}
+              scale={stopLabelScale}
+              onVisibleChange={setShowStopLabels}
+              onScaleChange={setStopLabelScale}
+            />
+          </>
+        ) : null}
+      </section>
+
+      <section className="route-editor-panel">
+        {drawMode && drawInteraction === 'path-node' ? (
+          <IslandMapDrawPathNodePanel
+            pendingNode={pendingPathNode}
+            nodeCount={draftPathNodes.length}
+            onLabelChange={(label) =>
+              setPendingPathNode((current) => (current ? { ...current, label } : current))
+            }
+            onConfirm={handleConfirmPendingPathNode}
+            onRemove={handleRemovePendingPathNode}
+          />
+        ) : null}
+        <IslandMapDrawStopPanel
           interaction={drawInteraction}
           routeId={drawRouteId}
           directionIndex={drawDirectionIndex}
@@ -1531,78 +1593,128 @@ export function IslandMapDrawEditor() {
           selectedStopId={selectedStopId}
           onEditStop={openStopEditor}
         />
-      {drawMode && drawInteraction === 'route' ? (
-        <p className="island-map-draw-help">
-          {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawHelp')}
-          <span className="island-map-draw-build-tag">{t('buildTag', { time: drawBuildLabel })}</span>
-        </p>
-      ) : null}
-      {drawMode && drawInteraction === 'route' && pendingTraceAnchor ? (
-        <p className="island-map-draw-trace-pending">{t('islandMapDrawTracePending')}</p>
-      ) : null}
-      {drawMode && drawInteraction === 'path-node' ? (
-        <p className="island-map-draw-help">
-          {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawPathNodeModeHelp')}
-        </p>
-      ) : null}
-      {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}
-    </div>
-  ) : null
+        {drawMode && drawInteraction === 'route' ? (
+          <p className="island-map-draw-help">
+            {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawHelp')}
+            <span className="island-map-draw-build-tag">{t('buildTag', { time: drawBuildLabel })}</span>
+          </p>
+        ) : null}
+        {drawMode && drawInteraction === 'route' && pendingTraceAnchor ? (
+          <p className="island-map-draw-trace-pending">{t('islandMapDrawTracePending')}</p>
+        ) : null}
+        {drawMode && drawInteraction === 'path-node' ? (
+          <p className="island-map-draw-help">
+            {roadSnap.loading ? t('islandMapDrawRoadLoading') : t('islandMapDrawPathNodeModeHelp')}
+          </p>
+        ) : null}
+        {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}
+      </section>
 
-  const node = (
+      <section className="route-editor-panel route-editor-panel-tips">
+        <h3>{t('mapDrawPanelTips')}</h3>
+        <p>{t('mapDrawTipClickMap')}</p>
+        <p>{t('mapDrawTipDrag')}</p>
+        <p>{t('mapDrawTipKeys')}</p>
+      </section>
+    </>
+  ) : (
+    <section className="route-editor-panel">{guestMapPanel}</section>
+  )
+
+  const node = ready ? (
     <div
-      className={`island-map island-map--fullscreen island-map--standalone${drawMode ? ' island-map--draw-mode' : ''}`.trim()}
+      className={`route-editor-app${drawMode ? ' route-editor-app--draw-mode' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
-      <IslandMapPanZoomSurface
-        {...surfaceProps(
-          mapSrc,
-          'fullscreen',
-          'island-map-viewport island-map-viewport--fullscreen',
-          mapView,
-          handleViewChange,
-          surfaceRouteOverlay,
-          drawMode,
-          drawInteraction,
-          draftPoints,
-          draftStopPoints,
-          draftStops,
-          draftPathNodes,
-          pendingStop?.point ?? null,
-          pendingPathNode?.point ?? null,
-          drawColor,
-          draftRouteNumber,
-          handleDrawMapClick,
-          handleDrawUndo,
-          surfaceMaxZoomRatio,
-          effectiveLegStarts,
-          pathLegHidden,
-          pathUserBends,
-          showStopLabels,
-          stopLabelScale,
-          stopEdit,
-          nodeEdit,
-          pathEdit,
-          traceEdit,
-          roadSnapSurface,
-        )}
-      />
-      <div className="island-map-controls island-map-controls--fullscreen">
-        {isLoggedIn ? drawPanel : guestMapPanel}
-        <div className="island-map-controls-row">
-          <button
-            type="button"
-            className="island-map-btn island-map-btn--layers"
-            onClick={toggleLayer}
-            aria-label={t('islandMapLayersAria')}
-            title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
-          >
-            {t('islandMapLayers')}
-          </button>
+      <header className="route-editor-header">
+        <div className="route-editor-header-left">
+          <h1 className="route-editor-title">{t('mapDrawPageTitle')}</h1>
+          <p className="route-editor-subtitle">{t('mapDrawPageSubtitle')}</p>
+        </div>
+        <div className="route-editor-header-middle">
+          <label className="route-editor-field">
+            <span>{t('islandMapDrawRouteId')}</span>
+            <input
+              value={drawRouteId}
+              onChange={(event) => setDrawRouteId(event.target.value.trim())}
+              placeholder={resolveWorldMapRouteId('21A') ?? '21'}
+              spellCheck={false}
+            />
+          </label>
+          <label className="route-editor-field">
+            <span>{t('islandMapDrawDirection')}</span>
+            <input
+              type="number"
+              min={0}
+              max={9}
+              value={drawDirectionIndex}
+              onChange={(event) => setDrawDirectionIndex(Number(event.target.value) || 0)}
+            />
+          </label>
+        </div>
+        <div className="route-editor-header-right">
+          {headerActions}
+          <a className="route-editor-btn route-editor-back" href="./routes.html">
+            {t('mapDrawPageBack')}
+          </a>
+        </div>
+      </header>
+
+      <div className="route-editor-body">
+        <aside className="route-editor-sidebar">{sidebar}</aside>
+        <div className="route-editor-workspace">
+          <div className="route-editor-map-shell">
+            <IslandMapPanZoomSurface
+              {...surfaceProps(
+                mapSrc,
+                'fullscreen',
+                'route-editor-map-viewport',
+                mapView,
+                handleViewChange,
+                surfaceRouteOverlay,
+                drawMode,
+                drawInteraction,
+                draftPoints,
+                draftStopPoints,
+                draftStops,
+                draftPathNodes,
+                pendingStop?.point ?? null,
+                pendingPathNode?.point ?? null,
+                drawColor,
+                draftRouteNumber,
+                handleDrawMapClick,
+                handleDrawUndo,
+                surfaceMaxZoomRatio,
+                effectiveLegStarts,
+                pathLegHidden,
+                pathUserBends,
+                showStopLabels,
+                stopLabelScale,
+                stopEdit,
+                nodeEdit,
+                pathEdit,
+                traceEdit,
+                roadSnapSurface,
+              )}
+              onMapPointerMove={setPointerPoint}
+            />
+          </div>
+          <footer className="route-editor-statusbar">
+            <span>{pointerLabel}</span>
+            <span>
+              {t('mapDrawStatusNodes', {
+                stops: draftStops.length,
+                nodes: draftPathNodes.length,
+              })}
+            </span>
+            <span>{t('mapDrawStatusZoom', { percent: zoomPercent })}</span>
+            <span>{t('mapDrawStatusHistory', { undo: undoCount, redo: redoCount })}</span>
+            <span>{statusMode}</span>
+          </footer>
         </div>
       </div>
     </div>
-  )
+  ) : null
 
   return (
     <>

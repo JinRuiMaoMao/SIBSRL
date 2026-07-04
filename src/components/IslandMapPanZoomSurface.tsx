@@ -72,6 +72,7 @@ interface IslandMapPanZoomSurfaceProps {
   isOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
   maxZoomRatio?: number
+  onMapPointerMove?: (point: WorldMapPoint | null) => void
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
@@ -278,6 +279,7 @@ export function IslandMapPanZoomSurface({
   isOnRoad: _isOnRoad,
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
+  onMapPointerMove,
 }: IslandMapPanZoomSurfaceProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -286,6 +288,7 @@ export function IslandMapPanZoomSurface({
   const modeRef = useRef(mode)
   const maxZoomRatioRef = useRef(maxZoomRatio)
   const onViewChangeRef = useRef(onViewChange)
+  const onMapPointerMoveRef = useRef(onMapPointerMove)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
   const panZoomRef = useRef<PanZoomState | null>(null)
@@ -313,6 +316,7 @@ export function IslandMapPanZoomSurface({
   modeRef.current = mode
   maxZoomRatioRef.current = maxZoomRatio
   onViewChangeRef.current = onViewChange
+  onMapPointerMoveRef.current = onMapPointerMove
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
   const [incomingSrc, setIncomingSrc] = useState<string | null>(null)
@@ -476,6 +480,27 @@ export function IslandMapPanZoomSurface({
     viewport.addEventListener('wheel', onWheel, { passive: false })
     return () => viewport.removeEventListener('wheel', onWheel)
   }, [applyPanZoom, imageSize, panZoom])
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport || !onMapPointerMove) return
+
+    const onMove = (event: PointerEvent) => {
+      const live = panZoomRef.current
+      const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
+      if (!live || !size) {
+        onMapPointerMoveRef.current?.(null)
+        return
+      }
+      const rect = viewport.getBoundingClientRect()
+      onMapPointerMoveRef.current?.(
+        viewportClientToNormalized(event.clientX, event.clientY, rect, live, size),
+      )
+    }
+
+    viewport.addEventListener('pointermove', onMove)
+    return () => viewport.removeEventListener('pointermove', onMove)
+  }, [displayedSrc, imageSize, onMapPointerMove])
 
   useEffect(() => {
     if (!dragging || !panZoom) return
