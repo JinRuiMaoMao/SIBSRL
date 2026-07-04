@@ -263,6 +263,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 站点标签默认只显示站名（不再自动加 1、2、3…）；侧栏可填可选站序，导出/导入会保留。",
             en: "Map-draw stop labels show names only by default (no auto 1, 2, 3…); optional stop numbers in the sidebar are preserved on export/import.",
           },
+          {
+            zh: "map-draw 侧栏新增「预览 PNG 导出效果」：勾选后隐藏拐点、保留站点与走线，样式接近导出 PNG。",
+            en: "Map-draw adds Preview PNG export—toggle hides bend points and keeps stops and route lines styled like the exported PNG.",
+          },
         ],
       },
     ],

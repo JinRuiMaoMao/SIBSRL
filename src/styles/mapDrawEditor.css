@@ -417,6 +417,25 @@ html[data-app-page='map-draw'] #root {
   stroke: #f59e0b;
 }
 
+.route-editor-app--export-preview .reference-route-editor-node--point {
+  display: none;
+}
+
+.route-editor-app--export-preview .reference-route-editor-node--stop .reference-route-editor-node-dot {
+  fill: #ffffff;
+  stroke: #000000;
+  stroke-width: 2px;
+}
+
+.route-editor-app--export-preview .reference-route-editor-label-bg {
+  fill: rgba(255, 255, 255, 0.92);
+  stroke: rgba(0, 0, 0, 0.35);
+}
+
+.route-editor-app--export-preview .reference-route-editor-label-name {
+  fill: #111111;
+}
+
 .reference-node-info-panel {
   display: flex;
   flex-direction: column;

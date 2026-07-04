@@ -101,6 +101,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
   const [showStopLabels, setShowStopLabels] = useState(readStoredMapDrawStopLabelVisible)
   const [stopLabelScale, setStopLabelScale] = useState(readStoredMapDrawStopLabelScale)
+  const [exportPngPreview, setExportPngPreview] = useState(false)
   const [exportHint, setExportHint] = useState<string | null>(null)
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
@@ -233,10 +234,10 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       showLabelsAlways: showStopLabels,
       labelFontSize: Math.max(8, Math.round(11 * stopLabelScale * scale)),
       showPointLines: true,
-      showPointIcons: true,
+      showPointIcons: !exportPngPreview,
       showStopIcons: true,
     })
-  }, [editor.manager, imageSize, showStopLabels, stopLabelScale])
+  }, [editor.manager, exportPngPreview, imageSize, showStopLabels, stopLabelScale])
 
   useEffect(() => {
     editor.manager.updateLineStyle({ color: drawColor })
@@ -935,7 +936,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
   const node = ready ? (
     <div
-      className={`route-editor-app${mapDrawMode ? ' route-editor-app--draw-mode' : ''}`.trim()}
+      className={`route-editor-app${mapDrawMode ? ' route-editor-app--draw-mode' : ''}${exportPngPreview ? ' route-editor-app--export-preview' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
       <header className="route-editor-header">
@@ -1031,6 +1032,14 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                   onVisibleChange={setShowStopLabels}
                   onScaleChange={setStopLabelScale}
                 />
+                <label className="island-map-draw-stop-label-check">
+                  <input
+                    type="checkbox"
+                    checked={exportPngPreview}
+                    onChange={(event) => setExportPngPreview(event.target.checked)}
+                  />
+                  <span>{t('mapDrawExportPngPreview')}</span>
+                </label>
               </section>
 
               <section className="route-editor-panel">
