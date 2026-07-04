@@ -299,6 +299,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw.html 浅色主题适配：页面配色与输入框、下拉、站名编辑区在浅色模式下可读。",
             en: "map-draw.html light theme: page palette and inputs (fields, selects, stop name editor) readable in light mode.",
           },
+          {
+            zh: "说明：map-draw 群岛地图绘制器仍处于 Beta 测试阶段，功能与交互可能继续调整，遇到问题欢迎反馈。",
+            en: "Note: the map-draw island route editor is still in beta—features and UX may change; feedback is welcome.",
+          },
         ],
       },
     ],
