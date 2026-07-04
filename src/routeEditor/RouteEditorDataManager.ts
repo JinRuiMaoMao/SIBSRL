@@ -184,6 +184,10 @@ export class RouteEditorDataManager {
       if (updates.labelOffsetY !== undefined) node.labelOffsetY = updates.labelOffsetY
       if (updates.labelWidth !== undefined) node.labelWidth = updates.labelWidth
       if (updates.labelHeight !== undefined) node.labelHeight = updates.labelHeight
+      if (updates.stopSeq !== undefined) {
+        const seq = updates.stopSeq
+        node.stopSeq = seq != null && seq > 0 ? Math.round(seq) : undefined
+      }
     }
 
     if (updates.x !== undefined) node.x = Math.round(updates.x)
@@ -351,8 +355,11 @@ export class RouteEditorDataManager {
           node.chi_name = ''
           node.eng_name = ''
         }
-        node.cornerRadius = node.cornerRadius ?? 0
+      node.cornerRadius = node.cornerRadius ?? 0
+      if (node.type === 'stop' && node.stopSeq != null && node.stopSeq <= 0) {
+        node.stopSeq = undefined
       }
+    }
       this.line = line
       const style = parsed.lineStyles?.[String(line.id)]
       this.lineStyle = style

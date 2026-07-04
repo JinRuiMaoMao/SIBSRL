@@ -259,6 +259,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 导出 JSON 新增 editorGraph（节点 id + 线段 from/to），导入时按手动连线恢复，单文件导入替换画布避免重复节点与乱连环线。",
             en: "Map-draw JSON export adds editorGraph (node ids + segment from/to links) so import restores manual connections; single-file import replaces the canvas to avoid duplicate nodes and spurious loop segments.",
           },
+          {
+            zh: "map-draw 站点标签默认只显示站名（不再自动加 1、2、3…）；侧栏可填可选站序，导出/导入会保留。",
+            en: "Map-draw stop labels show names only by default (no auto 1, 2, 3…); optional stop numbers in the sidebar are preserved on export/import.",
+          },
         ],
       },
     ],

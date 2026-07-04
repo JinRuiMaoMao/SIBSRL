@@ -9,6 +9,7 @@ import {
   mapDrawPointIconRadius,
   mapDrawStopIconRadius,
 } from '../utils/mapDrawNodeScale'
+import { formatRouteEditorStopLabel, routeEditorStopLabelShowsSeq } from '../utils/routeEditorStopLabel'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -136,8 +137,12 @@ export function ReferenceRouteEditorOverlay({
         const connectPending = connectPendingNodeId === node.id
         const radius = node.type === 'stop' ? stopRadius : pointRadius
         const labelOffsetY = (node.labelOffsetY - 18) * nodeScale
+        const stopLabel = node.type === 'stop' ? formatRouteEditorStopLabel(node) : ''
+        const stopLabelHasSeq = node.type === 'stop' && routeEditorStopLabelShowsSeq(node)
         const labelBoxWidth =
-          Math.max(56, node.labelWidth === 'resize' ? 80 : Number(node.labelWidth) || 80) * nodeScale
+          Math.max(56, node.labelWidth === 'resize' ? 80 : Number(node.labelWidth) || 80) *
+          nodeScale *
+          (stopLabelHasSeq ? 1 : 0.82)
         const labelBoxHeight = 28 * nodeScale
         const labelPadding = 4 * nodeScale
 
@@ -164,7 +169,7 @@ export function ReferenceRouteEditorOverlay({
             }
           >
             <circle cx={node.x} cy={node.y} r={radius} className="reference-route-editor-node-dot" />
-            {node.type === 'stop' && config.showLabelsAlways && (node.chi_name || node.eng_name) ? (
+            {node.type === 'stop' && config.showLabelsAlways && stopLabel ? (
               <g
                 className={`reference-route-editor-label reference-route-editor-label--${node.labelPosition}`}
                 transform={`translate(${node.x + node.labelOffsetX * nodeScale}, ${node.y + labelOffsetY})`}
@@ -179,22 +184,13 @@ export function ReferenceRouteEditorOverlay({
                   className="reference-route-editor-label-bg"
                 />
                 <text
-                  className="reference-route-editor-label-seq"
+                  className="reference-route-editor-label-name"
                   x={2 * nodeScale}
                   y={-labelBoxHeight / 2 + labelPadding / 2}
                   fontSize={config.labelFontSize}
                   dominantBaseline="middle"
                 >
-                  {stopIndex + 1}
-                </text>
-                <text
-                  className="reference-route-editor-label-name"
-                  x={16 * nodeScale}
-                  y={-labelBoxHeight / 2 + labelPadding / 2}
-                  fontSize={config.labelFontSize}
-                  dominantBaseline="middle"
-                >
-                  {node.chi_name || node.eng_name}
+                  {stopLabel}
                 </text>
               </g>
             ) : null}

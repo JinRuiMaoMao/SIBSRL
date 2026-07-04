@@ -78,6 +78,8 @@ export interface WorldMapDrawStop {
     zh: string
     en: string
   }
+  /** Optional label prefix; omit to show stop name only. */
+  seq?: number
 }
 
 export interface WorldMapDrawStopDraft {

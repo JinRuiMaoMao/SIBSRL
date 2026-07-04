@@ -53,10 +53,15 @@ function readStopEntry(value: unknown, index: number): WorldMapDrawStop | null {
   if (!isRecord(value) || !isWorldMapPoint(value.point)) return null
   const name = readStopName(value.name)
   if (!name) return null
+  const seq =
+    typeof value.seq === 'number' && Number.isFinite(value.seq) && value.seq > 0
+      ? Math.round(value.seq)
+      : undefined
   return {
     id: `import-${index}-${Math.random().toString(36).slice(2, 8)}`,
     point: [value.point[0], value.point[1]],
     name,
+    ...(seq != null ? { seq } : {}),
   }
 }
 
@@ -168,6 +173,10 @@ function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null 
     typeof value.cornerRadius === 'number' && Number.isFinite(value.cornerRadius)
       ? value.cornerRadius
       : undefined
+  const stopSeq =
+    typeof value.stopSeq === 'number' && Number.isFinite(value.stopSeq) && value.stopSeq > 0
+      ? Math.round(value.stopSeq)
+      : undefined
   return {
     id,
     type,
@@ -175,6 +184,7 @@ function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null 
     ...(chi_name ? { chi_name } : {}),
     ...(eng_name ? { eng_name } : {}),
     ...(cornerRadius ? { cornerRadius } : {}),
+    ...(stopSeq != null ? { stopSeq } : {}),
   }
 }
 

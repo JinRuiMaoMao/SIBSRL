@@ -41,6 +41,7 @@ export function routeEditorNodeToStop(
     id: `stop-${node.id}`,
     point: pixelToNormalized(node.x, node.y, imageWidth, imageHeight),
     name: { zh: node.chi_name || `站点${node.id}`, en: node.eng_name || node.chi_name || `Stop ${node.id}` },
+    ...(node.stopSeq != null && node.stopSeq > 0 ? { seq: node.stopSeq } : {}),
   }
 }
 
@@ -79,7 +80,11 @@ export function routeEditorLineToEditorGraphExport(
       type: node.type,
       point: pixelToNormalized(node.x, node.y, imageWidth, imageHeight),
       ...(node.type === 'stop'
-        ? { chi_name: node.chi_name, eng_name: node.eng_name }
+        ? {
+            chi_name: node.chi_name,
+            eng_name: node.eng_name,
+            ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
+          }
         : node.cornerRadius > 0
           ? { cornerRadius: node.cornerRadius }
           : {}),
@@ -146,6 +151,7 @@ export function editorGraphToRouteEditorLine(
         node.eng_name ?? '',
         node.cornerRadius ?? 0,
       ),
+      ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
     })
   }
 
@@ -347,6 +353,7 @@ export function sibsImportToRouteEditorLine(
         labelWidth: 80,
         labelHeight: 'auto',
         cornerRadius: 0,
+        ...(anchor.stop.seq != null && anchor.stop.seq > 0 ? { stopSeq: anchor.stop.seq } : {}),
       })
       continue
     }
@@ -434,6 +441,9 @@ export function parseReferenceJsonToLine(jsonText: string): RouteEditorLine | nu
         node.eng_name = ''
       }
       node.cornerRadius = node.cornerRadius ?? 0
+      if (node.type === 'stop' && node.stopSeq != null && node.stopSeq <= 0) {
+        node.stopSeq = undefined
+      }
     }
     return line
   } catch {

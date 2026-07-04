@@ -117,6 +117,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [editChiName, setEditChiName] = useState('')
   const [editEngName, setEditEngName] = useState('')
   const [editCornerRadius, setEditCornerRadius] = useState(0)
+  const [editStopSeq, setEditStopSeq] = useState('')
   const [newStopChiName, setNewStopChiName] = useState('')
   const [newStopEngName, setNewStopEngName] = useState('')
   const [newStopSnapPoint, setNewStopSnapPoint] = useState<WorldMapPoint | null>(null)
@@ -189,6 +190,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       setEditChiName('')
       setEditEngName('')
       setEditCornerRadius(0)
+      setEditStopSeq('')
       return
     }
     const node = editor.manager.getNodeById(selectedNodeId)
@@ -196,6 +198,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     setEditChiName(node.chi_name)
     setEditEngName(node.eng_name)
     setEditCornerRadius(node.cornerRadius)
+    setEditStopSeq(node.stopSeq != null && node.stopSeq > 0 ? String(node.stopSeq) : '')
   }, [editor.manager, selectedNodeId])
 
   useEffect(() => {
@@ -520,10 +523,18 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     if (selectedNodeId == null || !selectedNode) return
     const chi = editChiName.trim()
     const eng = editEngName.trim()
+    const seqRaw = editStopSeq.trim()
+    const parsedSeq = seqRaw ? Number.parseInt(seqRaw, 10) : null
     editor.updateNode(selectedNodeId, {
       chi_name: selectedNode.type === 'stop' ? chi || eng : editChiName,
       eng_name: selectedNode.type === 'stop' ? eng || chi : editEngName,
       cornerRadius: selectedNode.type === 'point' ? editCornerRadius : selectedNode.cornerRadius,
+      ...(selectedNode.type === 'stop'
+        ? {
+            stopSeq:
+              parsedSeq != null && Number.isFinite(parsedSeq) && parsedSeq > 0 ? parsedSeq : undefined,
+          }
+        : {}),
     })
     if (editorMode === 'addStop' && selectedNode.type === 'stop') {
       showExportHint(t('mapDrawStopNameApplied'))
@@ -537,6 +548,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     editChiName,
     editCornerRadius,
     editEngName,
+    editStopSeq,
     editor,
     editorMode,
     resetNewStopPlacement,
@@ -1038,6 +1050,23 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                       onSelectSuggestion={applyStopNameSelection}
                       onEnter={saveSelectedNodeEdits}
                     />
+                    <label className="route-editor-field">
+                      <span>{t('mapDrawStopSeqLabel')}</span>
+                      <input
+                        type="number"
+                        min={1}
+                        step={1}
+                        value={editStopSeq}
+                        placeholder={t('mapDrawStopSeqPlaceholder')}
+                        onChange={(event) => setEditStopSeq(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+                            event.preventDefault()
+                            saveSelectedNodeEdits()
+                          }
+                        }}
+                      />
+                    </label>
                     <MapDrawStopLocationPicker
                       locations={editCatalogLocations}
                       mode={editStopPlacementMode}

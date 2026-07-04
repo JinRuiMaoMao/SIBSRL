@@ -41,6 +41,7 @@ export interface WorldMapRouteExportPayload {
     stops?: Array<{
       name: { zh: string; en: string }
       point: WorldMapPoint
+      seq?: number
     }>
     virtualNodes?: Array<{
       order: number
@@ -162,6 +163,7 @@ export function buildWorldMapRouteExportPayload(
     ? stops.map((stop) => ({
         name: { zh: stop.name.zh, en: stop.name.en },
         point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
+        ...(stop.seq != null && stop.seq > 0 ? { seq: stop.seq } : {}),
       }))
     : []
   const exportPathNodes = selection.includePathNodes
@@ -206,6 +208,7 @@ export function buildWorldMapRouteExportPayload(
         ...(node.chi_name ? { chi_name: node.chi_name } : {}),
         ...(node.eng_name ? { eng_name: node.eng_name } : {}),
         ...(node.cornerRadius ? { cornerRadius: node.cornerRadius } : {}),
+        ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
       })),
       segments: editorGraph.segments.map((segment) => ({
         from: segment.from,

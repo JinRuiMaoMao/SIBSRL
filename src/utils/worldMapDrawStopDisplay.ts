@@ -4,9 +4,13 @@ import type { WorldMapDrawStop } from '../types/worldMapDraw'
 
 export function formatDrawStopLabel(
   stop: WorldMapDrawStop,
-  index: number,
+  _index: number,
   locale: Locale,
 ): string {
+  void _index
   const name = getPrimaryText(stop.name, locale)
-  return `${index + 1}. ${name}`
+  if (stop.seq != null && stop.seq > 0) {
+    return `${stop.seq}. ${name}`
+  }
+  return name
 }

@@ -27,6 +27,8 @@ export interface RouteEditorNode {
   labelWidth: number | 'resize'
   labelHeight: number | 'auto'
   cornerRadius: number
+  /** Optional display sequence shown before the stop name (omit for name-only labels). */
+  stopSeq?: number
 }
 
 export interface RouteEditorSegment {
@@ -43,6 +45,7 @@ export interface RouteEditorGraphExportNode {
   chi_name?: string
   eng_name?: string
   cornerRadius?: number
+  stopSeq?: number
 }
 
 export interface RouteEditorGraphExport {
