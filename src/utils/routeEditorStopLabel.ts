@@ -1,4 +1,5 @@
 import type { RouteEditorLabelPosition, RouteEditorNode } from '../routeEditor/types'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
 
 export const MAP_DRAW_STOP_LABEL_POSITIONS = [
   'top-left',
@@ -182,22 +183,26 @@ export function drawRouteEditorStopLabelOnCanvas(
 
   const originX = options.anchorX + layout.translateX
   const originY = options.anchorY + layout.translateY
-  const rectX = originX + layout.rectX
-  const rectY = originY + layout.rectY
+  const boxLeft = originX + layout.rectX
+  const boxTop = originY + layout.rectY
 
   ctx.beginPath()
-  ctx.roundRect(rectX, rectY, labelBoxWidth, labelBoxHeight, cornerRadius)
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.92)'
+  ctx.roundRect(boxLeft, boxTop, labelBoxWidth, labelBoxHeight, cornerRadius)
+  ctx.fillStyle = MAP_DRAW_EXPORT_STOP_LABEL_PLATE.fill
   ctx.fill()
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)'
+  ctx.strokeStyle = MAP_DRAW_EXPORT_STOP_LABEL_PLATE.stroke
   ctx.lineWidth = Math.max(1, options.nodeScale)
   ctx.stroke()
 
+  const textX =
+    layout.textAnchor === 'middle' ? boxLeft + labelBoxWidth / 2 : boxLeft + textInsetX
+  const textY = boxTop + labelBoxHeight / 2
+
   ctx.font = `${options.fontSize}px ${STOP_LABEL_FONT_FAMILY}`
-  ctx.fillStyle = '#111111'
+  ctx.fillStyle = MAP_DRAW_EXPORT_STOP_LABEL_PLATE.text
   ctx.textBaseline = 'middle'
-  ctx.textAlign = layout.textAnchor
-  ctx.fillText(trimmed, originX + layout.textX, originY + layout.textY)
+  ctx.textAlign = canvasTextAlign(layout.textAnchor)
+  ctx.fillText(trimmed, textX, textY)
   ctx.textAlign = 'start'
 }
 
@@ -219,6 +224,27 @@ export function formatRouteEditorStopLabel(node: Pick<RouteEditorNode, 'chi_name
     return `${node.stopSeq}. ${name}`
   }
   return name
+}
+
+export function formatWorldMapDrawStopEditorLabel(
+  stop: Pick<WorldMapDrawStop, 'name' | 'seq'>,
+): string {
+  const name = (stop.name.zh || stop.name.en || '').trim()
+  if (stop.seq != null && stop.seq > 0 && name) {
+    return `${stop.seq}. ${name}`
+  }
+  return name
+}
+
+/** PNG export preview plate — matches `.route-editor-app--export-preview` label styling. */
+export const MAP_DRAW_EXPORT_STOP_LABEL_PLATE = {
+  fill: 'rgba(255, 255, 255, 0.92)',
+  stroke: 'rgba(0, 0, 0, 0.35)',
+  text: '#111111',
+} as const
+
+function canvasTextAlign(textAnchor: RouteEditorStopLabelLayout['textAnchor']): CanvasTextAlign {
+  return textAnchor === 'middle' ? 'center' : 'start'
 }
 
 export function routeEditorStopLabelShowsSeq(node: Pick<RouteEditorNode, 'stopSeq'>): boolean {

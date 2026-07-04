@@ -4,10 +4,16 @@ import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { getPathLegRanges } from './worldMapDrawPathEdit'
 import { buildEditorCornerPathD } from './worldMapDrawPathCurve'
 import { normalizeStopLabelScale } from './mapDrawStopLabel'
-import { drawRouteEditorStopLabelOnCanvas } from './routeEditorStopLabel'
-import { mapDrawNodeScaleFactor } from './mapDrawNodeScale'
+import {
+  drawRouteEditorStopLabelOnCanvas,
+  formatWorldMapDrawStopEditorLabel,
+} from './routeEditorStopLabel'
+import {
+  MAP_DRAW_BASE_STOP_ICON_SIZE,
+  mapDrawNodeScaleFactor,
+  mapDrawStopIconRadius,
+} from './mapDrawNodeScale'
 import { resolveExportBaseName } from './worldMapRouteExport'
-import { formatDrawStopLabel } from './worldMapDrawStopDisplay'
 
 export interface WorldMapDrawImageSegment {
   from: WorldMapPoint
@@ -193,8 +199,9 @@ function drawStopsOnCanvas(
   const radius = Math.max(4, imageWidth * 0.0022 * scale)
   const outlineWidth = Math.max(1.5, imageWidth * 0.0009 * scale)
   const fontSize = Math.max(8, Math.round(11 * scale * nodeScale))
+  const labelStopRadius = mapDrawStopIconRadius(MAP_DRAW_BASE_STOP_ICON_SIZE, nodeScale)
 
-  stops.forEach((stop, index) => {
+  stops.forEach((stop) => {
     const x = stop.point[0] * imageWidth
     const y = stop.point[1] * imageHeight
     ctx.beginPath()
@@ -208,11 +215,11 @@ function drawStopsOnCanvas(
     drawRouteEditorStopLabelOnCanvas(ctx, {
       anchorX: x,
       anchorY: y,
-      label: formatDrawStopLabel(stop, index, options.locale),
+      label: formatWorldMapDrawStopEditorLabel(stop),
       labelPosition: stop.labelPosition ?? 'top',
       fontSize,
       nodeScale,
-      stopRadius: radius,
+      stopRadius: labelStopRadius,
     })
   })
 }

@@ -311,6 +311,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 显示站名时，点击站名标签框也可选中/连接站点；隐藏站名时不参与点击判定。",
             en: "Map-draw: when stop labels are visible, clicking the label box selects or connects the stop; hidden labels are not hit-tested.",
           },
+          {
+            zh: "修复 map-draw PNG 导出站名与底板框错位（Canvas 居中锚点）；导出标签样式与「预览 PNG 导出效果」一致。",
+            en: "Fixed map-draw PNG export stop name vs label box misalignment (canvas center anchor); export labels match Preview PNG export styling.",
+          },
         ],
       },
     ],
