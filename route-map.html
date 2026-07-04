@@ -1,9 +1,59 @@
 ﻿<!doctype html>
-<html lang="zh-Hans">
+<html lang="en">
   <head>
+    <script id="devtools-block">
+(function () {
+  var INDEX = './index.html';
+  var href = String(window.location.href || '');
+  var protocol = String(window.location.protocol || '');
+  if (/^view-source:/i.test(href) || protocol === 'view-source:') {
+    window.location.replace(INDEX);
+    return;
+  }
+  function isBlocked(event) {
+    var key = event.key || '';
+    if (key === 'F12') return true;
+    var upper = key.toUpperCase();
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey && 'IJC'.indexOf(upper) >= 0) return true;
+    if (upper === 'U') {
+      if (event.ctrlKey && !event.shiftKey && !event.altKey) return true;
+      if (event.metaKey && event.altKey) return true;
+    }
+    if (upper === 'S' && (event.ctrlKey || event.metaKey)) return true;
+    return false;
+  }
+  function block(event) {
+    if (!isBlocked(event)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    return false;
+  }
+  ['keydown', 'keyup', 'keypress'].forEach(function (type) {
+    window.addEventListener(type, block, true);
+    document.addEventListener(type, block, true);
+  });
+  document.addEventListener(
+    'click',
+    function (event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var link = target.closest('a[href]');
+      if (!link) return;
+      var linkHref = String(link.getAttribute('href') || '');
+      if (/^view-source:/i.test(linkHref)) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.location.replace(INDEX);
+      }
+    },
+    true,
+  );
+})();
+</script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>线路图 · 阳光群岛线路查询</title>
+    <meta name="app-page" content="route-map" />
+    <meta name="user-api-url" content="https://sibs-user-api.onrender.com" />
     <script id="theme-bootstrap">
       (function () {
         function resolveSystemAppearance() {
@@ -13,6 +63,7 @@
             return 'dark';
           }
         }
+
         try {
           var pref = localStorage.getItem('sibs-theme');
           if (pref !== 'light' && pref !== 'dark' && pref !== 'system') pref = 'system';
@@ -25,187 +76,210 @@
         }
       })();
     </script>
-    <style>
-      :root {
-        color-scheme: dark light;
-        --bg: #0b1220;
-        --text: #e8edf7;
-        --muted: #94a3b8;
-        --accent: #f5b942;
-        --border: rgba(148, 163, 184, 0.22);
+    <script id="locale-bootstrap">
+(function () {
+  var key = 'sibs-locale';
+  var langs = { vi:'vi', 'zh-Hans':'zh-Hans', 'zh-Hant':'zh-Hant', da:'da', en:'en', fil:'fil', id:'id', ko:'ko', 'pt-BR':'pt-BR', de:'de', es:'es', fr:'fr', ja:'ja', pl:'pl', sv:'sv' };
+  var bootHints = {
+    vi: 'Đang tải trang…',
+    'zh-Hans': '本站加载中…',
+    'zh-Hant': '本站載入中…',
+    da: 'Indlæser websted…',
+    en: 'Loading site…',
+    fil: 'Naglo-load ng site…',
+    id: 'Memuat situs…',
+    ko: '사이트 불러오는 중…',
+    'pt-BR': 'Carregando o site…',
+    de: 'Website wird geladen…',
+    es: 'Cargando el sitio…',
+    fr: 'Chargement du site…',
+    ja: 'サイトを読み込み中…',
+    pl: 'Wczytywanie witryny…',
+    sv: 'Laddar webbplatsen…',
+  };
+  try {
+    var stored = localStorage.getItem(key);
+    if (stored && Object.prototype.hasOwnProperty.call(langs, stored)) {
+      document.documentElement.lang = langs[stored];
+    }
+  } catch (e) {}
+  var hint = document.querySelector('.boot-hint');
+  if (hint) {
+    var lang = document.documentElement.lang || 'zh-Hans';
+    hint.textContent = bootHints[lang] || bootHints['zh-Hans'];
+  }
+})();
+</script>
+    <meta name="app-build" content="2026-07-04T21:20:42.786Z" />
+    <link rel="icon" href="./sibs-logo.png?v=2026-07-04T21%3A20%3A42.786Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-07-04T21%3A20%3A42.786Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-07-04T21%3A20%3A42.786Z" />
+    <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta
+      name="description"
+      content="Sunshine Islands Bus Simulator (SIBS) 巴士线路查询工具 - 阳光群岛 Roblox 巴士模拟器"
+    />
+    <title>线路走向图 · 阳光群岛线路查询</title>
+<link rel="stylesheet" crossorigin href="./assets/dev-CG5bRkJu.css">
+      <script id="app-surface-bootstrap">
+(function () {
+  var tab = document.querySelector('meta[name="app-tab"]');
+  if (tab && tab.content) document.documentElement.setAttribute('data-app-tab', tab.content.trim());
+  var page = document.querySelector('meta[name="app-page"]');
+  if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
+  try {
+    var prefs = JSON.parse(localStorage.getItem('sibs-app-preferences') || 'null');
+    var fill = 25;
+    if (prefs && typeof prefs.panelFill === 'number') {
+      fill = Math.min(75, Math.max(25, Math.round(prefs.panelFill)));
+    } else if (prefs && prefs.panelStyle === 'classic') {
+      fill = 75;
+    }
+    document.documentElement.style.setProperty('--panel-fill', fill + '%');
+    if (prefs && prefs.panelNoFill) {
+      document.documentElement.style.setProperty('--panel-fill', '0%');
+      document.documentElement.setAttribute('data-panel-no-fill', 'true');
+    }
+    if (prefs && prefs.desktopTabBarPinned) {
+      document.documentElement.setAttribute('data-desktop-tab-bar-pinned', 'true');
+    }
+  } catch (e) {
+    document.documentElement.style.setProperty('--panel-fill', '25%');
+  }
+})();
+</script>
+      <script id="sw-version-bootstrap">
+(function () {
+  var VERSION = "sibs-offline-v10";
+  var KEY = 'sibs-sw-version';
+  try {
+    var prev = localStorage.getItem(KEY);
+    if (prev && prev !== VERSION) {
+      localStorage.setItem(KEY, VERSION);
+      var tasks = [];
+      if ('serviceWorker' in navigator) {
+        tasks.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all(regs.map(function (r) { return r.unregister(); }));
+        }));
       }
-      html[data-theme='light'] {
-        --bg: #f4f7fb;
-        --text: #0f172a;
-        --muted: #64748b;
-        --accent: #c07000;
-        --border: rgba(15, 23, 42, 0.12);
+      if ('caches' in window) {
+        tasks.push(caches.keys().then(function (keys) {
+          return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+        }));
       }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--bg);
-        color: var(--text);
-        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      }
-      .route-map-page {
-        max-width: 72rem;
-        margin: 0 auto;
-        padding: 1rem 1rem 2rem;
-      }
-      .route-map-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 0.65rem 1rem;
-        margin-bottom: 1rem;
-      }
-      .route-map-back {
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 0.92rem;
-      }
-      .route-map-back:hover {
-        color: var(--accent);
-      }
-      .route-map-title {
-        margin: 0;
-        font-size: 1.15rem;
-        font-weight: 700;
-      }
-      .route-map-frame {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 12rem;
-        padding: 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: rgba(0, 0, 0, 0.18);
-      }
-      html[data-theme='light'] .route-map-frame {
-        background: rgba(255, 255, 255, 0.72);
-      }
-      .route-map-image {
-        display: block;
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-      }
-      .route-map-missing {
-        margin: 0;
-        color: var(--muted);
-        text-align: center;
-        line-height: 1.55;
-        max-width: 28rem;
-      }
-    </style>
+      Promise.all(tasks).finally(function () { location.reload(); });
+      return;
+    }
+    localStorage.setItem(KEY, VERSION);
+  } catch (e) {}
+})();
+</script>
+      <script id="sw-register">
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {});
+  });
+}
+</script>
   </head>
   <body>
-    <main class="route-map-page">
-      <div class="route-map-toolbar">
-        <a class="route-map-back" id="back-link" href="./routes.html">← 返回线路查询</a>
-        <h1 class="route-map-title" id="page-title">线路图</h1>
-      </div>
-      <div class="route-map-frame">
-        <img class="route-map-image" id="map-image" alt="" hidden />
-        <p class="route-map-missing" id="map-missing" hidden></p>
-      </div>
-    </main>
-    <script>
-      (function () {
-        var VIEW_LABELS = {
-          path: { zh: '走向', en: 'Path' },
-          height: { zh: '高度', en: 'Elevation' },
-        };
-        var EXTENSIONS = ['png', 'webp', 'jpg', 'jpeg'];
-
-        function readLocale() {
-          try {
-            var stored = localStorage.getItem('sibs-locale');
-            if (stored === 'en') return 'en';
-          } catch (e) {}
-          return 'zh';
+    <noscript>
+  <style>
+    #root, .boot-hint { display: none !important; }
+    .noscript-wall {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+      font-family: system-ui, sans-serif;
+      background: #0f1419;
+      color: #e7e9ea;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .noscript-wall h1 { font-size: 1.25rem; margin: 0 0 0.75rem; font-weight: 700; }
+    .noscript-wall p { margin: 0.35rem 0; color: #8b98a5; max-width: 26rem; }
+  </style>
+  <div class="noscript-wall" id="noscript-wall" role="alert">
+    <p aria-hidden="true">🚌</p>
+    <h1>请启用 JavaScript</h1>
+    <p>阳光群岛线路查询工具需要 JavaScript 才能运行，请在浏览器设置中开启后刷新页面。</p>
+    <p lang="en">This site requires JavaScript. Please enable it in your browser settings and reload.</p>
+  </div>
+</noscript>
+    <div id="root"><p class="boot-hint">本站加载中…</p></div>
+      <script id="boot-failure-guard">
+(function () {
+  var root = document.getElementById('root');
+  if (!root || document.getElementById('start-boot-splash')) return;
+  var ghPagesHint = 'GitHub Pages 请访问 https://jinruimaomao.github.io/SIBSRL/routes.html ，并 Ctrl+F5 强制刷新。';
+  function showFailure(title, detail, extra) {
+    if (!root.querySelector('.boot-hint')) return;
+    root.innerHTML =
+      '<div class="boot-failure" style="margin:2rem auto;max-width:28rem;padding:1.25rem;font-family:system-ui,sans-serif;color:#eef2f8;line-height:1.6">' +
+      '<h1 style="font-size:1.05rem;margin:0 0 .75rem">' + title + '</h1>' +
+      '<p style="margin:0 0 .5rem;opacity:.9">' + detail + '</p>' +
+      '<p style="margin:0;font-size:.82rem;opacity:.65">' + (extra || ghPagesHint) + '</p>' +
+      '</div>';
+  }
+  function clearSiteCaches() {
+    var tasks = [];
+    if ('serviceWorker' in navigator) {
+      tasks.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+        return Promise.all(regs.map(function (r) { return r.unregister(); }));
+      }));
+    }
+    if ('caches' in window) {
+      tasks.push(caches.keys().then(function (keys) {
+        return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+      }));
+    }
+    return Promise.all(tasks);
+  }
+  if (location.protocol === 'file:') {
+    showFailure('无法直接打开 HTML 文件', '请使用 npm run dev 或 GitHub Pages 在线地址访问。', ghPagesHint);
+    return;
+  }
+  window.addEventListener('error', function (event) {
+    var target = event.target;
+    if (target && target.tagName === 'SCRIPT') {
+      var src = String(target.src || target.getAttribute('src') || '');
+      if (src.indexOf('/assets/') >= 0 || src.indexOf('/src/main.tsx') >= 0) {
+        showFailure('应用脚本加载失败', '可能是缓存了旧版本资源。正在尝试清除 Service Worker 缓存…');
+        if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
+          sessionStorage.setItem('sibs-boot-cache-reload', '1');
+          clearSiteCaches().finally(function () { location.reload(); });
         }
-
-        function routeIdToPageFilename(routeId) {
-          return Array.from(routeId)
-            .map(function (ch) {
-              return /[A-Za-z0-9-]/.test(ch)
-                ? ch
-                : '%' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
-            })
-            .join('');
-        }
-
-        function assetPrefix() {
-          return /\/routes\//.test(location.pathname.replace(/\\/g, '/')) ? '../' : './';
-        }
-
-        function backHref() {
-          var params = new URLSearchParams(location.search);
-          var route = params.get('route');
-          if (!route) return assetPrefix() + 'routes.html';
-          return assetPrefix() + 'routes.html?route=' + encodeURIComponent(route);
-        }
-
-        var locale = readLocale();
-        var params = new URLSearchParams(location.search);
-        var routeId = (params.get('route') || '').trim();
-        var view = params.get('view') === 'height' ? 'height' : 'path';
-        var labels = VIEW_LABELS[view];
-        var label = locale === 'en' ? labels.en : labels.zh;
-        var title = routeId ? routeId + ' · ' + label : label;
-
-        document.getElementById('page-title').textContent = title;
-        document.title = title + ' · 阳光群岛线路查询';
-        document.getElementById('back-link').href = backHref();
-        document.getElementById('back-link').textContent =
-          locale === 'en' ? '← Back to routes' : '← 返回线路查询';
-
-        var image = document.getElementById('map-image');
-        var missing = document.getElementById('map-missing');
-        image.alt = title;
-
-        if (!routeId) {
-          missing.hidden = false;
-          missing.textContent =
-            locale === 'en' ? 'Missing route id in the URL.' : '链接缺少线路编号。';
-          return;
-        }
-
-        var base =
-          assetPrefix() +
-          'route-maps/' +
-          routeIdToPageFilename(routeId) +
-          '/' +
-          (view === 'height' ? 'height' : 'path') +
-          '.';
-        var attempt = 0;
-
-        function tryNext() {
-          if (attempt >= EXTENSIONS.length) {
-            missing.hidden = false;
-            missing.textContent =
-              locale === 'en'
-                ? 'No ' + labels.en.toLowerCase() + ' image for route ' + routeId + ' yet.'
-                : '暂无线路 ' + routeId + ' 的' + labels.zh + '图。';
-            image.hidden = true;
-            return;
-          }
-          image.src = base + EXTENSIONS[attempt++];
-        }
-
-        image.addEventListener('load', function () {
-          image.hidden = false;
-          missing.hidden = true;
-        });
-        image.addEventListener('error', tryNext);
-        tryNext();
-      })();
-    </script>
+      }
+    }
+  }, true);
+  window.addEventListener('unhandledrejection', function (event) {
+    var reason = event.reason;
+    var message = reason && reason.message ? reason.message : String(reason || '');
+    if (/preamble|Failed to fetch dynamically imported module|Loading chunk/i.test(message)) {
+      showFailure('应用启动失败', message, ghPagesHint);
+    }
+  });
+  window.setTimeout(function () {
+    if (!root.querySelector('.boot-hint')) return;
+    if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
+      sessionStorage.setItem('sibs-boot-cache-reload', '1');
+      clearSiteCaches().finally(function () { location.reload(); });
+      return;
+    }
+    showFailure('页面加载时间过长', '请 Ctrl+F5 强制刷新；若刚更新过站点，请清除浏览器站点数据。', ghPagesHint);
+  }, 15000);
+})();
+</script>
+      <script type="module" crossorigin src="./assets/dev-pDHK04SW.js"></script>
   </body>
 </html>

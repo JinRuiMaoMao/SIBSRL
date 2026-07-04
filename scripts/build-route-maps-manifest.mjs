@@ -2,7 +2,7 @@ import { existsSync, readdirSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-/** 仅这些 canonical 线路 ID 可提供走向/高度图（勿为其他线路添加按钮或资源）。 */
+/** 仅这些 canonical 线路 ID 可提供走向图静态 PNG（勿为其他线路添加资源）。 */
 export const ROUTE_MAP_CANONICAL_IDS = ['77X', '21']
 
 /** 详情/卡片 route id → 图片目录 canonical id */
@@ -11,7 +11,7 @@ export const ROUTE_MAP_ROUTE_ALIASES = {
   '21A': '21',
 }
 
-const MAP_KINDS = ['path', 'height']
+const MAP_KINDS = ['path']
 const IMAGE_EXTENSIONS = ['.png', '.webp', '.jpg', '.jpeg']
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))

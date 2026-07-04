@@ -9,6 +9,7 @@ import {
   injectLocaleBootstrap,
   injectAccountPageMeta,
   injectMapDrawPageMeta,
+  injectRouteMapPageMeta,
   injectSettingsPageMeta,
   injectNoScriptGuard,
   injectSecretPageMeta,
@@ -136,6 +137,11 @@ export function publishStandalone(options = {}) {
   writeFileSync(resolve(root, 'map-draw.html'), mapDrawHtml)
   writeFileSync(resolve(root, 'dist', 'map-draw.html'), mapDrawHtml)
 
+  let routeMapHtml = injectRouteMapPageMeta(baseHtml)
+  routeMapHtml = adjustAppPageTitle(routeMapHtml, '线路走向图')
+  writeFileSync(resolve(root, 'route-map.html'), routeMapHtml)
+  writeFileSync(resolve(root, 'dist', 'route-map.html'), routeMapHtml)
+
   rmSync(resolve(root, 'tabs'), { recursive: true, force: true })
   rmSync(resolve(root, 'dist', 'tabs'), { recursive: true, force: true })
 
@@ -183,12 +189,6 @@ export function publishStandalone(options = {}) {
     copyFileSync(catalogSource, resolve(root, 'dist', 'world-map-stops.json'))
     copyFileSync(catalogSource, resolve(root, 'public', 'world-map-stops.json'))
     console.log('[publish] 已复制 world-map-stops.json')
-  }
-
-  const routeMapPage = resolve(root, 'pages', 'route-map.html')
-  if (existsSync(routeMapPage)) {
-    cpSync(routeMapPage, resolve(root, 'route-map.html'))
-    cpSync(routeMapPage, resolve(root, 'dist', 'route-map.html'))
   }
 
   const publicLogo = resolve(root, 'public', 'sibs-logo.png')

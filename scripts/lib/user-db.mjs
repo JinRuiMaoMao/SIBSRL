@@ -67,6 +67,14 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
       resolved_at INTEGER,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS route_map_imports (
+      route_id TEXT PRIMARY KEY,
+      payload_json TEXT NOT NULL,
+      updated_at INTEGER NOT NULL,
+      updated_by TEXT,
+      FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+    );
   `)
 
   const userDataColumns = db.prepare('PRAGMA table_info(user_data)').all()
@@ -333,6 +341,25 @@ export function approveMapDrawPermissionRequest(db, token, resolvedAt = Date.now
     WHERE token = ?
   `).run(resolvedAt, token)
   return request
+}
+
+/** @param {import('better-sqlite3').Database} db @param {string} routeId */
+export function getRouteMapImport(db, routeId) {
+  return db
+    .prepare('SELECT route_id, payload_json, updated_at, updated_by FROM route_map_imports WHERE route_id = ?')
+    .get(routeId.trim())
+}
+
+/** @param {import('better-sqlite3').Database} db @param {{ routeId: string, payloadJson: string, updatedAt: number, updatedBy: string | null }} input */
+export function upsertRouteMapImport(db, { routeId, payloadJson, updatedAt, updatedBy }) {
+  db.prepare(`
+    INSERT INTO route_map_imports (route_id, payload_json, updated_at, updated_by)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(route_id) DO UPDATE SET
+      payload_json = excluded.payload_json,
+      updated_at = excluded.updated_at,
+      updated_by = excluded.updated_by
+  `).run(routeId.trim(), payloadJson, updatedAt, updatedBy)
 }
 
 export { MAP_DRAW_REQUEST_COOLDOWN_MS, MAP_DRAW_REQUEST_TTL_MS }

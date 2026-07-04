@@ -12,6 +12,7 @@ import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
 import { SecretHeader } from './components/SecretHeader'
 import { MapDrawPage } from './components/MapDrawPage'
+import { RouteMapPage } from './components/RouteMapPage'
 import { MusicPage } from './components/MusicPage'
 import { TriviaPage } from './components/TriviaPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
@@ -36,7 +37,7 @@ import {
   isGuidedTourReplaySessionActive,
 } from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
-import { isAccountPage, isMapDrawPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
+import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
@@ -130,7 +131,7 @@ function App() {
   }, [openTour])
 
   useEffect(() => {
-    if (isAccountPage() || isMapDrawPage() || isSecretPage() || isSettingsPage()) return
+    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage()) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const pendingReplay = consumePendingGuidedTourReplay()
@@ -198,7 +199,7 @@ function App() {
   }, [])
 
   const guidedTourLayer =
-    !isAccountPage() && !isMapDrawPage() && !isSecretPage() && !isSettingsPage() && !isStartPage() ? (
+    !isAccountPage() && !isMapDrawPage() && !isRouteMapPage() && !isSecretPage() && !isSettingsPage() && !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
         mode={tourMode}
@@ -225,6 +226,17 @@ function App() {
             <MapDrawPage />
           </ErrorBoundary>
         </IslandMapOverlayProvider>
+      </>
+    )
+  }
+
+  if (isRouteMapPage()) {
+    return (
+      <>
+        <LiquidGlassDefs />
+        <ErrorBoundary>
+          <RouteMapPage />
+        </ErrorBoundary>
       </>
     )
   }

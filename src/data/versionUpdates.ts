@@ -178,6 +178,14 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "线路详情移除「高度」按钮；「走向」改为交互式地图页，支持缩放与图层切换。",
+            en: "Route details no longer show Elevation; Path opens an interactive map with zoom and layer toggle.",
+          },
+          {
+            zh: "管理员可在走向图页导入 map-draw 导出的 JSON，导入后所有用户只读查看（不可编辑）。",
+            en: "Admins can import map-draw JSON on the path map page; all users then view it read-only.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },

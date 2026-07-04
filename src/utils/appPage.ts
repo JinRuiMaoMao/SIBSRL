@@ -47,6 +47,15 @@ export function isMapDrawPage(): boolean {
   return file === 'map-draw.html'
 }
 
+export function isRouteMapPage(): boolean {
+  const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
+  if (meta === 'route-map') return true
+
+  const file =
+    window.location.pathname.replace(/\\/g, '/').split('/').filter(Boolean).pop()?.toLowerCase() ?? ''
+  return file === 'route-map.html'
+}
+
 export function getAccountPageHref(): string {
   return './account.html'
 }

@@ -26,6 +26,7 @@ import {
   findUserByOAuth,
   getUserData,
   getVerificationCode,
+  getRouteMapImport,
   insertRouteFeedback,
   isOAuthOnlyUser,
   isUserAdmin,
@@ -38,6 +39,7 @@ import {
   MAP_DRAW_REQUEST_TTL_MS,
   updateUserPassword,
   updateUserProfile,
+  upsertRouteMapImport,
   upsertUserData,
   upsertVerificationCode,
 } from './lib/user-db.mjs'
@@ -565,6 +567,85 @@ function handleMapDrawApprove(req, res, url) {
   )
 }
 
+const ROUTE_MAP_ID_PATTERN = /^[A-Za-z0-9#%*+\-./]{1,32}$/
+const ROUTE_MAP_MAX_BYTES = 2_000_000
+
+function normalizeRouteMapId(raw) {
+  const trimmed = String(raw ?? '').trim()
+  if (!trimmed || !ROUTE_MAP_ID_PATTERN.test(trimmed)) return null
+  return trimmed
+}
+
+function readRouteMapPayload(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null
+  if (typeof raw.routeId !== 'string' || !Array.isArray(raw.directions) || raw.directions.length === 0) {
+    return null
+  }
+  return raw
+}
+
+function handleGetRouteMapImport(req, res, routeIdRaw) {
+  const routeId = normalizeRouteMapId(routeIdRaw)
+  if (!routeId) return error(req, res, 400, 'invalid_route_id', 'Invalid route id')
+
+  const row = getRouteMapImport(db, routeId)
+  if (!row) return error(req, res, 404, 'not_found', 'Route map not found')
+
+  let payload
+  try {
+    payload = JSON.parse(row.payload_json)
+  } catch {
+    return error(req, res, 500, 'invalid_stored_payload', 'Stored route map is invalid')
+  }
+
+  json(req, res, 200, {
+    routeId: row.route_id,
+    updatedAt: row.updated_at,
+    payload,
+  })
+}
+
+async function handlePutRouteMapImport(req, res, routeIdRaw) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  const user = findUserById(db, session.userId)
+  if (!user) return error(req, res, 404, 'user_not_found', 'User not found')
+  if (!isUserAdmin(user)) {
+    return error(req, res, 403, 'forbidden', 'Admin permission required')
+  }
+
+  const routeId = normalizeRouteMapId(routeIdRaw)
+  if (!routeId) return error(req, res, 400, 'invalid_route_id', 'Invalid route id')
+
+  let body
+  try {
+    body = await readJson(req)
+  } catch {
+    return error(req, res, 400, 'invalid_json', 'Invalid JSON body')
+  }
+
+  const payload = readRouteMapPayload(body.payload ?? body)
+  if (!payload) {
+    return error(req, res, 400, 'invalid_payload', 'Payload must be a route map export JSON')
+  }
+
+  const payloadJson = JSON.stringify(payload)
+  if (Buffer.byteLength(payloadJson, 'utf8') > ROUTE_MAP_MAX_BYTES) {
+    return error(req, res, 413, 'payload_too_large', 'Route map JSON is too large')
+  }
+
+  const updatedAt = Date.now()
+  upsertRouteMapImport(db, {
+    routeId,
+    payloadJson,
+    updatedAt,
+    updatedBy: session.userId,
+  })
+
+  json(req, res, 200, { ok: true, routeId, updatedAt })
+}
+
 async function handleRouteFeedback(req, res) {
   let body
   try {
@@ -768,6 +849,12 @@ const server = createServer(async (req, res) => {
     }
     if (method === 'GET' && path === '/api/user/map-draw-approve') {
       return handleMapDrawApprove(req, res, url)
+    }
+    const routeMapMatch = /^\/api\/route-maps\/([^/]+)$/.exec(path)
+    if (routeMapMatch) {
+      const routeId = decodeURIComponent(routeMapMatch[1] ?? '')
+      if (method === 'GET') return handleGetRouteMapImport(req, res, routeId)
+      if (method === 'PUT') return await handlePutRouteMapImport(req, res, routeId)
     }
     return error(req, res, 404, 'not_found', 'Not found')
   } catch (err) {

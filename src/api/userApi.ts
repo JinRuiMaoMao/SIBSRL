@@ -193,3 +193,40 @@ export function getOAuthStartUrl(provider: 'github' | 'google'): string | null {
   if (!base) return null
   return `${base}/api/auth/oauth/${provider}/start`
 }
+
+export interface RouteMapImportResponse {
+  routeId: string
+  updatedAt: number
+  payload: unknown
+}
+
+export async function fetchRouteMapImport(routeId: string, signal?: AbortSignal): Promise<RouteMapImportResponse | null> {
+  const base = getUserApiBaseUrl()
+  if (base === null) return null
+
+  try {
+    const res = await fetch(`${base}/api/route-maps/${encodeURIComponent(routeId)}`, { signal })
+    if (res.status === 404) return null
+    if (!res.ok) return null
+    return (await res.json()) as RouteMapImportResponse
+  } catch {
+    return null
+  }
+}
+
+export async function saveRouteMapImport(
+  token: string,
+  routeId: string,
+  payload: unknown,
+  signal?: AbortSignal,
+): Promise<{ ok: true; routeId: string; updatedAt: number }> {
+  return request<{ ok: true; routeId: string; updatedAt: number }>(
+    `/api/route-maps/${encodeURIComponent(routeId)}`,
+    {
+      method: 'PUT',
+      token,
+      body: JSON.stringify({ payload }),
+      signal,
+    },
+  )
+}
