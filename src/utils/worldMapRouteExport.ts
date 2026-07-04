@@ -42,6 +42,7 @@ export interface WorldMapRouteExportPayload {
       name: { zh: string; en: string }
       point: WorldMapPoint
       seq?: number
+      labelPosition?: RouteEditorGraphExport['nodes'][number]['labelPosition']
     }>
     virtualNodes?: Array<{
       order: number
@@ -210,6 +211,7 @@ export function buildWorldMapRouteExportPayload(
         ...(node.eng_name ? { eng_name: node.eng_name } : {}),
         ...(node.cornerRadius ? { cornerRadius: node.cornerRadius } : {}),
         ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
+        ...(node.labelPosition && node.labelPosition !== 'top' ? { labelPosition: node.labelPosition } : {}),
       })),
       segments: editorGraph.segments.map((segment) => ({
         from: segment.from,

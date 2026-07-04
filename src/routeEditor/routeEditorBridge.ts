@@ -223,17 +223,12 @@ export function sibsImportToRouteEditorLine(
     const pixel = normalizedToPixel(stop.point, imageWidth, imageHeight)
     nodes.push({
       id: nextId++,
-      chi_name: stop.name.zh,
-      eng_name: stop.name.en,
       type: 'stop',
       x: pixel.x,
       y: pixel.y,
-      labelPosition: 'top',
-      labelOffsetX: 0,
-      labelOffsetY: 0,
-      labelWidth: 'resize',
-      labelHeight: 'auto',
-      cornerRadius: 0,
+      ...defaultRouteEditorNodeFields('stop', stop.name.zh, stop.name.en),
+      ...(stop.seq != null && stop.seq > 0 ? { stopSeq: stop.seq } : {}),
+      ...(stop.labelPosition ? { labelPosition: stop.labelPosition } : {}),
     })
   }
 
@@ -345,35 +340,22 @@ export function sibsImportToRouteEditorLine(
       usedStops.add(anchor.stop.id)
       nodes.push({
         id: nextId++,
-        chi_name: anchor.stop.name.zh,
-        eng_name: anchor.stop.name.en,
         type: 'stop',
         x: pixel.x,
         y: pixel.y,
-        labelPosition: 'top',
-        labelOffsetX: 0,
-        labelOffsetY: 0,
-        labelWidth: 'resize',
-        labelHeight: 'auto',
-        cornerRadius: 0,
+        ...defaultRouteEditorNodeFields('stop', anchor.stop.name.zh, anchor.stop.name.en),
         ...(anchor.stop.seq != null && anchor.stop.seq > 0 ? { stopSeq: anchor.stop.seq } : {}),
+        ...(anchor.stop.labelPosition ? { labelPosition: anchor.stop.labelPosition } : {}),
       })
       continue
     }
 
     nodes.push({
       id: nextId++,
-      chi_name: '',
-      eng_name: '',
       type: 'point',
       x: pixel.x,
       y: pixel.y,
-      labelPosition: 'top',
-      labelOffsetX: 0,
-      labelOffsetY: 0,
-      labelWidth: 'resize',
-      labelHeight: 'auto',
-      cornerRadius: Number(anchor.pathNode?.label) || 0,
+      ...defaultRouteEditorNodeFields('point', '', '', Number(anchor.pathNode?.label) || 0),
     })
   }
 

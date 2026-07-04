@@ -315,6 +315,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw PNG 导出站名与底板框错位（Canvas 居中锚点）；导出标签样式与「预览 PNG 导出效果」一致。",
             en: "Fixed map-draw PNG export stop name vs label box misalignment (canvas center anchor); export labels match Preview PNG export styling.",
           },
+          {
+            zh: "修复 map-draw JSON 导出/导入丢失站名位置：editorGraph 与 stops 均保留 labelPosition，导入时恢复。",
+            en: "Fixed map-draw JSON export/import dropping stop labelPosition—preserved in editorGraph and stops, restored on import.",
+          },
         ],
       },
     ],
