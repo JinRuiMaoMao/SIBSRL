@@ -239,6 +239,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 导出：填写导出文件名后仍无法导出（文件名亦作为线路 ID 回退）。",
             en: "Fixed map-draw export blocked after entering a filename—the export name now also resolves the route ID when the header field is empty.",
           },
+          {
+            zh: "修复 map-draw 导入含完整轨迹的 SIBS JSON 后线路消失（合并去重时跳过连续重复像素，保留线段）。",
+            en: "Fixed map-draw routes vanishing after importing SIBS JSON with a full trace—consecutive duplicate pixels are collapsed before merge so segments stay intact.",
+          },
         ],
       },
     ],
