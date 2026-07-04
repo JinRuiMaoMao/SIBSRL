@@ -208,22 +208,49 @@ const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
 })();
 </script>`
 
+export const BOOT_HINT_DEFAULT = '本站加载中…'
+
 const LOCALE_BOOTSTRAP_SCRIPT = `<script id="locale-bootstrap">
 (function () {
   var key = '${LOCALE_STORAGE_KEY}';
   var langs = { vi:'vi', 'zh-Hans':'zh-Hans', 'zh-Hant':'zh-Hant', da:'da', en:'en', fil:'fil', id:'id', ko:'ko', 'pt-BR':'pt-BR', de:'de', es:'es', fr:'fr', ja:'ja', pl:'pl', sv:'sv' };
+  var bootHints = {
+    vi: 'Đang tải trang…',
+    'zh-Hans': '${BOOT_HINT_DEFAULT}',
+    'zh-Hant': '本站載入中…',
+    da: 'Indlæser websted…',
+    en: 'Loading site…',
+    fil: 'Naglo-load ng site…',
+    id: 'Memuat situs…',
+    ko: '사이트 불러오는 중…',
+    'pt-BR': 'Carregando o site…',
+    de: 'Website wird geladen…',
+    es: 'Cargando el sitio…',
+    fr: 'Chargement du site…',
+    ja: 'サイトを読み込み中…',
+    pl: 'Wczytywanie witryny…',
+    sv: 'Laddar webbplatsen…',
+  };
   try {
     var stored = localStorage.getItem(key);
     if (stored && Object.prototype.hasOwnProperty.call(langs, stored)) {
       document.documentElement.lang = langs[stored];
     }
   } catch (e) {}
+  var hint = document.querySelector('.boot-hint');
+  if (hint) {
+    var lang = document.documentElement.lang || 'zh-Hans';
+    hint.textContent = bootHints[lang] || bootHints['zh-Hans'];
+  }
 })();
 </script>`
 
 /** @param {string} html */
 export function injectLocaleBootstrap(html) {
-  if (html.includes('id="locale-bootstrap"')) return html
+  if (html.includes('bootHints')) return html
+  if (html.includes('id="locale-bootstrap"')) {
+    return html.replace(/<script id="locale-bootstrap">[\s\S]*?<\/script>/, LOCALE_BOOTSTRAP_SCRIPT)
+  }
   return html.replace('</script>\n    <meta name="app-tab"', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <meta name="app-tab"`)
     .replace('</script>\n    <meta name="app-build"', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <meta name="app-build"`)
     .replace('</script>\n    <!-- 开发入口', `</script>\n    ${LOCALE_BOOTSTRAP_SCRIPT}\n    <!-- 开发入口`)

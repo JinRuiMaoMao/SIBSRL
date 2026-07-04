@@ -102,7 +102,7 @@ export const START_BOOT_SPLASH_HTML = `<div id="start-boot-splash" class="start-
         <div class="start-boot-splash__track" id="start-boot-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading">
           <div class="start-boot-splash__fill" id="start-boot-fill"></div>
         </div>
-        <span class="start-boot-splash__label" id="start-boot-label">加载中…</span>
+        <span class="start-boot-splash__label" id="start-boot-label">本站加载中…</span>
       </div>
     </div>
   </div>

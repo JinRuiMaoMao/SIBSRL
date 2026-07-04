@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, type Connect, type Plugin, type ViteDevServer } from 'vite'
 // @ts-expect-error publish script is plain .mjs without types
 import { publishStandalone } from './scripts/publish-standalone.mjs'
 // @ts-expect-error build helper is plain .mjs without types
@@ -135,6 +135,33 @@ interface AppPageEntry {
   devFile: string
 }
 
+function serveTransformedDevHtml(
+  server: ViteDevServer,
+  req: Connect.IncomingMessage,
+  res: Connect.ServerResponse,
+  next: Connect.NextFunction,
+  filePath: string,
+  url: string,
+) {
+  if (!existsSync(filePath)) {
+    next()
+    return
+  }
+
+  const html = readFileSync(filePath, 'utf8')
+  void server
+    .transformIndexHtml(url, html)
+    .then((transformed) => {
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'text/html; charset=utf-8')
+      res.end(transformed)
+    })
+    .catch((error) => {
+      server.config.logger.error(error instanceof Error ? error.message : String(error))
+      next(error instanceof Error ? error : new Error(String(error)))
+    })
+}
+
 function devEntryRedirectPlugin(): Plugin {
   const devAppPages = (APP_PAGES as AppPageEntry[]).filter((page) => page.tab !== 'routes')
 
@@ -164,22 +191,14 @@ function devEntryRedirectPlugin(): Plugin {
         const appPage = devAppPages.find((page) => pathOnly === `/${page.publishFile}`)
         if (appPage) {
           const file = resolve(root, appPage.devFile)
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         if (pathOnly === '/' || pathOnly === '/index.html') {
           const file = resolve(root, 'pages/start.html')
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         if (pathOnly === '/routes.html') {
@@ -189,52 +208,32 @@ function devEntryRedirectPlugin(): Plugin {
 
         if (pathOnly === '/secret.html') {
           const file = resolve(root, 'pages/secret.html')
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         if (pathOnly === '/account.html') {
           const file = resolve(root, 'pages/account.html')
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         if (pathOnly === '/settings.html') {
           const file = resolve(root, 'pages/settings.html')
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         if (pathOnly === '/route-map.html') {
           const file = resolve(root, 'pages/route-map.html')
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         if (pathOnly === '/map-draw.html') {
           const file = resolve(root, 'pages/map-draw.html')
-          if (existsSync(file)) {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/html; charset=utf-8')
-            res.end(readFileSync(file, 'utf8'))
-            return
-          }
+          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
+          return
         }
 
         next()

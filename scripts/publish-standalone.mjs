@@ -47,7 +47,7 @@ function prepareStandaloneHtml(html, buildTag) {
   if (!out.includes('class="boot-hint"')) {
     out = out.replace(
       '<div id="root"></div>',
-      '<div id="root"><p class="boot-hint">加载中…</p></div>',
+      '<div id="root"><p class="boot-hint">本站加载中…</p></div>',
     )
   }
   return out

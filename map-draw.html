@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <script id="devtools-block">
@@ -77,21 +77,43 @@
       })();
     </script>
     <script id="locale-bootstrap">
-      (function () {
-        var key = 'sibs-locale';
-        var langs = { vi:'vi', 'zh-Hans':'zh-Hans', 'zh-Hant':'zh-Hant', da:'da', en:'en', fil:'fil', id:'id', ko:'ko', 'pt-BR':'pt-BR', de:'de', es:'es', fr:'fr', ja:'ja', pl:'pl', sv:'sv' };
-        try {
-          var stored = localStorage.getItem(key);
-          if (stored && Object.prototype.hasOwnProperty.call(langs, stored)) {
-            document.documentElement.lang = langs[stored];
-          }
-        } catch (e) {}
-      })();
-    </script>
-    <meta name="app-build" content="2026-07-04T11:16:30.864Z" />
-    <link rel="icon" href="./sibs-logo.png?v=2026-07-04T11%3A16%3A30.864Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-07-04T11%3A16%3A30.864Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-07-04T11%3A16%3A30.864Z" />
+(function () {
+  var key = 'sibs-locale';
+  var langs = { vi:'vi', 'zh-Hans':'zh-Hans', 'zh-Hant':'zh-Hant', da:'da', en:'en', fil:'fil', id:'id', ko:'ko', 'pt-BR':'pt-BR', de:'de', es:'es', fr:'fr', ja:'ja', pl:'pl', sv:'sv' };
+  var bootHints = {
+    vi: 'Đang tải trang…',
+    'zh-Hans': '本站加载中…',
+    'zh-Hant': '本站載入中…',
+    da: 'Indlæser websted…',
+    en: 'Loading site…',
+    fil: 'Naglo-load ng site…',
+    id: 'Memuat situs…',
+    ko: '사이트 불러오는 중…',
+    'pt-BR': 'Carregando o site…',
+    de: 'Website wird geladen…',
+    es: 'Cargando el sitio…',
+    fr: 'Chargement du site…',
+    ja: 'サイトを読み込み中…',
+    pl: 'Wczytywanie witryny…',
+    sv: 'Laddar webbplatsen…',
+  };
+  try {
+    var stored = localStorage.getItem(key);
+    if (stored && Object.prototype.hasOwnProperty.call(langs, stored)) {
+      document.documentElement.lang = langs[stored];
+    }
+  } catch (e) {}
+  var hint = document.querySelector('.boot-hint');
+  if (hint) {
+    var lang = document.documentElement.lang || 'zh-Hans';
+    hint.textContent = bootHints[lang] || bootHints['zh-Hans'];
+  }
+})();
+</script>
+    <meta name="app-build" content="2026-07-04T11:27:04.575Z" />
+    <link rel="icon" href="./sibs-logo.png?v=2026-07-04T11%3A27%3A04.575Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-07-04T11%3A27%3A04.575Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-07-04T11%3A27%3A04.575Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -103,8 +125,8 @@
       content="Sunshine Islands Bus Simulator (SIBS) 巴士线路查询工具 - 阳光群岛 Roblox 巴士模拟器"
     />
     <title>地图走线编辑 · 阳光群岛线路查询</title>
-    <script type="module" crossorigin src="./assets/dev-Bab2QDzK.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/dev-BJIj84VA.css">
+    <script type="module" crossorigin src="./assets/dev-1hgeAD0m.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/dev-CA_KpXeo.css">
       <script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
@@ -169,6 +191,6 @@ if ('serviceWorker' in navigator) {
     <p lang="en">This site requires JavaScript. Please enable it in your browser settings and reload.</p>
   </div>
 </noscript>
-    <div id="root"><p class="boot-hint">加载中…</p></div>
+    <div id="root"><p class="boot-hint">本站加载中…</p></div>
   </body>
 </html>

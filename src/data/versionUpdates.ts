@@ -319,6 +319,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw JSON 导出/导入丢失站名位置：editorGraph 与 stops 均保留 labelPosition，导入时恢复。",
             en: "Fixed map-draw JSON export/import dropping stop labelPosition—preserved in editorGraph and stops, restored on import.",
           },
+          {
+            zh: "全站首屏加载文案统一为「本站加载中…」（随语言切换）；修复开发模式下 map-draw 等独立页面一直停在加载中（Vite React 注入）。",
+            en: "Unified first-screen loading copy to “Loading site…” (locale-aware); fixed map-draw and other standalone pages stuck loading in dev (missing Vite React preamble).",
+          },
         ],
       },
     ],
