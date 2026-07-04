@@ -89,6 +89,8 @@ interface IslandMapPanZoomSurfaceProps {
     onNodeDoubleClick?: (nodeId: number) => void
     onSegmentDoubleClick?: (segmentId: number) => void
     onBackgroundClick?: () => void
+    segmentPassthrough?: boolean
+    allowSegmentDelete?: boolean
   } | null
 }
 
@@ -978,6 +980,8 @@ export function IslandMapPanZoomSurface({
                 ? (segmentId) => referenceEditorRef.current?.onSegmentDoubleClick?.(segmentId)
                 : undefined
             }
+            segmentPassthrough={referenceEditor.segmentPassthrough}
+            allowSegmentDelete={referenceEditor.allowSegmentDelete}
           />
         </div>
       ) : (

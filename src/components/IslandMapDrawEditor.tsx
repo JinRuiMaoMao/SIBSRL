@@ -327,11 +327,20 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     [editor, editorMode],
   )
 
+  const segmentPassthrough =
+    editorMode === 'addStop' ||
+    editorMode === 'addPoint' ||
+    (showStopEditPanel && editStopPlacementMode === 'manual')
+
+  const allowSegmentDelete =
+    editorMode !== 'addStop' && editorMode !== 'addPoint' && !showStopEditPanel
+
   const handleSegmentDoubleClick = useCallback(
     (segmentId: number) => {
+      if (!allowSegmentDelete) return
       editor.deleteSegment(segmentId)
     },
-    [editor],
+    [allowSegmentDelete, editor],
   )
 
   const applyStopNameSelection = useCallback(
@@ -1243,6 +1252,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                             ? handleConnectNodeClick
                             : undefined,
                       onSegmentDoubleClick: handleSegmentDoubleClick,
+                      segmentPassthrough,
+                      allowSegmentDelete,
                       onNodeDoubleClick: deleteNodeById,
                       onBackgroundClick:
                         editorMode === 'connectLine'

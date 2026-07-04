@@ -25,6 +25,10 @@ interface ReferenceRouteEditorOverlayProps {
   onNodePointerDown?: (nodeId: number, event: React.PointerEvent<SVGGElement>) => void
   onNodeDoubleClick?: (nodeId: number) => void
   onSegmentDoubleClick?: (segmentId: number) => void
+  /** Let map clicks pass through segments (placing stops/points on a line). */
+  segmentPassthrough?: boolean
+  /** Disable double-click segment delete while configuring placement. */
+  allowSegmentDelete?: boolean
 }
 
 function strokeDashArray(style: RouteEditorLineStyle['style']): string {
@@ -51,6 +55,8 @@ export function ReferenceRouteEditorOverlay({
   onNodePointerDown,
   onNodeDoubleClick,
   onSegmentDoubleClick,
+  segmentPassthrough = false,
+  allowSegmentDelete = true,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const stops = nodes.filter((node) => node.type === 'stop')
@@ -62,7 +68,7 @@ export function ReferenceRouteEditorOverlay({
 
   return (
     <svg
-      className="reference-route-editor-overlay"
+      className={`reference-route-editor-overlay${segmentPassthrough ? ' reference-route-editor-overlay--segment-passthrough' : ''}`.trim()}
       width={imageWidth}
       height={imageHeight}
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
@@ -84,9 +90,9 @@ export function ReferenceRouteEditorOverlay({
               stroke="transparent"
               strokeWidth={segmentHitWidth}
               vectorEffect="non-scaling-stroke"
-              onPointerDown={stopSegmentPointer}
+              onPointerDown={segmentPassthrough ? undefined : stopSegmentPointer}
               onDoubleClick={
-                onSegmentDoubleClick
+                allowSegmentDelete && onSegmentDoubleClick
                   ? (event) => {
                       event.stopPropagation()
                       event.preventDefault()

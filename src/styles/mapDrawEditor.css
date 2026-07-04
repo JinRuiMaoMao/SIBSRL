@@ -336,6 +336,11 @@ html[data-app-page='map-draw'] #root {
   pointer-events: none;
 }
 
+.reference-route-editor-overlay--segment-passthrough .reference-route-editor-segment {
+  pointer-events: none;
+  cursor: default;
+}
+
 .reference-route-editor-node {
   pointer-events: auto;
   cursor: pointer;

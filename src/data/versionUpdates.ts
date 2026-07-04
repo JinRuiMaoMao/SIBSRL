@@ -275,6 +275,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 清空站序后保存无效（留空站序输入框可清除编号前缀）。",
             en: "Fixed map-draw stop number not clearing when the optional seq field is saved empty.",
           },
+          {
+            zh: "map-draw 放置站点/节点或手动设置站位置时，走线不再挡住地图点击；设置站点期间禁用双击删线。",
+            en: "Map-draw route lines no longer block placing stops or nodes on a line; double-click segment delete is disabled while configuring stop placement.",
+          },
         ],
       },
     ],
