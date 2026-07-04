@@ -207,9 +207,21 @@ export function findCatalogLocationIndexByPoint(
   point: WorldMapPoint | null | undefined,
 ): number | null {
   if (!point || locations.length === 0) return null
-  const index = locations.findIndex(
+  const exactIndex = locations.findIndex(
     (entry) =>
       Math.abs(entry.point[0] - point[0]) < 0.0005 && Math.abs(entry.point[1] - point[1]) < 0.0005,
   )
-  return index >= 0 ? index : null
+  if (exactIndex >= 0) return exactIndex
+
+  let bestIndex: number | null = null
+  let bestDistance = Infinity
+  for (let index = 0; index < locations.length; index += 1) {
+    const entry = locations[index]!
+    const distance = Math.hypot(entry.point[0] - point[0], entry.point[1] - point[1])
+    if (distance < bestDistance) {
+      bestDistance = distance
+      bestIndex = index
+    }
+  }
+  return bestDistance < 0.003 ? bestIndex : null
 }

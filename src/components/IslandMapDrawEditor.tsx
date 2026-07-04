@@ -320,16 +320,8 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     (selection: MapDrawStopNameSelection) => {
       setEditChiName(selection.zh)
       setEditEngName(selection.en)
-      if (!selectedNodeId || !imageSize) return
-      const locations = findMapDrawCatalogLocationsForName(selection.zh, selection.en, stopCatalog)
-      const point =
-        selection.point ??
-        (locations.length === 1 ? locations[0]!.point : null)
-      if (!point) return
-      const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
-      editor.updateNode(selectedNodeId, { x, y })
     },
-    [editor, imageSize, selectedNodeId, stopCatalog],
+    [],
   )
 
   const resetNewStopPlacement = useCallback(() => {

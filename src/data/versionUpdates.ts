@@ -247,6 +247,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 map-draw 导入 SIBS JSON 时把轨迹采样点全部变成拐点：现仅恢复 stops 与 pathNodes，并按轨迹顺序连线。",
             en: "Fixed map-draw SIBS import turning every sampled trace point into a bend node—only stops and pathNodes are restored and linked in path order.",
           },
+          {
+            zh: "修复 map-draw 编辑/选站名时节点被拉到 catalog 坐标（如白鸽邨）：改站名不再移动位置，仅位置列表中主动选择 catalog 才移动。",
+            en: "Fixed map-draw stops jumping to catalog coords when picking a name (e.g. Dove Estate)—renaming no longer moves the node; only an explicit catalog pick in the location list repositions it.",
+          },
         ],
       },
     ],
