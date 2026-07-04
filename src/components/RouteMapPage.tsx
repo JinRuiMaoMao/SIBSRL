@@ -5,7 +5,13 @@ import { useAuth } from '../contexts/AuthContext'
 import { fitNormalizedViewToRoutePoints, getWorldMapRoutePoints } from '../data/worldMapRoutes'
 import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 import { useLocale } from '../i18n/LocaleContext'
+import {
+  clearCachedRouteMapImport,
+  readCachedRouteMapImport,
+  writeCachedRouteMapImport,
+} from '../storage/routeMapImportCache'
 import { getRouteMapImageUrl } from '../utils/routeMapImages'
+import { isRouteMapImportPayload, parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
 import { resolveRouteMapLookupIds, routeMapIdsMatch } from '../utils/routeMapLookup'
 import {
   buildRouteMapViewerDisplay,
@@ -13,8 +19,6 @@ import {
   userBendIndicesToFlags,
   type RouteMapViewerDisplay,
 } from '../utils/routeMapViewerDisplay'
-import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
-import { readCachedRouteMapImport, writeCachedRouteMapImport } from '../storage/routeMapImportCache'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import '../styles/routeMapPage.css'
 
@@ -40,8 +44,24 @@ function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
 }
 
-function resolveStaticImageUrl(routeId: string): string {
-  return getRouteMapImageUrl(routeId, 'path', false, 'png')
+async function resolveImportPayload(routeId: string): Promise<unknown | null> {
+  for (const id of resolveRouteMapLookupIds(routeId)) {
+    const response = await fetchRouteMapImport(id)
+    if (response?.payload && isRouteMapImportPayload(response.payload)) {
+      return response.payload
+    }
+  }
+
+  const cached = readCachedRouteMapImport(routeId)
+  if (cached && isRouteMapImportPayload(cached)) {
+    return cached
+  }
+
+  if (cached) {
+    clearCachedRouteMapImport(routeId)
+  }
+
+  return null
 }
 
 export function RouteMapPage() {
@@ -61,9 +81,18 @@ export function RouteMapPage() {
   const [staticImageUrl, setStaticImageUrl] = useState<string | null>(null)
   const [staticImageVisible, setStaticImageVisible] = useState(false)
   const [importing, setImporting] = useState(false)
+  const [importInvalid, setImportInvalid] = useState(false)
 
   const mapSrc = MAP_URLS[layer]
   const title = routeId ? `${routeId} · ${t('routeMapViewPath')}` : t('routeMapViewPath')
+
+  const beginStaticFallback = useCallback(() => {
+    setImportPayload(null)
+    setDisplay(null)
+    setImportInvalid(false)
+    setStaticImageUrl(getRouteMapImageUrl(routeId, 'path', false, 'png'))
+    setStaticImageVisible(false)
+  }, [routeId])
 
   const applyFitView = useCallback((nextDisplay: RouteMapViewerDisplay | null) => {
     if (!nextDisplay || nextDisplay.fitPoints.length < 2) return
@@ -76,6 +105,9 @@ export function RouteMapPage() {
     img.onload = () => {
       if (cancelled || img.naturalWidth <= 0 || img.naturalHeight <= 0) return
       setImageSize({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+    img.onerror = () => {
+      if (!cancelled) setImageSize(null)
     }
     img.src = mapSrc
     return () => {
@@ -90,22 +122,10 @@ export function RouteMapPage() {
     setDisplay(null)
     setStaticImageUrl(null)
     setStaticImageVisible(false)
+    setImportInvalid(false)
 
     void (async () => {
-      const lookupIds = resolveRouteMapLookupIds(routeId)
-      let payload: unknown | null = null
-
-      for (const id of lookupIds) {
-        const response = await fetchRouteMapImport(id)
-        if (response?.payload) {
-          payload = response.payload
-          break
-        }
-      }
-
-      if (!payload) {
-        payload = readCachedRouteMapImport(routeId)
-      }
+      const payload = routeId ? await resolveImportPayload(routeId) : null
 
       if (cancelled) return
 
@@ -122,25 +142,50 @@ export function RouteMapPage() {
         return
       }
 
-      setStaticImageUrl(resolveStaticImageUrl(routeId))
+      beginStaticFallback()
       setLoading(false)
     })()
 
     return () => {
       cancelled = true
     }
-  }, [routeId])
+  }, [beginStaticFallback, routeId])
 
   useEffect(() => {
     if (!importPayload || !imageSize) return
-    const parsed = parseWorldMapDrawImportJson(importPayload)
-    if (!parsed || parsed.kind !== 'route') {
-      setDisplay(null)
-      return
+
+    try {
+      const parsed = parseRouteMapImportPayload(importPayload)
+      if (!parsed) {
+        clearCachedRouteMapImport(routeId)
+        setImportInvalid(true)
+        beginStaticFallback()
+        return
+      }
+
+      const nextDisplay = buildRouteMapViewerDisplay(
+        parsed,
+        imageSize.width,
+        imageSize.height,
+        routeId || parsed.routeId,
+      )
+
+      if (!nextDisplay) {
+        clearCachedRouteMapImport(routeId)
+        setImportInvalid(true)
+        beginStaticFallback()
+        return
+      }
+
+      setImportInvalid(false)
+      setDisplay(nextDisplay)
+    } catch (error) {
+      console.error('[route-map] failed to build imported display', error)
+      clearCachedRouteMapImport(routeId)
+      setImportInvalid(true)
+      beginStaticFallback()
     }
-    const nextDisplay = buildRouteMapViewerDisplay(parsed, imageSize.width, imageSize.height, routeId || parsed.routeId)
-    setDisplay(nextDisplay)
-  }, [imageSize, importPayload, routeId])
+  }, [beginStaticFallback, imageSize, importPayload, routeId])
 
   useEffect(() => {
     applyFitView(display)
@@ -190,8 +235,8 @@ export function RouteMapPage() {
     setImporting(true)
     try {
       const raw = readImportJsonText(await file.text())
-      const parsed = parseWorldMapDrawImportJson(raw)
-      if (!parsed || parsed.kind !== 'route') {
+      const parsed = parseRouteMapImportPayload(raw)
+      if (!parsed) {
         await alert({ message: t('routeMapImportInvalid') })
         return
       }
@@ -205,9 +250,11 @@ export function RouteMapPage() {
 
       await saveRouteMapImport(token, routeId, raw)
       writeCachedRouteMapImport(routeId, raw)
-      setImportPayload(raw)
+      setImportInvalid(false)
       setStaticImageUrl(null)
       setStaticImageVisible(false)
+      setDisplay(null)
+      setImportPayload(raw)
       await alert({ message: t('routeMapImportSuccess') })
     } catch (error) {
       const message =
@@ -224,7 +271,7 @@ export function RouteMapPage() {
         display.referenceEditor ||
         display.stops.length > 0),
   )
-  const preparingDisplay = Boolean(importPayload && !display)
+  const preparingDisplay = Boolean(importPayload && !display && !importInvalid)
   const showEmpty = !loading && !preparingDisplay && !showInteractiveMap && !staticImageVisible
 
   return (
@@ -259,6 +306,10 @@ export function RouteMapPage() {
       <div className="route-map-page-body">
         {loading || preparingDisplay ? (
           <p className="route-map-page-status">{t('routeMapLoading')}</p>
+        ) : null}
+
+        {importInvalid ? (
+          <p className="route-map-page-status">{t('routeMapImportInvalidCached')}</p>
         ) : null}
 
         {!loading && !preparingDisplay && showInteractiveMap && display ? (

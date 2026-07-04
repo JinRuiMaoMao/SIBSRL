@@ -178,6 +178,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "修复走向图页因无效 JSON 缓存一直显示「加载中」或加载失败的问题，并自动回退静态 PNG。",
+            en: "Fixed path map stuck loading or failing when cached/API JSON was invalid; falls back to static PNG.",
+          },
+          {
             zh: "修复走向图页导入 JSON 后刷新显示「暂无走向图」：预加载地图尺寸后再渲染走线。",
             en: "Fixed path map page showing empty after refresh when JSON was imported—map dimensions preload before rendering paths.",
           },
