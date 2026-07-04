@@ -1,5 +1,6 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { sampleRouteEditorTrajectoryPathPoints } from '../routeEditor/routeEditorPath'
+import { resolveRouteEditorStopSeqEndpoints } from './routeMapStopMatching'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 function distance(a: WorldMapPoint, b: WorldMapPoint): number {
@@ -14,6 +15,36 @@ function dedupePoints(points: readonly WorldMapPoint[]): WorldMapPoint[] {
     out.push([point[0], point[1]])
   }
   return out
+}
+
+function closestPathIndex(path: readonly WorldMapPoint[], point: WorldMapPoint): number {
+  let best = 0
+  let bestDist = Infinity
+  for (let index = 0; index < path.length; index += 1) {
+    const dist = distance(path[index]!, point)
+    if (dist < bestDist) {
+      bestDist = dist
+      best = index
+    }
+  }
+  return best
+}
+
+function slicePathBetweenPoints(
+  path: readonly WorldMapPoint[],
+  startPoint: WorldMapPoint,
+  endPoint: WorldMapPoint,
+): WorldMapPoint[] {
+  if (path.length < 2) return [...path]
+
+  const startIdx = closestPathIndex(path, startPoint)
+  const endIdx = closestPathIndex(path, endPoint)
+  if (startIdx === endIdx) return [path[startIdx]!]
+
+  const low = Math.min(startIdx, endIdx)
+  const high = Math.max(startIdx, endIdx)
+  const segment = path.slice(low, high + 1)
+  return startIdx <= endIdx ? segment : [...segment].reverse()
 }
 
 export function resolveRouteMapDisplayPathPoints(
@@ -31,7 +62,24 @@ export function resolveRouteMapDisplayPathPoints(
       imageSize.width,
       imageSize.height,
     )
-    if (sampled.length >= 2) return sampled
+    if (sampled.length >= 2) {
+      const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(display.referenceEditor.nodes)
+      if (startNodeId != null && endNodeId != null && startNodeId !== endNodeId) {
+        const nodeById = new Map(display.referenceEditor.nodes.map((node) => [node.id, node]))
+        const startNode = nodeById.get(startNodeId)
+        const endNode = nodeById.get(endNodeId)
+        if (startNode && endNode) {
+          const startPoint: WorldMapPoint = [
+            startNode.x / imageSize.width,
+            startNode.y / imageSize.height,
+          ]
+          const endPoint: WorldMapPoint = [endNode.x / imageSize.width, endNode.y / imageSize.height]
+          const sliced = slicePathBetweenPoints(sampled, startPoint, endPoint)
+          if (sliced.length >= 2) return sliced
+        }
+      }
+      return sampled
+    }
   }
   return display.points.length >= 2 ? dedupePoints(display.points) : []
 }

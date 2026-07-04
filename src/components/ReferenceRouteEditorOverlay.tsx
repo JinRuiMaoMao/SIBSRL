@@ -14,6 +14,7 @@ import {
   measureRouteEditorStopLabelBoxWidth,
   resolveRouteEditorStopLabelLayout,
 } from '../utils/routeEditorStopLabel'
+import { resolveRouteEditorStopSeqEndpoints } from '../utils/routeMapStopMatching'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -63,7 +64,7 @@ export function ReferenceRouteEditorOverlay({
   allowSegmentDelete = true,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
-  const stops = nodes.filter((node) => node.type === 'stop')
+  const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
   const dash = strokeDashArray(lineStyle.style)
   const nodeScale = mapDrawNodeScaleFactor(imageWidth, imageHeight)
   const stopRadius = mapDrawStopIconRadius(config.stopIconSize, nodeScale)
@@ -140,9 +141,12 @@ export function ReferenceRouteEditorOverlay({
         if (node.type === 'stop' && !config.showStopIcons) return null
         if (node.type === 'point' && !config.showPointIcons) return null
 
-        const stopIndex = stops.findIndex((stop) => stop.id === node.id)
-        const isFirstStop = node.type === 'stop' && stopIndex === 0
-        const isLastStop = node.type === 'stop' && stopIndex === stops.length - 1 && stops.length > 1
+        const isStartStop = node.type === 'stop' && startNodeId != null && node.id === startNodeId
+        const isEndStop =
+          node.type === 'stop' &&
+          endNodeId != null &&
+          node.id === endNodeId &&
+          startNodeId !== endNodeId
         const selected = selectedNodeId === node.id
         const connectPending = connectPendingNodeId === node.id
         const radius = node.type === 'stop' ? stopRadius : pointRadius
@@ -175,7 +179,7 @@ export function ReferenceRouteEditorOverlay({
         return (
           <g
             key={node.id}
-            className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${connectPending ? ' reference-route-editor-node--connect-pending' : ''}${isFirstStop ? ' reference-route-editor-node--first' : ''}${isLastStop ? ' reference-route-editor-node--last' : ''}`.trim()}
+            className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${connectPending ? ' reference-route-editor-node--connect-pending' : ''}${isStartStop ? ' reference-route-editor-node--first' : ''}${isEndStop ? ' reference-route-editor-node--last' : ''}`.trim()}
             onPointerDown={
               onNodePointerDown
                 ? (event) => {
