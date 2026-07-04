@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { showCircularLineBesideNumber } from '../utils/routeCategory'
@@ -30,6 +30,7 @@ import { buildRouteShareUrl } from '../utils/routeNavigation'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
+import { StopDetailPanel } from './StopDetailPanel'
 import { StopNameDisplay } from './StopNameDisplay'
 
 interface RouteDetailProps {
@@ -67,6 +68,7 @@ export function RouteDetail({
   const { alert } = useAppDialog()
   const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [selectedStopIndex, setSelectedStopIndex] = useState<number | null>(null)
   const hasDirectionControls =
     routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
@@ -81,6 +83,10 @@ export function RouteDetail({
       ? getLoopViewLengthKm(route, locale)
       : getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
+
+  useEffect(() => {
+    setSelectedStopIndex(null)
+  }, [directionIndex, loopView, route.id])
 
   return (
     <aside
@@ -245,9 +251,21 @@ export function RouteDetail({
                   : ''
 
                 return (
-                  <li key={`${stop.name.en}-${i}`} className="stop-table-row" role="row">
+                  <li
+                    key={`${stop.name.en}-${i}`}
+                    className={`stop-table-row${selectedStopIndex === i ? ' stop-table-row--selected' : ''}`.trim()}
+                    role="row"
+                  >
                     <span className="stop-index stop-table-num">{i + 1}</span>
-                    <StopNameDisplay stop={stop} className="stop-table-name" />
+                    <button
+                      type="button"
+                      className="stop-table-name-btn"
+                      aria-expanded={selectedStopIndex === i}
+                      aria-label={t('stopDetailOpenAria', { stop: getPrimaryText(stop.name, locale) })}
+                      onClick={() => setSelectedStopIndex((current) => (current === i ? null : i))}
+                    >
+                      <StopNameDisplay stop={stop} className="stop-table-name" />
+                    </button>
                     <span className="stop-table-zone">
                       {stop.zone != null ? (
                         <span className="zone-tag zone-tag--table">Z{stop.zone}</span>
@@ -278,6 +296,15 @@ export function RouteDetail({
                 )
               })}
             </ol>
+            {selectedStopIndex != null && activeStops.list[selectedStopIndex] ? (
+              <StopDetailPanel
+                stop={activeStops.list[selectedStopIndex]!}
+                seq={selectedStopIndex + 1}
+                currentRouteId={route.id}
+                className="stop-detail-panel--inline"
+                onClose={() => setSelectedStopIndex(null)}
+              />
+            ) : null}
           </div>
         </section>
       )}
