@@ -267,6 +267,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 侧栏新增「预览 PNG 导出效果」：勾选后隐藏拐点、保留站点与走线，样式接近导出 PNG。",
             en: "Map-draw adds Preview PNG export—toggle hides bend points and keeps stops and route lines styled like the exported PNG.",
           },
+          {
+            zh: "map-draw 各模式下均支持双击线段删除（不再仅限画线模式）。",
+            en: "Map-draw double-click segment delete works in every mode, not only Connect lines.",
+          },
         ],
       },
     ],

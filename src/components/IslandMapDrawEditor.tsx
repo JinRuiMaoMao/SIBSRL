@@ -1242,8 +1242,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                           : editorMode === 'connectLine'
                             ? handleConnectNodeClick
                             : undefined,
-                      onSegmentDoubleClick:
-                        editorMode === 'connectLine' ? handleSegmentDoubleClick : undefined,
+                      onSegmentDoubleClick: handleSegmentDoubleClick,
                       onNodeDoubleClick: deleteNodeById,
                       onBackgroundClick:
                         editorMode === 'connectLine'
