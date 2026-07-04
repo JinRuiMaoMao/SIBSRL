@@ -194,6 +194,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Admins can import map-draw JSON on the path map page; all users then view it read-only.",
           },
           {
+            zh: "线路详情小地图可点击站点，浮窗显示站序、分区与经过此站的线路。",
+            en: "Route detail mini-map stops are clickable—popover shows sequence, zone, and routes via the stop.",
+          },
+          {
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },

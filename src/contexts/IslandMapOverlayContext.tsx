@@ -1,11 +1,13 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { RouteDetailMapStop } from '../utils/routeDetailMapStops'
 
 export interface IslandMapRouteOverlay {
   routeId: string
   routeNumber: string
   directionIndex: number
   points: readonly WorldMapPoint[]
+  stops?: readonly RouteDetailMapStop[]
 }
 
 interface IslandMapOverlayContextValue {

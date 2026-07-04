@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getMapDrawPageHref } from '../utils/appPage'
 import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
+import { routeDetailMapStopToDrawStop } from '../utils/routeDetailMapStops'
 import { ExpandIcon, HideIcon, MinimizeIcon, ShowIcon } from './islandMapControlIcons'
 import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
+import { IslandMapStopDetailPopover } from './IslandMapStopDetailPopover'
 
 type MapLayer = 'general' | 'detailed'
 
@@ -27,11 +29,51 @@ export function IslandMapViewer() {
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
+  const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
 
   const mapSrc = MAP_URLS[layer]
   const surfaceRouteOverlay = routeOverlay
     ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
     : null
+
+  const draftStops = useMemo(
+    () => (routeOverlay?.stops?.length ? routeOverlay.stops.map(routeDetailMapStopToDrawStop) : []),
+    [routeOverlay?.stops],
+  )
+
+  const selectedStop = useMemo(() => {
+    if (!selectedStopId || !routeOverlay?.stops?.length) return null
+    return routeOverlay.stops.find((stop) => stop.id === selectedStopId) ?? null
+  }, [routeOverlay?.stops, selectedStopId])
+
+  const handleStopClick = useCallback((stopId: string) => {
+    setSelectedStopId((current) => (current === stopId ? null : stopId))
+  }, [])
+
+  const closeStopDetail = useCallback(() => setSelectedStopId(null), [])
+
+  const stopSurfaceProps =
+    draftStops.length > 0
+      ? {
+          draftStops,
+          selectedStopId,
+          onStopClick: handleStopClick,
+          showStopLabels: true,
+        }
+      : {}
+
+  const stopDetailPopover =
+    selectedStop && routeOverlay ? (
+      <IslandMapStopDetailPopover
+        stop={selectedStop}
+        currentRouteId={routeOverlay.routeId}
+        onClose={closeStopDetail}
+      />
+    ) : null
+
+  useEffect(() => {
+    setSelectedStopId(null)
+  }, [routeOverlay?.directionIndex, routeOverlay?.routeId])
 
   const handleViewChange = useCallback((next: NormalizedMapView) => {
     setMapView(next)
@@ -77,15 +119,19 @@ export function IslandMapViewer() {
       aria-modal="true"
       aria-label={t('islandMapAria')}
     >
-      <IslandMapPanZoomSurface
-        src={mapSrc}
-        mode="fullscreen"
-        className="island-map-viewport island-map-viewport--fullscreen"
-        view={mapView}
-        onViewChange={handleViewChange}
-        routeOverlay={surfaceRouteOverlay}
-        maxZoomRatio={8}
-      />
+      <div className="island-map-viewport-shell island-map-viewport-shell--fullscreen">
+        <IslandMapPanZoomSurface
+          src={mapSrc}
+          mode="fullscreen"
+          className="island-map-viewport island-map-viewport--fullscreen"
+          view={mapView}
+          onViewChange={handleViewChange}
+          routeOverlay={surfaceRouteOverlay}
+          maxZoomRatio={8}
+          {...stopSurfaceProps}
+        />
+        {stopDetailPopover}
+      </div>
       <div className="island-map-controls island-map-controls--fullscreen">
         <div className="island-map-controls-row">
           <button
@@ -123,15 +169,19 @@ export function IslandMapViewer() {
       aria-label={t('islandMapAria')}
     >
       {widgetHidden ? null : (
-        <IslandMapPanZoomSurface
-          src={mapSrc}
-          mode="widget"
-          className="island-map-viewport island-map-viewport--widget"
-          view={mapView}
-          onViewChange={handleViewChange}
-          routeOverlay={surfaceRouteOverlay}
-          maxZoomRatio={8}
-        />
+        <div className="island-map-viewport-shell">
+          <IslandMapPanZoomSurface
+            src={mapSrc}
+            mode="widget"
+            className="island-map-viewport island-map-viewport--widget"
+            view={mapView}
+            onViewChange={handleViewChange}
+            routeOverlay={surfaceRouteOverlay}
+            maxZoomRatio={8}
+            {...stopSurfaceProps}
+          />
+          {stopDetailPopover}
+        </div>
       )}
       <div className="island-map-widget-toolbar">
         {widgetHidden ? (

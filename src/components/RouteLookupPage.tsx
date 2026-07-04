@@ -47,6 +47,9 @@ import { isChineseLocale } from '../i18n/types'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import type { RoutePageData } from '../types/routePageData'
 import { loadRoutePageData } from '../utils/loadRoutePageData'
+import { buildRouteDetailMapStops } from '../utils/routeDetailMapStops'
+import { resolveActiveStopGroup } from '../utils/routeLoopView'
+import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
 import { lockPageScroll } from '../utils/pageScrollLock'
 import {
   defaultClosedRouteGroups,
@@ -564,7 +567,7 @@ export function RouteLookupPage({
   const overlayRoute = detailOverlay?.kind === 'route' ? detailOverlay.route : null
   const overlayDirectionIndex = overlayRoute ? getDirectionIndex(overlayRoute) : null
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!overlayRoute || overlayDirectionIndex == null) {
       setRouteOverlay(null)
       return
@@ -576,15 +579,35 @@ export function RouteLookupPage({
       return
     }
 
-    setRouteOverlay({
+    const baseOverlay = {
       routeId: overlayRoute.id,
       routeNumber: overlayRoute.number,
       directionIndex: overlayDirectionIndex,
       points,
+    }
+
+    setRouteOverlay(baseOverlay)
+
+    let cancelled = false
+    const routeForStops =
+      routePageDetail?.route.id === overlayRoute.id ? routePageDetail.route : overlayRoute
+    const loopView = getLoopView(routeForStops)
+
+    void loadWorldMapStopCatalog().then((catalog) => {
+      if (cancelled) return
+      const activeGroup = resolveActiveStopGroup(routeForStops, overlayDirectionIndex, loopView)
+      const stops = activeGroup?.list ? buildRouteDetailMapStops(activeGroup.list, catalog) : []
+      setRouteOverlay({
+        ...baseOverlay,
+        ...(stops.length ? { stops } : {}),
+      })
     })
 
-    return () => setRouteOverlay(null)
-  }, [overlayDirectionIndex, overlayRoute, setRouteOverlay])
+    return () => {
+      cancelled = true
+      setRouteOverlay(null)
+    }
+  }, [getLoopView, overlayDirectionIndex, overlayRoute, routePageDetail, setRouteOverlay])
 
   useEffect(() => {
     const routeId = readRouteQueryFromLocation()

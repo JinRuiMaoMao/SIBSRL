@@ -16,6 +16,8 @@ interface IslandMapStopOverlayLayerProps {
   showStopLabels?: boolean
   stopLabelScale?: number
   onStopPointerDown?: (stopId: string, event: PointerEvent<SVGGElement>) => void
+  /** View-only mode: show larger hit targets without edit chrome. */
+  clickable?: boolean
   /** When false, parent handles nearest-target picking (route draw mode). */
   directPick?: boolean
 }
@@ -32,6 +34,7 @@ export function IslandMapStopOverlayLayer({
   showStopLabels = true,
   stopLabelScale = 1,
   onStopPointerDown,
+  clickable = false,
   directPick = true,
 }: IslandMapStopOverlayLayerProps) {
   const { locale } = useLocale()
@@ -54,12 +57,13 @@ export function IslandMapStopOverlayLayer({
         const isSelected = selectedStopId === stop.id
         const isTraceSelected = traceSelectedStopId === stop.id
         const isDragging = draggingStopId === stop.id
+        const isInteractive = editable || clickable
         return (
           <g
             key={stop.id}
-            className={`island-map-stop-overlay-item${isSelected ? ' island-map-stop-overlay-item--selected' : ''}${isTraceSelected ? ' island-map-stop-overlay-item--trace-selected' : ''}${isDragging ? ' island-map-stop-overlay-item--dragging' : ''}`.trim()}
+            className={`island-map-stop-overlay-item${isSelected ? ' island-map-stop-overlay-item--selected' : ''}${isTraceSelected ? ' island-map-stop-overlay-item--trace-selected' : ''}${isDragging ? ' island-map-stop-overlay-item--dragging' : ''}${clickable ? ' island-map-stop-overlay-item--clickable' : ''}`.trim()}
             onPointerDown={
-              editable && directPick && onStopPointerDown
+              isInteractive && directPick && onStopPointerDown
                 ? (event) => {
                     event.stopPropagation()
                     onStopPointerDown(stop.id, event)
@@ -67,7 +71,7 @@ export function IslandMapStopOverlayLayer({
                 : undefined
             }
           >
-            {editable ? (
+            {isInteractive ? (
               <rect
                 className="island-map-stop-overlay-hit"
                 x={x - hitSize / 2}

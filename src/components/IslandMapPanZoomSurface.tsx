@@ -697,20 +697,28 @@ export function IslandMapPanZoomSurface({
 
   const handleStopPointerDown = useCallback(
     (stopId: string, event: ReactPointerEvent<SVGGElement>) => {
-      if (!onStopDrag || !panZoom || !imageSize) return
+      if (onStopDrag) {
+        if (!panZoom || !imageSize) return
+        event.preventDefault()
+        event.stopPropagation()
+        stopDragRef.current = {
+          stopId,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          moved: false,
+        }
+        setDraggingStopId(stopId)
+        event.currentTarget.setPointerCapture(event.pointerId)
+        return
+      }
+
+      if (!onStopClick) return
       event.preventDefault()
       event.stopPropagation()
-      stopDragRef.current = {
-        stopId,
-        pointerId: event.pointerId,
-        startX: event.clientX,
-        startY: event.clientY,
-        moved: false,
-      }
-      setDraggingStopId(stopId)
-      event.currentTarget.setPointerCapture(event.pointerId)
+      onStopClick(stopId)
     },
-    [imageSize, onStopDrag, panZoom],
+    [imageSize, onStopClick, onStopDrag, panZoom],
   )
 
   useEffect(() => {
@@ -1047,6 +1055,7 @@ export function IslandMapPanZoomSurface({
                 : null
             }
             editable={Boolean(onStopDrag)}
+            clickable={Boolean(onStopClick && !onStopDrag)}
             selectedStopId={selectedStopId}
             traceSelectedStopId={traceSelectedStopId}
             draggingStopId={draggingStopId}

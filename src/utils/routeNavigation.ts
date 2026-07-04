@@ -31,6 +31,11 @@ export function getRoutePageDataHref(routeId: string): string {
   return `${ROUTE_PAGE_DIR}/${routeIdToPageFilename(routeId)}.html?v=${encodeURIComponent(__APP_BUILD__)}`
 }
 
+/** 站内打开某条线路详情页的相对链接。 */
+export function buildRouteHref(routeId: string, directionIndex?: number): string {
+  return getRoutePageHref(routeId, directionIndex)
+}
+
 /** 从线路列表页点击卡片时的相对链接：保留当前搜索参数，并带上 route。 */
 export function getRoutePageHref(routeId: string, directionIndex?: number): string {
   const params = new URLSearchParams(window.location.search)
