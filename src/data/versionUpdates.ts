@@ -181,58 +181,46 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw.html 按参考编辑器重做布局（顶栏 + 侧栏 + 地图 + 状态栏），初始化加载条固定 5 秒。",
             en: "Rebuilt map-draw.html layout (header, sidebar, map, status bar) from the reference editor; boot progress bar completes in 5 seconds.",
           },
+          {
+            zh: "map-draw 绘制逻辑改用参考编辑器：手动添加站点/拐点，线段需自行连接；支持参考 JSON 导入与节点信息面板。",
+            en: "Map-draw drawing uses the reference editor model: add stops/bend points manually and connect segments yourself; reference JSON import and node info panel included.",
+          },
+          {
+            zh: "map-draw 新增「画线」模式：仅在该模式下点击节点连线（含拐点互连）；「选择」模式用于编辑/删除节点。",
+            en: "Map-draw adds Connect lines mode—click nodes to link (including bend points) only in that mode; Select mode is for editing and deleting nodes.",
+          },
+          {
+            zh: "map-draw 导入支持多选合并：SIBS JSON 与参考 JSON 可同时导入，站点/节点/线段追加到当前画布（同位置自动去重）。",
+            en: "Map-draw import merges multiple files: SIBS and reference JSON append stops, nodes, and segments to the canvas with position deduping.",
+          },
+          {
+            zh: "map-draw 添加/编辑站点时可输入中/英文站名（自动匹配线路站点与 catalog）；放置后按 Enter 应用站名。",
+            en: "Map-draw add/edit stop fields accept Chinese/English names with autocomplete; press Enter to apply names after placing a stop.",
+          },
+          {
+            zh: "map-draw PNG 导出：站点白底黑边圆点，走线使用绘制颜色，支持编辑器线段导出。",
+            en: "Map-draw PNG export: white stops with black outlines, route in draw color, using editor segment lines when present.",
+          },
         ],
         fixes: [
           {
-            zh: "修复 map-draw.html 空白：绘制页移除已删除的 expanded 变量引用。",
-            en: "Fixed blank map-draw.html by removing stale expanded variable references on the draw page.",
+            zh: "修复 map-draw.html 空白页（移除已删除的 expanded 变量引用）。",
+            en: "Fixed blank map-draw.html by removing stale expanded variable references.",
           },
           {
-            zh: "修复 map-draw 放大后拖地图松手回弹：拖拽期间不再用旧 pan 状态覆盖 transform，并避免 view 回同步重置位置。",
-            en: "Fixed map-draw pan snap-back after zoomed drag: stop applying stale pan state on release and skip redundant view resync.",
+            zh: "修复 map-draw 放大后拖地图松手回弹；切换 Layers 后站点/线段错位（4000²↔8000² 自动换算坐标）。",
+            en: "Fixed map-draw pan snap-back after zoomed drag and stop/path misalignment when switching Layers (coords rescale between 4000² and 8000²).",
           },
           {
-            zh: "map-draw 绘制逻辑完全改用参考编辑器（Downloads/index）：有序节点、点击即添加、拐点圆角路径、节点信息面板与参考 JSON 导入。",
-            en: "Replaced map-draw drawing logic with the reference editor (Downloads/index): ordered nodes, click-to-add, bend corner paths, node info panel, and reference JSON import.",
+            zh: "修复 map-draw 连线交互：可链式连接下一段、点击空白取消、双击线段删除；拐点线段始终可见。",
+            en: "Fixed map-draw segment UX: chain connections, clear on empty-map click, double-click to delete; bend-point segments always visible.",
           },
           {
-            zh: "map-draw 线段需手动连接：选择模式下依次点击两个节点创建线段，双击线段删除；添加节点不再自动连线。",
-            en: "Map-draw segments connect manually: in Select mode click two nodes to link, double-click a segment to remove; adding nodes no longer auto-connects.",
+            zh: "修复 map-draw 站名无法保存/改名（编辑时输入框被画布更新重置）。",
+            en: "Fixed map-draw stop rename not sticking—edit fields no longer reset while the canvas updates.",
           },
           {
-            zh: "map-draw 导入合并追加到当前画布：支持多选 SIBS JSON 与参考 JSON 同时导入，合并站点/节点/线段（同位置节点自动去重）。",
-            en: "Map-draw import merge appends to the canvas: multi-select SIBS and reference JSON together; stops, nodes, and segments merge with deduped positions.",
-          },
-          {
-            zh: "map-draw 添加站点时可在侧栏输入中/英文站名，留空则仍自动命名。",
-            en: "Map-draw add-stop mode lets you enter Chinese/English stop names in the sidebar before clicking the map; blank fields still auto-name.",
-          },
-          {
-            zh: "map-draw PNG 导出：站点为白底黑边圆点，走线使用绘制颜色，并支持编辑器线段导出。",
-            en: "Map-draw PNG export: white stops with black outlines, route in draw color, using editor segment lines when present.",
-          },
-          {
-            zh: "map-draw 站名输入支持自动匹配（当前线路站点、world-map-stops catalog、全库站点）；匹配 catalog 后点击地图可定位到坐标。",
-            en: "Map-draw stop name inputs autocomplete from route stops, world-map-stops catalog, and the full stop index; catalog matches snap placement on click.",
-          },
-          {
-            zh: "修复 map-draw 切换 Layers 后站点/线段错位：概览图(4000²)与详细图(8000²)切换时自动按比例换算节点坐标。",
-            en: "Fixed map-draw stop/path misalignment when switching Layers—node coords now rescale between overview (4000²) and detailed (8000²) maps.",
-          },
-          {
-            zh: "修复 map-draw 连线与线段交互：连接后可继续连下一段、点击空白取消选中、双击线段删除。",
-            en: "Fixed map-draw segment UX: chain connections, clear selection on empty-map click, and double-click segment delete.",
-          },
-          {
-            zh: "map-draw 拐点与站点均可互连，编辑器始终显示拐点线段。",
-            en: "Map-draw bend points link to stops and each other; point segments always show in the editor.",
-          },
-          {
-            zh: "map-draw 新增「画线」模式：仅在该模式下点击节点连线；选择模式用于编辑节点。修复站名无法保存/改名，添加站点后按 Enter 应用站名。",
-            en: "Map-draw adds Connect lines mode for node linking only in that mode; Select mode is for editing. Fixed stop rename not sticking; press Enter to apply stop names after placing.",
-          },
-          {
-            zh: "修复 map-draw 导出：填写导出文件名后仍提示无法导出的问题（文件名亦作为线路 ID 回退）。",
+            zh: "修复 map-draw 导出：填写导出文件名后仍无法导出（文件名亦作为线路 ID 回退）。",
             en: "Fixed map-draw export blocked after entering a filename—the export name now also resolves the route ID when the header field is empty.",
           },
         ],
