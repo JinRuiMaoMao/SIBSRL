@@ -16,6 +16,7 @@ export function useStartPageBoot(): boolean {
 
     void runStartPageBoot(
       {
+        site: t('startBootStepSite'),
         script: t('startBootStepScript'),
         interface: t('startBootStepInterface'),
         logo: t('startBootStepLogo'),

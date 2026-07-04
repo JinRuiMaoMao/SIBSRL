@@ -1,8 +1,9 @@
-import { bootProgressTo } from './startPageBootStutter'
 import { hasStartBootBeenSeen, markStartBootBeenSeen } from '../storage/startPageBootSeen'
 
+export const START_PAGE_BOOT_DURATION_MS = 5000
+
 export interface StartPageBootBridge {
-  setProgress: (percent: number, label?: string, mode?: 'smooth' | 'surge' | 'retract' | 'hold') => void
+  setProgress: (percent: number, label?: string) => void
   finish: () => void
 }
 
@@ -31,8 +32,14 @@ function waitMs(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms))
 }
 
+function waitUntilElapsed(startedAt: number, targetMs: number): Promise<void> {
+  const remaining = targetMs - (Date.now() - startedAt)
+  return remaining > 0 ? waitMs(remaining) : Promise.resolve()
+}
+
 export async function runStartPageBoot(
   labels: {
+    site: string
     script: string
     interface: string
     logo: string
@@ -49,33 +56,32 @@ export async function runStartPageBoot(
   }
 
   const bridge = window.__SIBS_START_BOOT__
-  const set = (percent: number, label: string, mode?: 'smooth' | 'surge' | 'retract' | 'hold') => {
-    bridge?.setProgress(percent, label, mode)
+  const set = (percent: number, label: string) => {
+    bridge?.setProgress(percent, label)
   }
 
-  let current = 18
+  void preloadImage('./sibs-logo.png').catch(() => undefined)
+  void waitForFonts()
 
-  current = await bootProgressTo(set, current, 36, labels.script, options)
-  current = await bootProgressTo(set, current, 52, labels.interface, options)
+  const steps = options?.reduceMotion
+    ? [{ at: START_PAGE_BOOT_DURATION_MS, percent: 100, label: labels.ready }]
+    : [
+        { at: 0, percent: 0, label: labels.site },
+        { at: 1000, percent: 20, label: labels.script },
+        { at: 2000, percent: 40, label: labels.interface },
+        { at: 3000, percent: 60, label: labels.logo },
+        { at: 4000, percent: 80, label: labels.fonts },
+        { at: START_PAGE_BOOT_DURATION_MS, percent: 100, label: labels.ready },
+      ]
 
-  const logoPromise = preloadImage('./sibs-logo.png').catch(() => undefined)
-  current = await bootProgressTo(set, current, 72, labels.logo, options)
-  await logoPromise
-  current = await bootProgressTo(set, current, 88, labels.logo, options)
-
-  const fontsPromise = waitForFonts()
-  current = await bootProgressTo(set, current, 96, labels.fonts, options)
-  await fontsPromise
-
-  current = await bootProgressTo(set, current, 100, labels.ready, options)
-  await waitMs(options?.reduceMotion ? 160 : 520)
+  const startedAt = Date.now()
+  for (const step of steps) {
+    await waitUntilElapsed(startedAt, step.at)
+    set(step.percent, step.label)
+  }
 
   markStartBootBeenSeen()
-
-  if (bridge) {
-    bridge.finish()
-    return
-  }
+  bridge?.finish()
 
   document.documentElement.classList.remove('start-boot-active')
   document.getElementById('start-boot-splash')?.remove()

@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Connect, type Plugin, type ViteDevServer } from 'vite'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 // @ts-expect-error publish script is plain .mjs without types
 import { publishStandalone } from './scripts/publish-standalone.mjs'
 // @ts-expect-error build helper is plain .mjs without types
@@ -11,6 +12,8 @@ import { renderRoutePageHtml } from './scripts/lib/route-page-html.mjs'
 import { pageFilenameToRouteId } from './scripts/lib/route-page-filename-decode.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { APP_PAGES } from './scripts/lib/app-page-html.mjs'
+// @ts-expect-error build helper is plain .mjs without types
+import { injectStartBootSplash } from './scripts/lib/start-boot-splash.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { buildRouteMapsManifest } from './scripts/build-route-maps-manifest.mjs'
 // @ts-expect-error build helper is plain .mjs without types
@@ -137,8 +140,8 @@ interface AppPageEntry {
 
 function serveTransformedDevHtml(
   server: ViteDevServer,
-  req: Connect.IncomingMessage,
-  res: Connect.ServerResponse,
+  _req: IncomingMessage,
+  res: ServerResponse,
   next: Connect.NextFunction,
   filePath: string,
   url: string,
@@ -149,8 +152,9 @@ function serveTransformedDevHtml(
   }
 
   const html = readFileSync(filePath, 'utf8')
+  const preparedHtml = filePath.endsWith('start.html') ? injectStartBootSplash(html) : html
   void server
-    .transformIndexHtml(url, html)
+    .transformIndexHtml(url, preparedHtml)
     .then((transformed) => {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html; charset=utf-8')

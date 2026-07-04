@@ -323,6 +323,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "全站首屏加载文案统一为「本站加载中…」（随语言切换）；修复开发模式下 map-draw 等独立页面一直停在加载中（Vite React 注入）。",
             en: "Unified first-screen loading copy to “Loading site…” (locale-aware); fixed map-draw and other standalone pages stuck loading in dev (missing Vite React preamble).",
           },
+          {
+            zh: "开始页启动屏去掉进度条：站点 Logo 旋转，下方显示加载步骤与百分比，首次访问固定展示 5 秒。",
+            en: "Start-page boot splash drops the progress bar—spinning site logo with step label and percent below, fixed 5-second first visit.",
+          },
         ],
       },
     ],
