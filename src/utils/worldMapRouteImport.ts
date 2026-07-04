@@ -1,6 +1,11 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
-import type { RouteEditorGraphExport, RouteEditorGraphExportNode, RouteEditorNodeType } from '../routeEditor/types'
+import type {
+  RouteEditorGraphExport,
+  RouteEditorGraphExportNode,
+  RouteEditorLabelPosition,
+  RouteEditorNodeType,
+} from '../routeEditor/types'
 import { normalizeVirtualNodeKind } from './mapSurfaceKind'
 
 export type WorldMapDrawImportResult =
@@ -177,6 +182,15 @@ function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null 
     typeof value.stopSeq === 'number' && Number.isFinite(value.stopSeq) && value.stopSeq > 0
       ? Math.round(value.stopSeq)
       : undefined
+  const labelPosition =
+    value.labelPosition === 'top' ||
+    value.labelPosition === 'bottom' ||
+    value.labelPosition === 'left' ||
+    value.labelPosition === 'right' ||
+    value.labelPosition === 'middle-left' ||
+    value.labelPosition === 'middle-right'
+      ? (value.labelPosition as RouteEditorLabelPosition)
+      : undefined
   return {
     id,
     type,
@@ -185,6 +199,7 @@ function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null 
     ...(eng_name ? { eng_name } : {}),
     ...(cornerRadius ? { cornerRadius } : {}),
     ...(stopSeq != null ? { stopSeq } : {}),
+    ...(labelPosition ? { labelPosition } : {}),
   }
 }
 

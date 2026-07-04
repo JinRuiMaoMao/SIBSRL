@@ -283,6 +283,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 站点名标签背景框随站名长短自动调整宽度。",
             en: "Map-draw stop name label boxes now auto-size to fit each stop name length.",
           },
+          {
+            zh: "map-draw 站点名标签可选上下左右位置；Location 固定为「在地图上点击放置」，catalog 条目仅作快捷跳转。",
+            en: "Map-draw stop labels can be placed top/bottom/left/right; Location is always click-the-map-to-place with optional catalog shortcuts.",
+          },
         ],
       },
     ],

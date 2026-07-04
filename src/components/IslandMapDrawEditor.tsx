@@ -20,7 +20,7 @@ import {
 } from '../utils/worldMapDrawImportMerge'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
-import type { RouteEditorMode } from '../routeEditor/types'
+import type { RouteEditorLabelPosition, RouteEditorLine, RouteEditorMode, RouteEditorNode } from '../routeEditor/types'
 import {
   isReferenceEditorExportJson,
   mergeReferenceJsonFiles,
@@ -31,7 +31,6 @@ import {
   sibsImportToRouteEditorLine,
 } from '../routeEditor/routeEditorBridge'
 import { mergeManyRouteEditorLines } from '../routeEditor/routeEditorMerge'
-import type { RouteEditorLine, RouteEditorNode } from '../routeEditor/types'
 import { useRouteEditor } from '../routeEditor/useRouteEditor'
 import { IslandMapDrawExportDialog, type IslandMapDrawExportMergeFile } from './IslandMapDrawExportDialog'
 import { IslandMapDrawImportConflictDialog } from './IslandMapDrawImportConflictDialog'
@@ -42,10 +41,8 @@ import {
 import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
-import {
-  MapDrawStopLocationPicker,
-  type MapDrawStopPlacementMode,
-} from './MapDrawStopLocationPicker'
+import { MapDrawStopLocationPicker } from './MapDrawStopLocationPicker'
+import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
@@ -119,12 +116,11 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   const [editEngName, setEditEngName] = useState('')
   const [editCornerRadius, setEditCornerRadius] = useState(0)
   const [editStopSeq, setEditStopSeq] = useState('')
+  const [editLabelPosition, setEditLabelPosition] = useState<RouteEditorLabelPosition>('top')
   const [newStopChiName, setNewStopChiName] = useState('')
   const [newStopEngName, setNewStopEngName] = useState('')
   const [newStopSnapPoint, setNewStopSnapPoint] = useState<WorldMapPoint | null>(null)
-  const [newStopPlacementMode, setNewStopPlacementMode] = useState<MapDrawStopPlacementMode>('manual')
   const [newStopCatalogIndex, setNewStopCatalogIndex] = useState<number | null>(null)
-  const [editStopPlacementMode, setEditStopPlacementMode] = useState<MapDrawStopPlacementMode>('manual')
   const [stopCatalog, setStopCatalog] = useState<WorldMapCatalogStop[] | null>(null)
 
   const exportHintTimerRef = useRef<number | null>(null)
@@ -155,20 +151,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   }, [editCatalogLocations, imageSize, selectedNode])
 
   useEffect(() => {
-    if (selectedNodeId == null || !imageSize) {
-      setEditStopPlacementMode('manual')
+    if (selectedNodeId == null) {
+      setEditChiName('')
+      setEditEngName('')
+      setEditCornerRadius(0)
+      setEditStopSeq('')
+      setEditLabelPosition('top')
       return
     }
     const node = editor.manager.getNodeById(selectedNodeId)
-    if (!node || node.type !== 'stop') {
-      setEditStopPlacementMode('manual')
-      return
-    }
-    const locations = findMapDrawCatalogLocationsForName(node.chi_name, node.eng_name, stopCatalog)
-    const point = pixelToNormalized(node.x, node.y, imageSize.width, imageSize.height)
-    const catalogIndex = findCatalogLocationIndexByPoint(locations, point)
-    setEditStopPlacementMode(catalogIndex != null ? 'catalog' : 'manual')
-  }, [editor.manager, imageSize, selectedNodeId, stopCatalog])
+    if (!node) return
+    setEditChiName(node.chi_name)
+    setEditEngName(node.eng_name)
+    setEditCornerRadius(node.cornerRadius)
+    setEditStopSeq(node.stopSeq != null && node.stopSeq > 0 ? String(node.stopSeq) : '')
+    setEditLabelPosition(node.type === 'stop' ? node.labelPosition : 'top')
+  }, [editor.manager, selectedNodeId])
 
   useEffect(() => {
     if (!isLoggedIn) return
@@ -185,22 +183,6 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     }
     prevImageSizeRef.current = imageSize
   }, [editor.manager, imageSize])
-
-  useEffect(() => {
-    if (selectedNodeId == null) {
-      setEditChiName('')
-      setEditEngName('')
-      setEditCornerRadius(0)
-      setEditStopSeq('')
-      return
-    }
-    const node = editor.manager.getNodeById(selectedNodeId)
-    if (!node) return
-    setEditChiName(node.chi_name)
-    setEditEngName(node.eng_name)
-    setEditCornerRadius(node.cornerRadius)
-    setEditStopSeq(node.stopSeq != null && node.stopSeq > 0 ? String(node.stopSeq) : '')
-  }, [editor.manager, selectedNodeId])
 
   useEffect(() => {
     if (!routeOverlay) {
@@ -271,7 +253,6 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       setNewStopChiName('')
       setNewStopEngName('')
       setNewStopSnapPoint(null)
-      setNewStopPlacementMode('manual')
       setNewStopCatalogIndex(null)
       lastPlacedStopIdRef.current = null
     }
@@ -328,9 +309,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
   )
 
   const segmentPassthrough =
-    editorMode === 'addStop' ||
-    editorMode === 'addPoint' ||
-    (showStopEditPanel && editStopPlacementMode === 'manual')
+    editorMode === 'addStop' || editorMode === 'addPoint' || showStopEditPanel
 
   const allowSegmentDelete =
     editorMode !== 'addStop' && editorMode !== 'addPoint' && !showStopEditPanel
@@ -351,8 +330,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     [],
   )
 
-  const resetNewStopPlacement = useCallback(() => {
-    setNewStopPlacementMode('manual')
+  const resetNewStopCatalogSnap = useCallback(() => {
     setNewStopCatalogIndex(null)
     setNewStopSnapPoint(null)
   }, [])
@@ -361,7 +339,6 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     (index: number) => {
       const entry = newStopCatalogLocations[index]
       if (!entry) return
-      setNewStopPlacementMode('catalog')
       setNewStopCatalogIndex(index)
       setNewStopSnapPoint(entry.point)
     },
@@ -373,11 +350,19 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (selectedNodeId == null || !imageSize) return
       const entry = editCatalogLocations[index]
       if (!entry) return
-      setEditStopPlacementMode('catalog')
       const { x, y } = normalizedToPixel(entry.point, imageSize.width, imageSize.height)
       editor.updateNode(selectedNodeId, { x, y })
     },
     [editCatalogLocations, editor, imageSize, selectedNodeId],
+  )
+
+  const applyEditLabelPosition = useCallback(
+    (position: RouteEditorLabelPosition) => {
+      setEditLabelPosition(position)
+      if (selectedNodeId == null) return
+      editor.updateNode(selectedNodeId, { labelPosition: position })
+    },
+    [editor, selectedNodeId],
   )
 
   const applyNewStopNameSelection = useCallback(
@@ -388,25 +373,22 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       if (selection.point) {
         const index = findCatalogLocationIndexByPoint(locations, selection.point)
         if (index != null) {
-          setNewStopPlacementMode('catalog')
           setNewStopCatalogIndex(index)
           setNewStopSnapPoint(locations[index]!.point)
           return
         }
-        setNewStopPlacementMode('catalog')
         setNewStopCatalogIndex(null)
         setNewStopSnapPoint(selection.point)
         return
       }
       if (locations.length === 1) {
-        setNewStopPlacementMode('catalog')
         setNewStopCatalogIndex(0)
         setNewStopSnapPoint(locations[0]!.point)
         return
       }
-      resetNewStopPlacement()
+      resetNewStopCatalogSnap()
     },
-    [resetNewStopPlacement, stopCatalog],
+    [resetNewStopCatalogSnap, stopCatalog],
   )
 
   const handleMapClick = useCallback(
@@ -415,7 +397,6 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
       if (
         showStopEditPanel &&
-        editStopPlacementMode === 'manual' &&
         selectedNodeId != null &&
         (editorMode === 'select' || editorMode === 'addStop')
       ) {
@@ -424,36 +405,28 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         return
       }
 
-      const placement =
-        editorMode === 'addStop' && newStopPlacementMode === 'catalog' && newStopSnapPoint
-          ? newStopSnapPoint
-          : point
-      const { x, y } = normalizedToPixel(placement, imageSize.width, imageSize.height)
+      const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
       if (editorMode === 'addStop' && !showStopEditPanel) {
         const chi = newStopChiName.trim()
         const eng = newStopEngName.trim()
         const added = editor.addNode('stop', x, y, chi || eng ? { chi_name: chi, eng_name: eng } : undefined)
         lastPlacedStopIdRef.current = added.id
         setSelectedNodeId(added.id)
-        resetNewStopPlacement()
+        resetNewStopCatalogSnap()
         return
       }
-      const clickPixel = normalizedToPixel(point, imageSize.width, imageSize.height)
       if (editorMode === 'addPoint') {
-        editor.addNode('point', clickPixel.x, clickPixel.y)
+        editor.addNode('point', x, y)
         return
       }
     },
     [
       editor,
       editorMode,
-      editStopPlacementMode,
       imageSize,
       newStopChiName,
       newStopEngName,
-      newStopPlacementMode,
-      newStopSnapPoint,
-      resetNewStopPlacement,
+      resetNewStopCatalogSnap,
       selectedNodeId,
       showStopEditPanel,
     ],
@@ -466,7 +439,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         setConnectPreview(null)
         return
       }
-      if (editorMode === 'addStop' && newStopPlacementMode === 'catalog' && newStopSnapPoint) {
+      if (editorMode === 'addStop' && newStopSnapPoint && !showStopEditPanel) {
         const pixel = normalizedToPixel(newStopSnapPoint, imageSize.width, imageSize.height)
         setPointerPreview({ type: 'stop', x: pixel.x, y: pixel.y })
         setConnectPreview(null)
@@ -502,7 +475,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         y: pixel.y,
       })
     },
-    [connectPendingNodeId, editor.manager, editorMode, imageSize, newStopPlacementMode, newStopSnapPoint],
+    [connectPendingNodeId, editor.manager, editorMode, imageSize, newStopSnapPoint, showStopEditPanel],
   )
 
   const deleteNodeById = useCallback(
@@ -513,7 +486,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         lastPlacedStopIdRef.current = null
         setNewStopChiName('')
         setNewStopEngName('')
-        resetNewStopPlacement()
+        resetNewStopCatalogSnap()
       }
       if (connectPendingNodeId === nodeId || connectPendingRef.current === nodeId) {
         setConnectPendingNodeId(null)
@@ -521,7 +494,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
         setConnectPreview(null)
       }
     },
-    [connectPendingNodeId, editor, resetNewStopPlacement, selectedNodeId],
+    [connectPendingNodeId, editor, resetNewStopCatalogSnap, selectedNodeId],
   )
 
   const deleteSelectedNode = useCallback(() => {
@@ -552,7 +525,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
       lastPlacedStopIdRef.current = null
       setNewStopChiName('')
       setNewStopEngName('')
-      resetNewStopPlacement()
+      resetNewStopCatalogSnap()
     }
   }, [
     editChiName,
@@ -561,7 +534,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     editStopSeq,
     editor,
     editorMode,
-    resetNewStopPlacement,
+    resetNewStopCatalogSnap,
     selectedNode,
     selectedNodeId,
     showExportHint,
@@ -1085,20 +1058,15 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                         }}
                       />
                     </label>
+                    <MapDrawStopLabelPositionPicker
+                      value={editLabelPosition}
+                      onChange={applyEditLabelPosition}
+                    />
                     <MapDrawStopLocationPicker
                       locations={editCatalogLocations}
-                      mode={editStopPlacementMode}
-                      selectedCatalogIndex={
-                        editStopPlacementMode === 'catalog' ? editCatalogIndex : null
-                      }
-                      onModeChange={setEditStopPlacementMode}
+                      selectedCatalogIndex={editCatalogIndex}
                       onSelectCatalogIndex={applyEditCatalogIndex}
                     />
-                    <p className="island-map-draw-help">
-                      {editStopPlacementMode === 'manual'
-                        ? t('mapDrawAddStopHelp')
-                        : t('mapDrawAddStopCatalogSnapHint')}
-                    </p>
                     <p className="island-map-draw-help">
                       X: {selectedNode.x}, Y: {selectedNode.y}
                     </p>
@@ -1148,29 +1116,20 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                       engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
                       onChiNameChange={(value) => {
                         setNewStopChiName(value)
-                        resetNewStopPlacement()
+                        resetNewStopCatalogSnap()
                       }}
                       onEngNameChange={(value) => {
                         setNewStopEngName(value)
-                        resetNewStopPlacement()
+                        resetNewStopCatalogSnap()
                       }}
                       onSelectSuggestion={applyNewStopNameSelection}
                     />
                     <MapDrawStopLocationPicker
                       locations={newStopCatalogLocations}
-                      mode={newStopPlacementMode}
                       selectedCatalogIndex={newStopCatalogIndex}
-                      onModeChange={(mode) => {
-                        if (mode === 'manual') resetNewStopPlacement()
-                        else setNewStopPlacementMode('catalog')
-                      }}
                       onSelectCatalogIndex={applyNewStopCatalogIndex}
                     />
-                    <p className="island-map-draw-help">
-                      {newStopPlacementMode === 'catalog' && newStopSnapPoint
-                        ? t('mapDrawAddStopCatalogSnapHint')
-                        : t('mapDrawAddStopHelp')}
-                    </p>
+                    <p className="island-map-draw-help">{t('mapDrawAddStopHelp')}</p>
                   </div>
                 ) : editorMode === 'connectLine' && connectPendingNodeId != null ? (
                   <p className="island-map-draw-help">{t('mapDrawConnectPendingHint')}</p>
@@ -1206,13 +1165,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
               drawMode={mapDrawMode}
               drawInteraction={
                 editorMode === 'addStop'
-                  ? showStopEditPanel
-                    ? editStopPlacementMode === 'catalog'
-                      ? 'catalog'
-                      : 'route'
-                    : newStopPlacementMode === 'catalog'
-                      ? 'catalog'
-                      : 'route'
+                  ? 'route'
                   : editorMode === 'addPoint'
                     ? 'path-node'
                     : 'route'

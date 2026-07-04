@@ -50,6 +50,7 @@ export interface RouteEditorGraphExportNode {
   eng_name?: string
   cornerRadius?: number
   stopSeq?: number
+  labelPosition?: RouteEditorLabelPosition
 }
 
 export interface RouteEditorGraphExport {

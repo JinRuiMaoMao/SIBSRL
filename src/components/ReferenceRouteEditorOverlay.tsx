@@ -12,6 +12,7 @@ import {
 import {
   formatRouteEditorStopLabel,
   measureRouteEditorStopLabelBoxWidth,
+  resolveRouteEditorStopLabelLayout,
 } from '../utils/routeEditorStopLabel'
 
 interface ReferenceRouteEditorOverlayProps {
@@ -145,7 +146,6 @@ export function ReferenceRouteEditorOverlay({
         const selected = selectedNodeId === node.id
         const connectPending = connectPendingNodeId === node.id
         const radius = node.type === 'stop' ? stopRadius : pointRadius
-        const labelOffsetY = (node.labelOffsetY - 18) * nodeScale
         const stopLabel = node.type === 'stop' ? formatRouteEditorStopLabel(node) : ''
         const labelBoxHeight = 28 * nodeScale
         const labelPadding = 4 * nodeScale
@@ -158,6 +158,19 @@ export function ReferenceRouteEditorOverlay({
                 labelPadding: 4,
               })
             : Math.max(56, Number(node.labelWidth) || 80) * nodeScale
+        const labelLayout =
+          node.type === 'stop'
+            ? resolveRouteEditorStopLabelLayout(node.labelPosition, {
+                labelBoxWidth,
+                labelBoxHeight,
+                labelPadding,
+                textInsetX,
+                stopRadius,
+                nodeScale,
+                labelOffsetX: node.labelOffsetX,
+                labelOffsetY: node.labelOffsetY,
+              })
+            : null
 
         return (
           <g
@@ -182,15 +195,15 @@ export function ReferenceRouteEditorOverlay({
             }
           >
             <circle cx={node.x} cy={node.y} r={radius} className="reference-route-editor-node-dot" />
-            {node.type === 'stop' && config.showLabelsAlways && stopLabel ? (
+            {node.type === 'stop' && config.showLabelsAlways && stopLabel && labelLayout ? (
               <g
                 className={`reference-route-editor-label reference-route-editor-label--${node.labelPosition}`}
-                transform={`translate(${node.x + node.labelOffsetX * nodeScale}, ${node.y + labelOffsetY})`}
+                transform={`translate(${node.x + labelLayout.translateX}, ${node.y + labelLayout.translateY})`}
                 pointerEvents="none"
               >
                 <rect
-                  x={-labelPadding}
-                  y={-labelBoxHeight + labelPadding}
+                  x={labelLayout.rectX}
+                  y={labelLayout.rectY}
                   width={labelBoxWidth}
                   height={labelBoxHeight}
                   rx={4 * nodeScale}
@@ -198,8 +211,8 @@ export function ReferenceRouteEditorOverlay({
                 />
                 <text
                   className="reference-route-editor-label-name"
-                  x={textInsetX}
-                  y={-labelBoxHeight / 2 + labelPadding / 2}
+                  x={labelLayout.textX}
+                  y={labelLayout.textY}
                   fontSize={config.labelFontSize}
                   dominantBaseline="middle"
                 >

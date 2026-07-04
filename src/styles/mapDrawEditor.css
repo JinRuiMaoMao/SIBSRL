@@ -608,6 +608,49 @@ html[data-app-page='map-draw'] #root {
   opacity: 0.65;
 }
 
+.map-draw-stop-location-hint {
+  margin: 0;
+  font-size: 0.84rem;
+  opacity: 0.82;
+}
+
+.map-draw-stop-label-position-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.map-draw-stop-label-position-picker-title {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.map-draw-stop-label-position-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.map-draw-stop-label-position-btn {
+  padding: 0.38rem 0.35rem;
+  border-radius: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--text-muted, #888) 35%, transparent);
+  background: color-mix(in srgb, var(--surface-elevated, #151b28) 92%, #000);
+  color: inherit;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.map-draw-stop-label-position-btn:hover {
+  border-color: color-mix(in srgb, var(--accent, #f5b942) 45%, transparent);
+}
+
+.map-draw-stop-label-position-btn--active {
+  border-color: color-mix(in srgb, var(--accent, #f5b942) 70%, transparent);
+  background: color-mix(in srgb, var(--accent, #f5b942) 12%, transparent);
+}
+
 .map-draw-stop-location-option--manual {
   font-size: 0.88rem;
 }

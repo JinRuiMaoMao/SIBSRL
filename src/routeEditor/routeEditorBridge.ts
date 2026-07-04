@@ -84,6 +84,7 @@ export function routeEditorLineToEditorGraphExport(
             chi_name: node.chi_name,
             eng_name: node.eng_name,
             ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
+            ...(node.labelPosition !== 'top' ? { labelPosition: node.labelPosition } : {}),
           }
         : node.cornerRadius > 0
           ? { cornerRadius: node.cornerRadius }
@@ -152,6 +153,7 @@ export function editorGraphToRouteEditorLine(
         node.cornerRadius ?? 0,
       ),
       ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
+      ...(node.type === 'stop' && node.labelPosition ? { labelPosition: node.labelPosition } : {}),
     })
   }
 
