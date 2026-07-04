@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { AppTab } from '../types/appTab'
-import { isAccountPage, isSecretPage, isSettingsPage, isStartPage } from '../utils/appPage'
+import { isAccountPage, isMapDrawPage, isSecretPage, isSettingsPage, isStartPage } from '../utils/appPage'
 import {
   formatDocumentTitle,
   syncFavicon,
@@ -14,6 +14,7 @@ export function useDocumentMetadata(activeTab: AppTab): void {
   const start = isStartPage()
   const secret = isSecretPage()
   const account = isAccountPage()
+  const mapDraw = isMapDrawPage()
   const settings = isSettingsPage()
 
   useEffect(() => {
@@ -28,11 +29,13 @@ export function useDocumentMetadata(activeTab: AppTab): void {
     }
     const pageKey = secret
       ? 'secretPageTitle'
-      : account
-        ? 'authProfileTitle'
-        : settings
-          ? 'settings'
-          : TAB_TITLE_KEYS[activeTab]
+      : mapDraw
+        ? 'mapDrawPageTitle'
+        : account
+          ? 'authProfileTitle'
+          : settings
+            ? 'settings'
+            : TAB_TITLE_KEYS[activeTab]
     document.title = formatDocumentTitle(t(pageKey), t('documentTitleSuffix'))
-  }, [activeTab, account, locale, secret, settings, start, t])
+  }, [activeTab, account, locale, mapDraw, secret, settings, start, t])
 }

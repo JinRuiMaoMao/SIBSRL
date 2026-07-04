@@ -227,6 +227,16 @@ function devEntryRedirectPlugin(): Plugin {
           }
         }
 
+        if (pathOnly === '/map-draw.html') {
+          const file = resolve(root, 'pages/map-draw.html')
+          if (existsSync(file)) {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'text/html; charset=utf-8')
+            res.end(readFileSync(file, 'utf8'))
+            return
+          }
+        }
+
         next()
       })
     },

@@ -11,7 +11,7 @@ import { IslandMapOverlayProvider } from './contexts/IslandMapOverlayContext'
 import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
 import { SecretHeader } from './components/SecretHeader'
-import { MusicPage } from './components/MusicPage'
+import { MapDrawPage } from './components/MapDrawPage'
 import { TriviaPage } from './components/TriviaPage'
 import { RouteLookupPage } from './components/RouteLookupPage'
 import { ScrollRevealScope } from './components/ScrollRevealScope'
@@ -35,21 +35,21 @@ import {
   isGuidedTourReplaySessionActive,
 } from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
-import { isAccountPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
+import { isAccountPage, isMapDrawPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
 
-const IslandMapWidget = lazy(() =>
-  import('./components/IslandMapWidget').then((module) => ({ default: module.IslandMapWidget })),
+const IslandMapViewer = lazy(() =>
+  import('./components/IslandMapViewer').then((module) => ({ default: module.IslandMapViewer })),
 )
 
-function IslandMapWidgetLazy() {
+function IslandMapViewerLazy() {
   return (
     <Suspense fallback={null}>
-      <IslandMapWidget />
+      <IslandMapViewer />
     </Suspense>
   )
 }
@@ -129,7 +129,7 @@ function App() {
   }, [openTour])
 
   useEffect(() => {
-    if (isAccountPage() || isSecretPage() || isSettingsPage()) return
+    if (isAccountPage() || isMapDrawPage() || isSecretPage() || isSettingsPage()) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const pendingReplay = consumePendingGuidedTourReplay()
@@ -197,7 +197,7 @@ function App() {
   }, [])
 
   const guidedTourLayer =
-    !isAccountPage() && !isSecretPage() && !isSettingsPage() && !isStartPage() ? (
+    !isAccountPage() && !isMapDrawPage() && !isSecretPage() && !isSettingsPage() && !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
         mode={tourMode}
@@ -211,6 +211,17 @@ function App() {
       <>
         <LiquidGlassDefs />
         <StartPage />
+      </>
+    )
+  }
+
+  if (isMapDrawPage()) {
+    return (
+      <>
+        <LiquidGlassDefs />
+        <IslandMapOverlayProvider>
+          <MapDrawPage />
+        </IslandMapOverlayProvider>
       </>
     )
   }
@@ -322,7 +333,7 @@ function App() {
         </footer>
         </div>
         <IslandMapOverlayProvider>
-          <IslandMapWidgetLazy />
+          <IslandMapViewerLazy />
         </IslandMapOverlayProvider>
       </>
     )
@@ -394,7 +405,7 @@ function App() {
         </p>
       </footer>
       </div>
-      {isRoutesPage() ? <IslandMapWidgetLazy /> : null}
+      {isRoutesPage() ? <IslandMapViewerLazy /> : null}
       <AppTabBar activeTab={tabFromLocation} />
       </IslandMapOverlayProvider>
     </>

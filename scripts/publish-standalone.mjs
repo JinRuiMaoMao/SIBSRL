@@ -8,6 +8,7 @@ import {
   injectDevToolsBlock,
   injectLocaleBootstrap,
   injectAccountPageMeta,
+  injectMapDrawPageMeta,
   injectSettingsPageMeta,
   injectNoScriptGuard,
   injectSecretPageMeta,
@@ -112,6 +113,11 @@ export function publishStandalone(options = {}) {
   settingsHtml = adjustAppPageTitle(settingsHtml, '设置')
   writeFileSync(resolve(root, 'settings.html'), settingsHtml)
   writeFileSync(resolve(root, 'dist', 'settings.html'), settingsHtml)
+
+  let mapDrawHtml = injectMapDrawPageMeta(baseHtml)
+  mapDrawHtml = adjustAppPageTitle(mapDrawHtml, '地图走线编辑')
+  writeFileSync(resolve(root, 'map-draw.html'), mapDrawHtml)
+  writeFileSync(resolve(root, 'dist', 'map-draw.html'), mapDrawHtml)
 
   rmSync(resolve(root, 'tabs'), { recursive: true, force: true })
   rmSync(resolve(root, 'dist', 'tabs'), { recursive: true, force: true })

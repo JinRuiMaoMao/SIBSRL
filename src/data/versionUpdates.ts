@@ -213,6 +213,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "PNG 导出裁剪范围按实际绘制像素计算，包含圆角外凸、线帽与站名文字。",
             en: "PNG export crop bounds follow painted pixels, including arc bulge, stroke caps, and stop labels.",
           },
+          {
+            zh: "地图绘制迁至独立页 map-draw.html；线路查询页小地图仅保留缩放、图层与走线展示。",
+            en: "Map drawing moved to standalone map-draw.html; the route lookup mini-map keeps zoom, layers, and route overlay only.",
+          },
         ],
         fixes: [
           {
@@ -246,6 +250,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: "已注册并登录的用户可直接使用地图绘制全套工具；未登录点击「绘制」会提示注册。",
             en: "Registered signed-in users get full map draw tools; guests who tap Draw see a sign-in prompt.",
+          },
+          {
+            zh: "地图走线编辑入口：map-draw.html（从编辑器页返回线路查询）。",
+            en: "Route map editor lives at map-draw.html (back link returns to route lookup).",
           },
           {
             zh: "地图绘制支持一次选择多个 JSON 导入合并（catalog 站点与线路走线，路径冲突时可选择保留方案）。",

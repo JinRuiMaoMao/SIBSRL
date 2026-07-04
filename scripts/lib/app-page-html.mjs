@@ -346,6 +346,24 @@ export function injectStartPageMeta(html) {
 }
 
 /** @param {string} html */
+export function injectMapDrawPageMeta(html) {
+  let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')
+  const head = out.split('</head>')[0] ?? out
+  if (/<meta name="app-page"[^>]*>/i.test(head)) {
+    out = out.replace(
+      /(<meta name="app-page" content=")[^"]*(")/i,
+      `$1map-draw$2`,
+    )
+  } else {
+    out = out.replace(
+      '<meta charset="UTF-8" />',
+      `<meta charset="UTF-8" />\n    <meta name="app-page" content="map-draw" />`,
+    )
+  }
+  return out
+}
+
+/** @param {string} html */
 export function injectAccountPageMeta(html) {
   let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')
   const head = out.split('</head>')[0] ?? out

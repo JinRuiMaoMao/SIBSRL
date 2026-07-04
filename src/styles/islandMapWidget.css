@@ -201,6 +201,81 @@ html.has-compact-tab-nav .island-map--widget {
   background: var(--bg, #0f0f0f);
 }
 
+.island-map--standalone {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.island-map--standalone .island-map-controls--fullscreen {
+  position: absolute;
+}
+
+.map-draw-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg, #0f0f0f);
+}
+
+.map-draw-app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+  padding: 0.65rem 1rem;
+  padding-top: max(0.65rem, env(safe-area-inset-top, 0px));
+  border-bottom: 1px solid color-mix(in srgb, var(--text-muted, #94a3b8) 22%, transparent);
+  background: color-mix(in srgb, var(--bg, #0f0f0f) 92%, transparent);
+}
+
+.map-draw-app-header-left {
+  min-width: 0;
+}
+
+.map-draw-app-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.map-draw-app-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.map-draw-app-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--island-map-control-border, rgba(255, 255, 255, 0.14));
+  background: var(--island-map-control-bg, rgba(20, 24, 32, 0.82));
+  color: var(--text, #eef2f8);
+  font-size: 0.82rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.map-draw-app-back:hover {
+  border-color: color-mix(in srgb, var(--accent, #f5b942) 45%, transparent);
+}
+
+.map-draw-app-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+html[data-app-page='map-draw'] body {
+  overflow: hidden;
+}
+
 .island-map-controls--fullscreen {
   position: fixed;
   left: max(0.85rem, env(safe-area-inset-left, 0px));

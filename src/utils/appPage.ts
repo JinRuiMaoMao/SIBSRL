@@ -38,8 +38,21 @@ export function isSettingsPage(): boolean {
   return file === 'settings.html'
 }
 
+export function isMapDrawPage(): boolean {
+  const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
+  if (meta === 'map-draw') return true
+
+  const file =
+    window.location.pathname.replace(/\\/g, '/').split('/').filter(Boolean).pop()?.toLowerCase() ?? ''
+  return file === 'map-draw.html'
+}
+
 export function getAccountPageHref(): string {
   return './account.html'
+}
+
+export function getMapDrawPageHref(): string {
+  return './map-draw.html'
 }
 
 export function getSettingsPageHref(): string {
