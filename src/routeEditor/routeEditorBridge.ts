@@ -133,40 +133,91 @@ export function sibsImportToRouteEditorLine(
     }
   }
 
-  const nodePixelKey = (x: number, y: number) => `${Math.round(x)}|${Math.round(y)}`
   const normalizedPointKey = (point: WorldMapPoint) =>
     `${Math.round(point[0] * 10000)}|${Math.round(point[1] * 10000)}`
 
-  const stopByKey = new Map<string, WorldMapDrawStop>()
-  for (const stop of parsed.stops) {
-    stopByKey.set(normalizedPointKey(stop.point), stop)
+  const findPathIndex = (point: WorldMapPoint, points: readonly WorldMapPoint[]): number => {
+    const key = normalizedPointKey(point)
+    for (let index = 0; index < points.length; index += 1) {
+      if (normalizedPointKey(points[index]!) === key) return index
+    }
+    let bestIndex = 0
+    let bestDistance = Infinity
+    for (let index = 0; index < points.length; index += 1) {
+      const distance = Math.hypot(points[index]![0] - point[0], points[index]![1] - point[1])
+      if (distance < bestDistance) {
+        bestDistance = distance
+        bestIndex = index
+      }
+    }
+    return bestIndex
   }
 
-  let lastNodePixelKey: string | null = null
-  const appendPathNodeAtPixel = (
-    pixel: { x: number; y: number },
-    options: { stop?: WorldMapDrawStop; pathNode?: WorldMapDrawPathNode } = {},
-  ) => {
-    const pixelKey = nodePixelKey(pixel.x, pixel.y)
-    if (pixelKey === lastNodePixelKey && nodes.length > 0) {
-      const last = nodes[nodes.length - 1]!
-      if (options.stop && last.type !== 'stop') {
-        last.type = 'stop'
-        last.chi_name = options.stop.name.zh
-        last.eng_name = options.stop.name.en
-      }
-      if (options.pathNode && last.type === 'point') {
-        const cornerRadius = Number(options.pathNode.label) || 0
-        if (cornerRadius > 0) last.cornerRadius = cornerRadius
-      }
-      return
-    }
+  const isOnPath = (point: WorldMapPoint, points: readonly WorldMapPoint[]): boolean => {
+    const key = normalizedPointKey(point)
+    return points.some((pathPoint) => normalizedPointKey(pathPoint) === key)
+  }
 
-    if (options.stop) {
+  type PathAnchor = {
+    pathIndex: number
+    stop?: WorldMapDrawStop
+    pathNode?: WorldMapDrawPathNode
+  }
+
+  const anchors: PathAnchor[] = []
+  const offPathStops: WorldMapDrawStop[] = []
+  const hasPathTrace = parsed.points.length >= 2
+
+  for (const stop of parsed.stops) {
+    if (hasPathTrace && !isOnPath(stop.point, parsed.points)) {
+      offPathStops.push(stop)
+      continue
+    }
+    anchors.push({
+      pathIndex: hasPathTrace ? findPathIndex(stop.point, parsed.points) : anchors.length,
+      stop,
+    })
+  }
+
+  for (const pathNode of parsed.pathNodes) {
+    anchors.push({
+      pathIndex: hasPathTrace ? findPathIndex(pathNode.point, parsed.points) : anchors.length,
+      pathNode,
+    })
+  }
+
+  anchors.sort(
+    (left, right) =>
+      left.pathIndex - right.pathIndex || (left.stop ? 0 : 1) - (right.stop ? 0 : 1),
+  )
+
+  const mergedAnchors: PathAnchor[] = []
+  for (const anchor of anchors) {
+    const point = anchor.stop?.point ?? anchor.pathNode!.point
+    const last = mergedAnchors[mergedAnchors.length - 1]
+    if (last) {
+      const lastPoint = last.stop?.point ?? last.pathNode!.point
+      if (normalizedPointKey(lastPoint) === normalizedPointKey(point)) {
+        if (anchor.stop) last.stop = anchor.stop
+        if (anchor.pathNode) last.pathNode = anchor.pathNode
+        last.pathIndex = Math.min(last.pathIndex, anchor.pathIndex)
+        continue
+      }
+    }
+    mergedAnchors.push({ ...anchor })
+  }
+
+  const usedStops = new Set<string>()
+  for (const anchor of mergedAnchors) {
+    const point = anchor.stop?.point ?? anchor.pathNode!.point
+    const pixel = normalizedToPixel(point, imageWidth, imageHeight)
+
+    if (anchor.stop) {
+      usedStops.add(anchor.stop.id)
       nodes.push({
         id: nextId++,
-        chi_name: options.stop.name.zh,
-        eng_name: options.stop.name.en,
+        chi_name: anchor.stop.name.zh,
+        eng_name: anchor.stop.name.en,
         type: 'stop',
         x: pixel.x,
         y: pixel.y,
@@ -177,49 +228,30 @@ export function sibsImportToRouteEditorLine(
         labelHeight: 'auto',
         cornerRadius: 0,
       })
-    } else {
-      nodes.push({
-        id: nextId++,
-        chi_name: '',
-        eng_name: '',
-        type: 'point',
-        x: pixel.x,
-        y: pixel.y,
-        labelPosition: 'top',
-        labelOffsetX: 0,
-        labelOffsetY: 0,
-        labelWidth: 80,
-        labelHeight: 'auto',
-        cornerRadius: Number(options.pathNode?.label) || 0,
-      })
+      continue
     }
-    lastNodePixelKey = pixelKey
+
+    nodes.push({
+      id: nextId++,
+      chi_name: '',
+      eng_name: '',
+      type: 'point',
+      x: pixel.x,
+      y: pixel.y,
+      labelPosition: 'top',
+      labelOffsetX: 0,
+      labelOffsetY: 0,
+      labelWidth: 80,
+      labelHeight: 'auto',
+      cornerRadius: Number(anchor.pathNode?.label) || 0,
+    })
   }
 
-  const usedStops = new Set<string>()
-  for (const point of parsed.points) {
-    const stop = stopByKey.get(normalizedPointKey(point))
-    const pathNode = parsed.pathNodes.find(
-      (node) => Math.hypot(node.point[0] - point[0], node.point[1] - point[1]) < 0.002,
-    )
-    const pixel = pathNode
-      ? normalizedToPixel(pathNode.point, imageWidth, imageHeight)
-      : normalizedToPixel(point, imageWidth, imageHeight)
-
-    if (stop && !usedStops.has(stop.id)) {
+  for (const stop of offPathStops) {
+    if (!usedStops.has(stop.id)) {
       usedStops.add(stop.id)
-      appendPathNodeAtPixel(pixel, { stop })
-      continue
+      appendStop(stop)
     }
-    if (pathNode) {
-      appendPathNodeAtPixel(pixel, { pathNode })
-      continue
-    }
-    appendPathNodeAtPixel(pixel)
-  }
-
-  for (const stop of parsed.stops) {
-    if (!usedStops.has(stop.id)) appendStop(stop)
   }
 
   return {
