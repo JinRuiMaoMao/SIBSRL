@@ -375,10 +375,10 @@ export function IslandMapDrawEditor() {
     }
     savedViewRef.current = mapView
     setMapView(
-      fitNormalizedViewToRoutePoints(routeOverlay.points, expanded ? 'fullscreen' : 'widget'),
+      fitNormalizedViewToRoutePoints(routeOverlay.points, 'fullscreen'),
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only refit when route overlay or mode changes
-  }, [expanded, routeOverlay])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only refit when route overlay changes
+  }, [routeOverlay])
 
   useEffect(() => {
     if (!routeOverlay) return
@@ -1147,7 +1147,7 @@ export function IslandMapDrawEditor() {
         setMapView(
           fitNormalizedViewToRoutePoints(
             merged.stops.map((stop) => stop.point),
-            expanded ? 'fullscreen' : 'widget',
+            'fullscreen',
           ),
         )
         showExportHint(
@@ -1176,7 +1176,7 @@ export function IslandMapDrawEditor() {
       const fitPoints =
         merged.points.length >= 2 ? merged.points : merged.stops.map((stop) => stop.point)
       if (fitPoints.length > 0) {
-        setMapView(fitNormalizedViewToRoutePoints(fitPoints, expanded ? 'fullscreen' : 'widget'))
+        setMapView(fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen'))
       }
       if (resolution.kind === 'clearPaths') {
         showExportHint(
@@ -1197,7 +1197,7 @@ export function IslandMapDrawEditor() {
         showExportHint(t('islandMapDrawImportRouteDone', { routeId: merged.routeId }))
       }
     },
-    [draftStops, expanded, pushDrawHistory, showExportHint, t],
+    [draftStops, pushDrawHistory, showExportHint, t],
   )
 
   const handleImportFileChange = useCallback(

@@ -220,7 +220,9 @@ function App() {
       <>
         <LiquidGlassDefs />
         <IslandMapOverlayProvider>
-          <MapDrawPage />
+          <ErrorBoundary>
+            <MapDrawPage />
+          </ErrorBoundary>
         </IslandMapOverlayProvider>
       </>
     )

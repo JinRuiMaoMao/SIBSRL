@@ -169,6 +169,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "同步 7/4 每日挑战：马拉松封路 240A（竞速）。",
             en: "Synced 7/4 daily challenge: Marathon Road Closure 240A (race).",
           },
+          {
+            zh: "修复 map-draw.html 空白：绘制页移除已删除的 expanded 变量引用。",
+            en: "Fixed blank map-draw.html by removing stale expanded variable references on the draw page.",
+          },
         ],
       },
     ],

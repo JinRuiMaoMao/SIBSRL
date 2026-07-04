@@ -276,6 +276,13 @@ html[data-app-page='map-draw'] body {
   overflow: hidden;
 }
 
+html[data-app-page='map-draw'],
+html[data-app-page='map-draw'] body,
+html[data-app-page='map-draw'] #root {
+  height: 100%;
+  min-height: 100dvh;
+}
+
 .island-map-controls--fullscreen {
   position: fixed;
   left: max(0.85rem, env(safe-area-inset-left, 0px));
