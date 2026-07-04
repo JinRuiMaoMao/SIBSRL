@@ -1,9 +1,15 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
+import { useAuth } from '../contexts/AuthContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { ExpandIcon, HideIcon, MinimizeIcon, ShowIcon } from './islandMapControlIcons'
+import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
+
+const IslandMapDrawEditor = lazy(() =>
+  import('./IslandMapDrawEditor').then((module) => ({ default: module.IslandMapDrawEditor })),
+)
 
 type MapLayer = 'general' | 'detailed'
 
@@ -12,12 +18,15 @@ const MAP_URLS: Record<MapLayer, string> = {
   detailed: './maps/SIMap.png',
 }
 
-/** 线路查询页小地图：仅缩放、图层切换与走线展示，不含绘制/导入导出。 */
+/** 线路查询页小地图：缩放、图层、走线展示；全屏下已登录用户可打开绘制工具。 */
 export function IslandMapViewer() {
   const { t } = useLocale()
+  const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const [expanded, setExpanded] = useState(false)
+  const [drawOpen, setDrawOpen] = useState(false)
+  const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
@@ -32,7 +41,18 @@ export function IslandMapViewer() {
   }, [])
 
   const openFullscreen = useCallback(() => setExpanded(true), [])
-  const closeFullscreen = useCallback(() => setExpanded(false), [])
+  const closeFullscreen = useCallback(() => {
+    setDrawOpen(false)
+    setExpanded(false)
+  }, [])
+  const openDraw = useCallback(() => {
+    if (isLoggedIn) {
+      setDrawOpen(true)
+      return
+    }
+    setPermissionDialogOpen(true)
+  }, [isLoggedIn])
+  const closeDraw = useCallback(() => setDrawOpen(false), [])
   const toggleLayer = useCallback(() => {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
   }, [])
@@ -45,13 +65,33 @@ export function IslandMapViewer() {
   useEffect(() => {
     if (!expanded) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeFullscreen()
+      if (event.key !== 'Escape') return
+      if (drawOpen) {
+        closeDraw()
+        return
+      }
+      closeFullscreen()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [closeFullscreen, expanded])
+  }, [closeDraw, closeFullscreen, drawOpen, expanded])
+
+  useEffect(() => {
+    if (!expanded) setDrawOpen(false)
+  }, [expanded])
 
   const node = expanded ? (
+    drawOpen && isLoggedIn ? (
+      <Suspense fallback={null}>
+        <IslandMapDrawEditor
+          ready
+          variant="overlay"
+          initialMapView={mapView}
+          initialLayer={layer}
+          onClose={closeDraw}
+        />
+      </Suspense>
+    ) : (
     <div
       className="island-map island-map--fullscreen"
       role="dialog"
@@ -80,6 +120,14 @@ export function IslandMapViewer() {
           </button>
           <button
             type="button"
+            className="island-map-btn island-map-btn--draw"
+            onClick={openDraw}
+            title={isLoggedIn ? t('islandMapDrawStartHint') : t('islandMapDrawPermissionButtonHint')}
+          >
+            {t('islandMapDraw')}
+          </button>
+          <button
+            type="button"
             className="island-map-btn island-map-btn--minimize"
             onClick={closeFullscreen}
             aria-label={t('islandMapMinimize')}
@@ -90,6 +138,7 @@ export function IslandMapViewer() {
         </div>
       </div>
     </div>
+    )
   ) : (
     <div
       className={`island-map island-map--widget${widgetHidden ? ' island-map--widget-collapsed' : ''}${routeOverlay ? ' island-map--widget-route' : ''}`.trim()}
@@ -153,5 +202,16 @@ export function IslandMapViewer() {
   )
 
   if (typeof document === 'undefined') return node
-  return createPortal(node, document.body)
+  return (
+    <>
+      {createPortal(node, document.body)}
+      <IslandMapDrawPermissionDialogs
+        open={permissionDialogOpen}
+        onCancel={() => setPermissionDialogOpen(false)}
+        onGoRegister={() => {
+          window.location.href = './account.html'
+        }}
+      />
+    </>
+  )
 }

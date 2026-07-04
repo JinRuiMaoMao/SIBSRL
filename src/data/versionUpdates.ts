@@ -287,6 +287,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 站点名标签可选上下左右位置；Location 固定为「在地图上点击放置」，catalog 条目仅作快捷跳转。",
             en: "Map-draw stop labels can be placed top/bottom/left/right; Location is always click-the-map-to-place with optional catalog shortcuts.",
           },
+          {
+            zh: "线路查询全屏地图：已登录用户可直接打开绘制工具；未登录点击「绘制」仍提示前往注册。",
+            en: "Route lookup fullscreen map: signed-in users can open draw tools in place; guests still see the register prompt when tapping Draw.",
+          },
         ],
       },
     ],

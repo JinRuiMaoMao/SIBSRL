@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import '../styles/mapDrawEditor.css'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
 import { useLocale } from '../i18n/LocaleContext'
@@ -74,15 +75,30 @@ interface MapImageSize {
   height: number
 }
 
-export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
+interface IslandMapDrawEditorProps {
+  ready?: boolean
+  variant?: 'page' | 'overlay'
+  onClose?: () => void
+  initialMapView?: NormalizedMapView | null
+  initialLayer?: MapLayer
+}
+
+export function IslandMapDrawEditor({
+  ready = true,
+  variant = 'page',
+  onClose,
+  initialMapView = null,
+  initialLayer = 'general',
+}: IslandMapDrawEditorProps) {
+  const isOverlay = variant === 'overlay'
   const { t, locale } = useLocale()
   const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const editor = useRouteEditor(routeOverlay?.routeNumber ?? '默认线路')
 
-  const [layer, setLayer] = useState<MapLayer>('general')
-  const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
+  const [layer, setLayer] = useState<MapLayer>(initialLayer)
+  const [mapView, setMapView] = useState<NormalizedMapView | null>(initialMapView)
   const [imageSize, setImageSize] = useState<MapImageSize | null>(null)
   const [editorMode, setEditorMode] = useState<RouteEditorMode>('select')
   const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null)
@@ -918,13 +934,13 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
 
   const node = ready ? (
     <div
-      className={`route-editor-app${mapDrawMode ? ' route-editor-app--draw-mode' : ''}${exportPngPreview ? ' route-editor-app--export-preview' : ''}`.trim()}
+      className={`route-editor-app${isOverlay ? ' route-editor-app--overlay' : ''}${mapDrawMode ? ' route-editor-app--draw-mode' : ''}${exportPngPreview ? ' route-editor-app--export-preview' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
       <header className="route-editor-header">
         <div className="route-editor-header-left">
           <h1 className="route-editor-title">{t('mapDrawPageTitle')}</h1>
-          <p className="route-editor-subtitle">{t('mapDrawPageSubtitle')}</p>
+          {isOverlay ? null : <p className="route-editor-subtitle">{t('mapDrawPageSubtitle')}</p>}
         </div>
         <div className="route-editor-header-middle">
           <label className="route-editor-field">
@@ -967,9 +983,15 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
               </button>
             </>
           ) : null}
-          <a className="route-editor-btn route-editor-back" href="./routes.html">
-            {t('mapDrawPageBack')}
-          </a>
+          {isOverlay ? (
+            <button type="button" className="route-editor-btn route-editor-back" onClick={onClose}>
+              {t('mapDrawOverlayClose')}
+            </button>
+          ) : (
+            <a className="route-editor-btn route-editor-back" href="./routes.html">
+              {t('mapDrawPageBack')}
+            </a>
+          )}
         </div>
       </header>
 
