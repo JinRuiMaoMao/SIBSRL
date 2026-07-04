@@ -284,8 +284,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Map-draw stop name label boxes now auto-size to fit each stop name length.",
           },
           {
-            zh: "map-draw 站点名标签可选上下左右位置；Location 固定为「在地图上点击放置」，catalog 条目仅作快捷跳转。",
-            en: "Map-draw stop labels can be placed top/bottom/left/right; Location is always click-the-map-to-place with optional catalog shortcuts.",
+            zh: "map-draw 站点名标签可选九种位置（上左/上中/上右、左中/正中/右中、下左/下中/下右）；Location 固定为「在地图上点击放置」，catalog 条目仅作快捷跳转。",
+            en: "Map-draw stop labels support nine positions (top-left/center/right, middle-left/center/right, bottom-left/center/right); Location is always click-the-map-to-place with optional catalog shortcuts.",
+          },
+          {
+            zh: "修复 map-draw PNG 导出忽略站名标签位置（导出图与编辑器所选方向一致）。",
+            en: "Fixed map-draw PNG export ignoring stop label position—exported image matches the editor placement.",
           },
           {
             zh: "线路查询全屏地图：已登录用户可直接打开绘制工具；未登录点击「绘制」仍提示前往注册。",

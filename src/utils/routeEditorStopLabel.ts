@@ -1,6 +1,16 @@
 import type { RouteEditorLabelPosition, RouteEditorNode } from '../routeEditor/types'
 
-export const MAP_DRAW_STOP_LABEL_POSITIONS = ['top', 'bottom', 'left', 'right'] as const
+export const MAP_DRAW_STOP_LABEL_POSITIONS = [
+  'top-left',
+  'top',
+  'top-right',
+  'left',
+  'center',
+  'right',
+  'bottom-left',
+  'bottom',
+  'bottom-right',
+] as const
 export type MapDrawStopLabelPosition = (typeof MAP_DRAW_STOP_LABEL_POSITIONS)[number]
 
 export interface RouteEditorStopLabelLayout {
@@ -10,14 +20,23 @@ export interface RouteEditorStopLabelLayout {
   rectY: number
   textX: number
   textY: number
+  textAnchor: 'start' | 'middle'
 }
 
-export function normalizeRouteEditorLabelPosition(
-  position: RouteEditorLabelPosition,
-): MapDrawStopLabelPosition {
+export function migrateLegacyLabelPosition(position: RouteEditorLabelPosition): MapDrawStopLabelPosition {
   if (position === 'middle-left') return 'left'
   if (position === 'middle-right') return 'right'
-  return position
+  if ((MAP_DRAW_STOP_LABEL_POSITIONS as readonly string[]).includes(position)) {
+    return position as MapDrawStopLabelPosition
+  }
+  return 'top'
+}
+
+export function isActiveStopLabelPosition(
+  value: RouteEditorLabelPosition,
+  position: MapDrawStopLabelPosition,
+): boolean {
+  return migrateLegacyLabelPosition(value) === position
 }
 
 export function resolveRouteEditorStopLabelLayout(
@@ -33,50 +52,52 @@ export function resolveRouteEditorStopLabelLayout(
     labelOffsetY: number
   },
 ): RouteEditorStopLabelLayout {
-  const side = normalizeRouteEditorLabelPosition(position)
+  const side = migrateLegacyLabelPosition(position)
   const gap = 4 * layout.nodeScale
-  const { labelBoxWidth, labelBoxHeight, labelPadding, textInsetX, stopRadius } = layout
+  const { labelBoxWidth, labelBoxHeight, textInsetX, stopRadius } = layout
   const translateX = layout.labelOffsetX * layout.nodeScale
   const translateY = layout.labelOffsetY * layout.nodeScale
   const textY = (rectY: number) => rectY + labelBoxHeight / 2
 
+  const leftAligned = (rectX: number, rectY: number): RouteEditorStopLabelLayout => ({
+    translateX,
+    translateY,
+    rectX,
+    rectY,
+    textX: rectX + textInsetX,
+    textY: textY(rectY),
+    textAnchor: 'start',
+  })
+
+  const centerAligned = (rectX: number, rectY: number): RouteEditorStopLabelLayout => ({
+    translateX,
+    translateY,
+    rectX,
+    rectY,
+    textX: rectX + labelBoxWidth / 2,
+    textY: textY(rectY),
+    textAnchor: 'middle',
+  })
+
   switch (side) {
+    case 'top-left':
+      return leftAligned(-stopRadius - gap - labelBoxWidth, -stopRadius - gap - labelBoxHeight)
     case 'top':
-      return {
-        translateX,
-        translateY,
-        rectX: -labelPadding,
-        rectY: -stopRadius - gap - labelBoxHeight,
-        textX: textInsetX,
-        textY: textY(-stopRadius - gap - labelBoxHeight),
-      }
-    case 'bottom':
-      return {
-        translateX,
-        translateY,
-        rectX: -labelPadding,
-        rectY: stopRadius + gap,
-        textX: textInsetX,
-        textY: textY(stopRadius + gap),
-      }
+      return centerAligned(-labelBoxWidth / 2, -stopRadius - gap - labelBoxHeight)
+    case 'top-right':
+      return leftAligned(stopRadius + gap, -stopRadius - gap - labelBoxHeight)
     case 'left':
-      return {
-        translateX,
-        translateY,
-        rectX: -stopRadius - gap - labelBoxWidth,
-        rectY: -labelBoxHeight / 2,
-        textX: -stopRadius - gap - labelBoxWidth + textInsetX,
-        textY: textY(-labelBoxHeight / 2),
-      }
+      return leftAligned(-stopRadius - gap - labelBoxWidth, -labelBoxHeight / 2)
+    case 'center':
+      return centerAligned(-labelBoxWidth / 2, -labelBoxHeight / 2)
     case 'right':
-      return {
-        translateX,
-        translateY,
-        rectX: stopRadius + gap,
-        rectY: -labelBoxHeight / 2,
-        textX: stopRadius + gap + textInsetX,
-        textY: textY(-labelBoxHeight / 2),
-      }
+      return leftAligned(stopRadius + gap, -labelBoxHeight / 2)
+    case 'bottom-left':
+      return leftAligned(-stopRadius - gap - labelBoxWidth, stopRadius + gap)
+    case 'bottom':
+      return centerAligned(-labelBoxWidth / 2, stopRadius + gap)
+    case 'bottom-right':
+      return leftAligned(stopRadius + gap, stopRadius + gap)
   }
 }
 
@@ -120,6 +141,76 @@ export function measureRouteEditorStopLabelBoxWidth(
     units += char.charCodeAt(0) > 0xff ? 1 : 0.55
   }
   return Math.max(minWidth, Math.ceil(units * fontSize * 0.92 + horizontalPadding))
+}
+
+export function drawRouteEditorStopLabelOnCanvas(
+  ctx: CanvasRenderingContext2D,
+  options: {
+    anchorX: number
+    anchorY: number
+    label: string
+    labelPosition: RouteEditorLabelPosition
+    fontSize: number
+    nodeScale: number
+    stopRadius: number
+    labelOffsetX?: number
+    labelOffsetY?: number
+  },
+): void {
+  const trimmed = options.label.trim()
+  if (!trimmed) return
+
+  const labelBoxHeight = 28 * options.nodeScale
+  const labelPadding = 4 * options.nodeScale
+  const textInsetX = 2 * options.nodeScale
+  const cornerRadius = 4 * options.nodeScale
+  const labelBoxWidth = measureRouteEditorStopLabelBoxWidth(trimmed, options.fontSize, options.nodeScale, {
+    minWidth: 56,
+    textInsetX: 2,
+    labelPadding: 4,
+  })
+  const layout = resolveRouteEditorStopLabelLayout(options.labelPosition, {
+    labelBoxWidth,
+    labelBoxHeight,
+    labelPadding,
+    textInsetX,
+    stopRadius: options.stopRadius,
+    nodeScale: options.nodeScale,
+    labelOffsetX: options.labelOffsetX ?? 0,
+    labelOffsetY: options.labelOffsetY ?? 0,
+  })
+
+  const originX = options.anchorX + layout.translateX
+  const originY = options.anchorY + layout.translateY
+  const rectX = originX + layout.rectX
+  const rectY = originY + layout.rectY
+
+  ctx.beginPath()
+  ctx.roundRect(rectX, rectY, labelBoxWidth, labelBoxHeight, cornerRadius)
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.92)'
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)'
+  ctx.lineWidth = Math.max(1, options.nodeScale)
+  ctx.stroke()
+
+  ctx.font = `${options.fontSize}px ${STOP_LABEL_FONT_FAMILY}`
+  ctx.fillStyle = '#111111'
+  ctx.textBaseline = 'middle'
+  ctx.textAlign = layout.textAnchor
+  ctx.fillText(trimmed, originX + layout.textX, originY + layout.textY)
+  ctx.textAlign = 'start'
+}
+
+export function parseRouteEditorLabelPosition(value: unknown): RouteEditorLabelPosition | undefined {
+  if (typeof value !== 'string') return undefined
+  const allowed: readonly RouteEditorLabelPosition[] = [
+    ...MAP_DRAW_STOP_LABEL_POSITIONS,
+    'middle-left',
+    'middle-right',
+  ]
+  return allowed.includes(value as RouteEditorLabelPosition)
+    ? (value as RouteEditorLabelPosition)
+    : undefined
 }
 
 export function formatRouteEditorStopLabel(node: Pick<RouteEditorNode, 'chi_name' | 'eng_name' | 'stopSeq'>): string {

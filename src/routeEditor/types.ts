@@ -7,11 +7,18 @@ export type RouteEditorNodeType = 'stop' | 'point'
 export type RouteEditorMode = 'select' | 'addStop' | 'addPoint' | 'connectLine'
 
 export type RouteEditorLabelPosition =
+  | 'top-left'
   | 'top'
-  | 'bottom'
+  | 'top-right'
   | 'left'
+  | 'center'
   | 'right'
+  | 'bottom-left'
+  | 'bottom'
+  | 'bottom-right'
+  /** @deprecated Use `left`. */
   | 'middle-left'
+  /** @deprecated Use `right`. */
   | 'middle-right'
 
 export interface RouteEditorNode {

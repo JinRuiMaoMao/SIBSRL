@@ -214,6 +214,7 @@ export function ReferenceRouteEditorOverlay({
                   x={labelLayout.textX}
                   y={labelLayout.textY}
                   fontSize={config.labelFontSize}
+                  textAnchor={labelLayout.textAnchor}
                   dominantBaseline="middle"
                 >
                   {stopLabel}

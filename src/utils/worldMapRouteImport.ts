@@ -3,10 +3,10 @@ import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from
 import type {
   RouteEditorGraphExport,
   RouteEditorGraphExportNode,
-  RouteEditorLabelPosition,
   RouteEditorNodeType,
 } from '../routeEditor/types'
 import { normalizeVirtualNodeKind } from './mapSurfaceKind'
+import { parseRouteEditorLabelPosition } from './routeEditorStopLabel'
 
 export type WorldMapDrawImportResult =
   | {
@@ -62,11 +62,13 @@ function readStopEntry(value: unknown, index: number): WorldMapDrawStop | null {
     typeof value.seq === 'number' && Number.isFinite(value.seq) && value.seq > 0
       ? Math.round(value.seq)
       : undefined
+  const labelPosition = parseRouteEditorLabelPosition(value.labelPosition)
   return {
     id: `import-${index}-${Math.random().toString(36).slice(2, 8)}`,
     point: [value.point[0], value.point[1]],
     name,
     ...(seq != null ? { seq } : {}),
+    ...(labelPosition ? { labelPosition } : {}),
   }
 }
 
@@ -182,15 +184,7 @@ function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null 
     typeof value.stopSeq === 'number' && Number.isFinite(value.stopSeq) && value.stopSeq > 0
       ? Math.round(value.stopSeq)
       : undefined
-  const labelPosition =
-    value.labelPosition === 'top' ||
-    value.labelPosition === 'bottom' ||
-    value.labelPosition === 'left' ||
-    value.labelPosition === 'right' ||
-    value.labelPosition === 'middle-left' ||
-    value.labelPosition === 'middle-right'
-      ? (value.labelPosition as RouteEditorLabelPosition)
-      : undefined
+  const labelPosition = parseRouteEditorLabelPosition(value.labelPosition)
   return {
     id,
     type,

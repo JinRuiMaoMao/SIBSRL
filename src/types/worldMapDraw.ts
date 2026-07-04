@@ -1,4 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { RouteEditorLabelPosition } from '../routeEditor/types'
 
 export type IslandMapDrawInteraction = 'route' | 'catalog' | 'path-node'
 
@@ -80,6 +81,7 @@ export interface WorldMapDrawStop {
   }
   /** Optional label prefix; omit to show stop name only. */
   seq?: number
+  labelPosition?: RouteEditorLabelPosition
 }
 
 export interface WorldMapDrawStopDraft {

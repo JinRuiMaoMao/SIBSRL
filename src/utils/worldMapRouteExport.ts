@@ -164,6 +164,7 @@ export function buildWorldMapRouteExportPayload(
         name: { zh: stop.name.zh, en: stop.name.en },
         point: [roundCoord(stop.point[0]), roundCoord(stop.point[1])] as WorldMapPoint,
         ...(stop.seq != null && stop.seq > 0 ? { seq: stop.seq } : {}),
+        ...(stop.labelPosition && stop.labelPosition !== 'top' ? { labelPosition: stop.labelPosition } : {}),
       }))
     : []
   const exportPathNodes = selection.includePathNodes

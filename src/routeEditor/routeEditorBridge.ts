@@ -42,6 +42,7 @@ export function routeEditorNodeToStop(
     point: pixelToNormalized(node.x, node.y, imageWidth, imageHeight),
     name: { zh: node.chi_name || `站点${node.id}`, en: node.eng_name || node.chi_name || `Stop ${node.id}` },
     ...(node.stopSeq != null && node.stopSeq > 0 ? { seq: node.stopSeq } : {}),
+    ...(node.labelPosition !== 'top' ? { labelPosition: node.labelPosition } : {}),
   }
 }
 
