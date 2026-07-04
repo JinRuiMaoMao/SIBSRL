@@ -232,6 +232,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed oversized stops/nodes on the overview layer—node and label sizes now scale to match the detailed (8000²) map.",
           },
           {
+            zh: "map-draw 双击站点或拐点可删除（各模式均可用）。",
+            en: "Map-draw: double-click a stop or bend point to delete it (works in any mode).",
+          },
+          {
             zh: "修复 map-draw 导出：填写导出文件名后仍无法导出（文件名亦作为线路 ID 回退）。",
             en: "Fixed map-draw export blocked after entering a filename—the export name now also resolves the route ID when the header field is empty.",
           },

@@ -460,15 +460,29 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
     [connectPendingNodeId, editor.manager, editorMode, imageSize, newStopPlacementMode, newStopSnapPoint],
   )
 
+  const deleteNodeById = useCallback(
+    (nodeId: number) => {
+      editor.deleteNode(nodeId)
+      if (selectedNodeId === nodeId) {
+        setSelectedNodeId(null)
+        lastPlacedStopIdRef.current = null
+        setNewStopChiName('')
+        setNewStopEngName('')
+        resetNewStopPlacement()
+      }
+      if (connectPendingNodeId === nodeId || connectPendingRef.current === nodeId) {
+        setConnectPendingNodeId(null)
+        connectPendingRef.current = null
+        setConnectPreview(null)
+      }
+    },
+    [connectPendingNodeId, editor, resetNewStopPlacement, selectedNodeId],
+  )
+
   const deleteSelectedNode = useCallback(() => {
     if (selectedNodeId == null) return
-    editor.deleteNode(selectedNodeId)
-    setSelectedNodeId(null)
-    lastPlacedStopIdRef.current = null
-    setNewStopChiName('')
-    setNewStopEngName('')
-    resetNewStopPlacement()
-  }, [editor, resetNewStopPlacement, selectedNodeId])
+    deleteNodeById(selectedNodeId)
+  }, [deleteNodeById, selectedNodeId])
 
   const saveSelectedNodeEdits = useCallback(() => {
     if (selectedNodeId == null || !selectedNode) return
@@ -1127,6 +1141,7 @@ export function IslandMapDrawEditor({ ready = true }: { ready?: boolean }) {
                             : undefined,
                       onSegmentDoubleClick:
                         editorMode === 'connectLine' ? handleSegmentDoubleClick : undefined,
+                      onNodeDoubleClick: deleteNodeById,
                       onBackgroundClick:
                         editorMode === 'connectLine'
                           ? clearMapSelection

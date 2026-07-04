@@ -22,6 +22,7 @@ interface ReferenceRouteEditorOverlayProps {
   connectPreview?: { fromX: number; fromY: number; toX: number; toY: number } | null
   previewNode?: { type: 'stop' | 'point'; x: number; y: number } | null
   onNodePointerDown?: (nodeId: number, event: React.PointerEvent<SVGGElement>) => void
+  onNodeDoubleClick?: (nodeId: number) => void
   onSegmentDoubleClick?: (segmentId: number) => void
 }
 
@@ -47,6 +48,7 @@ export function ReferenceRouteEditorOverlay({
   connectPreview = null,
   previewNode = null,
   onNodePointerDown,
+  onNodeDoubleClick,
   onSegmentDoubleClick,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
@@ -148,6 +150,15 @@ export function ReferenceRouteEditorOverlay({
                 ? (event) => {
                     event.stopPropagation()
                     onNodePointerDown(node.id, event)
+                  }
+                : undefined
+            }
+            onDoubleClick={
+              onNodeDoubleClick
+                ? (event) => {
+                    event.stopPropagation()
+                    event.preventDefault()
+                    onNodeDoubleClick(node.id)
                   }
                 : undefined
             }

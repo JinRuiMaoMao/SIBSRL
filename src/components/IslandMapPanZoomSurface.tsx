@@ -86,6 +86,7 @@ interface IslandMapPanZoomSurfaceProps {
     connectPreview?: { fromX: number; fromY: number; toX: number; toY: number } | null
     previewNode?: { type: 'stop' | 'point'; x: number; y: number } | null
     onNodeClick?: (nodeId: number) => void
+    onNodeDoubleClick?: (nodeId: number) => void
     onSegmentDoubleClick?: (segmentId: number) => void
     onBackgroundClick?: () => void
   } | null
@@ -965,6 +966,11 @@ export function IslandMapPanZoomSurface({
             onNodePointerDown={
               referenceEditor.onNodeClick
                 ? (nodeId) => referenceEditorRef.current?.onNodeClick?.(nodeId)
+                : undefined
+            }
+            onNodeDoubleClick={
+              referenceEditor.onNodeDoubleClick
+                ? (nodeId) => referenceEditorRef.current?.onNodeDoubleClick?.(nodeId)
                 : undefined
             }
             onSegmentDoubleClick={
