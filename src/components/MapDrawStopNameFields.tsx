@@ -21,6 +21,7 @@ interface MapDrawStopNameFieldsProps {
   onChiNameChange: (value: string) => void
   onEngNameChange: (value: string) => void
   onSelectSuggestion: (selection: MapDrawStopNameSelection) => void
+  onEnter?: () => void
 }
 
 export function MapDrawStopNameFields({
@@ -54,6 +55,13 @@ export function MapDrawStopNameFields({
     setShowSuggestions(false)
   }
 
+  const handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter' || event.nativeEvent.isComposing) return
+    event.preventDefault()
+    setShowSuggestions(false)
+    onEnter?.()
+  }
+
   const suggestionTag = (suggestion: DrawStopSuggestion) => {
     if (suggestion.fromRouteDetail) return t('mapDrawStopSuggestRoute')
     if (suggestion.fromCatalog) return t('mapDrawStopSuggestCatalog')
@@ -76,6 +84,7 @@ export function MapDrawStopNameFields({
             setShowSuggestions(true)
           }}
           onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
+          onKeyDown={handleEnter}
           placeholder={chiPlaceholder}
           spellCheck={false}
           autoComplete="off"
@@ -95,6 +104,7 @@ export function MapDrawStopNameFields({
             setShowSuggestions(true)
           }}
           onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
+          onKeyDown={handleEnter}
           placeholder={engPlaceholder}
           spellCheck={false}
           autoComplete="off"

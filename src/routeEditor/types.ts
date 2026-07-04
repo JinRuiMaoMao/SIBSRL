@@ -2,7 +2,7 @@
 
 export type RouteEditorNodeType = 'stop' | 'point'
 
-export type RouteEditorMode = 'select' | 'addStop' | 'addPoint'
+export type RouteEditorMode = 'select' | 'addStop' | 'addPoint' | 'connectLine'
 
 export type RouteEditorLabelPosition =
   | 'top'

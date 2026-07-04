@@ -227,6 +227,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "map-draw 拐点与站点均可互连，编辑器始终显示拐点线段。",
             en: "Map-draw bend points link to stops and each other; point segments always show in the editor.",
           },
+          {
+            zh: "map-draw 新增「画线」模式：仅在该模式下点击节点连线；选择模式用于编辑节点。修复站名无法保存/改名，添加站点后按 Enter 应用站名。",
+            en: "Map-draw adds Connect lines mode for node linking only in that mode; Select mode is for editing. Fixed stop rename not sticking; press Enter to apply stop names after placing.",
+          },
         ],
       },
     ],
