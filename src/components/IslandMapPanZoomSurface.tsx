@@ -339,6 +339,8 @@ export function IslandMapPanZoomSurface({
   const onMapPointerMoveRef = useRef(onMapPointerMove)
   const onImageSizeChangeRef = useRef(onImageSizeChange)
   const referenceEditorRef = useRef(referenceEditor)
+  const referenceEditorOverlayWrapRef = useRef<HTMLDivElement>(null)
+  const lockOverlayScreenSizeRef = useRef(lockOverlayScreenSize)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
   const panZoomRef = useRef<PanZoomState | null>(null)
@@ -370,6 +372,7 @@ export function IslandMapPanZoomSurface({
   onMapPointerMoveRef.current = onMapPointerMove
   onImageSizeChangeRef.current = onImageSizeChange
   referenceEditorRef.current = referenceEditor
+  lockOverlayScreenSizeRef.current = lockOverlayScreenSize
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
   const [incomingSrc, setIncomingSrc] = useState<string | null>(null)
@@ -391,8 +394,14 @@ export function IslandMapPanZoomSurface({
 
   const applyTransformLive = useCallback((next: PanZoomState) => {
     const content = contentRef.current
-    if (!content) return
-    content.style.transform = `translate3d(${next.x}px, ${next.y}px, 0) scale(${next.scale})`
+    if (content) {
+      content.style.transform = `translate3d(${next.x}px, ${next.y}px, 0) scale(${next.scale})`
+    }
+    const overlayWrap = referenceEditorOverlayWrapRef.current
+    if (lockOverlayScreenSizeRef.current && overlayWrap && next.scale > 0) {
+      overlayWrap.style.transform = `scale(${1 / next.scale})`
+      overlayWrap.style.transformOrigin = '0 0'
+    }
   }, [])
 
   useEffect(() => {
@@ -963,6 +972,13 @@ export function IslandMapPanZoomSurface({
 
   const overlayVisualScale =
     lockOverlayScreenSize && panZoom && panZoom.scale > 0 ? 1 / panZoom.scale : 1
+  const referenceEditorOverlayStyle =
+    lockOverlayScreenSize && overlayVisualScale !== 1
+      ? ({
+          transform: `scale(${overlayVisualScale})`,
+          transformOrigin: '0 0',
+        } as const)
+      : undefined
 
   const overlayChildren = imageSize ? (
     <>
@@ -979,7 +995,11 @@ export function IslandMapPanZoomSurface({
         </div>
       ) : null}
       {referenceEditor ? (
-        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--reference-editor">
+        <div
+          ref={referenceEditorOverlayWrapRef}
+          className="island-map-route-overlay-wrap island-map-route-overlay-wrap--reference-editor island-map-route-overlay-wrap--screen-lock"
+          style={referenceEditorOverlayStyle}
+        >
           <ReferenceRouteEditorOverlay
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
@@ -1011,7 +1031,6 @@ export function IslandMapPanZoomSurface({
             showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
             connectCarriageway={referenceEditor.connectCarriageway}
             continuousSegmentPaths={referenceEditor.continuousSegmentPaths}
-            visualScale={overlayVisualScale}
           />
         </div>
       ) : (

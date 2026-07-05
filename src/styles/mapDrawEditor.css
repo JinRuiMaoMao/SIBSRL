@@ -654,6 +654,10 @@ html[data-app-page='map-draw'] #root {
   pointer-events: none;
 }
 
+.island-map-route-overlay-wrap--screen-lock {
+  transform-origin: 0 0;
+}
+
 .island-map-route-overlay-wrap--reference-editor .reference-route-editor-node,
 .island-map-route-overlay-wrap--reference-editor .reference-route-editor-segment {
   pointer-events: auto;
