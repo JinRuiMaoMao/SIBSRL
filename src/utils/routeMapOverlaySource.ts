@@ -13,7 +13,8 @@ import {
   buildRouteDetailMapStops,
   type RouteDetailMapStop,
 } from './routeDetailMapStops'
-import { isRouteMapImportPayload, parseRouteMapImportPayload, type RouteMapImportPayload } from './routeMapImportPayload'
+import { isRouteMapImportStorage } from './routeMapImportBundle'
+import { parseRouteMapImportPayload, type RouteMapImportPayload } from './routeMapImportPayload'
 import { resolveRouteMapLookupIds } from './routeMapLookup'
 import type { WorldMapCatalogStop } from './worldMapStopCatalog'
 import { buildRouteMapViewerDisplay, type RouteMapViewerDisplay } from './routeMapViewerDisplay'
@@ -51,7 +52,7 @@ export async function loadGeneralMapImageSize(): Promise<{ width: number; height
 export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown | null> {
   for (const id of resolveRouteMapLookupIds(routeId)) {
     const response = await fetchRouteMapImport(id)
-    if (response?.payload && isRouteMapImportPayload(response.payload)) {
+    if (response?.payload && isRouteMapImportStorage(response.payload)) {
       return response.payload
     }
   }
@@ -61,7 +62,7 @@ export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown
       const response = await fetch(`./world-map-routes/${encodeURIComponent(id)}.json`)
       if (!response.ok) continue
       const raw: unknown = await response.json()
-      if (isRouteMapImportPayload(raw)) return raw
+      if (isRouteMapImportStorage(raw)) return raw
     } catch {
       // offline / missing static bundle
     }
@@ -69,7 +70,7 @@ export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown
 
   for (const id of resolveRouteMapLookupIds(routeId)) {
     const cached = readCachedRouteMapImport(id)
-    if (cached && isRouteMapImportPayload(cached)) {
+    if (cached && isRouteMapImportStorage(cached)) {
       return cached
     }
     if (cached) {
@@ -80,9 +81,13 @@ export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown
   return null
 }
 
-export async function resolveRouteMapImportPayload(routeId: string): Promise<RouteMapImportPayload | null> {
+export async function resolveRouteMapImportPayload(
+  routeId: string,
+  directionIndex: number,
+): Promise<RouteMapImportPayload | null> {
   const raw = await resolveRouteMapImportRaw(routeId)
-  return raw ? parseRouteMapImportPayload(raw) : null
+  if (!raw) return null
+  return parseRouteMapImportPayload(raw, directionIndex)
 }
 
 export async function resolveImportedRouteMapDisplay(
@@ -91,12 +96,8 @@ export async function resolveImportedRouteMapDisplay(
   routeNumber: string,
   imageSize: { width: number; height: number } | null,
 ): Promise<RouteMapViewerDisplay | null> {
-  const raw = await resolveRouteMapImportRaw(routeId)
-  if (!raw) return null
-
-  const parsed = parseRouteMapImportPayload(raw)
-  if (!parsed || !importMatchesDirection(parsed, directionIndex)) return null
-  if (!imageSize || imageSize.width <= 0 || imageSize.height <= 0) return null
+  const parsed = await resolveRouteMapImportPayload(routeId, directionIndex)
+  if (!parsed || !imageSize || imageSize.width <= 0 || imageSize.height <= 0) return null
 
   return buildRouteMapViewerDisplay(parsed, imageSize.width, imageSize.height, routeNumber || parsed.routeId)
 }
@@ -109,10 +110,6 @@ function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): Ro
     stop: routeStop,
     point: stop.point,
   }
-}
-
-function importMatchesDirection(parsed: RouteMapImportPayload, directionIndex: number): boolean {
-  return parsed.directionIndex === directionIndex
 }
 
 export function buildRouteMapOverlayFromImport(
@@ -150,9 +147,9 @@ export async function resolveRouteMapOverlaySource(
   } = {},
 ): Promise<RouteMapOverlaySource | null> {
   const imageSize = options.imageSize ?? (await loadGeneralMapImageSize())
-  const importPayload = await resolveRouteMapImportPayload(routeId)
+  const importPayload = await resolveRouteMapImportPayload(routeId, directionIndex)
 
-  if (importPayload && importMatchesDirection(importPayload, directionIndex)) {
+  if (importPayload) {
     const built = buildRouteMapOverlayFromImport(importPayload, imageSize)
     if (built.points.length >= 2) {
       let stops = built.stops

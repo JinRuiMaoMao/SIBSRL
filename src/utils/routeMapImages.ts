@@ -37,6 +37,7 @@ export function buildRouteMapViewerUrl(
   routeId: string,
   kind: RouteMapViewKind,
   fromRoutesDir = false,
+  directionIndex?: number,
 ): string {
   const canonicalId = resolveRouteMapRouteId(routeId) ?? routeId
   const prefix = resolveRouteAssetPrefix(fromRoutesDir)
@@ -44,5 +45,8 @@ export function buildRouteMapViewerUrl(
     route: canonicalId,
     view: kind,
   })
+  if (directionIndex != null && directionIndex >= 0) {
+    params.set('dir', String(directionIndex))
+  }
   return `${prefix}route-map.html?${params.toString()}`
 }

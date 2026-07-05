@@ -1,10 +1,19 @@
 import type { WorldMapDrawImportResult } from './worldMapRouteImport'
-import { parseWorldMapDrawImportJson } from './worldMapRouteImport'
+import {
+  parseWorldMapDrawImportJson,
+  parseWorldMapDrawImportJsonForDirection,
+} from './worldMapRouteImport'
 
 export type RouteMapImportPayload = Extract<WorldMapDrawImportResult, { kind: 'route' }>
 
-export function parseRouteMapImportPayload(raw: unknown): RouteMapImportPayload | null {
-  const parsed = parseWorldMapDrawImportJson(raw)
+export function parseRouteMapImportPayload(
+  raw: unknown,
+  directionIndex?: number,
+): RouteMapImportPayload | null {
+  const parsed =
+    directionIndex != null
+      ? parseWorldMapDrawImportJsonForDirection(raw, directionIndex)
+      : parseWorldMapDrawImportJson(raw)
   return parsed?.kind === 'route' ? parsed : null
 }
 

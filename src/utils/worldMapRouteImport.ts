@@ -271,14 +271,24 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
   const direction = readDirection(raw.directions[0])
   if (!direction) return null
 
-  const stops = direction.stops
-  const points = direction.points
-  const virtualNodes = direction.virtualNodes
-  const pathNodes = direction.pathNodes
-  const legStarts = direction.legStarts
-  const pathLegHidden = direction.pathLegHidden
-  const userBendIndices = direction.userBendIndices
-  const editorGraph = direction.editorGraph
+  return buildRouteImportFromDirection(routeId, direction)
+}
+
+function buildRouteImportFromDirection(
+  routeId: string,
+  direction: NonNullable<ReturnType<typeof readDirection>>,
+): Extract<WorldMapDrawImportResult, { kind: 'route' }> | null {
+  const {
+    directionIndex,
+    points,
+    stops,
+    virtualNodes,
+    pathNodes,
+    legStarts,
+    pathLegHidden,
+    userBendIndices,
+    editorGraph,
+  } = direction
 
   const hasPath = points.length >= 2
   const hasStops = stops.length > 0
@@ -290,7 +300,7 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
   return {
     kind: 'route',
     routeId,
-    directionIndex: direction.directionIndex,
+    directionIndex,
     points: hasPath ? points : [],
     stops,
     virtualNodes,
@@ -300,4 +310,25 @@ export function parseWorldMapDrawImportJson(raw: unknown): WorldMapDrawImportRes
     userBendIndices,
     editorGraph,
   }
+}
+
+/** Parse one direction from a route export (single- or multi-direction file). */
+export function parseWorldMapDrawImportJsonForDirection(
+  raw: unknown,
+  directionIndex: number,
+): Extract<WorldMapDrawImportResult, { kind: 'route' }> | null {
+  if (!isRecord(raw) || typeof raw.routeId !== 'string' || !Array.isArray(raw.directions)) {
+    return null
+  }
+
+  const routeId = raw.routeId.trim()
+  if (!routeId) return null
+
+  const directionEntry =
+    raw.directions.find((entry) => readDirection(entry)?.directionIndex === directionIndex) ??
+    raw.directions[directionIndex]
+  const direction = readDirection(directionEntry)
+  if (!direction) return null
+
+  return buildRouteImportFromDirection(routeId, direction)
 }

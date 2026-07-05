@@ -17,6 +17,7 @@ import {
 import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { getRouteMapImageUrl } from '../utils/routeMapImages'
 import { parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
+import { mergeRouteMapImportStorage } from '../utils/routeMapImportBundle'
 import { findRouteForMapPage, routeMapIdsMatch } from '../utils/routeMapLookup'
 import { resolveRouteMapImportRaw } from '../utils/routeMapOverlaySource'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
@@ -166,11 +167,21 @@ export function RouteMapPage() {
     if (!importPayload || !imageSize) return
 
     try {
-      const parsed = parseRouteMapImportPayload(importPayload)
+      const parsed = parseRouteMapImportPayload(importPayload, directionIndex)
       if (!parsed) {
-        clearCachedRouteMapImport(routeId)
-        setImportInvalid(true)
-        beginStaticFallback()
+        void (async () => {
+          const worldOverlay = routeId
+            ? await resolveRouteMapOverlaySource(routeId, directionIndex)
+            : null
+          if (worldOverlay && worldOverlay.points.length >= 2) {
+            setImportInvalid(false)
+            setDisplay(buildSimpleRouteMapViewerDisplay(routeId, worldOverlay.points))
+            return
+          }
+          clearCachedRouteMapImport(routeId)
+          setImportInvalid(true)
+          beginStaticFallback()
+        })()
         return
       }
 
@@ -196,7 +207,7 @@ export function RouteMapPage() {
       setImportInvalid(true)
       beginStaticFallback()
     }
-  }, [beginStaticFallback, imageSize, importPayload, routeId])
+  }, [beginStaticFallback, directionIndex, imageSize, importPayload, routeId])
 
   useEffect(() => {
     if (!resolvedRoute) {
@@ -335,14 +346,19 @@ export function RouteMapPage() {
         if (!proceed) return
       }
 
-      await saveRouteMapImport(token, routeId, raw)
-      writeCachedRouteMapImport(routeId, raw)
+      const existing = await resolveRouteMapImportRaw(routeId)
+      const merged = mergeRouteMapImportStorage(existing, raw)
+
+      await saveRouteMapImport(token, routeId, merged)
+      writeCachedRouteMapImport(routeId, merged)
       setImportInvalid(false)
       setStaticImageUrl(null)
       setStaticImageVisible(false)
       setDisplay(null)
-      setImportPayload(raw)
-      await alert({ message: t('routeMapImportSuccess') })
+      setImportPayload(merged)
+      await alert({
+        message: t('routeMapImportSuccessDirection', { direction: parsed.directionIndex }),
+      })
     } catch (error) {
       const message =
         error instanceof UserApiError ? error.message : t('routeMapImportFailed')

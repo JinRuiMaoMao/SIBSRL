@@ -159,7 +159,11 @@ export function RouteDetail({
           size="detail"
         />
         </div>
-        <RouteMapViewButtons routeId={route.id} routeNumber={route.number} />
+        <RouteMapViewButtons
+          routeId={route.id}
+          routeNumber={route.number}
+          directionIndex={directionIndex}
+        />
       </section>
 
       <section className="detail-section detail-grid" data-tour="route-detail-info">
