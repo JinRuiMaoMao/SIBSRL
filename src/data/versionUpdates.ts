@@ -169,6 +169,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "同步 7/5 每日挑战：繁忙时间 140W（竞速）。",
             en: "Synced 7/5 daily challenge: Rush Hour 140W (race).",
           },
+          {
+            zh: "同步 7/7 每日挑战：罕见外观 × 私人租用 PH1。",
+            en: "Synced 7/7 daily challenge: Rare Appearance x Private Hire (PH1).",
+          },
         ],
       },
     ],

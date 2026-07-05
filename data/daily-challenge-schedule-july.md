@@ -20,7 +20,7 @@
 7/4: [Race] Marathon Road Closure
 7/5: [Race] Rush Hour (140W)
 7/6:
-7/7: Rare Appeaeance x Private Hire (PH1)
+7/7: Rare Appearance x Private Hire (PH1)
 7/8:
 7/9: [Race] Urban Odyssey (77XA)
 7/10:
