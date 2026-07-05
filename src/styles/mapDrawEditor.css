@@ -296,7 +296,6 @@ html[data-app-page='map-draw'] #root {
   fill: #2563eb;
   stroke: #fff;
   stroke-width: 2px;
-  vector-effect: non-scaling-stroke;
 }
 
 .reference-route-editor-node--point .reference-route-editor-node-dot {
@@ -354,7 +353,6 @@ html[data-app-page='map-draw'] #root {
   fill: rgba(15, 23, 42, 0.92);
   stroke: #f8fafc;
   stroke-width: 1.5px;
-  vector-effect: non-scaling-stroke;
 }
 
 .reference-route-editor-segment-overlap-count {
@@ -400,7 +398,6 @@ html[data-app-page='map-draw'] #root {
   fill: rgba(37, 99, 235, 0.35);
   stroke: #2563eb;
   stroke-width: 2px;
-  vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
 

@@ -5,7 +5,6 @@ import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPo
 import {
   DRAW_MAX_ZOOM_RATIO,
   DRAW_MIN_ZOOM_RATIO,
-  DRAW_OVERLAY_LOCK_ZOOM_MAX,
 } from '../utils/mapDrawOverlayZoom'
 import { useLocale } from '../i18n/LocaleContext'
 import { useAuth } from '../contexts/AuthContext'
@@ -748,7 +747,7 @@ export function IslandMapDrawEditor({
         setMapView(
           fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen', 0.08, {
             min: DRAW_MIN_ZOOM_RATIO,
-            max: DRAW_OVERLAY_LOCK_ZOOM_MAX,
+            max: DRAW_MAX_ZOOM_RATIO,
           }),
         )
       }
@@ -1210,7 +1209,6 @@ export function IslandMapDrawEditor({
               draftRouteNumber={drawRouteId.trim()}
               onDrawMapClick={handleMapClick}
               maxZoomRatio={isLoggedIn ? DRAW_MAX_ZOOM_RATIO : 8}
-              lockOverlayScreenSize={isLoggedIn}
               pathLegStarts={[0]}
               pathLegHidden={[]}
               pathUserBends={[]}

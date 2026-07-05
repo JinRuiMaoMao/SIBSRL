@@ -19,7 +19,6 @@ import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarge
 import {
   DRAW_MAX_ZOOM_RATIO,
   DRAW_MIN_ZOOM_RATIO,
-  resolveEditorOverlayVisualScale,
 } from '../utils/mapDrawOverlayZoom'
 
 import type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
@@ -79,8 +78,6 @@ interface IslandMapPanZoomSurfaceProps {
   isOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
   maxZoomRatio?: number
-  /** Keep route-editor overlay strokes/nodes/labels at constant screen size while zooming. */
-  lockOverlayScreenSize?: boolean
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
   trajectoryPath?: readonly WorldMapPoint[]
@@ -320,7 +317,6 @@ export function IslandMapPanZoomSurface({
   isOnRoad: _isOnRoad,
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
-  lockOverlayScreenSize = false,
   onMapPointerMove,
   onImageSizeChange,
   trajectoryPath = [],
@@ -405,15 +401,6 @@ export function IslandMapPanZoomSurface({
     const live = panZoomRef.current ?? panZoom
     if (live) applyTransformLive(live)
   }, [applyTransformLive, panZoom])
-
-  const referenceEditorVisualScale = useMemo(() => {
-    if (!lockOverlayScreenSize || !panZoom || panZoom.scale <= 0 || !imageSize) return 1
-    const viewport = readViewportSize()
-    if (!viewport) return 1
-    const fitScale = computeFitScale(viewport, imageSize)
-    const zoomRatio = fitScale > 0 ? panZoom.scale / fitScale : 1
-    return resolveEditorOverlayVisualScale(zoomRatio, panZoom.scale, true)
-  }, [imageSize, lockOverlayScreenSize, panZoom, readViewportSize])
 
   const publishPanZoom = useCallback((next: PanZoomState, viewport: ImageSize, size: ImageSize) => {
     const normalized = panZoomToNormalized(next, viewport, size)
@@ -982,7 +969,6 @@ export function IslandMapPanZoomSurface({
           <ReferenceRouteEditorOverlay
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
-            visualScale={referenceEditorVisualScale}
             nodes={referenceEditor.nodes}
             segments={referenceEditor.segments}
             lineStyle={referenceEditor.lineStyle}
