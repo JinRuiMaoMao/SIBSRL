@@ -9,6 +9,7 @@ import { resolveRouteEditorStopSeqOrderedStops } from './routeMapStopMatching'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 const NEXT_STOP_REACHED_EPSILON_PX = 14
+export const ROUTE_MAP_TRAJECTORY_BALL_SPACING_PX = 100
 
 function buildPixelPath(
   path: readonly WorldMapPoint[],
@@ -50,6 +51,49 @@ function pathArcLengthAtProgress(
     return arcLength + remaining
   }
   return total
+}
+
+/** Total drawn path length in image pixels. */
+export function computeRouteMapTrajectoryPathLength(
+  path: readonly WorldMapPoint[],
+  imageWidth: number,
+  imageHeight: number,
+): number {
+  return pathArcLengthAtProgress(path, 1, imageWidth, imageHeight)
+}
+
+/** Arc lengths for each visible ball; a new ball spawns every `spacingPx` behind the lead. */
+export function resolveRouteMapTrajectoryBallArcLengths(
+  leadArcLength: number,
+  pathTotalLength: number,
+  spacingPx = ROUTE_MAP_TRAJECTORY_BALL_SPACING_PX,
+): number[] {
+  if (pathTotalLength <= 0 || leadArcLength < 0) return []
+
+  const arcs: number[] = []
+  let index = 0
+  while (true) {
+    const spawnAt = index * spacingPx
+    if (leadArcLength < spawnAt) break
+    const ballArc = leadArcLength - spawnAt
+    if (ballArc > pathTotalLength) break
+    arcs.push(ballArc)
+    index += 1
+    if (index > 512) break
+  }
+  return arcs
+}
+
+export function interpolateRouteMapTrajectoryPointAtArcLength(
+  path: readonly WorldMapPoint[],
+  arcLength: number,
+  imageWidth: number,
+  imageHeight: number,
+): [number, number] {
+  const total = computeRouteMapTrajectoryPathLength(path, imageWidth, imageHeight)
+  if (total <= 0) return [0, 0]
+  const progress = Math.min(1, Math.max(0, arcLength / total))
+  return interpolateRouteMapTrajectoryPoint(path, progress, imageWidth, imageHeight)
 }
 
 /** Next stop ahead of the trajectory ball along the drawn path (by stopSeq). */
