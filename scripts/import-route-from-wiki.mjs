@@ -48,7 +48,7 @@ function pickField(wt, keys) {
   for (const key of keys) {
     const re = new RegExp(`${key}\\s*=\\s*([^\\n|]+)`, 'i')
     const m = wt.match(re)
-    if (m) return stripWiki(m[1])
+    if (m) return stripWiki(m[1].split('}}')[0])
   }
   return ''
 }
@@ -254,6 +254,31 @@ function parseRoutemapBlock(block) {
   return stops
 }
 
+function parseCaptionedWikitables(sectionTail) {
+  const directions = []
+  const end = sectionTail.search(/\n==[^=]/)
+  const scope = end > 0 ? sectionTail.slice(0, end) : sectionTail
+  const tableRe = /\{\|[\s\S]*?\n\|\}/g
+  let m
+  while ((m = tableRe.exec(scope))) {
+    const block = m[0]
+    const captionMatch = block.match(/\|\+\s*([^\n|]+)/)
+    const destHint = captionMatch ? stripWiki(captionMatch[1]) : ''
+    let stops = parseWikitableBlock(block)
+    if (!stops.length) stops = parseRoutemapBlock(block)
+    if (!stops.length) continue
+    const first = stops[0]?.name
+    const last = stops[stops.length - 1]?.name
+    directions.push({
+      destHint,
+      enFrom: first?.en ?? '',
+      enTo: last?.en ?? '',
+      stops,
+    })
+  }
+  return directions
+}
+
 function parseStopTables(wt) {
   const directions = []
   const stopsMatch = wt.match(/==\s*(?:Stops|Stop\s*List)\s*==/i)
@@ -281,20 +306,25 @@ function parseStopTables(wt) {
     }
   }
   if (!directions.length) {
-    const end = tail.search(/\n==[^=]/)
-    const block = trimStopBlock(end > 0 ? tail.slice(0, end) : tail)
-    const headerMatch =
-      block.match(/Bus Route[^|]*\(([^→↺]+?)→\s*([^)]+)\)/i) ??
-      block.match(/Bus Route[^|]*\(([^→↺]+?)↺\s*([^)]+)\)/i)
-    let stops = parseWikitableBlock(block)
-    if (!stops.length) stops = parseRoutemapBlock(block)
-    if (stops.length) {
-      directions.push({
-        destHint: '',
-        enFrom: stripWiki(headerMatch?.[1] ?? ''),
-        enTo: stripWiki(headerMatch?.[2] ?? ''),
-        stops,
-      })
+    const captioned = parseCaptionedWikitables(tail)
+    if (captioned.length) {
+      directions.push(...captioned)
+    } else {
+      const end = tail.search(/\n==[^=]/)
+      const block = trimStopBlock(end > 0 ? tail.slice(0, end) : tail)
+      const headerMatch =
+        block.match(/Bus Route[^|]*\(([^→↺]+?)→\s*([^)]+)\)/i) ??
+        block.match(/Bus Route[^|]*\(([^→↺]+?)↺\s*([^)]+)\)/i)
+      let stops = parseWikitableBlock(block)
+      if (!stops.length) stops = parseRoutemapBlock(block)
+      if (stops.length) {
+        directions.push({
+          destHint: '',
+          enFrom: stripWiki(headerMatch?.[1] ?? ''),
+          enTo: stripWiki(headerMatch?.[2] ?? ''),
+          stops,
+        })
+      }
     }
   }
   return directions
@@ -339,7 +369,19 @@ function serviceTimeForDirection(stops, enA, enB, startTime, endTime) {
   return formatServiceTime(startTime, endTime)
 }
 
-function inferDirectionKey(zhLabel, enLabel, index, total) {
+function endpointHintMatch(hint, endpoint) {
+  const shorten = (s) =>
+    s
+      .toLowerCase()
+      .replace(/shopping center|shopping centre|estate complex|ferry pier|brt station/g, '')
+      .trim()
+  const h = shorten(hint)
+  const e = shorten(endpoint)
+  if (h.length < 4 || e.length < 4) return false
+  return h.includes(e.slice(0, 6)) || e.includes(h.slice(0, 6))
+}
+
+function inferDirectionKey(zhLabel, enLabel, index, total, destHint = '', enA = '', enB = '') {
   const t = `${zhLabel} ${enLabel}`.toLowerCase()
   if (t.includes('northbound') || zhLabel.includes('北行')) return 'N'
   if (t.includes('southbound') || zhLabel.includes('南行')) return 'S'
@@ -347,6 +389,11 @@ function inferDirectionKey(zhLabel, enLabel, index, total) {
   if (t.includes('westbound') || zhLabel.includes('西行')) return 'W'
   if (t.includes('rainbow') && t.includes('eastmallow')) {
     return t.indexOf('rainbow') < t.indexOf('eastmallow') ? 'E' : 'W'
+  }
+  if (destHint && enA && enB) {
+    const hint = destHint.replace(/^to\s+/i, '').trim()
+    if (endpointHintMatch(hint, enB)) return 'S'
+    if (endpointHintMatch(hint, enA)) return 'N'
   }
   if (total === 2) return index === 0 ? 'N' : 'S'
   return undefined
@@ -520,7 +567,7 @@ function buildRoute(id, wt) {
     const zhDir = `（${first?.zh ?? ''} → ${last?.zh ?? ''}）`
     const enDir = `(${first?.en ?? ''} → ${last?.en ?? ''})`
     const serviceTime = serviceTimeForDirection(dir.stops, ep.enA, ep.enB, startTime, endTime)
-    const key = inferDirectionKey('', dir.enFrom + dir.enTo, i, dirTables.length)
+    const key = inferDirectionKey('', `${dir.enFrom}${dir.enTo} ${dir.destHint}`, i, dirTables.length, dir.destHint, ep.enA, ep.enB)
     const prefix =
       key === 'N'
         ? { zh: '北行', en: 'Northbound' }

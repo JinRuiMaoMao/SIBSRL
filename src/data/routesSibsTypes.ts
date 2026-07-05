@@ -2160,12 +2160,25 @@ export const routesSibsTypes: BusRoute[] = [
     length:     { zh: '3.3 km', en: '3.3 km' },
     stops: [
       {
-        direction:         { zh: '方向1（仙貝廣場 → 葉角灣）', en: 'Direction 1 (Senpai Shopping Center → Leafy Bay)' },
-        serviceTime:         { zh: '08:00 – 17:00, major events only}}Zone 7 route 73S is a special event route that runs between Leafy Bay and Senpai Shopping Center, via Leafy Bay Cemetery. This service is operated by Cityscape Bus using various types of buses, depending on ridership.', en: '08:00 – 17:00, major events only}}Zone 7 route 73S is a special event route that runs between Leafy Bay and Senpai Shopping Center, via Leafy Bay Cemetery. This service is operated by Cityscape Bus using various types of buses, depending on ridership.' },
+        directionKey: 'S',
+        direction:         { zh: '南行（仙貝廣場 → 葉角灣）', en: 'Southbound (Senpai Shopping Center → Leafy Bay)' },
+        serviceTime:         { zh: '08:00 – 17:00, major events only', en: '08:00 – 17:00, major events only' },
         list: [
           { name:             { zh: '仙貝廣場', en: 'Senpai Shopping Center' } },
           { name:             { zh: '葉角灣墳場', en: 'Leafy Bay Cemetery' } },
           { name:             { zh: '葉角灣', en: 'Leafy Bay' } },
+        ],
+      },
+      {
+        directionKey: 'N',
+        direction:         { zh: '北行（葉角灣 → 仙貝廣場）', en: 'Northbound (Leafy Bay → Senpai Shopping Center)' },
+        serviceTime:         { zh: '08:00 – 18:30, major events only', en: '08:00 – 18:30, major events only' },
+        list: [
+          { name:             { zh: '葉角灣', en: 'Leafy Bay' } },
+          { name:             { zh: '葉角灣墳場', en: 'Leafy Bay Cemetery' } },
+          { name:             { zh: '鎌塔花園', en: 'Kamaya Garden' } },
+          { name:             { zh: '國際塔', en: 'International Tower' } },
+          { name:             { zh: '仙貝廣場', en: 'Senpai Shopping Center' } },
         ],
       },
     ],
