@@ -101,6 +101,7 @@ interface IslandMapPanZoomSurfaceProps {
     allowSegmentDelete?: boolean
     showSegmentOverlapCounts?: boolean
     connectCarriageway?: RouteEditorCarriageway
+    continuousSegmentPaths?: boolean
   } | null
 }
 
@@ -1004,6 +1005,7 @@ export function IslandMapPanZoomSurface({
             allowSegmentDelete={referenceEditor.allowSegmentDelete}
             showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
             connectCarriageway={referenceEditor.connectCarriageway}
+            continuousSegmentPaths={referenceEditor.continuousSegmentPaths}
             nextStopNodeId={trajectoryPath.length >= 2 ? trajectoryNextStopNodeId : null}
           />
         </div>

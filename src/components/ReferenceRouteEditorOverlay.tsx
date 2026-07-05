@@ -19,6 +19,7 @@ import { resolveRouteEditorStopSeqEndpoints } from '../utils/routeMapStopMatchin
 import { buildRouteEditorSegmentOverlapGroups } from '../routeEditor/routeEditorSegmentOverlap'
 import {
   buildRouteEditorDualCarriagewayPairs,
+  buildRouteEditorDisplayPolylines,
   segmentDirectionArrowPoints,
 } from '../routeEditor/routeEditorSegmentDirection'
 import type { RouteEditorCarriageway } from '../routeEditor/types'
@@ -47,6 +48,8 @@ interface ReferenceRouteEditorOverlayProps {
   showSegmentOverlapCounts?: boolean
   /** Preview line carriageway while connecting (shows direction arrow on preview). */
   connectCarriageway?: RouteEditorCarriageway
+  /** Merge shared-node segments into continuous paths (route-map viewer). */
+  continuousSegmentPaths?: boolean
 }
 
 function strokeDashArray(style: RouteEditorLineStyle['style']): string {
@@ -99,6 +102,7 @@ export function ReferenceRouteEditorOverlay({
   allowSegmentDelete = true,
   showSegmentOverlapCounts = false,
   connectCarriageway = 'single',
+  continuousSegmentPaths = false,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
@@ -116,6 +120,10 @@ export function ReferenceRouteEditorOverlay({
     () => buildRouteEditorDualCarriagewayPairs(segments),
     [segments],
   )
+  const displayPolylines = useMemo(
+    () => (continuousSegmentPaths ? buildRouteEditorDisplayPolylines(segments, nodeById) : []),
+    [continuousSegmentPaths, nodeById, segments],
+  )
   const arrowSize = 10 * nodeScale
   const overlapBadgeRadius = 10 * nodeScale
   const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale))
@@ -128,6 +136,23 @@ export function ReferenceRouteEditorOverlay({
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
     >
+      {continuousSegmentPaths
+        ? displayPolylines.map((polyline, index) => (
+            <path
+              key={`polyline-${index}`}
+              className="reference-route-editor-segment-path"
+              d={polyline.d}
+              fill="none"
+              stroke={lineStyle.color}
+              strokeWidth={lineStyle.width}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={dash}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="none"
+            />
+          ))
+        : null}
       {segments.map((segment) => {
         const from = nodeById.get(segment.fromNodeId)
         const to = nodeById.get(segment.toNodeId)
@@ -141,43 +166,49 @@ export function ReferenceRouteEditorOverlay({
               ? -4 * nodeScale
               : 0
         const { x1, y1, x2, y2 } = offsetSegmentEndpoints(from, to, carriagewayOffset)
+        const showDirectionArrow = !dualCarriagewayPairs.has(pairKey)
+        const showSegmentStroke = !continuousSegmentPaths
 
         return (
           <g key={segment.id} className="reference-route-editor-segment">
-            <line
-              className="reference-route-editor-segment-hit"
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke="transparent"
-              strokeWidth={segmentHitWidth}
-              vectorEffect="non-scaling-stroke"
-              onPointerDown={segmentPassthrough ? undefined : stopSegmentPointer}
-              onDoubleClick={
-                allowSegmentDelete && onSegmentDoubleClick
-                  ? (event) => {
-                      event.stopPropagation()
-                      event.preventDefault()
-                      onSegmentDoubleClick(segment.id)
-                    }
-                  : undefined
-              }
-            />
-            <line
-              className="reference-route-editor-segment-line"
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke={lineStyle.color}
-              strokeWidth={lineStyle.width}
-              strokeLinecap="round"
-              strokeDasharray={dash}
-              vectorEffect="non-scaling-stroke"
-              pointerEvents="none"
-            />
-            {!dualCarriagewayPairs.has(pairKey) ? (
+            {!continuousSegmentPaths ? (
+              <line
+                className="reference-route-editor-segment-hit"
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="transparent"
+                strokeWidth={segmentHitWidth}
+                vectorEffect="non-scaling-stroke"
+                onPointerDown={segmentPassthrough ? undefined : stopSegmentPointer}
+                onDoubleClick={
+                  allowSegmentDelete && onSegmentDoubleClick
+                    ? (event) => {
+                        event.stopPropagation()
+                        event.preventDefault()
+                        onSegmentDoubleClick(segment.id)
+                      }
+                    : undefined
+                }
+              />
+            ) : null}
+            {showSegmentStroke ? (
+              <line
+                className="reference-route-editor-segment-line"
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke={lineStyle.color}
+                strokeWidth={lineStyle.width}
+                strokeLinecap="round"
+                strokeDasharray={dash}
+                vectorEffect="non-scaling-stroke"
+                pointerEvents="none"
+              />
+            ) : null}
+            {showDirectionArrow ? (
               <polygon
                 className="reference-route-editor-segment-arrow"
                 points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}

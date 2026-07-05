@@ -334,6 +334,10 @@ html[data-app-page='map-draw'] #root {
   pointer-events: none;
 }
 
+.reference-route-editor-segment-path {
+  pointer-events: none;
+}
+
 .reference-route-editor-segment-arrow {
   pointer-events: none;
 }

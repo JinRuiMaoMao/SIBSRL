@@ -119,6 +119,7 @@ export function IslandMapViewer() {
               previewNode: null,
               segmentPassthrough: interactiveLayer.referenceEditorProps.segmentPassthrough,
               allowSegmentDelete: interactiveLayer.referenceEditorProps.allowSegmentDelete,
+              continuousSegmentPaths: interactiveLayer.referenceEditorProps.continuousSegmentPaths,
               onNodeClick: interactiveLayer.referenceEditorProps.onNodeClick,
             }
           : null,

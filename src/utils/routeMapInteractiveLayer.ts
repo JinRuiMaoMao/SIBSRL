@@ -52,6 +52,7 @@ export interface RouteMapInteractiveLayerState {
     config: NonNullable<RouteMapViewerDisplay['referenceEditor']>['config']
     segmentPassthrough: boolean
     allowSegmentDelete: boolean
+    continuousSegmentPaths?: boolean
     onNodeClick?: (nodeId: number) => void
     selectedNodeId: number | null
   } | null
@@ -127,6 +128,7 @@ export function buildRouteMapInteractiveLayerState(
           config: ROUTE_MAP_VIEWER_EDITOR_CONFIG,
           segmentPassthrough: true,
           allowSegmentDelete: false,
+          continuousSegmentPaths: true,
           onNodeClick: referenceStopDetails.length ? onReferenceStopNodeClick : undefined,
           selectedNodeId: Number.isFinite(selectedReferenceNodeId) ? selectedReferenceNodeId : null,
         }
