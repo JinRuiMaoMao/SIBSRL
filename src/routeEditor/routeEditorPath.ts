@@ -312,6 +312,148 @@ export function sampleRouteEditorPathBetweenNodes(
   return points
 }
 
+type NormalizedPoint = [number, number]
+
+const TRAJECTORY_ARC_MATCH_EPSILON_PX = 12
+
+function toNormalizedPoint(x: number, y: number, imageWidth: number, imageHeight: number): NormalizedPoint {
+  return [x / imageWidth, y / imageHeight]
+}
+
+function interpolatePathPointAtArcLength(
+  path: readonly NormalizedPoint[],
+  arcLength: number,
+  imageWidth: number,
+  imageHeight: number,
+): NormalizedPoint | null {
+  if (path.length === 0) return null
+  if (path.length === 1) return [path[0]![0], path[0]![1]]
+
+  let remaining = Math.max(0, arcLength)
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const a = path[index]!
+    const b = path[index + 1]!
+    const ax = a[0] * imageWidth
+    const ay = a[1] * imageHeight
+    const bx = b[0] * imageWidth
+    const by = b[1] * imageHeight
+    const segLen = Math.hypot(bx - ax, by - ay)
+    if (segLen <= 0) continue
+    if (remaining > segLen) {
+      remaining -= segLen
+      continue
+    }
+    const t = remaining / segLen
+    return toNormalizedPoint(ax + (bx - ax) * t, ay + (by - ay) * t, imageWidth, imageHeight)
+  }
+
+  const last = path[path.length - 1]!
+  return [last[0], last[1]]
+}
+
+/** Closest arc-length at or after minArcLength (handles paths that revisit the same geometry). */
+export function pathArcLengthToStopMonotonic(
+  path: readonly NormalizedPoint[],
+  stopPoint: NormalizedPoint,
+  imageWidth: number,
+  imageHeight: number,
+  minArcLength = 0,
+): number {
+  if (path.length < 2) return 0
+
+  const targetX = stopPoint[0] * imageWidth
+  const targetY = stopPoint[1] * imageHeight
+  let cumulative = 0
+  let bestDistance = Infinity
+  let bestArcLength = minArcLength
+
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const a = path[index]!
+    const b = path[index + 1]!
+    const ax = a[0] * imageWidth
+    const ay = a[1] * imageHeight
+    const bx = b[0] * imageWidth
+    const by = b[1] * imageHeight
+    const dx = bx - ax
+    const dy = by - ay
+    const segLenSq = dx * dx + dy * dy
+    let t = 0
+    if (segLenSq > 0) {
+      t = Math.min(1, Math.max(0, ((targetX - ax) * dx + (targetY - ay) * dy) / segLenSq))
+    }
+    const projX = ax + dx * t
+    const projY = ay + dy * t
+    const distance = Math.hypot(targetX - projX, targetY - projY)
+    const arcAtProjection = cumulative + Math.hypot(projX - ax, projY - ay)
+    if (arcAtProjection >= minArcLength - TRAJECTORY_ARC_MATCH_EPSILON_PX && distance < bestDistance) {
+      bestDistance = distance
+      bestArcLength = arcAtProjection
+    }
+    cumulative += Math.hypot(dx, dy)
+  }
+
+  return bestArcLength
+}
+
+/** Extract a path slice between two arc lengths (supports backtracking when end < start). */
+export function slicePathByArcLengthRange(
+  path: readonly NormalizedPoint[],
+  startArc: number,
+  endArc: number,
+  imageWidth: number,
+  imageHeight: number,
+): NormalizedPoint[] {
+  if (path.length < 2) return [...path]
+  if (Math.abs(endArc - startArc) < 0.5) {
+    const point = interpolatePathPointAtArcLength(path, startArc, imageWidth, imageHeight)
+    return point ? [point] : []
+  }
+
+  const forward = endArc >= startArc
+  const low = forward ? startArc : endArc
+  const high = forward ? endArc : startArc
+  const slice: NormalizedPoint[] = []
+
+  const startPoint = interpolatePathPointAtArcLength(path, low, imageWidth, imageHeight)
+  if (startPoint) slice.push(startPoint)
+
+  let cumulative = 0
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const a = path[index]!
+    const b = path[index + 1]!
+    const ax = a[0] * imageWidth
+    const ay = a[1] * imageHeight
+    const bx = b[0] * imageWidth
+    const by = b[1] * imageHeight
+    const segLen = Math.hypot(bx - ax, by - ay)
+    const segStart = cumulative
+    const segEnd = cumulative + segLen
+
+    if (segEnd <= low || segStart >= high) {
+      cumulative += segLen
+      continue
+    }
+
+    if (segStart >= low && segEnd <= high) {
+      slice.push([b[0], b[1]])
+    }
+
+    cumulative += segLen
+  }
+
+  const endPoint = interpolatePathPointAtArcLength(path, high, imageWidth, imageHeight)
+  if (endPoint) slice.push(endPoint)
+
+  const deduped: NormalizedPoint[] = []
+  for (const point of slice) {
+    const last = deduped[deduped.length - 1]
+    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) continue
+    deduped.push(point)
+  }
+
+  return forward ? deduped : [...deduped].reverse()
+}
+
 /** Sample from first stopSeq through each stop in order to the last (follows drawn segments). */
 export function sampleRouteEditorTrajectoryThroughStops(
   line: RouteEditorLine,
@@ -319,43 +461,45 @@ export function sampleRouteEditorTrajectoryThroughStops(
   imageHeight: number,
   orderedStops: readonly RouteEditorNode[],
   samplesPerSegment = 16,
-): [number, number][] {
+): NormalizedPoint[] {
   if (orderedStops.length < 2) return []
 
-  const segments = line.segments ?? []
-  const chainStartNodeId = orderedStops[0]!.id
-  const chainOrder = buildRouteEditorChainNodeOrder(segments, chainStartNodeId)
+  const fullPath = sampleRouteEditorTrajectoryPathPoints(
+    line,
+    imageWidth,
+    imageHeight,
+    samplesPerSegment,
+  )
+  if (fullPath.length < 2) return fullPath
 
-  const points: [number, number][] = []
-  const pushPoint = (point: [number, number]) => {
+  let minArc = 0
+  const stopArcs: number[] = []
+  for (const stop of orderedStops) {
+    const stopPoint = toNormalizedPoint(stop.x, stop.y, imageWidth, imageHeight)
+    const arc = pathArcLengthToStopMonotonic(fullPath, stopPoint, imageWidth, imageHeight, minArc)
+    stopArcs.push(arc)
+    minArc = arc
+  }
+
+  const points: NormalizedPoint[] = []
+  const pushPoint = (point: NormalizedPoint) => {
     const last = points[points.length - 1]
     if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
     points.push(point)
   }
 
-  let chainCursor = chainOrder.indexOf(chainStartNodeId)
-  if (chainCursor < 0) chainCursor = 0
-
   for (let index = 0; index < orderedStops.length - 1; index += 1) {
-    const fromStop = orderedStops[index]!
-    const toStop = orderedStops[index + 1]!
-    const leg = sampleRouteEditorPathBetweenNodes(
-      line,
+    const leg = slicePathByArcLengthRange(
+      fullPath,
+      stopArcs[index]!,
+      stopArcs[index + 1]!,
       imageWidth,
       imageHeight,
-      fromStop.id,
-      toStop.id,
-      samplesPerSegment,
-      chainStartNodeId,
-      chainCursor,
     )
     for (const point of leg) pushPoint(point)
-
-    const nextCursor = indexInChainAfter(chainOrder, toStop.id, chainCursor)
-    if (nextCursor >= 0) chainCursor = nextCursor
   }
 
-  return points
+  return points.length >= 2 ? points : fullPath
 }
 
 function findRouteEditorChainStartNodeId(

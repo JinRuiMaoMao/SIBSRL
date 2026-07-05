@@ -1,6 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteEditorNode } from '../routeEditor/types'
 import {
+  pathArcLengthToStopMonotonic,
   sampleRouteEditorTrajectoryPathPoints,
   sampleRouteEditorTrajectoryThroughStops,
 } from '../routeEditor/routeEditorPath'
@@ -51,45 +52,6 @@ function pathArcLengthAtProgress(
   return total
 }
 
-function pathArcLengthToPoint(
-  path: readonly WorldMapPoint[],
-  point: WorldMapPoint,
-  imageWidth: number,
-  imageHeight: number,
-): number {
-  if (path.length < 2) return 0
-
-  const pixelPath = buildPixelPath(path, imageWidth, imageHeight)
-  const targetX = point[0] * imageWidth
-  const targetY = point[1] * imageHeight
-
-  let bestDistance = Infinity
-  let bestArcLength = 0
-  let cumulative = 0
-
-  for (let index = 0; index < pixelPath.length - 1; index += 1) {
-    const a = pixelPath[index]!
-    const b = pixelPath[index + 1]!
-    const dx = b[0] - a[0]
-    const dy = b[1] - a[1]
-    const segLenSq = dx * dx + dy * dy
-    let t = 0
-    if (segLenSq > 0) {
-      t = Math.min(1, Math.max(0, ((targetX - a[0]) * dx + (targetY - a[1]) * dy) / segLenSq))
-    }
-    const projX = a[0] + dx * t
-    const projY = a[1] + dy * t
-    const distance = Math.hypot(targetX - projX, targetY - projY)
-    if (distance < bestDistance) {
-      bestDistance = distance
-      bestArcLength = cumulative + Math.hypot(projX - a[0], projY - a[1])
-    }
-    cumulative += Math.hypot(dx, dy)
-  }
-
-  return bestArcLength
-}
-
 /** Next stop ahead of the trajectory ball along the drawn path (by stopSeq). */
 export function resolveRouteMapTrajectoryNextStopNodeId(
   nodes: readonly RouteEditorNode[],
@@ -104,12 +66,18 @@ export function resolveRouteMapTrajectoryNextStopNodeId(
   }
 
   const ballDistance = pathArcLengthAtProgress(path, progress, imageWidth, imageHeight)
-  let nextIndex = 1
-  for (let index = 0; index < orderedStops.length; index += 1) {
-    const stop = orderedStops[index]!
+  let minArc = 0
+  const stopArcs: number[] = []
+  for (const stop of orderedStops) {
     const stopPoint: WorldMapPoint = [stop.x / imageWidth, stop.y / imageHeight]
-    const stopDistance = pathArcLengthToPoint(path, stopPoint, imageWidth, imageHeight)
-    if (stopDistance <= ballDistance + NEXT_STOP_REACHED_EPSILON_PX) {
+    const arc = pathArcLengthToStopMonotonic(path, stopPoint, imageWidth, imageHeight, minArc)
+    stopArcs.push(arc)
+    minArc = arc
+  }
+
+  let nextIndex = 1
+  for (let index = 0; index < stopArcs.length; index += 1) {
+    if (stopArcs[index]! <= ballDistance + NEXT_STOP_REACHED_EPSILON_PX) {
       nextIndex = index + 1
     }
   }
