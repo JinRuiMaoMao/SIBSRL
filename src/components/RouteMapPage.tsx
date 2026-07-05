@@ -224,17 +224,23 @@ export function RouteMapPage() {
     setSelectedStopId((current) => (current === stopId ? null : stopId))
   }, [])
 
+  const selectedReferenceNodeId = useMemo(() => {
+    if (!selectedStopId?.startsWith('ref-stop-')) return null
+    const nodeId = Number.parseInt(selectedStopId.slice('ref-stop-'.length), 10)
+    return Number.isFinite(nodeId) ? nodeId : null
+  }, [selectedStopId])
+
   const interactiveLayer = useMemo(() => {
     if (!display) return null
     return buildRouteMapInteractiveLayerState(
       display,
       imageSize,
       catalogStops,
-      selectedStopId,
+      null,
       (nodeId) => handleStopClick(`ref-stop-${nodeId}`),
       routeStops,
     )
-  }, [catalogStops, display, handleStopClick, imageSize, routeStops, selectedStopId])
+  }, [catalogStops, display, handleStopClick, imageSize, routeStops])
 
   const interactiveStopDetails = interactiveLayer?.interactiveStopDetails ?? catalogStops
   const selectedStop = useMemo(() => {
@@ -399,7 +405,7 @@ export function RouteMapPage() {
                       segments: interactiveLayer.referenceEditorProps.segments,
                       lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
                       config: interactiveLayer.referenceEditorProps.config,
-                      selectedNodeId: interactiveLayer.referenceEditorProps.selectedNodeId,
+                      selectedNodeId: selectedReferenceNodeId,
                       connectPendingNodeId: null,
                       connectPreview: null,
                       previewNode: null,

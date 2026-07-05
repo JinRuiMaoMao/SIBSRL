@@ -20,6 +20,13 @@ interface RouteMapTrajectoryBallProps {
 
 const LOOP_DURATION_MS = 24_000
 
+function routeMapTrajectoryPathKey(path: readonly WorldMapPoint[]): string {
+  if (path.length === 0) return ''
+  const first = path[0]!
+  const last = path[path.length - 1]!
+  return `${path.length}:${first[0]},${first[1]}:${last[0]},${last[1]}`
+}
+
 export function RouteMapTrajectoryBall({
   imageWidth,
   imageHeight,
@@ -32,19 +39,31 @@ export function RouteMapTrajectoryBall({
     return mapDrawStopIconRadius(ROUTE_MAP_VIEWER_EDITOR_CONFIG.stopIconSize, nodeScale)
   }, [imageHeight, imageWidth])
 
+  const pathKey = useMemo(() => routeMapTrajectoryPathKey(path), [path])
   const pathTotalLength = useMemo(
     () => computeRouteMapTrajectoryPathLength(path, imageWidth, imageHeight),
-    [imageHeight, imageWidth, path],
+    [imageHeight, imageWidth, pathKey],
   )
 
   const [ballPositions, setBallPositions] = useState<readonly [number, number][]>([])
 
+  const pathRef = useRef(path)
+  pathRef.current = path
+  const stopNodesRef = useRef(stopNodes)
+  stopNodesRef.current = stopNodes
+  const onNextStopRef = useRef(onNextStopNodeIdChange)
+  onNextStopRef.current = onNextStopNodeIdChange
   const prevNextStopNodeIdRef = useRef<number | null | undefined>(undefined)
+  const animationStartAtRef = useRef(performance.now())
+  const prevPathKeyRef = useRef(pathKey)
 
   useEffect(() => {
+    if (prevPathKeyRef.current === pathKey) return
+    prevPathKeyRef.current = pathKey
+    animationStartAtRef.current = performance.now()
     prevNextStopNodeIdRef.current = undefined
-    onNextStopNodeIdChange?.(null)
-  }, [onNextStopNodeIdChange, path, stopNodes])
+    onNextStopRef.current?.(null)
+  }, [pathKey])
 
   useEffect(() => {
     if (path.length < 2 || imageWidth <= 0 || imageHeight <= 0 || pathTotalLength <= 0) {
@@ -53,30 +72,37 @@ export function RouteMapTrajectoryBall({
     }
 
     let frame = 0
-    const startAt = performance.now()
 
     const tick = (now: number) => {
-      const elapsed = (now - startAt) % LOOP_DURATION_MS
+      const elapsed = (now - animationStartAtRef.current) % LOOP_DURATION_MS
       const progress = elapsed / LOOP_DURATION_MS
       const leadArcLength = progress * pathTotalLength
       const ballArcs = resolveRouteMapTrajectoryBallArcLengths(leadArcLength, pathTotalLength)
+      const currentPath = pathRef.current
       setBallPositions(
         ballArcs.map((arcLength) =>
-          interpolateRouteMapTrajectoryPointAtArcLength(path, arcLength, imageWidth, imageHeight),
+          interpolateRouteMapTrajectoryPointAtArcLength(
+            currentPath,
+            arcLength,
+            imageWidth,
+            imageHeight,
+          ),
         ),
       )
 
-      if (onNextStopNodeIdChange && stopNodes.length > 0) {
+      const onNextStop = onNextStopRef.current
+      const nodes = stopNodesRef.current
+      if (onNextStop && nodes.length > 0) {
         const nextStopNodeId = resolveRouteMapTrajectoryNextStopNodeId(
-          stopNodes,
-          path,
+          nodes,
+          currentPath,
           progress,
           imageWidth,
           imageHeight,
         )
         if (nextStopNodeId !== prevNextStopNodeIdRef.current) {
           prevNextStopNodeIdRef.current = nextStopNodeId
-          onNextStopNodeIdChange(nextStopNodeId)
+          onNextStop(nextStopNodeId)
         }
       }
       frame = window.requestAnimationFrame(tick)
@@ -84,14 +110,7 @@ export function RouteMapTrajectoryBall({
 
     frame = window.requestAnimationFrame(tick)
     return () => window.cancelAnimationFrame(frame)
-  }, [
-    imageHeight,
-    imageWidth,
-    onNextStopNodeIdChange,
-    path,
-    pathTotalLength,
-    stopNodes,
-  ])
+  }, [imageHeight, imageWidth, path.length, pathKey, pathTotalLength])
 
   if (path.length < 2 || ballPositions.length === 0) return null
 

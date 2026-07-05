@@ -61,25 +61,23 @@ export function IslandMapViewer() {
     [catalogStops],
   )
 
+  const selectedReferenceNodeId = useMemo(() => {
+    if (!selectedStopId?.startsWith('ref-stop-')) return null
+    const nodeId = Number.parseInt(selectedStopId.slice('ref-stop-'.length), 10)
+    return Number.isFinite(nodeId) ? nodeId : null
+  }, [selectedStopId])
+
   const interactiveLayer = useMemo(() => {
     if (!importedPath) return null
     return buildRouteMapInteractiveLayerState(
       { ...importedPath, fitPoints: [...(routeOverlay?.points ?? importedPath.points)] },
       imageSize,
       catalogStops,
-      selectedStopId,
+      null,
       handleReferenceStopNodeClick,
       routeStops,
     )
-  }, [
-    catalogStops,
-    handleReferenceStopNodeClick,
-    imageSize,
-    importedPath,
-    routeOverlay?.points,
-    routeStops,
-    selectedStopId,
-  ])
+  }, [catalogStops, handleReferenceStopNodeClick, imageSize, importedPath, routeOverlay?.points, routeStops])
 
   const draftStops = useMemo(() => {
     if (interactiveLayer) return interactiveLayer.interactiveDrawStops
@@ -113,7 +111,7 @@ export function IslandMapViewer() {
               segments: interactiveLayer.referenceEditorProps.segments,
               lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
               config: interactiveLayer.referenceEditorProps.config,
-              selectedNodeId: interactiveLayer.referenceEditorProps.selectedNodeId,
+              selectedNodeId: selectedReferenceNodeId,
               connectPendingNodeId: null,
               connectPreview: null,
               previewNode: null,
