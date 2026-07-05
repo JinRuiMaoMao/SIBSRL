@@ -184,6 +184,39 @@ function indexInChainAfter(
   return chainOrder.indexOf(nodeId)
 }
 
+/** Map a node onto chainOrder, preferring a forward match from hintIndex. */
+function resolveChainIndexForNode(
+  chainOrder: readonly number[],
+  nodeId: number,
+  hintIndex: number,
+): number {
+  if (hintIndex >= 0 && hintIndex < chainOrder.length && chainOrder[hintIndex] === nodeId) {
+    return hintIndex
+  }
+  const after = indexInChainAfter(chainOrder, nodeId, hintIndex)
+  if (after >= 0 && chainOrder[after] === nodeId) return after
+  return chainOrder.indexOf(nodeId)
+}
+
+function advanceChainCursorAfterLeg(
+  chainOrder: readonly number[],
+  nodePath: readonly number[] | null | undefined,
+  toNodeId: number,
+  chainCursor: number,
+): number {
+  const direct = resolveChainIndexForNode(chainOrder, toNodeId, chainCursor)
+  if (direct >= 0) return direct
+
+  if (nodePath) {
+    for (let index = nodePath.length - 1; index >= 0; index -= 1) {
+      const resolved = resolveChainIndexForNode(chainOrder, nodePath[index]!, chainCursor)
+      if (resolved >= 0) return resolved
+    }
+  }
+
+  return chainCursor
+}
+
 function indexInChainBefore(
   chainOrder: readonly number[],
   nodeId: number,
@@ -218,12 +251,15 @@ function resolveChainNodePathBetween(
 ): number[] | null {
   if (fromNodeId === toNodeId) return [fromNodeId]
 
+  const fromIndex = resolveChainIndexForNode(chainOrder, fromNodeId, fromChainIndex)
+  if (fromIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+
   const forwardPath = findRouteEditorForwardNodePath(
     segments,
     chainOrder,
     fromNodeId,
     toNodeId,
-    fromChainIndex,
+    fromIndex,
   )
   if (
     forwardPath &&
@@ -233,9 +269,9 @@ function resolveChainNodePathBetween(
     return forwardPath
   }
 
-  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromChainIndex)
-  if (toBackward >= 0 && toBackward !== fromChainIndex) {
-    const backwardNodes = sliceChainOrderBackward(chainOrder, fromChainIndex, toBackward)
+  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromIndex)
+  if (toBackward >= 0 && toBackward !== fromIndex) {
+    const backwardNodes = sliceChainOrderBackward(chainOrder, fromIndex, toBackward)
     if (backwardNodes[backwardNodes.length - 1] === toNodeId) {
       return backwardNodes
     }
@@ -290,9 +326,10 @@ export function findRouteEditorForwardNodePath(
 ): number[] | null {
   if (fromNodeId === toNodeId) return [fromNodeId]
 
-  const fromIndex =
+  let fromIndex =
     fromChainIndex ??
     (chainOrder.indexOf(fromNodeId) >= 0 ? chainOrder.indexOf(fromNodeId) : -1)
+  fromIndex = resolveChainIndexForNode(chainOrder, fromNodeId, fromIndex)
   if (fromIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
 
   const toIndex = indexInChainAfter(chainOrder, toNodeId, fromIndex)
@@ -604,8 +641,7 @@ export function sampleRouteEditorTrajectoryThroughStops(
 
     pushPoint(toNormalizedPoint(toStop.x, toStop.y, imageWidth, imageHeight))
 
-    const nextCursor = indexInChainAfter(chainOrder, toStop.id, chainCursor)
-    if (nextCursor >= 0) chainCursor = nextCursor
+    chainCursor = advanceChainCursorAfterLeg(chainOrder, nodePath, toStop.id, chainCursor)
   }
 
   if (points.length >= 2) return points
