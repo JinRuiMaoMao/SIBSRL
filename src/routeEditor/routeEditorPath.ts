@@ -264,20 +264,29 @@ function directedHopDistance(
   if (cached != null) return cached
 
   const adjacency = buildRouteEditorOutgoingAdjacency(segments)
-  const queue: { nodeId: number; depth: number }[] = [{ nodeId: fromNodeId, depth: 0 }]
-  const visited = new Set<number>([fromNodeId])
+  const queue: { nodeId: number; cost: number }[] = [{ nodeId: fromNodeId, cost: 0 }]
+  const best = new Map<number, number>([[fromNodeId, 0]])
 
   while (queue.length > 0) {
-    const { nodeId, depth } = queue.shift()!
-    for (const link of adjacency.get(nodeId) ?? []) {
-      if (link.nodeId === toNodeId) {
-        const distance = depth + 1
-        cache.set(key, distance)
-        return distance
+    queue.sort((a, b) => a.cost - b.cost)
+    const { nodeId, cost } = queue.shift()!
+    if (cost > (best.get(nodeId) ?? Number.POSITIVE_INFINITY)) continue
+
+    if (nodeId === toNodeId) {
+      cache.set(key, cost)
+      return cost
+    }
+
+    const outgoing = adjacency.get(nodeId) ?? []
+    for (const link of outgoing) {
+      let edgeCost = 1
+      if (link.nodeId === toNodeId && outgoing.length >= 2) {
+        edgeCost = 1000
       }
-      if (visited.has(link.nodeId)) continue
-      visited.add(link.nodeId)
-      queue.push({ nodeId: link.nodeId, depth: depth + 1 })
+      const nextCost = cost + edgeCost
+      if (nextCost >= (best.get(link.nodeId) ?? Number.POSITIVE_INFINITY)) continue
+      best.set(link.nodeId, nextCost)
+      queue.push({ nodeId: link.nodeId, cost: nextCost })
     }
   }
 
@@ -291,6 +300,12 @@ function chainNodePathBacktracks(
   nodePath: readonly number[],
   fromIndex: number,
 ): boolean {
+  const visited = new Set<number>()
+  for (const nodeId of nodePath) {
+    if (visited.has(nodeId)) return true
+    visited.add(nodeId)
+  }
+
   let cursor = fromIndex
   for (let index = 1; index < nodePath.length; index += 1) {
     const nextIndex = resolveChainIndexForNode(chainOrder, nodePath[index]!, cursor)
@@ -324,18 +339,27 @@ function walkForwardNodePathOnGraph(
     if (current === toNodeId) return nodePath
 
     const candidates = (adjacency.get(current) ?? [])
-      .filter((link) => link.nodeId !== previous)
+      .filter((link) => link.nodeId !== previous && !nodePath.includes(link.nodeId))
       .sort((a, b) => a.nodeId - b.nodeId)
+
+    const hopToTarget = (nodeId: number) =>
+      directedHopDistance(segments, nodeId, toNodeId, hopCache)
+
+    const detourCandidates = candidates.filter((candidate) => candidate.nodeId !== toNodeId)
 
     let bestLink: (typeof candidates)[0] | null = null
     let bestScore = Number.POSITIVE_INFINITY
     for (const link of candidates) {
       const linkIndex = resolveChainIndexForNode(chainOrder, link.nodeId, chainCursor)
-      let score = directedHopDistance(segments, link.nodeId, toNodeId, hopCache)
+      let score = hopToTarget(link.nodeId)
+
+      if (link.nodeId === toNodeId && detourCandidates.length > 0) {
+        score += 50_000
+      }
 
       if (linkIndex >= 0 && chainCursor >= 0) {
         if (!isForwardChainStep(chainOrder, chainCursor, linkIndex)) {
-          score += 10_000
+          score += 100_000
         } else {
           score += forwardChainDistance(chainOrder, chainCursor, linkIndex) * 10
         }
@@ -371,6 +395,22 @@ function resolveChainNodePathBetween(
   const fromIndex = resolveChainIndexForNode(chainOrder, fromNodeId, fromChainIndex)
   if (fromIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
 
+  const loopPath = walkForwardNodePathOnGraph(
+    segments,
+    chainOrder,
+    fromNodeId,
+    toNodeId,
+    fromIndex,
+  )
+  if (
+    loopPath &&
+    loopPath.length >= 2 &&
+    loopPath[loopPath.length - 1] === toNodeId &&
+    isDirectedRouteEditorNodePath(segments, loopPath)
+  ) {
+    return loopPath
+  }
+
   const forwardPath = findRouteEditorForwardNodePath(
     segments,
     chainOrder,
@@ -388,22 +428,6 @@ function resolveChainNodePathBetween(
     return forwardPath
   }
 
-  const loopPath = walkForwardNodePathOnGraph(
-    segments,
-    chainOrder,
-    fromNodeId,
-    toNodeId,
-    fromIndex,
-  )
-  if (
-    loopPath &&
-    loopPath.length >= 2 &&
-    loopPath[loopPath.length - 1] === toNodeId &&
-    isDirectedRouteEditorNodePath(segments, loopPath)
-  ) {
-    return loopPath
-  }
-
   const fallbackPath = findRouteEditorNodePath(segments, fromNodeId, toNodeId)
   if (
     fallbackPath &&
@@ -415,7 +439,7 @@ function resolveChainNodePathBetween(
     return fallbackPath
   }
 
-  return loopPath ?? fallbackPath
+  return loopPath
 }
 
 function sampleNodePathPoints(
@@ -492,28 +516,37 @@ export function findRouteEditorNodePath(
   if (segments.length === 0) return null
 
   const adjacency = buildRouteEditorOutgoingAdjacency(segments)
-  const queue: number[] = [fromNodeId]
-  const visited = new Set<number>([fromNodeId])
+  const queue: { nodeId: number; cost: number }[] = [{ nodeId: fromNodeId, cost: 0 }]
+  const best = new Map<number, number>([[fromNodeId, 0]])
   const parent = new Map<number, number>()
 
   while (queue.length > 0) {
-    const current = queue.shift()!
-    if (current === toNodeId) {
+    queue.sort((a, b) => a.cost - b.cost)
+    const { nodeId, cost } = queue.shift()!
+    if (cost > (best.get(nodeId) ?? Number.POSITIVE_INFINITY)) continue
+
+    if (nodeId === toNodeId) {
       const path: number[] = [toNodeId]
-      let nodeId = toNodeId
-      while (parent.has(nodeId)) {
-        nodeId = parent.get(nodeId)!
-        path.push(nodeId)
+      let currentId = toNodeId
+      while (parent.has(currentId)) {
+        currentId = parent.get(currentId)!
+        path.push(currentId)
       }
       path.reverse()
       return path
     }
 
-    for (const link of adjacency.get(current) ?? []) {
-      if (visited.has(link.nodeId)) continue
-      visited.add(link.nodeId)
-      parent.set(link.nodeId, current)
-      queue.push(link.nodeId)
+    const outgoing = adjacency.get(nodeId) ?? []
+    for (const link of outgoing) {
+      let edgeCost = 1
+      if (link.nodeId === toNodeId && outgoing.length >= 2) {
+        edgeCost = 1000
+      }
+      const nextCost = cost + edgeCost
+      if (nextCost >= (best.get(link.nodeId) ?? Number.POSITIVE_INFINITY)) continue
+      best.set(link.nodeId, nextCost)
+      parent.set(link.nodeId, nodeId)
+      queue.push({ nodeId: link.nodeId, cost: nextCost })
     }
   }
 

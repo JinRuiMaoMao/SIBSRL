@@ -9,7 +9,14 @@ import { resolveRouteEditorStopSeqOrderedStops } from './routeMapStopMatching'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 const NEXT_STOP_REACHED_EPSILON_PX = 14
-export const ROUTE_MAP_TRAJECTORY_BALL_SPACING_PX = 100
+
+export const ROUTE_MAP_TRAJECTORY_BASE_LOOP_DURATION_MS = 24_000
+export const ROUTE_MAP_TRAJECTORY_SPEED = 0.8
+export const ROUTE_MAP_TRAJECTORY_BALL_SPAWN_INTERVAL_MS = 3_000
+
+export function resolveRouteMapTrajectoryLoopDurationMs(): number {
+  return ROUTE_MAP_TRAJECTORY_BASE_LOOP_DURATION_MS / ROUTE_MAP_TRAJECTORY_SPEED
+}
 
 function buildPixelPath(
   path: readonly WorldMapPoint[],
@@ -62,20 +69,23 @@ export function computeRouteMapTrajectoryPathLength(
   return pathArcLengthAtProgress(path, 1, imageWidth, imageHeight)
 }
 
-/** Arc lengths for each visible ball; a new ball spawns every `spacingPx` behind the lead. */
+/** Arc lengths for each visible ball; a new ball spawns every `spawnIntervalMs` behind the lead. */
 export function resolveRouteMapTrajectoryBallArcLengths(
   leadArcLength: number,
   pathTotalLength: number,
-  spacingPx = ROUTE_MAP_TRAJECTORY_BALL_SPACING_PX,
+  loopDurationMs = resolveRouteMapTrajectoryLoopDurationMs(),
+  spawnIntervalMs = ROUTE_MAP_TRAJECTORY_BALL_SPAWN_INTERVAL_MS,
 ): number[] {
-  if (pathTotalLength <= 0 || leadArcLength < 0) return []
+  if (pathTotalLength <= 0 || leadArcLength < 0 || loopDurationMs <= 0) return []
 
+  const leadElapsedMs = (leadArcLength / pathTotalLength) * loopDurationMs
   const arcs: number[] = []
   let index = 0
   while (true) {
-    const spawnAt = index * spacingPx
-    if (leadArcLength < spawnAt) break
-    const ballArc = leadArcLength - spawnAt
+    const spawnAtMs = index * spawnIntervalMs
+    if (leadElapsedMs < spawnAtMs) break
+    const ballElapsedMs = leadElapsedMs - spawnAtMs
+    const ballArc = (ballElapsedMs / loopDurationMs) * pathTotalLength
     if (ballArc > pathTotalLength) break
     arcs.push(ballArc)
     index += 1

@@ -166,7 +166,6 @@ export function ReferenceRouteEditorOverlay({
               ? -4 * nodeScale
               : 0
         const { x1, y1, x2, y2 } = offsetSegmentEndpoints(from, to, carriagewayOffset)
-        const showDirectionArrow = !dualCarriagewayPairs.has(pairKey)
         const showSegmentStroke = !continuousSegmentPaths
 
         return (
@@ -208,14 +207,12 @@ export function ReferenceRouteEditorOverlay({
                 pointerEvents="none"
               />
             ) : null}
-            {showDirectionArrow ? (
-              <polygon
-                className="reference-route-editor-segment-arrow"
-                points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
-                fill={lineStyle.color}
-                pointerEvents="none"
-              />
-            ) : null}
+            <polygon
+              className="reference-route-editor-segment-arrow"
+              points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
+              fill={lineStyle.color}
+              pointerEvents="none"
+            />
           </g>
         )
       })}
@@ -257,20 +254,18 @@ export function ReferenceRouteEditorOverlay({
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
           />
-          {connectCarriageway === 'single' ? (
-            <polygon
-              className="reference-route-editor-segment-arrow reference-route-editor-connect-preview-arrow"
-              points={segmentDirectionArrowPoints(
-                connectPreview.fromX,
-                connectPreview.fromY,
-                connectPreview.toX,
-                connectPreview.toY,
-                arrowSize,
-              )}
-              fill={lineStyle.color}
-              pointerEvents="none"
-            />
-          ) : null}
+          <polygon
+            className="reference-route-editor-segment-arrow reference-route-editor-connect-preview-arrow"
+            points={segmentDirectionArrowPoints(
+              connectPreview.fromX,
+              connectPreview.fromY,
+              connectPreview.toX,
+              connectPreview.toY,
+              arrowSize,
+            )}
+            fill={lineStyle.color}
+            pointerEvents="none"
+          />
         </g>
       ) : null}
 

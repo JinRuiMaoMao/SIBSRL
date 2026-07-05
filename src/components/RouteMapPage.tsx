@@ -30,6 +30,8 @@ import {
 } from '../utils/routeMapViewerDisplay'
 import { resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
 import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
+import { resolveRouteMapDisplayPathPoints } from '../utils/routeMapTrajectory'
+import { applyCatalogStopSeqToEditorNodes } from '../utils/routeMapStopMatching'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { StopDetailPanel } from './StopDetailPanel'
 import '../styles/routeMapPage.css'
@@ -242,6 +244,35 @@ export function RouteMapPage() {
     )
   }, [catalogStops, display, handleStopClick, imageSize, routeStops])
 
+  const trajectoryPath = useMemo(() => {
+    if (!display || !imageSize) return [] as const
+    return resolveRouteMapDisplayPathPoints(display, imageSize)
+  }, [display, imageSize])
+
+  const trajectoryStopNodes = useMemo(() => {
+    if (!display?.referenceEditor) return [] as const
+    if (!catalogStops.length) return display.referenceEditor.nodes
+    return applyCatalogStopSeqToEditorNodes(display.referenceEditor.nodes, catalogStops)
+  }, [catalogStops, display?.referenceEditor?.nodes])
+
+  const referenceEditor = useMemo(() => {
+    if (!interactiveLayer?.referenceEditorProps) return null
+    return {
+      nodes: interactiveLayer.referenceEditorProps.nodes,
+      segments: interactiveLayer.referenceEditorProps.segments,
+      lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
+      config: interactiveLayer.referenceEditorProps.config,
+      selectedNodeId: selectedReferenceNodeId,
+      connectPendingNodeId: null,
+      connectPreview: null,
+      previewNode: null,
+      segmentPassthrough: interactiveLayer.referenceEditorProps.segmentPassthrough,
+      allowSegmentDelete: interactiveLayer.referenceEditorProps.allowSegmentDelete,
+      continuousSegmentPaths: interactiveLayer.referenceEditorProps.continuousSegmentPaths,
+      onNodeClick: interactiveLayer.referenceEditorProps.onNodeClick,
+    }
+  }, [interactiveLayer?.referenceEditorProps, selectedReferenceNodeId])
+
   const interactiveStopDetails = interactiveLayer?.interactiveStopDetails ?? catalogStops
   const selectedStop = useMemo(() => {
     if (!selectedStopId) return null
@@ -395,27 +426,11 @@ export function RouteMapPage() {
               stopLabelScale={1}
               selectedStopId={selectedStopId}
               onStopClick={stopClickEnabled ? handleStopClick : undefined}
-              trajectoryPath={interactiveLayer?.trajectoryPath ?? []}
+              trajectoryPath={trajectoryPath}
+              trajectoryStopNodes={trajectoryStopNodes}
               maxZoomRatio={8}
               onImageSizeChange={setImageSize}
-              referenceEditor={
-                interactiveLayer?.referenceEditorProps
-                  ? {
-                      nodes: interactiveLayer.referenceEditorProps.nodes,
-                      segments: interactiveLayer.referenceEditorProps.segments,
-                      lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
-                      config: interactiveLayer.referenceEditorProps.config,
-                      selectedNodeId: selectedReferenceNodeId,
-                      connectPendingNodeId: null,
-                      connectPreview: null,
-                      previewNode: null,
-                      segmentPassthrough: interactiveLayer.referenceEditorProps.segmentPassthrough,
-                      allowSegmentDelete: interactiveLayer.referenceEditorProps.allowSegmentDelete,
-                      continuousSegmentPaths: interactiveLayer.referenceEditorProps.continuousSegmentPaths,
-                      onNodeClick: interactiveLayer.referenceEditorProps.onNodeClick,
-                    }
-                  : null
-              }
+              referenceEditor={referenceEditor}
             />
             {selectedStop && resolvedRoute ? (
               <div className="route-map-page-stop-popover">
