@@ -90,7 +90,7 @@ const MANUAL_ORIGINS = {
   },
   '475P': {
     origin: { zh: '海西邨', en: 'Haisey Estate' },
-    destination: { zh: '中日街', en: 'Sun Central Street' },
+    destination: { zh: '中环（中日街）', en: 'Sun Central Street' },
   },
   N472: {
     origin: { zh: '彩虹中心', en: 'Rainbow Estate Complex' },

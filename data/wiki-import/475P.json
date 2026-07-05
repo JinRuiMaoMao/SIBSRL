@@ -17,8 +17,8 @@
     "en": "Haisey Estate"
   },
   "destination": {
-    "zh": "Sun Central Street / 海西邨",
-    "en": "Sun Central Street / 海西邨"
+    "zh": "中环（中日街）",
+    "en": "Sun Central Street"
   },
   "via": {
     "zh": "East Door, Zone 7 Interchange, Southern",
@@ -40,8 +40,8 @@
   "stops": [
     {
       "direction": {
-        "zh": "方向1（海西邨 → 中環(中日街)）",
-        "en": "Direction 1 (Haisey Estate → Beta Road)"
+        "zh": "方向1（海西邨 → 中环（中日街））",
+        "en": "Direction 1 (Haisey Estate → Sun Central Street)"
       },
       "serviceTime": {
         "zh": "Mon – Fri: 07:10 – 09:00",
@@ -117,8 +117,8 @@
         },
         {
           "name": {
-            "zh": "中環(中日街)",
-            "en": "Beta Road"
+            "zh": "中环（中日街）",
+            "en": "Sun Central Street"
           },
           "zone": 4
         }
