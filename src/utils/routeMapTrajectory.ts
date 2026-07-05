@@ -69,25 +69,23 @@ export function computeRouteMapTrajectoryPathLength(
   return pathArcLengthAtProgress(path, 1, imageWidth, imageHeight)
 }
 
-/** Arc lengths for each visible ball; a new ball spawns every `spawnIntervalMs` behind the lead. */
+/** Arc lengths for each visible ball; a new ball spawns every `spawnIntervalMs` on an absolute timeline. */
 export function resolveRouteMapTrajectoryBallArcLengths(
-  leadArcLength: number,
+  elapsedMs: number,
   pathTotalLength: number,
   loopDurationMs = resolveRouteMapTrajectoryLoopDurationMs(),
   spawnIntervalMs = ROUTE_MAP_TRAJECTORY_BALL_SPAWN_INTERVAL_MS,
 ): number[] {
-  if (pathTotalLength <= 0 || leadArcLength < 0 || loopDurationMs <= 0) return []
+  if (pathTotalLength <= 0 || elapsedMs < 0 || loopDurationMs <= 0) return []
 
-  const leadElapsedMs = (leadArcLength / pathTotalLength) * loopDurationMs
   const arcs: number[] = []
   let index = 0
   while (true) {
     const spawnAtMs = index * spawnIntervalMs
-    if (leadElapsedMs < spawnAtMs) break
-    const ballElapsedMs = leadElapsedMs - spawnAtMs
-    const ballArc = (ballElapsedMs / loopDurationMs) * pathTotalLength
-    if (ballArc > pathTotalLength) break
-    arcs.push(ballArc)
+    if (elapsedMs < spawnAtMs) break
+    const ballElapsedMs = elapsedMs - spawnAtMs
+    const progress = (ballElapsedMs / loopDurationMs) % 1
+    arcs.push(progress * pathTotalLength)
     index += 1
     if (index > 512) break
   }

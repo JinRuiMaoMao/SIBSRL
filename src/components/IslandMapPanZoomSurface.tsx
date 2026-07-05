@@ -84,7 +84,6 @@ interface IslandMapPanZoomSurfaceProps {
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
   trajectoryPath?: readonly WorldMapPoint[]
-  trajectoryStopNodes?: readonly RouteEditorNode[]
   referenceEditor?: {
     nodes: readonly RouteEditorNode[]
     segments: readonly RouteEditorSegment[]
@@ -325,10 +324,8 @@ export function IslandMapPanZoomSurface({
   onMapPointerMove,
   onImageSizeChange,
   trajectoryPath = [],
-  trajectoryStopNodes = [],
   referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
-  const [trajectoryNextStopNodeId, setTrajectoryNextStopNodeId] = useState<number | null>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -1008,7 +1005,6 @@ export function IslandMapPanZoomSurface({
             showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
             connectCarriageway={referenceEditor.connectCarriageway}
             continuousSegmentPaths={referenceEditor.continuousSegmentPaths}
-            nextStopNodeId={trajectoryPath.length >= 2 ? trajectoryNextStopNodeId : null}
           />
         </div>
       ) : (
@@ -1117,8 +1113,6 @@ export function IslandMapPanZoomSurface({
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
             path={trajectoryPath}
-            stopNodes={trajectoryStopNodes.length > 0 ? trajectoryStopNodes : referenceEditor?.nodes}
-            onNextStopNodeIdChange={setTrajectoryNextStopNodeId}
           />
         </div>
       ) : null}

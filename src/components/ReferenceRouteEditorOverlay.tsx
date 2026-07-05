@@ -207,12 +207,14 @@ export function ReferenceRouteEditorOverlay({
                 pointerEvents="none"
               />
             ) : null}
-            <polygon
-              className="reference-route-editor-segment-arrow"
-              points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
-              fill={lineStyle.color}
-              pointerEvents="none"
-            />
+            {!continuousSegmentPaths ? (
+              <polygon
+                className="reference-route-editor-segment-arrow"
+                points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
+                fill={lineStyle.color}
+                pointerEvents="none"
+              />
+            ) : null}
           </g>
         )
       })}

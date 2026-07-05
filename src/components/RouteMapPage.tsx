@@ -31,7 +31,6 @@ import {
 import { resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
 import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
 import { resolveRouteMapDisplayPathPoints } from '../utils/routeMapTrajectory'
-import { applyCatalogStopSeqToEditorNodes } from '../utils/routeMapStopMatching'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { StopDetailPanel } from './StopDetailPanel'
 import '../styles/routeMapPage.css'
@@ -249,12 +248,6 @@ export function RouteMapPage() {
     return resolveRouteMapDisplayPathPoints(display, imageSize)
   }, [display, imageSize])
 
-  const trajectoryStopNodes = useMemo(() => {
-    if (!display?.referenceEditor) return [] as const
-    if (!catalogStops.length) return display.referenceEditor.nodes
-    return applyCatalogStopSeqToEditorNodes(display.referenceEditor.nodes, catalogStops)
-  }, [catalogStops, display?.referenceEditor?.nodes])
-
   const referenceEditor = useMemo(() => {
     if (!interactiveLayer?.referenceEditorProps) return null
     return {
@@ -427,7 +420,6 @@ export function RouteMapPage() {
               selectedStopId={selectedStopId}
               onStopClick={stopClickEnabled ? handleStopClick : undefined}
               trajectoryPath={trajectoryPath}
-              trajectoryStopNodes={trajectoryStopNodes}
               maxZoomRatio={8}
               onImageSizeChange={setImageSize}
               referenceEditor={referenceEditor}
