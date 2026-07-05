@@ -19,7 +19,7 @@ import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarge
 import {
   DRAW_MAX_ZOOM_RATIO,
   DRAW_MIN_ZOOM_RATIO,
-  resolveEditorOverlayWrapScale,
+  resolveEditorOverlayVisualScale,
 } from '../utils/mapDrawOverlayZoom'
 
 import type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
@@ -336,8 +336,6 @@ export function IslandMapPanZoomSurface({
   const onMapPointerMoveRef = useRef(onMapPointerMove)
   const onImageSizeChangeRef = useRef(onImageSizeChange)
   const referenceEditorRef = useRef(referenceEditor)
-  const referenceEditorOverlayWrapRef = useRef<HTMLDivElement>(null)
-  const lockOverlayScreenSizeRef = useRef(lockOverlayScreenSize)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
   const panZoomRef = useRef<PanZoomState | null>(null)
@@ -369,7 +367,6 @@ export function IslandMapPanZoomSurface({
   onMapPointerMoveRef.current = onMapPointerMove
   onImageSizeChangeRef.current = onImageSizeChange
   referenceEditorRef.current = referenceEditor
-  lockOverlayScreenSizeRef.current = lockOverlayScreenSize
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
   const [incomingSrc, setIncomingSrc] = useState<string | null>(null)
@@ -402,42 +399,21 @@ export function IslandMapPanZoomSurface({
     if (content) {
       content.style.transform = `translate3d(${next.x}px, ${next.y}px, 0) scale(${next.scale})`
     }
-
-    const overlayWrap = referenceEditorOverlayWrapRef.current
-    if (!overlayWrap) return
-
-    if (!lockOverlayScreenSizeRef.current || next.scale <= 0) {
-      overlayWrap.style.transform = ''
-      overlayWrap.style.transformOrigin = ''
-      return
-    }
-
-    const viewport = readViewportSize()
-    const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
-    if (!viewport || !size) {
-      overlayWrap.style.transform = ''
-      overlayWrap.style.transformOrigin = ''
-      return
-    }
-
-    const fitScale = computeFitScale(viewport, size)
-    const zoomRatio = fitScale > 0 ? next.scale / fitScale : 1
-    const wrapScale = resolveEditorOverlayWrapScale(zoomRatio, next.scale, true)
-
-    if (wrapScale === 1) {
-      overlayWrap.style.transform = ''
-      overlayWrap.style.transformOrigin = ''
-      return
-    }
-
-    overlayWrap.style.transform = `scale(${wrapScale})`
-    overlayWrap.style.transformOrigin = '0 0'
-  }, [imageSize, readViewportSize])
+  }, [])
 
   useLayoutEffect(() => {
     const live = panZoomRef.current ?? panZoom
     if (live) applyTransformLive(live)
-  }, [applyTransformLive, lockOverlayScreenSize, panZoom, referenceEditor, imageSize])
+  }, [applyTransformLive, panZoom])
+
+  const referenceEditorVisualScale = useMemo(() => {
+    if (!lockOverlayScreenSize || !panZoom || panZoom.scale <= 0 || !imageSize) return 1
+    const viewport = readViewportSize()
+    if (!viewport) return 1
+    const fitScale = computeFitScale(viewport, imageSize)
+    const zoomRatio = fitScale > 0 ? panZoom.scale / fitScale : 1
+    return resolveEditorOverlayVisualScale(zoomRatio, panZoom.scale, true)
+  }, [imageSize, lockOverlayScreenSize, panZoom, readViewportSize])
 
   const publishPanZoom = useCallback((next: PanZoomState, viewport: ImageSize, size: ImageSize) => {
     const normalized = panZoomToNormalized(next, viewport, size)
@@ -1002,13 +978,11 @@ export function IslandMapPanZoomSurface({
         </div>
       ) : null}
       {referenceEditor ? (
-        <div
-          ref={referenceEditorOverlayWrapRef}
-          className="island-map-route-overlay-wrap island-map-route-overlay-wrap--reference-editor island-map-route-overlay-wrap--screen-lock"
-        >
+        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--reference-editor">
           <ReferenceRouteEditorOverlay
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
+            visualScale={referenceEditorVisualScale}
             nodes={referenceEditor.nodes}
             segments={referenceEditor.segments}
             lineStyle={referenceEditor.lineStyle}

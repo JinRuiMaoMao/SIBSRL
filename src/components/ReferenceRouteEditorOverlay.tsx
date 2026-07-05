@@ -23,6 +23,9 @@ import {
   segmentDirectionArrowPoints,
 } from '../routeEditor/routeEditorSegmentDirection'
 import type { RouteEditorCarriageway } from '../routeEditor/types'
+import {
+  mapDrawAnchorScaleTransform,
+} from '../utils/mapDrawOverlayZoom'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -50,6 +53,8 @@ interface ReferenceRouteEditorOverlayProps {
   connectCarriageway?: RouteEditorCarriageway
   /** Merge shared-node segments into continuous paths (route-map viewer). */
   continuousSegmentPaths?: boolean
+  /** Counter-scale anchored visuals (1 / pan-zoom content scale) for constant screen size. */
+  visualScale?: number
 }
 
 function strokeDashArray(style: RouteEditorLineStyle['style']): string {
@@ -103,6 +108,7 @@ export function ReferenceRouteEditorOverlay({
   showSegmentOverlapCounts = false,
   connectCarriageway = 'single',
   continuousSegmentPaths = false,
+  visualScale = 1,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
@@ -208,12 +214,14 @@ export function ReferenceRouteEditorOverlay({
               />
             ) : null}
             {!continuousSegmentPaths ? (
-              <polygon
-                className="reference-route-editor-segment-arrow"
-                points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
-                fill={lineStyle.color}
-                pointerEvents="none"
-              />
+              <g transform={mapDrawAnchorScaleTransform((x1 + x2) / 2, (y1 + y2) / 2, visualScale)}>
+                <polygon
+                  className="reference-route-editor-segment-arrow"
+                  points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
+                  fill={lineStyle.color}
+                  pointerEvents="none"
+                />
+              </g>
             ) : null}
           </g>
         )
@@ -221,7 +229,11 @@ export function ReferenceRouteEditorOverlay({
 
       {showSegmentOverlapCounts
         ? overlapGroups.map((group) => (
-            <g key={group.key} className="reference-route-editor-segment-overlap">
+            <g
+              key={group.key}
+              className="reference-route-editor-segment-overlap"
+              transform={mapDrawAnchorScaleTransform(group.midX, group.midY, visualScale)}
+            >
               <circle
                 cx={group.midX}
                 cy={group.midY}
@@ -256,18 +268,26 @@ export function ReferenceRouteEditorOverlay({
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
           />
-          <polygon
-            className="reference-route-editor-segment-arrow reference-route-editor-connect-preview-arrow"
-            points={segmentDirectionArrowPoints(
-              connectPreview.fromX,
-              connectPreview.fromY,
-              connectPreview.toX,
-              connectPreview.toY,
-              arrowSize,
+          <g
+            transform={mapDrawAnchorScaleTransform(
+              (connectPreview.fromX + connectPreview.toX) / 2,
+              (connectPreview.fromY + connectPreview.toY) / 2,
+              visualScale,
             )}
-            fill={lineStyle.color}
-            pointerEvents="none"
-          />
+          >
+            <polygon
+              className="reference-route-editor-segment-arrow reference-route-editor-connect-preview-arrow"
+              points={segmentDirectionArrowPoints(
+                connectPreview.fromX,
+                connectPreview.fromY,
+                connectPreview.toX,
+                connectPreview.toY,
+                arrowSize,
+              )}
+              fill={lineStyle.color}
+              pointerEvents="none"
+            />
+          </g>
         </g>
       ) : null}
 
@@ -315,6 +335,7 @@ export function ReferenceRouteEditorOverlay({
           <g
             key={node.id}
             className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${connectPending ? ' reference-route-editor-node--connect-pending' : ''}${isStartStop ? ' reference-route-editor-node--first' : ''}${isEndStop ? ' reference-route-editor-node--last' : ''}${isNextStop ? ' reference-route-editor-node--next-stop' : ''}`.trim()}
+            transform={mapDrawAnchorScaleTransform(node.x, node.y, visualScale)}
             onPointerDown={
               onNodePointerDown
                 ? (event) => {
@@ -370,6 +391,7 @@ export function ReferenceRouteEditorOverlay({
           cy={previewNode.y}
           r={previewNode.type === 'stop' ? stopRadius : pointRadius}
           className={`reference-route-editor-preview reference-route-editor-preview--${previewNode.type}`}
+          transform={mapDrawAnchorScaleTransform(previewNode.x, previewNode.y, visualScale)}
         />
       ) : null}
     </svg>
