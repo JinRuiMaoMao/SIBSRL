@@ -1,50 +1,19 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
-import { sampleRouteEditorTrajectoryPathPoints } from '../routeEditor/routeEditorPath'
-import { resolveRouteEditorStopSeqEndpoints } from './routeMapStopMatching'
+import {
+  sampleRouteEditorTrajectoryPathPoints,
+  sampleRouteEditorTrajectoryThroughStops,
+} from '../routeEditor/routeEditorPath'
+import { resolveRouteEditorStopSeqOrderedStops } from './routeMapStopMatching'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
-
-function distance(a: WorldMapPoint, b: WorldMapPoint): number {
-  return Math.hypot(a[0] - b[0], a[1] - b[1])
-}
 
 function dedupePoints(points: readonly WorldMapPoint[]): WorldMapPoint[] {
   const out: WorldMapPoint[] = []
   for (const point of points) {
     const last = out[out.length - 1]
-    if (last && distance(last, point) < 0.00001) continue
+    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) continue
     out.push([point[0], point[1]])
   }
   return out
-}
-
-function closestPathIndex(path: readonly WorldMapPoint[], point: WorldMapPoint): number {
-  let best = 0
-  let bestDist = Infinity
-  for (let index = 0; index < path.length; index += 1) {
-    const dist = distance(path[index]!, point)
-    if (dist < bestDist) {
-      bestDist = dist
-      best = index
-    }
-  }
-  return best
-}
-
-function slicePathBetweenPoints(
-  path: readonly WorldMapPoint[],
-  startPoint: WorldMapPoint,
-  endPoint: WorldMapPoint,
-): WorldMapPoint[] {
-  if (path.length < 2) return [...path]
-
-  const startIdx = closestPathIndex(path, startPoint)
-  const endIdx = closestPathIndex(path, endPoint)
-  if (startIdx === endIdx) return [path[startIdx]!]
-
-  const low = Math.min(startIdx, endIdx)
-  const high = Math.max(startIdx, endIdx)
-  const segment = path.slice(low, high + 1)
-  return startIdx <= endIdx ? segment : [...segment].reverse()
 }
 
 export function resolveRouteMapDisplayPathPoints(
@@ -52,34 +21,25 @@ export function resolveRouteMapDisplayPathPoints(
   imageSize: { width: number; height: number },
 ): WorldMapPoint[] {
   if (display.referenceEditor?.segments.length) {
-    const sampled = sampleRouteEditorTrajectoryPathPoints(
-      {
-        id: 1,
-        name: display.routeNumber,
-        nodes: [...display.referenceEditor.nodes],
-        segments: [...display.referenceEditor.segments],
-      },
-      imageSize.width,
-      imageSize.height,
-    )
-    if (sampled.length >= 2) {
-      const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(display.referenceEditor.nodes)
-      if (startNodeId != null && endNodeId != null && startNodeId !== endNodeId) {
-        const nodeById = new Map(display.referenceEditor.nodes.map((node) => [node.id, node]))
-        const startNode = nodeById.get(startNodeId)
-        const endNode = nodeById.get(endNodeId)
-        if (startNode && endNode) {
-          const startPoint: WorldMapPoint = [
-            startNode.x / imageSize.width,
-            startNode.y / imageSize.height,
-          ]
-          const endPoint: WorldMapPoint = [endNode.x / imageSize.width, endNode.y / imageSize.height]
-          const sliced = slicePathBetweenPoints(sampled, startPoint, endPoint)
-          if (sliced.length >= 2) return sliced
-        }
-      }
-      return sampled
+    const line = {
+      id: 1,
+      name: display.routeNumber,
+      nodes: [...display.referenceEditor.nodes],
+      segments: [...display.referenceEditor.segments],
     }
+    const orderedStops = resolveRouteEditorStopSeqOrderedStops(line.nodes)
+    if (orderedStops.length >= 2) {
+      const throughStops = sampleRouteEditorTrajectoryThroughStops(
+        line,
+        imageSize.width,
+        imageSize.height,
+        orderedStops,
+      )
+      if (throughStops.length >= 2) return throughStops
+    }
+
+    const sampled = sampleRouteEditorTrajectoryPathPoints(line, imageSize.width, imageSize.height)
+    if (sampled.length >= 2) return sampled
   }
   return display.points.length >= 2 ? dedupePoints(display.points) : []
 }

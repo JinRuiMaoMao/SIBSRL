@@ -3,27 +3,26 @@ import type { BilingualText, RouteStop } from '../types/route'
 import type { RouteEditorNode } from '../routeEditor/types'
 import type { RouteDetailMapStop } from './routeDetailMapStops'
 
+export function resolveRouteEditorStopSeqOrderedStops(
+  nodes: readonly RouteEditorNode[],
+): RouteEditorNode[] {
+  const sequenced = nodes.filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
+  if (sequenced.length >= 1) {
+    return [...sequenced].sort((a, b) => a.stopSeq! - b.stopSeq! || a.id - b.id)
+  }
+  return nodes.filter((node) => node.type === 'stop')
+}
+
 export function resolveRouteEditorStopSeqEndpoints(nodes: readonly RouteEditorNode[]): {
   startNodeId: number | null
   endNodeId: number | null
 } {
-  const sequenced = nodes.filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
-  if (sequenced.length >= 1) {
-    let minNode = sequenced[0]!
-    let maxNode = sequenced[0]!
-    for (const node of sequenced) {
-      if (node.stopSeq! < minNode.stopSeq!) minNode = node
-      if (node.stopSeq! > maxNode.stopSeq!) maxNode = node
-    }
-    return { startNodeId: minNode.id, endNodeId: maxNode.id }
+  const ordered = resolveRouteEditorStopSeqOrderedStops(nodes)
+  if (ordered.length >= 2) {
+    return { startNodeId: ordered[0]!.id, endNodeId: ordered[ordered.length - 1]!.id }
   }
-
-  const stops = nodes.filter((node) => node.type === 'stop')
-  if (stops.length >= 2) {
-    return { startNodeId: stops[0]!.id, endNodeId: stops[stops.length - 1]!.id }
-  }
-  if (stops.length === 1) {
-    return { startNodeId: stops[0]!.id, endNodeId: stops[0]!.id }
+  if (ordered.length === 1) {
+    return { startNodeId: ordered[0]!.id, endNodeId: ordered[0]!.id }
   }
   return { startNodeId: null, endNodeId: null }
 }
