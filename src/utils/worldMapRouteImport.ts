@@ -59,7 +59,7 @@ function readStopEntry(value: unknown, index: number): WorldMapDrawStop | null {
   const name = readStopName(value.name)
   if (!name) return null
   const seq =
-    typeof value.seq === 'number' && Number.isFinite(value.seq) && value.seq > 0
+    typeof value.seq === 'number' && Number.isFinite(value.seq) && value.seq >= 0
       ? Math.round(value.seq)
       : undefined
   const labelPosition = parseRouteEditorLabelPosition(value.labelPosition)
@@ -181,7 +181,7 @@ function readEditorGraphNode(value: unknown): RouteEditorGraphExportNode | null 
       ? value.cornerRadius
       : undefined
   const stopSeq =
-    typeof value.stopSeq === 'number' && Number.isFinite(value.stopSeq) && value.stopSeq > 0
+    typeof value.stopSeq === 'number' && Number.isFinite(value.stopSeq) && value.stopSeq >= 0
       ? Math.round(value.stopSeq)
       : undefined
   const labelPosition = parseRouteEditorLabelPosition(value.labelPosition)

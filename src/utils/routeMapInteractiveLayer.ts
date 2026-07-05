@@ -3,11 +3,7 @@ import type { RouteStop } from '../types/route'
 import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
 import { ROUTE_MAP_VIEWER_EDITOR_CONFIG } from '../routeEditor/types'
 import type { RouteDetailMapStop } from './routeDetailMapStops'
-import {
-  applyCatalogStopSeqToEditorNodes,
-  buildReferenceStopDetailsFromCatalog,
-  routeMapStopNamesMatch,
-} from './routeMapStopMatching'
+import { buildReferenceStopDetailsFromCatalog } from './routeMapStopMatching'
 import { resolveRouteMapDisplayPathPoints } from './routeMapTrajectory'
 import { userBendIndicesToFlags, type RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
@@ -15,23 +11,10 @@ function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): Ro
   const routeStop: RouteStop = { name: stop.name }
   return {
     id: stop.id,
-    seq: stop.seq ?? index + 1,
+    seq: stop.seq != null ? stop.seq : index + 1,
     stop: routeStop,
     point: stop.point,
   }
-}
-
-function applyCatalogSeqToDrawStops(
-  stops: readonly WorldMapDrawStop[],
-  catalogStops: readonly RouteDetailMapStop[],
-): WorldMapDrawStop[] {
-  if (!catalogStops.length) return [...stops]
-  return stops.map((stop, index) => {
-    const matched = catalogStops.find((entry) => routeMapStopNamesMatch(entry.stop.name, stop.name))
-    return matched
-      ? { ...stop, seq: stop.seq ?? matched.seq }
-      : { ...stop, seq: stop.seq ?? index + 1 }
-  })
 }
 
 export interface RouteMapInteractiveLayerState {
@@ -79,7 +62,7 @@ export function buildRouteMapInteractiveLayerState(
   const interactiveDrawStops = display.referenceEditor
     ? []
     : display.stops.length > 0
-      ? applyCatalogSeqToDrawStops(display.stops, catalogStops)
+      ? [...display.stops]
       : catalogStops.map((stop) => ({
           id: stop.id,
           point: stop.point,
@@ -90,9 +73,7 @@ export function buildRouteMapInteractiveLayerState(
   const interactiveStopDetails = display.referenceEditor
     ? referenceStopDetails
     : display.stops.length > 0
-      ? applyCatalogSeqToDrawStops(display.stops, catalogStops).map((stop, index) =>
-          drawStopToRouteDetailMapStop(stop, index),
-        )
+      ? display.stops.map((stop, index) => drawStopToRouteDetailMapStop(stop, index))
       : [...catalogStops]
 
   const stopClickEnabled = interactiveDrawStops.length > 0 || referenceStopDetails.length > 0
@@ -104,10 +85,7 @@ export function buildRouteMapInteractiveLayerState(
 
   const trajectoryPath = imageSize ? resolveRouteMapDisplayPathPoints(display, imageSize) : []
 
-  const editorNodes =
-    display.referenceEditor && catalogStops.length
-      ? applyCatalogStopSeqToEditorNodes(display.referenceEditor.nodes, catalogStops)
-      : display.referenceEditor?.nodes ?? []
+  const editorNodes = display.referenceEditor?.nodes ?? []
 
   return {
     interactiveDrawStops,

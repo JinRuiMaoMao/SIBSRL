@@ -6,7 +6,7 @@ import type { RouteDetailMapStop } from './routeDetailMapStops'
 export function resolveRouteEditorStopSeqOrderedStops(
   nodes: readonly RouteEditorNode[],
 ): RouteEditorNode[] {
-  const sequenced = nodes.filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
+  const sequenced = nodes.filter((node) => node.type === 'stop' && node.stopSeq != null)
   if (sequenced.length >= 1) {
     return [...sequenced].sort((a, b) => a.stopSeq! - b.stopSeq! || a.id - b.id)
   }
@@ -92,10 +92,9 @@ export function buildReferenceStopDetailsFromCatalog(
 ): RouteDetailMapStop[] {
   const stopNodes = nodes.filter((node) => node.type === 'stop')
   return stopNodes.map((node, index) => {
-    const matched = matchCatalogStopForEditorNode(node, catalogStops)
     return {
       id: `ref-stop-${node.id}`,
-      seq: node.stopSeq ?? matched?.seq ?? index + 1,
+      seq: node.stopSeq != null ? node.stopSeq : index + 1,
       stop: resolveReferenceStopFromEditorNode(node, catalogStops, routeStops),
       point: [node.x / imageSize.width, node.y / imageSize.height],
     }

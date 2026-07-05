@@ -836,7 +836,7 @@ function findRouteEditorChainStartNodeId(
   const inCount = (nodeId: number) => incoming.get(nodeId) ?? 0
 
   const sequenced = nodes
-    .filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
+    .filter((node) => node.type === 'stop' && node.stopSeq != null)
     .sort((a, b) => a.stopSeq! - b.stopSeq! || a.id - b.id)
   if (sequenced.length >= 1) return sequenced[0]!.id
 

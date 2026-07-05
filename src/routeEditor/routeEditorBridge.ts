@@ -41,7 +41,7 @@ export function routeEditorNodeToStop(
     id: `stop-${node.id}`,
     point: pixelToNormalized(node.x, node.y, imageWidth, imageHeight),
     name: { zh: node.chi_name || `站点${node.id}`, en: node.eng_name || node.chi_name || `Stop ${node.id}` },
-    ...(node.stopSeq != null && node.stopSeq > 0 ? { seq: node.stopSeq } : {}),
+    ...(node.stopSeq != null ? { seq: node.stopSeq } : {}),
     ...(node.labelPosition !== 'top' ? { labelPosition: node.labelPosition } : {}),
   }
 }
@@ -84,7 +84,7 @@ export function routeEditorLineToEditorGraphExport(
         ? {
             chi_name: node.chi_name,
             eng_name: node.eng_name,
-            ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
+            ...(node.stopSeq != null ? { stopSeq: node.stopSeq } : {}),
             ...(node.labelPosition !== 'top' ? { labelPosition: node.labelPosition } : {}),
           }
         : node.cornerRadius > 0
@@ -153,7 +153,7 @@ export function editorGraphToRouteEditorLine(
         node.eng_name ?? '',
         node.cornerRadius ?? 0,
       ),
-      ...(node.stopSeq != null && node.stopSeq > 0 ? { stopSeq: node.stopSeq } : {}),
+      ...(node.stopSeq != null ? { stopSeq: node.stopSeq } : {}),
       ...(node.type === 'stop' && node.labelPosition ? { labelPosition: node.labelPosition } : {}),
     })
   }
@@ -227,7 +227,7 @@ export function sibsImportToRouteEditorLine(
       x: pixel.x,
       y: pixel.y,
       ...defaultRouteEditorNodeFields('stop', stop.name.zh, stop.name.en),
-      ...(stop.seq != null && stop.seq > 0 ? { stopSeq: stop.seq } : {}),
+      ...(stop.seq != null ? { stopSeq: stop.seq } : {}),
       ...(stop.labelPosition ? { labelPosition: stop.labelPosition } : {}),
     })
   }
@@ -344,7 +344,7 @@ export function sibsImportToRouteEditorLine(
         x: pixel.x,
         y: pixel.y,
         ...defaultRouteEditorNodeFields('stop', anchor.stop.name.zh, anchor.stop.name.en),
-        ...(anchor.stop.seq != null && anchor.stop.seq > 0 ? { stopSeq: anchor.stop.seq } : {}),
+        ...(anchor.stop.seq != null ? { stopSeq: anchor.stop.seq } : {}),
         ...(anchor.stop.labelPosition ? { labelPosition: anchor.stop.labelPosition } : {}),
       })
       continue

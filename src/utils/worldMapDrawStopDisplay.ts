@@ -9,7 +9,7 @@ export function formatDrawStopLabel(
 ): string {
   void _index
   const name = getPrimaryText(stop.name, locale)
-  if (stop.seq != null && stop.seq > 0) {
+  if (stop.seq != null) {
     return `${stop.seq}. ${name}`
   }
   return name

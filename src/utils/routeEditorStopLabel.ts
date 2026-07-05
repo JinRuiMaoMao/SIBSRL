@@ -220,7 +220,7 @@ export function parseRouteEditorLabelPosition(value: unknown): RouteEditorLabelP
 
 export function formatRouteEditorStopLabel(node: Pick<RouteEditorNode, 'chi_name' | 'eng_name' | 'stopSeq'>): string {
   const name = (node.chi_name || node.eng_name || '').trim()
-  if (node.stopSeq != null && node.stopSeq > 0 && name) {
+  if (node.stopSeq != null && name) {
     return `${node.stopSeq}. ${name}`
   }
   return name
@@ -230,7 +230,7 @@ export function formatWorldMapDrawStopEditorLabel(
   stop: Pick<WorldMapDrawStop, 'name' | 'seq'>,
 ): string {
   const name = (stop.name.zh || stop.name.en || '').trim()
-  if (stop.seq != null && stop.seq > 0 && name) {
+  if (stop.seq != null && name) {
     return `${stop.seq}. ${name}`
   }
   return name
@@ -248,5 +248,5 @@ function canvasTextAlign(textAnchor: RouteEditorStopLabelLayout['textAnchor']): 
 }
 
 export function routeEditorStopLabelShowsSeq(node: Pick<RouteEditorNode, 'stopSeq'>): boolean {
-  return node.stopSeq != null && node.stopSeq > 0
+  return node.stopSeq != null
 }

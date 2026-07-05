@@ -106,7 +106,7 @@ function drawStopToRouteDetailMapStop(stop: WorldMapDrawStop, index: number): Ro
   const routeStop: RouteStop = { name: stop.name }
   return {
     id: stop.id,
-    seq: stop.seq ?? index + 1,
+    seq: stop.seq != null ? stop.seq : index + 1,
     stop: routeStop,
     point: stop.point,
   }
