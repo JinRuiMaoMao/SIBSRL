@@ -28,8 +28,7 @@ export function getWorldMapRoutePoints(
   if (!canonicalId) return null
   const entry = WORLD_MAP_ROUTE_PATHS[canonicalId]
   if (!entry) return null
-  const direction =
-    entry.directions.find((item) => item.directionIndex === directionIndex) ?? entry.directions[0]
+  const direction = entry.directions.find((item) => item.directionIndex === directionIndex)
   return direction?.points ?? null
 }
 

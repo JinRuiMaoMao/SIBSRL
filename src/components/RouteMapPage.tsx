@@ -17,7 +17,7 @@ import {
 import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { getRouteMapImageUrl } from '../utils/routeMapImages'
 import { parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
-import { mergeRouteMapImportStorage } from '../utils/routeMapImportBundle'
+import { mergeRouteMapImportStorage, listRouteMapImportDirectionIndexes, normalizeIncomingRouteMapImport } from '../utils/routeMapImportBundle'
 import { findRouteForMapPage, routeMapIdsMatch } from '../utils/routeMapLookup'
 import { resolveRouteMapImportRaw } from '../utils/routeMapOverlaySource'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
@@ -176,6 +176,12 @@ export function RouteMapPage() {
           if (worldOverlay && worldOverlay.points.length >= 2) {
             setImportInvalid(false)
             setDisplay(buildSimpleRouteMapViewerDisplay(routeId, worldOverlay.points))
+            return
+          }
+          const importedDirections = listRouteMapImportDirectionIndexes(importPayload)
+          if (importedDirections.length > 0 && !importedDirections.includes(directionIndex)) {
+            setImportInvalid(false)
+            beginStaticFallback()
             return
           }
           clearCachedRouteMapImport(routeId)
@@ -347,7 +353,8 @@ export function RouteMapPage() {
       }
 
       const existing = await resolveRouteMapImportRaw(routeId)
-      const merged = mergeRouteMapImportStorage(existing, raw)
+      const normalized = normalizeIncomingRouteMapImport(raw, directionIndex)
+      const merged = mergeRouteMapImportStorage(existing, normalized)
 
       await saveRouteMapImport(token, routeId, merged)
       writeCachedRouteMapImport(routeId, merged)
@@ -357,7 +364,7 @@ export function RouteMapPage() {
       setDisplay(null)
       setImportPayload(merged)
       await alert({
-        message: t('routeMapImportSuccessDirection', { direction: parsed.directionIndex }),
+        message: t('routeMapImportSuccessDirection', { direction: directionIndex }),
       })
     } catch (error) {
       const message =

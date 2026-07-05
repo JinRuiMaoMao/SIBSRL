@@ -324,9 +324,9 @@ export function parseWorldMapDrawImportJsonForDirection(
   const routeId = raw.routeId.trim()
   if (!routeId) return null
 
-  const directionEntry =
-    raw.directions.find((entry) => readDirection(entry)?.directionIndex === directionIndex) ??
-    raw.directions[directionIndex]
+  const directionEntry = raw.directions.find(
+    (entry) => readDirection(entry)?.directionIndex === directionIndex,
+  )
   const direction = readDirection(directionEntry)
   if (!direction) return null
 

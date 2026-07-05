@@ -22,7 +22,10 @@ export function mergeRouteMapImportStorage(existing: unknown | null, incoming: u
     throw new Error('invalid_route_map_import')
   }
 
-  const routeId = incoming.routeId.trim()
+  const routeId =
+    existing && isRouteMapImportStorage(existing)
+      ? existing.routeId.trim()
+      : incoming.routeId.trim()
   const byIndex = new Map<number, unknown>()
 
   if (existing && isRouteMapImportStorage(existing)) {
@@ -52,6 +55,23 @@ export function mergeRouteMapImportStorage(existing: unknown | null, incoming: u
     directions: [...byIndex.entries()]
       .sort(([left], [right]) => left - right)
       .map(([, entry]) => entry),
+  }
+}
+
+/** Single-direction import on route-map page: store under the viewed direction only. */
+export function normalizeIncomingRouteMapImport(
+  incoming: unknown,
+  pageDirectionIndex: number,
+): unknown {
+  if (!isRouteMapImportStorage(incoming)) return incoming
+  if (incoming.directions.length !== 1) return incoming
+
+  const entry = incoming.directions[0]
+  if (!isRecord(entry)) return incoming
+
+  return {
+    ...incoming,
+    directions: [{ ...entry, directionIndex: pageDirectionIndex }],
   }
 }
 
