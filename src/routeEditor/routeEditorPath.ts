@@ -217,6 +217,69 @@ export function findRouteEditorSegmentPath(
   return null
 }
 
+function forwardChainDistance(
+  chainOrder: readonly number[],
+  fromIndex: number,
+  toIndex: number,
+): number {
+  if (fromIndex < 0 || toIndex < 0) return Number.POSITIVE_INFINITY
+  if (toIndex >= fromIndex) return toIndex - fromIndex
+  return chainOrder.length - fromIndex + toIndex
+}
+
+/** Greedy forward walk along chainOrder using only unused segments (never reverses). */
+function walkForwardUnusedSegmentsToNode(
+  segments: readonly RouteEditorSegment[],
+  chainOrder: readonly number[],
+  fromChainIndex: number,
+  toNodeId: number,
+  usedSegmentIds: ReadonlySet<number>,
+): RouteEditorSegment[] | null {
+  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  let chainCursor = fromChainIndex
+  let currentNodeId = chainOrder[fromChainIndex]
+  if (currentNodeId == null) return null
+  if (currentNodeId === toNodeId) return []
+
+  let previousNodeId: number | null = null
+  const segmentPath: RouteEditorSegment[] = []
+  const maxSteps = segments.length + chainOrder.length
+
+  for (let step = 0; step < maxSteps; step += 1) {
+    if (currentNodeId === toNodeId) return segmentPath
+
+    const targetIndex = indexInChainAfter(chainOrder, toNodeId, chainCursor)
+    const candidates = (adjacency.get(currentNodeId) ?? [])
+      .filter((link) => !usedSegmentIds.has(link.segment.id) && link.nodeId !== previousNodeId)
+      .sort((a, b) => a.segment.id - b.segment.id)
+
+    if (!candidates.length) return null
+
+    let bestLink = candidates[0]!
+    let bestScore = Number.POSITIVE_INFINITY
+    for (const link of candidates) {
+      const linkIndex = indexInChainAfter(chainOrder, link.nodeId, chainCursor)
+      if (linkIndex < 0) continue
+      const progress = forwardChainDistance(chainOrder, chainCursor, linkIndex)
+      const remaining =
+        targetIndex >= 0 ? forwardChainDistance(chainOrder, linkIndex, targetIndex) : progress
+      const score = progress * 1000 + remaining
+      if (score < bestScore) {
+        bestScore = score
+        bestLink = link
+      }
+    }
+
+    segmentPath.push(bestLink.segment)
+    previousNodeId = currentNodeId
+    currentNodeId = bestLink.nodeId
+    const nextCursor = indexInChainAfter(chainOrder, currentNodeId, chainCursor)
+    if (nextCursor >= 0) chainCursor = nextCursor
+  }
+
+  return currentNodeId === toNodeId ? segmentPath : null
+}
+
 function resolveSegmentPathBetween(
   segments: readonly RouteEditorSegment[],
   chainOrder: readonly number[],
@@ -228,33 +291,29 @@ function resolveSegmentPathBetween(
   if (fromNodeId === toNodeId) return []
 
   const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const fromIndex =
+    fromChainIndex >= 0 ? fromChainIndex : chainOrder.indexOf(fromNodeId)
+  if (fromIndex < 0) return null
 
-  const forwardPath = findRouteEditorForwardNodePath(
-    segments,
-    chainOrder,
-    fromNodeId,
-    toNodeId,
-    fromChainIndex,
-  )
-  if (
-    forwardPath &&
-    forwardPath.length >= 2 &&
-    forwardPath[forwardPath.length - 1] === toNodeId
-  ) {
-    const forwardSegments = nodePathToSegmentPath(forwardPath, adjacency, usedSegmentIds)
-    if (forwardSegments) return forwardSegments
-  }
-
-  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromChainIndex)
-  if (toBackward >= 0 && toBackward !== fromChainIndex) {
-    const backwardNodes = sliceChainOrderBackward(chainOrder, fromChainIndex, toBackward)
-    if (backwardNodes[backwardNodes.length - 1] === toNodeId) {
-      const backwardSegments = nodePathToSegmentPath(backwardNodes, adjacency, usedSegmentIds)
-      if (backwardSegments) return backwardSegments
+  const toIndex = indexInChainAfter(chainOrder, toNodeId, fromIndex)
+  if (toIndex >= 0) {
+    const forwardPath = sliceChainOrderForward(chainOrder, fromIndex, toIndex)
+    if (
+      forwardPath.length >= 2 &&
+      forwardPath[forwardPath.length - 1] === toNodeId
+    ) {
+      const forwardSegments = nodePathToSegmentPath(forwardPath, adjacency, usedSegmentIds)
+      if (forwardSegments) return forwardSegments
     }
   }
 
-  return findRouteEditorSegmentPath(segments, fromNodeId, toNodeId, usedSegmentIds)
+  return walkForwardUnusedSegmentsToNode(
+    segments,
+    chainOrder,
+    fromIndex,
+    toNodeId,
+    usedSegmentIds,
+  )
 }
 
 /** Walk every drawn segment once, starting from startNodeId (defines forward direction). */
@@ -295,31 +354,6 @@ function indexInChainAfter(
     if (chainOrder[index] === nodeId) return index
   }
   return chainOrder.indexOf(nodeId)
-}
-
-function indexInChainBefore(
-  chainOrder: readonly number[],
-  nodeId: number,
-  beforeIndex: number,
-): number {
-  for (let index = beforeIndex - 1; index >= 0; index -= 1) {
-    if (chainOrder[index] === nodeId) return index
-  }
-  for (let index = chainOrder.length - 1; index > beforeIndex; index -= 1) {
-    if (chainOrder[index] === nodeId) return index
-  }
-  return -1
-}
-
-/** Backtrack along chainOrder from fromIndex to toIndex (no forward loop wrap). */
-function sliceChainOrderBackward(
-  chainOrder: readonly number[],
-  fromIndex: number,
-  toIndex: number,
-): number[] {
-  if (fromIndex === toIndex) return [chainOrder[fromIndex]!]
-  if (toIndex < fromIndex) return [...chainOrder.slice(toIndex, fromIndex + 1)]
-  return [...chainOrder.slice(0, fromIndex + 1), ...chainOrder.slice(toIndex)]
 }
 
 /** Forward slice along chainOrder from fromIndex to toIndex (wraps on loops, never reverses). */
