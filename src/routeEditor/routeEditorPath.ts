@@ -251,6 +251,40 @@ function isForwardChainStep(
   )
 }
 
+/** Shortest hop count on directed segments (for loop routing when nodes are off chainOrder). */
+function directedHopDistance(
+  segments: readonly RouteEditorSegment[],
+  fromNodeId: number,
+  toNodeId: number,
+  cache = new Map<string, number>(),
+): number {
+  if (fromNodeId === toNodeId) return 0
+  const key = `${fromNodeId}:${toNodeId}`
+  const cached = cache.get(key)
+  if (cached != null) return cached
+
+  const adjacency = buildRouteEditorOutgoingAdjacency(segments)
+  const queue: { nodeId: number; depth: number }[] = [{ nodeId: fromNodeId, depth: 0 }]
+  const visited = new Set<number>([fromNodeId])
+
+  while (queue.length > 0) {
+    const { nodeId, depth } = queue.shift()!
+    for (const link of adjacency.get(nodeId) ?? []) {
+      if (link.nodeId === toNodeId) {
+        const distance = depth + 1
+        cache.set(key, distance)
+        return distance
+      }
+      if (visited.has(link.nodeId)) continue
+      visited.add(link.nodeId)
+      queue.push({ nodeId: link.nodeId, depth: depth + 1 })
+    }
+  }
+
+  cache.set(key, Number.POSITIVE_INFINITY)
+  return Number.POSITIVE_INFINITY
+}
+
 /** True when a chain slice revisits nodes against the drawn forward direction (cuts through roundabouts). */
 function chainNodePathBacktracks(
   chainOrder: readonly number[],
@@ -276,8 +310,8 @@ function walkForwardNodePathOnGraph(
   fromChainIndex: number,
 ): number[] | null {
   const adjacency = buildRouteEditorOutgoingAdjacency(segments)
+  const hopCache = new Map<string, number>()
   let chainCursor = resolveChainIndexForNode(chainOrder, fromNodeId, fromChainIndex)
-  if (chainCursor < 0) return null
 
   let current = fromNodeId
   if (current === toNodeId) return [current]
@@ -289,7 +323,6 @@ function walkForwardNodePathOnGraph(
   for (let step = 0; step < maxSteps; step += 1) {
     if (current === toNodeId) return nodePath
 
-    const targetIndex = resolveChainIndexForNode(chainOrder, toNodeId, chainCursor)
     const candidates = (adjacency.get(current) ?? [])
       .filter((link) => link.nodeId !== previous)
       .sort((a, b) => a.nodeId - b.nodeId)
@@ -298,25 +331,29 @@ function walkForwardNodePathOnGraph(
     let bestScore = Number.POSITIVE_INFINITY
     for (const link of candidates) {
       const linkIndex = resolveChainIndexForNode(chainOrder, link.nodeId, chainCursor)
-      if (linkIndex < 0) continue
-      if (!isForwardChainStep(chainOrder, chainCursor, linkIndex)) continue
-      const remaining =
-        targetIndex >= 0 ? forwardChainDistance(chainOrder, linkIndex, targetIndex) : 0
-      const score = forwardChainDistance(chainOrder, chainCursor, linkIndex) * 1000 + remaining
+      let score = directedHopDistance(segments, link.nodeId, toNodeId, hopCache)
+
+      if (linkIndex >= 0 && chainCursor >= 0) {
+        if (!isForwardChainStep(chainOrder, chainCursor, linkIndex)) {
+          score += 10_000
+        } else {
+          score += forwardChainDistance(chainOrder, chainCursor, linkIndex) * 10
+        }
+      }
+
       if (score < bestScore) {
         bestScore = score
         bestLink = link
       }
     }
 
-    if (!bestLink) return null
+    if (!bestLink || !Number.isFinite(bestScore)) return null
 
     nodePath.push(bestLink.nodeId)
     previous = current
     current = bestLink.nodeId
     const nextCursor = resolveChainIndexForNode(chainOrder, current, chainCursor)
-    if (nextCursor < 0) return null
-    chainCursor = nextCursor
+    if (nextCursor >= 0) chainCursor = nextCursor
   }
 
   return null
@@ -367,7 +404,18 @@ function resolveChainNodePathBetween(
     return loopPath
   }
 
-  return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+  const fallbackPath = findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+  if (
+    fallbackPath &&
+    fallbackPath.length >= 2 &&
+    fallbackPath[fallbackPath.length - 1] === toNodeId &&
+    isDirectedRouteEditorNodePath(segments, fallbackPath) &&
+    !chainNodePathBacktracks(chainOrder, fallbackPath, fromIndex)
+  ) {
+    return fallbackPath
+  }
+
+  return loopPath ?? fallbackPath
 }
 
 function sampleNodePathPoints(
@@ -427,10 +475,10 @@ export function findRouteEditorForwardNodePath(
   if (fromIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
 
   const toIndex = indexInChainAfter(chainOrder, toNodeId, fromIndex)
-  if (toIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+  if (toIndex < 0) return null
 
   const path = sliceChainOrderForward(chainOrder, fromIndex, toIndex)
-  if (!isDirectedRouteEditorNodePath(segments, path)) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+  if (!isDirectedRouteEditorNodePath(segments, path)) return null
   return path
 }
 
