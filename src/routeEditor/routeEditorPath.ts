@@ -143,6 +143,78 @@ function buildRouteEditorSegmentAdjacency(
   return adjacency
 }
 
+/** Walk every drawn segment once, starting from startNodeId (defines forward direction). */
+export function buildRouteEditorChainNodeOrder(
+  segments: readonly RouteEditorSegment[],
+  startNodeId: number,
+): number[] {
+  if (segments.length === 0) return [startNodeId]
+
+  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const ordered: number[] = [startNodeId]
+  const used = new Set<number>()
+  let current = startNodeId
+  let previous: number | null = null
+
+  while (used.size < segments.length) {
+    const links = (adjacency.get(current) ?? []).filter((link) => !used.has(link.segment.id))
+    const next = links.find((link) => link.nodeId !== previous) ?? links[0]
+    if (!next) break
+    used.add(next.segment.id)
+    previous = current
+    current = next.nodeId
+    ordered.push(current)
+  }
+
+  return ordered
+}
+
+function indexInChainAfter(
+  chainOrder: readonly number[],
+  nodeId: number,
+  afterIndex: number,
+): number {
+  for (let index = afterIndex; index < chainOrder.length; index += 1) {
+    if (chainOrder[index] === nodeId) return index
+  }
+  for (let index = 1; index < afterIndex; index += 1) {
+    if (chainOrder[index] === nodeId) return index
+  }
+  return chainOrder.indexOf(nodeId)
+}
+
+/** Forward slice along chainOrder from fromIndex to toIndex (wraps on loops, never reverses). */
+function sliceChainOrderForward(
+  chainOrder: readonly number[],
+  fromIndex: number,
+  toIndex: number,
+): number[] {
+  if (fromIndex === toIndex) return [chainOrder[fromIndex]!]
+  if (toIndex > fromIndex) return [...chainOrder.slice(fromIndex, toIndex + 1)]
+  return [...chainOrder.slice(fromIndex), ...chainOrder.slice(1, toIndex + 1)]
+}
+
+/** Follow the drawn polyline forward; avoids U-turn shortcuts on loops. */
+export function findRouteEditorForwardNodePath(
+  segments: readonly RouteEditorSegment[],
+  chainOrder: readonly number[],
+  fromNodeId: number,
+  toNodeId: number,
+  fromChainIndex?: number,
+): number[] | null {
+  if (fromNodeId === toNodeId) return [fromNodeId]
+
+  const fromIndex =
+    fromChainIndex ??
+    (chainOrder.indexOf(fromNodeId) >= 0 ? chainOrder.indexOf(fromNodeId) : -1)
+  if (fromIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+
+  const toIndex = indexInChainAfter(chainOrder, toNodeId, fromIndex)
+  if (toIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+
+  return sliceChainOrderForward(chainOrder, fromIndex, toIndex)
+}
+
 /** Shortest node path along drawn segments (BFS). */
 export function findRouteEditorNodePath(
   segments: readonly RouteEditorSegment[],
@@ -181,7 +253,7 @@ export function findRouteEditorNodePath(
   return null
 }
 
-/** Sample the drawn polyline between two connected nodes. */
+/** Sample the drawn polyline between two connected nodes (forward along chainStartNodeId). */
 export function sampleRouteEditorPathBetweenNodes(
   line: RouteEditorLine,
   imageWidth: number,
@@ -189,6 +261,8 @@ export function sampleRouteEditorPathBetweenNodes(
   fromNodeId: number,
   toNodeId: number,
   samplesPerSegment = 16,
+  chainStartNodeId?: number,
+  fromChainIndex?: number,
 ): [number, number][] {
   if (imageWidth <= 0 || imageHeight <= 0) return []
 
@@ -209,7 +283,20 @@ export function sampleRouteEditorPathBetweenNodes(
     return points
   }
 
-  const nodePath = findRouteEditorNodePath(line.segments ?? [], fromNodeId, toNodeId)
+  const segments = line.segments ?? []
+  const chainOrder =
+    chainStartNodeId != null
+      ? buildRouteEditorChainNodeOrder(segments, chainStartNodeId)
+      : buildRouteEditorChainNodeOrder(
+          segments,
+          findRouteEditorChainStartNodeId(line.nodes, segments),
+        )
+
+  const nodePath =
+    chainOrder.length > 0
+      ? findRouteEditorForwardNodePath(segments, chainOrder, fromNodeId, toNodeId, fromChainIndex)
+      : findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+
   if (!nodePath || nodePath.length < 2) {
     sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
     return points
@@ -235,12 +322,19 @@ export function sampleRouteEditorTrajectoryThroughStops(
 ): [number, number][] {
   if (orderedStops.length < 2) return []
 
+  const segments = line.segments ?? []
+  const chainStartNodeId = orderedStops[0]!.id
+  const chainOrder = buildRouteEditorChainNodeOrder(segments, chainStartNodeId)
+
   const points: [number, number][] = []
   const pushPoint = (point: [number, number]) => {
     const last = points[points.length - 1]
     if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
     points.push(point)
   }
+
+  let chainCursor = chainOrder.indexOf(chainStartNodeId)
+  if (chainCursor < 0) chainCursor = 0
 
   for (let index = 0; index < orderedStops.length - 1; index += 1) {
     const fromStop = orderedStops[index]!
@@ -252,11 +346,41 @@ export function sampleRouteEditorTrajectoryThroughStops(
       fromStop.id,
       toStop.id,
       samplesPerSegment,
+      chainStartNodeId,
+      chainCursor,
     )
     for (const point of leg) pushPoint(point)
+
+    const nextCursor = indexInChainAfter(chainOrder, toStop.id, chainCursor)
+    if (nextCursor >= 0) chainCursor = nextCursor
   }
 
   return points
+}
+
+function findRouteEditorChainStartNodeId(
+  nodes: readonly RouteEditorNode[],
+  segments: readonly RouteEditorSegment[],
+): number {
+  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const endpointLinkCount = (nodeId: number) => (adjacency.get(nodeId)?.length ?? 0)
+
+  const sequenced = nodes
+    .filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
+    .sort((a, b) => a.stopSeq! - b.stopSeq! || a.id - b.id)
+  if (sequenced.length >= 1) return sequenced[0]!.id
+
+  for (const node of nodes) {
+    if (node.type !== 'stop') continue
+    if (endpointLinkCount(node.id) === 1) return node.id
+  }
+  for (const node of nodes) {
+    if (endpointLinkCount(node.id) === 1) return node.id
+  }
+  for (const node of nodes) {
+    if (node.type === 'stop') return node.id
+  }
+  return segments[0]?.fromNodeId ?? nodes[0]?.id ?? 0
 }
 
 /** Walk segment graph from a route endpoint so sampling follows the drawn polyline order. */
@@ -346,26 +470,7 @@ export function sampleRouteEditorTrajectoryPathPoints(
   if (segments.length === 0) return []
 
   const adjacency = buildRouteEditorSegmentAdjacency(segments)
-  const endpointLinkCount = (nodeId: number) => (adjacency.get(nodeId)?.length ?? 0)
-
-  const pickStartNodeId = (): number => {
-    const sequenced = line.nodes
-      .filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
-      .sort((a, b) => a.stopSeq! - b.stopSeq! || a.id - b.id)
-    if (sequenced.length >= 1) return sequenced[0]!.id
-
-    for (const node of line.nodes) {
-      if (node.type !== 'stop') continue
-      if (endpointLinkCount(node.id) === 1) return node.id
-    }
-    for (const node of line.nodes) {
-      if (endpointLinkCount(node.id) === 1) return node.id
-    }
-    for (const node of line.nodes) {
-      if (node.type === 'stop') return node.id
-    }
-    return segments[0]!.fromNodeId
-  }
+  const startNodeId = findRouteEditorChainStartNodeId(line.nodes, segments)
 
   const points: [number, number][] = []
   const pushPoint = (point: [number, number]) => {
@@ -375,7 +480,7 @@ export function sampleRouteEditorTrajectoryPathPoints(
   }
 
   const used = new Set<number>()
-  let current = pickStartNodeId()
+  let current = startNodeId
   let previous: number | null = null
 
   while (used.size < segments.length) {
