@@ -57,6 +57,17 @@ export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown
   }
 
   for (const id of resolveRouteMapLookupIds(routeId)) {
+    try {
+      const response = await fetch(`./world-map-routes/${encodeURIComponent(id)}.json`)
+      if (!response.ok) continue
+      const raw: unknown = await response.json()
+      if (isRouteMapImportPayload(raw)) return raw
+    } catch {
+      // offline / missing static bundle
+    }
+  }
+
+  for (const id of resolveRouteMapLookupIds(routeId)) {
     const cached = readCachedRouteMapImport(id)
     if (cached && isRouteMapImportPayload(cached)) {
       return cached
