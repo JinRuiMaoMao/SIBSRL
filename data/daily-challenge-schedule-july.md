@@ -18,7 +18,7 @@
 7/2: Marathon Road Closure (473A)
 7/3: Bridge Closure (25whYN)
 7/4: [Race] Marathon Road Closure
-7/5: [Race] Rush Hour
+7/5: [Race] Rush Hour (140W)
 7/6:
 7/7: Rare Appeaeance x Private Hire (PH1)
 7/8:
