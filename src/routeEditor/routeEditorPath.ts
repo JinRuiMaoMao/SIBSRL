@@ -183,6 +183,91 @@ function indexInChainAfter(
   return chainOrder.indexOf(nodeId)
 }
 
+function indexInChainBefore(
+  chainOrder: readonly number[],
+  nodeId: number,
+  beforeIndex: number,
+): number {
+  for (let index = beforeIndex - 1; index >= 0; index -= 1) {
+    if (chainOrder[index] === nodeId) return index
+  }
+  for (let index = chainOrder.length - 1; index > beforeIndex; index -= 1) {
+    if (chainOrder[index] === nodeId) return index
+  }
+  return -1
+}
+
+/** Backtrack along chainOrder from fromIndex to toIndex (no forward loop wrap). */
+function sliceChainOrderBackward(
+  chainOrder: readonly number[],
+  fromIndex: number,
+  toIndex: number,
+): number[] {
+  if (fromIndex === toIndex) return [chainOrder[fromIndex]!]
+  if (toIndex < fromIndex) return [...chainOrder.slice(toIndex, fromIndex + 1)]
+  return [...chainOrder.slice(0, fromIndex + 1), ...chainOrder.slice(toIndex)]
+}
+
+function resolveChainNodePathBetween(
+  segments: readonly RouteEditorSegment[],
+  chainOrder: readonly number[],
+  fromNodeId: number,
+  toNodeId: number,
+  fromChainIndex: number,
+): number[] | null {
+  if (fromNodeId === toNodeId) return [fromNodeId]
+
+  const forwardPath = findRouteEditorForwardNodePath(
+    segments,
+    chainOrder,
+    fromNodeId,
+    toNodeId,
+    fromChainIndex,
+  )
+  if (
+    forwardPath &&
+    forwardPath.length >= 2 &&
+    forwardPath[forwardPath.length - 1] === toNodeId
+  ) {
+    return forwardPath
+  }
+
+  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromChainIndex)
+  if (toBackward >= 0 && toBackward !== fromChainIndex) {
+    const backwardNodes = sliceChainOrderBackward(chainOrder, fromChainIndex, toBackward)
+    if (backwardNodes[backwardNodes.length - 1] === toNodeId) {
+      return backwardNodes
+    }
+  }
+
+  return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+}
+
+function sampleNodePathPoints(
+  line: RouteEditorLine,
+  nodePath: readonly number[],
+  imageWidth: number,
+  imageHeight: number,
+  samplesPerSegment: number,
+): NormalizedPoint[] {
+  const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
+  const points: NormalizedPoint[] = []
+  const pushPoint = (point: NormalizedPoint) => {
+    const last = points[points.length - 1]
+    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
+    points.push(point)
+  }
+
+  for (let index = 0; index < nodePath.length - 1; index += 1) {
+    const fromNode = nodeById.get(nodePath[index]!)
+    const toNode = nodeById.get(nodePath[index + 1]!)
+    if (!fromNode || !toNode) continue
+    sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+  }
+
+  return points
+}
+
 /** Forward slice along chainOrder from fromIndex to toIndex (wraps on loops, never reverses). */
 function sliceChainOrderForward(
   chainOrder: readonly number[],
@@ -395,6 +480,24 @@ export function pathArcLengthToStopMonotonic(
   return bestArcLength
 }
 
+/** Monotonic arc-length marker for each stop on a sampled trajectory path. */
+export function buildTrajectoryStopArcLengths(
+  path: readonly NormalizedPoint[],
+  orderedStops: readonly RouteEditorNode[],
+  imageWidth: number,
+  imageHeight: number,
+): number[] {
+  let minArc = 0
+  const arcs: number[] = []
+  for (const stop of orderedStops) {
+    const stopPoint = toNormalizedPoint(stop.x, stop.y, imageWidth, imageHeight)
+    const arc = pathArcLengthToStopMonotonic(path, stopPoint, imageWidth, imageHeight, minArc)
+    arcs.push(arc)
+    minArc = arc + 1
+  }
+  return arcs
+}
+
 /** Extract a path slice between two arc lengths (supports backtracking when end < start). */
 export function slicePathByArcLengthRange(
   path: readonly NormalizedPoint[],
@@ -464,23 +567,13 @@ export function sampleRouteEditorTrajectoryThroughStops(
 ): NormalizedPoint[] {
   if (orderedStops.length < 2) return []
 
-  const fullPath = sampleRouteEditorTrajectoryPathPoints(
-    line,
-    imageWidth,
-    imageHeight,
-    samplesPerSegment,
-  )
-  if (fullPath.length < 2) return fullPath
+  const segments = line.segments ?? []
+  const chainStartNodeId = orderedStops[0]!.id
+  const chainOrder = buildRouteEditorChainNodeOrder(segments, chainStartNodeId)
+  let chainCursor = chainOrder.indexOf(chainStartNodeId)
+  if (chainCursor < 0) chainCursor = 0
 
-  let minArc = 0
-  const stopArcs: number[] = []
-  for (const stop of orderedStops) {
-    const stopPoint = toNormalizedPoint(stop.x, stop.y, imageWidth, imageHeight)
-    const arc = pathArcLengthToStopMonotonic(fullPath, stopPoint, imageWidth, imageHeight, minArc)
-    stopArcs.push(arc)
-    minArc = arc
-  }
-
+  const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
   const points: NormalizedPoint[] = []
   const pushPoint = (point: NormalizedPoint) => {
     const last = points[points.length - 1]
@@ -489,17 +582,36 @@ export function sampleRouteEditorTrajectoryThroughStops(
   }
 
   for (let index = 0; index < orderedStops.length - 1; index += 1) {
-    const leg = slicePathByArcLengthRange(
-      fullPath,
-      stopArcs[index]!,
-      stopArcs[index + 1]!,
-      imageWidth,
-      imageHeight,
+    const fromStop = orderedStops[index]!
+    const toStop = orderedStops[index + 1]!
+    const nodePath = resolveChainNodePathBetween(
+      segments,
+      chainOrder,
+      fromStop.id,
+      toStop.id,
+      chainCursor,
     )
-    for (const point of leg) pushPoint(point)
+
+    if (nodePath && nodePath.length >= 2) {
+      const leg = sampleNodePathPoints(line, nodePath, imageWidth, imageHeight, samplesPerSegment)
+      for (const point of leg) pushPoint(point)
+    } else {
+      const fromNode = nodeById.get(fromStop.id)
+      const toNode = nodeById.get(toStop.id)
+      if (fromNode && toNode) {
+        sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+      }
+    }
+
+    pushPoint(toNormalizedPoint(toStop.x, toStop.y, imageWidth, imageHeight))
+
+    const nextCursor = indexInChainAfter(chainOrder, toStop.id, chainCursor)
+    if (nextCursor >= 0) chainCursor = nextCursor
   }
 
-  return points.length >= 2 ? points : fullPath
+  if (points.length >= 2) return points
+
+  return sampleRouteEditorTrajectoryPathPoints(line, imageWidth, imageHeight, samplesPerSegment)
 }
 
 function findRouteEditorChainStartNodeId(

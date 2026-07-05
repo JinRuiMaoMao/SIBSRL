@@ -1,7 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteEditorNode } from '../routeEditor/types'
 import {
-  pathArcLengthToStopMonotonic,
+  buildTrajectoryStopArcLengths,
   sampleRouteEditorTrajectoryPathPoints,
   sampleRouteEditorTrajectoryThroughStops,
 } from '../routeEditor/routeEditorPath'
@@ -66,14 +66,7 @@ export function resolveRouteMapTrajectoryNextStopNodeId(
   }
 
   const ballDistance = pathArcLengthAtProgress(path, progress, imageWidth, imageHeight)
-  let minArc = 0
-  const stopArcs: number[] = []
-  for (const stop of orderedStops) {
-    const stopPoint: WorldMapPoint = [stop.x / imageWidth, stop.y / imageHeight]
-    const arc = pathArcLengthToStopMonotonic(path, stopPoint, imageWidth, imageHeight, minArc)
-    stopArcs.push(arc)
-    minArc = arc
-  }
+  const stopArcs = buildTrajectoryStopArcLengths(path, orderedStops, imageWidth, imageHeight)
 
   let nextIndex = 1
   for (let index = 0; index < stopArcs.length; index += 1) {
