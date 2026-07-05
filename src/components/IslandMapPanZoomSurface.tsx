@@ -81,6 +81,8 @@ interface IslandMapPanZoomSurfaceProps {
   isOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
   maxZoomRatio?: number
+  /** Keep route-editor overlay strokes/nodes/labels at constant screen size while zooming. */
+  lockOverlayScreenSize?: boolean
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
   trajectoryPath?: readonly WorldMapPoint[]
@@ -108,7 +110,7 @@ interface IslandMapPanZoomSurfaceProps {
 const WIDGET_ZOOM_FACTOR = 2.4
 const MIN_SCALE_RATIO = 0.45
 const DEFAULT_MAX_SCALE_RATIO = 8
-export const DRAW_MAX_ZOOM_RATIO = 28
+export const DRAW_MAX_ZOOM_RATIO = 32
 const WHEEL_ZOOM_FACTOR = 1.12
 const MAX_SYNC_ATTEMPTS = 12
 
@@ -321,6 +323,7 @@ export function IslandMapPanZoomSurface({
   isOnRoad: _isOnRoad,
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
+  lockOverlayScreenSize = false,
   onMapPointerMove,
   onImageSizeChange,
   trajectoryPath = [],
@@ -958,6 +961,9 @@ export function IslandMapPanZoomSurface({
     ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
     : undefined
 
+  const overlayVisualScale =
+    lockOverlayScreenSize && panZoom && panZoom.scale > 0 ? 1 / panZoom.scale : 1
+
   const overlayChildren = imageSize ? (
     <>
       {routeOverlay ? (
@@ -1005,6 +1011,7 @@ export function IslandMapPanZoomSurface({
             showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
             connectCarriageway={referenceEditor.connectCarriageway}
             continuousSegmentPaths={referenceEditor.continuousSegmentPaths}
+            visualScale={overlayVisualScale}
           />
         </div>
       ) : (

@@ -1196,6 +1196,7 @@ export function IslandMapDrawEditor({
               draftRouteNumber={drawRouteId.trim()}
               onDrawMapClick={handleMapClick}
               maxZoomRatio={isLoggedIn ? DRAW_MAX_ZOOM_RATIO : 8}
+              lockOverlayScreenSize={isLoggedIn}
               pathLegStarts={[0]}
               pathLegHidden={[]}
               pathUserBends={[]}

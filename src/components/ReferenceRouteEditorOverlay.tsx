@@ -50,12 +50,24 @@ interface ReferenceRouteEditorOverlayProps {
   connectCarriageway?: RouteEditorCarriageway
   /** Merge shared-node segments into continuous paths (route-map viewer). */
   continuousSegmentPaths?: boolean
+  /** Counter-scale overlay visuals (1 / pan-zoom content scale) for constant screen size. */
+  visualScale?: number
 }
 
-function strokeDashArray(style: RouteEditorLineStyle['style']): string {
-  if (style === 'dashed') return '10,5'
-  if (style === 'dotted') return '2,2'
+function strokeDashArray(style: RouteEditorLineStyle['style'], scale = 1): string {
+  if (style === 'dashed') return `${10 * scale},${5 * scale}`
+  if (style === 'dotted') return `${2 * scale},${2 * scale}`
   return ''
+}
+
+function segmentStrokeProps(
+  width: number,
+  visualScale: number,
+): { strokeWidth: number; vectorEffect?: 'non-scaling-stroke' } {
+  if (visualScale === 1) {
+    return { strokeWidth: width, vectorEffect: 'non-scaling-stroke' }
+  }
+  return { strokeWidth: width * visualScale }
 }
 
 function stopSegmentPointer(event: React.PointerEvent) {
@@ -103,14 +115,17 @@ export function ReferenceRouteEditorOverlay({
   showSegmentOverlapCounts = false,
   connectCarriageway = 'single',
   continuousSegmentPaths = false,
+  visualScale = 1,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
-  const dash = strokeDashArray(lineStyle.style)
+  const dash = strokeDashArray(lineStyle.style, visualScale)
+  const segmentStroke = segmentStrokeProps(lineStyle.width, visualScale)
   const nodeScale = mapDrawNodeScaleFactor(imageWidth, imageHeight)
-  const stopRadius = mapDrawStopIconRadius(config.stopIconSize, nodeScale)
-  const pointRadius = mapDrawPointIconRadius(config.pointIconSize, nodeScale)
-  const segmentHitWidth = 16 * nodeScale
+  const ui = visualScale
+  const stopRadius = mapDrawStopIconRadius(config.stopIconSize, nodeScale) * ui
+  const pointRadius = mapDrawPointIconRadius(config.pointIconSize, nodeScale) * ui
+  const segmentHitWidth = 16 * nodeScale * ui
   const overlapGroups = useMemo(() => {
     if (!showSegmentOverlapCounts) return []
     const byId = new Map(nodes.map((node) => [node.id, node]))
@@ -124,9 +139,9 @@ export function ReferenceRouteEditorOverlay({
     () => (continuousSegmentPaths ? buildRouteEditorDisplayPolylines(segments, nodeById) : []),
     [continuousSegmentPaths, nodeById, segments],
   )
-  const arrowSize = 10 * nodeScale
-  const overlapBadgeRadius = 10 * nodeScale
-  const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale))
+  const arrowSize = 10 * nodeScale * ui
+  const overlapBadgeRadius = 10 * nodeScale * ui
+  const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale * ui))
 
   return (
     <svg
@@ -144,11 +159,10 @@ export function ReferenceRouteEditorOverlay({
               d={polyline.d}
               fill="none"
               stroke={lineStyle.color}
-              strokeWidth={lineStyle.width}
+              {...segmentStroke}
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeDasharray={dash}
-              vectorEffect="non-scaling-stroke"
               pointerEvents="none"
             />
           ))
@@ -161,9 +175,9 @@ export function ReferenceRouteEditorOverlay({
         const pairKey = `${Math.min(segment.fromNodeId, segment.toNodeId)}:${Math.max(segment.fromNodeId, segment.toNodeId)}`
         const carriagewayOffset =
           dualCarriagewayPairs.has(pairKey) && segment.fromNodeId < segment.toNodeId
-            ? 4 * nodeScale
+            ? 4 * nodeScale * ui
             : dualCarriagewayPairs.has(pairKey)
-              ? -4 * nodeScale
+              ? -4 * nodeScale * ui
               : 0
         const { x1, y1, x2, y2 } = offsetSegmentEndpoints(from, to, carriagewayOffset)
         const showSegmentStroke = !continuousSegmentPaths
@@ -179,7 +193,7 @@ export function ReferenceRouteEditorOverlay({
                 y2={y2}
                 stroke="transparent"
                 strokeWidth={segmentHitWidth}
-                vectorEffect="non-scaling-stroke"
+                {...(ui === 1 ? { vectorEffect: 'non-scaling-stroke' as const } : {})}
                 onPointerDown={segmentPassthrough ? undefined : stopSegmentPointer}
                 onDoubleClick={
                   allowSegmentDelete && onSegmentDoubleClick
@@ -200,10 +214,9 @@ export function ReferenceRouteEditorOverlay({
                 x2={x2}
                 y2={y2}
                 stroke={lineStyle.color}
-                strokeWidth={lineStyle.width}
+                {...segmentStroke}
                 strokeLinecap="round"
                 strokeDasharray={dash}
-                vectorEffect="non-scaling-stroke"
                 pointerEvents="none"
               />
             ) : null}
@@ -252,9 +265,8 @@ export function ReferenceRouteEditorOverlay({
             x2={connectPreview.toX}
             y2={connectPreview.toY}
             stroke={lineStyle.color}
-            strokeWidth={lineStyle.width}
+            {...segmentStroke}
             strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
           />
           <polygon
             className="reference-route-editor-segment-arrow reference-route-editor-connect-preview-arrow"
@@ -286,17 +298,17 @@ export function ReferenceRouteEditorOverlay({
         const connectPending = connectPendingNodeId === node.id
         const radius = node.type === 'stop' ? stopRadius : pointRadius
         const stopLabel = node.type === 'stop' ? formatRouteEditorStopLabel(node) : ''
-        const labelBoxHeight = 28 * nodeScale
-        const labelPadding = 4 * nodeScale
-        const textInsetX = 2 * nodeScale
+        const labelBoxHeight = 28 * nodeScale * ui
+        const labelPadding = 4 * nodeScale * ui
+        const textInsetX = 2 * nodeScale * ui
         const labelBoxWidth =
           node.labelWidth === 'resize'
-            ? measureRouteEditorStopLabelBoxWidth(stopLabel, config.labelFontSize, nodeScale, {
+            ? measureRouteEditorStopLabelBoxWidth(stopLabel, config.labelFontSize * ui, nodeScale * ui, {
                 minWidth: 56,
                 textInsetX: 2,
                 labelPadding: 4,
               })
-            : Math.max(56, Number(node.labelWidth) || 80) * nodeScale
+            : Math.max(56, Number(node.labelWidth) || 80) * nodeScale * ui
         const labelLayout =
           node.type === 'stop'
             ? resolveRouteEditorStopLabelLayout(node.labelPosition, {
@@ -305,7 +317,7 @@ export function ReferenceRouteEditorOverlay({
                 labelPadding,
                 textInsetX,
                 stopRadius,
-                nodeScale,
+                nodeScale: nodeScale * ui,
                 labelOffsetX: node.labelOffsetX,
                 labelOffsetY: node.labelOffsetY,
               })
@@ -344,14 +356,14 @@ export function ReferenceRouteEditorOverlay({
                   y={labelLayout.rectY}
                   width={labelBoxWidth}
                   height={labelBoxHeight}
-                  rx={4 * nodeScale}
+                  rx={4 * nodeScale * ui}
                   className={`reference-route-editor-label-bg${isNextStop ? ' reference-route-editor-label-bg--next-stop' : ''}`.trim()}
                 />
                 <text
                   className="reference-route-editor-label-name"
                   x={labelLayout.textX}
                   y={labelLayout.textY}
-                  fontSize={config.labelFontSize}
+                  fontSize={config.labelFontSize * ui}
                   textAnchor={labelLayout.textAnchor}
                   dominantBaseline="middle"
                   pointerEvents="none"
