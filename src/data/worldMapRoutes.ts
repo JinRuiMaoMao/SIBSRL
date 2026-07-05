@@ -1,4 +1,4 @@
-import type { NormalizedMapView } from '../components/IslandMapPanZoomSurface'
+import type { NormalizedMapView } from '../types/islandMapPanZoom'
 import {
   WORLD_MAP_ROUTE_ALIASES,
   WORLD_MAP_ROUTE_PATHS,

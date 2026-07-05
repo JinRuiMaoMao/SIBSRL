@@ -22,19 +22,10 @@ import {
   resolveEditorOverlayWrapScale,
 } from '../utils/mapDrawOverlayZoom'
 
+import type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
+
 export { DRAW_MAX_ZOOM_RATIO, DRAW_MIN_ZOOM_RATIO } from '../utils/mapDrawOverlayZoom'
-
-export interface PanZoomState {
-  x: number
-  y: number
-  scale: number
-}
-
-export interface NormalizedMapView {
-  centerX: number
-  centerY: number
-  zoomRatio: number
-}
+export type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
 
 interface ImageSize {
   width: number
@@ -398,6 +389,14 @@ export function IslandMapPanZoomSurface({
     panZoomRef.current = panZoom
   }
 
+  const readViewportSize = useCallback((): ImageSize | null => {
+    const viewport = viewportRef.current
+    if (!viewport) return null
+    const rect = viewport.getBoundingClientRect()
+    if (rect.width <= 0 || rect.height <= 0) return null
+    return { width: rect.width, height: rect.height }
+  }, [])
+
   const applyTransformLive = useCallback((next: PanZoomState) => {
     const content = contentRef.current
     if (content) {
@@ -439,14 +438,6 @@ export function IslandMapPanZoomSurface({
     const live = panZoomRef.current ?? panZoom
     if (live) applyTransformLive(live)
   }, [applyTransformLive, lockOverlayScreenSize, panZoom, referenceEditor, imageSize])
-
-  const readViewportSize = useCallback((): ImageSize | null => {
-    const viewport = viewportRef.current
-    if (!viewport) return null
-    const rect = viewport.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return null
-    return { width: rect.width, height: rect.height }
-  }, [])
 
   const publishPanZoom = useCallback((next: PanZoomState, viewport: ImageSize, size: ImageSize) => {
     const normalized = panZoomToNormalized(next, viewport, size)
