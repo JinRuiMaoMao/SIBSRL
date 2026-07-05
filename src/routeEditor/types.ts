@@ -103,8 +103,8 @@ export const DEFAULT_ROUTE_EDITOR_CONFIG: RouteEditorConfig = {
   showPointLines: false,
   mapScale: 1,
   defaultLabelPosition: 'top',
-  stopIconSize: 12,
-  pointIconSize: 12,
+  stopIconSize: 16,
+  pointIconSize: 16,
   labelFontSize: 11,
 }
 

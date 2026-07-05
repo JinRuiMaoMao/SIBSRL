@@ -2,8 +2,8 @@
 export const MAP_DRAW_DETAILED_IMAGE_SIZE = 8000
 
 /** Stop / bend-point icon sizes tuned for the detailed map layer. */
-export const MAP_DRAW_BASE_STOP_ICON_SIZE = 12
-export const MAP_DRAW_BASE_POINT_ICON_SIZE = 12
+export const MAP_DRAW_BASE_STOP_ICON_SIZE = 16
+export const MAP_DRAW_BASE_POINT_ICON_SIZE = 16
 
 /** Scale editor node visuals so overview (4000²) matches detailed (8000²) appearance. */
 export function mapDrawNodeScaleFactor(imageWidth: number, imageHeight: number): number {
