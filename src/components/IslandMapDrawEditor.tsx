@@ -26,7 +26,6 @@ import {
   isReferenceEditorExportJson,
   mergeReferenceJsonFiles,
   normalizedToPixel,
-  pixelToNormalized,
   routeEditorLineToExportSegmentLines,
   routeEditorLineToSibsDraft,
   sibsImportToRouteEditorLine,
@@ -42,7 +41,6 @@ import {
 import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
-import { MapDrawStopLocationPicker } from './MapDrawStopLocationPicker'
 import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
@@ -54,11 +52,7 @@ import {
   readStoredMapDrawStopLabelVisible,
 } from '../utils/mapDrawStopLabel'
 import { mapDrawNodeScaleFactor } from '../utils/mapDrawNodeScale'
-import {
-  findCatalogLocationIndexByPoint,
-  findDrawRouteStopSeq,
-  findMapDrawCatalogLocationsForName,
-} from '../utils/worldMapDrawRouteLookup'
+import { findDrawRouteStopSeq } from '../utils/worldMapDrawRouteLookup'
 import { consumeMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
 
 function readImportJsonText(text: string): unknown {
@@ -135,8 +129,6 @@ export function IslandMapDrawEditor({
   const [editLabelPosition, setEditLabelPosition] = useState<RouteEditorLabelPosition>('top')
   const [newStopChiName, setNewStopChiName] = useState('')
   const [newStopEngName, setNewStopEngName] = useState('')
-  const [newStopSnapPoint, setNewStopSnapPoint] = useState<WorldMapPoint | null>(null)
-  const [newStopCatalogIndex, setNewStopCatalogIndex] = useState<number | null>(null)
   const [stopCatalog, setStopCatalog] = useState<WorldMapCatalogStop[] | null>(null)
 
   const exportHintTimerRef = useRef<number | null>(null)
@@ -152,22 +144,6 @@ export function IslandMapDrawEditor({
   const selectedNode = selectedNodeId != null ? editor.manager.getNodeById(selectedNodeId) : null
   const showStopEditPanel =
     selectedNode?.type === 'stop' && (editorMode === 'select' || editorMode === 'addStop')
-
-  const newStopCatalogLocations = useMemo(
-    () => findMapDrawCatalogLocationsForName(newStopChiName, newStopEngName, stopCatalog),
-    [newStopChiName, newStopEngName, stopCatalog],
-  )
-
-  const editCatalogLocations = useMemo(() => {
-    if (!showStopEditPanel) return []
-    return findMapDrawCatalogLocationsForName(editChiName, editEngName, stopCatalog)
-  }, [editChiName, editEngName, showStopEditPanel, stopCatalog])
-
-  const editCatalogIndex = useMemo(() => {
-    if (!selectedNode || !imageSize || editCatalogLocations.length === 0) return null
-    const point = pixelToNormalized(selectedNode.x, selectedNode.y, imageSize.width, imageSize.height)
-    return findCatalogLocationIndexByPoint(editCatalogLocations, point)
-  }, [editCatalogLocations, imageSize, selectedNode])
 
   const resolveRouteStopSeq = useCallback(
     (zh: string, en: string, explicitSeq?: number): number | null => {
@@ -311,8 +287,6 @@ export function IslandMapDrawEditor({
     if (mode === 'addStop') {
       setNewStopChiName('')
       setNewStopEngName('')
-      setNewStopSnapPoint(null)
-      setNewStopCatalogIndex(null)
       pendingNewStopSeqRef.current = null
       lastPlacedStopIdRef.current = null
     }
@@ -394,59 +368,16 @@ export function IslandMapDrawEditor({
       }
 
       if (selectedNodeId != null) {
-        const updates: {
-          chi_name: string
-          eng_name: string
-          stopSeq?: number | null
-          x?: number
-          y?: number
-        } = {
+        editor.updateNode(selectedNodeId, {
           chi_name: selection.zh,
           eng_name: selection.en,
           stopSeq: seq != null && seq > 0 ? seq : null,
-        }
-        if (selection.point && imageSize) {
-          const { x, y } = normalizedToPixel(selection.point, imageSize.width, imageSize.height)
-          updates.x = x
-          updates.y = y
-        }
-        editor.updateNode(selectedNodeId, updates)
+        })
       }
 
       stopFormDirtyRef.current = false
     },
-    [editor, imageSize, resolveRouteStopSeq, selectedNodeId],
-  )
-
-  const resetNewStopCatalogSnap = useCallback(() => {
-    setNewStopCatalogIndex(null)
-    setNewStopSnapPoint(null)
-    pendingNewStopSeqRef.current = null
-  }, [])
-
-  const applyNewStopCatalogIndex = useCallback(
-    (index: number) => {
-      const entry = newStopCatalogLocations[index]
-      if (!entry) return
-      setNewStopCatalogIndex(index)
-      setNewStopSnapPoint(entry.point)
-    },
-    [newStopCatalogLocations],
-  )
-
-  const applyEditCatalogIndex = useCallback(
-    (index: number) => {
-      if (selectedNodeId == null || !imageSize) return
-      const entry = editCatalogLocations[index]
-      if (!entry) return
-      const { x, y } = normalizedToPixel(entry.point, imageSize.width, imageSize.height)
-      editor.updateNode(selectedNodeId, { x, y })
-      if (!stopFormDirtyRef.current) {
-        setEditChiName(entry.name.zh)
-        setEditEngName(entry.name.en)
-      }
-    },
-    [editCatalogLocations, editor, imageSize, selectedNodeId],
+    [editor, resolveRouteStopSeq, selectedNodeId],
   )
 
   const applyEditLabelPosition = useCallback(
@@ -463,41 +394,13 @@ export function IslandMapDrawEditor({
       setNewStopChiName(selection.zh)
       setNewStopEngName(selection.en)
       pendingNewStopSeqRef.current = resolveRouteStopSeq(selection.zh, selection.en, selection.seq)
-      const locations = findMapDrawCatalogLocationsForName(selection.zh, selection.en, stopCatalog)
-      if (selection.point) {
-        const index = findCatalogLocationIndexByPoint(locations, selection.point)
-        if (index != null) {
-          setNewStopCatalogIndex(index)
-          setNewStopSnapPoint(locations[index]!.point)
-          return
-        }
-        setNewStopCatalogIndex(null)
-        setNewStopSnapPoint(selection.point)
-        return
-      }
-      if (locations.length === 1) {
-        setNewStopCatalogIndex(0)
-        setNewStopSnapPoint(locations[0]!.point)
-        return
-      }
-      resetNewStopCatalogSnap()
     },
-    [resetNewStopCatalogSnap, resolveRouteStopSeq, stopCatalog],
+    [resolveRouteStopSeq],
   )
 
   const handleMapClick = useCallback(
     (point: WorldMapPoint) => {
       if (!imageSize) return
-
-      if (
-        showStopEditPanel &&
-        selectedNodeId != null &&
-        (editorMode === 'select' || editorMode === 'addStop')
-      ) {
-        const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
-        editor.updateNode(selectedNodeId, { x, y })
-        return
-      }
 
       const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
       if (editorMode === 'addStop' && !showStopEditPanel) {
@@ -515,7 +418,6 @@ export function IslandMapDrawEditor({
         pendingNewStopSeqRef.current = null
         lastPlacedStopIdRef.current = added.id
         setSelectedNodeId(added.id)
-        resetNewStopCatalogSnap()
         return
       }
       if (editorMode === 'addPoint') {
@@ -529,9 +431,7 @@ export function IslandMapDrawEditor({
       imageSize,
       newStopChiName,
       newStopEngName,
-      resetNewStopCatalogSnap,
       resolveRouteStopSeq,
-      selectedNodeId,
       showStopEditPanel,
     ],
   )
@@ -540,12 +440,6 @@ export function IslandMapDrawEditor({
     (point: WorldMapPoint | null) => {
       if (!imageSize) {
         setPointerPreview(null)
-        setConnectPreview(null)
-        return
-      }
-      if (editorMode === 'addStop' && newStopSnapPoint && !showStopEditPanel) {
-        const pixel = normalizedToPixel(newStopSnapPoint, imageSize.width, imageSize.height)
-        setPointerPreview({ type: 'stop', x: pixel.x, y: pixel.y })
         setConnectPreview(null)
         return
       }
@@ -579,7 +473,7 @@ export function IslandMapDrawEditor({
         y: pixel.y,
       })
     },
-    [connectPendingNodeId, editor.manager, editorMode, imageSize, newStopSnapPoint, showStopEditPanel],
+    [connectPendingNodeId, editor.manager, editorMode, imageSize],
   )
 
   const deleteNodeById = useCallback(
@@ -590,7 +484,7 @@ export function IslandMapDrawEditor({
         lastPlacedStopIdRef.current = null
         setNewStopChiName('')
         setNewStopEngName('')
-        resetNewStopCatalogSnap()
+        pendingNewStopSeqRef.current = null
       }
       if (connectPendingNodeId === nodeId || connectPendingRef.current === nodeId) {
         setConnectPendingNodeId(null)
@@ -598,7 +492,7 @@ export function IslandMapDrawEditor({
         setConnectPreview(null)
       }
     },
-    [connectPendingNodeId, editor, resetNewStopCatalogSnap, selectedNodeId],
+    [connectPendingNodeId, editor, selectedNodeId],
   )
 
   const deleteSelectedNode = useCallback(() => {
@@ -630,7 +524,7 @@ export function IslandMapDrawEditor({
       lastPlacedStopIdRef.current = null
       setNewStopChiName('')
       setNewStopEngName('')
-      resetNewStopCatalogSnap()
+      pendingNewStopSeqRef.current = null
     }
   }, [
     editChiName,
@@ -639,7 +533,6 @@ export function IslandMapDrawEditor({
     editStopSeq,
     editor,
     editorMode,
-    resetNewStopCatalogSnap,
     selectedNode,
     selectedNodeId,
     showExportHint,
@@ -1182,11 +1075,6 @@ export function IslandMapDrawEditor({
                       value={editLabelPosition}
                       onChange={applyEditLabelPosition}
                     />
-                    <MapDrawStopLocationPicker
-                      locations={editCatalogLocations}
-                      selectedCatalogIndex={editCatalogIndex}
-                      onSelectCatalogIndex={applyEditCatalogIndex}
-                    />
                     <p className="island-map-draw-help">
                       X: {selectedNode.x}, Y: {selectedNode.y}
                     </p>
@@ -1234,20 +1122,9 @@ export function IslandMapDrawEditor({
                       catalog={stopCatalog}
                       chiPlaceholder={t('mapDrawAddStopChiPlaceholder')}
                       engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
-                      onChiNameChange={(value) => {
-                        setNewStopChiName(value)
-                        resetNewStopCatalogSnap()
-                      }}
-                      onEngNameChange={(value) => {
-                        setNewStopEngName(value)
-                        resetNewStopCatalogSnap()
-                      }}
+                      onChiNameChange={setNewStopChiName}
+                      onEngNameChange={setNewStopEngName}
                       onSelectSuggestion={applyNewStopNameSelection}
-                    />
-                    <MapDrawStopLocationPicker
-                      locations={newStopCatalogLocations}
-                      selectedCatalogIndex={newStopCatalogIndex}
-                      onSelectCatalogIndex={applyNewStopCatalogIndex}
                     />
                     <p className="island-map-draw-help">{t('mapDrawAddStopHelp')}</p>
                   </div>
