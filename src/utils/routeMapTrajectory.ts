@@ -9,13 +9,6 @@ import { resolveRouteEditorStopSeqOrderedStops } from './routeMapStopMatching'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 const NEXT_STOP_REACHED_EPSILON_PX = 14
-const SEGMENT_CONSUMED_EPSILON_PX = 6
-
-export interface RouteMapTrajectory {
-  path: readonly WorldMapPoint[]
-  segmentIds: readonly number[]
-  segmentEndArcLengths: readonly number[]
-}
 
 function buildPixelPath(
   path: readonly WorldMapPoint[],
@@ -85,32 +78,6 @@ export function resolveRouteMapTrajectoryNextStopNodeId(
   return nextIndex < orderedStops.length ? orderedStops[nextIndex]!.id : null
 }
 
-/** Segment ids the trajectory ball has fully traversed at the given progress. */
-export function resolveRouteMapTrajectoryConsumedSegmentIds(
-  trajectory: RouteMapTrajectory,
-  progress: number,
-  imageWidth: number,
-  imageHeight: number,
-): number[] {
-  if (
-    trajectory.path.length < 2 ||
-    trajectory.segmentIds.length === 0 ||
-    imageWidth <= 0 ||
-    imageHeight <= 0
-  ) {
-    return []
-  }
-
-  const ballDistance = pathArcLengthAtProgress(trajectory.path, progress, imageWidth, imageHeight)
-  const consumed: number[] = []
-  for (let index = 0; index < trajectory.segmentIds.length; index += 1) {
-    if (trajectory.segmentEndArcLengths[index]! <= ballDistance + SEGMENT_CONSUMED_EPSILON_PX) {
-      consumed.push(trajectory.segmentIds[index]!)
-    }
-  }
-  return consumed
-}
-
 function dedupePoints(points: readonly WorldMapPoint[]): WorldMapPoint[] {
   const out: WorldMapPoint[] = []
   for (const point of points) {
@@ -121,10 +88,10 @@ function dedupePoints(points: readonly WorldMapPoint[]): WorldMapPoint[] {
   return out
 }
 
-export function resolveRouteMapTrajectory(
+export function resolveRouteMapDisplayPathPoints(
   display: RouteMapViewerDisplay,
   imageSize: { width: number; height: number },
-): RouteMapTrajectory {
+): readonly WorldMapPoint[] {
   if (display.referenceEditor?.segments.length) {
     const line = {
       id: 1,
@@ -140,22 +107,13 @@ export function resolveRouteMapTrajectory(
         imageSize.height,
         orderedStops,
       )
-      if (throughStops.path.length >= 2) return throughStops
+      if (throughStops.length >= 2) return throughStops
     }
 
     const sampled = sampleRouteEditorTrajectoryPathPoints(line, imageSize.width, imageSize.height)
-    if (sampled.path.length >= 2) return sampled
+    if (sampled.length >= 2) return sampled
   }
-
-  const path = display.points.length >= 2 ? dedupePoints(display.points) : []
-  return { path, segmentIds: [], segmentEndArcLengths: [] }
-}
-
-export function resolveRouteMapDisplayPathPoints(
-  display: RouteMapViewerDisplay,
-  imageSize: { width: number; height: number },
-): readonly WorldMapPoint[] {
-  return resolveRouteMapTrajectory(display, imageSize).path
+  return display.points.length >= 2 ? dedupePoints(display.points) : []
 }
 
 export function interpolateRouteMapTrajectoryPoint(

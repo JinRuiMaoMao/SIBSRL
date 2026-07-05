@@ -9,7 +9,6 @@ import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
 import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode, RouteEditorSegment } from '../routeEditor/types'
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { RouteMapTrajectoryBall } from './RouteMapTrajectoryBall'
-import type { RouteMapTrajectory } from '../utils/routeMapTrajectory'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
 
 export interface PanZoomState {
@@ -79,7 +78,6 @@ interface IslandMapPanZoomSurfaceProps {
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
   trajectoryPath?: readonly WorldMapPoint[]
-  trajectory?: RouteMapTrajectory
   referenceEditor?: {
     nodes: readonly RouteEditorNode[]
     segments: readonly RouteEditorSegment[]
@@ -318,20 +316,9 @@ export function IslandMapPanZoomSurface({
   onMapPointerMove,
   onImageSizeChange,
   trajectoryPath = [],
-  trajectory = { path: [], segmentIds: [], segmentEndArcLengths: [] },
   referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
   const [trajectoryNextStopNodeId, setTrajectoryNextStopNodeId] = useState<number | null>(null)
-  const [trajectoryConsumedSegmentIds, setTrajectoryConsumedSegmentIds] = useState<readonly number[]>([])
-  const resolvedTrajectory = trajectory.path.length >= 2 ? trajectory : {
-    path: trajectoryPath,
-    segmentIds: trajectory.segmentIds,
-    segmentEndArcLengths: trajectory.segmentEndArcLengths,
-  }
-  useEffect(() => {
-    setTrajectoryConsumedSegmentIds([])
-    setTrajectoryNextStopNodeId(null)
-  }, [resolvedTrajectory.path, resolvedTrajectory.segmentEndArcLengths, resolvedTrajectory.segmentIds])
   const viewportRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -1009,8 +996,7 @@ export function IslandMapPanZoomSurface({
             segmentPassthrough={referenceEditor.segmentPassthrough}
             allowSegmentDelete={referenceEditor.allowSegmentDelete}
             showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
-            nextStopNodeId={resolvedTrajectory.path.length >= 2 ? trajectoryNextStopNodeId : null}
-            hiddenSegmentIds={trajectoryConsumedSegmentIds}
+            nextStopNodeId={trajectoryPath.length >= 2 ? trajectoryNextStopNodeId : null}
           />
         </div>
       ) : (
@@ -1113,15 +1099,14 @@ export function IslandMapPanZoomSurface({
       ) : null}
         </>
       )}
-      {resolvedTrajectory.path.length >= 2 ? (
+      {trajectoryPath.length >= 2 ? (
         <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--trajectory">
           <RouteMapTrajectoryBall
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
-            trajectory={resolvedTrajectory}
+            path={trajectoryPath}
             stopNodes={referenceEditor?.nodes}
             onNextStopNodeIdChange={setTrajectoryNextStopNodeId}
-            onConsumedSegmentIdsChange={setTrajectoryConsumedSegmentIds}
           />
         </div>
       ) : null}
