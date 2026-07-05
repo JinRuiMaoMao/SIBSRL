@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import type {
   RouteEditorConfig,
   RouteEditorLineStyle,
@@ -15,6 +16,7 @@ import {
   resolveRouteEditorStopLabelLayout,
 } from '../utils/routeEditorStopLabel'
 import { resolveRouteEditorStopSeqEndpoints } from '../utils/routeMapStopMatching'
+import { buildRouteEditorSegmentOverlapGroups } from '../routeEditor/routeEditorSegmentOverlap'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -36,6 +38,8 @@ interface ReferenceRouteEditorOverlayProps {
   segmentPassthrough?: boolean
   /** Disable double-click segment delete while configuring placement. */
   allowSegmentDelete?: boolean
+  /** Show a count badge when multiple segments stack between the same two nodes. */
+  showSegmentOverlapCounts?: boolean
 }
 
 function strokeDashArray(style: RouteEditorLineStyle['style']): string {
@@ -65,6 +69,7 @@ export function ReferenceRouteEditorOverlay({
   nextStopNodeId = null,
   segmentPassthrough = false,
   allowSegmentDelete = true,
+  showSegmentOverlapCounts = false,
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
@@ -73,6 +78,13 @@ export function ReferenceRouteEditorOverlay({
   const stopRadius = mapDrawStopIconRadius(config.stopIconSize, nodeScale)
   const pointRadius = mapDrawPointIconRadius(config.pointIconSize, nodeScale)
   const segmentHitWidth = 16 * nodeScale
+  const overlapGroups = useMemo(() => {
+    if (!showSegmentOverlapCounts) return []
+    const byId = new Map(nodes.map((node) => [node.id, node]))
+    return buildRouteEditorSegmentOverlapGroups(segments, byId)
+  }, [nodes, segments, showSegmentOverlapCounts])
+  const overlapBadgeRadius = 10 * nodeScale
+  const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale))
 
   return (
     <svg
@@ -125,6 +137,30 @@ export function ReferenceRouteEditorOverlay({
           </g>
         )
       })}
+
+      {showSegmentOverlapCounts
+        ? overlapGroups.map((group) => (
+            <g key={group.key} className="reference-route-editor-segment-overlap">
+              <circle
+                cx={group.midX}
+                cy={group.midY}
+                r={overlapBadgeRadius}
+                className="reference-route-editor-segment-overlap-bg"
+              />
+              <text
+                x={group.midX}
+                y={group.midY}
+                className="reference-route-editor-segment-overlap-count"
+                fontSize={overlapBadgeFontSize}
+                textAnchor="middle"
+                dominantBaseline="central"
+                pointerEvents="none"
+              >
+                {group.count}
+              </text>
+            </g>
+          ))
+        : null}
 
       {connectPreview ? (
         <line

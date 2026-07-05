@@ -93,6 +93,7 @@ interface IslandMapPanZoomSurfaceProps {
     onBackgroundClick?: () => void
     segmentPassthrough?: boolean
     allowSegmentDelete?: boolean
+    showSegmentOverlapCounts?: boolean
   } | null
 }
 
@@ -994,6 +995,7 @@ export function IslandMapPanZoomSurface({
             }
             segmentPassthrough={referenceEditor.segmentPassthrough}
             allowSegmentDelete={referenceEditor.allowSegmentDelete}
+            showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
             nextStopNodeId={trajectoryPath.length >= 2 ? trajectoryNextStopNodeId : null}
           />
         </div>
