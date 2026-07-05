@@ -25,6 +25,7 @@ export const ROUTE_UNLOCK_MAP: Record<string, RouteUnlockInfo> = {
   '475': { levelRequired: 15 },
   '476P': { sunshardsRequired: 900 },
   '49A': { levelRequired: 34 },
+  '673': { levelRequired: 72 },
   '73S': { levelRequired: 40 },
   '74A': { levelRequired: 68 },
   '75': { levelRequired: 48 },

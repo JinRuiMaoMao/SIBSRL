@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script id="theme-bootstrap">
+(function () {
+  function resolveSystemAppearance() {
+    try {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch (e) {
+      return 'dark';
+    }
+  }
+
+  try {
+    var pref = localStorage.getItem('sibs-theme');
+    if (pref !== 'light' && pref !== 'dark' && pref !== 'system') pref = 'system';
+    document.documentElement.setAttribute(
+      'data-theme',
+      pref === 'system' ? resolveSystemAppearance() : pref,
+    );
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+    <script id="devtools-block">
+(function () {
+  var INDEX = './index.html';
+  var href = String(window.location.href || '');
+  var protocol = String(window.location.protocol || '');
+  if (/^view-source:/i.test(href) || protocol === 'view-source:') {
+    window.location.replace(INDEX);
+    return;
+  }
+  function isBlocked(event) {
+    var key = event.key || '';
+    if (key === 'F12') return true;
+    var upper = key.toUpperCase();
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey && 'IJC'.indexOf(upper) >= 0) return true;
+    if (upper === 'U') {
+      if (event.ctrlKey && !event.shiftKey && !event.altKey) return true;
+      if (event.metaKey && event.altKey) return true;
+    }
+    if (upper === 'S' && (event.ctrlKey || event.metaKey)) return true;
+    return false;
+  }
+  function block(event) {
+    if (!isBlocked(event)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    return false;
+  }
+  ['keydown', 'keyup', 'keypress'].forEach(function (type) {
+    window.addEventListener(type, block, true);
+    document.addEventListener(type, block, true);
+  });
+  document.addEventListener(
+    'click',
+    function (event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var link = target.closest('a[href]');
+      if (!link) return;
+      var linkHref = String(link.getAttribute('href') || '');
+      if (/^view-source:/i.test(linkHref)) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.location.replace(INDEX);
+      }
+    },
+    true,
+  );
+})();
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../sibs-logo.png" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png" />
+  <title>673 · 阳光群岛线路查询</title>
+  <link rel="canonical" href="../routes.html?route=673" />
+  <meta http-equiv="refresh" content="0;url=../routes.html?route=673" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --route-shell-bg: #0c1222;
+      --route-shell-text: #eef2f8;
+      --route-shell-muted: #94a3b8;
+      --route-shell-link: #f5b942;
+    }
+    [data-theme='light'] {
+      color-scheme: light;
+      --route-shell-bg: #dce1e9;
+      --route-shell-text: #2a3444;
+      --route-shell-muted: #5f6d80;
+      --route-shell-link: #b07808;
+    }
+    html,
+    body {
+      min-height: 100%;
+      background: var(--route-shell-bg);
+      color: var(--route-shell-text);
+    }
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    p { color: var(--route-shell-muted); }
+    strong { color: var(--route-shell-text); }
+    a { color: var(--route-shell-link); }
+    pre { display: none; }
+  </style>
+</head>
+<body>
+    <noscript>
+  <style>
+    #root, .boot-hint { display: none !important; }
+    #start-boot-splash { display: none !important; }
+    .noscript-wall {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+      font-family: system-ui, sans-serif;
+      background: #0f1419;
+      color: #e7e9ea;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .noscript-wall h1 { font-size: 1.25rem; margin: 0 0 0.75rem; font-weight: 700; }
+    .noscript-wall p { margin: 0.35rem 0; color: #8b98a5; max-width: 26rem; }
+  </style>
+  <div class="noscript-wall" id="noscript-wall" role="alert">
+    <p><img src="./sibs-logo.png" alt="" width="48" height="48" decoding="async" /></p>
+    <h1>请启用 JavaScript</h1>
+    <p>阳光群岛线路查询工具需要 JavaScript 才能运行，请在浏览器设置中开启后刷新页面。</p>
+    <p lang="en">This site requires JavaScript. Please enable it in your browser settings and reload.</p>
+  </div>
+</noscript>
+  <!--
+    线路数据（可编辑）
+    - 修改下方 JSON 中的 stops、fare、notes、audio 等字段
+    - 保存后刷新 routes.html 详情即可生效，无需改 routes.ts
+    - 重新 build 时会保留此处已有 JSON，不会覆盖你的修改
+    - 分站简写：{ "zh": "中文", "en": "English", "zone": 1 }
+    - 报站音频：在分站加 "audio": { "audioUrl": "./audio/...", "nextStop": { "zh": "...", "en": "..." } }
+  -->
+  <script type="application/json" id="sibs-route-data">
+{
+  "id": "673",
+  "operators": [
+    "HZ",
+    "CSB"
+  ],
+  "fare": "$9.4",
+  "interval": {
+    "zh": "30 - 90 分钟",
+    "en": "30 - 90 mins"
+  },
+  "journeyTime": {
+    "zh": "20 分钟",
+    "en": "20 mins"
+  },
+  "length": {
+    "zh": "15.7 km",
+    "en": "15.7 km"
+  },
+  "origin": {
+    "zh": "东厂",
+    "en": "East Factory"
+  },
+  "destination": {
+    "zh": "东厂",
+    "en": "East Door Bus Terminus"
+  },
+  "via": {
+    "zh": "海怡西、海怡摩天大厦、海怡沙滩、第七区转车站、东厂、叶欣公园、钻石交易塔、新地花园、叶角湾、叶角湾坟场、叶角医院、东门总站、海西角、海西邨、叶角医院、叶角湾坟场、叶角湾、新地花园、叶欣海旁道、南洋大厦、彩虹广场、山道、第七区转车站、海怡沙滩、海怡摩天大厦、海怡西",
+    "en": "West Horizon, Horizon Tower, Horizon Beach, Zone 7 Interchange, East Factory, YiYan Park, Diamond Trading Tower, Sindy Garden, Leafy Bay, Leafy Bay Cemetery, Leafy Hospital, East Door Bus Terminus, Haisey Point, Haisey Estate, Leafy Hospital, Leafy Bay Cemetery, Leafy Bay, Sindy Garden, Praya YiYan Road, Southern Building, Rainbow Plaza, YiYan Road, Zone 7 Interchange, Horizon Beach, Horizon Tower, West Horizon"
+  },
+  "stops": [
+    {
+      "direction": {
+        "zh": "方向1（海怡车厂 → 海怡车厂）",
+        "en": "Direction 1 (Horizon Depot → Horizon Depot)"
+      },
+      "serviceTime": {
+        "zh": "周一至五: 07:20 – 18:00 / Sat、Sun and PH: 09:00 – 18:00",
+        "en": "Mon – Fri: 07:20 – 18:00 / Sat, Sun and PH: 09:00 – 18:00"
+      },
+      "length": {
+        "zh": "15.7 km",
+        "en": "15.7 km"
+      },
+      "list": [
+        {
+          "zh": "海怡车厂",
+          "en": "Horizon Depot",
+          "zone": 6
+        },
+        {
+          "zh": "海怡西",
+          "en": "West Horizon",
+          "zone": 6
+        },
+        {
+          "zh": "海怡摩天大厦",
+          "en": "Horizon Tower",
+          "zone": 6
+        },
+        {
+          "zh": "海怡沙滩",
+          "en": "Horizon Beach",
+          "zone": 6
+        },
+        {
+          "zh": "第七区转车站",
+          "en": "Zone 7 Interchange",
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          },
+          "zone": 7,
+          "audio": {
+            "audioUrl": "./audio/routes/N171/n171-n-at-33.mp3",
+            "nextStop": {
+              "zh": "东厂",
+              "en": "East Factory"
+            }
+          }
+        },
+        {
+          "zh": "东厂",
+          "en": "East Factory",
+          "zone": 7,
+          "audio": {
+            "audioUrl": "./audio/routes/N171/n171-n-at-34.mp3",
+            "nextStop": {
+              "zh": "叶欣公园",
+              "en": "YiYan Park"
+            }
+          }
+        },
+        {
+          "zh": "叶欣公园",
+          "en": "YiYan Park",
+          "zone": 7,
+          "audio": {
+            "audioUrl": "./audio/routes/N171/n171-n-at-35.mp3",
+            "nextStop": {
+              "zh": "钻石交易塔",
+              "en": "Diamond Trading Tower"
+            }
+          }
+        },
+        {
+          "zh": "钻石交易塔",
+          "en": "Diamond Trading Tower",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾",
+          "en": "Leafy Bay",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾坟场",
+          "en": "Leafy Bay Cemetery",
+          "zone": 7
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "东门总站",
+          "en": "East Door Bus Terminus",
+          "nameSub": {
+            "zh": "东门中心",
+            "en": "East Door Complex"
+          },
+          "zone": 7,
+          "audio": {
+            "audioUrl": "./audio/routes/N171/n171-n-at-57.mp3",
+            "nextStop": {
+              "zh": "海西角",
+              "en": "Haisey Point"
+            }
+          }
+        },
+        {
+          "zh": "海西角",
+          "en": "Haisey Point",
+          "zone": 8,
+          "audio": {
+            "audioUrl": "./audio/routes/N171/n171-n-at-58.mp3",
+            "nextStop": {
+              "zh": "海西邨",
+              "en": "Haisey Estate"
+            }
+          }
+        },
+        {
+          "zh": "海西邨",
+          "en": "Haisey Estate",
+          "zone": 8
+        },
+        {
+          "zh": "叶角医院",
+          "en": "Leafy Hospital",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾坟场",
+          "en": "Leafy Bay Cemetery",
+          "zone": 7
+        },
+        {
+          "zh": "叶角湾",
+          "en": "Leafy Bay",
+          "zone": 7
+        },
+        {
+          "zh": "新地花园",
+          "en": "Sindy Garden",
+          "zone": 7
+        },
+        {
+          "zh": "叶欣海旁道",
+          "en": "Praya YiYan Road",
+          "nameSub": {
+            "zh": "钻石交易塔",
+            "en": "Diamond Trading Tower"
+          },
+          "zone": 7
+        },
+        {
+          "zh": "南洋大厦",
+          "en": "Southern Building",
+          "zone": 7
+        },
+        {
+          "zh": "彩虹广场",
+          "en": "Rainbow Plaza",
+          "zone": 7
+        },
+        {
+          "zh": "山道",
+          "en": "YiYan Road",
+          "zone": 7
+        },
+        {
+          "zh": "第七区转车站",
+          "en": "Zone 7 Interchange",
+          "nameSub": {
+            "zh": "千叶站",
+            "en": "Thousand Leaf Station"
+          },
+          "zone": 7
+        },
+        {
+          "zh": "海怡沙滩",
+          "en": "Horizon Beach",
+          "zone": 6
+        },
+        {
+          "zh": "海怡摩天大厦",
+          "en": "Horizon Tower",
+          "zone": 6
+        },
+        {
+          "zh": "海怡西",
+          "en": "West Horizon",
+          "zone": 6
+        },
+        {
+          "zh": "海怡车厂",
+          "en": "Horizon Depot",
+          "zone": 6,
+          "audio": {
+            "audioUrl": "./audio/routes/common/alighting-reminder.mp3",
+            "nextStop": {
+              "zh": "下车提醒",
+              "en": "Alighting reminder"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "stopAudio": [
+    {
+      "atStopIndex": 4,
+      "audioUrl": "./audio/routes/N171/n171-n-at-33.mp3",
+      "nextStop": {
+        "zh": "东厂",
+        "en": "East Factory"
+      }
+    },
+    {
+      "atStopIndex": 5,
+      "audioUrl": "./audio/routes/N171/n171-n-at-34.mp3",
+      "nextStop": {
+        "zh": "叶欣公园",
+        "en": "YiYan Park"
+      }
+    },
+    {
+      "atStopIndex": 6,
+      "audioUrl": "./audio/routes/N171/n171-n-at-35.mp3",
+      "nextStop": {
+        "zh": "钻石交易塔",
+        "en": "Diamond Trading Tower"
+      }
+    },
+    {
+      "atStopIndex": 12,
+      "audioUrl": "./audio/routes/N171/n171-n-at-57.mp3",
+      "nextStop": {
+        "zh": "海西角",
+        "en": "Haisey Point"
+      }
+    },
+    {
+      "atStopIndex": 13,
+      "audioUrl": "./audio/routes/N171/n171-n-at-58.mp3",
+      "nextStop": {
+        "zh": "海西邨",
+        "en": "Haisey Estate"
+      }
+    },
+    {
+      "atStopIndex": 27,
+      "audioUrl": "./audio/routes/common/alighting-reminder.mp3",
+      "nextStop": {
+        "zh": "下车提醒",
+        "en": "Alighting reminder"
+      }
+    }
+  ]
+}
+  </script>
+  <script>location.replace("../routes.html?route=673");</script>
+  <p>正在打开线路 <strong>673</strong>…</p>
+  <p><a href="../routes.html?route=673">若未自动跳转，请点击此处</a></p>
+</body>
+</html>
