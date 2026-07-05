@@ -1177,6 +1177,19 @@ html[data-reduce-motion='true'] .start-page-external-link:active {
   margin-top: 0.25rem;
 }
 
+.music-legacy-section {
+  margin-top: 2rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid color-mix(in srgb, var(--border, #2a2a2a) 85%, transparent);
+}
+
+.music-section-intro {
+  margin-top: 0.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.92rem;
+  opacity: 0.88;
+}
+
 .complaints-list {
   list-style: none;
   margin: 0;
