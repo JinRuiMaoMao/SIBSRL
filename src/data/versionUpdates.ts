@@ -175,6 +175,76 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: {
+          zh: "群岛地图",
+          en: "Island map",
+        },
+        additions: [
+          {
+            zh: "走向图与详情小地图支持按方向分别导入与展示；同线路多方向 JSON 会按 directionIndex 合并保存。",
+            en: "Path map and detail mini-map import and display routes per direction; multi-direction JSON for one route merges by directionIndex.",
+          },
+          {
+            zh: "详情页「走向」按钮会带上当前方向（?dir=）；切换方向后显示对应走线。",
+            en: "Route detail Path button includes the current direction (?dir=); switching direction shows the matching path.",
+          },
+          {
+            zh: "上线 N171 双向走线：方向 0 长岛码头 → 彩虹中心，方向 1 彩虹中心 → 长岛码头。",
+            en: "Published N171 paths both ways: dir 0 Long Island Ferry Pier → Rainbow, dir 1 Rainbow → Long Island Ferry Pier.",
+          },
+        ],
+        fixes: [
+          {
+            zh: "修复 map-draw 放大后线路从地图锚点「跑走」的问题（改为在节点锚点 counter-scale）。",
+            en: "Fixed route lines drifting off map anchors when zooming in map-draw (counter-scale at node anchors).",
+          },
+          {
+            zh: "修复 map-draw 页因初始化顺序导致的白屏崩溃。",
+            en: "Fixed map-draw white-screen crash from initialization order.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "地图绘制",
+          en: "Map draw editor",
+        },
+        additions: [
+          {
+            zh: "编辑器 overlay（站点、节点、文字、线段）改回随地图缩放，不再锁定 100% 屏幕大小。",
+            en: "Editor overlay (stops, nodes, labels, lines) scales with the map again instead of locking at 100% screen size.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "音乐",
+          en: "Music",
+        },
+        additions: [
+          {
+            zh: "音乐页底部新增「1.7–1.8 Version」归档区，收录已绝版曲目。",
+            en: "Music page adds a 1.7–1.8 Version archive section for discontinued tracks.",
+          },
+          {
+            zh: "导入 7 首 1.7–1.8 绝版 BGM（Lucky Channel、Turnabout Sisters、Ring Attack 等）。",
+            en: "Added seven legacy 1.7–1.8 BGM tracks (Lucky Channel, Turnabout Sisters, Ring Attack, etc.).",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "线路数据",
+          en: "Route data",
+        },
+        fixes: [
+          {
+            zh: "修正 475P 终点站为「中环（中日街）」（原为「中日街」/ Beta Road）。",
+            en: "Fixed 475P terminus to Central (Sun Central Street) (was Sun Central Street only / Beta Road).",
+          },
+        ],
+      },
     ],
   },
   {
