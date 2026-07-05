@@ -52,6 +52,27 @@ function stopSegmentPointer(event: React.PointerEvent) {
   event.stopPropagation()
 }
 
+function offsetSegmentEndpoints(
+  from: RouteEditorNode,
+  to: RouteEditorNode,
+  offsetPx: number,
+): { x1: number; y1: number; x2: number; y2: number } {
+  if (offsetPx === 0) {
+    return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
+  }
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const length = Math.hypot(dx, dy) || 1
+  const nx = (-dy / length) * offsetPx
+  const ny = (dx / length) * offsetPx
+  return {
+    x1: from.x + nx,
+    y1: from.y + ny,
+    x2: to.x + nx,
+    y2: to.y + ny,
+  }
+}
+
 export function ReferenceRouteEditorOverlay({
   imageWidth,
   imageHeight,
@@ -83,6 +104,18 @@ export function ReferenceRouteEditorOverlay({
     const byId = new Map(nodes.map((node) => [node.id, node]))
     return buildRouteEditorSegmentOverlapGroups(segments, byId)
   }, [nodes, segments, showSegmentOverlapCounts])
+  const dualCarriagewayPairs = useMemo(() => {
+    const forwardKeys = new Set(segments.map((segment) => `${segment.fromNodeId}:${segment.toNodeId}`))
+    const pairs = new Set<string>()
+    for (const segment of segments) {
+      if (forwardKeys.has(`${segment.toNodeId}:${segment.fromNodeId}`)) {
+        const low = Math.min(segment.fromNodeId, segment.toNodeId)
+        const high = Math.max(segment.fromNodeId, segment.toNodeId)
+        pairs.add(`${low}:${high}`)
+      }
+    }
+    return pairs
+  }, [segments])
   const overlapBadgeRadius = 10 * nodeScale
   const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale))
 
@@ -99,14 +132,23 @@ export function ReferenceRouteEditorOverlay({
         const to = nodeById.get(segment.toNodeId)
         if (!from || !to) return null
 
+        const pairKey = `${Math.min(segment.fromNodeId, segment.toNodeId)}:${Math.max(segment.fromNodeId, segment.toNodeId)}`
+        const carriagewayOffset =
+          dualCarriagewayPairs.has(pairKey) && segment.fromNodeId < segment.toNodeId
+            ? 4 * nodeScale
+            : dualCarriagewayPairs.has(pairKey)
+              ? -4 * nodeScale
+              : 0
+        const { x1, y1, x2, y2 } = offsetSegmentEndpoints(from, to, carriagewayOffset)
+
         return (
           <g key={segment.id} className="reference-route-editor-segment">
             <line
               className="reference-route-editor-segment-hit"
-              x1={from.x}
-              y1={from.y}
-              x2={to.x}
-              y2={to.y}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
               stroke="transparent"
               strokeWidth={segmentHitWidth}
               vectorEffect="non-scaling-stroke"
@@ -123,10 +165,10 @@ export function ReferenceRouteEditorOverlay({
             />
             <line
               className="reference-route-editor-segment-line"
-              x1={from.x}
-              y1={from.y}
-              x2={to.x}
-              y2={to.y}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
               stroke={lineStyle.color}
               strokeWidth={lineStyle.width}
               strokeLinecap="round"

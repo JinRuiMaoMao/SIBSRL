@@ -21,7 +21,7 @@ import {
 } from '../utils/worldMapDrawImportMerge'
 import { worldMapDrawDraftSliceFromImport, type WorldMapDrawDraftSlice } from '../utils/worldMapDrawMerge'
 import { parseWorldMapDrawImportJson } from '../utils/worldMapRouteImport'
-import type { RouteEditorLabelPosition, RouteEditorLine, RouteEditorMode, RouteEditorNode } from '../routeEditor/types'
+import type { RouteEditorCarriageway, RouteEditorLabelPosition, RouteEditorLine, RouteEditorMode, RouteEditorNode } from '../routeEditor/types'
 import {
   isReferenceEditorExportJson,
   mergeReferenceJsonFiles,
@@ -95,6 +95,7 @@ export function IslandMapDrawEditor({
   const [mapView, setMapView] = useState<NormalizedMapView | null>(initialMapView)
   const [imageSize, setImageSize] = useState<MapImageSize | null>(null)
   const [editorMode, setEditorMode] = useState<RouteEditorMode>('select')
+  const [connectCarriageway, setConnectCarriageway] = useState<RouteEditorCarriageway>('single')
   const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null)
   const [connectPendingNodeId, setConnectPendingNodeId] = useState<number | null>(null)
   const [connectPreview, setConnectPreview] = useState<{
@@ -334,12 +335,12 @@ export function IslandMapDrawEditor({
         setConnectPreview(null)
         return
       }
-      editor.addSegment(pending, nodeId)
+      editor.addSegment(pending, nodeId, connectCarriageway)
       setConnectPendingNodeId(nodeId)
       connectPendingRef.current = nodeId
       setConnectPreview(null)
     },
-    [editor, editorMode],
+    [connectCarriageway, editor, editorMode],
   )
 
   const segmentPassthrough =
@@ -996,6 +997,24 @@ export function IslandMapDrawEditor({
                   <button type="button" className={`route-editor-btn${editorMode === 'connectLine' ? ' route-editor-btn--active' : ''}`.trim()} onClick={() => enterEditorMode('connectLine')}>
                     {t('mapDrawModeConnectLine')}
                   </button>
+                  {editorMode === 'connectLine' ? (
+                    <div className="route-editor-btn-row">
+                      <button
+                        type="button"
+                        className={`route-editor-btn${connectCarriageway === 'single' ? ' route-editor-btn--active' : ''}`.trim()}
+                        onClick={() => setConnectCarriageway('single')}
+                      >
+                        {t('mapDrawConnectSingle')}
+                      </button>
+                      <button
+                        type="button"
+                        className={`route-editor-btn${connectCarriageway === 'dual' ? ' route-editor-btn--active' : ''}`.trim()}
+                        onClick={() => setConnectCarriageway('dual')}
+                      >
+                        {t('mapDrawConnectDual')}
+                      </button>
+                    </div>
+                  ) : null}
                   {selectedNodeId != null && (editorMode === 'select' || editorMode === 'addStop') ? (
                     <button type="button" className="route-editor-btn route-editor-btn--danger" onClick={deleteSelectedNode}>
                       {t('mapDrawDeleteNode')}

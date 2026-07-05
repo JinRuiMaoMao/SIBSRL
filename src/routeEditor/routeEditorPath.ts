@@ -217,6 +217,99 @@ function advanceChainCursorAfterLeg(
   return chainCursor
 }
 
+function forwardChainDistance(
+  chainOrder: readonly number[],
+  fromIndex: number,
+  toIndex: number,
+): number {
+  if (fromIndex < 0 || toIndex < 0) return Number.POSITIVE_INFINITY
+  if (toIndex >= fromIndex) return toIndex - fromIndex
+  return chainOrder.length - fromIndex + toIndex
+}
+
+function isForwardChainStep(
+  chainOrder: readonly number[],
+  fromIndex: number,
+  toIndex: number,
+): boolean {
+  if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return false
+  return (
+    forwardChainDistance(chainOrder, fromIndex, toIndex) <=
+    forwardChainDistance(chainOrder, toIndex, fromIndex)
+  )
+}
+
+/** True when a chain slice revisits nodes against the drawn forward direction (cuts through roundabouts). */
+function chainNodePathBacktracks(
+  chainOrder: readonly number[],
+  nodePath: readonly number[],
+  fromIndex: number,
+): boolean {
+  let cursor = fromIndex
+  for (let index = 1; index < nodePath.length; index += 1) {
+    const nextIndex = resolveChainIndexForNode(chainOrder, nodePath[index]!, cursor)
+    if (nextIndex < 0) continue
+    if (!isForwardChainStep(chainOrder, cursor, nextIndex)) return true
+    cursor = nextIndex
+  }
+  return false
+}
+
+/** Greedy forward walk on the graph — follows loop/roundabout arcs instead of backtracking spurs. */
+function walkForwardNodePathOnGraph(
+  segments: readonly RouteEditorSegment[],
+  chainOrder: readonly number[],
+  fromNodeId: number,
+  toNodeId: number,
+  fromChainIndex: number,
+): number[] | null {
+  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  let chainCursor = resolveChainIndexForNode(chainOrder, fromNodeId, fromChainIndex)
+  if (chainCursor < 0) return null
+
+  let current = fromNodeId
+  if (current === toNodeId) return [current]
+
+  let previous: number | null = null
+  const nodePath: number[] = [current]
+  const maxSteps = segments.length + chainOrder.length
+
+  for (let step = 0; step < maxSteps; step += 1) {
+    if (current === toNodeId) return nodePath
+
+    const targetIndex = resolveChainIndexForNode(chainOrder, toNodeId, chainCursor)
+    const candidates = (adjacency.get(current) ?? [])
+      .filter((link) => link.nodeId !== previous)
+      .sort((a, b) => a.nodeId - b.nodeId)
+
+    let bestLink: (typeof candidates)[0] | null = null
+    let bestScore = Number.POSITIVE_INFINITY
+    for (const link of candidates) {
+      const linkIndex = resolveChainIndexForNode(chainOrder, link.nodeId, chainCursor)
+      if (linkIndex < 0) continue
+      if (!isForwardChainStep(chainOrder, chainCursor, linkIndex)) continue
+      const remaining =
+        targetIndex >= 0 ? forwardChainDistance(chainOrder, linkIndex, targetIndex) : 0
+      const score = forwardChainDistance(chainOrder, chainCursor, linkIndex) * 1000 + remaining
+      if (score < bestScore) {
+        bestScore = score
+        bestLink = link
+      }
+    }
+
+    if (!bestLink) return null
+
+    nodePath.push(bestLink.nodeId)
+    previous = current
+    current = bestLink.nodeId
+    const nextCursor = resolveChainIndexForNode(chainOrder, current, chainCursor)
+    if (nextCursor < 0) return null
+    chainCursor = nextCursor
+  }
+
+  return null
+}
+
 function indexInChainBefore(
   chainOrder: readonly number[],
   nodeId: number,
@@ -264,9 +357,21 @@ function resolveChainNodePathBetween(
   if (
     forwardPath &&
     forwardPath.length >= 2 &&
-    forwardPath[forwardPath.length - 1] === toNodeId
+    forwardPath[forwardPath.length - 1] === toNodeId &&
+    !chainNodePathBacktracks(chainOrder, forwardPath, fromIndex)
   ) {
     return forwardPath
+  }
+
+  const loopPath = walkForwardNodePathOnGraph(
+    segments,
+    chainOrder,
+    fromNodeId,
+    toNodeId,
+    fromIndex,
+  )
+  if (loopPath && loopPath.length >= 2 && loopPath[loopPath.length - 1] === toNodeId) {
+    return loopPath
   }
 
   const toBackward = indexInChainBefore(chainOrder, toNodeId, fromIndex)

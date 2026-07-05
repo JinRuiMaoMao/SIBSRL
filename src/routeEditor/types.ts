@@ -4,7 +4,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 
 export type RouteEditorNodeType = 'stop' | 'point'
 
-export type RouteEditorMode = 'select' | 'addStop' | 'addPoint' | 'connectLine'
+export type RouteEditorCarriageway = 'single' | 'dual'
 
 export type RouteEditorLabelPosition =
   | 'top-left'

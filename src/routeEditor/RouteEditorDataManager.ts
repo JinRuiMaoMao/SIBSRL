@@ -1,6 +1,7 @@
 import {
   DEFAULT_ROUTE_EDITOR_CONFIG,
   DEFAULT_ROUTE_EDITOR_LINE_STYLE,
+  type RouteEditorCarriageway,
   type RouteEditorConfig,
   type RouteEditorLabelPosition,
   type RouteEditorLine,
@@ -233,21 +234,34 @@ export class RouteEditorDataManager {
     return true
   }
 
-  addSegment(fromNodeId: number, toNodeId: number): boolean {
+  addSegment(
+    fromNodeId: number,
+    toNodeId: number,
+    carriageway: RouteEditorCarriageway = 'single',
+  ): boolean {
     if (fromNodeId === toNodeId) return false
     const fromNode = this.line.nodes.find((node) => node.id === fromNodeId)
     const toNode = this.line.nodes.find((node) => node.id === toNodeId)
     if (!fromNode || !toNode) return false
-    const exists = this.line.segments.some(
-      (segment) => segment.fromNodeId === fromNodeId && segment.toNodeId === toNodeId,
-    )
-    if (exists) return false
 
-    this.line.segments.push({
-      id: this.nextSegmentId++,
-      fromNodeId,
-      toNodeId,
-    })
+    let changed = false
+    const addDirected = (from: number, to: number) => {
+      const exists = this.line.segments.some(
+        (segment) => segment.fromNodeId === from && segment.toNodeId === to,
+      )
+      if (exists) return false
+      this.line.segments.push({
+        id: this.nextSegmentId++,
+        fromNodeId: from,
+        toNodeId: to,
+      })
+      return true
+    }
+
+    if (addDirected(fromNodeId, toNodeId)) changed = true
+    if (carriageway === 'dual' && addDirected(toNodeId, fromNodeId)) changed = true
+    if (!changed) return false
+
     this.saveHistory()
     this.emit('change')
     return true
