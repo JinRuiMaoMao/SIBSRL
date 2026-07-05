@@ -16,6 +16,13 @@ import type {
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { RouteMapTrajectoryBall } from './RouteMapTrajectoryBall'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
+import {
+  DRAW_MAX_ZOOM_RATIO,
+  DRAW_MIN_ZOOM_RATIO,
+  resolveEditorOverlayWrapScale,
+} from '../utils/mapDrawOverlayZoom'
+
+export { DRAW_MAX_ZOOM_RATIO, DRAW_MIN_ZOOM_RATIO } from '../utils/mapDrawOverlayZoom'
 
 export interface PanZoomState {
   x: number
@@ -108,9 +115,8 @@ interface IslandMapPanZoomSurfaceProps {
 }
 
 const WIDGET_ZOOM_FACTOR = 2.4
-const MIN_SCALE_RATIO = 0.45
+const MIN_SCALE_RATIO = DRAW_MIN_ZOOM_RATIO
 const DEFAULT_MAX_SCALE_RATIO = 8
-export const DRAW_MAX_ZOOM_RATIO = 32
 const WHEEL_ZOOM_FACTOR = 1.12
 const MAX_SYNC_ATTEMPTS = 12
 
@@ -397,22 +403,42 @@ export function IslandMapPanZoomSurface({
     if (content) {
       content.style.transform = `translate3d(${next.x}px, ${next.y}px, 0) scale(${next.scale})`
     }
-    const overlayWrap = referenceEditorOverlayWrapRef.current
-    if (lockOverlayScreenSizeRef.current && overlayWrap && next.scale > 0) {
-      overlayWrap.style.transform = `scale(${1 / next.scale})`
-      overlayWrap.style.transformOrigin = '0 0'
-    }
-  }, [])
 
-  useEffect(() => {
-    if (dragging || !panZoom) return
-    const live = panZoomRef.current
-    if (live && !panZoomEqual(live, panZoom)) {
-      applyTransformLive(live)
+    const overlayWrap = referenceEditorOverlayWrapRef.current
+    if (!overlayWrap) return
+
+    if (!lockOverlayScreenSizeRef.current || next.scale <= 0) {
+      overlayWrap.style.transform = ''
+      overlayWrap.style.transformOrigin = ''
       return
     }
-    applyTransformLive(panZoom)
-  }, [applyTransformLive, dragging, panZoom])
+
+    const viewport = readViewportSize()
+    const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
+    if (!viewport || !size) {
+      overlayWrap.style.transform = ''
+      overlayWrap.style.transformOrigin = ''
+      return
+    }
+
+    const fitScale = computeFitScale(viewport, size)
+    const zoomRatio = fitScale > 0 ? next.scale / fitScale : 1
+    const wrapScale = resolveEditorOverlayWrapScale(zoomRatio, next.scale, true)
+
+    if (wrapScale === 1) {
+      overlayWrap.style.transform = ''
+      overlayWrap.style.transformOrigin = ''
+      return
+    }
+
+    overlayWrap.style.transform = `scale(${wrapScale})`
+    overlayWrap.style.transformOrigin = '0 0'
+  }, [imageSize, readViewportSize])
+
+  useLayoutEffect(() => {
+    const live = panZoomRef.current ?? panZoom
+    if (live) applyTransformLive(live)
+  }, [applyTransformLive, lockOverlayScreenSize, panZoom, referenceEditor, imageSize])
 
   const readViewportSize = useCallback((): ImageSize | null => {
     const viewport = viewportRef.current
@@ -970,16 +996,6 @@ export function IslandMapPanZoomSurface({
     ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
     : undefined
 
-  const overlayVisualScale =
-    lockOverlayScreenSize && panZoom && panZoom.scale > 0 ? 1 / panZoom.scale : 1
-  const referenceEditorOverlayStyle =
-    lockOverlayScreenSize && overlayVisualScale !== 1
-      ? ({
-          transform: `scale(${overlayVisualScale})`,
-          transformOrigin: '0 0',
-        } as const)
-      : undefined
-
   const overlayChildren = imageSize ? (
     <>
       {routeOverlay ? (
@@ -998,7 +1014,6 @@ export function IslandMapPanZoomSurface({
         <div
           ref={referenceEditorOverlayWrapRef}
           className="island-map-route-overlay-wrap island-map-route-overlay-wrap--reference-editor island-map-route-overlay-wrap--screen-lock"
-          style={referenceEditorOverlayStyle}
         >
           <ReferenceRouteEditorOverlay
             imageWidth={imageSize.width}

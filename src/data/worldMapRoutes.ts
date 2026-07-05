@@ -60,6 +60,7 @@ export function fitNormalizedViewToRoutePoints(
   points: readonly WorldMapPoint[],
   mode: 'widget' | 'fullscreen',
   padding = 0.06,
+  zoomClamp?: { min?: number; max?: number },
 ): NormalizedMapView {
   const xs = points.map((point) => point[0])
   const ys = points.map((point) => point[1])
@@ -71,9 +72,11 @@ export function fitNormalizedViewToRoutePoints(
   const centerY = clamp((minY + maxY) / 2, 0, 1)
   const span = Math.max(maxX - minX, maxY - minY, 0.06)
   const base = mode === 'widget' ? WIDGET_ROUTE_FOCUS_FACTOR : 1
+  const minZoom = zoomClamp?.min ?? 0.8
+  const maxZoom = zoomClamp?.max ?? 12
   return {
     centerX,
     centerY,
-    zoomRatio: clamp(base / span, 0.8, 12),
+    zoomRatio: clamp(base / span, minZoom, maxZoom),
   }
 }

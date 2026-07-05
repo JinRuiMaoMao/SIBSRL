@@ -2,6 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/mapDrawEditor.css'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { fitNormalizedViewToRoutePoints, resolveWorldMapRouteId, type WorldMapPoint } from '../data/worldMapRoutes'
+import {
+  DRAW_MAX_ZOOM_RATIO,
+  DRAW_MIN_ZOOM_RATIO,
+  DRAW_OVERLAY_LOCK_ZOOM_MAX,
+} from '../utils/mapDrawOverlayZoom'
 import { useLocale } from '../i18n/LocaleContext'
 import { useAuth } from '../contexts/AuthContext'
 import {
@@ -45,7 +50,7 @@ import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
-import { IslandMapPanZoomSurface, DRAW_MAX_ZOOM_RATIO, type NormalizedMapView } from './IslandMapPanZoomSurface'
+import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
 import {
   readStoredMapDrawStopLabelScale,
@@ -716,10 +721,6 @@ export function IslandMapDrawEditor({
           importLines.push(imported.line)
           setDrawRouteId(imported.routeId)
           setDrawDirectionIndex(imported.directionIndex)
-          const fitPoints = merged.points.length >= 2 ? merged.points : merged.stops.map((stop) => stop.point)
-          if (fitPoints.length > 0) {
-            setMapView(fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen'))
-          }
         }
       }
 
@@ -739,6 +740,19 @@ export function IslandMapDrawEditor({
       } else {
         editor.mergeFromImport(importLine, merged?.kind === 'route' ? importLine.name : undefined)
       }
+
+      const fitPoints = importLine.nodes.map(
+        (node) => [node.x / imageSize.width, node.y / imageSize.height] as WorldMapPoint,
+      )
+      if (fitPoints.length >= 2) {
+        setMapView(
+          fitNormalizedViewToRoutePoints(fitPoints, 'fullscreen', 0.08, {
+            min: DRAW_MIN_ZOOM_RATIO,
+            max: DRAW_OVERLAY_LOCK_ZOOM_MAX,
+          }),
+        )
+      }
+
       setSelectedNodeId(null)
       setConnectPendingNodeId(null)
       setConnectPreview(null)
