@@ -390,6 +390,7 @@ export function RouteMapPage() {
               selectedStopId={selectedStopId}
               onStopClick={stopClickEnabled ? handleStopClick : undefined}
               trajectoryPath={interactiveLayer?.trajectoryPath ?? []}
+              trajectory={interactiveLayer?.trajectory}
               maxZoomRatio={8}
               onImageSizeChange={setImageSize}
               referenceEditor={

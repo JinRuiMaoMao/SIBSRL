@@ -144,6 +144,119 @@ function buildRouteEditorSegmentAdjacency(
   return adjacency
 }
 
+function pickUnusedSegmentBetween(
+  adjacency: Map<number, { nodeId: number; segment: RouteEditorSegment }[]>,
+  fromNodeId: number,
+  toNodeId: number,
+  usedSegmentIds: ReadonlySet<number>,
+): RouteEditorSegment | null {
+  const links = (adjacency.get(fromNodeId) ?? [])
+    .filter((link) => link.nodeId === toNodeId && !usedSegmentIds.has(link.segment.id))
+    .sort((a, b) => a.segment.id - b.segment.id)
+  return links[0]?.segment ?? null
+}
+
+function nodePathToSegmentPath(
+  nodePath: readonly number[],
+  adjacency: Map<number, { nodeId: number; segment: RouteEditorSegment }[]>,
+  usedSegmentIds: ReadonlySet<number>,
+): RouteEditorSegment[] | null {
+  if (nodePath.length < 2) return []
+  const segmentPath: RouteEditorSegment[] = []
+  for (let index = 0; index < nodePath.length - 1; index += 1) {
+    const segment = pickUnusedSegmentBetween(
+      adjacency,
+      nodePath[index]!,
+      nodePath[index + 1]!,
+      usedSegmentIds,
+    )
+    if (!segment) return null
+    segmentPath.push(segment)
+  }
+  return segmentPath
+}
+
+/** Shortest node path using each drawn segment at most once. */
+export function findRouteEditorSegmentPath(
+  segments: readonly RouteEditorSegment[],
+  fromNodeId: number,
+  toNodeId: number,
+  usedSegmentIds: ReadonlySet<number>,
+): RouteEditorSegment[] | null {
+  if (fromNodeId === toNodeId) return []
+  if (segments.length === 0) return null
+
+  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const queue: number[] = [fromNodeId]
+  const visited = new Set<number>([fromNodeId])
+  const parent = new Map<number, { fromNodeId: number; segment: RouteEditorSegment }>()
+
+  while (queue.length > 0) {
+    const current = queue.shift()!
+    if (current === toNodeId) {
+      const segmentPath: RouteEditorSegment[] = []
+      let nodeId = toNodeId
+      while (parent.has(nodeId)) {
+        const step = parent.get(nodeId)!
+        segmentPath.push(step.segment)
+        nodeId = step.fromNodeId
+      }
+      segmentPath.reverse()
+      return segmentPath
+    }
+
+    for (const link of adjacency.get(current) ?? []) {
+      if (usedSegmentIds.has(link.segment.id)) continue
+      if (visited.has(link.nodeId)) continue
+      visited.add(link.nodeId)
+      parent.set(link.nodeId, { fromNodeId: current, segment: link.segment })
+      queue.push(link.nodeId)
+    }
+  }
+
+  return null
+}
+
+function resolveSegmentPathBetween(
+  segments: readonly RouteEditorSegment[],
+  chainOrder: readonly number[],
+  fromNodeId: number,
+  toNodeId: number,
+  fromChainIndex: number,
+  usedSegmentIds: ReadonlySet<number>,
+): RouteEditorSegment[] | null {
+  if (fromNodeId === toNodeId) return []
+
+  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+
+  const forwardPath = findRouteEditorForwardNodePath(
+    segments,
+    chainOrder,
+    fromNodeId,
+    toNodeId,
+    fromChainIndex,
+  )
+  if (
+    forwardPath &&
+    forwardPath.length >= 2 &&
+    forwardPath[forwardPath.length - 1] === toNodeId
+  ) {
+    const forwardSegments = nodePathToSegmentPath(forwardPath, adjacency, usedSegmentIds)
+    if (forwardSegments) return forwardSegments
+  }
+
+  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromChainIndex)
+  if (toBackward >= 0 && toBackward !== fromChainIndex) {
+    const backwardNodes = sliceChainOrderBackward(chainOrder, fromChainIndex, toBackward)
+    if (backwardNodes[backwardNodes.length - 1] === toNodeId) {
+      const backwardSegments = nodePathToSegmentPath(backwardNodes, adjacency, usedSegmentIds)
+      if (backwardSegments) return backwardSegments
+    }
+  }
+
+  return findRouteEditorSegmentPath(segments, fromNodeId, toNodeId, usedSegmentIds)
+}
+
 /** Walk every drawn segment once, starting from startNodeId (defines forward direction). */
 export function buildRouteEditorChainNodeOrder(
   segments: readonly RouteEditorSegment[],
@@ -207,66 +320,6 @@ function sliceChainOrderBackward(
   if (fromIndex === toIndex) return [chainOrder[fromIndex]!]
   if (toIndex < fromIndex) return [...chainOrder.slice(toIndex, fromIndex + 1)]
   return [...chainOrder.slice(0, fromIndex + 1), ...chainOrder.slice(toIndex)]
-}
-
-function resolveChainNodePathBetween(
-  segments: readonly RouteEditorSegment[],
-  chainOrder: readonly number[],
-  fromNodeId: number,
-  toNodeId: number,
-  fromChainIndex: number,
-): number[] | null {
-  if (fromNodeId === toNodeId) return [fromNodeId]
-
-  const forwardPath = findRouteEditorForwardNodePath(
-    segments,
-    chainOrder,
-    fromNodeId,
-    toNodeId,
-    fromChainIndex,
-  )
-  if (
-    forwardPath &&
-    forwardPath.length >= 2 &&
-    forwardPath[forwardPath.length - 1] === toNodeId
-  ) {
-    return forwardPath
-  }
-
-  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromChainIndex)
-  if (toBackward >= 0 && toBackward !== fromChainIndex) {
-    const backwardNodes = sliceChainOrderBackward(chainOrder, fromChainIndex, toBackward)
-    if (backwardNodes[backwardNodes.length - 1] === toNodeId) {
-      return backwardNodes
-    }
-  }
-
-  return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
-}
-
-function sampleNodePathPoints(
-  line: RouteEditorLine,
-  nodePath: readonly number[],
-  imageWidth: number,
-  imageHeight: number,
-  samplesPerSegment: number,
-): WorldMapPoint[] {
-  const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
-  const points: WorldMapPoint[] = []
-  const pushPoint = (point: WorldMapPoint) => {
-    const last = points[points.length - 1]
-    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
-    points.push(point)
-  }
-
-  for (let index = 0; index < nodePath.length - 1; index += 1) {
-    const fromNode = nodeById.get(nodePath[index]!)
-    const toNode = nodeById.get(nodePath[index + 1]!)
-    if (!fromNode || !toNode) continue
-    sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
-  }
-
-  return points
 }
 
 /** Forward slice along chainOrder from fromIndex to toIndex (wraps on loops, never reverses). */
@@ -556,15 +609,66 @@ export function slicePathByArcLengthRange(
   return forward ? deduped : [...deduped].reverse()
 }
 
-/** Sample from first stopSeq through each stop in order to the last (follows drawn segments). */
+function sampleSegmentPathIntoTrajectory(
+  line: RouteEditorLine,
+  segmentPath: readonly RouteEditorSegment[],
+  imageWidth: number,
+  imageHeight: number,
+  samplesPerSegment: number,
+  points: WorldMapPoint[],
+  segmentIds: number[],
+  segmentEndArcLengths: number[],
+  arcLengthPx: { value: number },
+) {
+  const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
+  for (const segment of segmentPath) {
+    const from = nodeById.get(segment.fromNodeId)
+    const to = nodeById.get(segment.toNodeId)
+    if (!from || !to) continue
+    sampleSegmentPoints(from, to, imageWidth, imageHeight, samplesPerSegment, (point) => {
+      pushTrajectoryPoint(points, arcLengthPx, imageWidth, imageHeight, point)
+    })
+    segmentIds.push(segment.id)
+    segmentEndArcLengths.push(arcLengthPx.value)
+  }
+}
+
+function pushTrajectoryPoint(
+  points: WorldMapPoint[],
+  arcLengthPx: { value: number },
+  imageWidth: number,
+  imageHeight: number,
+  point: WorldMapPoint,
+) {
+  const last = points[points.length - 1]
+  if (last) {
+    arcLengthPx.value += Math.hypot(
+      (point[0] - last[0]) * imageWidth,
+      (point[1] - last[1]) * imageHeight,
+    )
+  }
+  if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
+  points.push(point)
+}
+
+export interface RouteEditorTrajectorySample {
+  path: WorldMapPoint[]
+  /** Drawn segment ids in traversal order; each id appears at most once. */
+  segmentIds: number[]
+  /** Pixel arc length at the end of each segment along path. */
+  segmentEndArcLengths: number[]
+}
+
+/** Sample from first stopSeq through each stop in order to the last (each segment used once). */
 export function sampleRouteEditorTrajectoryThroughStops(
   line: RouteEditorLine,
   imageWidth: number,
   imageHeight: number,
   orderedStops: readonly RouteEditorNode[],
   samplesPerSegment = 16,
-): WorldMapPoint[] {
-  if (orderedStops.length < 2) return []
+): RouteEditorTrajectorySample {
+  const empty: RouteEditorTrajectorySample = { path: [], segmentIds: [], segmentEndArcLengths: [] }
+  if (orderedStops.length < 2) return empty
 
   const segments = line.segments ?? []
   const chainStartNodeId = orderedStops[0]!.id
@@ -573,42 +677,62 @@ export function sampleRouteEditorTrajectoryThroughStops(
   if (chainCursor < 0) chainCursor = 0
 
   const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
+  const usedSegmentIds = new Set<number>()
   const points: WorldMapPoint[] = []
-  const pushPoint = (point: WorldMapPoint) => {
-    const last = points[points.length - 1]
-    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
-    points.push(point)
-  }
+  const segmentIds: number[] = []
+  const segmentEndArcLengths: number[] = []
+  const arcLengthPx = { value: 0 }
 
   for (let index = 0; index < orderedStops.length - 1; index += 1) {
     const fromStop = orderedStops[index]!
     const toStop = orderedStops[index + 1]!
-    const nodePath = resolveChainNodePathBetween(
+    const segmentPath = resolveSegmentPathBetween(
       segments,
       chainOrder,
       fromStop.id,
       toStop.id,
       chainCursor,
+      usedSegmentIds,
     )
 
-    if (nodePath && nodePath.length >= 2) {
-      const leg = sampleNodePathPoints(line, nodePath, imageWidth, imageHeight, samplesPerSegment)
-      for (const point of leg) pushPoint(point)
+    if (segmentPath && segmentPath.length > 0) {
+      sampleSegmentPathIntoTrajectory(
+        line,
+        segmentPath,
+        imageWidth,
+        imageHeight,
+        samplesPerSegment,
+        points,
+        segmentIds,
+        segmentEndArcLengths,
+        arcLengthPx,
+      )
+      for (const segment of segmentPath) usedSegmentIds.add(segment.id)
     } else {
       const fromNode = nodeById.get(fromStop.id)
       const toNode = nodeById.get(toStop.id)
       if (fromNode && toNode) {
-        sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+        sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, (point) => {
+          pushTrajectoryPoint(points, arcLengthPx, imageWidth, imageHeight, point)
+        })
       }
     }
 
-    pushPoint(toNormalizedPoint(toStop.x, toStop.y, imageWidth, imageHeight))
+    pushTrajectoryPoint(
+      points,
+      arcLengthPx,
+      imageWidth,
+      imageHeight,
+      toNormalizedPoint(toStop.x, toStop.y, imageWidth, imageHeight),
+    )
 
     const nextCursor = indexInChainAfter(chainOrder, toStop.id, chainCursor)
     if (nextCursor >= 0) chainCursor = nextCursor
   }
 
-  if (points.length >= 2) return points
+  if (points.length >= 2) {
+    return { path: points, segmentIds, segmentEndArcLengths }
+  }
 
   return sampleRouteEditorTrajectoryPathPoints(line, imageWidth, imageHeight, samplesPerSegment)
 }
@@ -717,22 +841,21 @@ export function sampleRouteEditorTrajectoryPathPoints(
   imageWidth: number,
   imageHeight: number,
   samplesPerSegment = 16,
-): [number, number][] {
-  if (imageWidth <= 0 || imageHeight <= 0) return []
+): RouteEditorTrajectorySample {
+  const empty: RouteEditorTrajectorySample = { path: [], segmentIds: [], segmentEndArcLengths: [] }
+  if (imageWidth <= 0 || imageHeight <= 0) return empty
 
   const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
   const segments = line.segments ?? []
-  if (segments.length === 0) return []
+  if (segments.length === 0) return empty
 
   const adjacency = buildRouteEditorSegmentAdjacency(segments)
   const startNodeId = findRouteEditorChainStartNodeId(line.nodes, segments)
 
-  const points: [number, number][] = []
-  const pushPoint = (point: [number, number]) => {
-    const last = points[points.length - 1]
-    if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
-    points.push(point)
-  }
+  const points: WorldMapPoint[] = []
+  const segmentIds: number[] = []
+  const segmentEndArcLengths: number[] = []
+  const arcLengthPx = { value: 0 }
 
   const used = new Set<number>()
   let current = startNodeId
@@ -749,20 +872,30 @@ export function sampleRouteEditorTrajectoryPathPoints(
     const toNode = nodeById.get(next.nodeId)
     if (!fromNode || !toNode) break
 
-    sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+    sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, (point) => {
+      pushTrajectoryPoint(points, arcLengthPx, imageWidth, imageHeight, point)
+    })
+    segmentIds.push(next.segment.id)
+    segmentEndArcLengths.push(arcLengthPx.value)
     used.add(next.segment.id)
     previous = current
     current = next.nodeId
   }
 
-  if (points.length >= 2) return points
+  if (points.length >= 2) {
+    return { path: points, segmentIds, segmentEndArcLengths }
+  }
 
   for (const segment of segments) {
     const from = nodeById.get(segment.fromNodeId)
     const to = nodeById.get(segment.toNodeId)
     if (!from || !to) continue
-    sampleSegmentPoints(from, to, imageWidth, imageHeight, samplesPerSegment, pushPoint)
+    sampleSegmentPoints(from, to, imageWidth, imageHeight, samplesPerSegment, (point) => {
+      pushTrajectoryPoint(points, arcLengthPx, imageWidth, imageHeight, point)
+    })
+    segmentIds.push(segment.id)
+    segmentEndArcLengths.push(arcLengthPx.value)
   }
 
-  return points
+  return { path: points, segmentIds, segmentEndArcLengths }
 }

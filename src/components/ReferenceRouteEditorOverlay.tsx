@@ -34,6 +34,8 @@ interface ReferenceRouteEditorOverlayProps {
   onSegmentDoubleClick?: (segmentId: number) => void
   /** Highlight this stop's label as the trajectory ball's next stop. */
   nextStopNodeId?: number | null
+  /** Hide segments already traversed by the trajectory ball. */
+  hiddenSegmentIds?: readonly number[]
   /** Let map clicks pass through segments (placing stops/points on a line). */
   segmentPassthrough?: boolean
   /** Disable double-click segment delete while configuring placement. */
@@ -67,6 +69,7 @@ export function ReferenceRouteEditorOverlay({
   onNodeDoubleClick,
   onSegmentDoubleClick,
   nextStopNodeId = null,
+  hiddenSegmentIds = [],
   segmentPassthrough = false,
   allowSegmentDelete = true,
   showSegmentOverlapCounts = false,
@@ -78,11 +81,19 @@ export function ReferenceRouteEditorOverlay({
   const stopRadius = mapDrawStopIconRadius(config.stopIconSize, nodeScale)
   const pointRadius = mapDrawPointIconRadius(config.pointIconSize, nodeScale)
   const segmentHitWidth = 16 * nodeScale
+  const hiddenSegmentIdSet = useMemo(
+    () => new Set(hiddenSegmentIds),
+    [hiddenSegmentIds],
+  )
+  const visibleSegments = useMemo(
+    () => (hiddenSegmentIdSet.size ? segments.filter((segment) => !hiddenSegmentIdSet.has(segment.id)) : segments),
+    [hiddenSegmentIdSet, segments],
+  )
   const overlapGroups = useMemo(() => {
     if (!showSegmentOverlapCounts) return []
     const byId = new Map(nodes.map((node) => [node.id, node]))
-    return buildRouteEditorSegmentOverlapGroups(segments, byId)
-  }, [nodes, segments, showSegmentOverlapCounts])
+    return buildRouteEditorSegmentOverlapGroups(visibleSegments, byId)
+  }, [nodes, showSegmentOverlapCounts, visibleSegments])
   const overlapBadgeRadius = 10 * nodeScale
   const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale))
 
@@ -94,7 +105,7 @@ export function ReferenceRouteEditorOverlay({
       viewBox={`0 0 ${imageWidth} ${imageHeight}`}
       aria-hidden
     >
-      {segments.map((segment) => {
+      {visibleSegments.map((segment) => {
         const from = nodeById.get(segment.fromNodeId)
         const to = nodeById.get(segment.toNodeId)
         if (!from || !to) return null
