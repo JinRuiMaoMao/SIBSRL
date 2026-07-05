@@ -17,6 +17,11 @@ import {
 } from '../utils/routeEditorStopLabel'
 import { resolveRouteEditorStopSeqEndpoints } from '../utils/routeMapStopMatching'
 import { buildRouteEditorSegmentOverlapGroups } from '../routeEditor/routeEditorSegmentOverlap'
+import {
+  buildRouteEditorDualCarriagewayPairs,
+  segmentDirectionArrowPoints,
+} from '../routeEditor/routeEditorSegmentDirection'
+import type { RouteEditorCarriageway } from '../routeEditor/types'
 
 interface ReferenceRouteEditorOverlayProps {
   imageWidth: number
@@ -40,6 +45,8 @@ interface ReferenceRouteEditorOverlayProps {
   allowSegmentDelete?: boolean
   /** Show a count badge when multiple segments stack between the same two nodes. */
   showSegmentOverlapCounts?: boolean
+  /** Preview line carriageway while connecting (shows direction arrow on preview). */
+  connectCarriageway?: RouteEditorCarriageway
 }
 
 function strokeDashArray(style: RouteEditorLineStyle['style']): string {
@@ -91,6 +98,7 @@ export function ReferenceRouteEditorOverlay({
   segmentPassthrough = false,
   allowSegmentDelete = true,
   showSegmentOverlapCounts = false,
+  connectCarriageway = 'single',
 }: ReferenceRouteEditorOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
@@ -104,18 +112,11 @@ export function ReferenceRouteEditorOverlay({
     const byId = new Map(nodes.map((node) => [node.id, node]))
     return buildRouteEditorSegmentOverlapGroups(segments, byId)
   }, [nodes, segments, showSegmentOverlapCounts])
-  const dualCarriagewayPairs = useMemo(() => {
-    const forwardKeys = new Set(segments.map((segment) => `${segment.fromNodeId}:${segment.toNodeId}`))
-    const pairs = new Set<string>()
-    for (const segment of segments) {
-      if (forwardKeys.has(`${segment.toNodeId}:${segment.fromNodeId}`)) {
-        const low = Math.min(segment.fromNodeId, segment.toNodeId)
-        const high = Math.max(segment.fromNodeId, segment.toNodeId)
-        pairs.add(`${low}:${high}`)
-      }
-    }
-    return pairs
-  }, [segments])
+  const dualCarriagewayPairs = useMemo(
+    () => buildRouteEditorDualCarriagewayPairs(segments),
+    [segments],
+  )
+  const arrowSize = 10 * nodeScale
   const overlapBadgeRadius = 10 * nodeScale
   const overlapBadgeFontSize = Math.max(9, Math.round(11 * nodeScale))
 
@@ -176,6 +177,14 @@ export function ReferenceRouteEditorOverlay({
               vectorEffect="non-scaling-stroke"
               pointerEvents="none"
             />
+            {!dualCarriagewayPairs.has(pairKey) ? (
+              <polygon
+                className="reference-route-editor-segment-arrow"
+                points={segmentDirectionArrowPoints(x1, y1, x2, y2, arrowSize)}
+                fill={lineStyle.color}
+                pointerEvents="none"
+              />
+            ) : null}
           </g>
         )
       })}
@@ -205,17 +214,33 @@ export function ReferenceRouteEditorOverlay({
         : null}
 
       {connectPreview ? (
-        <line
-          className="reference-route-editor-connect-preview"
-          x1={connectPreview.fromX}
-          y1={connectPreview.fromY}
-          x2={connectPreview.toX}
-          y2={connectPreview.toY}
-          stroke={lineStyle.color}
-          strokeWidth={lineStyle.width}
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
+        <g className="reference-route-editor-connect-preview-wrap">
+          <line
+            className="reference-route-editor-connect-preview"
+            x1={connectPreview.fromX}
+            y1={connectPreview.fromY}
+            x2={connectPreview.toX}
+            y2={connectPreview.toY}
+            stroke={lineStyle.color}
+            strokeWidth={lineStyle.width}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          {connectCarriageway === 'single' ? (
+            <polygon
+              className="reference-route-editor-segment-arrow reference-route-editor-connect-preview-arrow"
+              points={segmentDirectionArrowPoints(
+                connectPreview.fromX,
+                connectPreview.fromY,
+                connectPreview.toX,
+                connectPreview.toY,
+                arrowSize,
+              )}
+              fill={lineStyle.color}
+              pointerEvents="none"
+            />
+          ) : null}
+        </g>
       ) : null}
 
       {nodes.map((node) => {

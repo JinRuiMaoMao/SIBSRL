@@ -6,7 +6,13 @@ import { IslandMapStopOverlayLayer } from './IslandMapStopOverlayLayer'
 import { IslandMapPathNodeOverlayLayer } from './IslandMapPathNodeOverlayLayer'
 import type { WorldMapDrawStop, WorldMapDrawPathNode } from '../types/worldMapDraw'
 import type { IslandMapDrawInteraction } from '../types/worldMapDraw'
-import type { RouteEditorConfig, RouteEditorLineStyle, RouteEditorNode, RouteEditorSegment } from '../routeEditor/types'
+import type {
+  RouteEditorCarriageway,
+  RouteEditorConfig,
+  RouteEditorLineStyle,
+  RouteEditorNode,
+  RouteEditorSegment,
+} from '../routeEditor/types'
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { RouteMapTrajectoryBall } from './RouteMapTrajectoryBall'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
@@ -94,6 +100,7 @@ interface IslandMapPanZoomSurfaceProps {
     segmentPassthrough?: boolean
     allowSegmentDelete?: boolean
     showSegmentOverlapCounts?: boolean
+    connectCarriageway?: RouteEditorCarriageway
   } | null
 }
 
@@ -996,6 +1003,7 @@ export function IslandMapPanZoomSurface({
             segmentPassthrough={referenceEditor.segmentPassthrough}
             allowSegmentDelete={referenceEditor.allowSegmentDelete}
             showSegmentOverlapCounts={referenceEditor.showSegmentOverlapCounts}
+            connectCarriageway={referenceEditor.connectCarriageway}
             nextStopNodeId={trajectoryPath.length >= 2 ? trajectoryNextStopNodeId : null}
           />
         </div>

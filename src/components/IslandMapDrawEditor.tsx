@@ -1224,6 +1224,7 @@ export function IslandMapDrawEditor({
                       segmentPassthrough,
                       allowSegmentDelete,
                       showSegmentOverlapCounts: true,
+                      connectCarriageway,
                       onNodeDoubleClick: deleteNodeById,
                       onBackgroundClick:
                         editorMode === 'connectLine'

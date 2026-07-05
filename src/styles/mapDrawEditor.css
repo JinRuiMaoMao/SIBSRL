@@ -334,6 +334,14 @@ html[data-app-page='map-draw'] #root {
   pointer-events: none;
 }
 
+.reference-route-editor-segment-arrow {
+  pointer-events: none;
+}
+
+.reference-route-editor-connect-preview-wrap {
+  pointer-events: none;
+}
+
 .reference-route-editor-segment-overlap {
   pointer-events: none;
 }

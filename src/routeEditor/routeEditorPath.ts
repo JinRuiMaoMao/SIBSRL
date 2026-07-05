@@ -1,5 +1,9 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteEditorLine, RouteEditorNode, RouteEditorSegment } from './types'
+import {
+  hasDirectedRouteEditorSegment,
+  isDirectedRouteEditorNodePath,
+} from './routeEditorSegmentDirection'
 
 /** 参考 route-editor-main.js updateRouteCornerRadius（有序节点，兼容旧导入） */
 export function buildRouteEditorPathD(
@@ -129,7 +133,8 @@ export function sampleRouteEditorPathPoints(
   return points
 }
 
-function buildRouteEditorSegmentAdjacency(
+/** Outgoing edges only — segment direction is the travel direction. */
+function buildRouteEditorOutgoingAdjacency(
   segments: readonly RouteEditorSegment[],
 ): Map<number, { nodeId: number; segment: RouteEditorSegment }[]> {
   const adjacency = new Map<number, { nodeId: number; segment: RouteEditorSegment }[]>()
@@ -137,11 +142,18 @@ function buildRouteEditorSegmentAdjacency(
     const fromLinks = adjacency.get(segment.fromNodeId) ?? []
     fromLinks.push({ nodeId: segment.toNodeId, segment })
     adjacency.set(segment.fromNodeId, fromLinks)
-    const toLinks = adjacency.get(segment.toNodeId) ?? []
-    toLinks.push({ nodeId: segment.fromNodeId, segment })
-    adjacency.set(segment.toNodeId, toLinks)
   }
   return adjacency
+}
+
+function buildRouteEditorIncomingDegree(
+  segments: readonly RouteEditorSegment[],
+): Map<number, number> {
+  const incoming = new Map<number, number>()
+  for (const segment of segments) {
+    incoming.set(segment.toNodeId, (incoming.get(segment.toNodeId) ?? 0) + 1)
+  }
+  return incoming
 }
 
 /** Walk every drawn segment once, starting from startNodeId (defines forward direction). */
@@ -151,7 +163,7 @@ export function buildRouteEditorChainNodeOrder(
 ): number[] {
   if (segments.length === 0) return [startNodeId]
 
-  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const adjacency = buildRouteEditorOutgoingAdjacency(segments)
   const ordered: number[] = [startNodeId]
   const used = new Set<number>()
   let current = startNodeId
@@ -263,7 +275,7 @@ function walkForwardNodePathOnGraph(
   toNodeId: number,
   fromChainIndex: number,
 ): number[] | null {
-  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const adjacency = buildRouteEditorOutgoingAdjacency(segments)
   let chainCursor = resolveChainIndexForNode(chainOrder, fromNodeId, fromChainIndex)
   if (chainCursor < 0) return null
 
@@ -310,31 +322,6 @@ function walkForwardNodePathOnGraph(
   return null
 }
 
-function indexInChainBefore(
-  chainOrder: readonly number[],
-  nodeId: number,
-  beforeIndex: number,
-): number {
-  for (let index = beforeIndex - 1; index >= 0; index -= 1) {
-    if (chainOrder[index] === nodeId) return index
-  }
-  for (let index = chainOrder.length - 1; index > beforeIndex; index -= 1) {
-    if (chainOrder[index] === nodeId) return index
-  }
-  return -1
-}
-
-/** Backtrack along chainOrder from fromIndex to toIndex (no forward loop wrap). */
-function sliceChainOrderBackward(
-  chainOrder: readonly number[],
-  fromIndex: number,
-  toIndex: number,
-): number[] {
-  if (fromIndex === toIndex) return [chainOrder[fromIndex]!]
-  if (toIndex < fromIndex) return [...chainOrder.slice(toIndex, fromIndex + 1)]
-  return [...chainOrder.slice(0, fromIndex + 1), ...chainOrder.slice(toIndex)]
-}
-
 function resolveChainNodePathBetween(
   segments: readonly RouteEditorSegment[],
   chainOrder: readonly number[],
@@ -358,6 +345,7 @@ function resolveChainNodePathBetween(
     forwardPath &&
     forwardPath.length >= 2 &&
     forwardPath[forwardPath.length - 1] === toNodeId &&
+    isDirectedRouteEditorNodePath(segments, forwardPath) &&
     !chainNodePathBacktracks(chainOrder, forwardPath, fromIndex)
   ) {
     return forwardPath
@@ -370,16 +358,13 @@ function resolveChainNodePathBetween(
     toNodeId,
     fromIndex,
   )
-  if (loopPath && loopPath.length >= 2 && loopPath[loopPath.length - 1] === toNodeId) {
+  if (
+    loopPath &&
+    loopPath.length >= 2 &&
+    loopPath[loopPath.length - 1] === toNodeId &&
+    isDirectedRouteEditorNodePath(segments, loopPath)
+  ) {
     return loopPath
-  }
-
-  const toBackward = indexInChainBefore(chainOrder, toNodeId, fromIndex)
-  if (toBackward >= 0 && toBackward !== fromIndex) {
-    const backwardNodes = sliceChainOrderBackward(chainOrder, fromIndex, toBackward)
-    if (backwardNodes[backwardNodes.length - 1] === toNodeId) {
-      return backwardNodes
-    }
   }
 
   return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
@@ -393,6 +378,7 @@ function sampleNodePathPoints(
   samplesPerSegment: number,
 ): WorldMapPoint[] {
   const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
+  const segments = line.segments ?? []
   const points: WorldMapPoint[] = []
   const pushPoint = (point: WorldMapPoint) => {
     const last = points[points.length - 1]
@@ -401,8 +387,11 @@ function sampleNodePathPoints(
   }
 
   for (let index = 0; index < nodePath.length - 1; index += 1) {
-    const fromNode = nodeById.get(nodePath[index]!)
-    const toNode = nodeById.get(nodePath[index + 1]!)
+    const fromId = nodePath[index]!
+    const toId = nodePath[index + 1]!
+    if (!hasDirectedRouteEditorSegment(segments, fromId, toId)) continue
+    const fromNode = nodeById.get(fromId)
+    const toNode = nodeById.get(toId)
     if (!fromNode || !toNode) continue
     sampleSegmentPoints(fromNode, toNode, imageWidth, imageHeight, samplesPerSegment, pushPoint)
   }
@@ -440,7 +429,9 @@ export function findRouteEditorForwardNodePath(
   const toIndex = indexInChainAfter(chainOrder, toNodeId, fromIndex)
   if (toIndex < 0) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
 
-  return sliceChainOrderForward(chainOrder, fromIndex, toIndex)
+  const path = sliceChainOrderForward(chainOrder, fromIndex, toIndex)
+  if (!isDirectedRouteEditorNodePath(segments, path)) return findRouteEditorNodePath(segments, fromNodeId, toNodeId)
+  return path
 }
 
 /** Shortest node path along drawn segments (BFS). */
@@ -452,7 +443,7 @@ export function findRouteEditorNodePath(
   if (fromNodeId === toNodeId) return [fromNodeId]
   if (segments.length === 0) return null
 
-  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const adjacency = buildRouteEditorOutgoingAdjacency(segments)
   const queue: number[] = [fromNodeId]
   const visited = new Set<number>([fromNodeId])
   const parent = new Map<number, number>()
@@ -758,8 +749,10 @@ function findRouteEditorChainStartNodeId(
   nodes: readonly RouteEditorNode[],
   segments: readonly RouteEditorSegment[],
 ): number {
-  const adjacency = buildRouteEditorSegmentAdjacency(segments)
-  const endpointLinkCount = (nodeId: number) => (adjacency.get(nodeId)?.length ?? 0)
+  const outgoing = buildRouteEditorOutgoingAdjacency(segments)
+  const incoming = buildRouteEditorIncomingDegree(segments)
+  const outCount = (nodeId: number) => outgoing.get(nodeId)?.length ?? 0
+  const inCount = (nodeId: number) => incoming.get(nodeId) ?? 0
 
   const sequenced = nodes
     .filter((node) => node.type === 'stop' && node.stopSeq != null && node.stopSeq > 0)
@@ -768,10 +761,17 @@ function findRouteEditorChainStartNodeId(
 
   for (const node of nodes) {
     if (node.type !== 'stop') continue
-    if (endpointLinkCount(node.id) === 1) return node.id
+    if (outCount(node.id) > 0 && inCount(node.id) === 0) return node.id
   }
   for (const node of nodes) {
-    if (endpointLinkCount(node.id) === 1) return node.id
+    if (outCount(node.id) > 0 && inCount(node.id) === 0) return node.id
+  }
+  for (const node of nodes) {
+    if (node.type !== 'stop') continue
+    if (outCount(node.id) > 0) return node.id
+  }
+  for (const node of nodes) {
+    if (outCount(node.id) > 0) return node.id
   }
   for (const node of nodes) {
     if (node.type === 'stop') return node.id
@@ -786,23 +786,20 @@ export function orderRouteEditorSegmentChain(
 ): RouteEditorSegment[] {
   if (segments.length <= 1) return [...segments]
 
-  const adjacency = new Map<number, { segment: RouteEditorSegment; other: number }[]>()
-  for (const segment of segments) {
-    const fromLinks = adjacency.get(segment.fromNodeId) ?? []
-    fromLinks.push({ segment, other: segment.toNodeId })
-    adjacency.set(segment.fromNodeId, fromLinks)
-    const toLinks = adjacency.get(segment.toNodeId) ?? []
-    toLinks.push({ segment, other: segment.fromNodeId })
-    adjacency.set(segment.toNodeId, toLinks)
-  }
+  const adjacency = buildRouteEditorOutgoingAdjacency(segments)
 
   const pickStartNodeId = (): number => {
+    const incoming = buildRouteEditorIncomingDegree(segments)
     for (const node of nodes) {
       if (node.type !== 'stop') continue
-      if ((adjacency.get(node.id)?.length ?? 0) === 1) return node.id
+      if ((adjacency.get(node.id)?.length ?? 0) > 0 && (incoming.get(node.id) ?? 0) === 0) {
+        return node.id
+      }
     }
     for (const node of nodes) {
-      if ((adjacency.get(node.id)?.length ?? 0) === 1) return node.id
+      if ((adjacency.get(node.id)?.length ?? 0) > 0 && (incoming.get(node.id) ?? 0) === 0) {
+        return node.id
+      }
     }
     for (const node of nodes) {
       if (node.type === 'stop') return node.id
@@ -817,14 +814,12 @@ export function orderRouteEditorSegmentChain(
 
   while (ordered.length < segments.length) {
     const links = (adjacency.get(current) ?? []).filter((link) => !used.has(link.segment.id))
-    const next =
-      links.find((link) => link.other !== previous) ??
-      links[0]
+    const next = links.find((link) => link.nodeId !== previous) ?? links[0]
     if (!next) break
     ordered.push(next.segment)
     used.add(next.segment.id)
     previous = current
-    current = next.other
+    current = next.nodeId
   }
 
   return ordered.length === segments.length ? ordered : [...segments]
@@ -865,7 +860,7 @@ export function sampleRouteEditorTrajectoryPathPoints(
   const segments = line.segments ?? []
   if (segments.length === 0) return []
 
-  const adjacency = buildRouteEditorSegmentAdjacency(segments)
+  const adjacency = buildRouteEditorOutgoingAdjacency(segments)
   const startNodeId = findRouteEditorChainStartNodeId(line.nodes, segments)
 
   const points: [number, number][] = []
