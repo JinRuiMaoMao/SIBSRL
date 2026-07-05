@@ -6,6 +6,8 @@ export type RouteEditorNodeType = 'stop' | 'point'
 
 export type RouteEditorCarriageway = 'single' | 'dual'
 
+export type RouteEditorMode = 'select' | 'addStop' | 'addPoint' | 'connectLine'
+
 export type RouteEditorLabelPosition =
   | 'top-left'
   | 'top'
