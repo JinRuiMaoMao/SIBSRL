@@ -317,6 +317,7 @@ export function IslandMapPanZoomSurface({
   trajectoryPath = [],
   referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
+  const [trajectoryNextStopNodeId, setTrajectoryNextStopNodeId] = useState<number | null>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -993,6 +994,7 @@ export function IslandMapPanZoomSurface({
             }
             segmentPassthrough={referenceEditor.segmentPassthrough}
             allowSegmentDelete={referenceEditor.allowSegmentDelete}
+            nextStopNodeId={trajectoryPath.length >= 2 ? trajectoryNextStopNodeId : null}
           />
         </div>
       ) : (
@@ -1101,6 +1103,8 @@ export function IslandMapPanZoomSurface({
             imageWidth={imageSize.width}
             imageHeight={imageSize.height}
             path={trajectoryPath}
+            stopNodes={referenceEditor?.nodes}
+            onNextStopNodeIdChange={setTrajectoryNextStopNodeId}
           />
         </div>
       ) : null}

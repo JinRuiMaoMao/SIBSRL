@@ -30,6 +30,8 @@ interface ReferenceRouteEditorOverlayProps {
   onNodePointerDown?: (nodeId: number, event: React.PointerEvent<SVGGElement>) => void
   onNodeDoubleClick?: (nodeId: number) => void
   onSegmentDoubleClick?: (segmentId: number) => void
+  /** Highlight this stop's label as the trajectory ball's next stop. */
+  nextStopNodeId?: number | null
   /** Let map clicks pass through segments (placing stops/points on a line). */
   segmentPassthrough?: boolean
   /** Disable double-click segment delete while configuring placement. */
@@ -60,6 +62,7 @@ export function ReferenceRouteEditorOverlay({
   onNodePointerDown,
   onNodeDoubleClick,
   onSegmentDoubleClick,
+  nextStopNodeId = null,
   segmentPassthrough = false,
   allowSegmentDelete = true,
 }: ReferenceRouteEditorOverlayProps) {
@@ -147,6 +150,7 @@ export function ReferenceRouteEditorOverlay({
           endNodeId != null &&
           node.id === endNodeId &&
           startNodeId !== endNodeId
+        const isNextStop = node.type === 'stop' && nextStopNodeId != null && node.id === nextStopNodeId
         const selected = selectedNodeId === node.id
         const connectPending = connectPendingNodeId === node.id
         const radius = node.type === 'stop' ? stopRadius : pointRadius
@@ -179,7 +183,7 @@ export function ReferenceRouteEditorOverlay({
         return (
           <g
             key={node.id}
-            className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${connectPending ? ' reference-route-editor-node--connect-pending' : ''}${isStartStop ? ' reference-route-editor-node--first' : ''}${isEndStop ? ' reference-route-editor-node--last' : ''}`.trim()}
+            className={`reference-route-editor-node reference-route-editor-node--${node.type}${selected ? ' reference-route-editor-node--selected' : ''}${connectPending ? ' reference-route-editor-node--connect-pending' : ''}${isStartStop ? ' reference-route-editor-node--first' : ''}${isEndStop ? ' reference-route-editor-node--last' : ''}${isNextStop ? ' reference-route-editor-node--next-stop' : ''}`.trim()}
             onPointerDown={
               onNodePointerDown
                 ? (event) => {
@@ -210,7 +214,7 @@ export function ReferenceRouteEditorOverlay({
                   width={labelBoxWidth}
                   height={labelBoxHeight}
                   rx={4 * nodeScale}
-                  className="reference-route-editor-label-bg"
+                  className={`reference-route-editor-label-bg${isNextStop ? ' reference-route-editor-label-bg--next-stop' : ''}`.trim()}
                 />
                 <text
                   className="reference-route-editor-label-name"

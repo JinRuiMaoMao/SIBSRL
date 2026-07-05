@@ -351,6 +351,15 @@ html[data-app-page='map-draw'] #root {
   cursor: pointer;
 }
 
+.reference-route-editor-label-bg--next-stop {
+  fill: #facc15;
+  stroke: #ca8a04;
+}
+
+.reference-route-editor-node--next-stop .reference-route-editor-label-name {
+  fill: #1c1917;
+}
+
 .reference-route-editor-label-seq,
 .reference-route-editor-label-name {
   fill: #f8fafc;

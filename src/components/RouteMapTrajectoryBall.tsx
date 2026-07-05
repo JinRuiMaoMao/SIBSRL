@@ -1,18 +1,30 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import type { RouteEditorNode } from '../routeEditor/types'
 import { ROUTE_MAP_VIEWER_EDITOR_CONFIG } from '../routeEditor/types'
 import { mapDrawNodeScaleFactor, mapDrawStopIconRadius } from '../utils/mapDrawNodeScale'
-import { interpolateRouteMapTrajectoryPoint } from '../utils/routeMapTrajectory'
+import {
+  interpolateRouteMapTrajectoryPoint,
+  resolveRouteMapTrajectoryNextStopNodeId,
+} from '../utils/routeMapTrajectory'
 
 interface RouteMapTrajectoryBallProps {
   imageWidth: number
   imageHeight: number
   path: readonly WorldMapPoint[]
+  stopNodes?: readonly RouteEditorNode[]
+  onNextStopNodeIdChange?: (nodeId: number | null) => void
 }
 
 const LOOP_DURATION_MS = 24_000
 
-export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteMapTrajectoryBallProps) {
+export function RouteMapTrajectoryBall({
+  imageWidth,
+  imageHeight,
+  path,
+  stopNodes = [],
+  onNextStopNodeIdChange,
+}: RouteMapTrajectoryBallProps) {
   const radius = useMemo(() => {
     const nodeScale = mapDrawNodeScaleFactor(imageWidth, imageHeight)
     return mapDrawStopIconRadius(ROUTE_MAP_VIEWER_EDITOR_CONFIG.stopIconSize, nodeScale)
@@ -22,6 +34,13 @@ export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteM
     if (path.length === 0 || imageWidth <= 0 || imageHeight <= 0) return [0, 0]
     return interpolateRouteMapTrajectoryPoint(path, 0, imageWidth, imageHeight)
   })
+
+  const prevNextStopNodeIdRef = useRef<number | null | undefined>(undefined)
+
+  useEffect(() => {
+    prevNextStopNodeIdRef.current = undefined
+    onNextStopNodeIdChange?.(null)
+  }, [onNextStopNodeIdChange, path, stopNodes])
 
   useEffect(() => {
     if (path.length < 2 || imageWidth <= 0 || imageHeight <= 0) return
@@ -33,12 +52,25 @@ export function RouteMapTrajectoryBall({ imageWidth, imageHeight, path }: RouteM
       const elapsed = (now - startAt) % LOOP_DURATION_MS
       const progress = elapsed / LOOP_DURATION_MS
       setPosition(interpolateRouteMapTrajectoryPoint(path, progress, imageWidth, imageHeight))
+      if (onNextStopNodeIdChange && stopNodes.length > 0) {
+        const nextStopNodeId = resolveRouteMapTrajectoryNextStopNodeId(
+          stopNodes,
+          path,
+          progress,
+          imageWidth,
+          imageHeight,
+        )
+        if (nextStopNodeId !== prevNextStopNodeIdRef.current) {
+          prevNextStopNodeIdRef.current = nextStopNodeId
+          onNextStopNodeIdChange(nextStopNodeId)
+        }
+      }
       frame = window.requestAnimationFrame(tick)
     }
 
     frame = window.requestAnimationFrame(tick)
     return () => window.cancelAnimationFrame(frame)
-  }, [imageHeight, imageWidth, path])
+  }, [imageHeight, imageWidth, onNextStopNodeIdChange, path, stopNodes])
 
   if (path.length < 2) return null
 
