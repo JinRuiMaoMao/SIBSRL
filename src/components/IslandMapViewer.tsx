@@ -64,7 +64,7 @@ export function IslandMapViewer() {
   const interactiveLayer = useMemo(() => {
     if (!importedPath) return null
     return buildRouteMapInteractiveLayerState(
-      { ...importedPath, fitPoints: routeOverlay?.points ?? importedPath.points },
+      { ...importedPath, fitPoints: [...(routeOverlay?.points ?? importedPath.points)] },
       imageSize,
       catalogStops,
       selectedStopId,

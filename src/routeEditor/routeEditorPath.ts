@@ -1,3 +1,4 @@
+import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { RouteEditorLine, RouteEditorNode, RouteEditorSegment } from './types'
 
 /** 参考 route-editor-main.js updateRouteCornerRadius（有序节点，兼容旧导入） */
@@ -249,10 +250,10 @@ function sampleNodePathPoints(
   imageWidth: number,
   imageHeight: number,
   samplesPerSegment: number,
-): NormalizedPoint[] {
+): WorldMapPoint[] {
   const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
-  const points: NormalizedPoint[] = []
-  const pushPoint = (point: NormalizedPoint) => {
+  const points: WorldMapPoint[] = []
+  const pushPoint = (point: WorldMapPoint) => {
     const last = points[points.length - 1]
     if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
     points.push(point)
@@ -397,20 +398,18 @@ export function sampleRouteEditorPathBetweenNodes(
   return points
 }
 
-type NormalizedPoint = [number, number]
-
 const TRAJECTORY_ARC_MATCH_EPSILON_PX = 12
 
-function toNormalizedPoint(x: number, y: number, imageWidth: number, imageHeight: number): NormalizedPoint {
+function toNormalizedPoint(x: number, y: number, imageWidth: number, imageHeight: number): WorldMapPoint {
   return [x / imageWidth, y / imageHeight]
 }
 
 function interpolatePathPointAtArcLength(
-  path: readonly NormalizedPoint[],
+  path: readonly WorldMapPoint[],
   arcLength: number,
   imageWidth: number,
   imageHeight: number,
-): NormalizedPoint | null {
+): WorldMapPoint | null {
   if (path.length === 0) return null
   if (path.length === 1) return [path[0]![0], path[0]![1]]
 
@@ -438,8 +437,8 @@ function interpolatePathPointAtArcLength(
 
 /** Closest arc-length at or after minArcLength (handles paths that revisit the same geometry). */
 export function pathArcLengthToStopMonotonic(
-  path: readonly NormalizedPoint[],
-  stopPoint: NormalizedPoint,
+  path: readonly WorldMapPoint[],
+  stopPoint: WorldMapPoint,
   imageWidth: number,
   imageHeight: number,
   minArcLength = 0,
@@ -482,7 +481,7 @@ export function pathArcLengthToStopMonotonic(
 
 /** Monotonic arc-length marker for each stop on a sampled trajectory path. */
 export function buildTrajectoryStopArcLengths(
-  path: readonly NormalizedPoint[],
+  path: readonly WorldMapPoint[],
   orderedStops: readonly RouteEditorNode[],
   imageWidth: number,
   imageHeight: number,
@@ -500,12 +499,12 @@ export function buildTrajectoryStopArcLengths(
 
 /** Extract a path slice between two arc lengths (supports backtracking when end < start). */
 export function slicePathByArcLengthRange(
-  path: readonly NormalizedPoint[],
+  path: readonly WorldMapPoint[],
   startArc: number,
   endArc: number,
   imageWidth: number,
   imageHeight: number,
-): NormalizedPoint[] {
+): WorldMapPoint[] {
   if (path.length < 2) return [...path]
   if (Math.abs(endArc - startArc) < 0.5) {
     const point = interpolatePathPointAtArcLength(path, startArc, imageWidth, imageHeight)
@@ -515,7 +514,7 @@ export function slicePathByArcLengthRange(
   const forward = endArc >= startArc
   const low = forward ? startArc : endArc
   const high = forward ? endArc : startArc
-  const slice: NormalizedPoint[] = []
+  const slice: WorldMapPoint[] = []
 
   const startPoint = interpolatePathPointAtArcLength(path, low, imageWidth, imageHeight)
   if (startPoint) slice.push(startPoint)
@@ -547,7 +546,7 @@ export function slicePathByArcLengthRange(
   const endPoint = interpolatePathPointAtArcLength(path, high, imageWidth, imageHeight)
   if (endPoint) slice.push(endPoint)
 
-  const deduped: NormalizedPoint[] = []
+  const deduped: WorldMapPoint[] = []
   for (const point of slice) {
     const last = deduped[deduped.length - 1]
     if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) continue
@@ -564,7 +563,7 @@ export function sampleRouteEditorTrajectoryThroughStops(
   imageHeight: number,
   orderedStops: readonly RouteEditorNode[],
   samplesPerSegment = 16,
-): NormalizedPoint[] {
+): WorldMapPoint[] {
   if (orderedStops.length < 2) return []
 
   const segments = line.segments ?? []
@@ -574,8 +573,8 @@ export function sampleRouteEditorTrajectoryThroughStops(
   if (chainCursor < 0) chainCursor = 0
 
   const nodeById = new Map(line.nodes.map((node) => [node.id, node]))
-  const points: NormalizedPoint[] = []
-  const pushPoint = (point: NormalizedPoint) => {
+  const points: WorldMapPoint[] = []
+  const pushPoint = (point: WorldMapPoint) => {
     const last = points[points.length - 1]
     if (last && Math.hypot(last[0] - point[0], last[1] - point[1]) < 0.00001) return
     points.push(point)

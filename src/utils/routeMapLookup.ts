@@ -1,4 +1,5 @@
 import { ROUTE_MAP_ROUTE_ALIASES } from '../data/routeMapsManifest'
+import type { BusRoute } from '../types/route'
 
 /** Candidate route ids to try when loading stored/API route maps. */
 export function resolveRouteMapLookupIds(routeId: string): string[] {
@@ -27,7 +28,7 @@ export function routeMapIdsMatch(left: string, right: string): boolean {
 }
 
 /** Resolve a published route record from a route-map URL id (e.g. 21 → 21A). */
-export function findRouteForMapPage(routeId: string, routesList: readonly { id: string }[]): { id: string } | undefined {
+export function findRouteForMapPage(routeId: string, routesList: readonly BusRoute[]): BusRoute | undefined {
   for (const id of resolveRouteMapLookupIds(routeId)) {
     const match = routesList.find((route) => route.id === id)
     if (match) return match

@@ -16,7 +16,7 @@ import {
 import { isRouteMapImportPayload, parseRouteMapImportPayload, type RouteMapImportPayload } from './routeMapImportPayload'
 import { resolveRouteMapLookupIds } from './routeMapLookup'
 import type { WorldMapCatalogStop } from './worldMapStopCatalog'
-import { buildRouteMapViewerDisplay } from './routeMapViewerDisplay'
+import { buildRouteMapViewerDisplay, type RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
 export interface RouteMapOverlaySource {
   points: readonly WorldMapPoint[]
