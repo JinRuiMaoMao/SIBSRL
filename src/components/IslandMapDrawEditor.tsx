@@ -371,6 +371,11 @@ export function IslandMapDrawEditor({
     )
   }, [drawColor, drawDirectionDataIndex, drawRouteId, editor.line, editor.lineStyle, imageSize])
 
+  const clearCatalogLocationPick = useCallback(() => {
+    setCatalogLocationChoices([])
+    setCatalogLocationActiveIndex(null)
+  }, [])
+
   const enterEditorMode = useCallback((mode: RouteEditorMode) => {
     setEditorMode(mode)
     if (mode === 'addStop') {
@@ -501,11 +506,6 @@ export function IslandMapDrawEditor({
     },
     [editor, imageSize, resolveRouteStopSeq],
   )
-
-  const clearCatalogLocationPick = useCallback(() => {
-    setCatalogLocationChoices([])
-    setCatalogLocationActiveIndex(null)
-  }, [])
 
   const tryAutoPlaceNewStop = useCallback(
     (selection: MapDrawStopNameSelection): 'placed' | 'pick' | 'manual' => {
