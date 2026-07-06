@@ -650,6 +650,7 @@ export function IslandMapDrawEditor({
         zh: zh || location.name.zh,
         en: en || location.name.en,
       },
+      seq: index + 1,
     }))
   }, [catalogLocationChoices, newStopChiName, newStopEngName])
 

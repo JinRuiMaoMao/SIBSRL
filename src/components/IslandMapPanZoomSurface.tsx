@@ -999,55 +999,82 @@ export function IslandMapPanZoomSurface({
             continuousSegmentPaths={referenceEditor.continuousSegmentPaths}
           />
         </div>
-      ) : (
-        <>
-      {drawInteraction === 'route' && draftPoints.length > 0 ? (
-        <div className="island-map-route-overlay-wrap">
-          <IslandMapRouteOverlayLayer
-            imageWidth={imageSize.width}
-            imageHeight={imageSize.height}
-            routeNumber={draftRouteNumber}
-            points={draftPoints}
-            vertexPoints={draftStopPoints}
-            legStarts={pathLegStarts}
-            legHidden={pathLegHidden}
-            userBendIndices={userBendIndexSet}
-            smoothRoadCorners
-            variant="draft"
-            strokeColor={draftStrokeColor}
-          />
-        </div>
       ) : null}
-      {drawMode && pathEditable && drawInteraction === 'route' && draftPoints.length >= 2 && onBendInsert && onBendMove && onBendRemove && onLegDelete ? (
-        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--path-editable">
-          <IslandMapDraftPathEditLayer
-            imageWidth={imageSize.width}
-            imageHeight={imageSize.height}
-            points={draftPoints}
-            legStarts={pathLegStarts}
-            legHidden={pathLegHidden}
-            userBendIndices={userBendIndexSet}
-            strokeColor={draftStrokeColor}
-            editable
-            snapPoint={snapPathPoint}
-            clientToNormalized={clientToNormalized}
-            onBendInsert={onBendInsert}
-            onBendMove={onBendMove}
-            onBendDragStart={onBendDragStart}
-            onBendDragEnd={onBendDragEnd}
-            onBendRemove={onBendRemove}
-            onLegDelete={onLegDelete}
-            onInteractionActiveChange={(active) => {
-              pathEditActiveRef.current = active
-            }}
-            interactionScale={panZoom?.scale ?? 1}
-            isNearPathAnchor={isNearPathAnchor}
-          />
-        </div>
+      {!referenceEditor ? (
+        <>
+          {drawInteraction === 'route' && draftPoints.length > 0 ? (
+            <div className="island-map-route-overlay-wrap">
+              <IslandMapRouteOverlayLayer
+                imageWidth={imageSize.width}
+                imageHeight={imageSize.height}
+                routeNumber={draftRouteNumber}
+                points={draftPoints}
+                vertexPoints={draftStopPoints}
+                legStarts={pathLegStarts}
+                legHidden={pathLegHidden}
+                userBendIndices={userBendIndexSet}
+                smoothRoadCorners
+                variant="draft"
+                strokeColor={draftStrokeColor}
+              />
+            </div>
+          ) : null}
+          {drawMode && pathEditable && drawInteraction === 'route' && draftPoints.length >= 2 && onBendInsert && onBendMove && onBendRemove && onLegDelete ? (
+            <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--path-editable">
+              <IslandMapDraftPathEditLayer
+                imageWidth={imageSize.width}
+                imageHeight={imageSize.height}
+                points={draftPoints}
+                legStarts={pathLegStarts}
+                legHidden={pathLegHidden}
+                userBendIndices={userBendIndexSet}
+                strokeColor={draftStrokeColor}
+                editable
+                snapPoint={snapPathPoint}
+                clientToNormalized={clientToNormalized}
+                onBendInsert={onBendInsert}
+                onBendMove={onBendMove}
+                onBendDragStart={onBendDragStart}
+                onBendDragEnd={onBendDragEnd}
+                onBendRemove={onBendRemove}
+                onLegDelete={onLegDelete}
+                onInteractionActiveChange={(active) => {
+                  pathEditActiveRef.current = active
+                }}
+                interactionScale={panZoom?.scale ?? 1}
+                isNearPathAnchor={isNearPathAnchor}
+              />
+            </div>
+          ) : null}
+          {draftPathNodes.length > 0 || pendingPathNodePoint ? (
+            <div
+              className={`island-map-route-overlay-wrap${onPathNodeDrag ? ' island-map-route-overlay-wrap--node-editable' : ''}`.trim()}
+            >
+              <IslandMapPathNodeOverlayLayer
+                imageWidth={imageSize.width}
+                imageHeight={imageSize.height}
+                nodes={draftPathNodes}
+                pendingNode={
+                  pendingPathNodePoint
+                    ? {
+                        x: pendingPathNodePoint[0] * imageSize.width,
+                        y: pendingPathNodePoint[1] * imageSize.height,
+                      }
+                    : null
+                }
+                editable={Boolean(onPathNodeDrag)}
+                traceSelectedNodeId={traceSelectedPathNodeId}
+                draggingNodeId={draggingNodeId}
+                directPick={!routeDrawUsesParentPick}
+                onNodePointerDown={handlePathNodePointerDown}
+              />
+            </div>
+          ) : null}
+        </>
       ) : null}
       {draftStops.length > 0 || pendingStopPoint ? (
         <div
-          className={`island-map-route-overlay-wrap${onStopDrag ? ' island-map-route-overlay-wrap--stop-editable' : ''}`.trim()}
+          className={`island-map-route-overlay-wrap${onStopDrag ? ' island-map-route-overlay-wrap--stop-editable' : onStopClick ? ' island-map-route-overlay-wrap--stop-clickable' : ''}`.trim()}
         >
           <IslandMapStopOverlayLayer
             imageWidth={imageSize.width}
@@ -1073,32 +1100,6 @@ export function IslandMapPanZoomSurface({
           />
         </div>
       ) : null}
-      {draftPathNodes.length > 0 || pendingPathNodePoint ? (
-        <div
-          className={`island-map-route-overlay-wrap${onPathNodeDrag ? ' island-map-route-overlay-wrap--node-editable' : ''}`.trim()}
-        >
-          <IslandMapPathNodeOverlayLayer
-            imageWidth={imageSize.width}
-            imageHeight={imageSize.height}
-            nodes={draftPathNodes}
-            pendingNode={
-              pendingPathNodePoint
-                ? {
-                    x: pendingPathNodePoint[0] * imageSize.width,
-                    y: pendingPathNodePoint[1] * imageSize.height,
-                  }
-                : null
-            }
-            editable={Boolean(onPathNodeDrag)}
-            traceSelectedNodeId={traceSelectedPathNodeId}
-            draggingNodeId={draggingNodeId}
-            directPick={!routeDrawUsesParentPick}
-            onNodePointerDown={handlePathNodePointerDown}
-          />
-        </div>
-      ) : null}
-        </>
-      )}
       {trajectoryPath.length >= 2 ? (
         <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--trajectory">
           <RouteMapTrajectoryBall

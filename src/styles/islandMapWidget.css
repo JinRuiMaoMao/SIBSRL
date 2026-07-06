@@ -878,6 +878,7 @@ html[data-app-page='map-draw'] #root {
 }
 
 .island-map-route-overlay-wrap--stop-editable,
+.island-map-route-overlay-wrap--stop-clickable,
 .island-map-route-overlay-wrap--node-editable {
   pointer-events: none;
   z-index: 9;
