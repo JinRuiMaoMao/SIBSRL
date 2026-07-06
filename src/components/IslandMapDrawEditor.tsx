@@ -44,7 +44,9 @@ import {
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
 import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
+import { MapDrawCatalogLocationPicker } from './MapDrawCatalogLocationPicker'
 import { loadWorldMapStopCatalog, mergeWorldMapCatalogStops, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
+import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
@@ -134,6 +136,7 @@ export function IslandMapDrawEditor({
   } | null>(null)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
   const [catalogLocationChoices, setCatalogLocationChoices] = useState<WorldMapCatalogStop[]>([])
+  const [catalogLocationActiveIndex, setCatalogLocationActiveIndex] = useState<number | null>(null)
   const [pointerPreview, setPointerPreview] = useState<{ type: 'stop' | 'point'; x: number; y: number } | null>(
     null,
   )
@@ -375,7 +378,7 @@ export function IslandMapDrawEditor({
       setNewStopEngName('')
       pendingNewStopSeqRef.current = null
       lastPlacedStopIdRef.current = null
-      setCatalogLocationChoices([])
+      clearCatalogLocationPick()
       setStopPlacementMode('auto')
     }
     if (mode !== 'select') {
@@ -386,7 +389,7 @@ export function IslandMapDrawEditor({
       connectPendingRef.current = null
       setConnectPreview(null)
     }
-  }, [])
+  }, [clearCatalogLocationPick])
 
   const clearMapSelection = useCallback(() => {
     setSelectedNodeId(null)
@@ -499,6 +502,11 @@ export function IslandMapDrawEditor({
     [editor, imageSize, resolveRouteStopSeq],
   )
 
+  const clearCatalogLocationPick = useCallback(() => {
+    setCatalogLocationChoices([])
+    setCatalogLocationActiveIndex(null)
+  }, [])
+
   const tryAutoPlaceNewStop = useCallback(
     (selection: MapDrawStopNameSelection): 'placed' | 'pick' | 'manual' => {
       if (
@@ -522,20 +530,21 @@ export function IslandMapDrawEditor({
         setNewStopChiName('')
         setNewStopEngName('')
         pendingNewStopSeqRef.current = null
-        setCatalogLocationChoices([])
+        clearCatalogLocationPick()
         return 'placed'
       }
 
       const locations = findMapDrawCatalogLocationsForName(selection.zh, selection.en, stopCatalog)
       if (locations.length > 1) {
         setCatalogLocationChoices(locations)
+        setCatalogLocationActiveIndex(null)
         return 'pick'
       }
 
-      setCatalogLocationChoices([])
+      clearCatalogLocationPick()
       return 'manual'
     },
-    [editorMode, imageSize, placeStopAtPoint, showStopEditPanel, stopCatalog, stopPlacementMode],
+    [clearCatalogLocationPick, editorMode, imageSize, placeStopAtPoint, showStopEditPanel, stopCatalog, stopPlacementMode],
   )
 
   const applyNewStopNameSelection = useCallback(
@@ -613,21 +622,65 @@ export function IslandMapDrawEditor({
       setNewStopChiName('')
       setNewStopEngName('')
       pendingNewStopSeqRef.current = null
-      setCatalogLocationChoices([])
+      clearCatalogLocationPick()
       showExportHint(t('mapDrawAutoPlaceDone'))
     },
-    [newStopChiName, newStopEngName, placeStopAtPoint, showExportHint, t],
+    [clearCatalogLocationPick, newStopChiName, newStopEngName, placeStopAtPoint, showExportHint, t],
   )
+
+  const handleCatalogPreviewStopClick = useCallback(
+    (stopId: string) => {
+      const match = /^catalog-preview-(\d+)$/.exec(stopId)
+      if (!match) return
+      const location = catalogLocationChoices[Number(match[1])]
+      if (!location) return
+      handleCatalogLocationPick(location)
+    },
+    [catalogLocationChoices, handleCatalogLocationPick],
+  )
+
+  const catalogPreviewStops = useMemo((): WorldMapDrawStop[] => {
+    if (catalogLocationChoices.length === 0) return []
+    const zh = newStopChiName.trim()
+    const en = newStopEngName.trim()
+    return catalogLocationChoices.map((location, index) => ({
+      id: `catalog-preview-${index}`,
+      point: location.point,
+      name: {
+        zh: zh || location.name.zh,
+        en: en || location.name.en,
+      },
+    }))
+  }, [catalogLocationChoices, newStopChiName, newStopEngName])
+
+  const catalogPreviewSelectedStopId =
+    catalogLocationActiveIndex != null ? `catalog-preview-${catalogLocationActiveIndex}` : null
+
+  useEffect(() => {
+    if (catalogLocationChoices.length === 0) {
+      setCatalogLocationActiveIndex(null)
+      return
+    }
+    setCatalogLocationActiveIndex(null)
+    setMapView(
+      fitNormalizedViewToRoutePoints(
+        catalogLocationChoices.map((location) => location.point),
+        'fullscreen',
+        0.08,
+      ),
+    )
+    showExportHint(t('mapDrawAutoPlacePickLocation'))
+  }, [catalogLocationChoices, showExportHint, t])
 
   const finishManualNewStopPlacement = useCallback(() => {
     setSelectedNodeId(null)
     setNewStopChiName('')
     setNewStopEngName('')
     pendingNewStopSeqRef.current = null
-    setCatalogLocationChoices([])
+    clearCatalogLocationPick()
     activateAutoPlacement()
     showExportHint(t('mapDrawManualPlaceDoneBackToAuto'))
-  }, [activateAutoPlacement, showExportHint, t])
+  }, [activateAutoPlacement, clearCatalogLocationPick, showExportHint, t])
 
   const handleMapClick = useCallback(
     (point: WorldMapPoint) => {
@@ -1173,7 +1226,7 @@ export function IslandMapDrawEditor({
           className={`route-editor-btn${stopPlacementMode === 'auto' ? ' route-editor-btn--active' : ''}`.trim()}
           onClick={() => {
             activateAutoPlacement()
-            setCatalogLocationChoices([])
+            clearCatalogLocationPick()
           }}
         >
           {t('mapDrawStopPlacementAuto')}
@@ -1441,22 +1494,16 @@ export function IslandMapDrawEditor({
                     {drawDirectionField}
                     {stopPlacementModeToggle}
                     {catalogLocationChoices.length > 0 ? (
-                      <div className="map-draw-stop-location-picker">
-                        <p className="island-map-draw-help">{t('mapDrawAutoPlacePickLocation')}</p>
-                        <ul className="map-draw-stop-name-suggestions" role="listbox">
-                          {catalogLocationChoices.map((location) => (
-                            <li key={`${location.point[0]}|${location.point[1]}`} role="option">
-                              <button type="button" onClick={() => handleCatalogLocationPick(location)}>
-                                <span className="map-draw-stop-name-suggestion-primary">
-                                  {t('mapDrawStopLocationCoords', {
-                                    coords: `${location.point[0].toFixed(4)}, ${location.point[1].toFixed(4)}`,
-                                  })}
-                                </span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      <MapDrawCatalogLocationPicker
+                        locations={catalogLocationChoices}
+                        activeIndex={catalogLocationActiveIndex}
+                        onHoverIndex={setCatalogLocationActiveIndex}
+                        onPick={handleCatalogLocationPick}
+                        onManual={() => {
+                          clearCatalogLocationPick()
+                          activateManualPlacement()
+                        }}
+                      />
                     ) : null}
                     <p className="island-map-draw-help">{t('mapDrawAddStopHelp')}</p>
                   </div>
@@ -1497,13 +1544,15 @@ export function IslandMapDrawEditor({
               }
               draftPoints={[]}
               draftStopPoints={[]}
-              draftStops={[]}
+              draftStops={catalogPreviewStops}
               draftPathNodes={[]}
               pendingStopPoint={null}
               pendingPathNodePoint={null}
               draftStrokeColor={drawColor}
               draftRouteNumber={drawRouteId.trim()}
               onDrawMapClick={handleMapClick}
+              selectedStopId={catalogPreviewSelectedStopId}
+              onStopClick={catalogPreviewStops.length > 0 ? handleCatalogPreviewStopClick : undefined}
               maxZoomRatio={DRAW_MAX_ZOOM_RATIO}
               pathLegStarts={[0]}
               pathLegHidden={[]}

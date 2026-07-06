@@ -854,6 +854,26 @@
     },
     {
       "name": {
+        "zh": "阳光大学南校园",
+        "en": "Sunshine University Southern Campus"
+      },
+      "point": [
+        0.566,
+        0.535
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学中",
+        "en": "Central- Sunshine University"
+      },
+      "point": [
+        0.415,
+        0.462
+      ]
+    },
+    {
+      "name": {
         "zh": "阳光大学",
         "en": "Sunshine University"
       },

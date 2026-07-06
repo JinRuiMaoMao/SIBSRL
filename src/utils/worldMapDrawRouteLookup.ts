@@ -3,6 +3,7 @@ import type { RouteStop } from '../types/route'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapCatalogStop } from './worldMapStopCatalog'
 import { fixLaneStopChinese } from '../i18n/convert'
+import { resolveCatalogNameCandidates } from './mapDrawCatalogNameResolve'
 import { stopsMatch } from './stopIdentity'
 import { DISPLAY_ONLY_RENAMES, findDisplayRouteByQuery, mergeRoutesByBaseNumber } from './routeMerge'
 import { findStopsMatchingQuery } from './routeStopLookup'
@@ -51,10 +52,21 @@ export function findDrawRouteStopSeq(
     const stop = routeStops[index]!
     const stopZh = stop.name.zh.trim()
     const stopEn = (stop.name.en || stop.name.zh).trim()
+    const subZh = stop.nameSub?.zh?.trim() ?? ''
+    const subEn = stop.nameSub?.en?.trim() ?? ''
     if (queryZh && stopZh && queryZh === stopZh) return index + 1
     if (queryEn && stopEn && queryEn.toLowerCase() === stopEn.toLowerCase()) return index + 1
     if (queryZh && stopEn && queryZh === stopEn) return index + 1
     if (queryEn && stopZh && queryEn === stopZh) return index + 1
+    if (subZh || subEn) {
+      for (const candidate of resolveCatalogNameCandidates(queryZh, queryEn)) {
+        if (candidate.zh === stopZh || candidate.en.toLowerCase() === stopEn.toLowerCase()) {
+          return index + 1
+        }
+      }
+      if (queryZh && subZh.includes(queryZh)) return index + 1
+      if (queryEn && subEn.toLowerCase().includes(queryEn.toLowerCase())) return index + 1
+    }
   }
   return null
 }
@@ -99,7 +111,14 @@ function findCatalogStopSuggestions(
   for (const stop of catalog) {
     const zh = stop.name.zh.trim()
     const en = (stop.name.en || stop.name.zh).trim()
-    const score = scoreNameMatch(raw, zh, en)
+    let score = scoreNameMatch(raw, zh, en)
+    if (score < 0) {
+      const aliasHit = resolveCatalogNameCandidates(raw, raw).some(
+        (candidate) =>
+          candidate.zh === zh || candidate.en.toLowerCase() === en.toLowerCase(),
+      )
+      if (aliasHit) score = 90
+    }
     if (score < 0) continue
     scored.push({
       score,
@@ -193,16 +212,18 @@ function rankSuggestion(suggestion: DrawStopSuggestion): number {
 }
 
 function catalogStopNameMatches(zh: string, en: string, stop: WorldMapCatalogStop): boolean {
-  const queryZh = fixLaneStopChinese(zh.trim(), en.trim() || undefined)
-  const queryEn = en.trim()
-  const stopZh = fixLaneStopChinese(stop.name.zh.trim(), stop.name.en.trim() || undefined)
-  const stopEn = (stop.name.en || stop.name.zh).trim()
-  if (stopsMatch({ zh: queryZh, en: queryEn }, { zh: stopZh, en: stopEn })) return true
+  for (const candidate of resolveCatalogNameCandidates(zh, en)) {
+    const queryZh = fixLaneStopChinese(candidate.zh.trim(), candidate.en.trim() || undefined)
+    const queryEn = candidate.en.trim()
+    const stopZh = fixLaneStopChinese(stop.name.zh.trim(), stop.name.en.trim() || undefined)
+    const stopEn = (stop.name.en || stop.name.zh).trim()
+    if (stopsMatch({ zh: queryZh, en: queryEn }, { zh: stopZh, en: stopEn })) return true
 
-  const queryEnLower = queryEn.toLowerCase()
-  const stopEnLower = stopEn.toLowerCase()
-  if (queryZh && (stopZh === queryZh || stopEn === queryZh)) return true
-  if (queryEn && (stopEnLower === queryEnLower || stopZh === queryEn)) return true
+    const queryEnLower = queryEn.toLowerCase()
+    const stopEnLower = stopEn.toLowerCase()
+    if (queryZh && (stopZh === queryZh || stopEn === queryZh)) return true
+    if (queryEn && (stopEnLower === queryEnLower || stopZh === queryEn)) return true
+  }
   return false
 }
 

@@ -95,7 +95,7 @@ const EN_TO_ZH: Record<string, string> = {
   'bird bridge': '雀鸟桥',
   norton: '北顿',
   'leafy university (leafy university street)': '叶角大学（叶角大学街）',
-  'sunshine university southern campus': '阳光大学南环校园',
+  'sunshine university southern campus': '阳光大学南校园',
   'and north island estate': '及北岛花园',
 }
 
