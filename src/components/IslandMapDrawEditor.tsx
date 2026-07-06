@@ -45,6 +45,10 @@ import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
 import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
 import { MapDrawCatalogLocationPicker } from './MapDrawCatalogLocationPicker'
+import {
+  MapDrawAllStationsPanel,
+  type MapDrawAllStationsFilter,
+} from './MapDrawAllStationsPanel'
 import { loadWorldMapStopCatalog, mergeWorldMapCatalogStops, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
@@ -71,6 +75,7 @@ import {
   resolveDrawDirectionDataIndex,
 } from '../utils/mapDrawStopCatalogSnap'
 import { getDirectionKey } from '../utils/routeDirectionCore'
+import { isMapDrawCatalogStopPlaced } from '../utils/mapDrawCatalogPlaced'
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
@@ -150,6 +155,8 @@ export function IslandMapDrawEditor({
   const [newStopEngName, setNewStopEngName] = useState('')
   const [stopCatalog, setStopCatalog] = useState<WorldMapCatalogStop[] | null>(null)
   const [stopPlacementMode, setStopPlacementMode] = useState<StopPlacementMode>('auto')
+  const [showAllCatalogStops, setShowAllCatalogStops] = useState(false)
+  const [allStationsFilter, setAllStationsFilter] = useState<MapDrawAllStationsFilter>('all')
 
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -657,6 +664,56 @@ export function IslandMapDrawEditor({
 
   const catalogPreviewSelectedStopId =
     catalogLocationActiveIndex != null ? `catalog-preview-${catalogLocationActiveIndex}` : null
+
+  const referenceCatalogStops = useMemo((): WorldMapDrawStop[] => {
+    if (!showAllCatalogStops || !stopCatalog?.length || !imageSize) return []
+
+    const rows = stopCatalog.map((stop, index) => ({
+      stop,
+      index,
+      placed: isMapDrawCatalogStopPlaced(stop, editor.line.nodes, imageSize.width, imageSize.height),
+    }))
+
+    const filtered =
+      allStationsFilter === 'added'
+        ? rows.filter((row) => row.placed)
+        : allStationsFilter === 'not-added'
+          ? rows.filter((row) => !row.placed)
+          : rows
+
+    const previewPoints = new Set(
+      catalogLocationChoices.map((location) => `${location.point[0]}|${location.point[1]}`),
+    )
+
+    return filtered
+      .filter((row) => !previewPoints.has(`${row.stop.point[0]}|${row.stop.point[1]}`))
+      .map((row) => ({
+        id: `catalog-all-${row.index}`,
+        point: row.stop.point,
+        name: row.stop.name,
+      }))
+  }, [
+    allStationsFilter,
+    catalogLocationChoices,
+    editor.line.nodes,
+    imageSize,
+    showAllCatalogStops,
+    stopCatalog,
+  ])
+
+  const handleAllStationsSelect = useCallback(
+    (stop: WorldMapCatalogStop) => {
+      setNewStopChiName(stop.name.zh)
+      setNewStopEngName(stop.name.en)
+      pendingNewStopSeqRef.current =
+        resolveRouteStopSeq(stop.name.zh, stop.name.en) ?? null
+      enterEditorMode('addStop')
+      setMapView(
+        fitNormalizedViewToRoutePoints([stop.point], 'fullscreen', 0.06, { min: 1.2, max: DRAW_MAX_ZOOM_RATIO }),
+      )
+    },
+    [enterEditorMode, resolveRouteStopSeq],
+  )
 
   useEffect(() => {
     if (catalogLocationChoices.length === 0) {
@@ -1519,6 +1576,18 @@ export function IslandMapDrawEditor({
                 {exportHint ? <p className="island-map-draw-export-hint">{exportHint}</p> : null}
               </section>
 
+              <MapDrawAllStationsPanel
+                catalog={stopCatalog}
+                nodes={editor.line.nodes}
+                imageWidth={imageSize?.width ?? 0}
+                imageHeight={imageSize?.height ?? 0}
+                showAll={showAllCatalogStops}
+                filter={allStationsFilter}
+                onShowAllChange={setShowAllCatalogStops}
+                onFilterChange={setAllStationsFilter}
+                onSelectStation={handleAllStationsSelect}
+              />
+
               <section className="route-editor-panel route-editor-panel-tips">
                 <h3>{t('mapDrawPanelTips')}</h3>
                 <p>{t('mapDrawTipClickMap')}</p>
@@ -1547,6 +1616,7 @@ export function IslandMapDrawEditor({
               draftPoints={[]}
               draftStopPoints={[]}
               draftStops={catalogPreviewStops}
+              referenceCatalogStops={referenceCatalogStops}
               draftPathNodes={[]}
               pendingStopPoint={null}
               pendingPathNodePoint={null}

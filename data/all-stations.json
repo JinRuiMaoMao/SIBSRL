@@ -736,6 +736,486 @@
             0.605,
             0.33
           ]
+        },
+        {
+          "name": {
+            "zh": "阳光大学南校园",
+            "en": "Sunshine University Southern Campus"
+          },
+          "point": [
+            0.601,
+            0.548
+          ]
+        },
+        {
+          "name": {
+            "zh": "北顿游泳池",
+            "en": "Norton Swimming Pool"
+          },
+          "point": [
+            0.404,
+            0.588
+          ]
+        },
+        {
+          "name": {
+            "zh": "北岛花园",
+            "en": "North Island Estate"
+          },
+          "point": [
+            0.403,
+            0.562
+          ]
+        },
+        {
+          "name": {
+            "zh": "北岛花园",
+            "en": "North Island Estate"
+          },
+          "point": [
+            0.406,
+            0.563
+          ]
+        },
+        {
+          "name": {
+            "zh": "望环台",
+            "en": "Panorama Heights"
+          },
+          "point": [
+            0.425,
+            0.537
+          ]
+        },
+        {
+          "name": {
+            "zh": "望环台",
+            "en": "Panorama Heights"
+          },
+          "point": [
+            0.431,
+            0.543
+          ]
+        },
+        {
+          "name": {
+            "zh": "枫树里",
+            "en": "Maple Lane"
+          },
+          "point": [
+            0.487,
+            0.545
+          ]
+        },
+        {
+          "name": {
+            "zh": "强生街市",
+            "en": "Johnson Market"
+          },
+          "point": [
+            0.589,
+            0.55
+          ]
+        },
+        {
+          "name": {
+            "zh": "强生街市",
+            "en": "Johnson Market"
+          },
+          "point": [
+            0.587,
+            0.552
+          ]
+        },
+        {
+          "name": {
+            "zh": "新纪元中心",
+            "en": "Ping Center"
+          },
+          "point": [
+            0.534,
+            0.542
+          ]
+        },
+        {
+          "name": {
+            "zh": "旭涛荟",
+            "en": "Hotel Symbol"
+          },
+          "point": [
+            0.644,
+            0.578
+          ]
+        },
+        {
+          "name": {
+            "zh": "中环医院",
+            "en": "Central Hospital"
+          },
+          "point": [
+            0.635,
+            0.583
+          ]
+        },
+        {
+          "name": {
+            "zh": "南环运动场",
+            "en": "Southern Sports Field"
+          },
+          "point": [
+            0.636,
+            0.614
+          ]
+        },
+        {
+          "name": {
+            "zh": "中环桥",
+            "en": "Central Bridge"
+          },
+          "point": [
+            0.468,
+            0.542
+          ]
+        },
+        {
+          "name": {
+            "zh": "M∞",
+            "en": "Museum Infinite"
+          },
+          "point": [
+            0.672,
+            0.506
+          ]
+        },
+        {
+          "name": {
+            "zh": "南环文化区公园",
+            "en": "Southern Cultural District Park"
+          },
+          "point": [
+            0.676,
+            0.487
+          ]
+        },
+        {
+          "name": {
+            "zh": "中叶隧道行政大楼",
+            "en": "Leafy-Central Tunnel Administration Block"
+          },
+          "point": [
+            0.656,
+            0.498
+          ]
+        },
+        {
+          "name": {
+            "zh": "南环花园二期",
+            "en": "Southern Two"
+          },
+          "point": [
+            0.614,
+            0.555
+          ]
+        },
+        {
+          "name": {
+            "zh": "南环坊",
+            "en": "Langford Place"
+          },
+          "point": [
+            0.617,
+            0.566
+          ]
+        },
+        {
+          "name": {
+            "zh": "东锦葵大街",
+            "en": "Eastmallow Main Street"
+          },
+          "point": [
+            0.488,
+            0.478
+          ]
+        },
+        {
+          "name": {
+            "zh": "东锦葵邨－灯葵屋",
+            "en": "Eastmallow Estate - Light House"
+          },
+          "point": [
+            0.495,
+            0.497
+          ]
+        },
+        {
+          "name": {
+            "zh": "东锦葵邨－花葵屋",
+            "en": "Eastmallow Estate - Flower House"
+          },
+          "point": [
+            0.489,
+            0.502
+          ]
+        },
+        {
+          "name": {
+            "zh": "东锦葵邨 - 阳葵屋",
+            "en": "Eastmallow Estate - Sunny House"
+          },
+          "point": [
+            0.514,
+            0.472
+          ]
+        },
+        {
+          "name": {
+            "zh": "南洋大厦",
+            "en": "Southern Building"
+          },
+          "point": [
+            0.79,
+            0.317
+          ]
+        },
+        {
+          "name": {
+            "zh": "彩虹广场",
+            "en": "Rainbow Plaza"
+          },
+          "point": [
+            0.753,
+            0.309
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶角大学",
+            "en": "Leafy University"
+          },
+          "point": [
+            0.751,
+            0.275
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶角花园",
+            "en": "Leafy Bay Garden"
+          },
+          "point": [
+            0.815,
+            0.251
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶角花园",
+            "en": "Leafy Bay Garden"
+          },
+          "point": [
+            0.819,
+            0.253
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶角湾邨",
+            "en": "Leafy Bay Estate"
+          },
+          "point": [
+            0.798,
+            0.196
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶角湾邨商场",
+            "en": "Leafy Bay Estate Shopping Center"
+          },
+          "point": [
+            0.78,
+            0.217
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶欣警察局",
+            "en": "Leafy Police Station"
+          },
+          "point": [
+            0.738,
+            0.241
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶角湾坟场",
+            "en": "Leafy Bay Cemetery"
+          },
+          "point": [
+            0.83,
+            0.172
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶欣径",
+            "en": "Leafy Walking Trail"
+          },
+          "point": [
+            0.758,
+            0.169
+          ]
+        },
+        {
+          "name": {
+            "zh": "仙贝山",
+            "en": "Senpai Hill"
+          },
+          "point": [
+            0.764,
+            0.198
+          ]
+        },
+        {
+          "name": {
+            "zh": "罗力素花园二期",
+            "en": "Laws Garden 2"
+          },
+          "point": [
+            0.761,
+            0.136
+          ]
+        },
+        {
+          "name": {
+            "zh": "罗力素花园一期",
+            "en": "Laws Garden 1"
+          },
+          "point": [
+            0.76,
+            0.122
+          ]
+        },
+        {
+          "name": {
+            "zh": "勿莫商场",
+            "en": "Mo Shopping Center"
+          },
+          "point": [
+            0.79,
+            0.131
+          ]
+        },
+        {
+          "name": {
+            "zh": "勿莫街市",
+            "en": "Mo Market"
+          },
+          "point": [
+            0.794,
+            0.141
+          ]
+        },
+        {
+          "name": {
+            "zh": "北叶花园",
+            "en": "North Leafy Garden"
+          },
+          "point": [
+            0.723,
+            0.108
+          ]
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          },
+          "point": [
+            0.815,
+            0.038
+          ]
+        },
+        {
+          "name": {
+            "zh": "海西角",
+            "en": "Haisey Point"
+          },
+          "point": [
+            0.806,
+            0.039
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门商业中心",
+            "en": "East Door Commercial Center"
+          },
+          "point": [
+            0.754,
+            0.067
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门码头",
+            "en": "East Door Pier"
+          },
+          "point": [
+            0.772,
+            0.052
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶欣邨第四座",
+            "en": "YiYan Estate Block 4"
+          },
+          "point": [
+            0.806,
+            0.292
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶欣邨第一座",
+            "en": "YiYan Estate Block 1"
+          },
+          "point": [
+            0.79,
+            0.295
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶欣公园",
+            "en": "YiYan Park"
+          },
+          "point": [
+            0.769,
+            0.299
+          ]
+        },
+        {
+          "name": {
+            "zh": "叶欣邨第二座",
+            "en": "YiYan Estate Block 2"
+          },
+          "point": [
+            0.789,
+            0.299
+          ]
+        },
+        {
+          "name": {
+            "zh": "钻石交易塔",
+            "en": "Diamond Trading Tower"
+          },
+          "point": [
+            0.815,
+            0.309
+          ]
         }
       ]
     }

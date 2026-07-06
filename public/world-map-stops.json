@@ -88,18 +88,18 @@
         "en": "Mo Shopping Center"
       },
       "point": [
-        0.794,
+        0.79,
         0.131
       ]
     },
     {
       "name": {
-        "zh": "勿莫商场",
-        "en": "Mo Shopping Center"
+        "zh": "勿莫街市",
+        "en": "Mo Market"
       },
       "point": [
-        0.79,
-        0.131
+        0.794,
+        0.141
       ]
     },
     {
@@ -144,6 +144,16 @@
     },
     {
       "name": {
+        "zh": "东门码头",
+        "en": "East Door Pier"
+      },
+      "point": [
+        0.772,
+        0.052
+      ]
+    },
+    {
+      "name": {
         "zh": "东门花园",
         "en": "East Door Garden"
       },
@@ -170,6 +180,56 @@
       "point": [
         0.768,
         0.067
+      ]
+    },
+    {
+      "name": {
+        "zh": "东门商业中心",
+        "en": "East Door Commercial Center"
+      },
+      "point": [
+        0.754,
+        0.067
+      ]
+    },
+    {
+      "name": {
+        "zh": "东锦葵大街",
+        "en": "Eastmallow Main Street"
+      },
+      "point": [
+        0.488,
+        0.478
+      ]
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨 - 阳葵屋",
+        "en": "Eastmallow Estate - Sunny House"
+      },
+      "point": [
+        0.514,
+        0.472
+      ]
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨－灯葵屋",
+        "en": "Eastmallow Estate - Light House"
+      },
+      "point": [
+        0.495,
+        0.497
+      ]
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨－花葵屋",
+        "en": "Eastmallow Estate - Flower House"
+      },
+      "point": [
+        0.489,
+        0.502
       ]
     },
     {
@@ -238,8 +298,8 @@
         "en": "North Island Estate"
       },
       "point": [
-        0.406,
-        0.563
+        0.403,
+        0.562
       ]
     },
     {
@@ -248,8 +308,8 @@
         "en": "North Island Estate"
       },
       "point": [
-        0.403,
-        0.562
+        0.406,
+        0.563
       ]
     },
     {
@@ -374,6 +434,16 @@
     },
     {
       "name": {
+        "zh": "叶角湾坟场",
+        "en": "Leafy Bay Cemetery"
+      },
+      "point": [
+        0.83,
+        0.172
+      ]
+    },
+    {
+      "name": {
         "zh": "叶角湾邨",
         "en": "Leafy Bay Estate"
       },
@@ -410,6 +480,16 @@
       "point": [
         0.79,
         0.295
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣邨第二座",
+        "en": "YiYan Estate Block 2"
+      },
+      "point": [
+        0.789,
+        0.299
       ]
     },
     {
@@ -768,8 +848,8 @@
         "en": "Sunshine University Southern Campus"
       },
       "point": [
-        0.566,
-        0.535
+        0.601,
+        0.548
       ]
     },
     {
@@ -1138,8 +1218,8 @@
         "en": "Panorama Heights"
       },
       "point": [
-        0.431,
-        0.543
+        0.425,
+        0.537
       ]
     },
     {
@@ -1148,8 +1228,8 @@
         "en": "Panorama Heights"
       },
       "point": [
-        0.425,
-        0.537
+        0.431,
+        0.543
       ]
     },
     {

@@ -48,6 +48,7 @@ interface IslandMapPanZoomSurfaceProps {
   draftStrokeColor?: string
   draftRouteNumber?: string
   draftStops?: readonly WorldMapDrawStop[]
+  referenceCatalogStops?: readonly WorldMapDrawStop[]
   draftPathNodes?: readonly WorldMapDrawPathNode[]
   showStopLabels?: boolean
   stopLabelScale?: number
@@ -287,6 +288,7 @@ export function IslandMapPanZoomSurface({
   draftStrokeColor,
   draftRouteNumber = '',
   draftStops = [],
+  referenceCatalogStops = [],
   draftPathNodes = [],
   showStopLabels = true,
   stopLabelScale = 1,
@@ -1071,6 +1073,17 @@ export function IslandMapPanZoomSurface({
             </div>
           ) : null}
         </>
+      ) : null}
+      {referenceCatalogStops.length > 0 ? (
+        <div className="island-map-route-overlay-wrap island-map-route-overlay-wrap--catalog-all">
+          <IslandMapStopOverlayLayer
+            imageWidth={imageSize.width}
+            imageHeight={imageSize.height}
+            stops={referenceCatalogStops}
+            showStopLabels={showStopLabels}
+            stopLabelScale={stopLabelScale}
+          />
+        </div>
       ) : null}
       {draftStops.length > 0 || pendingStopPoint ? (
         <div
