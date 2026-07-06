@@ -297,6 +297,10 @@ function buildRouteImportFromDirection(
   const hasEditorGraph = Boolean(editorGraph)
   if (!hasPath && !hasStops && !hasVirtualNodes && !hasPathNodes && !hasEditorGraph) return null
 
+  if (hasStops && !hasPath && !hasVirtualNodes && !hasPathNodes && !hasEditorGraph) {
+    return { kind: 'catalog', stops }
+  }
+
   return {
     kind: 'route',
     routeId,

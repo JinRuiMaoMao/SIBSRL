@@ -2,6 +2,8 @@ import { routes } from '../data/routes'
 import type { RouteStop } from '../types/route'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapCatalogStop } from './worldMapStopCatalog'
+import { fixLaneStopChinese } from '../i18n/convert'
+import { stopsMatch } from './stopIdentity'
 import { DISPLAY_ONLY_RENAMES, findDisplayRouteByQuery, mergeRoutesByBaseNumber } from './routeMerge'
 import { findStopsMatchingQuery } from './routeStopLookup'
 
@@ -191,13 +193,16 @@ function rankSuggestion(suggestion: DrawStopSuggestion): number {
 }
 
 function catalogStopNameMatches(zh: string, en: string, stop: WorldMapCatalogStop): boolean {
-  const queryZh = zh.trim()
+  const queryZh = fixLaneStopChinese(zh.trim(), en.trim() || undefined)
   const queryEn = en.trim()
-  if (!queryZh && !queryEn) return false
-  const stopZh = stop.name.zh.trim()
+  const stopZh = fixLaneStopChinese(stop.name.zh.trim(), stop.name.en.trim() || undefined)
   const stopEn = (stop.name.en || stop.name.zh).trim()
+  if (stopsMatch({ zh: queryZh, en: queryEn }, { zh: stopZh, en: stopEn })) return true
+
+  const queryEnLower = queryEn.toLowerCase()
+  const stopEnLower = stopEn.toLowerCase()
   if (queryZh && (stopZh === queryZh || stopEn === queryZh)) return true
-  if (queryEn && (stopEn.toLowerCase() === queryEn.toLowerCase() || stopZh === queryEn)) return true
+  if (queryEn && (stopEnLower === queryEnLower || stopZh === queryEn)) return true
   return false
 }
 

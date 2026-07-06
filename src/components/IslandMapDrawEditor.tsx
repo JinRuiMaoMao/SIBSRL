@@ -44,7 +44,7 @@ import {
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
 import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
-import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
+import { loadWorldMapStopCatalog, mergeWorldMapCatalogStops, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
@@ -309,13 +309,18 @@ export function IslandMapDrawEditor({
   }, [])
 
   const snapStopsFromCatalog = useCallback(
-    (routeQuery: string, directionInput: string, options?: { silent?: boolean }) => {
-      if (!imageSize || !stopCatalog?.length) return null
+    (
+      routeQuery: string,
+      directionInput: string,
+      options?: { silent?: boolean; catalog?: readonly WorldMapCatalogStop[] | null },
+    ) => {
+      const catalog = options?.catalog ?? stopCatalog
+      if (!imageSize || !catalog?.length) return null
       if (!canApplyMapDrawCatalogSnap(routeQuery, directionInput)) return null
 
       const { result, updates } = buildMapDrawCatalogSnapUpdates(
         editor.line.nodes,
-        stopCatalog,
+        catalog,
         routeQuery,
         directionInput,
         imageSize.width,
@@ -999,7 +1004,21 @@ export function IslandMapDrawEditor({
       setConnectPreview(null)
       setEditorMode('select')
 
+      let catalogForSnap = stopCatalog
+      let catalogAdded = 0
+      if (merged) {
+        const importedStops = merged.stops.map((stop) => ({ name: stop.name, point: stop.point }))
+        const { catalog, added } = mergeWorldMapCatalogStops(stopCatalog ?? [], importedStops)
+        catalogForSnap = catalog
+        catalogAdded = added
+        if (added > 0) setStopCatalog(catalog)
+      }
+
       const showImportDoneHint = () => {
+        if (catalogAdded > 0) {
+          showExportHint(t('mapDrawImportCatalogSessionMerged', { count: catalogAdded }))
+          return
+        }
         showExportHint(
           t('mapDrawImportMergeDone', {
             stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
@@ -1008,7 +1027,10 @@ export function IslandMapDrawEditor({
         )
       }
 
-      const snapResult = snapStopsFromCatalog(snapRouteQuery, snapDirectionInput, { silent: true })
+      const snapResult = snapStopsFromCatalog(snapRouteQuery, snapDirectionInput, {
+        silent: true,
+        catalog: catalogForSnap,
+      })
       if (snapResult && (snapResult.moved > 0 || snapResult.seqUpdated > 0)) {
         showExportHint(
           t('mapDrawCatalogSnapDone', { moved: snapResult.moved, seq: snapResult.seqUpdated }),

@@ -5,11 +5,67 @@ export interface WorldMapCatalogStop {
   point: WorldMapPoint
 }
 
+export interface WorldMapCatalogStopInput {
+  name: { zh: string; en: string }
+  point: WorldMapPoint
+}
+
 let catalogCache: WorldMapCatalogStop[] | null = null
+
+function catalogPointKey(stop: WorldMapCatalogStopInput): string {
+  return `${stop.name.zh.trim()}|${stop.name.en.trim()}|${stop.point[0].toFixed(3)}|${stop.point[1].toFixed(3)}`.toLowerCase()
+}
+
+function normalizeCatalogStopInput(stop: WorldMapCatalogStopInput): WorldMapCatalogStop | null {
+  const zh = stop.name.zh.trim()
+  const en = stop.name.en.trim()
+  if (!zh && !en) return null
+  if (
+    !Array.isArray(stop.point) ||
+    stop.point.length !== 2 ||
+    typeof stop.point[0] !== 'number' ||
+    typeof stop.point[1] !== 'number'
+  ) {
+    return null
+  }
+  return {
+    name: { zh: zh || en, en: en || zh },
+    point: [stop.point[0], stop.point[1]],
+  }
+}
+
+/** Merge imported stop coordinates into the in-memory catalog used for auto-placement. */
+export function mergeWorldMapCatalogStops(
+  base: readonly WorldMapCatalogStop[],
+  additions: readonly WorldMapCatalogStopInput[],
+): { catalog: WorldMapCatalogStop[]; added: number } {
+  const catalog = [...base]
+  const seen = new Set(catalog.map(catalogPointKey))
+  let added = 0
+
+  for (const raw of additions) {
+    const stop = normalizeCatalogStopInput(raw)
+    if (!stop) continue
+    const key = catalogPointKey(stop)
+    if (seen.has(key)) continue
+    seen.add(key)
+    catalog.push(stop)
+    added += 1
+  }
+
+  catalogCache = catalog
+  return { catalog, added }
+}
+
+export function invalidateWorldMapStopCatalogCache(): void {
+  catalogCache = null
+}
 
 export async function loadWorldMapStopCatalog(): Promise<WorldMapCatalogStop[]> {
   if (catalogCache) return catalogCache
-  const response = await fetch('./world-map-stops.json', { cache: 'force-cache' })
+  const response = await fetch(`./world-map-stops.json?v=${encodeURIComponent(__APP_BUILD__)}`, {
+    cache: 'no-cache',
+  })
   if (!response.ok) {
     throw new Error(`Failed to load world-map-stops.json (${response.status})`)
   }

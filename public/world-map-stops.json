@@ -1,6 +1,6 @@
 {
   "kind": "world-map-stop-catalog",
-  "note": "All-stop catalog on SIMap (normalized 0–1). Merged partial stations/termini from All Stations export.",
+  "note": "All-stop catalog on SIMap (normalized 0–1). Includes All Stations export plus coordinates from world-map-routes.",
   "stops": [
     {
       "name": {
@@ -10,6 +10,16 @@
       "point": [
         0.414,
         0.798
+      ]
+    },
+    {
+      "name": {
+        "zh": "三哥大厦",
+        "en": "Third Technology Building"
+      },
+      "point": [
+        0.405,
+        0.794
       ]
     },
     {
@@ -34,12 +44,32 @@
     },
     {
       "name": {
+        "zh": "中叶隧道行政大楼",
+        "en": "Leafy-Central Tunnel Administration Block"
+      },
+      "point": [
+        0.656,
+        0.498
+      ]
+    },
+    {
+      "name": {
         "zh": "中西转车站",
         "en": "Central - Western Interchange"
       },
       "point": [
         0.66,
         0.883
+      ]
+    },
+    {
+      "name": {
+        "zh": "中环医院",
+        "en": "Central Hospital"
+      },
+      "point": [
+        0.635,
+        0.583
       ]
     },
     {
@@ -54,12 +84,52 @@
     },
     {
       "name": {
+        "zh": "中环桥",
+        "en": "Central Bridge"
+      },
+      "point": [
+        0.468,
+        0.542
+      ]
+    },
+    {
+      "name": {
+        "zh": "勿莫商场",
+        "en": "Mo Shopping Center"
+      },
+      "point": [
+        0.794,
+        0.131
+      ]
+    },
+    {
+      "name": {
+        "zh": "勿莫商场",
+        "en": "Mo Shopping Center"
+      },
+      "point": [
+        0.79,
+        0.131
+      ]
+    },
+    {
+      "name": {
         "zh": "文化广场",
         "en": "Culture Square"
       },
       "point": [
         0.27,
         0.726
+      ]
+    },
+    {
+      "name": {
+        "zh": "文化广场",
+        "en": "Culture Square"
+      },
+      "point": [
+        0.269,
+        0.73
       ]
     },
     {
@@ -74,12 +144,92 @@
     },
     {
       "name": {
+        "zh": "东厂",
+        "en": "East Factory"
+      },
+      "point": [
+        0.739,
+        0.289
+      ]
+    },
+    {
+      "name": {
+        "zh": "东厂",
+        "en": "East Factory"
+      },
+      "point": [
+        0.74,
+        0.292
+      ]
+    },
+    {
+      "name": {
+        "zh": "东门下邨",
+        "en": "Lower East Door Estate"
+      },
+      "point": [
+        0.806,
+        0.09
+      ]
+    },
+    {
+      "name": {
+        "zh": "东门公园",
+        "en": "East Door Park"
+      },
+      "point": [
+        0.816,
+        0.106
+      ]
+    },
+    {
+      "name": {
+        "zh": "东门花园",
+        "en": "East Door Garden"
+      },
+      "point": [
+        0.789,
+        0.085
+      ]
+    },
+    {
+      "name": {
+        "zh": "东门总站",
+        "en": "East Door Bus Terminus"
+      },
+      "point": [
+        0.767,
+        0.064
+      ]
+    },
+    {
+      "name": {
+        "zh": "东门总站",
+        "en": "East Door Bus Terminus"
+      },
+      "point": [
+        0.768,
+        0.067
+      ]
+    },
+    {
+      "name": {
         "zh": "东锦葵海傍路",
         "en": "Eastmallow Praya Road"
       },
       "point": [
         0.529,
         0.454
+      ]
+    },
+    {
+      "name": {
+        "zh": "仙贝山",
+        "en": "Senpai Hill"
+      },
+      "point": [
+        0.764,
+        0.198
       ]
     },
     {
@@ -104,12 +254,62 @@
     },
     {
       "name": {
+        "zh": "北叶花园",
+        "en": "North Leafy Garden"
+      },
+      "point": [
+        0.723,
+        0.108
+      ]
+    },
+    {
+      "name": {
         "zh": "北岛山顶",
         "en": "North Island Hill Peak"
       },
       "point": [
         0.366,
         0.559
+      ]
+    },
+    {
+      "name": {
+        "zh": "北岛花园",
+        "en": "North Island Estate"
+      },
+      "point": [
+        0.406,
+        0.563
+      ]
+    },
+    {
+      "name": {
+        "zh": "北岛花园",
+        "en": "North Island Estate"
+      },
+      "point": [
+        0.403,
+        0.562
+      ]
+    },
+    {
+      "name": {
+        "zh": "北岛花园商场",
+        "en": "NIE Shopping Center"
+      },
+      "point": [
+        0.402,
+        0.544
+      ]
+    },
+    {
+      "name": {
+        "zh": "北岛花园商场",
+        "en": "NIE Shopping Center"
+      },
+      "point": [
+        0.405,
+        0.544
       ]
     },
     {
@@ -134,12 +334,42 @@
     },
     {
       "name": {
+        "zh": "北顿游泳池",
+        "en": "Norton Swimming Pool"
+      },
+      "point": [
+        0.404,
+        0.588
+      ]
+    },
+    {
+      "name": {
+        "zh": "北顿路",
+        "en": "Norton Road"
+      },
+      "point": [
+        0.414,
+        0.588
+      ]
+    },
+    {
+      "name": {
         "zh": "北滩",
         "en": "Northern Beach"
       },
       "point": [
         0.306,
         0.545
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶角大学",
+        "en": "Leafy University"
+      },
+      "point": [
+        0.751,
+        0.275
       ]
     },
     {
@@ -154,6 +384,26 @@
     },
     {
       "name": {
+        "zh": "叶角花园",
+        "en": "Leafy Bay Garden"
+      },
+      "point": [
+        0.815,
+        0.251
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶角花园",
+        "en": "Leafy Bay Garden"
+      },
+      "point": [
+        0.819,
+        0.253
+      ]
+    },
+    {
+      "name": {
         "zh": "叶角湾",
         "en": "Leafy Bay"
       },
@@ -164,12 +414,92 @@
     },
     {
       "name": {
+        "zh": "叶角湾邨",
+        "en": "Leafy Bay Estate"
+      },
+      "point": [
+        0.798,
+        0.196
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶角湾邨商场",
+        "en": "Leafy Bay Estate Shopping Center"
+      },
+      "point": [
+        0.78,
+        0.217
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣公园",
+        "en": "YiYan Park"
+      },
+      "point": [
+        0.769,
+        0.299
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣邨第一座",
+        "en": "YiYan Estate Block 1"
+      },
+      "point": [
+        0.79,
+        0.295
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣邨第四座",
+        "en": "YiYan Estate Block 4"
+      },
+      "point": [
+        0.806,
+        0.292
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣径",
+        "en": "Leafy Walking Trail"
+      },
+      "point": [
+        0.758,
+        0.169
+      ]
+    },
+    {
+      "name": {
         "zh": "叶欣海旁道",
         "en": "Praya YiYan Road"
       },
       "point": [
         0.806,
         0.317
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣海旁道",
+        "en": "Praya YiYan Road"
+      },
+      "point": [
+        0.807,
+        0.315
+      ]
+    },
+    {
+      "name": {
+        "zh": "叶欣警察局",
+        "en": "Leafy Police Station"
+      },
+      "point": [
+        0.738,
+        0.241
       ]
     },
     {
@@ -244,12 +574,32 @@
     },
     {
       "name": {
+        "zh": "白鸽消防局",
+        "en": "Dove Fire Station"
+      },
+      "point": [
+        0.461,
+        0.773
+      ]
+    },
+    {
+      "name": {
         "zh": "艺术大厦",
         "en": "Art Building"
       },
       "point": [
         0.203,
         0.791
+      ]
+    },
+    {
+      "name": {
+        "zh": "艺术大厦",
+        "en": "Art Building"
+      },
+      "point": [
+        0.209,
+        0.79
       ]
     },
     {
@@ -274,12 +624,32 @@
     },
     {
       "name": {
+        "zh": "长岛东医院",
+        "en": "East Long Island Hospital"
+      },
+      "point": [
+        0.252,
+        0.786
+      ]
+    },
+    {
+      "name": {
         "zh": "长岛码头",
         "en": "Long Island Ferry Pier"
       },
       "point": [
         0.238,
         0.699
+      ]
+    },
+    {
+      "name": {
+        "zh": "长岛码头",
+        "en": "Long Island Ferry Pier"
+      },
+      "point": [
+        0.238,
+        0.702
       ]
     },
     {
@@ -294,12 +664,42 @@
     },
     {
       "name": {
+        "zh": "亚历山大花园",
+        "en": "Alexander Garden"
+      },
+      "point": [
+        0.761,
+        0.239
+      ]
+    },
+    {
+      "name": {
+        "zh": "亚历山大教堂",
+        "en": "Alexander Church"
+      },
+      "point": [
+        0.772,
+        0.249
+      ]
+    },
+    {
+      "name": {
         "zh": "伊迪城",
         "en": "Eddie City"
       },
       "point": [
         0.488,
         0.783
+      ]
+    },
+    {
+      "name": {
+        "zh": "伊迪城",
+        "en": "Eddie City"
+      },
+      "point": [
+        0.495,
+        0.777
       ]
     },
     {
@@ -354,6 +754,16 @@
     },
     {
       "name": {
+        "zh": "艾迪城",
+        "en": "Addi City"
+      },
+      "point": [
+        0.498,
+        0.789
+      ]
+    },
+    {
+      "name": {
         "zh": "艾迪路",
         "en": "Addi Road"
       },
@@ -380,6 +790,26 @@
       "point": [
         0.431,
         0.618
+      ]
+    },
+    {
+      "name": {
+        "zh": "西区海底隧道转车站",
+        "en": "Western Habour Tunnel Interchange"
+      },
+      "point": [
+        0.427,
+        0.634
+      ]
+    },
+    {
+      "name": {
+        "zh": "西区海底隧道转车站",
+        "en": "Western Habour Tunnel Interchange"
+      },
+      "point": [
+        0.43,
+        0.634
       ]
     },
     {
@@ -420,6 +850,16 @@
       "point": [
         0.434,
         0.484
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学",
+        "en": "Sunshine University"
+      },
+      "point": [
+        0.432,
+        0.486
       ]
     },
     {
@@ -484,6 +924,16 @@
     },
     {
       "name": {
+        "zh": "阳光码头",
+        "en": "Sunshine Pier"
+      },
+      "point": [
+        0.657,
+        0.633
+      ]
+    },
+    {
+      "name": {
         "zh": "阳光站",
         "en": "Sunshine Station"
       },
@@ -494,11 +944,31 @@
     },
     {
       "name": {
+        "zh": "阳光殡仪馆",
+        "en": "Sunshine Funeral"
+      },
+      "point": [
+        0.183,
+        0.776
+      ]
+    },
+    {
+      "name": {
         "zh": "国际码头",
         "en": "Regional Pier"
       },
       "point": [
         0.306,
+        0.752
+      ]
+    },
+    {
+      "name": {
+        "zh": "国际码头",
+        "en": "Regional Pier"
+      },
+      "point": [
+        0.303,
         0.752
       ]
     },
@@ -514,12 +984,52 @@
     },
     {
       "name": {
+        "zh": "宜和剧场",
+        "en": "Jardine Theater"
+      },
+      "point": [
+        0.248,
+        0.791
+      ]
+    },
+    {
+      "name": {
         "zh": "明月角",
         "en": "Lunar Point"
       },
       "point": [
         0.413,
         0.62
+      ]
+    },
+    {
+      "name": {
+        "zh": "枫树里",
+        "en": "Maple Lane"
+      },
+      "point": [
+        0.487,
+        0.545
+      ]
+    },
+    {
+      "name": {
+        "zh": "罗力素花园一期",
+        "en": "Laws Garden 1"
+      },
+      "point": [
+        0.76,
+        0.122
+      ]
+    },
+    {
+      "name": {
+        "zh": "罗力素花园二期",
+        "en": "Laws Garden 2"
+      },
+      "point": [
+        0.761,
+        0.136
       ]
     },
     {
@@ -584,12 +1094,82 @@
     },
     {
       "name": {
+        "zh": "际巴车厂",
+        "en": "CSB Depot"
+      },
+      "point": [
+        0.822,
+        0.29
+      ]
+    },
+    {
+      "name": {
+        "zh": "南环文化区公园",
+        "en": "Southern Cultural District Park"
+      },
+      "point": [
+        0.676,
+        0.487
+      ]
+    },
+    {
+      "name": {
         "zh": "南环台",
         "en": "Southern Terrance"
       },
       "point": [
         0.608,
         0.584
+      ]
+    },
+    {
+      "name": {
+        "zh": "南环坊",
+        "en": "Langford Place"
+      },
+      "point": [
+        0.617,
+        0.566
+      ]
+    },
+    {
+      "name": {
+        "zh": "南环花园二期",
+        "en": "Southern Two"
+      },
+      "point": [
+        0.614,
+        0.555
+      ]
+    },
+    {
+      "name": {
+        "zh": "南环运动场",
+        "en": "Southern Sports Field"
+      },
+      "point": [
+        0.636,
+        0.614
+      ]
+    },
+    {
+      "name": {
+        "zh": "南洋大厦",
+        "en": "Southern Building"
+      },
+      "point": [
+        0.79,
+        0.317
+      ]
+    },
+    {
+      "name": {
+        "zh": "玻璃楼",
+        "en": "Glass Office"
+      },
+      "point": [
+        0.504,
+        0.544
       ]
     },
     {
@@ -604,6 +1184,16 @@
     },
     {
       "name": {
+        "zh": "虹尾角站",
+        "en": "Iris Point Station"
+      },
+      "point": [
+        0.293,
+        0.792
+      ]
+    },
+    {
+      "name": {
         "zh": "虹尾角街市",
         "en": "Iris Point Market"
       },
@@ -614,12 +1204,42 @@
     },
     {
       "name": {
+        "zh": "海西角",
+        "en": "Haisey Point"
+      },
+      "point": [
+        0.815,
+        0.038
+      ]
+    },
+    {
+      "name": {
+        "zh": "海西角",
+        "en": "Haisey Point"
+      },
+      "point": [
+        0.806,
+        0.039
+      ]
+    },
+    {
+      "name": {
         "zh": "海西邨",
         "en": "Haisey Estate"
       },
       "point": [
         0.832,
         0.047
+      ]
+    },
+    {
+      "name": {
+        "zh": "海西邨",
+        "en": "Haisey Estate"
+      },
+      "point": [
+        0.83,
+        0.051
       ]
     },
     {
@@ -644,12 +1264,72 @@
     },
     {
       "name": {
+        "zh": "钻石交易塔",
+        "en": "Diamond Trading Tower"
+      },
+      "point": [
+        0.815,
+        0.309
+      ]
+    },
+    {
+      "name": {
+        "zh": "彩色汇",
+        "en": "Rainbow Center"
+      },
+      "point": [
+        0.276,
+        0.791
+      ]
+    },
+    {
+      "name": {
+        "zh": "彩虹广场",
+        "en": "Rainbow Plaza"
+      },
+      "point": [
+        0.753,
+        0.309
+      ]
+    },
+    {
+      "name": {
         "zh": "彩虹中心",
         "en": "Rainbow Estate Complex"
       },
       "point": [
         0.858,
         0.102
+      ]
+    },
+    {
+      "name": {
+        "zh": "彩虹中心",
+        "en": "Rainbow Estate Complex"
+      },
+      "point": [
+        0.86,
+        0.1
+      ]
+    },
+    {
+      "name": {
+        "zh": "望环台",
+        "en": "Panorama Heights"
+      },
+      "point": [
+        0.431,
+        0.543
+      ]
+    },
+    {
+      "name": {
+        "zh": "望环台",
+        "en": "Panorama Heights"
+      },
+      "point": [
+        0.425,
+        0.537
       ]
     },
     {
@@ -664,12 +1344,62 @@
     },
     {
       "name": {
+        "zh": "第七区转车站",
+        "en": "Zone 7 Interchange"
+      },
+      "point": [
+        0.703,
+        0.292
+      ]
+    },
+    {
+      "name": {
+        "zh": "第七区转车站",
+        "en": "Zone 7 Interchange"
+      },
+      "point": [
+        0.705,
+        0.293
+      ]
+    },
+    {
+      "name": {
         "zh": "银行大厦",
         "en": "Bank Tower"
       },
       "point": [
         0.389,
         0.786
+      ]
+    },
+    {
+      "name": {
+        "zh": "强生街市",
+        "en": "Johnson Market"
+      },
+      "point": [
+        0.589,
+        0.55
+      ]
+    },
+    {
+      "name": {
+        "zh": "强生街市",
+        "en": "Johnson Market"
+      },
+      "point": [
+        0.587,
+        0.552
+      ]
+    },
+    {
+      "name": {
+        "zh": "新纪元中心",
+        "en": "Ping Center"
+      },
+      "point": [
+        0.534,
+        0.542
       ]
     },
     {
@@ -700,6 +1430,16 @@
       "point": [
         0.375,
         0.791
+      ]
+    },
+    {
+      "name": {
+        "zh": "赖得商场",
+        "en": "Wright Shopping Center"
+      },
+      "point": [
+        0.357,
+        0.792
       ]
     },
     {
@@ -750,6 +1490,26 @@
       "point": [
         0.538,
         0.788
+      ]
+    },
+    {
+      "name": {
+        "zh": "M∞",
+        "en": "Museum Infinite"
+      },
+      "point": [
+        0.672,
+        0.506
+      ]
+    },
+    {
+      "name": {
+        "zh": "The ONE",
+        "en": "The ONE"
+      },
+      "point": [
+        0.555,
+        0.543
       ]
     }
   ]
