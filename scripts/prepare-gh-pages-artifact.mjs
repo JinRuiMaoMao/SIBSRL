@@ -12,6 +12,7 @@ const COPY_FILES = [
   'sibs-logo.png',
   'apple-touch-icon.png',
   'world-map-stops.json',
+  'route-detail-stops.json',
 ]
 
 rmSync(out, { recursive: true, force: true })
