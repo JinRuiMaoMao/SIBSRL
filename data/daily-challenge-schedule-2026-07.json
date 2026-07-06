@@ -9,7 +9,7 @@
     { "date": "2026-07-03", "event": "Bridge Closure", "routeCode": "25YN", "race": false },
     { "date": "2026-07-04", "event": "Marathon Road Closure", "routeCode": "240A", "race": true },
     { "date": "2026-07-05", "event": "Rush Hour", "routeCode": "140W", "race": true },
-    { "date": "2026-07-06", "event": null, "routeCode": null, "race": false },
+    { "date": "2026-07-06", "event": "E-Payment Outage", "routeCode": "472W", "race": false },
     { "date": "2026-07-07", "event": "Rare Appearance x Private Hire", "routeCode": "PH1", "race": false },
     { "date": "2026-07-08", "event": null, "routeCode": null, "race": false },
     { "date": "2026-07-09", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },

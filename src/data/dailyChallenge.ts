@@ -117,6 +117,7 @@ const EVENT_ZH: Record<string, string> = {
   'Rare Appearance x Private Hire': '罕见外观 × 私人租用',
   'Rare Appearance': '罕见外观',
   'E-Payment Outage': '电子支付故障',
+  'E-Payment': '电子支付故障',
   'Friendly Day': '友善日',
   'Lazy Passengers': '懒惰乘客',
   'Slow Passengers': '慢速乘客',
@@ -279,13 +280,42 @@ export function buildDailyChallengeFromScheduleDay(
     }
   }
 
+  const isEpayment472West =
+    routeNumber === '472W' &&
+    (entry.event === 'E-Payment Outage' || entry.event === 'E-Payment')
+  if (isEpayment472West) {
+    directionKey = 'W'
+    endpoints = {
+      zh: '仙貝 → 北頓',
+      en: 'Senpai → Norton',
+    }
+  }
+
+  let intro = buildIntro(event, entry.routeCode, entry.race)
+  if (isEpayment472West) {
+    intro = {
+      body: {
+        zh: '电子支付系统故障，乘客须以现金支付车费。',
+        en: 'Electronic payment is unavailable; passengers must pay fares in cash.',
+      },
+      objective: {
+        zh: '目标：使用任意 HZ、CSB 或 HK Special 巴士完成 472 West（仙貝 → 北頓），不得跳站。',
+        en: 'Objective: Complete 472 West (Senpai → Norton) with any HZ, CSB, or HK Special bus without skipping stops.',
+      },
+      closing: {
+        zh: '🚌 祝你好运，驾驶员。',
+        en: '🚌 Good luck, driver.',
+      },
+    }
+  }
+
   return {
     date: entry.date,
     event,
     routeNumber,
     endpoints,
     directionKey,
-    intro: buildIntro(event, entry.routeCode, entry.race),
+    intro,
     isAvailable: true,
     isPlaceholder: false,
     fromSchedule: true,
@@ -364,6 +394,13 @@ export function getDailyChallengeOperatorsLabel(
   if (!routeNumber) return null
 
   const route = findRouteForDailyChallenge(routeNumber)
+  if (
+    routeNumber === '472W' &&
+    (challenge.event.en.includes('E-Payment') || challenge.event.zh.includes('电子支付'))
+  ) {
+    return locale === 'zh' ? 'HZ / CSB / HK' : 'HZ / CSB / HK'
+  }
+
   if (!route || route.operators.length === 0) return null
 
   return formatRouteOperators(route)
