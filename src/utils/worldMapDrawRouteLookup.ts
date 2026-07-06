@@ -193,7 +193,8 @@ export function findMapDrawStopNameSuggestions(
     insert(suggestion, suggestion.fromRouteDetail ? 3 : 1)
   }
   for (const suggestion of findCatalogStopSuggestions(raw, catalog)) {
-    insert(suggestion, 2)
+    const locations = findMapDrawCatalogLocationsForName(suggestion.zh, suggestion.en, catalog)
+    insert(locations.length > 1 ? { ...suggestion, point: undefined } : suggestion, 2)
   }
 
   return [...merged.values()]
@@ -234,8 +235,9 @@ export function resolveMapDrawAutoPlacePoint(
   catalog: readonly WorldMapCatalogStop[] | null | undefined,
   hintPoint?: WorldMapPoint,
 ): WorldMapPoint | null {
-  if (hintPoint) return hintPoint
   const locations = findMapDrawCatalogLocationsForName(zh, en, catalog)
+  if (locations.length > 1) return null
+  if (hintPoint) return hintPoint
   return locations.length === 1 ? locations[0]!.point : null
 }
 

@@ -58,6 +58,7 @@ import { mapDrawNodeScaleFactor } from '../utils/mapDrawNodeScale'
 import {
   findDrawRouteStopSeq,
   findBusRouteForDraw,
+  findCatalogLocationIndexByPoint,
   findMapDrawCatalogLocationsForName,
   resolveMapDrawAutoPlacePoint,
 } from '../utils/worldMapDrawRouteLookup'
@@ -518,12 +519,19 @@ export function IslandMapDrawEditor({
         return 'manual'
       }
 
-      const point = resolveMapDrawAutoPlacePoint(
-        selection.zh,
-        selection.en,
-        stopCatalog,
-        selection.point,
-      )
+      const locations = findMapDrawCatalogLocationsForName(selection.zh, selection.en, stopCatalog)
+      if (locations.length > 1) {
+        setCatalogLocationChoices(locations)
+        setCatalogLocationActiveIndex(
+          selection.point ? findCatalogLocationIndexByPoint(locations, selection.point) : null,
+        )
+        return 'pick'
+      }
+
+      const point =
+        resolveMapDrawAutoPlacePoint(selection.zh, selection.en, stopCatalog, selection.point) ??
+        locations[0]?.point ??
+        null
       if (point) {
         placeStopAtPoint(selection, point)
         setSelectedNodeId(null)
@@ -532,13 +540,6 @@ export function IslandMapDrawEditor({
         pendingNewStopSeqRef.current = null
         clearCatalogLocationPick()
         return 'placed'
-      }
-
-      const locations = findMapDrawCatalogLocationsForName(selection.zh, selection.en, stopCatalog)
-      if (locations.length > 1) {
-        setCatalogLocationChoices(locations)
-        setCatalogLocationActiveIndex(null)
-        return 'pick'
       }
 
       clearCatalogLocationPick()
