@@ -260,28 +260,7 @@ export function findMapDrawCatalogLocationsForName(
   catalog: readonly WorldMapCatalogStop[] | null | undefined,
 ): WorldMapCatalogStop[] {
   if (!catalog?.length) return []
-  const sameName = catalog.filter((stop) => catalogStopSameName(zh, en, stop))
-  if (sameName.length > 0) return sameName
-
-  const matches = catalog.filter((stop) => catalogStopNameMatches(zh, en, stop))
-  if (matches.length > 0) return matches
-
-  const query = zh.trim() || en.trim()
-  if (query.length < 2) return []
-
-  const seen = new Set<string>()
-  const fuzzy: WorldMapCatalogStop[] = []
-  for (const suggestion of findCatalogStopSuggestions(query, catalog)) {
-    if (!suggestion.point) continue
-    const key = `${suggestion.point[0]}|${suggestion.point[1]}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    fuzzy.push({
-      name: { zh: suggestion.zh, en: suggestion.en },
-      point: suggestion.point,
-    })
-  }
-  return fuzzy
+  return catalog.filter((stop) => catalogStopSameName(zh, en, stop))
 }
 
 export function findCatalogLocationIndexByPoint(

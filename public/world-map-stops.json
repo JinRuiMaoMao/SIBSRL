@@ -1,6 +1,6 @@
 {
   "kind": "world-map-stop-catalog",
-  "note": "All-stop catalog on SIMap (normalized 0–1). Includes All Stations export plus coordinates from world-map-routes.",
+  "note": "All-stop catalog on SIMap (normalized 0–1). Coordinates for names in data/all-stations.json come only from that export; other names are supplemental.",
   "stops": [
     {
       "name": {
@@ -10,16 +10,6 @@
       "point": [
         0.414,
         0.798
-      ]
-    },
-    {
-      "name": {
-        "zh": "三哥大厦",
-        "en": "Third Technology Building"
-      },
-      "point": [
-        0.405,
-        0.794
       ]
     },
     {
@@ -124,42 +114,12 @@
     },
     {
       "name": {
-        "zh": "文化广场",
-        "en": "Culture Square"
-      },
-      "point": [
-        0.269,
-        0.73
-      ]
-    },
-    {
-      "name": {
         "zh": "东厂",
         "en": "East Factory"
       },
       "point": [
         0.743,
         0.297
-      ]
-    },
-    {
-      "name": {
-        "zh": "东厂",
-        "en": "East Factory"
-      },
-      "point": [
-        0.739,
-        0.289
-      ]
-    },
-    {
-      "name": {
-        "zh": "东厂",
-        "en": "East Factory"
-      },
-      "point": [
-        0.74,
-        0.292
       ]
     },
     {
@@ -484,16 +444,6 @@
     },
     {
       "name": {
-        "zh": "叶欣海旁道",
-        "en": "Praya YiYan Road"
-      },
-      "point": [
-        0.807,
-        0.315
-      ]
-    },
-    {
-      "name": {
         "zh": "叶欣警察局",
         "en": "Leafy Police Station"
       },
@@ -574,32 +524,12 @@
     },
     {
       "name": {
-        "zh": "白鸽消防局",
-        "en": "Dove Fire Station"
-      },
-      "point": [
-        0.461,
-        0.773
-      ]
-    },
-    {
-      "name": {
         "zh": "艺术大厦",
         "en": "Art Building"
       },
       "point": [
         0.203,
         0.791
-      ]
-    },
-    {
-      "name": {
-        "zh": "艺术大厦",
-        "en": "Art Building"
-      },
-      "point": [
-        0.209,
-        0.79
       ]
     },
     {
@@ -624,32 +554,12 @@
     },
     {
       "name": {
-        "zh": "长岛东医院",
-        "en": "East Long Island Hospital"
-      },
-      "point": [
-        0.252,
-        0.786
-      ]
-    },
-    {
-      "name": {
         "zh": "长岛码头",
         "en": "Long Island Ferry Pier"
       },
       "point": [
         0.238,
         0.699
-      ]
-    },
-    {
-      "name": {
-        "zh": "长岛码头",
-        "en": "Long Island Ferry Pier"
-      },
-      "point": [
-        0.238,
-        0.702
       ]
     },
     {
@@ -690,16 +600,6 @@
       "point": [
         0.488,
         0.783
-      ]
-    },
-    {
-      "name": {
-        "zh": "伊迪城",
-        "en": "Eddie City"
-      },
-      "point": [
-        0.495,
-        0.777
       ]
     },
     {
@@ -748,8 +648,8 @@
         "en": "Addi City"
       },
       "point": [
-        0.498,
-        0.789
+        0.495,
+        0.777
       ]
     },
     {
@@ -780,26 +680,6 @@
       "point": [
         0.431,
         0.618
-      ]
-    },
-    {
-      "name": {
-        "zh": "西区海底隧道转车站",
-        "en": "Western Habour Tunnel Interchange"
-      },
-      "point": [
-        0.427,
-        0.634
-      ]
-    },
-    {
-      "name": {
-        "zh": "西区海底隧道转车站",
-        "en": "Western Habour Tunnel Interchange"
-      },
-      "point": [
-        0.43,
-        0.634
       ]
     },
     {
@@ -844,32 +724,12 @@
     },
     {
       "name": {
-        "zh": "阳光大学南校园",
-        "en": "Sunshine University Southern Campus"
-      },
-      "point": [
-        0.566,
-        0.535
-      ]
-    },
-    {
-      "name": {
         "zh": "阳光大学中",
         "en": "Central- Sunshine University"
       },
       "point": [
         0.415,
         0.462
-      ]
-    },
-    {
-      "name": {
-        "zh": "阳光大学",
-        "en": "Sunshine University"
-      },
-      "point": [
-        0.432,
-        0.486
       ]
     },
     {
@@ -904,6 +764,16 @@
     },
     {
       "name": {
+        "zh": "阳光大学南校园",
+        "en": "Sunshine University Southern Campus"
+      },
+      "point": [
+        0.566,
+        0.535
+      ]
+    },
+    {
+      "name": {
         "zh": "阳光大学宿舍",
         "en": "Sunshine University Residences"
       },
@@ -930,16 +800,6 @@
       "point": [
         0.659,
         0.631
-      ]
-    },
-    {
-      "name": {
-        "zh": "阳光码头",
-        "en": "Sunshine Pier"
-      },
-      "point": [
-        0.657,
-        0.633
       ]
     },
     {
@@ -974,31 +834,11 @@
     },
     {
       "name": {
-        "zh": "国际码头",
-        "en": "Regional Pier"
-      },
-      "point": [
-        0.303,
-        0.752
-      ]
-    },
-    {
-      "name": {
         "zh": "宜和剧场",
         "en": "Jardine Theater"
       },
       "point": [
         0.25,
-        0.791
-      ]
-    },
-    {
-      "name": {
-        "zh": "宜和剧场",
-        "en": "Jardine Theater"
-      },
-      "point": [
-        0.248,
         0.791
       ]
     },
@@ -1194,16 +1034,6 @@
     },
     {
       "name": {
-        "zh": "虹尾角站",
-        "en": "Iris Point Station"
-      },
-      "point": [
-        0.293,
-        0.792
-      ]
-    },
-    {
-      "name": {
         "zh": "虹尾角街市",
         "en": "Iris Point Market"
       },
@@ -1240,16 +1070,6 @@
       "point": [
         0.832,
         0.047
-      ]
-    },
-    {
-      "name": {
-        "zh": "海西邨",
-        "en": "Haisey Estate"
-      },
-      "point": [
-        0.83,
-        0.051
       ]
     },
     {
@@ -1314,16 +1134,6 @@
     },
     {
       "name": {
-        "zh": "彩虹中心",
-        "en": "Rainbow Estate Complex"
-      },
-      "point": [
-        0.86,
-        0.1
-      ]
-    },
-    {
-      "name": {
         "zh": "望环台",
         "en": "Panorama Heights"
       },
@@ -1350,26 +1160,6 @@
       "point": [
         0.706,
         0.282
-      ]
-    },
-    {
-      "name": {
-        "zh": "第七区转车站",
-        "en": "Zone 7 Interchange"
-      },
-      "point": [
-        0.703,
-        0.292
-      ]
-    },
-    {
-      "name": {
-        "zh": "第七区转车站",
-        "en": "Zone 7 Interchange"
-      },
-      "point": [
-        0.705,
-        0.293
       ]
     },
     {
@@ -1440,16 +1230,6 @@
       "point": [
         0.375,
         0.791
-      ]
-    },
-    {
-      "name": {
-        "zh": "赖得商场",
-        "en": "Wright Shopping Center"
-      },
-      "point": [
-        0.357,
-        0.792
       ]
     },
     {

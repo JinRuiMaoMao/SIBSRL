@@ -2,13 +2,8 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const root = resolve(import.meta.dirname, '..')
-const allPath = process.argv[2]
+const allPath = process.argv[2] ?? resolve(root, 'data', 'all-stations.json')
 const catalogPath = resolve(root, 'data', 'world-map-stops.json')
-
-if (!allPath) {
-  console.error('Usage: node scripts/merge-world-map-stops.mjs <All Stations.json>')
-  process.exit(1)
-}
 
 const all = JSON.parse(readFileSync(allPath, 'utf8'))
 const cat = JSON.parse(readFileSync(catalogPath, 'utf8'))
@@ -22,6 +17,8 @@ const pointKey = (stop) =>
   `${(stop.name.zh || '').trim()}|${(stop.name.en || '').trim()}|${stop.point[0].toFixed(3)}|${stop.point[1].toFixed(3)}`.toLowerCase()
 const nameKey = (stop) =>
   `${(stop.name.zh || '').trim()}|${(stop.name.en || '').trim()}`.toLowerCase()
+
+const allNameKeys = new Set(allStops.map((stop) => nameKey(stop)))
 
 const merged = []
 const seen = new Set()
@@ -38,19 +35,12 @@ function pushStop(stop) {
   merged.push(entry)
 }
 
+// All Stations export is authoritative for every name it contains (including duplicate points).
 for (const stop of allStops) pushStop(stop)
 
+// Supplement only stops whose names are absent from All Stations (e.g. route-only names).
 for (const stop of cat.stops) {
-  const inAll = allStops.some((candidate) => nameKey(candidate) === nameKey(stop))
-  if (inAll) continue
-  const samePoint = merged.some(
-    (entry) =>
-      entry.point[0].toFixed(3) === stop.point[0].toFixed(3) &&
-      entry.point[1].toFixed(3) === stop.point[1].toFixed(3) &&
-      (entry.name.en.toLowerCase() === (stop.name.en || '').trim().toLowerCase() ||
-        entry.name.zh.toLowerCase() === (stop.name.zh || '').trim().toLowerCase()),
-  )
-  if (samePoint) continue
+  if (allNameKeys.has(nameKey(stop))) continue
   pushStop(stop)
 }
 
@@ -62,7 +52,8 @@ merged.sort((a, b) => {
 
 const out = {
   kind: 'world-map-stop-catalog',
-  note: 'All-stop catalog on SIMap (normalized 0–1). Merged partial stations/termini from All Stations export.',
+  note:
+    'All-stop catalog on SIMap (normalized 0–1). Coordinates for names in data/all-stations.json come only from that export; other names are supplemental.',
   stops: merged,
 }
 
