@@ -798,8 +798,8 @@
         "en": "Sunshine University"
       },
       "point": [
-        0.434,
-        0.484
+        0.431,
+        0.487
       ]
     },
     {
@@ -808,8 +808,8 @@
         "en": "Central- Sunshine University"
       },
       "point": [
-        0.415,
-        0.462
+        0.42,
+        0.455
       ]
     },
     {
@@ -828,8 +828,18 @@
         "en": "Sunshine University Main Campus"
       },
       "point": [
-        0.42,
-        0.454
+        0.436,
+        0.482
+      ]
+    },
+    {
+      "name": {
+        "zh": "阳光大学本部",
+        "en": "Sunshine University Main Campus"
+      },
+      "point": [
+        0.432,
+        0.481
       ]
     },
     {
@@ -1108,7 +1118,7 @@
         "en": "Iris Point Station"
       },
       "point": [
-        0.273,
+        0.299,
         0.791
       ]
     },
@@ -1270,6 +1280,16 @@
       "point": [
         0.587,
         0.552
+      ]
+    },
+    {
+      "name": {
+        "zh": "智家坊",
+        "en": "I Home"
+      },
+      "point": [
+        0.273,
+        0.791
       ]
     },
     {

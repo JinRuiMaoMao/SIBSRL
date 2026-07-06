@@ -1,0 +1,1446 @@
+{
+  "kind": "route-detail-stop-catalog",
+  "note": "Unique stop names from routes/*.html detail pages and data/secret-routes.json (all directions).",
+  "stops": [
+    {
+      "name": {
+        "zh": "三哥大厦",
+        "en": "Third Technology Building"
+      }
+    },
+    {
+      "name": {
+        "zh": "三塔",
+        "en": "Triple Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "上湾街市",
+        "en": "Sheung Bay Market"
+      }
+    },
+    {
+      "name": {
+        "zh": "山道",
+        "en": "YiYan Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "中日街",
+        "en": "Sun Central Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "中叶隧道行政大楼",
+        "en": "Leafy-Central Tunnel Administration Block"
+      }
+    },
+    {
+      "name": {
+        "zh": "中西转车站",
+        "en": "Central - Western Interchange"
+      }
+    },
+    {
+      "name": {
+        "zh": "中西转车站",
+        "en": "Section fare begins here"
+      }
+    },
+    {
+      "name": {
+        "zh": "中间花园",
+        "en": "Middle Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环(中日街)",
+        "en": "Circular Point"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环（中日街）",
+        "en": "Sun Central Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环医院",
+        "en": "Central Hospital"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环南总站",
+        "en": "Southern Central Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环南路",
+        "en": "Southern Central Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环桥",
+        "en": "Central Bridge"
+      }
+    },
+    {
+      "name": {
+        "zh": "中环消防局",
+        "en": "Central Fire Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "勿莫商场",
+        "en": "Mo Shopping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "勿莫街市",
+        "en": "Mo Market"
+      }
+    },
+    {
+      "name": {
+        "zh": "文化广场",
+        "en": "Culture Square"
+      }
+    },
+    {
+      "name": {
+        "zh": "月亮绕道",
+        "en": "Moon Island Bypass"
+      }
+    },
+    {
+      "name": {
+        "zh": "东厂",
+        "en": "East Factory"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门下邨",
+        "en": "Lower East Door Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门下邨",
+        "en": "East Door Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门下部",
+        "en": "Lower East Door Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门公园",
+        "en": "East Door Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门邨",
+        "en": "East Door Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门码头",
+        "en": "East Door Pier"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门码头总站",
+        "en": "East Door Ferry Pier Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门花园",
+        "en": "East Door Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门花园",
+        "en": "Tuna Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门总站",
+        "en": "East Door Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门商业中心",
+        "en": "East Door Commercial Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门商场",
+        "en": "East Door Shopping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门路",
+        "en": "East Door Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "东门路",
+        "en": "East Door Port Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵大街",
+        "en": "Eastmallow Main Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨 - 阳葵屋",
+        "en": "Eastmallow Estate - Sunny House"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨 - 阳葵屋",
+        "en": "Section fare begins here"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨 - 阳葵屋",
+        "en": "Sunny House, Eastmallow Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨－灯葵屋",
+        "en": "Eastmallow Estate - Light House"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨－阳葵屋",
+        "en": "Eastmallow Estate - Sunny House"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨－花葵屋",
+        "en": "Eastmallow Estate - Flower House"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵邨－春葵屋",
+        "en": "Eastmallow Estate - Spring House"
+      }
+    },
+    {
+      "name": {
+        "zh": "东锦葵海傍路",
+        "en": "Eastmallow Praya Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝",
+        "en": "Senpai"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝",
+        "en": "Senpai BRT Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝山",
+        "en": "Senpai Hill"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝广场",
+        "en": "Senpai Shopping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝广场",
+        "en": "Senpai Shopping Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝巿政大厦",
+        "en": "Senpai Municipal Services Building"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝市政大厦",
+        "en": "Senpai Municipal Services Building"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝多层停车场",
+        "en": "Senpai Multi-Storey Car Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝纪念碑",
+        "en": "The Stone of Memory"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝纪念碑花园",
+        "en": "The Stone of Memory"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝图书馆",
+        "en": "Senpai Library"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝酒店",
+        "en": "Senpai Hotel"
+      }
+    },
+    {
+      "name": {
+        "zh": "仙贝道",
+        "en": "Senpai Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "北叶花园",
+        "en": "North Leafy Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛（巨石路）",
+        "en": "North Island (Rocky Road)"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛（巨石路）",
+        "en": "Northern Island (Rocky Road)"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛山顶",
+        "en": "North Island Hill Peak"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛邨商场",
+        "en": "North Island Estate Shopping Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛花园",
+        "en": "North Island Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛花园巨石楼",
+        "en": "North Island Estate - Rocky Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛花园商场",
+        "en": "North Island Estate Shopping Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "北岛花园商场",
+        "en": "NIE Shopping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "北环中心",
+        "en": "Northern Plaza"
+      }
+    },
+    {
+      "name": {
+        "zh": "北环转车站",
+        "en": "Northern Interchange (Northbound)"
+      }
+    },
+    {
+      "name": {
+        "zh": "北环转车站",
+        "en": "Northern Interchange (Southbound)"
+      }
+    },
+    {
+      "name": {
+        "zh": "北环转车站",
+        "en": "Northern Interchange"
+      }
+    },
+    {
+      "name": {
+        "zh": "北环转车站",
+        "en": "Moon Island Bypass"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿市中心",
+        "en": "Norton Town Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿市中心",
+        "en": "Norton Town Centre Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿邨",
+        "en": "Norton Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿邨",
+        "en": "Norton Hill Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿码头",
+        "en": "Norton Ferry Pier"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿花园",
+        "en": "Norton Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿花园",
+        "en": "Norton Main Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿游泳池",
+        "en": "Norton Swimming Pool"
+      }
+    },
+    {
+      "name": {
+        "zh": "北顿路",
+        "en": "Norton Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "北滩",
+        "en": "Northern Beach"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角大学",
+        "en": "Leafy University"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角医院",
+        "en": "Leafy Hospital"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角花园",
+        "en": "Leafy Bay Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角湾",
+        "en": "Leafy Bay"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角湾",
+        "en": "Leafy Bay Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角湾坟场",
+        "en": "Leafy Bay Cemetery"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角湾邨",
+        "en": "Leafy Bay Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角湾邨商场",
+        "en": "Leafy Bay Estate Shopping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶角湾邨商场",
+        "en": "Leafy Bay Estate Shopping Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣公园",
+        "en": "YiYan Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣邨第一座",
+        "en": "YiYan Estate Block 1"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣邨第二座",
+        "en": "YiYan Estate Block 2"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣邨第四座",
+        "en": "YiYan Estate Block 4"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣径",
+        "en": "Leafy Walking Trail"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣海旁道",
+        "en": "Praya YiYan Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "叶欣警察局",
+        "en": "Leafy Police Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "四露谷车厂天台",
+        "en": "Shallow Valley Depot Rooftop"
+      }
+    },
+    {
+      "name": {
+        "zh": "巨石路",
+        "en": "Rocky Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "巨石路20号",
+        "en": "20 Rocky Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "巨石路35号",
+        "en": "35 Rocky Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "巨石路60号",
+        "en": "60 Rocky Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "永巴四露谷车厂",
+        "en": "FT Shallow Valley Depot"
+      }
+    },
+    {
+      "name": {
+        "zh": "汇丰总行",
+        "en": "HSBC Headquarters"
+      }
+    },
+    {
+      "name": {
+        "zh": "白鸽山",
+        "en": "Dove Hill"
+      }
+    },
+    {
+      "name": {
+        "zh": "白鸽公园",
+        "en": "Dove Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "白鸽邨",
+        "en": "Dove Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "白鸽消防局",
+        "en": "Dove Fire Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "艺术大厦",
+        "en": "Art Building"
+      }
+    },
+    {
+      "name": {
+        "zh": "艺术大厦",
+        "en": "LMK Long Island East is located here. Players can get food here."
+      }
+    },
+    {
+      "name": {
+        "zh": "长岛中心",
+        "en": "Long Island Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "长岛东医院",
+        "en": "East Long Island Hospital"
+      }
+    },
+    {
+      "name": {
+        "zh": "长岛码头",
+        "en": "Long Island Ferry Pier"
+      }
+    },
+    {
+      "name": {
+        "zh": "长岛码头",
+        "en": "Long Island Ferry Pier Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "长岛海滨长廊",
+        "en": "Long Island Waterfront Promenade"
+      }
+    },
+    {
+      "name": {
+        "zh": "龙门",
+        "en": "Lung Mun"
+      }
+    },
+    {
+      "name": {
+        "zh": "亚历山大花园",
+        "en": "Alexander Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "亚历山大教堂",
+        "en": "Alexander Church"
+      }
+    },
+    {
+      "name": {
+        "zh": "亚特路",
+        "en": "Arctan Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "伊迪城",
+        "en": "Eddie City"
+      }
+    },
+    {
+      "name": {
+        "zh": "安灵台",
+        "en": "Ambling Peak Columbarium"
+      }
+    },
+    {
+      "name": {
+        "zh": "安灵台",
+        "en": "Ambling Peak"
+      }
+    },
+    {
+      "name": {
+        "zh": "旭涛荟",
+        "en": "Hotel Symbol"
+      }
+    },
+    {
+      "name": {
+        "zh": "百彩新城",
+        "en": "N Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "红石楼",
+        "en": "Redstone House"
+      }
+    },
+    {
+      "name": {
+        "zh": "红地砖",
+        "en": "Red Wall Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "红豆中心",
+        "en": "Redbean Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "红豆商场",
+        "en": "Redbean Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "红豆楼",
+        "en": "Redbean House"
+      }
+    },
+    {
+      "name": {
+        "zh": "艾迪城",
+        "en": "Addi City"
+      }
+    },
+    {
+      "name": {
+        "zh": "艾迪路",
+        "en": "Addi Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "西区医院",
+        "en": "Western Hospital"
+      }
+    },
+    {
+      "name": {
+        "zh": "西区海底隧道转车站",
+        "en": "Western Habour Tunnel Interchange"
+      }
+    },
+    {
+      "name": {
+        "zh": "时间里",
+        "en": "Timelapse Lane"
+      }
+    },
+    {
+      "name": {
+        "zh": "时间廊",
+        "en": "Timelapse Mall"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学",
+        "en": "Sunshine University"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学中",
+        "en": "Central- Sunshine University"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学北",
+        "en": "North Sunshine University"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学本部",
+        "en": "Sunshine University Main Campus"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学运动场",
+        "en": "Sunshine University Sports Field"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学南校园",
+        "en": "Sunshine University Southern Campus"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光大学宿舍",
+        "en": "Sunshine University Residences"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光太空馆",
+        "en": "Sunshine Space Museum"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光体育馆",
+        "en": "Sunshine Stadium"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光码头",
+        "en": "Sunshine Pier"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光站",
+        "en": "Sunshine Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光站",
+        "en": "Sunshine Road Passage"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光站",
+        "en": "Sunshine Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光站",
+        "en": "Section fare begins here"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光站",
+        "en": "Two-way section fare ends here"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光高铁站",
+        "en": "Sunshine Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "阳光殡仪馆",
+        "en": "Sunshine Funeral"
+      }
+    },
+    {
+      "name": {
+        "zh": "国际码头",
+        "en": "Regional Pier"
+      }
+    },
+    {
+      "name": {
+        "zh": "国际塔",
+        "en": "International Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "宜和剧场",
+        "en": "Jardine Theater"
+      }
+    },
+    {
+      "name": {
+        "zh": "明月角",
+        "en": "Lunar Point"
+      }
+    },
+    {
+      "name": {
+        "zh": "明月角",
+        "en": "West Moon Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "枫树里",
+        "en": "Maple Lane"
+      }
+    },
+    {
+      "name": {
+        "zh": "罗力素花园一期",
+        "en": "Laws Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "罗力素花园一期",
+        "en": "Laws Garden 1"
+      }
+    },
+    {
+      "name": {
+        "zh": "罗力素花园二期",
+        "en": "Laws Garden 2"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头",
+        "en": "Containers Terminal"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头",
+        "en": "Containers Ferry Pier"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头员工宿舍",
+        "en": "Containers Island Employee House"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头员工宿舍",
+        "en": "Container Area's Employee House"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头员工宿舍",
+        "en": "Container Area Employee House"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头员工宿舍",
+        "en": "Container's Area Employee House"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头岛",
+        "en": "Container's Island Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "货柜码头岛",
+        "en": "Container's Island"
+      }
+    },
+    {
+      "name": {
+        "zh": "购物廊",
+        "en": "Shopping Corridor"
+      }
+    },
+    {
+      "name": {
+        "zh": "运动场",
+        "en": "Sport Ground"
+      }
+    },
+    {
+      "name": {
+        "zh": "阿周电视",
+        "en": "Roblox TV"
+      }
+    },
+    {
+      "name": {
+        "zh": "际巴车厂",
+        "en": "CSB Depot"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环中心",
+        "en": "The Southern"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环文化区公园",
+        "en": "Southern Cultural District Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环台",
+        "en": "Southern Terrance"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环坊",
+        "en": "Langford Place"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环花园",
+        "en": "Southern One"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环花园一期",
+        "en": "Southern One"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环花园二期",
+        "en": "Southern Two"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环花园二期",
+        "en": "Central Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环运动场",
+        "en": "Southern Sports Field"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环街市",
+        "en": "Southern Market"
+      }
+    },
+    {
+      "name": {
+        "zh": "南环街市",
+        "en": "Section fare begins here"
+      }
+    },
+    {
+      "name": {
+        "zh": "南洋大厦",
+        "en": "Southern Building"
+      }
+    },
+    {
+      "name": {
+        "zh": "政府总部",
+        "en": "Government Office"
+      }
+    },
+    {
+      "name": {
+        "zh": "玻璃楼",
+        "en": "Glass Office"
+      }
+    },
+    {
+      "name": {
+        "zh": "虹尾角站",
+        "en": "Iris Point Station"
+      }
+    },
+    {
+      "name": {
+        "zh": "虹尾角街市",
+        "en": "Iris Point Market"
+      }
+    },
+    {
+      "name": {
+        "zh": "海西回旋处",
+        "en": "Haisey Roundabout"
+      }
+    },
+    {
+      "name": {
+        "zh": "海西回旋处",
+        "en": "Section fare begins here"
+      }
+    },
+    {
+      "name": {
+        "zh": "海西角",
+        "en": "Haisey Point"
+      }
+    },
+    {
+      "name": {
+        "zh": "海西角",
+        "en": "Forth Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "海西邨",
+        "en": "Haisey Estate Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "海西邨",
+        "en": "Haisey Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "海怡车厂",
+        "en": "Horizon Depot"
+      }
+    },
+    {
+      "name": {
+        "zh": "海怡西",
+        "en": "West Horizon"
+      }
+    },
+    {
+      "name": {
+        "zh": "海怡沙滩",
+        "en": "Horizon Beach"
+      }
+    },
+    {
+      "name": {
+        "zh": "海怡摩天大厦",
+        "en": "Horizon Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "海苔湾",
+        "en": "Seaweed Bay"
+      }
+    },
+    {
+      "name": {
+        "zh": "班尼街",
+        "en": "Brown Street"
+      }
+    },
+    {
+      "name": {
+        "zh": "钻石交易塔",
+        "en": "Diamond Trading Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "钻石交易塔",
+        "en": "YiYan Road"
+      }
+    },
+    {
+      "name": {
+        "zh": "彩云楼",
+        "en": "Choi Wan House"
+      }
+    },
+    {
+      "name": {
+        "zh": "彩色汇",
+        "en": "Rainbow Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "彩虹广场",
+        "en": "Rainbow Plaza"
+      }
+    },
+    {
+      "name": {
+        "zh": "彩虹中心",
+        "en": "Rainbow Estate Complex"
+      }
+    },
+    {
+      "name": {
+        "zh": "彩虹中心",
+        "en": "Rainbow Estate Complex Bus Terminus"
+      }
+    },
+    {
+      "name": {
+        "zh": "彩虹邨",
+        "en": "Rainbow Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "望环台",
+        "en": "Panorama Heights"
+      }
+    },
+    {
+      "name": {
+        "zh": "第七区转车站",
+        "en": "Zone 7 Interchange"
+      }
+    },
+    {
+      "name": {
+        "zh": "绿宝石中心",
+        "en": "Emerald Plaza"
+      }
+    },
+    {
+      "name": {
+        "zh": "银行大厦",
+        "en": "Bank Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "雀鸟桥",
+        "en": "Bird Bridge"
+      }
+    },
+    {
+      "name": {
+        "zh": "强生街市",
+        "en": "Johnson Market"
+      }
+    },
+    {
+      "name": {
+        "zh": "智家坊",
+        "en": "I Home"
+      }
+    },
+    {
+      "name": {
+        "zh": "黑白中心",
+        "en": "Grayscale Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "黑白中心",
+        "en": "Grayscale Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "新地公园",
+        "en": "Sindy Park"
+      }
+    },
+    {
+      "name": {
+        "zh": "新地花园",
+        "en": "Sindy Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "新纪元中心",
+        "en": "Ping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "新纪元中心",
+        "en": "Ping Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "落山邨",
+        "en": "Downhill Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "赖得里",
+        "en": "Wright Lane"
+      }
+    },
+    {
+      "name": {
+        "zh": "赖得商场",
+        "en": "Wright Shopping Center"
+      }
+    },
+    {
+      "name": {
+        "zh": "赖得商场",
+        "en": "Wright Shopping Centre"
+      }
+    },
+    {
+      "name": {
+        "zh": "路博斯总部大楼",
+        "en": "Roblox HQ"
+      }
+    },
+    {
+      "name": {
+        "zh": "甄博士楼",
+        "en": "X.Y.Zhen College"
+      }
+    },
+    {
+      "name": {
+        "zh": "橙红邨",
+        "en": "Ored Estate"
+      }
+    },
+    {
+      "name": {
+        "zh": "薄荷大厦",
+        "en": "Mint Tower"
+      }
+    },
+    {
+      "name": {
+        "zh": "镰塔花园",
+        "en": "Kamaya Garden"
+      }
+    },
+    {
+      "name": {
+        "zh": "镰塔花园（东行）",
+        "en": "Kamaya Garden (Eastbound)"
+      }
+    },
+    {
+      "name": {
+        "zh": "镰塔花园（西行）",
+        "en": "Kamaya Garden (Westbound)"
+      }
+    },
+    {
+      "name": {
+        "zh": "镰塔运动场",
+        "en": "Kamaya Sports Field"
+      }
+    },
+    {
+      "name": {
+        "zh": "警察总部",
+        "en": "Police Headquarters"
+      }
+    },
+    {
+      "name": {
+        "zh": "Basketball Court",
+        "en": "Basketball Court"
+      }
+    },
+    {
+      "name": {
+        "zh": "M∞",
+        "en": "Museum Infinite"
+      }
+    },
+    {
+      "name": {
+        "zh": "Museum Infinite",
+        "en": "Museum Infinite"
+      }
+    },
+    {
+      "name": {
+        "zh": "Rio House",
+        "en": "Rio House"
+      }
+    },
+    {
+      "name": {
+        "zh": "The ONE",
+        "en": "The ONE"
+      }
+    }
+  ]
+}

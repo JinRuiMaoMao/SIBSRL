@@ -157,16 +157,6 @@
         },
         {
           "name": {
-            "zh": "虹尾角站",
-            "en": "Iris Point Station"
-          },
-          "point": [
-            0.273,
-            0.791
-          ]
-        },
-        {
-          "name": {
             "zh": "虹尾角街市",
             "en": "Iris Point Market"
           },
@@ -187,32 +177,12 @@
         },
         {
           "name": {
-            "zh": "阳光大学",
-            "en": "Sunshine University"
-          },
-          "point": [
-            0.434,
-            0.484
-          ]
-        },
-        {
-          "name": {
             "zh": "阳光大学北",
             "en": "North Sunshine University"
           },
           "point": [
             0.404,
             0.458
-          ]
-        },
-        {
-          "name": {
-            "zh": "阳光大学本部",
-            "en": "Sunshine University Main Campus"
-          },
-          "point": [
-            0.42,
-            0.454
           ]
         },
         {
@@ -1215,6 +1185,226 @@
           "point": [
             0.815,
             0.309
+          ]
+        },
+        {
+          "name": {
+            "zh": "阳光大学",
+            "en": "Sunshine University"
+          },
+          "point": [
+            0.431,
+            0.487
+          ]
+        },
+        {
+          "name": {
+            "zh": "阳光大学本部",
+            "en": "Sunshine University Main Campus"
+          },
+          "point": [
+            0.436,
+            0.482
+          ]
+        },
+        {
+          "name": {
+            "zh": "阳光大学中",
+            "en": "Central- Sunshine University"
+          },
+          "point": [
+            0.42,
+            0.455
+          ]
+        },
+        {
+          "name": {
+            "zh": "阳光大学本部",
+            "en": "Sunshine University Main Campus"
+          },
+          "point": [
+            0.432,
+            0.481
+          ]
+        },
+        {
+          "name": {
+            "zh": "北岛花园商场",
+            "en": "NIE Shopping Center"
+          },
+          "point": [
+            0.402,
+            0.544
+          ]
+        },
+        {
+          "name": {
+            "zh": "北岛花园商场",
+            "en": "NIE Shopping Center"
+          },
+          "point": [
+            0.405,
+            0.544
+          ]
+        },
+        {
+          "name": {
+            "zh": "阳光殡仪馆",
+            "en": "Sunshine Funeral"
+          },
+          "point": [
+            0.183,
+            0.776
+          ]
+        },
+        {
+          "name": {
+            "zh": "彩色汇",
+            "en": "Rainbow Center"
+          },
+          "point": [
+            0.276,
+            0.791
+          ]
+        },
+        {
+          "name": {
+            "zh": "智家坊",
+            "en": "I Home"
+          },
+          "point": [
+            0.273,
+            0.791
+          ]
+        },
+        {
+          "name": {
+            "zh": "虹尾角站",
+            "en": "Iris Point Station"
+          },
+          "point": [
+            0.299,
+            0.791
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门总站",
+            "en": "East Door Bus Terminus"
+          },
+          "point": [
+            0.767,
+            0.064
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门总站",
+            "en": "East Door Bus Terminus"
+          },
+          "point": [
+            0.768,
+            0.067
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门公园",
+            "en": "East Door Park"
+          },
+          "point": [
+            0.816,
+            0.106
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门花园",
+            "en": "East Door Garden"
+          },
+          "point": [
+            0.789,
+            0.085
+          ]
+        },
+        {
+          "name": {
+            "zh": "东门下邨",
+            "en": "Lower East Door Estate"
+          },
+          "point": [
+            0.806,
+            0.09
+          ]
+        },
+        {
+          "name": {
+            "zh": "北顿路",
+            "en": "Norton Road"
+          },
+          "point": [
+            0.414,
+            0.588
+          ]
+        },
+        {
+          "name": {
+            "zh": "亚历山大花园",
+            "en": "Alexander Garden"
+          },
+          "point": [
+            0.761,
+            0.239
+          ]
+        },
+        {
+          "name": {
+            "zh": "亚历山大教堂",
+            "en": "Alexander Church"
+          },
+          "point": [
+            0.772,
+            0.249
+          ]
+        },
+        {
+          "name": {
+            "zh": "际巴车厂",
+            "en": "CSB Depot"
+          },
+          "point": [
+            0.822,
+            0.29
+          ]
+        },
+        {
+          "name": {
+            "zh": "玻璃楼",
+            "en": "Glass Office"
+          },
+          "point": [
+            0.504,
+            0.544
+          ]
+        },
+        {
+          "name": {
+            "zh": "The ONE",
+            "en": "The ONE"
+          },
+          "point": [
+            0.555,
+            0.543
+          ]
+        },
+        {
+          "name": {
+            "zh": "镰塔花园",
+            "en": "Kamaya Garden"
+          },
+          "point": [
+            0.708,
+            0.263
           ]
         }
       ]

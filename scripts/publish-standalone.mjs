@@ -25,6 +25,7 @@ import {
 } from './lib/app-page-html.mjs'
 import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
+import { buildRouteDetailStops } from './build-route-detail-stops.mjs'
 import { syncBrandAssets } from './sync-brand-assets.mjs'
 import { syncWorldMapImages } from './sync-world-map-images.mjs'
 import { buildWorldMapRoutesManifest } from './build-world-map-routes-manifest.mjs'
@@ -149,6 +150,11 @@ export function publishStandalone(options = {}) {
     targets: [resolve(root, 'routes'), resolve(root, 'dist', 'routes')],
   })
 
+  const routeDetailStops = buildRouteDetailStops()
+  console.log(
+    `[route-detail-stops] ${routeDetailStops.stopCount} stops from ${routeDetailStops.routeCount} route sources`,
+  )
+
   syncBrandAssets()
   syncWorldMapImages()
   buildWorldMapRoutesManifest()
@@ -189,6 +195,14 @@ export function publishStandalone(options = {}) {
     copyFileSync(catalogSource, resolve(root, 'dist', 'world-map-stops.json'))
     copyFileSync(catalogSource, resolve(root, 'public', 'world-map-stops.json'))
     console.log('[publish] 已复制 world-map-stops.json')
+  }
+
+  const routeDetailStopsSource = resolve(root, 'data', 'route-detail-stops.json')
+  if (existsSync(routeDetailStopsSource)) {
+    copyFileSync(routeDetailStopsSource, resolve(root, 'route-detail-stops.json'))
+    copyFileSync(routeDetailStopsSource, resolve(root, 'dist', 'route-detail-stops.json'))
+    copyFileSync(routeDetailStopsSource, resolve(root, 'public', 'route-detail-stops.json'))
+    console.log('[publish] 已复制 route-detail-stops.json')
   }
 
   const publicLogo = resolve(root, 'public', 'sibs-logo.png')

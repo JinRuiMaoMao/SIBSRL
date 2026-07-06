@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-05'
+export const CURRENT_CHANGELOG_DATE = '2026-07-06'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,46 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-07-06-summary",
+    date: "2026-07-06",
+    title: {
+      zh: "2026-07-06 更新",
+      en: "2026-07-06 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "地图绘制",
+          en: "Map draw editor",
+        },
+        additions: [
+          {
+            zh: "新增「显示全部站点」面板：可勾选后在地图上叠加站点，并支持「全部」「已添加」「未添加」筛选。",
+            en: "Added Show all catalog stops panel: optional map overlay with All / Added / Not added filters.",
+          },
+          {
+            zh: "「已添加」仅统计本次编辑中通过「导入」载入的站点；内置 world-map-stops.json 不再计入该数字。",
+            en: "Added count reflects only stops loaded via Import in the current session; bundled world-map-stops.json is excluded.",
+          },
+          {
+            zh: "「未添加」列出各线路详情页（含秘密线路）站序中有、但尚未导入至当前目录的站点，便于补全坐标。",
+            en: "Not added lists stops on route detail pages (including secret routes) not yet imported into the session catalog.",
+          },
+          {
+            zh: "已导入至目录的站点名称前显示 ✓。",
+            en: "A checkmark appears before stop names already in the imported session catalog.",
+          },
+        ],
+        fixes: [
+          {
+            zh: "修复线路站序索引构建时未识别 routes/*.html 扁平站名格式，导致部分已上线站点无法正确匹配的问题（有效站名 111→240）。",
+            en: "Fixed route stop index build missing flat {zh, en} names in routes/*.html, so listed stops matched correctly (111→240 unique names).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-07-05-summary",
     date: "2026-07-05",

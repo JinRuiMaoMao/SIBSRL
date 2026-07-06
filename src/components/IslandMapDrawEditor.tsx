@@ -45,11 +45,13 @@ import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
 import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
 import { MapDrawCatalogLocationPicker } from './MapDrawCatalogLocationPicker'
+import { MapDrawAllStationsPanel } from './MapDrawAllStationsPanel'
 import {
-  MapDrawAllStationsPanel,
+  buildMapDrawAllStationsRows,
+  filterMapDrawAllStationsRows,
   type MapDrawAllStationsFilter,
-} from './MapDrawAllStationsPanel'
-import { loadWorldMapStopCatalog, mergeWorldMapCatalogStops, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
+} from '../utils/mapDrawCatalogPlaced'
+import type { MapDrawRouteDetailStopName } from '../utils/mapDrawRouteDetailStops'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
@@ -75,7 +77,7 @@ import {
   resolveDrawDirectionDataIndex,
 } from '../utils/mapDrawStopCatalogSnap'
 import { getDirectionKey } from '../utils/routeDirectionCore'
-import { isMapDrawCatalogStopPlaced } from '../utils/mapDrawCatalogPlaced'
+import { loadWorldMapStopCatalog, mergeWorldMapCatalogStops, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
@@ -154,9 +156,12 @@ export function IslandMapDrawEditor({
   const [newStopChiName, setNewStopChiName] = useState('')
   const [newStopEngName, setNewStopEngName] = useState('')
   const [stopCatalog, setStopCatalog] = useState<WorldMapCatalogStop[] | null>(null)
+  /** Stops imported via the Import button in this editor session (panel「已添加」source). */
+  const [sessionImportedCatalog, setSessionImportedCatalog] = useState<WorldMapCatalogStop[]>([])
   const [stopPlacementMode, setStopPlacementMode] = useState<StopPlacementMode>('auto')
   const [showAllCatalogStops, setShowAllCatalogStops] = useState(false)
   const [allStationsFilter, setAllStationsFilter] = useState<MapDrawAllStationsFilter>('all')
+  const [routeDetailStops, setRouteDetailStops] = useState<MapDrawRouteDetailStopName[]>([])
 
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -238,6 +243,21 @@ export function IslandMapDrawEditor({
     void loadWorldMapStopCatalog()
       .then(setStopCatalog)
       .catch(() => setStopCatalog([]))
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    void import('../utils/mapDrawRouteDetailStops')
+      .then(({ loadAllRouteDetailStopNames }) => loadAllRouteDetailStopNames())
+      .then((stops) => {
+        if (!cancelled) setRouteDetailStops(stops)
+      })
+      .catch(() => {
+        if (!cancelled) setRouteDetailStops([])
+      })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {
@@ -666,26 +686,17 @@ export function IslandMapDrawEditor({
     catalogLocationActiveIndex != null ? `catalog-preview-${catalogLocationActiveIndex}` : null
 
   const referenceCatalogStops = useMemo((): WorldMapDrawStop[] => {
-    if (!showAllCatalogStops || !stopCatalog?.length || !imageSize) return []
+    if (!showAllCatalogStops || !sessionImportedCatalog.length) return []
 
-    const rows = stopCatalog.map((stop, index) => ({
-      stop,
-      index,
-      placed: isMapDrawCatalogStopPlaced(stop, editor.line.nodes, imageSize.width, imageSize.height),
-    }))
-
-    const filtered =
-      allStationsFilter === 'added'
-        ? rows.filter((row) => row.placed)
-        : allStationsFilter === 'not-added'
-          ? rows.filter((row) => !row.placed)
-          : rows
+    const rows = buildMapDrawAllStationsRows(sessionImportedCatalog, routeDetailStops)
+    const filtered = filterMapDrawAllStationsRows(rows, allStationsFilter)
 
     const previewPoints = new Set(
       catalogLocationChoices.map((location) => `${location.point[0]}|${location.point[1]}`),
     )
 
     return filtered
+      .filter((row) => row.hasMapCoords)
       .filter((row) => !previewPoints.has(`${row.stop.point[0]}|${row.stop.point[1]}`))
       .map((row) => ({
         id: `catalog-all-${row.index}`,
@@ -695,8 +706,8 @@ export function IslandMapDrawEditor({
   }, [
     allStationsFilter,
     catalogLocationChoices,
-    editor.line.nodes,
-    imageSize,
+    routeDetailStops,
+    sessionImportedCatalog,
     showAllCatalogStops,
     stopCatalog,
   ])
@@ -708,9 +719,15 @@ export function IslandMapDrawEditor({
       pendingNewStopSeqRef.current =
         resolveRouteStopSeq(stop.name.zh, stop.name.en) ?? null
       enterEditorMode('addStop')
-      setMapView(
-        fitNormalizedViewToRoutePoints([stop.point], 'fullscreen', 0.06, { min: 1.2, max: DRAW_MAX_ZOOM_RATIO }),
-      )
+      const hasMapCoords = !(stop.point[0] === 0 && stop.point[1] === 0)
+      if (hasMapCoords) {
+        setMapView(
+          fitNormalizedViewToRoutePoints([stop.point], 'fullscreen', 0.06, {
+            min: 1.2,
+            max: DRAW_MAX_ZOOM_RATIO,
+          }),
+        )
+      }
     },
     [enterEditorMode, resolveRouteStopSeq],
   )
@@ -1124,6 +1141,8 @@ export function IslandMapDrawEditor({
         catalogForSnap = catalog
         catalogAdded = added
         if (added > 0) setStopCatalog(catalog)
+        const { catalog: sessionCatalog } = mergeWorldMapCatalogStops(sessionImportedCatalog, importedStops)
+        setSessionImportedCatalog(sessionCatalog)
       }
 
       const showImportDoneHint = () => {
@@ -1162,7 +1181,7 @@ export function IslandMapDrawEditor({
         return
       }
     },
-    [drawRouteId, drawDirectionInput, editor, imageSize, showExportHint, sibsDraft?.stops, snapStopsFromCatalog, t],
+    [drawRouteId, drawDirectionInput, editor, imageSize, sessionImportedCatalog, showExportHint, sibsDraft?.stops, snapStopsFromCatalog, stopCatalog, t],
   )
 
   const handleImportFileChange = useCallback(
@@ -1577,10 +1596,8 @@ export function IslandMapDrawEditor({
               </section>
 
               <MapDrawAllStationsPanel
-                catalog={stopCatalog}
-                nodes={editor.line.nodes}
-                imageWidth={imageSize?.width ?? 0}
-                imageHeight={imageSize?.height ?? 0}
+                catalog={sessionImportedCatalog}
+                routeDetailStops={routeDetailStops}
                 showAll={showAllCatalogStops}
                 filter={allStationsFilter}
                 onShowAllChange={setShowAllCatalogStops}

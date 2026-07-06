@@ -1,17 +1,19 @@
 import { useMemo } from 'react'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
-import type { RouteEditorNode } from '../routeEditor/types'
-import { catalogStopListKey, isMapDrawCatalogStopPlaced } from '../utils/mapDrawCatalogPlaced'
+import {
+  buildMapDrawAllStationsRows,
+  filterMapDrawAllStationsRows,
+  type MapDrawAllStationsFilter,
+} from '../utils/mapDrawCatalogPlaced'
+import type { MapDrawRouteDetailStopName } from '../utils/mapDrawRouteDetailStops'
 import type { WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 
-export type MapDrawAllStationsFilter = 'all' | 'added' | 'not-added'
+export type { MapDrawAllStationsFilter }
 
 interface MapDrawAllStationsPanelProps {
   catalog: readonly WorldMapCatalogStop[] | null
-  nodes: readonly RouteEditorNode[]
-  imageWidth: number
-  imageHeight: number
+  routeDetailStops: readonly MapDrawRouteDetailStopName[]
   showAll: boolean
   filter: MapDrawAllStationsFilter
   onShowAllChange: (value: boolean) => void
@@ -21,9 +23,7 @@ interface MapDrawAllStationsPanelProps {
 
 export function MapDrawAllStationsPanel({
   catalog,
-  nodes,
-  imageWidth,
-  imageHeight,
+  routeDetailStops,
   showAll,
   filter,
   onShowAllChange,
@@ -33,22 +33,12 @@ export function MapDrawAllStationsPanel({
   const { locale, t } = useLocale()
 
   const rows = useMemo(() => {
-    if (!catalog?.length) return []
-    return catalog.map((stop, index) => ({
-      stop,
-      index,
-      key: catalogStopListKey(stop, index),
-      placed: isMapDrawCatalogStopPlaced(stop, nodes, imageWidth, imageHeight),
-    }))
-  }, [catalog, imageWidth, imageHeight, nodes])
+    return buildMapDrawAllStationsRows(catalog ?? [], routeDetailStops)
+  }, [catalog, routeDetailStops])
 
-  const filteredRows = useMemo(() => {
-    if (filter === 'added') return rows.filter((row) => row.placed)
-    if (filter === 'not-added') return rows.filter((row) => !row.placed)
-    return rows
-  }, [filter, rows])
+  const filteredRows = useMemo(() => filterMapDrawAllStationsRows(rows, filter), [filter, rows])
 
-  const addedCount = rows.filter((row) => row.placed).length
+  const addedCount = rows.filter((row) => row.inCatalog).length
 
   return (
     <section className="route-editor-panel map-draw-all-stations-panel">
@@ -59,6 +49,7 @@ export function MapDrawAllStationsPanel({
 
       {showAll ? (
         <>
+          <p className="island-map-draw-help map-draw-all-stations-import-note">{t('mapDrawAllStationsImportNote')}</p>
           <div className="map-draw-all-stations-filters" role="tablist" aria-label={t('mapDrawAllStationsFilterLabel')}>
             {(
               [
@@ -80,7 +71,7 @@ export function MapDrawAllStationsPanel({
             ))}
           </div>
 
-          {!catalog?.length ? (
+          {rows.length === 0 ? (
             <p className="island-map-draw-help">{t('mapDrawAllStationsEmpty')}</p>
           ) : filteredRows.length === 0 ? (
             <p className="island-map-draw-help">{t('mapDrawAllStationsFilterEmpty')}</p>
@@ -92,11 +83,11 @@ export function MapDrawAllStationsPanel({
                   <li key={row.key} role="option">
                     <button
                       type="button"
-                      className={`map-draw-all-stations-item${row.placed ? ' map-draw-all-stations-item--placed' : ''}`.trim()}
+                      className={`map-draw-all-stations-item${row.inCatalog ? ' map-draw-all-stations-item--placed' : ''}`.trim()}
                       onClick={() => onSelectStation?.(row.stop)}
                     >
                       <span className="map-draw-all-stations-item-label">
-                        {row.placed ? (
+                        {row.inCatalog ? (
                           <span className="map-draw-all-stations-check" aria-hidden>
                             ✓
                           </span>
