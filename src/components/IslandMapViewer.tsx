@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
-import { useAuth } from '../contexts/AuthContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getMapDrawPageHref } from '../utils/appPage'
 import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
 import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { routeDetailMapStopToDrawStop } from '../utils/routeDetailMapStops'
 import { ExpandIcon, HideIcon, MinimizeIcon, ShowIcon } from './islandMapControlIcons'
-import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { IslandMapStopDetailPopover } from './IslandMapStopDetailPopover'
 
@@ -19,15 +17,13 @@ const MAP_URLS: Record<MapLayer, string> = {
   detailed: './maps/SIMap.png',
 }
 
-/** 线路查询页小地图：缩放、图层、走线展示；全屏下已登录用户可跳转 map-draw.html。 */
+/** 线路查询页小地图：缩放、图层、走线展示；全屏下可跳转 map-draw.html。 */
 export function IslandMapViewer() {
   const { t } = useLocale()
-  const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const importedPath = routeOverlay?.importedPath ?? null
   const [expanded, setExpanded] = useState(false)
-  const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
@@ -163,15 +159,11 @@ export function IslandMapViewer() {
     setExpanded(false)
   }, [])
   const openDraw = useCallback(() => {
-    if (!isLoggedIn) {
-      setPermissionDialogOpen(true)
-      return
-    }
     if (routeOverlay) {
       stashMapDrawRouteHandoff(routeOverlay)
     }
     window.location.href = getMapDrawPageHref()
-  }, [isLoggedIn, routeOverlay])
+  }, [routeOverlay])
   const toggleLayer = useCallback(() => {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
   }, [])
@@ -231,7 +223,7 @@ export function IslandMapViewer() {
             type="button"
             className="island-map-btn island-map-btn--draw"
             onClick={openDraw}
-            title={isLoggedIn ? t('islandMapDrawStartHint') : t('islandMapDrawPermissionButtonHint')}
+            title={t('islandMapDrawStartHint')}
           >
             {t('islandMapDraw')}
           </button>
@@ -305,16 +297,5 @@ export function IslandMapViewer() {
   )
 
   if (typeof document === 'undefined') return node
-  return (
-    <>
-      {createPortal(node, document.body)}
-      <IslandMapDrawPermissionDialogs
-        open={permissionDialogOpen}
-        onCancel={() => setPermissionDialogOpen(false)}
-        onGoRegister={() => {
-          window.location.href = './account.html'
-        }}
-      />
-    </>
-  )
+  return createPortal(node, document.body)
 }

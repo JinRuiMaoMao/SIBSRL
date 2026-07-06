@@ -1,3 +1,6 @@
+import { getPrimaryText } from '../i18n/displayText'
+import type { Locale } from '../i18n/types'
+import { isChineseLocale } from '../i18n/types'
 import type { RouteEditorLabelPosition, RouteEditorNode } from '../routeEditor/types'
 import type { WorldMapDrawStop } from '../types/worldMapDraw'
 
@@ -218,8 +221,21 @@ export function parseRouteEditorLabelPosition(value: unknown): RouteEditorLabelP
     : undefined
 }
 
-export function formatRouteEditorStopLabel(node: Pick<RouteEditorNode, 'chi_name' | 'eng_name' | 'stopSeq'>): string {
-  const name = (node.chi_name || node.eng_name || '').trim()
+function localizedMapDrawStopName(
+  zh: string,
+  en: string,
+  locale: Locale | undefined,
+): string {
+  const raw = (zh || en || '').trim()
+  if (!locale || !isChineseLocale(locale) || !zh) return raw
+  return getPrimaryText({ zh, en }, locale) || raw
+}
+
+export function formatRouteEditorStopLabel(
+  node: Pick<RouteEditorNode, 'chi_name' | 'eng_name' | 'stopSeq'>,
+  locale?: Locale,
+): string {
+  const name = localizedMapDrawStopName(node.chi_name, node.eng_name, locale)
   if (node.stopSeq != null && name) {
     return `${node.stopSeq}. ${name}`
   }
@@ -228,8 +244,9 @@ export function formatRouteEditorStopLabel(node: Pick<RouteEditorNode, 'chi_name
 
 export function formatWorldMapDrawStopEditorLabel(
   stop: Pick<WorldMapDrawStop, 'name' | 'seq'>,
+  locale?: Locale,
 ): string {
-  const name = (stop.name.zh || stop.name.en || '').trim()
+  const name = localizedMapDrawStopName(stop.name.zh, stop.name.en, locale)
   if (stop.seq != null && name) {
     return `${stop.seq}. ${name}`
   }

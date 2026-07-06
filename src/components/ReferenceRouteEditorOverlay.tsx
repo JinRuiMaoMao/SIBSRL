@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useLocale } from '../i18n/LocaleContext'
 import type {
   RouteEditorConfig,
   RouteEditorLineStyle,
@@ -104,6 +105,7 @@ export function ReferenceRouteEditorOverlay({
   connectCarriageway = 'single',
   continuousSegmentPaths = false,
 }: ReferenceRouteEditorOverlayProps) {
+  const { locale } = useLocale()
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const { startNodeId, endNodeId } = resolveRouteEditorStopSeqEndpoints(nodes)
   const dash = strokeDashArray(lineStyle.style)
@@ -281,7 +283,7 @@ export function ReferenceRouteEditorOverlay({
         const selected = selectedNodeId === node.id
         const connectPending = connectPendingNodeId === node.id
         const radius = node.type === 'stop' ? stopRadius : pointRadius
-        const stopLabel = node.type === 'stop' ? formatRouteEditorStopLabel(node) : ''
+        const stopLabel = node.type === 'stop' ? formatRouteEditorStopLabel(node, locale) : ''
         const labelBoxHeight = 28 * nodeScale
         const labelPadding = 4 * nodeScale
         const textInsetX = 2 * nodeScale

@@ -1,4 +1,5 @@
 import { useMemo, useState, type KeyboardEvent } from 'react'
+import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import { isChineseLocale } from '../i18n/types'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
@@ -126,7 +127,9 @@ export function MapDrawStopNameFields({
         <ul className="map-draw-stop-name-suggestions" role="listbox">
           {suggestions.map((suggestion) => {
             const tag = suggestionTag(suggestion)
-            const primary = chiFirst ? suggestion.zh : suggestion.en || suggestion.zh
+            const primary = chiFirst
+              ? getPrimaryText({ zh: suggestion.zh, en: suggestion.en }, locale)
+              : suggestion.en || suggestion.zh
             const primaryLabel =
               suggestion.seq != null && suggestion.seq > 0 ? `${suggestion.seq}. ${primary}` : primary
             const secondary = chiFirst
@@ -134,7 +137,7 @@ export function MapDrawStopNameFields({
                 ? suggestion.en
                 : null
               : suggestion.zh !== suggestion.en
-                ? suggestion.zh
+                ? getPrimaryText({ zh: suggestion.zh, en: suggestion.en }, locale)
                 : null
             return (
               <li key={`${suggestion.zh}|${suggestion.en}`} role="option">

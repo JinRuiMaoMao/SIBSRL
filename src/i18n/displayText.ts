@@ -1,5 +1,5 @@
 import type { BilingualText } from '../types/route'
-import { convertToTraditional } from './convert'
+import { convertToTraditional, fixLaneStopChinese } from './convert'
 import { isChineseLocale, type Locale } from './types'
 
 export function localizeChinese(text: string, locale: Locale): string {
@@ -13,7 +13,10 @@ export function localizeChinese(text: string, locale: Locale): string {
  */
 export function getPrimaryText(text: BilingualText, locale: Locale): string {
   if (isChineseLocale(locale)) {
-    const zh = localizeChinese(text.zh, locale)
+    let zh = localizeChinese(text.zh, locale)
+    if (locale === 'zh-Hant') {
+      zh = fixLaneStopChinese(zh, text.en)
+    }
     return zh || text.en
   }
   return text.en || text.zh

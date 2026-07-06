@@ -201,6 +201,18 @@ function catalogStopNameMatches(zh: string, en: string, stop: WorldMapCatalogSto
   return false
 }
 
+/** When a stop name matches exactly one catalog entry, return its map coordinates for auto-placement. */
+export function resolveMapDrawAutoPlacePoint(
+  zh: string,
+  en: string,
+  catalog: readonly WorldMapCatalogStop[] | null | undefined,
+  hintPoint?: WorldMapPoint,
+): WorldMapPoint | null {
+  if (hintPoint) return hintPoint
+  const locations = findMapDrawCatalogLocationsForName(zh, en, catalog)
+  return locations.length === 1 ? locations[0]!.point : null
+}
+
 /** All catalog entries matching the current stop name (may share a name at different points). */
 export function findMapDrawCatalogLocationsForName(
   zh: string,

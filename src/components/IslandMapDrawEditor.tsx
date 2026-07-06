@@ -7,7 +7,6 @@ import {
   DRAW_MIN_ZOOM_RATIO,
 } from '../utils/mapDrawOverlayZoom'
 import { useLocale } from '../i18n/LocaleContext'
-import { useAuth } from '../contexts/AuthContext'
 import {
   buildWorldMapRouteExportPayload,
   copyWorldMapRouteJson,
@@ -42,13 +41,11 @@ import {
   IslandMapDrawClearDialog,
   type IslandMapDrawClearSelection,
 } from './IslandMapDrawClearDialog'
-import { IslandMapDrawPermissionDialogs } from './IslandMapDrawPermissionDialogs'
 import { IslandMapDrawColorPicker } from './IslandMapDrawColorPicker'
 import { MapDrawStopNameFields, type MapDrawStopNameSelection } from './MapDrawStopNameFields'
 import { MapDrawStopLabelPositionPicker } from './MapDrawStopLabelPositionPicker'
 import { loadWorldMapStopCatalog, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 import { IslandMapDrawStopLabelSettings } from './IslandMapDrawStopLabelSettings'
-import { IslandMapImportExportPanel } from './IslandMapImportExportPanel'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { readStoredMapDrawColor } from '../utils/mapDrawColor'
 import {
@@ -56,7 +53,12 @@ import {
   readStoredMapDrawStopLabelVisible,
 } from '../utils/mapDrawStopLabel'
 import { mapDrawNodeScaleFactor } from '../utils/mapDrawNodeScale'
-import { findDrawRouteStopSeq } from '../utils/worldMapDrawRouteLookup'
+import {
+  findDrawRouteStopSeq,
+  findMapDrawCatalogLocationsForName,
+  resolveMapDrawAutoPlacePoint,
+} from '../utils/worldMapDrawRouteLookup'
+import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import { consumeMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
 
 function readImportJsonText(text: string): unknown {
@@ -90,7 +92,6 @@ export function IslandMapDrawEditor({
 }: IslandMapDrawEditorProps) {
   const isOverlay = variant === 'overlay'
   const { t, locale } = useLocale()
-  const { isLoggedIn } = useAuth()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const editor = useRouteEditor(routeOverlay?.routeNumber ?? '默认线路')
@@ -123,7 +124,7 @@ export function IslandMapDrawEditor({
     conflict: PathConflictGroup
   } | null>(null)
   const [exportMergeFiles, setExportMergeFiles] = useState<IslandMapDrawExportMergeFile[]>([])
-  const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
+  const [catalogLocationChoices, setCatalogLocationChoices] = useState<WorldMapCatalogStop[]>([])
   const [pointerPreview, setPointerPreview] = useState<{ type: 'stop' | 'point'; x: number; y: number } | null>(
     null,
   )
@@ -203,11 +204,10 @@ export function IslandMapDrawEditor({
   }, [editor, editor.manager, resolveRouteStopSeq, selectedNodeId])
 
   useEffect(() => {
-    if (!isLoggedIn) return
     void loadWorldMapStopCatalog()
       .then(setStopCatalog)
       .catch(() => setStopCatalog([]))
-  }, [isLoggedIn])
+  }, [])
 
   useEffect(() => {
     if (!imageSize) return
@@ -294,6 +294,7 @@ export function IslandMapDrawEditor({
       setNewStopEngName('')
       pendingNewStopSeqRef.current = null
       lastPlacedStopIdRef.current = null
+      setCatalogLocationChoices([])
     }
     if (mode !== 'select') {
       setSelectedNodeId(null)
@@ -394,13 +395,113 @@ export function IslandMapDrawEditor({
     [editor, selectedNodeId],
   )
 
+  const placeStopAtPoint = useCallback(
+    (selection: MapDrawStopNameSelection, point: WorldMapPoint) => {
+      if (!imageSize) return null
+      const chi = selection.zh.trim()
+      const eng = selection.en.trim()
+      const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
+      const seq = resolveRouteStopSeq(chi, eng, selection.seq)
+      const added = editor.addNode(
+        'stop',
+        x,
+        y,
+        chi || eng ? { chi_name: chi, eng_name: eng } : undefined,
+      )
+      if (seq != null) {
+        editor.updateNode(added.id, { stopSeq: seq })
+      }
+      lastPlacedStopIdRef.current = added.id
+      return added
+    },
+    [editor, imageSize, resolveRouteStopSeq],
+  )
+
+  const tryAutoPlaceNewStop = useCallback(
+    (selection: MapDrawStopNameSelection): 'placed' | 'pick' | 'manual' => {
+      if (editorMode !== 'addStop' || showStopEditPanel || !imageSize) return 'manual'
+
+      const point = resolveMapDrawAutoPlacePoint(
+        selection.zh,
+        selection.en,
+        stopCatalog,
+        selection.point,
+      )
+      if (point) {
+        placeStopAtPoint(selection, point)
+        setSelectedNodeId(null)
+        setNewStopChiName('')
+        setNewStopEngName('')
+        pendingNewStopSeqRef.current = null
+        setCatalogLocationChoices([])
+        return 'placed'
+      }
+
+      const locations = findMapDrawCatalogLocationsForName(selection.zh, selection.en, stopCatalog)
+      if (locations.length > 1) {
+        setCatalogLocationChoices(locations)
+        return 'pick'
+      }
+
+      setCatalogLocationChoices([])
+      return 'manual'
+    },
+    [editorMode, imageSize, placeStopAtPoint, showStopEditPanel, stopCatalog],
+  )
+
   const applyNewStopNameSelection = useCallback(
     (selection: MapDrawStopNameSelection) => {
       setNewStopChiName(selection.zh)
       setNewStopEngName(selection.en)
       pendingNewStopSeqRef.current = resolveRouteStopSeq(selection.zh, selection.en, selection.seq)
+      if (tryAutoPlaceNewStop(selection) === 'placed') {
+        showExportHint(t('mapDrawAutoPlaceDone'))
+      }
     },
-    [resolveRouteStopSeq],
+    [resolveRouteStopSeq, showExportHint, t, tryAutoPlaceNewStop],
+  )
+
+  const handleNewStopEnter = useCallback(() => {
+    const chi = newStopChiName.trim()
+    const eng = newStopEngName.trim()
+    if (!chi && !eng) return
+
+    const matched = resolveStopByQuery(chi || eng)
+    const selection: MapDrawStopNameSelection = {
+      zh: matched?.zh ?? chi,
+      en: matched?.en ?? eng,
+      seq: resolveRouteStopSeq(matched?.zh ?? chi, matched?.en ?? eng) ?? undefined,
+    }
+    setNewStopChiName(selection.zh)
+    setNewStopEngName(selection.en)
+    pendingNewStopSeqRef.current = selection.seq ?? null
+
+    const result = tryAutoPlaceNewStop(selection)
+    if (result === 'placed') {
+      showExportHint(t('mapDrawAutoPlaceDone'))
+      return
+    }
+    if (result === 'pick') return
+    showExportHint(t('mapDrawAutoPlaceNeedMap'))
+  }, [newStopChiName, newStopEngName, resolveRouteStopSeq, showExportHint, t, tryAutoPlaceNewStop])
+
+  const handleCatalogLocationPick = useCallback(
+    (location: WorldMapCatalogStop) => {
+      const selection: MapDrawStopNameSelection = {
+        zh: newStopChiName.trim() || location.name.zh,
+        en: newStopEngName.trim() || location.name.en,
+        seq: pendingNewStopSeqRef.current ?? undefined,
+        point: location.point,
+      }
+      placeStopAtPoint(selection, location.point)
+      setSelectedNodeId(null)
+      setNewStopChiName('')
+      setNewStopEngName('')
+      pendingNewStopSeqRef.current = null
+      setCatalogLocationChoices([])
+      showExportHint(t('mapDrawAutoPlaceDone'))
+    },
+    [newStopChiName, newStopEngName, placeStopAtPoint, showExportHint, t],
   )
 
   const handleMapClick = useCallback(
@@ -843,7 +944,6 @@ export function IslandMapDrawEditor({
   }, [])
 
   useEffect(() => {
-    if (!isLoggedIn) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         if (editorMode === 'connectLine' && connectPendingNodeId != null) {
@@ -883,7 +983,6 @@ export function IslandMapDrawEditor({
     editor,
     editorMode,
     enterEditorMode,
-    isLoggedIn,
     selectedNodeId,
   ])
 
@@ -911,22 +1010,6 @@ export function IslandMapDrawEditor({
     ],
     [drawDirectionIndex, drawRouteId, exportMergeFiles, sibsDraft?.points, sibsDraft?.stops],
   )
-
-  const guestPanel = !isLoggedIn ? (
-    <IslandMapImportExportPanel
-      interaction="route"
-      routeId={drawRouteId}
-      stopCount={stopCount}
-      pathNodeCount={pathNodeCount}
-      canExport={canExport}
-      canClear={canClear}
-      exportHint={exportHint}
-      onImport={() => importInputRef.current?.click()}
-      onExport={() => setExportDialogOpen(true)}
-      onClear={() => setClearDialogOpen(true)}
-      onDrawRequest={() => setPermissionDialogOpen(true)}
-    />
-  ) : null
 
   const node = (
     <div
@@ -960,25 +1043,21 @@ export function IslandMapDrawEditor({
           </label>
         </div>
         <div className="route-editor-header-right">
-          {isLoggedIn ? (
-            <>
-              <button type="button" className="route-editor-btn" onClick={() => editor.undo()} disabled={editor.history.undoCount <= 0}>
-                {t('islandMapDrawUndo')}
-              </button>
-              <button type="button" className="route-editor-btn" onClick={() => editor.redo()} disabled={editor.history.redoCount <= 0}>
-                {t('islandMapDrawRedo')}
-              </button>
-              <button type="button" className="route-editor-btn" onClick={() => importInputRef.current?.click()}>
-                {t('islandMapDrawImport')}
-              </button>
-              <button type="button" className="route-editor-btn" onClick={() => setExportDialogOpen(true)} disabled={!canExport}>
-                {t('islandMapDrawExport')}
-              </button>
-              <button type="button" className="route-editor-btn route-editor-btn--danger" onClick={() => setClearDialogOpen(true)} disabled={!canClear}>
-                {t('islandMapDrawClear')}
-              </button>
-            </>
-          ) : null}
+          <button type="button" className="route-editor-btn" onClick={() => editor.undo()} disabled={editor.history.undoCount <= 0}>
+            {t('islandMapDrawUndo')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={() => editor.redo()} disabled={editor.history.redoCount <= 0}>
+            {t('islandMapDrawRedo')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={() => importInputRef.current?.click()}>
+            {t('islandMapDrawImport')}
+          </button>
+          <button type="button" className="route-editor-btn" onClick={() => setExportDialogOpen(true)} disabled={!canExport}>
+            {t('islandMapDrawExport')}
+          </button>
+          <button type="button" className="route-editor-btn route-editor-btn--danger" onClick={() => setClearDialogOpen(true)} disabled={!canClear}>
+            {t('islandMapDrawClear')}
+          </button>
           {isOverlay ? (
             <button type="button" className="route-editor-btn route-editor-back" onClick={onClose}>
               {t('mapDrawOverlayClose')}
@@ -993,9 +1072,7 @@ export function IslandMapDrawEditor({
 
       <div className="route-editor-body">
         <aside className="route-editor-sidebar">
-          {isLoggedIn ? (
-            <>
-              <section className="route-editor-panel">
+          <section className="route-editor-panel">
                 <h3>{t('mapDrawPanelNodes')}</h3>
                 <div className="route-editor-btn-row route-editor-btn-row--stack">
                   <button type="button" className={`route-editor-btn route-editor-btn--primary${editorMode === 'addStop' ? ' route-editor-btn--active' : ''}`.trim()} onClick={() => enterEditorMode('addStop')}>
@@ -1157,7 +1234,26 @@ export function IslandMapDrawEditor({
                       onChiNameChange={setNewStopChiName}
                       onEngNameChange={setNewStopEngName}
                       onSelectSuggestion={applyNewStopNameSelection}
+                      onEnter={handleNewStopEnter}
                     />
+                    {catalogLocationChoices.length > 0 ? (
+                      <div className="map-draw-stop-location-picker">
+                        <p className="island-map-draw-help">{t('mapDrawAutoPlacePickLocation')}</p>
+                        <ul className="map-draw-stop-name-suggestions" role="listbox">
+                          {catalogLocationChoices.map((location) => (
+                            <li key={`${location.point[0]}|${location.point[1]}`} role="option">
+                              <button type="button" onClick={() => handleCatalogLocationPick(location)}>
+                                <span className="map-draw-stop-name-suggestion-primary">
+                                  {t('mapDrawStopLocationCoords', {
+                                    coords: `${location.point[0].toFixed(4)}, ${location.point[1].toFixed(4)}`,
+                                  })}
+                                </span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                     <p className="island-map-draw-help">{t('mapDrawAddStopHelp')}</p>
                   </div>
                 ) : editorMode === 'connectLine' && connectPendingNodeId != null ? (
@@ -1176,10 +1272,6 @@ export function IslandMapDrawEditor({
                 <p>{t('mapDrawTipDrag')}</p>
                 <p>{t('mapDrawTipKeys')}</p>
               </section>
-            </>
-          ) : (
-            <section className="route-editor-panel">{guestPanel}</section>
-          )}
         </aside>
 
         <div className="route-editor-workspace">
@@ -1208,7 +1300,7 @@ export function IslandMapDrawEditor({
               draftStrokeColor={drawColor}
               draftRouteNumber={drawRouteId.trim()}
               onDrawMapClick={handleMapClick}
-              maxZoomRatio={isLoggedIn ? DRAW_MAX_ZOOM_RATIO : 8}
+              maxZoomRatio={DRAW_MAX_ZOOM_RATIO}
               pathLegStarts={[0]}
               pathLegHidden={[]}
               pathUserBends={[]}
@@ -1217,7 +1309,7 @@ export function IslandMapDrawEditor({
               onMapPointerMove={handleMapPointerMove}
               onImageSizeChange={setImageSize}
               referenceEditor={
-                isLoggedIn && imageSize
+                imageSize
                   ? {
                       nodes: editor.line.nodes,
                       segments: editor.line.segments,
@@ -1325,13 +1417,6 @@ export function IslandMapDrawEditor({
           setExportMergeFiles([])
         }}
         onConfirm={handleExportConfirm}
-      />
-      <IslandMapDrawPermissionDialogs
-        open={permissionDialogOpen}
-        onCancel={() => setPermissionDialogOpen(false)}
-        onGoRegister={() => {
-          window.location.href = './account.html'
-        }}
       />
       {node}
     </>

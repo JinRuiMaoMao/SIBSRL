@@ -215,7 +215,7 @@ function drawStopsOnCanvas(
     drawRouteEditorStopLabelOnCanvas(ctx, {
       anchorX: x,
       anchorY: y,
-      label: formatWorldMapDrawStopEditorLabel(stop),
+      label: formatWorldMapDrawStopEditorLabel(stop, options.locale),
       labelPosition: stop.labelPosition ?? 'top',
       fontSize,
       nodeScale,
