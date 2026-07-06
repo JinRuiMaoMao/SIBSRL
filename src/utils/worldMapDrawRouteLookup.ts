@@ -212,6 +212,18 @@ function rankSuggestion(suggestion: DrawStopSuggestion): number {
   return 1
 }
 
+function catalogStopSameName(zh: string, en: string, stop: WorldMapCatalogStop): boolean {
+  const queryZh = fixLaneStopChinese(zh.trim(), en.trim() || undefined)
+  const queryEn = en.trim().toLowerCase()
+  const stopZh = fixLaneStopChinese(stop.name.zh.trim(), stop.name.en.trim() || undefined)
+  const stopEn = (stop.name.en || stop.name.zh).trim().toLowerCase()
+
+  if (stopsMatch({ zh, en }, { zh: stop.name.zh, en: stop.name.en })) return true
+  if (queryZh && stopZh === queryZh) return true
+  if (queryEn && stopEn === queryEn) return true
+  return false
+}
+
 function catalogStopNameMatches(zh: string, en: string, stop: WorldMapCatalogStop): boolean {
   for (const candidate of resolveCatalogNameCandidates(zh, en)) {
     const queryZh = fixLaneStopChinese(candidate.zh.trim(), candidate.en.trim() || undefined)
@@ -248,6 +260,9 @@ export function findMapDrawCatalogLocationsForName(
   catalog: readonly WorldMapCatalogStop[] | null | undefined,
 ): WorldMapCatalogStop[] {
   if (!catalog?.length) return []
+  const sameName = catalog.filter((stop) => catalogStopSameName(zh, en, stop))
+  if (sameName.length > 0) return sameName
+
   const matches = catalog.filter((stop) => catalogStopNameMatches(zh, en, stop))
   if (matches.length > 0) return matches
 
