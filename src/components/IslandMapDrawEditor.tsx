@@ -55,11 +55,19 @@ import {
 import { mapDrawNodeScaleFactor } from '../utils/mapDrawNodeScale'
 import {
   findDrawRouteStopSeq,
+  findBusRouteForDraw,
   findMapDrawCatalogLocationsForName,
   resolveMapDrawAutoPlacePoint,
 } from '../utils/worldMapDrawRouteLookup'
 import { resolveStopByQuery } from '../utils/routeBetweenStops'
 import { consumeMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
+import {
+  buildMapDrawCatalogSnapUpdates,
+  canApplyMapDrawCatalogSnap,
+  parseDrawRouteHeaderFields,
+  resolveDrawDirectionDataIndex,
+} from '../utils/mapDrawStopCatalogSnap'
+import { getDirectionKey } from '../utils/routeDirectionCore'
 
 function readImportJsonText(text: string): unknown {
   return JSON.parse(text.replace(/^\uFEFF/, '').trim())
@@ -111,7 +119,7 @@ export function IslandMapDrawEditor({
     toY: number
   } | null>(null)
   const [drawRouteId, setDrawRouteId] = useState('')
-  const [drawDirectionIndex, setDrawDirectionIndex] = useState(0)
+  const [drawDirectionInput, setDrawDirectionInput] = useState('0')
   const [drawColor, setDrawColor] = useState(readStoredMapDrawColor)
   const [showStopLabels, setShowStopLabels] = useState(readStoredMapDrawStopLabelVisible)
   const [stopLabelScale, setStopLabelScale] = useState(readStoredMapDrawStopLabelScale)
@@ -153,13 +161,23 @@ export function IslandMapDrawEditor({
   const showStopEditPanel =
     selectedNode?.type === 'stop' && (editorMode === 'select' || editorMode === 'addStop')
 
+  const drawRouteContext = useMemo(
+    () => parseDrawRouteHeaderFields(drawRouteId, drawDirectionInput),
+    [drawDirectionInput, drawRouteId],
+  )
+  const drawDirectionDataIndex = useMemo(
+    () => resolveDrawDirectionDataIndex(drawRouteId, drawDirectionInput),
+    [drawDirectionInput, drawRouteId],
+  )
+
   const resolveRouteStopSeq = useCallback(
     (zh: string, en: string, explicitSeq?: number): number | null => {
       if (explicitSeq != null && explicitSeq > 0) return explicitSeq
-      if (!drawRouteId.trim()) return null
-      return findDrawRouteStopSeq(drawRouteId, drawDirectionIndex, zh, en)
+      const routeQuery = drawRouteContext.routeQuery
+      if (!routeQuery) return null
+      return findDrawRouteStopSeq(routeQuery, drawDirectionDataIndex, zh, en)
     },
-    [drawDirectionIndex, drawRouteId],
+    [drawDirectionDataIndex, drawRouteContext.routeQuery],
   )
 
   useEffect(() => {
@@ -242,7 +260,9 @@ export function IslandMapDrawEditor({
   useEffect(() => {
     if (!routeOverlay) return
     setDrawRouteId(routeOverlay.routeId)
-    setDrawDirectionIndex(routeOverlay.directionIndex)
+    const route = findBusRouteForDraw(routeOverlay.routeId)
+    const directionKey = route ? getDirectionKey(route, routeOverlay.directionIndex) : null
+    setDrawDirectionInput(directionKey ?? String(routeOverlay.directionIndex))
     editor.setLineName(routeOverlay.routeNumber)
   }, [editor, routeOverlay])
 
@@ -288,6 +308,48 @@ export function IslandMapDrawEditor({
     setStopPlacementMode('auto')
   }, [])
 
+  const snapStopsFromCatalog = useCallback(
+    (routeQuery: string, directionInput: string, options?: { silent?: boolean }) => {
+      if (!imageSize || !stopCatalog?.length) return null
+      if (!canApplyMapDrawCatalogSnap(routeQuery, directionInput)) return null
+
+      const { result, updates } = buildMapDrawCatalogSnapUpdates(
+        editor.line.nodes,
+        stopCatalog,
+        routeQuery,
+        directionInput,
+        imageSize.width,
+        imageSize.height,
+      )
+      if (updates.length === 0) return result
+
+      for (const update of updates) {
+        editor.updateNode(update.nodeId, {
+          x: update.x,
+          y: update.y,
+          ...(update.stopSeq !== undefined ? { stopSeq: update.stopSeq } : {}),
+        })
+      }
+
+      if (!options?.silent && (result.moved > 0 || result.seqUpdated > 0)) {
+        showExportHint(
+          t('mapDrawCatalogSnapDone', { moved: result.moved, seq: result.seqUpdated }),
+        )
+      } else if (!options?.silent && result.skippedMulti > 0) {
+        showExportHint(t('mapDrawCatalogSnapMulti', { count: result.skippedMulti }))
+      } else if (!options?.silent && result.missing > 0 && result.moved === 0) {
+        showExportHint(t('mapDrawCatalogSnapMissing', { count: result.missing }))
+      }
+
+      return result
+    },
+    [editor, imageSize, showExportHint, stopCatalog, t],
+  )
+
+  const handleRouteHeaderBlur = useCallback(() => {
+    snapStopsFromCatalog(drawRouteId, drawDirectionInput)
+  }, [drawDirectionInput, drawRouteId, snapStopsFromCatalog])
+
   const sibsDraft = useMemo(() => {
     if (!imageSize) return null
     return routeEditorLineToSibsDraft(
@@ -296,10 +358,10 @@ export function IslandMapDrawEditor({
       imageSize.width,
       imageSize.height,
       drawRouteId,
-      drawDirectionIndex,
+      drawDirectionDataIndex,
       editor.config.showPointLines,
     )
-  }, [drawColor, drawDirectionIndex, drawRouteId, editor.line, editor.lineStyle, imageSize])
+  }, [drawColor, drawDirectionDataIndex, drawRouteId, editor.line, editor.lineStyle, imageSize])
 
   const enterEditorMode = useCallback((mode: RouteEditorMode) => {
     setEditorMode(mode)
@@ -811,7 +873,7 @@ export function IslandMapDrawEditor({
       if (exportJson) {
         const payload = buildWorldMapRouteExportPayload(
           resolvedRouteId,
-          merged.directionIndex ?? drawDirectionIndex,
+          merged.directionIndex ?? drawDirectionDataIndex,
           pointsForExport,
           merged.stops.length > 0 ? merged.stops : sibsDraft.stops,
           overlayRouteId,
@@ -844,7 +906,7 @@ export function IslandMapDrawEditor({
     },
     [
       drawColor,
-      drawDirectionIndex,
+      drawDirectionDataIndex,
       drawRouteId,
       editor.config.showPointLines,
       editor.line,
@@ -876,6 +938,9 @@ export function IslandMapDrawEditor({
       const merged = files.length > 0 ? mergeImportedDrawFiles(files, resolution, sibsDraft?.stops ?? []) : null
 
       const importLines: RouteEditorLine[] = []
+      let snapRouteQuery = drawRouteId
+      let snapDirectionInput = drawDirectionInput
+
       if (referenceLine) {
         importLines.push(referenceLine)
       } else if (merged) {
@@ -893,8 +958,10 @@ export function IslandMapDrawEditor({
             return
           }
           importLines.push(imported.line)
+          snapRouteQuery = imported.routeId
+          snapDirectionInput = String(imported.directionIndex)
           setDrawRouteId(imported.routeId)
-          setDrawDirectionIndex(imported.directionIndex)
+          setDrawDirectionInput(String(imported.directionIndex))
         }
       }
 
@@ -932,32 +999,36 @@ export function IslandMapDrawEditor({
       setConnectPreview(null)
       setEditorMode('select')
 
-      if (merged?.kind === 'catalog') {
+      const showImportDoneHint = () => {
         showExportHint(
           t('mapDrawImportMergeDone', {
             stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
             segments: importLine.segments.length,
           }),
         )
+      }
+
+      const snapResult = snapStopsFromCatalog(snapRouteQuery, snapDirectionInput, { silent: true })
+      if (snapResult && (snapResult.moved > 0 || snapResult.seqUpdated > 0)) {
+        showExportHint(
+          t('mapDrawCatalogSnapDone', { moved: snapResult.moved, seq: snapResult.seqUpdated }),
+        )
+      } else if (snapResult && snapResult.skippedMulti > 0) {
+        showExportHint(t('mapDrawCatalogSnapMulti', { count: snapResult.skippedMulti }))
+      } else if (snapResult && snapResult.missing > 0) {
+        showExportHint(t('mapDrawCatalogSnapMissing', { count: snapResult.missing }))
+      } else {
+        showImportDoneHint()
+      }
+
+      if (merged?.kind === 'catalog') {
         return
       }
       if (merged?.kind === 'route') {
-        showExportHint(
-          t('mapDrawImportMergeDone', {
-            stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
-            segments: importLine.segments.length,
-          }),
-        )
         return
       }
-      showExportHint(
-        t('mapDrawImportMergeDone', {
-          stops: importLine.nodes.filter((node: RouteEditorNode) => node.type === 'stop').length,
-          segments: importLine.segments.length,
-        }),
-      )
     },
-    [editor, imageSize, showExportHint, sibsDraft?.stops, t],
+    [drawRouteId, drawDirectionInput, editor, imageSize, showExportHint, sibsDraft?.stops, snapStopsFromCatalog, t],
   )
 
   const handleImportFileChange = useCallback(
@@ -1100,14 +1171,14 @@ export function IslandMapDrawEditor({
     () => [
       {
         routeId: drawRouteId,
-        directionIndex: drawDirectionIndex,
+        directionIndex: drawDirectionDataIndex,
         points: sibsDraft?.points ?? [],
         stops: sibsDraft?.stops ?? [],
         virtualNodes: [],
       },
       ...exportMergeFiles.map((file) => file.slice),
     ],
-    [drawDirectionIndex, drawRouteId, exportMergeFiles, sibsDraft?.points, sibsDraft?.stops],
+    [drawDirectionDataIndex, drawRouteId, exportMergeFiles, sibsDraft?.points, sibsDraft?.stops],
   )
 
   const node = (
@@ -1126,6 +1197,7 @@ export function IslandMapDrawEditor({
             <input
               value={drawRouteId}
               onChange={(event) => setDrawRouteId(event.target.value.trim())}
+              onBlur={handleRouteHeaderBlur}
               placeholder={resolveWorldMapRouteId('21A') ?? '21'}
               spellCheck={false}
             />
@@ -1133,11 +1205,11 @@ export function IslandMapDrawEditor({
           <label className="route-editor-field">
             <span>{t('islandMapDrawDirection')}</span>
             <input
-              type="number"
-              min={0}
-              max={9}
-              value={drawDirectionIndex}
-              onChange={(event) => setDrawDirectionIndex(Number(event.target.value) || 0)}
+              value={drawDirectionInput}
+              onChange={(event) => setDrawDirectionInput(event.target.value)}
+              onBlur={handleRouteHeaderBlur}
+              placeholder={t('mapDrawDirectionPlaceholder')}
+              spellCheck={false}
             />
           </label>
         </div>
@@ -1243,8 +1315,8 @@ export function IslandMapDrawEditor({
                     <MapDrawStopNameFields
                       chiName={editChiName}
                       engName={editEngName}
-                      routeId={drawRouteId}
-                      directionIndex={drawDirectionIndex}
+                      routeId={drawRouteContext.routeQuery || drawRouteId}
+                      directionIndex={drawDirectionDataIndex}
                       catalog={stopCatalog}
                       chiPlaceholder={t('mapDrawAddStopChiPlaceholder')}
                       engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
@@ -1329,8 +1401,8 @@ export function IslandMapDrawEditor({
                     <MapDrawStopNameFields
                       chiName={newStopChiName}
                       engName={newStopEngName}
-                      routeId={drawRouteId}
-                      directionIndex={drawDirectionIndex}
+                      routeId={drawRouteContext.routeQuery || drawRouteId}
+                      directionIndex={drawDirectionDataIndex}
                       catalog={stopCatalog}
                       chiPlaceholder={t('mapDrawAddStopChiPlaceholder')}
                       engPlaceholder={t('mapDrawAddStopEngPlaceholder')}
@@ -1490,7 +1562,7 @@ export function IslandMapDrawEditor({
       <IslandMapDrawExportDialog
         open={exportDialogOpen}
         routeId={drawRouteId}
-        directionIndex={drawDirectionIndex}
+        directionIndex={drawDirectionDataIndex}
         stops={sibsDraft?.stops ?? []}
         pathNodes={sibsDraft?.pathNodes ?? []}
         points={sibsDraft?.points ?? []}
