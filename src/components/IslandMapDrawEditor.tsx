@@ -66,6 +66,7 @@ function readImportJsonText(text: string): unknown {
 }
 
 type MapLayer = 'general' | 'detailed'
+type StopPlacementMode = 'auto' | 'manual'
 
 const MAP_URLS: Record<MapLayer, string> = {
   general: './maps/SIMapGerenal.png',
@@ -136,6 +137,7 @@ export function IslandMapDrawEditor({
   const [newStopChiName, setNewStopChiName] = useState('')
   const [newStopEngName, setNewStopEngName] = useState('')
   const [stopCatalog, setStopCatalog] = useState<WorldMapCatalogStop[] | null>(null)
+  const [stopPlacementMode, setStopPlacementMode] = useState<StopPlacementMode>('auto')
 
   const exportHintTimerRef = useRef<number | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -274,6 +276,18 @@ export function IslandMapDrawEditor({
     }, 2600)
   }, [])
 
+  const activateManualPlacement = useCallback(
+    (messageKey: 'mapDrawSwitchedToManual' | 'mapDrawManualPlaceHint' = 'mapDrawManualPlaceHint') => {
+      setStopPlacementMode('manual')
+      showExportHint(t(messageKey))
+    },
+    [showExportHint, t],
+  )
+
+  const activateAutoPlacement = useCallback(() => {
+    setStopPlacementMode('auto')
+  }, [])
+
   const sibsDraft = useMemo(() => {
     if (!imageSize) return null
     return routeEditorLineToSibsDraft(
@@ -295,6 +309,7 @@ export function IslandMapDrawEditor({
       pendingNewStopSeqRef.current = null
       lastPlacedStopIdRef.current = null
       setCatalogLocationChoices([])
+      setStopPlacementMode('auto')
     }
     if (mode !== 'select') {
       setSelectedNodeId(null)
@@ -419,7 +434,14 @@ export function IslandMapDrawEditor({
 
   const tryAutoPlaceNewStop = useCallback(
     (selection: MapDrawStopNameSelection): 'placed' | 'pick' | 'manual' => {
-      if (editorMode !== 'addStop' || showStopEditPanel || !imageSize) return 'manual'
+      if (
+        stopPlacementMode !== 'auto' ||
+        editorMode !== 'addStop' ||
+        showStopEditPanel ||
+        !imageSize
+      ) {
+        return 'manual'
+      }
 
       const point = resolveMapDrawAutoPlacePoint(
         selection.zh,
@@ -446,7 +468,7 @@ export function IslandMapDrawEditor({
       setCatalogLocationChoices([])
       return 'manual'
     },
-    [editorMode, imageSize, placeStopAtPoint, showStopEditPanel, stopCatalog],
+    [editorMode, imageSize, placeStopAtPoint, showStopEditPanel, stopCatalog, stopPlacementMode],
   )
 
   const applyNewStopNameSelection = useCallback(
@@ -454,11 +476,23 @@ export function IslandMapDrawEditor({
       setNewStopChiName(selection.zh)
       setNewStopEngName(selection.en)
       pendingNewStopSeqRef.current = resolveRouteStopSeq(selection.zh, selection.en, selection.seq)
-      if (tryAutoPlaceNewStop(selection) === 'placed') {
+      if (stopPlacementMode !== 'auto') return
+
+      const result = tryAutoPlaceNewStop(selection)
+      if (result === 'placed') {
         showExportHint(t('mapDrawAutoPlaceDone'))
+      } else if (result === 'manual') {
+        activateManualPlacement('mapDrawSwitchedToManual')
       }
     },
-    [resolveRouteStopSeq, showExportHint, t, tryAutoPlaceNewStop],
+    [
+      activateManualPlacement,
+      resolveRouteStopSeq,
+      showExportHint,
+      stopPlacementMode,
+      t,
+      tryAutoPlaceNewStop,
+    ],
   )
 
   const handleNewStopEnter = useCallback(() => {
@@ -476,14 +510,28 @@ export function IslandMapDrawEditor({
     setNewStopEngName(selection.en)
     pendingNewStopSeqRef.current = selection.seq ?? null
 
+    if (stopPlacementMode === 'manual') {
+      showExportHint(t('mapDrawManualPlaceHint'))
+      return
+    }
+
     const result = tryAutoPlaceNewStop(selection)
     if (result === 'placed') {
       showExportHint(t('mapDrawAutoPlaceDone'))
       return
     }
     if (result === 'pick') return
-    showExportHint(t('mapDrawAutoPlaceNeedMap'))
-  }, [newStopChiName, newStopEngName, resolveRouteStopSeq, showExportHint, t, tryAutoPlaceNewStop])
+    activateManualPlacement('mapDrawSwitchedToManual')
+  }, [
+    activateManualPlacement,
+    newStopChiName,
+    newStopEngName,
+    resolveRouteStopSeq,
+    showExportHint,
+    stopPlacementMode,
+    t,
+    tryAutoPlaceNewStop,
+  ])
 
   const handleCatalogLocationPick = useCallback(
     (location: WorldMapCatalogStop) => {
@@ -504,12 +552,36 @@ export function IslandMapDrawEditor({
     [newStopChiName, newStopEngName, placeStopAtPoint, showExportHint, t],
   )
 
+  const finishManualNewStopPlacement = useCallback(() => {
+    setSelectedNodeId(null)
+    setNewStopChiName('')
+    setNewStopEngName('')
+    pendingNewStopSeqRef.current = null
+    setCatalogLocationChoices([])
+    activateAutoPlacement()
+    showExportHint(t('mapDrawManualPlaceDoneBackToAuto'))
+  }, [activateAutoPlacement, showExportHint, t])
+
   const handleMapClick = useCallback(
     (point: WorldMapPoint) => {
       if (!imageSize) return
 
       const { x, y } = normalizedToPixel(point, imageSize.width, imageSize.height)
+
+      if (
+        stopPlacementMode === 'manual' &&
+        showStopEditPanel &&
+        selectedNodeId != null &&
+        selectedNode?.type === 'stop'
+      ) {
+        editor.updateNode(selectedNodeId, { x, y })
+        showExportHint(t('mapDrawStopMoved'))
+        return
+      }
+
       if (editorMode === 'addStop' && !showStopEditPanel) {
+        if (stopPlacementMode !== 'manual') return
+
         const chi = newStopChiName.trim()
         const eng = newStopEngName.trim()
         const added = editor.addNode('stop', x, y, chi || eng ? { chi_name: chi, eng_name: eng } : undefined)
@@ -517,13 +589,9 @@ export function IslandMapDrawEditor({
           pendingNewStopSeqRef.current ?? resolveRouteStopSeq(chi || added.chi_name, eng || added.eng_name)
         if (seq != null) {
           editor.updateNode(added.id, { stopSeq: seq })
-          setEditStopSeq(String(seq))
-        } else {
-          setEditStopSeq('')
         }
-        pendingNewStopSeqRef.current = null
         lastPlacedStopIdRef.current = added.id
-        setSelectedNodeId(added.id)
+        finishManualNewStopPlacement()
         return
       }
       if (editorMode === 'addPoint') {
@@ -534,11 +602,17 @@ export function IslandMapDrawEditor({
     [
       editor,
       editorMode,
+      finishManualNewStopPlacement,
       imageSize,
       newStopChiName,
       newStopEngName,
       resolveRouteStopSeq,
+      selectedNode,
+      selectedNodeId,
+      showExportHint,
       showStopEditPanel,
+      stopPlacementMode,
+      t,
     ],
   )
 
@@ -997,6 +1071,31 @@ export function IslandMapDrawEditor({
           ? t('mapDrawStatusAddStop')
           : t('mapDrawStatusAddPoint')
 
+  const stopPlacementModeToggle = (
+    <div className="map-draw-stop-placement-mode">
+      <span className="map-draw-stop-placement-mode-label">{t('mapDrawStopLocationTitle')}</span>
+      <div className="route-editor-btn-row">
+        <button
+          type="button"
+          className={`route-editor-btn${stopPlacementMode === 'auto' ? ' route-editor-btn--active' : ''}`.trim()}
+          onClick={() => {
+            activateAutoPlacement()
+            setCatalogLocationChoices([])
+          }}
+        >
+          {t('mapDrawStopPlacementAuto')}
+        </button>
+        <button
+          type="button"
+          className={`route-editor-btn${stopPlacementMode === 'manual' ? ' route-editor-btn--active' : ''}`.trim()}
+          onClick={() => activateManualPlacement('mapDrawManualPlaceHint')}
+        >
+          {t('mapDrawStopPlacementManual')}
+        </button>
+      </div>
+    </div>
+  )
+
   const exportSourceSlices = useMemo<WorldMapDrawDraftSlice[]>(
     () => [
       {
@@ -1160,6 +1259,10 @@ export function IslandMapDrawEditor({
                       onSelectSuggestion={applyStopNameSelection}
                       onEnter={saveSelectedNodeEdits}
                     />
+                    {stopPlacementModeToggle}
+                    {stopPlacementMode === 'manual' ? (
+                      <p className="island-map-draw-help">{t('mapDrawManualMoveHint')}</p>
+                    ) : null}
                     <label className="route-editor-field">
                       <span>{t('mapDrawStopSeqLabel')}</span>
                       <input
@@ -1236,6 +1339,7 @@ export function IslandMapDrawEditor({
                       onSelectSuggestion={applyNewStopNameSelection}
                       onEnter={handleNewStopEnter}
                     />
+                    {stopPlacementModeToggle}
                     {catalogLocationChoices.length > 0 ? (
                       <div className="map-draw-stop-location-picker">
                         <p className="island-map-draw-help">{t('mapDrawAutoPlacePickLocation')}</p>

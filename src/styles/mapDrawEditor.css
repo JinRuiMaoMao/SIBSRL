@@ -546,6 +546,17 @@ html[data-app-page='map-draw'] #root {
   gap: 0.35rem;
 }
 
+.map-draw-stop-placement-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.map-draw-stop-placement-mode-label {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
 .map-draw-stop-location-picker-title {
   font-size: 0.82rem;
   opacity: 0.85;
