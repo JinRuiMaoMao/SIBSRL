@@ -1181,6 +1181,19 @@ export function IslandMapDrawEditor({
     [drawDirectionDataIndex, drawRouteId, exportMergeFiles, sibsDraft?.points, sibsDraft?.stops],
   )
 
+  const drawDirectionField = (
+    <label className="route-editor-field">
+      <span>{t('islandMapDrawDirection')}</span>
+      <input
+        value={drawDirectionInput}
+        onChange={(event) => setDrawDirectionInput(event.target.value)}
+        onBlur={handleRouteHeaderBlur}
+        placeholder={t('mapDrawDirectionPlaceholder')}
+        spellCheck={false}
+      />
+    </label>
+  )
+
   const node = (
     <div
       className={`route-editor-app${isOverlay ? ' route-editor-app--overlay' : ''}${mapDrawMode ? ' route-editor-app--draw-mode' : ''}${exportPngPreview ? ' route-editor-app--export-preview' : ''}`.trim()}
@@ -1202,16 +1215,7 @@ export function IslandMapDrawEditor({
               spellCheck={false}
             />
           </label>
-          <label className="route-editor-field">
-            <span>{t('islandMapDrawDirection')}</span>
-            <input
-              value={drawDirectionInput}
-              onChange={(event) => setDrawDirectionInput(event.target.value)}
-              onBlur={handleRouteHeaderBlur}
-              placeholder={t('mapDrawDirectionPlaceholder')}
-              spellCheck={false}
-            />
-          </label>
+          {drawDirectionField}
         </div>
         <div className="route-editor-header-right">
           <button type="button" className="route-editor-btn" onClick={() => editor.undo()} disabled={editor.history.undoCount <= 0}>
@@ -1331,6 +1335,7 @@ export function IslandMapDrawEditor({
                       onSelectSuggestion={applyStopNameSelection}
                       onEnter={saveSelectedNodeEdits}
                     />
+                    {drawDirectionField}
                     {stopPlacementModeToggle}
                     {stopPlacementMode === 'manual' ? (
                       <p className="island-map-draw-help">{t('mapDrawManualMoveHint')}</p>
@@ -1411,6 +1416,7 @@ export function IslandMapDrawEditor({
                       onSelectSuggestion={applyNewStopNameSelection}
                       onEnter={handleNewStopEnter}
                     />
+                    {drawDirectionField}
                     {stopPlacementModeToggle}
                     {catalogLocationChoices.length > 0 ? (
                       <div className="map-draw-stop-location-picker">
