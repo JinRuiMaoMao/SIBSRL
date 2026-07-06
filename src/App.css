@@ -1342,6 +1342,24 @@ html[data-reduce-motion='true'] .start-page-external-link:active {
   border-radius: 6px;
 }
 
+.brand-logo-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.brand-logo-hint {
+  font-size: 0.68rem;
+  line-height: 1.15;
+  color: var(--text-muted);
+  max-width: 5.5rem;
+}
+
+.site-header-shell.is-collapsed .brand-logo-hint {
+  display: none;
+}
+
 .brand h1 {
   margin: 0;
   font-size: 1.35rem;

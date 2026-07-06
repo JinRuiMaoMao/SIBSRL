@@ -33,14 +33,17 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
       <header className="site-header">
         <div className="header-inner header-inner--brand-only">
           <div className="brand">
-            <button
-              type="button"
-              className="brand-icon-btn"
-              onClick={onLogoClick}
-              aria-label={t('appTitle')}
-            >
-              <SiteLogo />
-            </button>
+            <div className="brand-logo-cluster">
+              <button
+                type="button"
+                className="brand-icon-btn"
+                onClick={onLogoClick}
+                aria-label={t('appTitle')}
+              >
+                <SiteLogo />
+              </button>
+              <span className="brand-logo-hint">{t('logoSecretHint')}</span>
+            </div>
             <div>
               <h1>{t('appTitle')}</h1>
               <p className="tagline">{t('appTagline')}</p>
