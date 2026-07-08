@@ -12,7 +12,18 @@
     { "date": "2026-06-06", "event": "Marathon Road Closure", "routeCode": "471W", "race": true },
     { "date": "2026-06-07", "event": "Rush Hour", "routeCode": "41AN", "race": true },
     { "date": "2026-06-08", "event": "Private Hire", "routeCode": "PH1", "race": false },
-    { "date": "2026-06-09", "event": "Rare Appearance x Private Hire", "routeCode": "PH2", "race": false },
+    {
+      "date": "2026-06-09",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH2",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } }
+      ]
+    },
     { "date": "2026-06-10", "event": "Marathon Road Closure (N)", "routeCode": "N146A", "race": false },
     { "date": "2026-06-11", "event": "Foggy Day", "routeCode": "141PE", "race": false },
     {

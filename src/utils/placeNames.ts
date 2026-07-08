@@ -50,6 +50,8 @@ const EN_TO_ZH: Record<string, string> = {
   'western harbour tunnel interchange': '西区海底隧道转车站',
   'north island estate': '北岛花园',
   'sunshine university': '阳光大学',
+  'sunshine university sports field': '阳光大学运动场',
+  'su sports field': '阳光大学运动场',
   'northern interchange (southbound)': '北环转车站 (南行)',
   'praya yiyan road': '叶欣海旁道',
   'sun central street': '中日街',
