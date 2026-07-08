@@ -15,7 +15,18 @@
     { "date": "2026-06-09", "event": "Rare Appearance x Private Hire", "routeCode": "PH2", "race": false },
     { "date": "2026-06-10", "event": "Marathon Road Closure (N)", "routeCode": "N146A", "race": false },
     { "date": "2026-06-11", "event": "Foggy Day", "routeCode": "141PE", "race": false },
-    { "date": "2026-06-12", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-06-12",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } }
+      ]
+    },
     { "date": "2026-06-13", "event": "Marathon Road Closure (N)", "routeCode": "N171EM", "race": true },
     { "date": "2026-06-14", "event": "Rush Hour", "routeCode": "475W", "race": true },
     {

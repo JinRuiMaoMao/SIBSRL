@@ -170,8 +170,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Synced 7/8 daily challenge: 140E.",
           },
           {
-            zh: "私人租用挑战可在详情页显示当日站序（与普通线路相同的站序表、分区与报站音）；已录入 6/15、7/7 PH1 站序。",
-            en: "Private hire challenges can show the day’s stop order in detail (same stop table, zones, and PA as regular routes); 6/15 and 7/7 PH1 stops recorded.",
+            zh: "私人租用挑战可在详情页显示当日站序（与普通线路相同的站序表、分区与报站音）；已录入 6/12、6/15、7/7 PH1 站序。",
+            en: "Private hire challenges can show the day’s stop order in detail (same stop table, zones, and PA as regular routes); 6/12, 6/15, and 7/7 PH1 stops recorded.",
           },
         ],
       },
