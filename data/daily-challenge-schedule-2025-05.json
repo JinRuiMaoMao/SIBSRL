@@ -56,7 +56,18 @@
       "date": "2025-05-09",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island B/T" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
     },
     {
       "date": "2025-05-10",
@@ -182,7 +193,19 @@
       "date": "2025-05-30",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
     },
     {
       "date": "2025-05-31",

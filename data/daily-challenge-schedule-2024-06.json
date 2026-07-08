@@ -8,7 +8,17 @@
       "date": "2024-06-01",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
     },
     {
       "date": "2024-06-02",
@@ -38,7 +48,17 @@
       "date": "2024-06-06",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } }
+      ]
     },
     {
       "date": "2024-06-07",
@@ -50,7 +70,17 @@
       "date": "2024-06-08",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } }
+      ]
     },
     {
       "date": "2024-06-09",
@@ -62,13 +92,33 @@
       "date": "2024-06-10",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } }
+      ]
     },
     {
       "date": "2024-06-11",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } }
+      ]
     },
     {
       "date": "2024-06-12",
@@ -146,13 +196,34 @@
       "date": "2024-06-24",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
     },
     {
       "date": "2024-06-25",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } }
+      ]
     },
     {
       "date": "2024-06-26",

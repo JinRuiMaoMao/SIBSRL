@@ -14,7 +14,16 @@
       "date": "2025-02-02",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": true
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } }
+      ]
     },
     {
       "date": "2025-02-03",
@@ -44,7 +53,18 @@
       "date": "2025-02-07",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } }
+      ]
     },
     {
       "date": "2025-02-08",
@@ -68,7 +88,18 @@
       "date": "2025-02-11",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } }
+      ]
     },
     {
       "date": "2025-02-12",
@@ -110,13 +141,32 @@
       "date": "2025-02-18",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } }
+      ]
     },
     {
       "date": "2025-02-19",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
     },
     {
       "date": "2025-02-20",
@@ -170,7 +220,16 @@
       "date": "2025-02-28",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } }
+      ]
     }
   ]
 }

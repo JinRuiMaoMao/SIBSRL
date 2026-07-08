@@ -14,7 +14,17 @@
       "date": "2025-04-02",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } }
+      ]
     },
     {
       "date": "2025-04-03",
@@ -62,7 +72,19 @@
       "date": "2025-04-10",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } }
+      ]
     },
     {
       "date": "2025-04-11",
@@ -98,7 +120,17 @@
       "date": "2025-04-16",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
     },
     {
       "date": "2025-04-17",
@@ -140,7 +172,18 @@
       "date": "2025-04-23",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } }
+      ]
     },
     {
       "date": "2025-04-24",
@@ -158,7 +201,15 @@
       "date": "2025-04-26",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": true
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } }
+      ]
     },
     {
       "date": "2025-04-27",
@@ -170,7 +221,18 @@
       "date": "2025-04-28",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } }
+      ]
     },
     {
       "date": "2025-04-29",
@@ -182,7 +244,16 @@
       "date": "2025-04-30",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } }
+      ]
     }
   ]
 }

@@ -5,12 +5,46 @@
   "note": "Community-provided July 2025 Daily Challenge list. Discord emoji/custom emoji notes were removed; bold/italic ranges were treated as race days. Shorthand entries such as PayHearts, whY370, Rushour, Bridgeless, and FINALLY 270A were normalized.",
   "days": [
     { "date": "2025-07-01", "event": "Slow Passengers", "routeCode": "142", "race": false },
-    { "date": "2025-07-02", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-07-02",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island B/T" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
+    },
     { "date": "2025-07-03", "event": "Street Light Outage", "routeCode": "148", "race": false },
     { "date": "2025-07-04", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
     { "date": "2025-07-05", "event": "Grumble Day", "routeCode": "76", "race": true },
     { "date": "2025-07-06", "event": "Rush Hour", "routeCode": "476", "race": true },
-    { "date": "2025-07-07", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-07-07",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
+    },
     { "date": "2025-07-08", "event": "Safety First", "routeCode": "25", "race": true },
     { "date": "2025-07-09", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
     { "date": "2025-07-10", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
@@ -18,10 +52,56 @@
     { "date": "2025-07-12", "event": "Bridge Closure", "routeCode": "Y370", "race": true },
     { "date": "2025-07-13", "event": "Rush Hour", "routeCode": "46", "race": true },
     { "date": "2025-07-14", "event": "Marathon Road Closure", "routeCode": "471S", "race": false },
-    { "date": "2025-07-15", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-07-15",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
+    },
     { "date": "2025-07-16", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
-    { "date": "2025-07-17", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2025-07-18", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-07-17",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } }
+      ]
+    },
+    {
+      "date": "2025-07-18",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
+    },
     { "date": "2025-07-19", "event": "Foggy Day", "routeCode": "142", "race": true },
     { "date": "2025-07-20", "event": "Rush Hour", "routeCode": "42A", "race": true },
     { "date": "2025-07-21", "event": "Foggy Day", "routeCode": "171", "race": false },

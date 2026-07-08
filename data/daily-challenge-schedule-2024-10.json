@@ -8,7 +8,15 @@
       "date": "2024-10-01",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } }
+      ]
     },
     {
       "date": "2024-10-02",
@@ -50,7 +58,19 @@
       "date": "2024-10-08",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island B/T" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } }
+      ]
     },
     {
       "date": "2024-10-09",
@@ -74,7 +94,17 @@
       "date": "2024-10-12",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": true
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island B/T" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } }
+      ]
     },
     {
       "date": "2024-10-13",
@@ -104,7 +134,16 @@
       "date": "2024-10-17",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "阳光大学宿舍", "en": "Sunshine University Residences" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
     },
     {
       "date": "2024-10-18",
@@ -170,7 +209,15 @@
       "date": "2024-10-28",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } }
+      ]
     },
     {
       "date": "2024-10-29",

@@ -6,7 +6,21 @@
   "days": [
     { "date": "2025-09-01", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
     { "date": "2025-09-02", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
-    { "date": "2025-09-03", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-09-03",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } }
+      ]
+    },
     { "date": "2025-09-04", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
     { "date": "2025-09-05", "event": "Slow Passengers", "routeCode": "141PE", "race": false },
     { "date": "2025-09-06", "event": "Foggy Day", "routeCode": "N171E", "race": true },
@@ -19,20 +33,81 @@
     { "date": "2025-09-13", "event": "Marathon Road Closure", "routeCode": "Y370", "race": true },
     { "date": "2025-09-14", "event": "Rush Hour", "routeCode": "246PE", "race": true },
     { "date": "2025-09-15", "event": "Marathon Road Closure", "routeCode": "473A", "race": false },
-    { "date": "2025-09-16", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-09-16",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } }
+      ]
+    },
     { "date": "2025-09-17", "event": "Street Light Outage", "routeCode": "74AS", "race": false },
     { "date": "2025-09-18", "event": "Safety First", "routeCode": "171W", "race": true },
     { "date": "2025-09-19", "event": "E-Payment Outage", "routeCode": "N472W", "race": false },
     { "date": "2025-09-20", "event": "Marathon Shuttle", "routeCode": "R370", "race": true },
     { "date": "2025-09-21", "event": "Rush Hour", "routeCode": "41AS", "race": true },
-    { "date": "2025-09-22", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-09-22",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } }
+      ]
+    },
     { "date": "2025-09-23", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2025-09-24", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-09-24",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } }
+      ]
+    },
     { "date": "2025-09-25", "event": "Safety First", "routeCode": "476E", "race": true },
     { "date": "2025-09-26", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
     { "date": "2025-09-27", "event": "Lazy Passengers", "routeCode": "246X", "race": true },
-    { "date": "2025-09-28", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": true },
-    { "date": "2025-09-29", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-09-28",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } }
+      ]
+    },
+    {
+      "date": "2025-09-29",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } }
+      ]
+    },
     { "date": "2025-09-30", "event": "Marathon Road Closure", "routeCode": "473A", "race": false }
   ]
 }

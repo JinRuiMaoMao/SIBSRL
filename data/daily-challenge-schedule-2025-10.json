@@ -4,14 +4,49 @@
   "resetHour": 8,
   "note": "Community-provided October 2025 Daily Challenge list. Discord emoji/custom emoji notes were removed; bold weekend entries were treated as race days. Shorthand entries such as Rare PH, Rare App, Free, No Lights, Marathon 240, and 370AEM were normalized.",
   "days": [
-    { "date": "2025-10-01", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-10-01",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } }
+      ]
+    },
     { "date": "2025-10-02", "event": "Free Ride Day", "routeCode": "41A", "race": false },
     { "date": "2025-10-03", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
     { "date": "2025-10-04", "event": "Grumble Day", "routeCode": "475W", "race": true },
     { "date": "2025-10-05", "event": "Rush Hour", "routeCode": "472W", "race": true },
     { "date": "2025-10-06", "event": "Concert Aftermath", "routeCode": "140E", "race": false },
-    { "date": "2025-10-07", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2025-10-08", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-10-07",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } }
+      ]
+    },
+    {
+      "date": "2025-10-08",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } }
+      ]
+    },
     { "date": "2025-10-09", "event": "Marathon Road Closure", "routeCode": "370AEM", "race": false },
     { "date": "2025-10-10", "event": "Bridge Closure", "routeCode": "Y370", "race": false },
     { "date": "2025-10-11", "event": "Marathon Road Closure", "routeCode": "N246", "race": true },
@@ -25,15 +60,53 @@
     { "date": "2025-10-19", "event": "Rush Hour", "routeCode": "148E", "race": true },
     { "date": "2025-10-20", "event": "Rare Appearance", "routeCode": "370BE", "race": false },
     { "date": "2025-10-21", "event": "Rush Hour", "routeCode": "76N", "race": false },
-    { "date": "2025-10-22", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-10-22",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
+    },
     { "date": "2025-10-23", "event": "Rare Appearance", "routeCode": "N472W", "race": false },
     { "date": "2025-10-24", "event": "Free Ride Day", "routeCode": "472W", "race": false },
     { "date": "2025-10-25", "event": "Foggy Day", "routeCode": "246X", "race": true },
     { "date": "2025-10-26", "event": "Rush Hour", "routeCode": "476E", "race": true },
     { "date": "2025-10-27", "event": "Street Light Outage", "routeCode": "42AS", "race": false },
     { "date": "2025-10-28", "event": "Foggy Day", "routeCode": "246PE", "race": false },
-    { "date": "2025-10-29", "event": "Private Hire", "routeCode": "PH", "race": false },
-    { "date": "2025-10-30", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-10-29",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } }
+      ]
+    },
+    {
+      "date": "2025-10-30",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } }
+      ]
+    },
     { "date": "2025-10-31", "event": "Foggy Day", "routeCode": "N472W", "race": false }
   ]
 }

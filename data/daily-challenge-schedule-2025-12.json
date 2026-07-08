@@ -11,7 +11,18 @@
     { "date": "2025-12-05", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
     { "date": "2025-12-06", "event": "Friendly Day", "routeCode": "46E", "race": true },
     { "date": "2025-12-07", "event": "Rush Hour", "routeCode": "77N", "race": true },
-    { "date": "2025-12-08", "event": "Rare Appearance x Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2025-12-08",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } }
+      ]
+    },
     { "date": "2025-12-09", "event": "Marathon Road Closure", "routeCode": "370", "race": false },
     { "date": "2025-12-10", "event": "Free Ride Day", "routeCode": "46W", "race": false },
     { "date": "2025-12-11", "event": "Marathon Road Closure", "routeCode": "473", "race": false },
@@ -25,7 +36,20 @@
     { "date": "2025-12-19", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
     { "date": "2025-12-20", "event": "Marathon Shuttle", "routeCode": "R148", "race": true },
     { "date": "2025-12-21", "event": "Rush Hour", "routeCode": "171W", "race": true },
-    { "date": "2025-12-22", "event": "Rare Appearance x Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2025-12-22",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
+    },
     { "date": "2025-12-23", "event": "Street Light Outage", "routeCode": "25N", "race": false },
     { "date": "2025-12-24", "event": "Foggy Day", "routeCode": "473W", "race": false },
     { "date": "2025-12-25", "event": "Daily Challenge", "routeCode": "370", "race": false },
@@ -34,6 +58,19 @@
     { "date": "2025-12-28", "event": "Rush Hour", "routeCode": "476W", "race": true },
     { "date": "2025-12-29", "event": "E-Payment Outage", "routeCode": "46W", "race": false },
     { "date": "2025-12-30", "event": "Safety First", "routeCode": "473E", "race": true },
-    { "date": "2025-12-31", "event": "Private Hire", "routeCode": "PH", "race": false }
+    {
+      "date": "2025-12-31",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } }
+      ]
+    }
   ]
 }

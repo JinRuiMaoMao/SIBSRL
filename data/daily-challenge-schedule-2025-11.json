@@ -9,7 +9,20 @@
     { "date": "2025-11-03", "event": "Marathon Road Closure", "routeCode": "N171WM", "race": false },
     { "date": "2025-11-04", "event": "Grumble Day", "routeCode": "476W", "race": true },
     { "date": "2025-11-05", "event": "Marathon Road Closure", "routeCode": "N171EM", "race": false },
-    { "date": "2025-11-06", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-11-06",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } }
+      ]
+    },
     { "date": "2025-11-07", "event": "Concert Aftermath", "routeCode": "140E", "race": false },
     { "date": "2025-11-08", "event": "Marathon Shuttle", "routeCode": "R370", "race": true },
     { "date": "2025-11-09", "event": "Rush Hour", "routeCode": "25S", "race": true },
@@ -21,7 +34,20 @@
     { "date": "2025-11-15", "event": "Bridge Closure", "routeCode": "25YS", "race": true },
     { "date": "2025-11-16", "event": "Rush Hour", "routeCode": "370BW", "race": true },
     { "date": "2025-11-17", "event": "Free Ride Day", "routeCode": "21", "race": false },
-    { "date": "2025-11-18", "event": "Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-11-18",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } }
+      ]
+    },
     { "date": "2025-11-19", "event": "Concert Aftermath", "routeCode": "140E", "race": false },
     { "date": "2025-11-20", "event": "Safety First", "routeCode": "42AS", "race": true },
     { "date": "2025-11-21", "event": "E-Payment Outage", "routeCode": "75P", "race": false },
@@ -32,7 +58,20 @@
     { "date": "2025-11-26", "event": "Marathon Road Closure", "routeCode": "N171EM", "race": false },
     { "date": "2025-11-27", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
     { "date": "2025-11-28", "event": "Marathon Road Closure", "routeCode": "Y370", "race": false },
-    { "date": "2025-11-29", "event": "Private Hire", "routeCode": "PH", "race": true },
+    {
+      "date": "2025-11-29",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } }
+      ]
+    },
     { "date": "2025-11-30", "event": "Rush Hour", "routeCode": "75S", "race": true }
   ]
 }

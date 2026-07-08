@@ -43,6 +43,7 @@ const EN_TO_ZH: Record<string, string> = {
   'dove industry zone': '白鸽工业区',
   'haisey estate': '海西邨',
   'csb depot': '际巴车厂',
+  'csb depot rooftop': '际巴车厂',
   'eastmallow praya road': '东锦葵海傍路',
   'hotel symbol': '旭涛荟',
   'sunshine stadium': '阳光体育馆',

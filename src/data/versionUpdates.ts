@@ -170,8 +170,16 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Synced 7/8 daily challenge: 140E.",
           },
           {
-            zh: "私人租用挑战可在详情页显示当日站序（与普通线路相同的站序表、分区与报站音）；已录入 6/8–6/9、6/12、6/15、7/7 PH 站序。",
-            en: "Private hire challenges can show the day’s stop order in detail (same stop table, zones, and PA as regular routes); 6/8–6/9, 6/12, 6/15, and 7/7 PH stops recorded.",
+            zh: "批量录入私人租用（PH）当日站序 privateHireStops（双语站名；详情页与普通线路一样显示站序表、分区与报站音）：2024 年 6–12 月共 35 天、2025 全年 55 天、2026 年 1–6 月及 7 月已发生 PH 日已全部补齐（7/11 尚未发生）。",
+            en: "Batch-recorded private hire (PH) daily privateHireStops (bilingual names; detail pages show stop tables, zones, and PA like regular routes): all 35 Jun–Dec 2024 days, all 55 days in 2025, and every elapsed PH day in Jan–Jun 2026 plus July 2026 before 7/11.",
+          },
+          {
+            zh: "新增 2024 年 6–8 月、7 月及 2024–2025 多个月份 PH 站序 Markdown 对照表；社区推测条目（如 2024-07-25、2024-12-13）已在文档注明。",
+            en: "Added PH stop-order Markdown tables for Jun–Aug and Jul 2024 plus multiple 2024–2025 months; community-guessed entries (e.g. 2024-07-25, 2024-12-13) are noted in the docs.",
+          },
+          {
+            zh: "站名缩写与别名已统一（际巴车厂天台、货柜码头岛、叶角湾坟场、阿周电视等）；地图绘制英文目录新增 CSB Depot Rooftop 别名。",
+            en: "Normalized PH stop shorthand and aliases (CSB Depot Rooftop, Container's Island B/T, Upper Leafy Bay, Roblox TV, etc.); map-draw English catalog now aliases CSB Depot Rooftop.",
           },
         ],
       },

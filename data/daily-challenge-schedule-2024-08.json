@@ -20,7 +20,17 @@
       "date": "2024-08-03",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": true
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } }
+      ]
     },
     {
       "date": "2024-08-04",
@@ -38,7 +48,17 @@
       "date": "2024-08-06",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
     },
     {
       "date": "2024-08-07",
@@ -74,7 +94,18 @@
       "date": "2024-08-12",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } }
+      ]
     },
     {
       "date": "2024-08-13",
@@ -146,7 +177,18 @@
       "date": "2024-08-24",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": true
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "阳光大学宿舍", "en": "Sunshine University Residences" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } }
+      ]
     },
     {
       "date": "2024-08-25",
@@ -158,13 +200,37 @@
       "date": "2024-08-26",
       "event": "Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } }
+      ]
     },
     {
       "date": "2024-08-27",
       "event": "Rare Appearance x Private Hire",
       "routeCode": "PH",
-      "race": false
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "阳光体育馆", "en": "Sunshine Stadium" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
     },
     {
       "date": "2024-08-28",

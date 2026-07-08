@@ -6,8 +6,30 @@
   "days": [
     { "date": "2026-06-01", "event": "Free Ride Day", "routeCode": "475AW", "race": false },
     { "date": "2026-06-02", "event": "Safety First", "routeCode": "473W", "race": true },
-    { "date": "2026-06-03", "event": "Private Hire", "routeCode": "PH1", "race": false },
-    { "date": "2026-06-04", "event": "Rare Appearance x Private Hire", "routeCode": "PH2", "race": false },
+    {
+      "date": "2026-06-03",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "Yiyan Estate Blk 1" } },
+        { "name": { "zh": "海西邨", "en": "Haisy Estate" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } }
+      ]
+    },
+    {
+      "date": "2026-06-04",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH2",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } }
+      ]
+    },
     { "date": "2026-06-05", "event": "Street light outage", "routeCode": "74AN", "race": false },
     { "date": "2026-06-06", "event": "Marathon Road Closure", "routeCode": "471W", "race": true },
     { "date": "2026-06-07", "event": "Rush Hour", "routeCode": "41AN", "race": true },

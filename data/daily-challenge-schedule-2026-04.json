@@ -5,15 +5,51 @@
   "note": "Community-provided April 2026 Daily Challenge list. Discord emoji/custom emoji notes were removed; Marathon Shuttle entries written as '(148)' were normalized to R148.",
   "days": [
     { "date": "2026-04-01", "event": "Marathon Road Closure", "routeCode": "471W", "race": false },
-    { "date": "2026-04-02", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-04-02",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } }
+      ]
+    },
     { "date": "2026-04-03", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },
-    { "date": "2026-04-04", "event": "Private Hire", "routeCode": "PH1", "race": true },
+    {
+      "date": "2026-04-04",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
+    },
     { "date": "2026-04-05", "event": "Rush Hour", "routeCode": "25S", "race": true },
     { "date": "2026-04-06", "event": "Marathon Road Closure", "routeCode": "471W", "race": false },
     { "date": "2026-04-07", "event": "E-Payment Outage", "routeCode": "473W", "race": false },
     { "date": "2026-04-08", "event": "Street Light Outage", "routeCode": "42AS", "race": false },
     { "date": "2026-04-09", "event": "Rush Hour", "routeCode": "U47S", "race": false },
-    { "date": "2026-04-10", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-04-10",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } }
+      ]
+    },
     { "date": "2026-04-11", "event": "Free Ride Day", "routeCode": "42AN", "race": true },
     { "date": "2026-04-12", "event": "Rush Hour", "routeCode": "75S", "race": true },
     { "date": "2026-04-13", "event": "Safety First", "routeCode": "42S", "race": true },
@@ -26,13 +62,37 @@
     { "date": "2026-04-20", "event": "Rare Appearance", "routeCode": "74AN", "race": false },
     { "date": "2026-04-21", "event": "Marathon Road Closure", "routeCode": "N171EM", "race": false },
     { "date": "2026-04-22", "event": "Rush Hour", "routeCode": "146W", "race": false },
-    { "date": "2026-04-23", "event": "Rare Appearance x Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-04-23",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } }
+      ]
+    },
     { "date": "2026-04-24", "event": "Grumble Day", "routeCode": "42AN", "race": true },
     { "date": "2026-04-25", "event": "Marathon Road Closure", "routeCode": "473A", "race": true },
     { "date": "2026-04-26", "event": "Rush Hour", "routeCode": "476E", "race": true },
     { "date": "2026-04-27", "event": "Marathon Road Closure", "routeCode": "248", "race": false },
     { "date": "2026-04-28", "event": "Marathon Road Closure", "routeCode": "N171EM", "race": false },
     { "date": "2026-04-29", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
-    { "date": "2026-04-30", "event": "Private Hire", "routeCode": "PH1", "race": false }
+    {
+      "date": "2026-04-30",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } }
+      ]
+    }
   ]
 }

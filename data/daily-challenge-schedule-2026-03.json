@@ -5,21 +5,97 @@
   "note": "Community-provided March 2026 Daily Challenge list. Discord emoji/custom emoji notes were removed; shorthand entries such as PH1, PH, Marathon (471W), Marathon Shuttle (370), and 25why S were normalized.",
   "days": [
     { "date": "2026-03-01", "event": "Rush Hour", "routeCode": "75P", "race": true },
-    { "date": "2026-03-02", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2026-03-02",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
+    },
     { "date": "2026-03-03", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
-    { "date": "2026-03-04", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-03-04",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "北顿码头", "en": "Norton Ferry Pier" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
+      ]
+    },
     { "date": "2026-03-05", "event": "Concert Crowd Dispersal", "routeCode": "140E", "race": false },
     { "date": "2026-03-06", "event": "Bridge Closure", "routeCode": "25YS", "race": false },
     { "date": "2026-03-07", "event": "Bridge Closure", "routeCode": "25YS", "race": true },
-    { "date": "2026-03-08", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": true },
-    { "date": "2026-03-09", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2026-03-08",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } }
+      ]
+    },
+    {
+      "date": "2026-03-09",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } }
+      ]
+    },
     { "date": "2026-03-10", "event": "Lazy Passengers", "routeCode": "142W", "race": false },
     { "date": "2026-03-11", "event": "Marathon Road Closure", "routeCode": "N146A", "race": false },
     { "date": "2026-03-12", "event": "Marathon Road Closure", "routeCode": "N171WM", "race": false },
-    { "date": "2026-03-13", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-03-13",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } }
+      ]
+    },
     { "date": "2026-03-14", "event": "Marathon Road Closure", "routeCode": "N171EM", "race": true },
     { "date": "2026-03-15", "event": "Rush Hour", "routeCode": "42AS", "race": true },
-    { "date": "2026-03-16", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-03-16",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "国际码头", "en": "Regional Pier" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
+    },
     { "date": "2026-03-17", "event": "Rare Appearance", "routeCode": "46E", "race": false },
     { "date": "2026-03-18", "event": "Marathon Road Closure", "routeCode": "471W", "race": false },
     { "date": "2026-03-19", "event": "Bridge Closure", "routeCode": "25YS", "race": false },
@@ -27,13 +103,48 @@
     { "date": "2026-03-21", "event": "Marathon Shuttle", "routeCode": "R370", "race": true },
     { "date": "2026-03-22", "event": "Rush Hour", "routeCode": "49AN", "race": true },
     { "date": "2026-03-23", "event": "Marathon Road Closure", "routeCode": "471W", "race": false },
-    { "date": "2026-03-24", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-03-24",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
+    },
     { "date": "2026-03-25", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
     { "date": "2026-03-26", "event": "Free Ride Day", "routeCode": "76N", "race": false },
     { "date": "2026-03-27", "event": "Foggy Day", "routeCode": "74AN", "race": false },
-    { "date": "2026-03-28", "event": "Private Hire", "routeCode": "PH", "race": true },
+    {
+      "date": "2026-03-28",
+      "event": "Private Hire",
+      "routeCode": "PH",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } }
+      ]
+    },
     { "date": "2026-03-29", "event": "Safety First", "routeCode": "370BE", "race": true },
-    { "date": "2026-03-30", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-03-30",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } }
+      ]
+    },
     { "date": "2026-03-31", "event": "Bridge Closure", "routeCode": "25YS", "race": false }
   ]
 }

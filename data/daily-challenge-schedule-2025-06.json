@@ -5,7 +5,23 @@
   "note": "Community-provided June 2025 Daily Challenge list, completed by a later user message. Discord emoji/custom emoji and last-seen notes were removed; bold/italic ranges were treated as race days. Direction notes were normalized to route codes where possible.",
   "days": [
     { "date": "2025-06-01", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
-    { "date": "2025-06-02", "event": "Rare Appearance x Private Hire", "routeCode": "PH", "race": false },
+    {
+      "date": "2025-06-02",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "中日街", "en": "Sun Central Street" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } }
+      ]
+    },
     { "date": "2025-06-03", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
     { "date": "2025-06-04", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
     { "date": "2025-06-05", "event": "Marathon Road Closure", "routeCode": "473A", "race": false },
@@ -14,9 +30,38 @@
     { "date": "2025-06-08", "event": "Rush Hour", "routeCode": "42S", "race": true },
     { "date": "2025-06-09", "event": "Marathon Road Closure", "routeCode": "248A", "race": false },
     { "date": "2025-06-10", "event": "Free Ride Day", "routeCode": "246PE", "race": false },
-    { "date": "2025-06-11", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2025-06-11",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阳光大学运动场", "en": "SU Sports Field" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } },
+        { "name": { "zh": "亚历山大教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "叶角湾邨商场", "en": "Leafy Bay Estate Shopping Center" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
+    },
     { "date": "2025-06-12", "event": "Street Light Outage", "routeCode": "N271N", "race": false },
-    { "date": "2025-06-13", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2025-06-13",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "南环运动场", "en": "Southern Sports Field" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "安灵台", "en": "Ambling Peak" } },
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island B/T" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } }
+      ]
+    },
     { "date": "2025-06-14", "event": "Marathon Road Closure", "routeCode": "242A", "race": true },
     { "date": "2025-06-15", "event": "Rush Hour", "routeCode": "74AN", "race": true },
     { "date": "2025-06-16", "event": "Concert Overrun", "routeCode": "N171", "race": false },

@@ -6,9 +6,31 @@
   "days": [
     { "date": "2026-01-01", "event": "Marathon Road Closure", "routeCode": "242", "race": false },
     { "date": "2026-01-02", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
-    { "date": "2026-01-03", "event": "Private Hire", "routeCode": "PH1", "race": true },
+    {
+      "date": "2026-01-03",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Ferry Pier" } }
+      ]
+    },
     { "date": "2026-01-04", "event": "Rush Hour", "routeCode": "142E", "race": true },
-    { "date": "2026-01-05", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-01-05",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } }
+      ]
+    },
     { "date": "2026-01-06", "event": "Grumble Day", "routeCode": "475E", "race": true },
     { "date": "2026-01-07", "event": "Marathon Road Closure", "routeCode": "N246", "race": false },
     { "date": "2026-01-08", "event": "Marathon Road Closure", "routeCode": "N246", "race": false },
@@ -23,12 +45,37 @@
     { "date": "2026-01-17", "event": "Foggy Day", "routeCode": "74AS", "race": true },
     { "date": "2026-01-18", "event": "Rush Hour", "routeCode": "246XA", "race": true },
     { "date": "2026-01-19", "event": "Urban Odyssey", "routeCode": "77X", "race": false },
-    { "date": "2026-01-20", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-01-20",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "巨石路", "en": "Rocky Road" } },
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "叶欣径", "en": "Leafy Walking Trail" } }
+      ]
+    },
     { "date": "2026-01-21", "event": "Free Ride Day", "routeCode": "41AS", "race": false },
     { "date": "2026-01-22", "event": "E-Payment Outage", "routeCode": "246X", "race": false },
     { "date": "2026-01-23", "event": "Marathon Road Closure", "routeCode": "473A", "race": false },
     { "date": "2026-01-24", "event": "Marathon Shuttle", "routeCode": "R148", "race": true },
-    { "date": "2026-01-25", "event": "Rare Appearance x Private Hire", "routeCode": "PH1", "race": true },
+    {
+      "date": "2026-01-25",
+      "event": "Rare Appearance x Private Hire",
+      "routeCode": "PH1",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "货柜码头岛", "en": "Container's Island Bus Terminus" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "叶欣海旁道", "en": "Praya YiYan Road" } },
+        { "name": { "zh": "际巴车厂天台", "en": "CSB Depot Rooftop" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
+    },
     { "date": "2026-01-26", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
     { "date": "2026-01-27", "event": "Marathon Road Closure", "routeCode": "471", "race": false },
     { "date": "2026-01-28", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
