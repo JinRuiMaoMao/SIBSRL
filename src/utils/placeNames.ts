@@ -70,6 +70,7 @@ const EN_TO_ZH: Record<string, string> = {
   'normal gap': '普通道',
   'leafy bay estate': '叶角湾邨',
   'leafy bay cemetery': '叶角湾坟场',
+  'upper leafy bay': '叶角湾坟场',
   'leafy bay': '叶角湾',
   'leafy university': '叶角大学',
   'leafy hospital': '叶角医院',

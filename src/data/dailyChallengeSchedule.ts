@@ -27,11 +27,17 @@ import scheduleMayJson from '../../data/daily-challenge-schedule-2026-05.json'
 import scheduleJuneJson from '../../data/daily-challenge-schedule-2026-06.json'
 import scheduleJulyJson from '../../data/daily-challenge-schedule-2026-07.json'
 
+export interface DailyChallengeScheduleStopName {
+  name: { zh: string; en: string }
+}
+
 export interface DailyChallengeScheduleDay {
   date: string
   event: string | null
   routeCode: string | null
   race: boolean
+  /** Recorded in-game stop order for Private Hire challenges (layout varies daily). */
+  privateHireStops?: DailyChallengeScheduleStopName[]
 }
 
 export interface DailyChallengeSchedule {
@@ -250,6 +256,7 @@ export function mergeScheduleWithLiveDays(
       event: live.event,
       routeCode: live.routeCode ?? existing?.routeCode ?? null,
       race: live.race,
+      privateHireStops: live.privateHireStops ?? existing?.privateHireStops,
     })
   }
 

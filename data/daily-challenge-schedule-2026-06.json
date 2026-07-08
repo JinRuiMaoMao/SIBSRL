@@ -18,7 +18,18 @@
     { "date": "2026-06-12", "event": "Private Hire", "routeCode": "PH1", "race": false },
     { "date": "2026-06-13", "event": "Marathon Road Closure (N)", "routeCode": "N171EM", "race": true },
     { "date": "2026-06-14", "event": "Rush Hour", "routeCode": "475W", "race": true },
-    { "date": "2026-06-15", "event": "Private Hire", "routeCode": "PH1", "race": false },
+    {
+      "date": "2026-06-15",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "叶角湾坟场", "en": "Upper Leafy Bay" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "四露谷车厂天台", "en": "Shallow Valley Depot Rooftop" } }
+      ]
+    },
     { "date": "2026-06-16", "event": "Marathon Road Closure", "routeCode": "471E", "race": false },
     { "date": "2026-06-17", "event": "Marathon Road Closure", "routeCode": "240A", "race": false },
     { "date": "2026-06-18", "event": "Bridge Closure", "routeCode": "Y370A", "race": false },

@@ -37,6 +37,8 @@ export interface DailyChallengeInfo {
   routeNumber?: string
   /** 挑战方向摘要，如「货柜岛 → 北顿」 */
   endpoints?: BilingualText
+  /** Private Hire 当日随机站序（来自日程记录） */
+  privateHireStops?: readonly BilingualText[]
   /** 打开关联线路详情时预选的方向 */
   directionKey?: 'N' | 'S' | 'E' | 'W'
   /** 当日挑战简介 */
@@ -186,6 +188,22 @@ function buildEndpointsFromRoute(
   return undefined
 }
 
+function normalizePrivateHireStops(
+  stops: DailyChallengeScheduleDay['privateHireStops'],
+): BilingualText[] | undefined {
+  if (!stops?.length) return undefined
+  return stops.map((stop) => ({
+    zh: stop.name.zh.trim() || stop.name.en.trim(),
+    en: stop.name.en.trim() || stop.name.zh.trim(),
+  }))
+}
+
+function buildEndpointsFromPrivateHireStops(stops: readonly BilingualText[]): BilingualText {
+  const first = stops[0]!
+  const last = stops[stops.length - 1]!
+  return { zh: `${first.zh} → ${last.zh}`, en: `${first.en} → ${last.en}` }
+}
+
 function buildIntro(
   event: BilingualText,
   routeCode: string | null,
@@ -261,10 +279,13 @@ export function buildDailyChallengeFromScheduleDay(
 
   const event = toEventLabel(entry.event, entry.race)
   const routeNumber = entry.routeCode ?? undefined
+  const privateHireStops = normalizePrivateHireStops(entry.privateHireStops)
   let directionKey: 'N' | 'S' | 'E' | 'W' | undefined
   let endpoints: BilingualText | undefined
 
-  if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
+  if (routeNumber && isPrivateHireChallengeRoute(routeNumber) && privateHireStops?.length) {
+    endpoints = buildEndpointsFromPrivateHireStops(privateHireStops)
+  } else if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
     const resolved = resolveDailyChallengeRouteLookup(routeNumber)
     directionKey = resolved.directionKey
     const linked = findRouteForDailyChallenge(routeNumber)
@@ -316,6 +337,7 @@ export function buildDailyChallengeFromScheduleDay(
     endpoints,
     directionKey,
     intro,
+    privateHireStops,
     isAvailable: true,
     isPlaceholder: false,
     fromSchedule: true,
@@ -425,6 +447,7 @@ function matchesDailyChallengeQuery(challenge: DailyChallengeInfo, query: string
     challenge.event.en,
     challenge.endpoints?.zh,
     challenge.endpoints?.en,
+    ...(challenge.privateHireStops?.flatMap((stop) => [stop.zh, stop.en]) ?? []),
     challenge.intro?.body.zh,
     challenge.intro?.body.en,
     challenge.intro?.objective.zh,

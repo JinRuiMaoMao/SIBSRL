@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import {
   DAILY_CHALLENGE_GUIDE,
   getAssignedRouteDescription,
@@ -10,7 +11,15 @@ import {
 } from '../data/dailyChallenge'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
+import type { RouteStop } from '../types/route'
+import {
+  enrichPrivateHireRouteStop,
+  getPrivateHireStopAudioAtRow,
+} from '../utils/privateHireStopDetails'
+import { BroadcastAudioButton } from './BroadcastAudioButton'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
+import { StopDetailPanel } from './StopDetailPanel'
+import { StopNameDisplay } from './StopNameDisplay'
 
 interface DailyChallengeDetailProps {
   challenge: DailyChallengeInfo
@@ -25,6 +34,105 @@ function GuideList({ items, locale }: { items: { zh: string; en: string }[]; loc
         <li key={index}>{getPrimaryText(item, locale)}</li>
       ))}
     </ul>
+  )
+}
+
+function PrivateHireStopTable({
+  stops,
+  routeId,
+}: {
+  stops: readonly { zh: string; en: string }[]
+  routeId: string
+}) {
+  const { locale, t } = useLocale()
+  const [selectedStopIndex, setSelectedStopIndex] = useState<number | null>(null)
+  const [playingStopAudioId, setPlayingStopAudioId] = useState<string | null>(null)
+  const routeStops = useMemo(
+    () => stops.map((stop) => enrichPrivateHireRouteStop(stop)),
+    [stops],
+  )
+
+  return (
+    <section className="detail-section" data-tour="route-detail-stops">
+      <h3>{t('stopsSection')}</h3>
+      <div className="stop-table" role="table">
+        <div className="stop-table-row stop-table-head" role="row">
+          <span className="stop-table-num" role="columnheader" aria-label="#">
+            #
+          </span>
+          <span className="stop-table-col-name" role="columnheader">
+            {t('stopColName')}
+          </span>
+          <span className="stop-table-col-zone" role="columnheader">
+            {t('stopColZone')}
+          </span>
+          <span className="stop-table-col-audio" role="columnheader">
+            {t('stopColAudio')}
+          </span>
+        </div>
+        <ol className="stop-table-body">
+          {routeStops.map((stop, index) => {
+            const stopAudio = getPrivateHireStopAudioAtRow(routeStops, index)
+            const audioId = `${routeId}-ph-at-${index}`
+            const nextName = stopAudio ? getPrimaryText(stopAudio.nextStopLabel, locale) : ''
+
+            return (
+            <li
+              key={`${stop.name.en}-${index}`}
+              className={`stop-table-row${selectedStopIndex === index ? ' stop-table-row--selected' : ''}`.trim()}
+              role="row"
+            >
+              <span className="stop-index stop-table-num">{index + 1}</span>
+              <button
+                type="button"
+                className="stop-table-name-btn"
+                aria-expanded={selectedStopIndex === index}
+                aria-label={t('stopDetailOpenAria', { stop: getPrimaryText(stop.name, locale) })}
+                onClick={() => setSelectedStopIndex((current) => (current === index ? null : index))}
+              >
+                <StopNameDisplay stop={stop} className="stop-table-name" />
+              </button>
+              <span className="stop-table-zone">
+                {stop.zone != null ? (
+                  <span className="zone-tag zone-tag--table">Z{stop.zone}</span>
+                ) : (
+                  <span className="stop-table-empty" aria-hidden="true">
+                    —
+                  </span>
+                )}
+              </span>
+              <span className="stop-table-audio">
+                {stopAudio ? (
+                  <BroadcastAudioButton
+                    id={audioId}
+                    src={stopAudio.audioUrl}
+                    activeId={playingStopAudioId}
+                    onActiveChange={setPlayingStopAudioId}
+                    playLabel={t('routePaPlayNext', { stop: nextName })}
+                    pauseLabel={t('broadcastPause')}
+                    compact
+                  />
+                ) : (
+                  <span className="stop-table-empty" aria-hidden="true">
+                    —
+                  </span>
+                )}
+              </span>
+            </li>
+            )
+          })}
+        </ol>
+        {selectedStopIndex != null && routeStops[selectedStopIndex] ? (
+          <StopDetailPanel
+            stop={routeStops[selectedStopIndex]!}
+            seq={selectedStopIndex + 1}
+            currentRouteId={routeId}
+            className="stop-detail-panel--inline"
+            onClose={() => setSelectedStopIndex(null)}
+          />
+        ) : null}
+      </div>
+    </section>
   )
 }
 
@@ -56,6 +164,10 @@ export function DailyChallengeDetail({
           ×
         </button>
       </div>
+
+      {challenge.privateHireStops?.length ? (
+        <PrivateHireStopTable stops={challenge.privateHireStops} routeId={routeNumber} />
+      ) : null}
 
       <article className="daily-challenge-guide">
         <h2 className="daily-challenge-guide-title">{getPrimaryText(guide.title, locale)}</h2>

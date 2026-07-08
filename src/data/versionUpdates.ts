@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-06'
+export const CURRENT_CHANGELOG_DATE = '2026-07-08'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,32 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-07-08-summary",
+    date: "2026-07-08",
+    title: {
+      zh: "2026-07-08 更新",
+      en: "2026-07-08 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 7/8 每日挑战：140E。",
+            en: "Synced 7/8 daily challenge: 140E.",
+          },
+          {
+            zh: "私人租用挑战可在详情页显示当日站序（与普通线路相同的站序表、分区与报站音）；已录入 6/15、7/7 PH1 站序。",
+            en: "Private hire challenges can show the day’s stop order in detail (same stop table, zones, and PA as regular routes); 6/15 and 7/7 PH1 stops recorded.",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-07-06-summary",
     date: "2026-07-06",
