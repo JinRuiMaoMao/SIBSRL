@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-08'
+export const CURRENT_CHANGELOG_DATE = '2026-07-09'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-07-09-summary",
+    date: "2026-07-09",
+    title: {
+      zh: "2026-07-09 更新",
+      en: "2026-07-09 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        fixes: [
+          {
+            zh: "修复从日历点开非 PH 每日挑战时，线路详情仍显示今日挑战文案与起终点（例如今日为 77XA、日历选 472 却显示 77XA）的问题。",
+            en: "Fixed calendar non-PH daily challenges opening a route detail that still showed today's challenge intro and endpoints (e.g. today 77XA but calendar 472 showed 77XA).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-07-08-summary",
     date: "2026-07-08",

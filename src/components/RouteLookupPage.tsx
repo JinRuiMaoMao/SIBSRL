@@ -207,7 +207,8 @@ export function RouteLookupPage({
   useStickyLayoutOffsets()
   const [detailOverlay, setDetailOverlay] = useState<DetailOverlay>(null)
   const [detailClosing, setDetailClosing] = useState(false)
-  const [dailyChallengeRouteView, setDailyChallengeRouteView] = useState(false)
+  const [dailyChallengeRouteContext, setDailyChallengeRouteContext] =
+    useState<DailyChallengeInfo | null>(null)
   const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
   const [searchHistory, setSearchHistory] = useState(readSearchHistory)
@@ -519,7 +520,7 @@ export function RouteLookupPage({
     setDetailClosing(false)
     setDetailOverlay(null)
     setRoutePageDetail(null)
-    setDailyChallengeRouteView(false)
+    setDailyChallengeRouteContext(null)
     clearSelection()
     clearRouteFromLocation()
   }, [clearSelection])
@@ -640,7 +641,7 @@ export function RouteLookupPage({
 
     const route = findDisplayRoute(routeId)
     if (route) {
-      setDailyChallengeRouteView(false)
+      setDailyChallengeRouteContext(null)
       recordRecent(route.id)
       selectRoute(routeId)
       const directionIndex = readDirectionQueryFromLocation()
@@ -660,7 +661,7 @@ export function RouteLookupPage({
       if (routeId) {
         const route = findDisplayRoute(routeId)
         if (route) {
-          setDailyChallengeRouteView(false)
+          setDailyChallengeRouteContext(null)
           recordRecent(route.id)
           selectRoute(routeId)
           const directionIndex = readDirectionQueryFromLocation()
@@ -678,7 +679,7 @@ export function RouteLookupPage({
         prev?.kind === 'route' || prev?.kind === 'not-found' ? null : prev,
       )
       setRoutePageDetail(null)
-      setDailyChallengeRouteView(false)
+      setDailyChallengeRouteContext(null)
       clearSelection()
     }
 
@@ -771,13 +772,13 @@ export function RouteLookupPage({
         if (route) {
           const directionIndex = findDailyChallengeDirectionIndex(route, challenge.directionKey)
           if (directionIndex != null) setDirectionIndex(route.id, directionIndex)
-          setDailyChallengeRouteView(true)
+          setDailyChallengeRouteContext(challenge)
           selectRoute(route.id)
           return
         }
       }
 
-      setDailyChallengeRouteView(false)
+      setDailyChallengeRouteContext(null)
       clearSelection()
       setDetailOverlay({ kind: 'daily-challenge', challenge })
     },
@@ -803,7 +804,7 @@ export function RouteLookupPage({
       if (q && (!parsed.from?.trim() || !parsed.to?.trim())) {
         replaceSearchInLocation(q)
       }
-      setDailyChallengeRouteView(false)
+      setDailyChallengeRouteContext(null)
       recordRecent(routeId)
       selectRoute(routeId)
       const route = findDisplayRoute(routeId)
@@ -916,8 +917,7 @@ export function RouteLookupPage({
   )
 
   const dailyChallengeSelected =
-    detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteView
-  const todaysChallenge = dailyChallenge
+    detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteContext != null
   const routeDetailProps =
     detailOverlay?.kind === 'route'
       ? {
@@ -933,13 +933,9 @@ export function RouteLookupPage({
             setLoopView(detailOverlay.route.id, loopView)
           },
           onClose: handleCloseDetail,
-          lockDirection: dailyChallengeRouteView,
-          directionEndpoints: dailyChallengeRouteView
-            ? (todaysChallenge.endpoints ?? null)
-            : null,
-          dailyChallengeIntro: dailyChallengeRouteView
-            ? (todaysChallenge.intro ?? null)
-            : null,
+          lockDirection: dailyChallengeRouteContext != null,
+          directionEndpoints: dailyChallengeRouteContext?.endpoints ?? null,
+          dailyChallengeIntro: dailyChallengeRouteContext?.intro ?? null,
         }
       : null
 
@@ -1217,7 +1213,7 @@ export function RouteLookupPage({
   const handleSelectTransferPlan = useCallback(
     (plan: TransferPlan, planIndex: number) => {
       if (!betweenStopLookup?.from || !betweenStopLookup?.to) return
-      setDailyChallengeRouteView(false)
+      setDailyChallengeRouteContext(null)
       clearSelection()
       clearRouteFromLocation()
       setDetailOverlay({
