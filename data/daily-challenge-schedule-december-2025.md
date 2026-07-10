@@ -13,7 +13,7 @@
 > - `Marathon (R148)` → `Marathon Shuttle (R148)`。
 > - 其他 `Marathon (...)` → `Marathon Road Closure (...)`。
 > - Christmas / Boxing Day / New Year Eve 等节日说明作为备注移除。
-> - 12/25 只给出 `370` 路线图标、没有活动名，因此结构化为 `Daily Challenge (370)`。
+> - 12/25 社区原文仅给出 `370` 路线图标；已确认为 **马拉松接驳 R370**（Marathon Shuttle）。
 
 ## 原文（已去除 emoji）
 
@@ -43,7 +43,7 @@ December Daily Challenge
 12/22: Rare Appearance x Private Hire (PH1)
 12/23: Street Light Outage (25N)
 12/24: Foggy Day (473W)
-12/25: Daily Challenge (370)
+12/25: Marathon Shuttle (R370)
 12/26: Rush Hour (246X)
 12/27: (Race) Safety First (47A)
 12/28: (Race) Rush Hour (476W)

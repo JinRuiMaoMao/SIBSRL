@@ -2,7 +2,7 @@
   "month": "2025-12",
   "timezone": "Asia/Hong_Kong",
   "resetHour": 8,
-  "note": "Community-provided December 2025 Daily Challenge list. Discord emoji/custom emoji notes were removed; Christmas/holiday notes were treated as comments. The 12/25 entry only supplied route 370, so it is stored as a generic Daily Challenge.",
+  "note": "Community-provided December 2025 Daily Challenge list. Discord emoji/custom emoji notes were removed; Christmas/holiday notes were treated as comments. The 12/25 entry only showed route 370 in the source; confirmed as Marathon Shuttle (R370).",
   "days": [
     { "date": "2025-12-01", "event": "Slow Passengers", "routeCode": "75S", "race": false },
     { "date": "2025-12-02", "event": "Friendly Day", "routeCode": "42S", "race": false },
@@ -52,7 +52,7 @@
     },
     { "date": "2025-12-23", "event": "Street Light Outage", "routeCode": "25N", "race": false },
     { "date": "2025-12-24", "event": "Foggy Day", "routeCode": "473W", "race": false },
-    { "date": "2025-12-25", "event": "Daily Challenge", "routeCode": "370", "race": false },
+    { "date": "2025-12-25", "event": "Marathon Shuttle", "routeCode": "R370", "race": false },
     { "date": "2025-12-26", "event": "Rush Hour", "routeCode": "246X", "race": false },
     { "date": "2025-12-27", "event": "Safety First", "routeCode": "47A", "race": true },
     { "date": "2025-12-28", "event": "Rush Hour", "routeCode": "476W", "race": true },

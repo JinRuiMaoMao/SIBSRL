@@ -179,6 +179,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "更正 2025-08-05：由占位「每日挑战」改为马拉松封路（北行）（N246）；游戏内任务显示 N246、完成为 N146A，本站以 N246 → N146A 解析线路详情。",
             en: "Corrected 2025-08-05 from placeholder Daily Challenge to Marathon Road Closure (N) (N246); in-game task shows N246 while runs use N146A—site resolves N246 to N146A for route detail.",
           },
+          {
+            zh: "更正 2025-12-25：由占位「每日挑战（370）」改为马拉松接驳（R370）。",
+            en: "Corrected 2025-12-25 from placeholder Daily Challenge (370) to Marathon Shuttle (R370).",
+          },
         ],
       },
     ],
