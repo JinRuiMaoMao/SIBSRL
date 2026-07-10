@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "同步 7/10 每日挑战：76#。",
-            en: "Synced 7/10 daily challenge: 76#.",
+            zh: "同步 7/10 每日挑战：电子支付故障（76#）。",
+            en: "Synced 7/10 daily challenge: E-Payment Outage (76#).",
           },
         ],
       },
