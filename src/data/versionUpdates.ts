@@ -170,6 +170,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Synced 7/10 daily challenge: E-Payment Outage (76#).",
           },
         ],
+        fixes: [
+          {
+            zh: "更正 7/8 每日挑战：由占位「每日挑战」改为音乐会人群疏散（Concert Crowd Dispersal · 140E）。",
+            en: "Corrected 7/8 daily challenge from placeholder Daily Challenge to Concert Crowd Dispersal (140E).",
+          },
+        ],
       },
     ],
   },
@@ -210,8 +216,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "同步 7/8 每日挑战：140E。",
-            en: "Synced 7/8 daily challenge: 140E.",
+            zh: "同步 7/8 每日挑战：音乐会人群疏散（Concert Crowd Dispersal · 140E）。",
+            en: "Synced 7/8 daily challenge: Concert Crowd Dispersal (140E).",
           },
           {
             zh: "批量录入私人租用（PH）当日站序 privateHireStops（双语站名；详情页与普通线路一样显示站序表、分区与报站音）：2024 年 6–12 月共 35 天、2025 全年 55 天、2026 年 1–6 月及 7 月已发生 PH 日已全部补齐（7/11 尚未发生）。",

@@ -24,7 +24,7 @@
         { "name": { "zh": "阿周电视", "en": "RBX TV" } }
       ]
     },
-    { "date": "2026-07-08", "event": "Daily Challenge", "routeCode": "140E", "race": false },
+    { "date": "2026-07-08", "event": "Concert Crowd Dispersal", "routeCode": "140E", "race": false },
     { "date": "2026-07-09", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },
     { "date": "2026-07-10", "event": "E-Payment Outage", "routeCode": "76#", "race": false },
     { "date": "2026-07-11", "event": "Private Hire", "routeCode": "PH1", "race": true },
