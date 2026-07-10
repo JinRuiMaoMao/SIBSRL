@@ -24,7 +24,7 @@
     { "date": "2025-08-02", "event": "Lazy Passengers", "routeCode": "N171W", "race": true },
     { "date": "2025-08-03", "event": "Rush Hour", "routeCode": "473", "race": true },
     { "date": "2025-08-04", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
-    { "date": "2025-08-05", "event": "Daily Challenge", "routeCode": "N246", "race": true },
+    { "date": "2025-08-05", "event": "Marathon Road Closure (N)", "routeCode": "N246", "race": true },
     { "date": "2025-08-06", "event": "Bridge Closure", "routeCode": "Y370", "race": true },
     { "date": "2025-08-07", "event": "Marathon Road Closure", "routeCode": "471", "race": true },
     { "date": "2025-08-08", "event": "Safety First", "routeCode": "76", "race": true },

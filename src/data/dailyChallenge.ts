@@ -12,6 +12,11 @@ import {
   mergeRoutesByBaseNumber,
   toMergeBaseRouteNumber,
 } from '../utils/routeMerge'
+
+/** 游戏内任务代号 → 本站线路 id（如马拉松 N246 任务实际走 N146A）。 */
+const DAILY_CHALLENGE_ROUTE_ALIASES: Record<string, string> = {
+  N246: 'N146A',
+}
 import { formatRouteOperators } from '../utils/routeDisplay'
 import {
   getDirectionKey,
@@ -94,20 +99,24 @@ export function resolveDailyChallengeRouteLookup(routeCode: string): {
   if (!trimmed || isPrivateHireChallengeRoute(trimmed)) {
     return { lookupNumber: trimmed }
   }
-  const base = toMergeBaseRouteNumber(trimmed)
+  const aliased = DAILY_CHALLENGE_ROUTE_ALIASES[trimmed] ?? trimmed
+  const base = toMergeBaseRouteNumber(aliased)
   const lookupNumber = DISPLAY_ONLY_RENAMES[base] ?? base
-  const dir = getMergeDirectionKey(trimmed)
+  const dir = getMergeDirectionKey(aliased)
   return { lookupNumber, directionKey: dir ?? undefined }
 }
 
 export function findRouteForDailyChallenge(routeNumberOrCode: string): BusRoute | null {
-  const { lookupNumber } = resolveDailyChallengeRouteLookup(routeNumberOrCode)
-  const key = lookupNumber.trim().toLowerCase()
-  if (!key || isPrivateHireChallengeRoute(key)) return null
+  const trimmed = routeNumberOrCode.trim()
+  const aliased = DAILY_CHALLENGE_ROUTE_ALIASES[trimmed] ?? trimmed
+  if (!aliased || isPrivateHireChallengeRoute(aliased)) return null
   const display = mergeRoutesByBaseNumber(routes)
+  const keys = new Set(
+    [aliased, toMergeBaseRouteNumber(aliased)].map((key) => key.trim().toLowerCase()),
+  )
   return (
     display.find(
-      (r) => r.number.toLowerCase() === key || r.id.toLowerCase() === key,
+      (r) => keys.has(r.number.toLowerCase()) || keys.has(r.id.toLowerCase()),
     ) ?? null
   )
 }

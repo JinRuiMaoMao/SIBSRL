@@ -16,7 +16,7 @@
 > - `whY370always` → `Bridge Closure (Y370)`。
 > - `R370` → `Marathon Shuttle (R370)`。
 > - `Marathon 240` → `Marathon Road Closure (240A)`。
-> - 8/5 只提供 `N246` 且没有活动名，结构化为 `Daily Challenge (N246)`。
+> - 8/5 社区完成截图为 **N146A**，游戏内任务选项显示 **N246**；活动为马拉松道路封闭（北行），结构化为 `Marathon Road Closure (N) (N246)`，本站以 **N246 → N146A** 解析线路详情。
 
 ## 原文（已去除 emoji / Markdown）
 
@@ -26,7 +26,7 @@ SIBS 2025 AUGUST DAILY CHALLENGES
 8/2: (Race) Lazy Passengers (N171W)
 8/3: (Race) Rush Hour (473)
 8/4: (Race) Urban Odyssey (77X)
-8/5: (Race) Daily Challenge (N246)
+8/5: (Race) Marathon Road Closure (N) (N246)
 8/6: (Race) Bridge Closure (Y370)
 8/7: (Race) Marathon Road Closure (471)
 8/8: (Race) Safety First (76)
