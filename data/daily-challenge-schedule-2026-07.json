@@ -27,7 +27,18 @@
     { "date": "2026-07-08", "event": "Concert Crowd Dispersal", "routeCode": "140E", "race": false },
     { "date": "2026-07-09", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },
     { "date": "2026-07-10", "event": "E-Payment Outage", "routeCode": "76#", "race": false },
-    { "date": "2026-07-11", "event": "Private Hire", "routeCode": "PH1", "race": true },
+    {
+      "date": "2026-07-11",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": true,
+      "privateHireStops": [
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "亚历山教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminus" } }
+      ]
+    },
     { "date": "2026-07-12", "event": "Rush Hour", "routeCode": null, "race": true },
     { "date": "2026-07-13", "event": null, "routeCode": null, "race": false },
     { "date": "2026-07-14", "event": null, "routeCode": null, "race": false },

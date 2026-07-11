@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-10'
+export const CURRENT_CHANGELOG_DATE = '2026-07-11'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -152,6 +152,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
+    id: "2026-07-11-summary",
+    date: "2026-07-11",
+    title: {
+      zh: "2026-07-11 更新",
+      en: "2026-07-11 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "录入 7/11 私人租用（PH1）站序：北滩 → 仙贝广场 → 亚历山教堂 → 东门总站。",
+            en: "Recorded 7/11 Private Hire (PH1) stops: Northern Beach → Senpai Shopping Center → Alexander Church → East Door Bus Terminus.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "2026-07-10-summary",
     date: "2026-07-10",
     title: {
@@ -228,8 +250,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Synced 7/8 daily challenge: Concert Crowd Dispersal (140E).",
           },
           {
-            zh: "批量录入私人租用（PH）当日站序 privateHireStops（双语站名；详情页与普通线路一样显示站序表、分区与报站音）：2024 年 6–12 月共 35 天、2025 全年 55 天、2026 年 1–6 月及 7 月已发生 PH 日已全部补齐（7/11 尚未发生）。",
-            en: "Batch-recorded private hire (PH) daily privateHireStops (bilingual names; detail pages show stop tables, zones, and PA like regular routes): all 35 Jun–Dec 2024 days, all 55 days in 2025, and every elapsed PH day in Jan–Jun 2026 plus July 2026 before 7/11.",
+            zh: "批量录入私人租用（PH）当日站序 privateHireStops（双语站名；详情页与普通线路一样显示站序表、分区与报站音）：2024 年 6–12 月共 35 天、2025 全年 55 天、2026 年 1–6 月及 7 月已发生 PH 日已全部补齐（含 7/11）。",
+            en: "Batch-recorded private hire (PH) daily privateHireStops (bilingual names; detail pages show stop tables, zones, and PA like regular routes): all 35 Jun–Dec 2024 days, all 55 days in 2025, and every elapsed PH day in Jan–Jun 2026 plus July 2026 through 7/11.",
           },
           {
             zh: "新增 2024 年 6–8 月、7 月及 2024–2025 多个月份 PH 站序 Markdown 对照表；社区推测条目（如 2024-07-25、2024-12-13）已在文档注明。",
