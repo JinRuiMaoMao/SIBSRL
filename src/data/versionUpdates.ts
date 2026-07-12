@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-11'
+export const CURRENT_CHANGELOG_DATE = '2026-07-12'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-07-12-summary",
+    date: "2026-07-12",
+    title: {
+      zh: "2026-07-12 更新",
+      en: "2026-07-12 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 7/12 每日挑战：[竞速] 繁忙时间（473W）。",
+            en: "Synced 7/12 daily challenge: [Race] Rush Hour (473W).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-07-11-summary",
     date: "2026-07-11",
