@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-12'
+export const CURRENT_CHANGELOG_DATE = '2026-07-13'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-07-13-summary",
+    date: "2026-07-13",
+    title: {
+      zh: "2026-07-13 更新",
+      en: "2026-07-13 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 7/13 每日挑战：马拉松封路（242，白鸽邨 ↺ 阳光码头，经西区海底隧道下层）。",
+            en: "Synced 7/13 daily challenge: Marathon Road Closure (242, Dove Estate ↺ Sunshine Pier via Central Western Bridge Lower Part).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-07-12-summary",
     date: "2026-07-12",
