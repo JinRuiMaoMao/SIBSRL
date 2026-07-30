@@ -54,10 +54,34 @@
     { "date": "2026-07-24", "event": "Safety First", "routeCode": "46W", "race": true },
     { "date": "2026-07-25", "event": "Marathon Road Closure (N)", "routeCode": "N171EM", "race": true },
     { "date": "2026-07-26", "event": "Rush Hour", "routeCode": "77N", "race": true },
-    { "date": "2026-07-27", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-07-28", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-07-29", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-07-30", "event": null, "routeCode": null, "race": false },
+    {
+      "date": "2026-07-27",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "伊迪城", "en": "Eddie City" } },
+        { "name": { "zh": "南環坊", "en": "Langford Place" } },
+        { "name": { "zh": "东锦葵海傍路", "en": "Eastmallow Praya Road" } },
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } }
+      ]
+    },
+    {
+      "date": "2026-07-28",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "三哥大厦", "en": "Third Technology Building" } },
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "阳光殡仪馆", "en": "Sunshine Funeral" } },
+        { "name": { "zh": "叶欣邨第一座", "en": "YiYan Estate Block 1" } },
+        { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } },
+        { "name": { "zh": "海西邨", "en": "Haisey Estate" } }
+      ]
+    },
+    { "date": "2026-07-29", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
+    { "date": "2026-07-30", "event": "Lazy Passengers", "routeCode": "49A", "race": false },
     { "date": "2026-07-31", "event": "Safety First", "routeCode": null, "race": true }
   ]
 }
