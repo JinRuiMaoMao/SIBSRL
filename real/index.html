@@ -145,10 +145,10 @@
         window.addEventListener('resize', apply);
       })();
     </script>
-    <meta name="app-build" content="2026-08-01T09:57:53.634Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T09%3A57%3A53.634Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T09%3A57%3A53.634Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T09%3A57%3A53.634Z" />
+    <meta name="app-build" content="2026-08-01T10:03:40.470Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A03%3A40.470Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A03%3A40.470Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A03%3A40.470Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -301,12 +301,41 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   var tab = tabMeta && tabMeta.content ? tabMeta.content.trim() : '';
   var track = page === 'start'
     ? '../audio/broadcasts/music/music-main-menu.ogg'
-    : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu.ogg' : '');
+    : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu-intro.ogg' : '');
   if (!track) return;
   try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
   var audio = new Audio(track);
-  audio.loop = true;
+  audio.loop = false;
   audio.preload = 'auto';
+  if (tab === 'routes') {
+    var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
+    var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
+    var introEnd = 30;
+    var mainStart = 49;
+    var phase = 'intro';
+    var onIntroTime = function () {
+      if (phase !== 'intro' || audio.currentTime < introEnd) return;
+      phase = 'main';
+      audio.removeEventListener('timeupdate', onIntroTime);
+      audio.src = mainUrl;
+      audio.addEventListener('loadedmetadata', function () {
+        audio.currentTime = mainStart;
+        tryPlay();
+      }, { once: true });
+      audio.load();
+    };
+    var onMainEnded = function () {
+      if (phase !== 'main') return;
+      phase = 'intro';
+      audio.src = introUrl;
+      audio.currentTime = 0;
+      audio.addEventListener('timeupdate', onIntroTime);
+      audio.addEventListener('canplay', tryPlay, { once: true });
+      audio.load();
+    };
+    audio.addEventListener('timeupdate', onIntroTime);
+    audio.addEventListener('ended', onMainEnded);
+  }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
   function unlock() {
     try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
@@ -443,7 +472,7 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   }, 15000);
 })();
 </script>
-      <script type="module" crossorigin src="../assets/dev-R1hGpQ5D.js"></script>
+      <script type="module" crossorigin src="../assets/dev-euDy-Dhb.js"></script>
       <script id="start-boot-splash-script">
 (function () {
   var splash = document.getElementById('start-boot-splash');

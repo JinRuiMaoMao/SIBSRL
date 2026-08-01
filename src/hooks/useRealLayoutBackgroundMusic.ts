@@ -6,6 +6,7 @@ import {
   loadRealLayoutMusicTrack,
   pauseRealLayoutMusic,
 } from '../utils/realLayoutMusicPlayer'
+import { getRealLayoutMusicCompositeConfig } from '../utils/realLayoutMusicComposite'
 import {
   readRealMusicMuted,
   writeRealMusicMuted,
@@ -56,7 +57,9 @@ export function useRealLayoutBackgroundMusic(trackId: RealLayoutMusicTrackId) {
     }
     const element = getRealLayoutMusicElement()
     if (element) {
-      element.currentTime = 0
+      if (!getRealLayoutMusicCompositeConfig(nextTrackId)) {
+        element.currentTime = 0
+      }
       element.muted = false
     }
     void attemptRealLayoutAutoplay()
