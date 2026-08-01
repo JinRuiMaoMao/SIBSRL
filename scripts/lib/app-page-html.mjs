@@ -501,9 +501,10 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var mainEnd = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
+    var targetVolume = 1;
     var phase = 'intro';
+    var spliced = false;
     var fadeFrame = null;
-    var transitionPending = false;
     function cancelFade() {
       if (fadeFrame != null) { cancelAnimationFrame(fadeFrame); fadeFrame = null; }
     }
@@ -519,47 +520,54 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       }
       fadeFrame = requestAnimationFrame(step);
     }
-    function fadeThenSwitch(toMain) {
-      if (transitionPending) return;
-      transitionPending = true;
-      fadeVolume(0, function () {
-        if (toMain) {
-          phase = 'main';
-          audio.src = mainUrl;
-          audio.addEventListener('loadedmetadata', function () {
-            audio.currentTime = mainStart;
-            audio.volume = 0;
-            tryPlay();
-            fadeVolume(1, function () { transitionPending = false; });
-          }, { once: true });
-          audio.load();
-        } else {
-          audio.currentTime = mainStart;
-          audio.volume = 0;
-          tryPlay();
-          fadeVolume(1, function () {
-            transitionPending = false;
-            mainFadeStarted = false;
-          });
-        }
-      });
+    function rampVolume(currentTime, cutAt) {
+      var fadeStart = cutAt - fadeLead;
+      if (currentTime <= fadeStart) {
+        audio.volume = targetVolume;
+        return;
+      }
+      if (currentTime >= cutAt) {
+        audio.volume = 0;
+        return;
+      }
+      var progress = (currentTime - fadeStart) / fadeLead;
+      audio.volume = targetVolume * (1 - progress);
     }
-    var introFadeStarted = false;
-    var mainFadeStarted = false;
-    var onIntroTime = function () {
-      if (phase !== 'intro' || transitionPending || introFadeStarted) return;
-      if (audio.currentTime < introEnd - fadeLead) return;
-      introFadeStarted = true;
-      fadeThenSwitch(true);
+    function spliceToMain() {
+      if (spliced) return;
+      spliced = true;
+      phase = 'main';
+      audio.volume = 0;
+      audio.src = mainUrl;
+      audio.addEventListener('loadedmetadata', function () {
+        audio.currentTime = mainStart;
+        tryPlay();
+        fadeVolume(targetVolume);
+      }, { once: true });
+      audio.load();
+    }
+    function spliceMainLoop() {
+      spliced = false;
+      audio.volume = 0;
+      audio.currentTime = mainStart;
+      tryPlay();
+      fadeVolume(targetVolume);
+    }
+    var onTrackTime = function () {
+      if (phase === 'intro') {
+        rampVolume(audio.currentTime, introEnd);
+        if (audio.currentTime >= introEnd) spliceToMain();
+        return;
+      }
+      if (phase === 'main') {
+        rampVolume(audio.currentTime, mainEnd);
+        if (audio.currentTime >= mainEnd) spliceMainLoop();
+      }
     };
-    var onMainTime = function () {
-      if (phase !== 'main' || transitionPending || mainFadeStarted) return;
-      if (audio.currentTime < mainEnd - fadeLead) return;
-      mainFadeStarted = true;
-      fadeThenSwitch(false);
-    };
-    audio.addEventListener('timeupdate', onIntroTime);
-    audio.addEventListener('timeupdate', onMainTime);
+    audio.addEventListener('timeupdate', onTrackTime);
+    audio.addEventListener('ended', function () {
+      if (phase === 'intro' && !spliced) spliceToMain();
+    });
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
   function unlock() {
