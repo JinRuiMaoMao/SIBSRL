@@ -121,6 +121,22 @@ export function getSeasonalAvailabilityLabels(
   return { range, unavailableFrom }
 }
 
+export function getSeasonalRouteDisplayWindow(
+  route: BusRoute,
+  now = new Date(),
+): SeasonalAvailabilityWindow | null {
+  const active = getSeasonalRouteActiveWindow(route, now)
+  if (active) return active
+
+  const keys = new Set<string>(routeAvailabilityKeys(route))
+  for (const key of keys) {
+    const windows = lookupWindows(key)
+    if (windows?.[0]) return windows[0]
+  }
+
+  return null
+}
+
 export function shouldPromoteSeasonalRouteBelowDailyChallenge(
   route: BusRoute,
   now = new Date(),

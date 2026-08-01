@@ -5072,11 +5072,53 @@ html.route-detail-open .route-split-shell {
   overflow: visible;
 }
 
-.route-group-collapse-panel-inner .route-grid {
+.route-group-collapse--game {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: color-mix(in srgb, var(--bg-surface) 88%, #000 12%);
+}
+
+.route-group-collapse--game .route-group-collapse-trigger {
+  background: transparent;
+  padding: 1rem 1.1rem;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.route-group-collapse--game .route-group-collapse-title {
+  flex: 0 1 auto;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--accent) 82%, var(--text) 18%);
+  text-align: center;
+}
+
+.route-group-collapse--game .route-group-collapse-count {
+  display: none;
+}
+
+.route-group-collapse--game .route-group-collapse-icon {
+  color: color-mix(in srgb, var(--accent) 70%, var(--text-muted) 30%);
+}
+
+.route-grid--special-seasonal {
+  gap: 0.85rem;
+}
+
+.route-display-group-list > .route-card-link--seasonal-promoted {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+  .route-grid--special-seasonal > .route-card-link--seasonal-promoted {
+    grid-column: span 1;
+  }
+}
+
+.route-group-collapse-panel-inner .route-grid--special-seasonal {
   margin-top: 0;
 }
 
-.secret-group-empty,
 .route-group-empty {
   padding: 1.25rem;
   margin: 0;

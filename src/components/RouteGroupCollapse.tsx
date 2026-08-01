@@ -3,7 +3,12 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 
 const GROUP_TITLE_KEYS: Record<
-  'normal' | 'special' | 'daily' | 'seasonal' | 'favorites' | 'recent' | 'viaStop' | 'betweenStops',
+  | 'normal'
+  | 'specialSeasonal'
+  | 'favorites'
+  | 'recent'
+  | 'viaStop'
+  | 'betweenStops',
   MessageKey
 > = {
   favorites: 'favoriteRoutes',
@@ -11,17 +16,13 @@ const GROUP_TITLE_KEYS: Record<
   viaStop: 'routesViaStop',
   betweenStops: 'routesBetweenStops',
   normal: 'routeGroupNormal',
-  special: 'routeGroupSpecial',
-  daily: 'routeGroupDaily',
-  seasonal: 'routeGroupSeasonal',
+  specialSeasonal: 'routeGroupSpecialSeasonal',
 }
 
 interface RouteGroupCollapseProps {
   groupId:
     | 'normal'
-    | 'special'
-    | 'daily'
-    | 'seasonal'
+    | 'specialSeasonal'
     | 'favorites'
     | 'recent'
     | 'viaStop'
@@ -31,6 +32,7 @@ interface RouteGroupCollapseProps {
   onOpenChange: (open: boolean) => void
   children: ReactNode
   dataTour?: string
+  variant?: 'default' | 'game'
 }
 
 export function RouteGroupCollapse({
@@ -40,13 +42,17 @@ export function RouteGroupCollapse({
   onOpenChange,
   children,
   dataTour,
+  variant = 'default',
 }: RouteGroupCollapseProps) {
   const { t } = useLocale()
   const panelId = useId()
   const title = t(GROUP_TITLE_KEYS[groupId])
 
   return (
-    <section className={`route-group-collapse ${open ? 'is-open' : ''}`} data-tour={dataTour}>
+    <section
+      className={`route-group-collapse ${open ? 'is-open' : ''} ${variant === 'game' ? 'route-group-collapse--game' : ''}`.trim()}
+      data-tour={dataTour}
+    >
       <button
         type="button"
         className="route-group-collapse-trigger"

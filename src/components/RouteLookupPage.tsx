@@ -10,15 +10,20 @@ import {
 } from '../data/dailyChallenge'
 import type { DailyChallengeScheduleDay } from '../data/dailyChallengeSchedule'
 import {
+  countVisibleMergedSlots,
+  filterRoutesForMainRouteList,
   getGroupDisplaySlots,
-  getRouteDisplayIdsForGroup,
-  resolveGroupedRouteEntry,
+  getRouteDisplayGroupsForRoute,
+  mergeGroupDisplaySlots,
   ROUTE_DISPLAY_GROUP_ORDER,
+  ROUTE_LIST_UI_SECTION_GROUPS,
+  ROUTE_LIST_UI_SECTION_ORDER,
   type RouteDisplayGroupKey,
+  type RouteListUiSectionKey,
 } from '../data/routeDisplayGroups'
 import {
   getSeasonalAvailabilityLabels,
-  getSeasonalRouteActiveWindow,
+  getSeasonalRouteDisplayWindow,
 } from '../data/seasonalRouteAvailability'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { DailyChallengeCalendarDialog } from './DailyChallengeCalendarDialog'
@@ -164,25 +169,6 @@ function scrollRealRouteCardIntoView(listKey: string) {
   el.scrollIntoView({ behavior: shouldReduceMotion() ? 'auto' : 'smooth', block: 'center' })
 }
 
-function countUniqueVisibleSlots(
-  groups: RouteDisplayGroupKey[],
-  slotsByGroup: Record<RouteDisplayGroupKey, ReturnType<typeof getGroupDisplaySlots>>,
-): number {
-  const seenRouteIds = new Set<string>()
-  let count = 0
-
-  for (const group of groups) {
-    for (const slot of slotsByGroup[group]) {
-      if (!slot.isVisible || !slot.entry) continue
-      if (seenRouteIds.has(slot.entry.route.id)) continue
-      seenRouteIds.add(slot.entry.route.id)
-      count++
-    }
-  }
-
-  return count
-}
-
 function scrollElementBelowStickyToolbar(el: HTMLElement) {
   const root = document.documentElement
   const header =
@@ -292,11 +278,17 @@ export function RouteLookupPage({
     types,
   } = useRouteSearch(dailyChallenge)
   const realFilteredEntries = useMemo(
-    () => (splitLayoutActive ? buildRealRouteListEntries(filteredRoutes) : []),
+    () =>
+      splitLayoutActive
+        ? buildRealRouteListEntries(filterRoutesForMainRouteList(filteredRoutes))
+        : [],
     [filteredRoutes, splitLayoutActive],
   )
   const realTotalEntries = useMemo(
-    () => (splitLayoutActive ? buildRealRouteListEntries(displayRoutes) : []),
+    () =>
+      splitLayoutActive
+        ? buildRealRouteListEntries(filterRoutesForMainRouteList(displayRoutes))
+        : [],
     [displayRoutes, splitLayoutActive],
   )
   const selectedRealListKey = useMemo(() => {
@@ -1101,14 +1093,6 @@ export function RouteLookupPage({
     return null
   }
 
-  const visibleDisplayGroups = useMemo(
-    () =>
-      ROUTE_DISPLAY_GROUP_ORDER.filter(
-        (group) => getRouteDisplayIdsForGroup(group).length > 0,
-      ),
-    [],
-  )
-
   const dailyListedId = getDailyChallengeListedRouteId(dailyChallenge)
 
   const groupedTotalSlots = useMemo(() => {
@@ -1137,47 +1121,50 @@ export function RouteLookupPage({
 
   const getSeasonalLabelsForRoute = useCallback(
     (route: BusRoute) => {
-      const window = getSeasonalRouteActiveWindow(route)
+      const window = getSeasonalRouteDisplayWindow(route)
       if (!window) return null
       return getSeasonalAvailabilityLabels(window, locale, t)
     },
     [locale, t],
   )
 
-  const promotedSeasonalEntries = useMemo(() => {
-    const visibleIds = new Set(filteredRoutes.map((route) => route.id))
-    const seenRouteIds = new Set<string>()
-    const entries: Array<{
-      entry: NonNullable<ReturnType<typeof resolveGroupedRouteEntry>>
-      window: NonNullable<ReturnType<typeof getSeasonalRouteActiveWindow>>
-    }> = []
+  const listSectionSlots = useMemo(() => {
+    const normal = groupedSlots.normal
+    const specialSeasonal = mergeGroupDisplaySlots(
+      ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal,
+      groupedSlots,
+    )
+    return { normal, specialSeasonal }
+  }, [groupedSlots])
 
-    for (const listedId of getRouteDisplayIdsForGroup('seasonal')) {
-      const entry = resolveGroupedRouteEntry(listedId)
-      if (!entry || seenRouteIds.has(entry.route.id)) continue
-      if (!visibleIds.has(entry.route.id)) continue
-      const window = getSeasonalRouteActiveWindow(entry.route)
-      if (!window?.promoteBelowDailyChallenge) continue
-      seenRouteIds.add(entry.route.id)
-      entries.push({ entry, window })
-    }
+  const listSectionTotalSlots = useMemo(() => {
+    const normal = groupedTotalSlots.normal
+    const specialSeasonal = mergeGroupDisplaySlots(
+      ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal,
+      groupedTotalSlots,
+    )
+    return { normal, specialSeasonal }
+  }, [groupedTotalSlots])
 
-    return entries
-  }, [filteredRoutes])
-
-  const countVisibleGroupSlots = useCallback(
-    (group: RouteDisplayGroupKey) =>
-      groupedSlots[group].filter((slot) => slot.isVisible && slot.entry).length,
-    [groupedSlots],
+  const countVisibleSectionSlots = useCallback(
+    (section: RouteListUiSectionKey) =>
+      countVisibleMergedSlots(listSectionSlots[section]),
+    [listSectionSlots],
   )
 
   const groupedRouteCount = useMemo(() => {
-    return countUniqueVisibleSlots(visibleDisplayGroups, groupedSlots)
-  }, [groupedSlots, visibleDisplayGroups])
+    return ROUTE_LIST_UI_SECTION_ORDER.reduce(
+      (sum, section) => sum + countVisibleMergedSlots(listSectionSlots[section]),
+      0,
+    )
+  }, [listSectionSlots])
 
   const groupedTotalCount = useMemo(() => {
-    return countUniqueVisibleSlots(visibleDisplayGroups, groupedTotalSlots)
-  }, [groupedTotalSlots, visibleDisplayGroups])
+    return ROUTE_LIST_UI_SECTION_ORDER.reduce(
+      (sum, section) => sum + countVisibleMergedSlots(listSectionTotalSlots[section]),
+      0,
+    )
+  }, [listSectionTotalSlots])
 
   const betweenStopPairDraft =
     Boolean(structuredStopPair.from?.trim() && structuredStopPair.to?.trim()) &&
@@ -1226,13 +1213,13 @@ export function RouteLookupPage({
     }
 
     const next = defaultClosedRouteGroups()
-    for (const group of visibleDisplayGroups) {
-      if (countVisibleGroupSlots(group) > 0) next[group] = true
+    for (const section of ROUTE_LIST_UI_SECTION_ORDER) {
+      if (countVisibleSectionSlots(section) > 0) next[section] = true
     }
     if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
     if (parsed.from?.trim() && parsed.to?.trim()) setBetweenStopsSectionOpen(true)
     setGroupOpen(next)
-  }, [countVisibleGroupSlots, filters.query, stopLookupRoutes.length, visibleDisplayGroups])
+  }, [countVisibleSectionSlots, filters.query, stopLookupRoutes.length])
 
   const handleApplyHistory = useCallback(
     (query: string) => {
@@ -1254,14 +1241,34 @@ export function RouteLookupPage({
     setSearchHistory([])
   }, [])
 
-  const renderGroupedRouteCards = (group: RouteDisplayGroupKey) =>
-    groupedSlots[group].map((slot, index) => {
+  const renderListSectionCards = (section: RouteListUiSectionKey) =>
+    listSectionSlots[section].map((slot, index) => {
       const { route, listedId, directionKey } = slot.entry!
       const directionIndex = getCardDirectionIndex(route, directionKey)
       const seasonalLabels = getSeasonalLabelsForRoute(route)
+      const seasonalWindow = getSeasonalRouteDisplayWindow(route)
+      const useSeasonalCard =
+        section === 'specialSeasonal' &&
+        getRouteDisplayGroupsForRoute(route).includes('seasonal') &&
+        seasonalWindow != null
+
+      if (useSeasonalCard) {
+        return (
+          <SeasonalPromotedRouteCard
+            key={`${section}-${listedId}`}
+            route={route}
+            displayNumber={listedId !== route.number ? listedId : undefined}
+            window={seasonalWindow}
+            selected={selectedRoute?.id === route.id}
+            directionIndex={directionIndex}
+            onNavigate={handleRouteNavigate}
+          />
+        )
+      }
+
       return (
         <RouteCard
-          key={`${group}-${listedId}`}
+          key={`${section}-${listedId}`}
           route={route}
           displayNumber={listedId !== route.number ? listedId : undefined}
           selected={selectedRoute?.id === route.id}
@@ -1269,23 +1276,7 @@ export function RouteLookupPage({
           loopView={getLoopView(route)}
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
-          tourAnchor={group === 'normal' && index === 0 ? 'route-card' : undefined}
-          onNavigate={handleRouteNavigate}
-        />
-      )
-    })
-
-  const renderPromotedSeasonalRouteCards = () =>
-    promotedSeasonalEntries.map(({ entry, window }) => {
-      const { route, listedId } = entry
-      return (
-        <SeasonalPromotedRouteCard
-          key={`promoted-seasonal-${listedId}`}
-          route={route}
-          displayNumber={listedId !== route.number ? listedId : undefined}
-          window={window}
-          selected={selectedRoute?.id === route.id}
-          directionIndex={getDirectionIndex(route)}
+          tourAnchor={section === 'normal' && index === 0 ? 'route-card' : undefined}
           onNavigate={handleRouteNavigate}
         />
       )
@@ -1541,8 +1532,6 @@ export function RouteLookupPage({
               />
             ) : null}
 
-            {promotedSeasonalEntries.length > 0 ? renderPromotedSeasonalRouteCards() : null}
-
             {betweenStopPairDraft ? (
               <p className="stop-lookup-summary stop-lookup-pending">{t('betweenStopsPressEnter')}</p>
             ) : null}
@@ -1583,9 +1572,9 @@ export function RouteLookupPage({
               </RouteGroupCollapse>
             ) : null}
 
-            {visibleDisplayGroups.map((group) => (
-              <Fragment key={group}>
-                {group === 'normal' && showFavoritesSection ? (
+            {ROUTE_LIST_UI_SECTION_ORDER.map((section) => (
+              <Fragment key={section}>
+                {section === 'normal' && showFavoritesSection ? (
                   <RouteGroupCollapse
                     groupId="favorites"
                     dataTour="favorites"
@@ -1607,7 +1596,7 @@ export function RouteLookupPage({
                   </RouteGroupCollapse>
                 ) : null}
 
-                {group === 'normal' && recentRoutes.length > 0 ? (
+                {section === 'normal' && recentRoutes.length > 0 ? (
                   <RouteGroupCollapse
                     groupId="recent"
                     count={recentRoutes.length}
@@ -1621,18 +1610,23 @@ export function RouteLookupPage({
                 ) : null}
 
                 <RouteGroupCollapse
-                  groupId={group}
-                  dataTour={group === 'normal' ? 'route-group-normal' : undefined}
-                  count={countVisibleGroupSlots(group)}
-                  open={groupOpen[group]}
+                  groupId={section}
+                  variant="game"
+                  dataTour={section === 'normal' ? 'route-group-normal' : undefined}
+                  count={countVisibleSectionSlots(section)}
+                  open={groupOpen[section]}
                   onOpenChange={(open) =>
-                    setGroupOpen((prev) => ({ ...prev, [group]: open }))
+                    setGroupOpen((prev) => ({ ...prev, [section]: open }))
                   }
                 >
-                  {countVisibleGroupSlots(group) === 0 ? (
+                  {countVisibleSectionSlots(section) === 0 ? (
                     <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
                   ) : (
-                    <div className="route-grid">{renderGroupedRouteCards(group)}</div>
+                    <div
+                      className={`route-grid${section === 'specialSeasonal' ? ' route-grid--special-seasonal' : ''}`}
+                    >
+                      {renderListSectionCards(section)}
+                    </div>
                   )}
                 </RouteGroupCollapse>
               </Fragment>

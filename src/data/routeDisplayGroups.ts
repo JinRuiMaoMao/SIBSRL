@@ -18,6 +18,19 @@ export const ROUTE_DISPLAY_GROUP_ORDER: RouteDisplayGroupKey[] = [
   'seasonal',
 ]
 
+/** 主站列表 UI：常规在上，特殊+节日在下；不含每日挑战分组。 */
+export type RouteListUiSectionKey = 'normal' | 'specialSeasonal'
+
+export const ROUTE_LIST_UI_SECTION_ORDER: RouteListUiSectionKey[] = ['normal', 'specialSeasonal']
+
+export const ROUTE_LIST_UI_SECTION_GROUPS: Record<
+  RouteListUiSectionKey,
+  readonly RouteDisplayGroupKey[]
+> = {
+  normal: ['normal'],
+  specialSeasonal: ['special', 'seasonal'],
+}
+
 const groupRouteIds = routeDisplayGroupsJson as Record<RouteDisplayGroupKey, string[]>
 
 const displayRoutes = mergeRoutesByBaseNumber(routes)
@@ -195,4 +208,47 @@ export function getGroupDisplaySlots(
   shown.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
 
   return shown
+}
+
+/** 仅出现在每日挑战分组、不在常规/特殊/季节列表中的线路。 */
+export function isDailyOnlyDisplayRoute(route: BusRoute): boolean {
+  const groups = getRouteDisplayGroupsForRoute(route)
+  if (!groups.includes('daily')) return false
+  return !groups.some((group) => group === 'normal' || group === 'special' || group === 'seasonal')
+}
+
+export function filterRoutesForMainRouteList(routes: readonly BusRoute[]): BusRoute[] {
+  return routes.filter((route) => !isDailyOnlyDisplayRoute(route))
+}
+
+export function mergeGroupDisplaySlots(
+  groups: readonly RouteDisplayGroupKey[],
+  slotsByGroup: Record<RouteDisplayGroupKey, GroupedRouteDisplaySlot[]>,
+): GroupedRouteDisplaySlot[] {
+  const seenRouteIds = new Set<string>()
+  const merged: GroupedRouteDisplaySlot[] = []
+
+  for (const group of groups) {
+    for (const slot of slotsByGroup[group] ?? []) {
+      if (!slot.isVisible || !slot.entry) continue
+      if (seenRouteIds.has(slot.entry.route.id)) continue
+      seenRouteIds.add(slot.entry.route.id)
+      merged.push(slot)
+    }
+  }
+
+  merged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
+  return merged
+}
+
+export function countVisibleMergedSlots(slots: readonly GroupedRouteDisplaySlot[]): number {
+  const seenRouteIds = new Set<string>()
+  let count = 0
+  for (const slot of slots) {
+    if (!slot.isVisible || !slot.entry) continue
+    if (seenRouteIds.has(slot.entry.route.id)) continue
+    seenRouteIds.add(slot.entry.route.id)
+    count++
+  }
+  return count
 }

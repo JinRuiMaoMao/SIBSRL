@@ -1,8 +1,8 @@
-import type { RouteDisplayGroupKey } from '../data/routeDisplayGroups'
+import type { RouteListUiSectionKey } from '../data/routeDisplayGroups'
 import type { RouteFilters, RouteTypeFilter } from '../types/route'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 
-export type RouteListGroupKey = RouteDisplayGroupKey | 'favorites' | 'recent'
+export type RouteListGroupKey = RouteListUiSectionKey | 'favorites' | 'recent'
 
 export const FAVORITE_ROUTES_STORAGE_KEY = 'sibs-favorite-routes'
 export const ROUTE_FILTERS_STORAGE_KEY = 'sibs-route-filters'
@@ -12,9 +12,7 @@ const DEFAULT_GROUP_OPEN: Record<RouteListGroupKey, boolean> = {
   favorites: false,
   recent: false,
   normal: false,
-  special: false,
-  daily: false,
-  seasonal: false,
+  specialSeasonal: false,
 }
 
 const DEFAULT_SAVED_FILTERS: Pick<RouteFilters, 'zone' | 'operator' | 'type'> = {
@@ -89,9 +87,9 @@ export function readStoredRouteGroupOpen(): Record<RouteListGroupKey, boolean> {
       favorites: Boolean(stored.favorites),
       recent: Boolean(stored.recent),
       normal: Boolean(stored.normal),
-      special: Boolean(stored.special),
-      daily: Boolean(stored.daily),
-      seasonal: Boolean(stored.seasonal),
+      specialSeasonal: Boolean(
+        stored.specialSeasonal ?? stored.special ?? stored.seasonal,
+      ),
     }
   } catch {
     return { ...DEFAULT_GROUP_OPEN }
