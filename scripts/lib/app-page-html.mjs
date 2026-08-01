@@ -497,7 +497,8 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
     var introFadeAt = 30;
-    var mainStart = 189;
+    var mainEntryStart = 189;
+    var mainLoopStart = 17;
     var mainFadeAt = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
@@ -524,7 +525,7 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     function startMainOverlap() {
       if (crossfadeStarted) return;
       crossfadeStarted = true;
-      mainAudio.currentTime = mainStart;
+      mainAudio.currentTime = mainEntryStart;
       mainAudio.volume = targetVolume;
       if (!mainAudio.paused) return;
       mainAudio.muted = audio.muted;
@@ -545,7 +546,7 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       var loopAudio = new Audio(mainUrl);
       loopAudio.preload = 'auto';
       loopAudio.addEventListener('loadedmetadata', function () {
-        loopAudio.currentTime = mainStart;
+        loopAudio.currentTime = mainLoopStart;
         loopAudio.volume = targetVolume;
         loopAudio.muted = audio.muted;
         loopAudio.play().catch(function () {});
