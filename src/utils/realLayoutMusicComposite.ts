@@ -11,6 +11,8 @@ export type RealLayoutMusicCompositeConfig = {
   loop: boolean
   /** Segment index to restart from when the sequence completes (default 0). */
   loopFromSegmentIndex?: number
+  /** Hard-cut to the next segment at end (no volume crossfade). */
+  instantSegmentHandoff?: boolean
 }
 
 const MAP_MENU_INTRO_ASSET = 'audio/broadcasts/music/music-map-menu-intro.ogg'
@@ -29,6 +31,7 @@ export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
     ],
     loop: true,
     loopFromSegmentIndex: 2,
+    instantSegmentHandoff: true,
   },
 }
 

@@ -305,11 +305,32 @@ function attachCompositeSegmentHandlers(
   segment: RealLayoutMusicCompositeSegment,
 ): void {
   const element = getActiveAudio()
+  const nextIndex = resolveNextSegmentIndex(index, config)
+
+  if (config.instantSegmentHandoff) {
+    let handedOff = false
+
+    const handoffOnce = () => {
+      if (handedOff || nextIndex == null) return
+      handedOff = true
+      playCompositeSegment(nextIndex, config)
+    }
+
+    compositeEndedHandler = handoffOnce
+    element.addEventListener('ended', compositeEndedHandler)
+
+    compositeTimeUpdateHandler = () => {
+      const duration = element.duration
+      if (!Number.isFinite(duration) || duration <= 0) return
+      if (element.currentTime >= duration - 0.05) handoffOnce()
+    }
+    element.addEventListener('timeupdate', compositeTimeUpdateHandler)
+    return
+  }
+
   const fadeLead = fadeLeadSeconds()
   let crossfadeStarted = false
   let finalized = false
-
-  const nextIndex = segment.endAt != null ? resolveNextSegmentIndex(index, config) : null
 
   if (nextIndex != null) {
     const nextSegment = config.segments[nextIndex]
