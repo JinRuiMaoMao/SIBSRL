@@ -1,12 +1,13 @@
 import { usePortraitBlocked } from '../hooks/usePortraitBlocked'
 import { useLocale } from '../i18n/LocaleContext'
+import { isRealLayoutMode, getSiteAssetRoot } from '../utils/appLayoutMode'
 import { createPortal } from 'react-dom'
 
 export function PortraitOrientationGate() {
   const blocked = usePortraitBlocked()
   const { t } = useLocale()
 
-  if (!blocked) return null
+  if (!isRealLayoutMode() || !blocked) return null
 
   const node = (
     <div
@@ -18,7 +19,7 @@ export function PortraitOrientationGate() {
       <div className="portrait-orientation-gate-card">
         <img
           className="portrait-orientation-gate-logo"
-          src="./sibs-logo.png"
+          src={`${getSiteAssetRoot()}sibs-logo.png`}
           alt=""
           width={56}
           height={56}

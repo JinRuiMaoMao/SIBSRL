@@ -196,8 +196,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Split layout is now a left route sidebar plus edge-to-edge full-height map; fixed portrait rotate prompt not appearing.",
           },
           {
-            zh: "竖屏（手机/平板）不再可用，检测到竖屏时会提示请旋转至横屏。",
-            en: "Portrait mode on phones and tablets is blocked; users are prompted to rotate to landscape.",
+            zh: "竖屏（手机/平板）在 real 分屏站需横屏使用；normal 网格站不受此限制。",
+            en: "Portrait mode on phones/tablets is blocked on the real split site only; the normal grid site works in any orientation.",
           },
           {
             zh: "新增分屏布局：左侧横向单卡浏览线路，右侧嵌入群岛地图；搜索栏右上角可切换「网格／分屏」。",

@@ -176,10 +176,23 @@ export function injectThemeBootstrap(html) {
   return html.replace('<head>', `<head>\n    ${THEME_BOOTSTRAP_SCRIPT}`)
 }
 
+const PORTRAIT_REAL_LAYOUT_CHECK = `function isRealLayoutSite() {
+    var path = String(window.location.pathname || '').replace(/\\\\/g, '/');
+    if (/\\/real(?:\\/|$)/i.test(path)) return true;
+    if (/\\/normal(?:\\/|$)/i.test(path)) return false;
+    var meta = document.querySelector('meta[name="app-layout-mode"]');
+    return !!(meta && meta.content && meta.content.trim() === 'real');
+  }`
+
 const PORTRAIT_BLOCK_BOOTSTRAP_SCRIPT = `<script id="portrait-block-bootstrap">
 (function () {
+  ${PORTRAIT_REAL_LAYOUT_CHECK}
   var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px), (max-aspect-ratio: 1/1) and (max-width: 1024px)');
   function apply() {
+    if (!isRealLayoutSite()) {
+      document.documentElement.removeAttribute('data-portrait-blocked');
+      return;
+    }
     document.documentElement.setAttribute('data-portrait-blocked', mq.matches ? 'true' : 'false');
   }
   apply();
@@ -200,10 +213,19 @@ const PORTRAIT_ORIENTATION_FALLBACK = `<div id="portrait-orientation-fallback" c
   <div class="portrait-orientation-gate-card">
     <p><img src="./sibs-logo.png" alt="" width="56" height="56" decoding="async" /></p>
     <h1>请旋转设备至横屏</h1>
-    <p>本站仅支持横屏使用。请将手机或平板转至横屏后再继续。</p>
-    <p lang="en">Please rotate to landscape. This site only works in landscape mode.</p>
+    <p>分屏模式仅支持横屏。请将手机或平板转至横屏后再继续。</p>
+    <p lang="en">Split layout requires landscape. Please rotate your device to continue.</p>
   </div>
 </div>`
+
+/** @param {string} html */
+export function stripPortraitOrientationBlocks(html) {
+  let out = html.replace(/<script id="portrait-block-bootstrap">[\s\S]*?<\/script>\s*/gi, '')
+  if (out.includes('id="portrait-orientation-fallback"')) {
+    out = out.replace(`${PORTRAIT_ORIENTATION_FALLBACK}\n    `, '').replace(PORTRAIT_ORIENTATION_FALLBACK, '')
+  }
+  return out
+}
 
 /** @param {string} html */
 export function injectPortraitOrientationFallback(html) {
@@ -270,6 +292,9 @@ export function buildLegacyLayoutRedirectHtml(targetPath) {
 /** @param {string} html @param {'normal' | 'real'} layoutMode @param {boolean} forSubdir */
 export function prepareLayoutScopedHtml(html, layoutMode, forSubdir) {
   let out = injectAppLayoutModeMeta(html, layoutMode)
+  if (layoutMode === 'normal') {
+    out = stripPortraitOrientationBlocks(out)
+  }
   if (forSubdir) out = rewritePublishedHtmlForLayoutSubdir(out)
   return out
 }
