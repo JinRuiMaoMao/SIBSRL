@@ -30,7 +30,7 @@ export function isRouteEligibleForTripPlanning(
   if (!isRouteStopDataComplete(route)) return false
 
   const groups = getRouteDisplayGroupsForRoute(route)
-  if (groups.includes('normal')) return true
+  if (groups.includes('normal') || groups.includes('special')) return true
   if (groups.includes('daily') && isTodaysDailyChallengeRoute(route, dailyChallenge)) return true
   if (groups.includes('seasonal') && isSeasonalRouteUnlocked(route, now)) return true
 

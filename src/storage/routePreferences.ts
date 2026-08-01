@@ -12,6 +12,7 @@ const DEFAULT_GROUP_OPEN: Record<RouteListGroupKey, boolean> = {
   favorites: false,
   recent: false,
   normal: false,
+  special: false,
   daily: false,
   seasonal: false,
 }
@@ -88,6 +89,7 @@ export function readStoredRouteGroupOpen(): Record<RouteListGroupKey, boolean> {
       favorites: Boolean(stored.favorites),
       recent: Boolean(stored.recent),
       normal: Boolean(stored.normal),
+      special: Boolean(stored.special),
       daily: Boolean(stored.daily),
       seasonal: Boolean(stored.seasonal),
     }

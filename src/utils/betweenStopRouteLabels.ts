@@ -36,6 +36,7 @@ export function getBetweenStopRouteBadgeKeys(
 
   const inTripPool =
     groups.includes('normal') ||
+    groups.includes('special') ||
     (groups.includes('daily') && isTodaysDailyChallengeRoute(route, dailyChallenge)) ||
     (groups.includes('seasonal') && isSeasonalRouteUnlocked(route, now))
 

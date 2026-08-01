@@ -9,9 +9,14 @@ import {
 import { compareRouteNumber } from '../utils/routeSort'
 import { routes } from './routes'
 
-export type RouteDisplayGroupKey = 'normal' | 'daily' | 'seasonal'
+export type RouteDisplayGroupKey = 'normal' | 'special' | 'daily' | 'seasonal'
 
-export const ROUTE_DISPLAY_GROUP_ORDER: RouteDisplayGroupKey[] = ['normal', 'daily', 'seasonal']
+export const ROUTE_DISPLAY_GROUP_ORDER: RouteDisplayGroupKey[] = [
+  'normal',
+  'special',
+  'daily',
+  'seasonal',
+]
 
 const groupRouteIds = routeDisplayGroupsJson as Record<RouteDisplayGroupKey, string[]>
 

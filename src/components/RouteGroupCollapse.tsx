@@ -3,7 +3,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 
 const GROUP_TITLE_KEYS: Record<
-  'normal' | 'daily' | 'seasonal' | 'favorites' | 'recent' | 'viaStop' | 'betweenStops',
+  'normal' | 'special' | 'daily' | 'seasonal' | 'favorites' | 'recent' | 'viaStop' | 'betweenStops',
   MessageKey
 > = {
   favorites: 'favoriteRoutes',
@@ -11,12 +11,21 @@ const GROUP_TITLE_KEYS: Record<
   viaStop: 'routesViaStop',
   betweenStops: 'routesBetweenStops',
   normal: 'routeGroupNormal',
+  special: 'routeGroupSpecial',
   daily: 'routeGroupDaily',
   seasonal: 'routeGroupSeasonal',
 }
 
 interface RouteGroupCollapseProps {
-  groupId: 'normal' | 'daily' | 'seasonal' | 'favorites' | 'recent' | 'viaStop' | 'betweenStops'
+  groupId:
+    | 'normal'
+    | 'special'
+    | 'daily'
+    | 'seasonal'
+    | 'favorites'
+    | 'recent'
+    | 'viaStop'
+    | 'betweenStops'
   count: number
   open: boolean
   onOpenChange: (open: boolean) => void

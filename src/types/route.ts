@@ -26,7 +26,7 @@ export type RouteServiceType =
 export type RouteTypeFilter = RouteServiceType | 'centralAxis'
 
 /** 游戏内“常规/每日挑战/季节限定（限时）”分组筛选 */
-export type RouteGroupFilter = 'all' | 'normal' | 'daily' | 'seasonal'
+export type RouteGroupFilter = 'all' | 'normal' | 'special' | 'daily' | 'seasonal'
 
 export interface BilingualText {
   zh: string
