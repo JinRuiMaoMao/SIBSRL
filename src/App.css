@@ -7823,6 +7823,20 @@ html[data-reduce-motion='true'] .real-start-page--ready {
   overflow: hidden;
 }
 
+@keyframes real-start-bg-drift {
+  0% {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: scale(1.1) translate3d(-1.25%, -0.85%, 0);
+  }
+
+  100% {
+    transform: scale(1.06) translate3d(0.85%, 1.1%, 0);
+  }
+}
+
 .real-start-bg-map {
   position: absolute;
   inset: -8%;
@@ -7831,7 +7845,24 @@ html[data-reduce-motion='true'] .real-start-page--ready {
   object-fit: cover;
   opacity: 0.42;
   filter: saturate(0.35) brightness(0.45) blur(1px);
+  transform: scale(1.06) translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.real-start-page--ready .real-start-bg-map {
+  animation: real-start-bg-drift 100s ease-in-out infinite alternate;
+}
+
+html[data-reduce-motion='true'] .real-start-bg-map {
+  animation: none;
   transform: scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .real-start-bg-map {
+    animation: none !important;
+    transform: scale(1.02);
+  }
 }
 
 .real-start-bg-overlay {
