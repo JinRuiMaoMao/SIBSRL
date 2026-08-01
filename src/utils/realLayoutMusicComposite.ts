@@ -13,21 +13,16 @@ export type RealLayoutMusicCompositeConfig = {
   loopFromSegmentIndex?: number
 }
 
-/** 4:53 — main loop ends here and jumps back to 0:49. */
-const MAP_MENU_MAIN_END_AT = 4 * 60 + 53
+const MAP_MENU_SPLICE_AT = 17
 
-/** Routes map music: Radium2 intro → original Radium 0:49–4:53, then loop from 0:49. */
+/** Routes map music: Radium2 → original Radium, both spliced at 0:17; main loops from 0:17. */
 export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
   Record<RealLayoutMusicTrackId, RealLayoutMusicCompositeConfig>
 > = {
   'music-map-menu': {
     segments: [
-      { asset: 'audio/broadcasts/music/music-map-menu-intro.ogg', endAt: 30 },
-      {
-        asset: 'audio/broadcasts/music/music-map-menu.ogg',
-        startAt: 49,
-        endAt: MAP_MENU_MAIN_END_AT,
-      },
+      { asset: 'audio/broadcasts/music/music-map-menu-intro.ogg', endAt: MAP_MENU_SPLICE_AT },
+      { asset: 'audio/broadcasts/music/music-map-menu.ogg', startAt: MAP_MENU_SPLICE_AT },
     ],
     loop: true,
     loopFromSegmentIndex: 1,
