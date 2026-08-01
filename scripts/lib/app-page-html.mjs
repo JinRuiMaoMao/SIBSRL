@@ -497,7 +497,7 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
     var introFadeAt = 30;
-    var mainStart = 30;
+    var mainStart = 189;
     var mainFadeAt = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
