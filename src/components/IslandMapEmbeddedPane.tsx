@@ -37,6 +37,7 @@ export function IslandMapEmbeddedPane() {
     () => (routeOverlay?.stops?.length ? routeOverlay.stops : []),
     [routeOverlay?.stops],
   )
+  const showStopsOnMap = catalogStops.length > 0
 
   const handleStopClick = useCallback((stopId: string) => {
     setSelectedStopId((current) => (current === stopId ? null : stopId))
@@ -90,8 +91,8 @@ export function IslandMapEmbeddedPane() {
   const importedSurfaceProps = interactiveLayer
     ? {
         draftPoints: interactiveLayer.draftPoints,
-        draftStopPoints: importedPath!.stopPoints,
-        draftStops: interactiveLayer.interactiveDrawStops,
+        ...(showStopsOnMap ? { draftStopPoints: importedPath!.stopPoints } : {}),
+        ...(showStopsOnMap ? { draftStops: interactiveLayer.interactiveDrawStops } : {}),
         draftPathNodes: interactiveLayer.draftPathNodes,
         draftRouteNumber: importedPath!.routeNumber,
         pathLegStarts: importedPath!.legStarts,
@@ -104,14 +105,16 @@ export function IslandMapEmbeddedPane() {
               segments: interactiveLayer.referenceEditorProps.segments,
               lineStyle: interactiveLayer.referenceEditorProps.lineStyle,
               config: interactiveLayer.referenceEditorProps.config,
-              selectedNodeId: selectedReferenceNodeId,
+              selectedNodeId: showStopsOnMap ? selectedReferenceNodeId : null,
               connectPendingNodeId: null,
               connectPreview: null,
               previewNode: null,
               segmentPassthrough: interactiveLayer.referenceEditorProps.segmentPassthrough,
               allowSegmentDelete: interactiveLayer.referenceEditorProps.allowSegmentDelete,
               continuousSegmentPaths: interactiveLayer.referenceEditorProps.continuousSegmentPaths,
-              onNodeClick: interactiveLayer.referenceEditorProps.onNodeClick,
+              onNodeClick: showStopsOnMap
+                ? interactiveLayer.referenceEditorProps.onNodeClick
+                : undefined,
             }
           : null,
       }
@@ -120,12 +123,16 @@ export function IslandMapEmbeddedPane() {
   const stopSurfaceProps = importedPath
     ? {
         ...importedSurfaceProps,
-        draftStops,
-        selectedStopId,
-        onStopClick: interactiveLayer?.stopClickEnabled ? handleStopClick : undefined,
-        showStopLabels: true,
+        ...(showStopsOnMap
+          ? {
+              draftStops,
+              selectedStopId,
+              onStopClick: interactiveLayer?.stopClickEnabled ? handleStopClick : undefined,
+              showStopLabels: true,
+            }
+          : {}),
       }
-    : draftStops.length > 0
+    : showStopsOnMap
       ? {
           draftStops,
           selectedStopId,
@@ -135,7 +142,7 @@ export function IslandMapEmbeddedPane() {
       : {}
 
   const stopDetailPopover =
-    selectedStop && routeOverlay ? (
+    showStopsOnMap && selectedStop && routeOverlay ? (
       <IslandMapStopDetailPopover
         stop={selectedStop}
         currentRouteId={routeOverlay.routeId}

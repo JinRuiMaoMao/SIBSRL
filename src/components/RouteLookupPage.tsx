@@ -613,7 +613,10 @@ export function RouteLookupPage({
       if (cancelled) return
 
       if (importedDisplay) {
-        const catalogStops = activeGroup?.list ? buildRouteDetailMapStops(activeGroup.list, catalog) : []
+        const catalogStops =
+          !splitLayoutActive && activeGroup?.list
+            ? buildRouteDetailMapStops(activeGroup.list, catalog)
+            : []
         setRouteOverlay({
           routeId: overlayRoute.id,
           routeNumber: overlayRoute.number,
@@ -627,7 +630,7 @@ export function RouteLookupPage({
 
       const overlaySource = await resolveRouteMapOverlaySource(overlayRoute.id, overlayDirectionIndex, {
         catalog,
-        catalogStops: activeGroup?.list,
+        catalogStops: splitLayoutActive ? undefined : activeGroup?.list,
         imageSize,
       })
       if (cancelled) return
@@ -642,7 +645,7 @@ export function RouteLookupPage({
         routeNumber: overlayRoute.number,
         directionIndex: overlayDirectionIndex,
         points: overlaySource.points,
-        ...(overlaySource.stops.length ? { stops: overlaySource.stops } : {}),
+        ...( !splitLayoutActive && overlaySource.stops.length ? { stops: overlaySource.stops } : {}),
       })
     })()
 
@@ -985,6 +988,7 @@ export function RouteLookupPage({
               ? null
               : dailyChallengeRouteContext?.endpoints ?? null,
           dailyChallengeIntro: dailyChallengeRouteContext?.intro ?? null,
+          hideStops: splitLayoutActive,
         }
       : null
 

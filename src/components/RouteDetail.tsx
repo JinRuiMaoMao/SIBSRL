@@ -49,6 +49,8 @@ interface RouteDetailProps {
   lockDirection?: boolean
   /** 每日挑战方向摘要（替代东行/西行标签） */
   directionEndpoints?: BilingualText | null
+  /** real 分屏：不展示站点表 */
+  hideStops?: boolean
 }
 
 export function RouteDetail({
@@ -63,6 +65,7 @@ export function RouteDetail({
   dailyChallengeIntro = null,
   lockDirection = false,
   directionEndpoints = null,
+  hideStops = false,
 }: RouteDetailProps) {
   const { locale, t } = useLocale()
   const { alert } = useAppDialog()
@@ -224,7 +227,7 @@ export function RouteDetail({
         )}
       </section>
 
-      {activeStops && (
+      {activeStops && !hideStops && (
         <section className="detail-section" data-tour="route-detail-stops">
           <h3>{t('stopsSection')}</h3>
           <div className="stop-table" role="table">
