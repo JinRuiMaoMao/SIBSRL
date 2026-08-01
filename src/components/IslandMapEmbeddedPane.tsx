@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
-import { getMapDrawPageHref } from '../utils/appPage'
-import { getSiteAssetRoot } from '../utils/appLayoutMode'
-import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
+import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { routeDetailMapStopToDrawStop } from '../utils/routeDetailMapStops'
-import { ExpandIcon } from './islandMapControlIcons'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { IslandMapStopDetailPopover } from './IslandMapStopDetailPopover'
 
 type MapLayer = 'general' | 'detailed'
 
 function mapLayerSrc(layer: MapLayer): string {
-  const root = getSiteAssetRoot()
-  return layer === 'general' ? `${root}maps/SIMapGerenal.png` : `${root}maps/SIMap.png`
+  return layer === 'general'
+    ? resolveSiteAssetUrl('./maps/SIMapGerenal.png')
+    : resolveSiteAssetUrl('./maps/SIMap.png')
 }
 
 /** Real 布局右侧嵌入地图（内联渲染，不用 portal）。 */
@@ -27,7 +25,6 @@ export function IslandMapEmbeddedPane() {
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
-  const [expanded, setExpanded] = useState(false)
 
   const mapSrc = mapLayerSrc(layer)
   const surfaceRouteOverlay =
@@ -153,96 +150,32 @@ export function IslandMapEmbeddedPane() {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
   }, [])
 
-  const openDraw = useCallback(() => {
-    if (routeOverlay) stashMapDrawRouteHandoff(routeOverlay)
-    window.location.href = getMapDrawPageHref()
-  }, [routeOverlay])
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('island-map-fullscreen-open', expanded)
-    return () => document.documentElement.classList.remove('island-map-fullscreen-open')
-  }, [expanded])
-
-  useEffect(() => {
-    if (!expanded) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setExpanded(false)
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [expanded])
-
-  const surface = (
-    <IslandMapPanZoomSurface
-      src={mapSrc}
-      mode="fullscreen"
-      className={`island-map-viewport island-map-viewport--${expanded ? 'fullscreen' : 'embedded'}`}
-      view={mapView}
-      onViewChange={setMapView}
-      routeOverlay={surfaceRouteOverlay}
-      maxZoomRatio={8}
-      onImageSizeChange={setImageSize}
-      {...stopSurfaceProps}
-    />
-  )
-
-  if (expanded) {
-    return (
-      <div className="island-map island-map--fullscreen" role="dialog" aria-modal="true" aria-label={t('islandMapAria')}>
-        <div className="island-map-viewport-shell island-map-viewport-shell--fullscreen">
-          {surface}
-          {stopDetailPopover}
-        </div>
-        <div className="island-map-controls island-map-controls--fullscreen">
-          <div className="island-map-controls-row">
-            <button type="button" className="island-map-btn island-map-btn--layers" onClick={toggleLayer}>
-              {t('islandMapLayers')}
-            </button>
-            <button type="button" className="island-map-btn island-map-btn--draw" onClick={openDraw}>
-              {t('islandMapDraw')}
-            </button>
-            <button
-              type="button"
-              className="island-map-btn island-map-btn--minimize"
-              onClick={() => setExpanded(false)}
-              aria-label={t('islandMapMinimize')}
-            >
-              {t('islandMapMinimize')}
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div
       className={`island-map island-map--embedded${routeOverlay ? ' island-map--embedded-route' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
       <div className="island-map-viewport-shell island-map-viewport-shell--embedded">
-        {surface}
+        <IslandMapPanZoomSurface
+          src={mapSrc}
+          mode="fullscreen"
+          className="island-map-viewport island-map-viewport--embedded"
+          view={mapView}
+          onViewChange={setMapView}
+          routeOverlay={surfaceRouteOverlay}
+          maxZoomRatio={8}
+          onImageSizeChange={setImageSize}
+          {...stopSurfaceProps}
+        />
         {stopDetailPopover}
-      </div>
-      <div className="island-map-widget-toolbar island-map-widget-toolbar--embedded">
         <button
           type="button"
-          className="island-map-btn island-map-btn--layers island-map-btn--layers-compact"
+          className="island-map-btn island-map-btn--layers island-map-layers-control"
           onClick={toggleLayer}
           aria-label={t('islandMapLayersAria')}
+          title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
         >
           {t('islandMapLayers')}
-        </button>
-        <button
-          type="button"
-          className="island-map-btn island-map-btn--expand"
-          onClick={() => setExpanded(true)}
-          aria-label={t('islandMapExpand')}
-        >
-          <ExpandIcon />
-        </button>
-        <button type="button" className="island-map-btn island-map-btn--draw" onClick={openDraw}>
-          {t('islandMapDraw')}
         </button>
       </div>
     </div>

@@ -2,31 +2,27 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
-import { getSiteAssetRoot, isRealLayoutMode } from '../utils/appLayoutMode'
-import { getMapDrawPageHref } from '../utils/appPage'
-import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
+import { isRealLayoutMode, resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { routeDetailMapStopToDrawStop } from '../utils/routeDetailMapStops'
-import { ExpandIcon, HideIcon, MinimizeIcon, ShowIcon } from './islandMapControlIcons'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
 import { IslandMapStopDetailPopover } from './IslandMapStopDetailPopover'
 
 type MapLayer = 'general' | 'detailed'
 
 function mapLayerSrc(layer: MapLayer): string {
-  const root = getSiteAssetRoot()
-  return layer === 'general' ? `${root}maps/SIMapGerenal.png` : `${root}maps/SIMap.png`
+  return layer === 'general'
+    ? resolveSiteAssetUrl('./maps/SIMapGerenal.png')
+    : resolveSiteAssetUrl('./maps/SIMap.png')
 }
 
-/** 线路查询页小地图：缩放、图层、走线展示；全屏下可跳转 map-draw.html。 */
+/** 线路查询页小地图：缩放、图层、走线展示。 */
 export function IslandMapViewer() {
   const { t } = useLocale()
   const realLayout = isRealLayoutMode()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const importedPath = routeOverlay?.importedPath ?? null
-  const [expanded, setExpanded] = useState(false)
-  const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
@@ -156,144 +152,37 @@ export function IslandMapViewer() {
     setMapView(next)
   }, [])
 
-  const openFullscreen = useCallback(() => setExpanded(true), [])
-  const closeFullscreen = useCallback(() => {
-    setExpanded(false)
-  }, [])
-  const openDraw = useCallback(() => {
-    if (routeOverlay) {
-      stashMapDrawRouteHandoff(routeOverlay)
-    }
-    window.location.href = getMapDrawPageHref()
-  }, [routeOverlay])
   const toggleLayer = useCallback(() => {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
   }, [])
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('island-map-fullscreen-open', expanded)
-    return () => document.documentElement.classList.remove('island-map-fullscreen-open')
-  }, [expanded])
-
-  useEffect(() => {
-    if (!expanded) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      closeFullscreen()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [closeFullscreen, expanded])
-
-  const renderSurface = (mode: 'widget' | 'fullscreen' | 'embedded', className: string) => (
-    <IslandMapPanZoomSurface
-      src={mapSrc}
-      mode={mode === 'embedded' ? 'fullscreen' : mode}
-      className={className}
-      view={mapView}
-      onViewChange={handleViewChange}
-      routeOverlay={surfaceRouteOverlay}
-      maxZoomRatio={8}
-      onImageSizeChange={setImageSize}
-      {...stopSurfaceProps}
-    />
-  )
-
-  const node = expanded ? (
+  const node = realLayout ? null : (
     <div
-      className="island-map island-map--fullscreen"
-      role="dialog"
-      aria-modal="true"
+      className={`island-map island-map--widget${routeOverlay ? ' island-map--widget-route' : ''}`.trim()}
       aria-label={t('islandMapAria')}
     >
-      <div className="island-map-viewport-shell island-map-viewport-shell--fullscreen">
-        {renderSurface('fullscreen', 'island-map-viewport island-map-viewport--fullscreen')}
+      <div className="island-map-viewport-shell">
+        <IslandMapPanZoomSurface
+          src={mapSrc}
+          mode="widget"
+          className="island-map-viewport island-map-viewport--widget"
+          view={mapView}
+          onViewChange={handleViewChange}
+          routeOverlay={surfaceRouteOverlay}
+          maxZoomRatio={8}
+          onImageSizeChange={setImageSize}
+          {...stopSurfaceProps}
+        />
         {stopDetailPopover}
-      </div>
-      <div className="island-map-controls island-map-controls--fullscreen">
-        <div className="island-map-controls-row">
-          <button
-            type="button"
-            className="island-map-btn island-map-btn--layers"
-            onClick={toggleLayer}
-            aria-label={t('islandMapLayersAria')}
-            title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
-          >
-            {t('islandMapLayers')}
-          </button>
-          <button
-            type="button"
-            className="island-map-btn island-map-btn--draw"
-            onClick={openDraw}
-            title={t('islandMapDrawStartHint')}
-          >
-            {t('islandMapDraw')}
-          </button>
-          <button
-            type="button"
-            className="island-map-btn island-map-btn--minimize"
-            onClick={closeFullscreen}
-            aria-label={t('islandMapMinimize')}
-            title={t('islandMapMinimize')}
-          >
-            <MinimizeIcon />
-          </button>
-        </div>
-      </div>
-    </div>
-  ) : realLayout ? null : (
-    <div
-      className={`island-map island-map--widget${widgetHidden ? ' island-map--widget-collapsed' : ''}${routeOverlay ? ' island-map--widget-route' : ''}`.trim()}
-      aria-label={t('islandMapAria')}
-    >
-      {widgetHidden ? null : (
-        <div className="island-map-viewport-shell">
-          {renderSurface('widget', 'island-map-viewport island-map-viewport--widget')}
-          {stopDetailPopover}
-        </div>
-      )}
-      <div className="island-map-widget-toolbar">
-        {widgetHidden ? (
-          <button
-            type="button"
-            className="island-map-btn island-map-btn--show"
-            onClick={() => setWidgetHidden(false)}
-            aria-label={t('islandMapShow')}
-            title={t('islandMapShow')}
-          >
-            <ShowIcon />
-          </button>
-        ) : (
-          <>
-            <button
-              type="button"
-              className="island-map-btn island-map-btn--layers island-map-btn--layers-compact"
-              onClick={toggleLayer}
-              aria-label={t('islandMapLayersAria')}
-              title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
-            >
-              {t('islandMapLayers')}
-            </button>
-            <button
-              type="button"
-              className="island-map-btn island-map-btn--hide"
-              onClick={() => setWidgetHidden(true)}
-              aria-label={t('islandMapHide')}
-              title={t('islandMapHide')}
-            >
-              <HideIcon />
-            </button>
-            <button
-              type="button"
-              className="island-map-btn island-map-btn--expand"
-              onClick={openFullscreen}
-              aria-label={t('islandMapExpand')}
-              title={t('islandMapExpand')}
-            >
-              <ExpandIcon />
-            </button>
-          </>
-        )}
+        <button
+          type="button"
+          className="island-map-btn island-map-btn--layers island-map-layers-control"
+          onClick={toggleLayer}
+          aria-label={t('islandMapLayersAria')}
+          title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
+        >
+          {t('islandMapLayers')}
+        </button>
       </div>
     </div>
   )

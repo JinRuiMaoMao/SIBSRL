@@ -3558,7 +3558,17 @@ html[data-list-density='compact'] .transfer-plan-stop {
   );
 }
 
+html[data-route-lookup-layout='split'] .app {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
 html[data-route-lookup-layout='split'] .main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   max-width: none;
   margin: 0;
   padding: 0;
@@ -3571,18 +3581,16 @@ html[data-route-lookup-layout='split'] .site-footer {
 .route-lookup-page--split {
   flex: 1;
   min-height: 0;
+  height: 100%;
 }
 
 .route-split-shell {
   display: grid;
   grid-template-columns: min(20rem, 34vw) minmax(0, 1fr);
   gap: 0;
-  min-height: calc(
-    100dvh - var(--site-header-sticky-offset, 0px) - var(--app-tab-bar-reserve, 0px)
-  );
-  height: calc(
-    100dvh - var(--site-header-sticky-offset, 0px) - var(--app-tab-bar-reserve, 0px)
-  );
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .route-split-sidebar {

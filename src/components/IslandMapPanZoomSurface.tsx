@@ -538,14 +538,19 @@ export function IslandMapPanZoomSurface({
 
   useEffect(() => {
     const viewport = viewportRef.current
-    if (!viewport || !imageSize) return
+    if (!viewport) return
 
     const observer = new ResizeObserver(() => {
+      if (!imageSize) {
+        if (syncPanZoomRef.current({ publish: !viewRef.current })) return
+        scheduleSync({ publish: !viewRef.current })
+        return
+      }
       syncPanZoomRef.current({ publish: false, preferLivePan: true })
     })
     observer.observe(viewport)
     return () => observer.disconnect()
-  }, [imageSize])
+  }, [imageSize, scheduleSync])
 
   useEffect(() => {
     const viewport = viewportRef.current

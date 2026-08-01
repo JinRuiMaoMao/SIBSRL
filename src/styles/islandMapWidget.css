@@ -9,8 +9,6 @@
   left: max(0.65rem, env(safe-area-inset-left, 0px));
   bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   z-index: 190;
-  display: flex;
-  flex-direction: column;
   width: min(9.5rem, 34vw);
   border-radius: 0.75rem;
   overflow: hidden;
@@ -34,22 +32,15 @@ html.has-compact-tab-nav .island-map--widget {
   min-width: 0;
 }
 
-.island-map-widget-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.35rem;
-  padding: 0.28rem 0.35rem;
-  border-top: 1px solid var(--island-map-control-border);
-  background: var(--island-map-control-bg);
-}
-
-.island-map--widget-collapsed {
-  width: auto;
-}
-
-.island-map--widget-collapsed .island-map-widget-toolbar {
-  border-top: none;
+.island-map-layers-control {
+  position: absolute;
+  top: max(0.35rem, env(safe-area-inset-top, 0px));
+  right: max(0.35rem, env(safe-area-inset-right, 0px));
+  z-index: 4;
+  min-width: 0;
+  min-height: 0;
+  padding: 0.28rem 0.5rem;
+  font-size: 0.72rem;
 }
 
 .island-map--embedded {
@@ -76,9 +67,11 @@ html.has-compact-tab-nav .island-map--widget {
   background: color-mix(in srgb, var(--bg, #0f0f0f) 92%, #000);
 }
 
-.island-map-widget-toolbar--embedded {
-  flex-shrink: 0;
-  border-top: 1px solid var(--island-map-control-border);
+.island-map--embedded .island-map-layers-control {
+  top: max(0.55rem, env(safe-area-inset-top, 0px));
+  right: max(0.55rem, env(safe-area-inset-right, 0px));
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
 }
 
 .island-map-panzoom {
