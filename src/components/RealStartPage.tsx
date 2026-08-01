@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, type MouseEvent } from 'react'
 import { getTodaysDailyChallenge, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { getSiteLogoUrl } from '../data/siteBrand'
+import { useRealLayoutBackgroundMusic } from '../hooks/useRealLayoutBackgroundMusic'
 import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
@@ -19,14 +20,16 @@ interface RealStartMenuItem {
   icon: string
   tone: 'green' | 'blue' | 'purple'
   external?: boolean
+  onClick?: (event: MouseEvent<HTMLAnchorElement>, href: string) => void
 }
 
 interface RealStartDockItem {
   id: string
-  href: string
+  href?: string
   labelKey: 'tabMusic' | 'realStartFaq' | 'realStartAbout' | 'realStartShop'
   icon: string
   external?: boolean
+  onClick?: () => void
 }
 
 function formatChallengeScheduleDate(date: string, locale: Locale): string {
@@ -91,6 +94,7 @@ function RealStartDailyChallengeCard({
 export function RealStartPage() {
   const bootReady = useStartPageBoot()
   const { locale, t } = useLocale()
+  const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
@@ -98,15 +102,28 @@ export function RealStartPage() {
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
   const wikiHref = getStartPageExternalLinkUrl('wiki', locale)
 
+  const handlePlayClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    event.preventDefault()
+    switchTrack('music-map-menu')
+    window.location.href = href
+  }
+
   const mainMenu: RealStartMenuItem[] = [
-    { id: 'play', href: routesHref, labelKey: 'realStartPlay', icon: '▶', tone: 'green' },
+    {
+      id: 'play',
+      href: routesHref,
+      labelKey: 'realStartPlay',
+      icon: '▶',
+      tone: 'green',
+      onClick: handlePlayClick,
+    },
     { id: 'servers', href: robloxHref, labelKey: 'realStartServers', icon: '⛁', tone: 'green', external: true },
     { id: 'profile', href: getAccountPageHref(), labelKey: 'realStartProfile', icon: '👤', tone: 'blue' },
     { id: 'language', href: getSettingsPageHref(), labelKey: 'language', icon: '文', tone: 'purple' },
   ]
 
   const dockItems: RealStartDockItem[] = [
-    { id: 'music', href: getTabPageHref('music'), labelKey: 'tabMusic', icon: '♪' },
+    { id: 'music', labelKey: 'tabMusic', icon: muted ? '🔇' : '♪', onClick: toggleMuted },
     { id: 'faq', href: wikiHref, labelKey: 'realStartFaq', icon: '?', external: true },
     { id: 'about', href: getTabPageHref('updates'), labelKey: 'realStartAbout', icon: 'i' },
     { id: 'shop', href: robloxHref, labelKey: 'realStartShop', icon: '🛒', external: true },
@@ -117,6 +134,11 @@ export function RealStartPage() {
     syncHtmlLang(locale)
     document.title = t('realStartPageDocumentTitle')
   }, [locale, t])
+
+  useEffect(() => {
+    if (!bootReady || muted) return
+    retryPlay()
+  }, [bootReady, muted, retryPlay])
 
   return (
     <div
@@ -144,6 +166,11 @@ export function RealStartPage() {
                   <a
                     className={`real-start-menu-btn real-start-menu-btn--${item.tone}`}
                     href={item.href}
+                    onClick={
+                      item.onClick
+                        ? (event) => item.onClick!(event, item.href)
+                        : undefined
+                    }
                     {...(item.external ? { target: '_blank', rel: 'noreferrer' } : {})}
                   >
                     <span className="real-start-menu-icon" aria-hidden="true">
@@ -166,16 +193,31 @@ export function RealStartPage() {
           <ul className="real-start-dock-list">
             {dockItems.map((item) => (
               <li key={item.id}>
-                <a
-                  className="real-start-dock-btn"
-                  href={item.href}
-                  {...(item.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                >
-                  <span className="real-start-dock-icon" aria-hidden="true">
-                    {item.icon}
-                  </span>
-                  <span className="real-start-dock-label">{t(item.labelKey)}</span>
-                </a>
+                {item.onClick ? (
+                  <button
+                    type="button"
+                    className={`real-start-dock-btn${item.id === 'music' && muted ? ' real-start-dock-btn--muted' : ''}`}
+                    onClick={item.onClick}
+                    aria-pressed={item.id === 'music' ? muted : undefined}
+                    aria-label={item.id === 'music' ? t(muted ? 'realStartMusicUnmute' : 'realStartMusicMute') : t(item.labelKey)}
+                  >
+                    <span className="real-start-dock-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    <span className="real-start-dock-label">{t(item.labelKey)}</span>
+                  </button>
+                ) : (
+                  <a
+                    className="real-start-dock-btn"
+                    href={item.href}
+                    {...(item.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                  >
+                    <span className="real-start-dock-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    <span className="real-start-dock-label">{t(item.labelKey)}</span>
+                  </a>
+                )}
               </li>
             ))}
           </ul>

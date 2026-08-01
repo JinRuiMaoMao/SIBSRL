@@ -37,6 +37,7 @@ import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { isRealLayoutMode } from '../utils/appLayoutMode'
 import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
+import { RealRouteLookupMusic } from './RealRouteLookupMusic'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
@@ -1466,7 +1467,9 @@ export function RouteLookupPage({
   return (
     <div className={`route-lookup-page${splitLayoutActive ? ' route-lookup-page--split' : ''}`}>
       {splitLayoutActive ? (
-        <div className="route-split-shell">
+        <>
+          <RealRouteLookupMusic />
+          <div className="route-split-shell">
           <aside className="route-split-sidebar sibs-scrollbar" aria-label={t('routeList')}>
             <div
               ref={stickyToolbarRef}
@@ -1522,6 +1525,7 @@ export function RouteLookupPage({
             ) : null}
           </div>
         </div>
+        </>
       ) : (
         <>
       <div

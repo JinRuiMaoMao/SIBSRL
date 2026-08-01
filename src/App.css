@@ -7988,10 +7988,20 @@ html[data-reduce-motion='true'] .real-start-page--ready {
   align-items: center;
   gap: 0.2rem;
   width: 4.1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: inherit;
   text-decoration: none;
+  font: inherit;
   font-size: 0.72rem;
   line-height: 1.2;
+  cursor: pointer;
+}
+
+.real-start-dock-btn--muted .real-start-dock-icon {
+  opacity: 0.55;
+  border-color: rgb(255 255 255 / 0.35);
 }
 
 .real-start-dock-icon {
