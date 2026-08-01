@@ -498,25 +498,67 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
     var introEnd = 17;
     var mainStart = 17;
+    var fadeMs = 900;
+    var fadeLead = fadeMs / 1000;
     var phase = 'intro';
+    var fadeFrame = null;
+    var transitionPending = false;
+    function cancelFade() {
+      if (fadeFrame != null) { cancelAnimationFrame(fadeFrame); fadeFrame = null; }
+    }
+    function fadeVolume(target, done) {
+      cancelFade();
+      var start = audio.volume;
+      var t0 = performance.now();
+      function step(t) {
+        var p = Math.min(1, (t - t0) / fadeMs);
+        audio.volume = start + (target - start) * p;
+        if (p < 1) fadeFrame = requestAnimationFrame(step);
+        else { fadeFrame = null; audio.volume = target; if (done) done(); }
+      }
+      fadeFrame = requestAnimationFrame(step);
+    }
+    function fadeThenSwitch(toMain) {
+      if (transitionPending) return;
+      transitionPending = true;
+      fadeVolume(0, function () {
+        if (toMain) {
+          phase = 'main';
+          audio.src = mainUrl;
+          audio.addEventListener('loadedmetadata', function () {
+            audio.currentTime = mainStart;
+            audio.volume = 0;
+            tryPlay();
+            fadeVolume(1, function () { transitionPending = false; });
+          }, { once: true });
+          audio.load();
+        } else {
+          audio.currentTime = mainStart;
+          audio.volume = 0;
+          tryPlay();
+          fadeVolume(1, function () {
+            transitionPending = false;
+            mainFadeStarted = false;
+          });
+        }
+      });
+    }
+    var introFadeStarted = false;
+    var mainFadeStarted = false;
     var onIntroTime = function () {
-      if (phase !== 'intro' || audio.currentTime < introEnd) return;
-      phase = 'main';
-      audio.removeEventListener('timeupdate', onIntroTime);
-      audio.src = mainUrl;
-      audio.addEventListener('loadedmetadata', function () {
-        audio.currentTime = mainStart;
-        tryPlay();
-      }, { once: true });
-      audio.load();
+      if (phase !== 'intro' || transitionPending || introFadeStarted) return;
+      if (audio.currentTime < introEnd - fadeLead) return;
+      introFadeStarted = true;
+      fadeThenSwitch(true);
     };
-    var onMainEnded = function () {
-      if (phase !== 'main') return;
-      audio.currentTime = mainStart;
-      tryPlay();
+    var onMainTime = function () {
+      if (phase !== 'main' || transitionPending || mainFadeStarted || !isFinite(audio.duration)) return;
+      if (audio.currentTime < audio.duration - fadeLead) return;
+      mainFadeStarted = true;
+      fadeThenSwitch(false);
     };
     audio.addEventListener('timeupdate', onIntroTime);
-    audio.addEventListener('ended', onMainEnded);
+    audio.addEventListener('timeupdate', onMainTime);
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
   function unlock() {
