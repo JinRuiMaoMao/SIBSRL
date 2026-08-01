@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
+import { useRouteMapViewerDisplayForImageSize } from '../hooks/useRouteMapViewerDisplayForImageSize'
 import { useLocale } from '../i18n/LocaleContext'
 import { isRealLayoutMode, resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { getMapDrawPageHref } from '../utils/appPage'
@@ -25,13 +26,14 @@ export function IslandMapViewer() {
   const realLayout = isRealLayoutMode()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
-  const importedPath = routeOverlay?.importedPath ?? null
   const [expanded, setExpanded] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
+  const importedPath =
+    useRouteMapViewerDisplayForImageSize(routeOverlay, imageSize) ?? routeOverlay?.importedPath ?? null
 
   const mapSrc = mapLayerSrc(layer)
   const surfaceRouteOverlay =
@@ -68,8 +70,14 @@ export function IslandMapViewer() {
 
   const interactiveLayer = useMemo(() => {
     if (!importedPath) return null
+    const fitPoints =
+      importedPath.fitPoints && importedPath.fitPoints.length >= 2
+        ? importedPath.fitPoints
+        : routeOverlay?.points.length
+          ? routeOverlay.points
+          : importedPath.points
     return buildRouteMapInteractiveLayerState(
-      { ...importedPath, fitPoints: [...(routeOverlay?.points ?? importedPath.points)] },
+      { ...importedPath, fitPoints: [...fitPoints] },
       imageSize,
       catalogStops,
       null,

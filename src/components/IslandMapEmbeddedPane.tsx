@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
+import { useRouteMapViewerDisplayForImageSize } from '../hooks/useRouteMapViewerDisplayForImageSize'
 import { useLocale } from '../i18n/LocaleContext'
 import { fitNormalizedViewToRoutePoints } from '../data/worldMapRoutes'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
@@ -21,11 +22,12 @@ export function IslandMapEmbeddedPane() {
   const { t } = useLocale()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
-  const importedPath = routeOverlay?.importedPath ?? null
   const [layer, setLayer] = useState<MapLayer>('general')
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
+  const importedPath =
+    useRouteMapViewerDisplayForImageSize(routeOverlay, imageSize) ?? routeOverlay?.importedPath ?? null
 
   const mapSrc = mapLayerSrc(layer)
   const surfaceRouteOverlay =
@@ -63,8 +65,14 @@ export function IslandMapEmbeddedPane() {
 
   const interactiveLayer = useMemo(() => {
     if (!importedPath) return null
+    const fitPoints =
+      importedPath.fitPoints && importedPath.fitPoints.length >= 2
+        ? importedPath.fitPoints
+        : routeOverlay?.points.length
+          ? routeOverlay.points
+          : importedPath.points
     return buildRouteMapInteractiveLayerState(
-      { ...importedPath, fitPoints: [...(routeOverlay?.points ?? importedPath.points)] },
+      { ...importedPath, fitPoints: [...fitPoints] },
       imageSize,
       catalogStops,
       null,
@@ -155,10 +163,18 @@ export function IslandMapEmbeddedPane() {
   }, [routeOverlay?.directionIndex, routeOverlay?.importedPath, routeOverlay?.routeId])
 
   useEffect(() => {
-    const points = routeOverlay?.points
+    const points =
+      importedPath?.fitPoints && importedPath.fitPoints.length >= 2
+        ? importedPath.fitPoints
+        : routeOverlay?.points
     if (!points || points.length < 2) return
     setMapView(fitNormalizedViewToRoutePoints(points, 'fullscreen', 0.08))
-  }, [routeOverlay?.directionIndex, routeOverlay?.routeId, routeOverlay?.points])
+  }, [
+    importedPath?.fitPoints,
+    routeOverlay?.directionIndex,
+    routeOverlay?.routeId,
+    routeOverlay?.points,
+  ])
 
   const toggleLayer = useCallback(() => {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
