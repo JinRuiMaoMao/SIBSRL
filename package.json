@@ -14,6 +14,7 @@
     "gen:world-map-routes": "node scripts/build-world-map-routes-manifest.mjs",
     "trace:world-map-route": "node scripts/trace-world-map-route-from-catalog.mjs",
     "sync:brand": "node scripts/sync-brand-assets.mjs",
+    "sync:company-logos": "node scripts/sync-company-logos.mjs",
     "gen:changelog": "npx vite-node scripts/materialize-changelog.mjs",
     "gen:stop-aliases": "node scripts/generate-stop-aliases.mjs",
     "import:routes": "node scripts/import-route-from-wiki.mjs --all && node scripts/compose-476-from-wiki.mjs && node scripts/build-route-unlocks.mjs && node scripts/build-sibs-routes-ts.mjs",

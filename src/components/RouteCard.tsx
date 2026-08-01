@@ -8,7 +8,7 @@ import {
   routeHasDirectionVariants,
 } from '../utils/routeDirections'
 import { getDirectionLengthKm } from '../utils/routeDirections'
-import { formatRouteOperators } from '../utils/routeDisplay'
+import { OperatorLogos } from './OperatorLogos'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
 import { getRoutePageHref } from '../utils/routeNavigation'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
@@ -71,7 +71,7 @@ export function RouteCard({
     loopView && routeHasLoopDirectionLayout(route)
       ? getLoopViewLengthKm(route, locale)
       : getDirectionLengthKm(route, directionIndex, locale)
-  const operatorsLabel = formatRouteOperators(route)
+  const operatorsLabel = route.operators.length > 0 ? route.operators : null
   const serviceTime =
     loopView && routeHasLoopDirectionLayout(route)
       ? (getOptionalText(route.serviceTime, locale) ??
@@ -180,11 +180,11 @@ export function RouteCard({
             </div>
           </div>
 
-          {operatorsLabel && (
+          {operatorsLabel ? (
             <div className="route-card-foot">
-              <span className="route-card-operators">{operatorsLabel}</span>
+              <OperatorLogos operators={operatorsLabel} size="card" />
             </div>
-          )}
+          ) : null}
         </div>
         </div>
       </article>

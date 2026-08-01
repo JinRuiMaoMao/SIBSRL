@@ -16,7 +16,7 @@ import {
   resolveActiveStopGroup,
   routeHasLoopDirectionLayout,
 } from '../utils/routeLoopView'
-import { formatRouteOperators } from '../utils/routeDisplay'
+import { OperatorLogos } from './OperatorLogos'
 import {
   formatShortJourneyTime,
   routeDifficultyStars,
@@ -103,7 +103,7 @@ export function RouteDetailRealPanel({
       : getDirectionServiceTime(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
   const difficulty = routeDifficultyStars(route.levelRequired)
-  const operatorsLabel = formatRouteOperators(route)
+  const operators = route.operators
   const fareText =
     route.fare != null
       ? typeof route.fare === 'string'
@@ -214,10 +214,12 @@ export function RouteDetailRealPanel({
                 <span className="route-real-panel-meta-value">{fareText}</span>
               </div>
             ) : null}
-            {operatorsLabel ? (
+            {operators.length > 0 ? (
               <div className="route-real-panel-meta-item">
                 <span className="route-real-panel-meta-label">{t('operator')}</span>
-                <span className="route-real-panel-meta-value">{operatorsLabel}</span>
+                <span className="route-real-panel-meta-value">
+                  <OperatorLogos operators={operators} size="meta" />
+                </span>
               </div>
             ) : null}
             {route.levelRequired != null ? (

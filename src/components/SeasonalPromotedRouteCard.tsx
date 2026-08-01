@@ -7,7 +7,7 @@ import {
   getDirectionDataIndex,
   getDirectionLengthKm,
 } from '../utils/routeDirections'
-import { formatRouteOperators } from '../utils/routeDisplay'
+import { OperatorLogos } from './OperatorLogos'
 import { getRoutePageHref } from '../utils/routeNavigation'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
 import { resolveStopDisplay } from '../utils/stopTurningPoint'
@@ -39,7 +39,7 @@ export function SeasonalPromotedRouteCard({
   const cardNumber = displayNumber ?? route.number
   const lengthKm = getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route)
-  const operatorsLabel = formatRouteOperators(route)
+  const operators = route.operators
   const countdown = useSeasonalAvailabilityCountdown(window)
   const stopDataIndex = getDirectionDataIndex(route, directionIndex)
   const stopGroup = route.stops?.[stopDataIndex]
@@ -126,9 +126,9 @@ export function SeasonalPromotedRouteCard({
           <div className="route-card-meta-left">
             {displayTypes.length > 0 ? <RouteTypeTags types={displayTypes} compact /> : null}
           </div>
-          {operatorsLabel ? (
+          {operators.length > 0 ? (
             <div className="route-card-foot">
-              <span className="route-card-operators">{operatorsLabel}</span>
+              <OperatorLogos operators={operators} size="card" />
             </div>
           ) : null}
         </div>

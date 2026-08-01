@@ -12,7 +12,7 @@ import { getDirectionLengthKm } from '../utils/routeDirections'
 import { formatLoopViewEndpoints, getLoopViewLengthKm } from '../utils/routeLoopView'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { DailyChallengeResetCountdown } from './DailyChallengeResetCountdown'
-import { DailyChallengeCalendarButton } from './DailyChallengeCalendarButton'
+import { OperatorLogos } from './OperatorLogos'
 
 interface DailyChallengeCardProps {
   selected?: boolean
@@ -122,7 +122,11 @@ export function DailyChallengeCard({
           </div>
         </div>
 
-        {operatorsLabel ? (
+        {linkedRoute?.operators.length ? (
+          <div className="route-card-foot">
+            <OperatorLogos operators={linkedRoute.operators} size="card" />
+          </div>
+        ) : operatorsLabel ? (
           <div className="route-card-foot">
             <span className="route-card-operators">{operatorsLabel}</span>
           </div>

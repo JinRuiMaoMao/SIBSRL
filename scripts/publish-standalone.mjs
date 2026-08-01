@@ -33,6 +33,7 @@ import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
 import { buildRouteDetailStops } from './build-route-detail-stops.mjs'
 import { syncBrandAssets } from './sync-brand-assets.mjs'
+import { syncCompanyLogos } from './sync-company-logos.mjs'
 import { syncWorldMapImages } from './sync-world-map-images.mjs'
 import { buildWorldMapRoutesManifest } from './build-world-map-routes-manifest.mjs'
 
@@ -225,6 +226,7 @@ export function publishStandalone(options = {}) {
   )
 
   syncBrandAssets()
+  syncCompanyLogos()
   syncWorldMapImages()
   buildWorldMapRoutesManifest()
 
@@ -291,6 +293,13 @@ export function publishStandalone(options = {}) {
     cpSync(publicLogo, resolve(root, 'dist', 'sibs-logo.png'))
     cpSync(publicLogo, resolve(root, 'apple-touch-icon.png'))
     cpSync(publicLogo, resolve(root, 'dist', 'apple-touch-icon.png'))
+  }
+
+  const publicCompanyLogos = resolve(root, 'public', 'company-logos')
+  if (existsSync(publicCompanyLogos)) {
+    cpSync(publicCompanyLogos, resolve(root, 'company-logos'), { recursive: true })
+    cpSync(publicCompanyLogos, resolve(root, 'dist', 'company-logos'), { recursive: true })
+    console.log('[publish] 已复制运营商 Logo 到 company-logos/')
   }
 
   const distAssets = resolve(root, 'dist', 'assets')

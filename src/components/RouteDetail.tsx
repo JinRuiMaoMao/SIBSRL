@@ -21,7 +21,7 @@ import { getOptionalText } from '../i18n/displayText'
 import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
 import type { RoutePageData } from '../types/routePageData'
 import { getPageStopAudioAtRow } from '../utils/routePageDataFormat'
-import { RouteDirectionControls } from './RouteDirectionControls'
+import { OperatorLogos } from './OperatorLogos'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
 import { BroadcastAudioButton } from './BroadcastAudioButton'
@@ -173,11 +173,7 @@ export function RouteDetail({
         {route.operators.length > 0 && (
           <div>
             <h4>{t('operator')}</h4>
-            <ul>
-              {route.operators.map((op) => (
-                <li key={op}>{op}</li>
-              ))}
-            </ul>
+            <OperatorLogos operators={route.operators} size="detail" />
           </div>
         )}
         {serviceTimeText && (
