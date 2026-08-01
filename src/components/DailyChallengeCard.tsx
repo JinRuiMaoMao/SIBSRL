@@ -35,6 +35,10 @@ export function DailyChallengeCard({
 }: DailyChallengeCardProps) {
   const { locale, t } = useLocale()
   const eventLabel = getPrimaryText(challenge.event, locale)
+  const linkedRoute =
+    challenge.routeNumber && !isPrivateHireChallengeRoute(challenge.routeNumber)
+      ? findRouteForDailyChallenge(challenge.routeNumber)
+      : null
   const endpointsLabel =
     linkedRoute && challenge.loopView
       ? formatLoopViewEndpoints(linkedRoute, locale)
@@ -42,10 +46,6 @@ export function DailyChallengeCard({
         ? getPrimaryText(challenge.endpoints, locale)
         : null
   const routeNumber = challenge.routeNumber ?? '—'
-  const linkedRoute =
-    challenge.routeNumber && !isPrivateHireChallengeRoute(challenge.routeNumber)
-      ? findRouteForDailyChallenge(challenge.routeNumber)
-      : null
   const directionIndex =
     linkedRoute != null
       ? (findDailyChallengeDirectionIndex(linkedRoute, challenge.directionKey) ?? 0)

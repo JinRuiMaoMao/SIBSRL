@@ -12,23 +12,22 @@ import {
   mergeRoutesByBaseNumber,
   toMergeBaseRouteNumber,
 } from '../utils/routeMerge'
-
-/** 游戏内任务代号 → 本站线路 id（如马拉松 N246 任务实际走 N146A）。 */
-const DAILY_CHALLENGE_ROUTE_ALIASES: Record<string, string> = {
-  N246: 'N146A',
-}
 import { formatRouteOperators } from '../utils/routeDisplay'
 import {
   getDirectionKey,
   getSortedDirectionDataIndices,
 } from '../utils/routeDirectionCore'
-import { formatLoopViewEndpoints } from '../utils/routeLoopView'
 import { routeMatchesTypeFilter } from '../utils/routeTypes'
 import {
   challengeRouteNumberMatchesQuery,
   matchesRouteSearchQuery,
 } from '../utils/routeSearchQuery'
 import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
+
+/** 游戏内任务代号 → 本站线路 id（如马拉松 N246 任务实际走 N146A）。 */
+const DAILY_CHALLENGE_ROUTE_ALIASES: Record<string, string> = {
+  N246: 'N146A',
+}
 
 export interface DailyChallengeIntro {
   body: BilingualText
@@ -280,6 +279,30 @@ function buildIntro(
   }
 }
 
+function buildLoopEndpointsFromRoute(route: BusRoute): BilingualText | undefined {
+  if (route.id === '246X') {
+    return {
+      zh: '东锦葵海傍路 ↺ 时间廊',
+      en: 'Eastmallow Praya Road ↺ Timelapse Mall',
+    }
+  }
+  if (route.origin && route.destination) {
+    const originZh = route.origin.zh
+    const originEn = route.origin.en
+    if (originZh === route.destination.zh) {
+      return {
+        zh: `${originZh}（环线）`,
+        en: `${originEn} (loop)`,
+      }
+    }
+    return {
+      zh: `${originZh} ↺ ${route.destination.zh}`,
+      en: `${originEn} ↺ ${route.destination.en}`,
+    }
+  }
+  return undefined
+}
+
 export function buildDailyChallengeFromScheduleDay(
   entry: DailyChallengeScheduleDay,
 ): DailyChallengeInfo {
@@ -309,10 +332,7 @@ export function buildDailyChallengeFromScheduleDay(
     const linked = findRouteForDailyChallenge(routeNumber)
     if (linked) {
       if (loopView) {
-        endpoints = {
-          zh: formatLoopViewEndpoints(linked, 'zh') ?? buildEndpointsFromRoute(linked)?.zh ?? '',
-          en: formatLoopViewEndpoints(linked, 'en') ?? buildEndpointsFromRoute(linked)?.en ?? '',
-        }
+        endpoints = buildLoopEndpointsFromRoute(linked) ?? buildEndpointsFromRoute(linked)
       } else {
         endpoints = buildEndpointsFromRoute(linked, directionKey)
       }

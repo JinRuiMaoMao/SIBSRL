@@ -1,7 +1,6 @@
-import type { MessageKey } from '../messages'
 import type { Locale } from '../types'
 
-type Bundle = Partial<Record<MessageKey, string>>
+type Bundle = Record<string, string>
 
 const extendedKeys = {
   categoryCentralAxis: {
@@ -851,7 +850,7 @@ function pickLocaleBundle(locale: (typeof EXTENDED_LOCALES)[number]): Bundle {
   const bundle: Bundle = {}
   for (const [key, table] of Object.entries(extendedKeys)) {
     const value = table[locale]
-    if (value) bundle[key as MessageKey] = value
+    if (value) bundle[key] = value
   }
   return bundle
 }

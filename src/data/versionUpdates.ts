@@ -203,6 +203,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "NPC 语音分类标签改为与 E:\\SIBS资源\\NPC 文件夹名一致（不再翻译分类名）。",
             en: "NPC category labels now match E:\\SIBS资源\\NPC folder names exactly (no translated category names).",
           },
+          {
+            zh: "修复每日挑战卡片变量声明顺序导致的白屏（Cannot access before initialization）；并断开 i18n 语言包循环引用。",
+            en: "Fixed daily challenge card white screen from variable declaration order (Cannot access before initialization); broke i18n bundle circular imports.",
+          },
         ],
       },
     ],

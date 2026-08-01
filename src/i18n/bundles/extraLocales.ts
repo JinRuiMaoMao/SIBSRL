@@ -1,8 +1,7 @@
-import type { MessageKey } from '../messages'
 import type { Locale } from '../types'
 import { extendedUiBundles } from './extendedUi'
 
-type Bundle = Partial<Record<MessageKey, string>>
+type Bundle = Record<string, string>
 
 function withExtendedUi(locale: Locale, base: Bundle): Bundle {
   return { ...base, ...extendedUiBundles[locale] }
