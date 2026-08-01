@@ -11,7 +11,7 @@ import { renderRoutePageHtml } from './scripts/lib/route-page-html.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { pageFilenameToRouteId } from './scripts/lib/route-page-filename-decode.mjs'
 // @ts-expect-error build helper is plain .mjs without types
-import { APP_PAGES } from './scripts/lib/app-page-html.mjs'
+import { APP_PAGES, injectAppLayoutModeMeta } from './scripts/lib/app-page-html.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { injectStartBootSplash } from './scripts/lib/start-boot-splash.mjs'
 // @ts-expect-error build helper is plain .mjs without types
@@ -131,11 +131,25 @@ function publishStandalonePlugin(buildTag: string): Plugin {
   }
 }
 
-/** 开发时 / 与 /index.html 为开始页；/routes.html 与 dev.html 为线路查询 */
+/** 开发时 / 与 /index.html 为开始页；/normal/dev.html、/real/dev.html 为分布局线路查询 */
 interface AppPageEntry {
   tab: string
   publishFile: string
   devFile: string
+}
+
+const LAYOUT_DEV_PAGE_SOURCES: Record<string, string> = {
+  'routes.html': 'dev.html',
+  'dev.html': 'dev.html',
+  'ann.html': 'pages/ann.html',
+  'music.html': 'pages/music.html',
+  'complaints.html': 'pages/complaints.html',
+  'trivia.html': 'pages/trivia.html',
+  'updates.html': 'pages/updates.html',
+  'account.html': 'pages/account.html',
+  'settings.html': 'pages/settings.html',
+  'route-map.html': 'pages/route-map.html',
+  'map-draw.html': 'pages/map-draw.html',
 }
 
 function normalizeDevRequestPath(url: string | undefined): string {
@@ -151,13 +165,17 @@ function serveTransformedDevHtml(
   next: Connect.NextFunction,
   filePath: string,
   url: string,
+  layoutMode?: 'normal' | 'real',
 ) {
   if (!existsSync(filePath)) {
     next()
     return
   }
 
-  const html = readFileSync(filePath, 'utf8')
+  let html = readFileSync(filePath, 'utf8')
+  if (layoutMode) {
+    html = injectAppLayoutModeMeta(html, layoutMode)
+  }
   const preparedHtml = filePath.endsWith('start.html') ? injectStartBootSplash(html) : html
   void server
     .transformIndexHtml(url, preparedHtml)
@@ -181,6 +199,18 @@ function devEntryRedirectPlugin(): Plugin {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const pathOnly = normalizeDevRequestPath(req.url)
+
+        const layoutScoped = pathOnly.match(/^\/(normal|real)\/([^/]+\.html)$/)
+        if (layoutScoped) {
+          const layoutMode = layoutScoped[1] as 'normal' | 'real'
+          const pageName = layoutScoped[2]!.toLowerCase()
+          const sourceRel = LAYOUT_DEV_PAGE_SOURCES[pageName]
+          if (sourceRel) {
+            const file = resolve(root, sourceRel)
+            serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly, layoutMode)
+            return
+          }
+        }
 
         const routePage = pathOnly.match(/^\/routes\/(.+)\.html$/)
         if (routePage) {
@@ -212,9 +242,17 @@ function devEntryRedirectPlugin(): Plugin {
           return
         }
 
-        if (pathOnly === '/routes.html' || pathOnly === '/dev.html') {
+        if (pathOnly === '/routes.html') {
+          const query = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+          res.statusCode = 302
+          res.setHeader('Location', `/normal/dev.html${query}`)
+          res.end()
+          return
+        }
+
+        if (pathOnly === '/dev.html') {
           const file = resolve(root, 'dev.html')
-          serveTransformedDevHtml(server, req, res, next, file, '/dev.html')
+          serveTransformedDevHtml(server, req, res, next, file, '/dev.html', 'normal')
           return
         }
 

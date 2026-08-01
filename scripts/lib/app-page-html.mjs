@@ -216,6 +216,64 @@ export function injectPortraitOrientationFallback(html) {
 
 const LOCALE_STORAGE_KEY = 'sibs-locale'
 
+/** @type {Array<{ dir: string, mode: 'normal' | 'real' }>} */
+export const APP_LAYOUT_PUBLISH = [
+  { dir: 'normal', mode: 'normal' },
+  { dir: 'real', mode: 'real' },
+]
+
+/** @param {string} html @param {'normal' | 'real'} mode */
+export function injectAppLayoutModeMeta(html, mode) {
+  const meta = `<meta name="app-layout-mode" content="${mode}" />`
+  if (/<meta name="app-layout-mode"/i.test(html)) {
+    return html.replace(/name="app-layout-mode" content="[^"]*"/, `name="app-layout-mode" content="${mode}"`)
+  }
+  if (/<meta name="app-tab"/i.test(html)) {
+    return html.replace(
+      /(<meta name="app-tab" content="[^"]*" \/>)/,
+      `$1\n    ${meta}`,
+    )
+  }
+  return html.replace(/<meta charset="UTF-8"\s*\/>/, (match) => `${match}\n    ${meta}`)
+}
+
+/** @param {string} html */
+export function rewritePublishedHtmlForLayoutSubdir(html) {
+  return html
+    .replace(/"\.\/assets\//g, '"../assets/')
+    .replace(/'\.\/assets\//g, "'../assets/")
+    .replace(/src="\.\/assets\//g, 'src="../assets/')
+    .replace(/"\.\/maps\//g, '"../maps/')
+    .replace(/"\.\/audio\//g, '"../audio/')
+    .replace(/"\.\/route-maps\//g, '"../route-maps/')
+    .replace(/href="\.\/sibs-logo/g, 'href="../sibs-logo')
+    .replace(/src="\.\/sibs-logo/g, 'src="../sibs-logo')
+    .replace(/var INDEX = '\.\/index\.html';/g, "var INDEX = '../index.html';")
+    .replace(/register\('\.\/sw\.js'/g, "register('../sw.js'")
+}
+
+/** @param {string} targetPath e.g. normal/routes.html */
+export function buildLegacyLayoutRedirectHtml(targetPath) {
+  const clean = targetPath.replace(/^\.\//, '')
+  return `<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <script>location.replace('./${clean}'+location.search+location.hash);</script>
+  <meta http-equiv="refresh" content="0;url=./${clean}" />
+  <title>Redirecting…</title>
+</head>
+<body><p><a href="./${clean}">Continue</a></p></body>
+</html>`
+}
+
+/** @param {string} html @param {'normal' | 'real'} layoutMode @param {boolean} forSubdir */
+export function prepareLayoutScopedHtml(html, layoutMode, forSubdir) {
+  let out = injectAppLayoutModeMeta(html, layoutMode)
+  if (forSubdir) out = rewritePublishedHtmlForLayoutSubdir(out)
+  return out
+}
+
 const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'
 
 const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
@@ -224,6 +282,11 @@ const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
   if (tab && tab.content) document.documentElement.setAttribute('data-app-tab', tab.content.trim());
   var page = document.querySelector('meta[name="app-page"]');
   if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
+  var layout = document.querySelector('meta[name="app-layout-mode"]');
+  if (layout && layout.content) {
+    document.documentElement.setAttribute('data-app-layout-mode', layout.content.trim());
+    document.documentElement.setAttribute('data-route-lookup-layout', layout.content.trim() === 'real' ? 'split' : 'grid');
+  }
   try {
     var prefs = JSON.parse(localStorage.getItem('${APP_PREFERENCES_STORAGE_KEY}') || 'null');
     var fill = 25;
@@ -328,10 +391,10 @@ const SECRET_ACCESS_GUARD_SCRIPT = `<script id="secret-access-guard">
 (function () {
   try {
     if (sessionStorage.getItem('${SECRET_ACCESS_STORAGE_KEY}') !== '1') {
-      location.replace('./routes.html');
+      location.replace('./normal/routes.html');
     }
   } catch (e) {
-    location.replace('./routes.html');
+    location.replace('./normal/routes.html');
   }
 })();
 </script>`
@@ -384,7 +447,7 @@ const START_ROUTE_REDIRECT_SCRIPT = `<script id="start-route-redirect">
   if (!q) return;
   var params = new URLSearchParams(q);
   if (params.has('route') || params.has('from') || params.has('to') || params.has('q')) {
-    window.location.replace('./routes.html' + q + (window.location.hash || ''));
+    window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
   }
 })();
 </script>`
@@ -476,7 +539,7 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
 (function () {
   var root = document.getElementById('root');
   if (!root || document.getElementById('start-boot-splash')) return;
-  var ghPagesHint = 'GitHub Pages 请访问 https://jinruimaomao.github.io/SIBSRL/routes.html ，并 Ctrl+F5 强制刷新。';
+  var ghPagesHint = 'GitHub Pages 请访问 https://jinruimaomao.github.io/SIBSRL/normal/routes.html ，并 Ctrl+F5 强制刷新。';
   function showFailure(title, detail, extra) {
     if (!root.querySelector('.boot-hint')) return;
     root.innerHTML =

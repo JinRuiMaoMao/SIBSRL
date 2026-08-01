@@ -87,7 +87,6 @@ export function applyAppPreferences(preferences: AppPreferences): void {
   } else {
     document.documentElement.removeAttribute('data-desktop-tab-bar-pinned')
   }
-  document.documentElement.setAttribute('data-route-lookup-layout', preferences.routeLookupLayout)
   document.documentElement.removeAttribute('data-panel-style')
 }
 

@@ -1,4 +1,4 @@
-import { copyFileSync, cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -24,6 +24,9 @@ import {
   injectSwVersionBootstrap,
   relocateAppBundleScript,
   syncFaviconLink,
+  APP_LAYOUT_PUBLISH,
+  prepareLayoutScopedHtml,
+  buildLegacyLayoutRedirectHtml,
 } from './lib/app-page-html.mjs'
 import { injectStartBootSplash } from './lib/start-boot-splash.mjs'
 import { generateRoutePages } from './generate-route-pages.mjs'
@@ -65,6 +68,26 @@ function prepareStandaloneHtml(html, buildTag) {
     )
   }
   return out
+}
+
+/** @param {string} html @param {string} filename @param {string} siteRoot @param {string} distRoot */
+function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot) {
+  for (const { dir, mode } of APP_LAYOUT_PUBLISH) {
+    const scoped = prepareLayoutScopedHtml(html, mode, true)
+    const layoutDir = resolve(siteRoot, dir)
+    const distLayoutDir = resolve(distRoot, dir)
+    mkdirSync(layoutDir, { recursive: true })
+    mkdirSync(distLayoutDir, { recursive: true })
+    writeFileSync(resolve(layoutDir, filename), scoped)
+    writeFileSync(resolve(distLayoutDir, filename), scoped)
+  }
+}
+
+/** @param {string} filename @param {string} targetPath @param {string} siteRoot @param {string} distRoot */
+function writeLegacyRedirect(filename, targetPath, siteRoot, distRoot) {
+  const redirectHtml = buildLegacyLayoutRedirectHtml(targetPath)
+  writeFileSync(resolve(siteRoot, filename), redirectHtml)
+  writeFileSync(resolve(distRoot, filename), redirectHtml)
 }
 
 /**
@@ -109,8 +132,8 @@ export function publishStandalone(options = {}) {
   for (const page of APP_PAGES) {
     let html = injectAppTabMeta(baseHtml, page.tab)
     html = adjustAppPageTitle(html, page.titleZh)
-    writeFileSync(resolve(root, page.publishFile), html)
-    writeFileSync(resolve(root, 'dist', page.publishFile), html)
+    publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
+    writeLegacyRedirect(page.publishFile, `normal/${page.publishFile}`, root, resolve(root, 'dist'))
   }
 
   let startHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
@@ -131,23 +154,23 @@ export function publishStandalone(options = {}) {
 
   let accountHtml = injectAccountPageMeta(baseHtml)
   accountHtml = adjustAppPageTitle(accountHtml, '个人中心')
-  writeFileSync(resolve(root, 'account.html'), accountHtml)
-  writeFileSync(resolve(root, 'dist', 'account.html'), accountHtml)
+  publishHtmlToLayoutDirs(accountHtml, 'account.html', root, resolve(root, 'dist'))
+  writeLegacyRedirect('account.html', 'normal/account.html', root, resolve(root, 'dist'))
 
   let settingsHtml = injectSettingsPageMeta(baseHtml)
   settingsHtml = adjustAppPageTitle(settingsHtml, '设置')
-  writeFileSync(resolve(root, 'settings.html'), settingsHtml)
-  writeFileSync(resolve(root, 'dist', 'settings.html'), settingsHtml)
+  publishHtmlToLayoutDirs(settingsHtml, 'settings.html', root, resolve(root, 'dist'))
+  writeLegacyRedirect('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
 
   let mapDrawHtml = injectMapDrawPageMeta(baseHtml)
   mapDrawHtml = adjustAppPageTitle(mapDrawHtml, '地图走线编辑')
-  writeFileSync(resolve(root, 'map-draw.html'), mapDrawHtml)
-  writeFileSync(resolve(root, 'dist', 'map-draw.html'), mapDrawHtml)
+  publishHtmlToLayoutDirs(mapDrawHtml, 'map-draw.html', root, resolve(root, 'dist'))
+  writeLegacyRedirect('map-draw.html', 'normal/map-draw.html', root, resolve(root, 'dist'))
 
   let routeMapHtml = injectRouteMapPageMeta(baseHtml)
   routeMapHtml = adjustAppPageTitle(routeMapHtml, '线路走向图')
-  writeFileSync(resolve(root, 'route-map.html'), routeMapHtml)
-  writeFileSync(resolve(root, 'dist', 'route-map.html'), routeMapHtml)
+  publishHtmlToLayoutDirs(routeMapHtml, 'route-map.html', root, resolve(root, 'dist'))
+  writeLegacyRedirect('route-map.html', 'normal/route-map.html', root, resolve(root, 'dist'))
 
   rmSync(resolve(root, 'tabs'), { recursive: true, force: true })
   rmSync(resolve(root, 'dist', 'tabs'), { recursive: true, force: true })
@@ -242,7 +265,7 @@ export function publishStandalone(options = {}) {
   }
 
   console.log(
-    `[publish] 已更新 index.html、${APP_PAGES.map((p) => p.publishFile).join('、')}（构建 ${buildTag}）`,
+    `[publish] 已更新 index.html、normal/* 与 real/*（${APP_PAGES.map((p) => p.publishFile).join('、')} 等；构建 ${buildTag}）`,
   )
   return { buildTag, built }
 }

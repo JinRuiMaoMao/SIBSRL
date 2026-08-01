@@ -188,6 +188,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "线路查询分为两个独立 URL：normal/（网格 + 左下角地图）与 real/（左侧列表 + 右侧全屏地图）；搜索栏可跳转切换。",
+            en: "Route lookup now has separate URLs: normal/ (grid + corner map widget) and real/ (sidebar list + full-height map); use the search toolbar link to switch.",
+          },
+          {
             zh: "分屏布局改为左侧竖条线路列表、右侧全屏地图（左右贴边无间距）；修复竖屏横屏提示被遮挡不显示。",
             en: "Split layout is now a left route sidebar plus edge-to-edge full-height map; fixed portrait rotate prompt not appearing.",
           },
@@ -198,6 +202,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           {
             zh: "新增分屏布局：左侧横向单卡浏览线路，右侧嵌入群岛地图；搜索栏右上角可切换「网格／分屏」。",
             en: "Added split layout: horizontal one-card route carousel on the left, embedded island map on the right; toggle Grid/Split in the search toolbar.",
+          },
+        ],
+        fixes: [
+          {
+            zh: "修复 real 布局下右侧群岛地图不显示（布局改由 URL 决定，不再被本地偏好覆盖）。",
+            en: "Fixed the island map not showing in real layout (layout is now driven by URL, not overridden by stored preferences).",
           },
         ],
       },

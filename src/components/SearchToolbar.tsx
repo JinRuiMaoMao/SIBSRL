@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import type { RouteLookupLayout } from '../storage/appPreferences'
+import { isRealLayoutMode, getAlternateLayoutRoutesHref } from '../utils/appLayoutMode'
 import type { RouteTypeFilter } from '../types/route'
 import { FilterMenu } from './FilterMenu'
 import { RouteFilters } from './RouteFilters'
@@ -34,8 +34,6 @@ interface SearchToolbarProps {
   showShortcutHint?: boolean
   syntaxVisible?: boolean
   onSyntaxToggle?: () => void
-  routeLookupLayout?: RouteLookupLayout
-  onRouteLookupLayoutChange?: (layout: RouteLookupLayout) => void
 }
 
 export function SearchToolbar({
@@ -66,11 +64,10 @@ export function SearchToolbar({
   showShortcutHint = true,
   syntaxVisible,
   onSyntaxToggle,
-  routeLookupLayout = 'grid',
-  onRouteLookupLayoutChange,
 }: SearchToolbarProps) {
   const { t } = useLocale()
-  const splitLayoutActive = routeLookupLayout === 'split'
+  const realLayout = isRealLayoutMode()
+  const alternateLayoutHref = getAlternateLayoutRoutesHref()
 
   return (
     <div className="search-toolbar">
@@ -89,20 +86,14 @@ export function SearchToolbar({
         onSyntaxToggle={onSyntaxToggle}
       />
       <div className="search-toolbar-actions">
-        {onRouteLookupLayoutChange ? (
-          <button
-            type="button"
-            className={`route-layout-toggle-btn${splitLayoutActive ? ' route-layout-toggle-btn--active' : ''}`}
-            onClick={() =>
-              onRouteLookupLayoutChange(splitLayoutActive ? 'grid' : 'split')
-            }
-            aria-pressed={splitLayoutActive}
-            aria-label={t('routeLookupLayoutToggleAria')}
-            title={splitLayoutActive ? t('routeLookupLayoutGrid') : t('routeLookupLayoutSplit')}
-          >
-            {splitLayoutActive ? t('routeLookupLayoutGrid') : t('routeLookupLayoutSplit')}
-          </button>
-        ) : null}
+        <a
+          className={`route-layout-toggle-btn${realLayout ? ' route-layout-toggle-btn--active' : ''}`}
+          href={alternateLayoutHref}
+          aria-label={t('routeLookupLayoutToggleAria')}
+          title={realLayout ? t('routeLookupLayoutGrid') : t('routeLookupLayoutSplit')}
+        >
+          {realLayout ? t('routeLookupLayoutGrid') : t('routeLookupLayoutSplit')}
+        </a>
         <button
           type="button"
           className="random-route-btn"

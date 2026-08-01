@@ -1,3 +1,5 @@
+import { getLayoutScopedHref, isLayoutScopedPage } from './appLayoutMode'
+
 export function isStartPage(): boolean {
   const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
   if (meta === 'start') return true
@@ -8,7 +10,20 @@ export function isStartPage(): boolean {
 }
 
 export function getStartPageHref(): string {
+  if (isLayoutScopedPage()) return '../index.html'
   return './index.html'
+}
+
+export function getAccountPageHref(): string {
+  return getLayoutScopedHref('account.html')
+}
+
+export function getMapDrawPageHref(): string {
+  return getLayoutScopedHref('map-draw.html')
+}
+
+export function getSettingsPageHref(): string {
+  return getLayoutScopedHref('settings.html')
 }
 
 export function isSecretPage(): boolean {
@@ -54,16 +69,4 @@ export function isRouteMapPage(): boolean {
   const file =
     window.location.pathname.replace(/\\/g, '/').split('/').filter(Boolean).pop()?.toLowerCase() ?? ''
   return file === 'route-map.html'
-}
-
-export function getAccountPageHref(): string {
-  return './account.html'
-}
-
-export function getMapDrawPageHref(): string {
-  return './map-draw.html'
-}
-
-export function getSettingsPageHref(): string {
-  return './settings.html'
 }

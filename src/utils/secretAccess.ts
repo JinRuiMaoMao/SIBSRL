@@ -1,3 +1,5 @@
+import { getLayoutScopedHref } from './appLayoutMode'
+
 /** sessionStorage key — keep in sync with inline guard in pages/secret.html */
 export const SECRET_ACCESS_STORAGE_KEY = 'sibs-secret-unlock'
 
@@ -18,7 +20,7 @@ export function hasSecretAccess(): boolean {
 }
 
 export function routesIndexHref(): string {
-  return import.meta.env.DEV ? './dev.html' : './routes.html'
+  return getLayoutScopedHref(import.meta.env.DEV ? 'dev.html' : 'routes.html')
 }
 
 export function redirectToRoutesIndex(): void {

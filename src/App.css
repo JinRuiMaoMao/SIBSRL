@@ -3635,6 +3635,8 @@ html[data-route-lookup-layout='split'] .site-footer {
 
 .route-map-pane {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   min-width: 0;
   height: 100%;

@@ -15,6 +15,7 @@ import {
   type ListDensity,
   type RouteLookupLayout,
 } from '../storage/appPreferences'
+import { applyAppLayoutModeAttributes } from '../utils/appLayoutMode'
 
 interface AppPreferencesContextValue extends AppPreferences {
   setReduceMotion: (value: boolean) => void
@@ -35,6 +36,7 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
     setPreferences((prev) => {
       const next = { ...prev, ...patch }
       applyAppPreferences(next)
+      applyAppLayoutModeAttributes()
       writeAppPreferences(next)
       return next
     })
@@ -42,6 +44,7 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     applyAppPreferences(preferences)
+    applyAppLayoutModeAttributes()
   }, [preferences])
 
   const value = useMemo(

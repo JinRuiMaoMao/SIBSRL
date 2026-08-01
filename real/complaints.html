@@ -1,20 +1,9 @@
 ﻿<!doctype html>
 <html lang="en">
   <head>
-    <script id="secret-access-guard">
-(function () {
-  try {
-    if (sessionStorage.getItem('sibs-secret-unlock') !== '1') {
-      location.replace('./normal/routes.html');
-    }
-  } catch (e) {
-    location.replace('./normal/routes.html');
-  }
-})();
-</script>
     <script id="devtools-block">
 (function () {
-  var INDEX = './index.html';
+  var INDEX = '../index.html';
   var href = String(window.location.href || '');
   var protocol = String(window.location.protocol || '');
   if (/^view-source:/i.test(href) || protocol === 'view-source:') {
@@ -63,8 +52,6 @@
 })();
 </script>
     <meta charset="UTF-8" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="app-page" content="secret" />
     <meta name="user-api-url" content="https://sibs-user-api.onrender.com" />
     <script id="theme-bootstrap">
       (function () {
@@ -135,10 +122,12 @@
         window.addEventListener('resize', apply);
       })();
     </script>
+    <meta name="app-tab" content="complaints" />
+    <meta name="app-layout-mode" content="real" />
     <meta name="app-build" content="2026-08-01T02:14:17.796Z" />
-    <link rel="icon" href="./sibs-logo.png?v=2026-08-01T02%3A14%3A17.796Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-08-01T02%3A14%3A17.796Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-08-01T02%3A14%3A17.796Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T02%3A14%3A17.796Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T02%3A14%3A17.796Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T02%3A14%3A17.796Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -149,8 +138,8 @@
       name="description"
       content="Sunshine Islands Bus Simulator (SIBS) 巴士线路查询工具 - 阳光群岛 Roblox 巴士模拟器"
     />
-    <title>??? · 阳光群岛线路查询</title>
-<link rel="stylesheet" crossorigin href="./assets/dev-Df2wqcTt.css">
+    <title>NPC · 阳光群岛线路查询</title>
+<link rel="stylesheet" crossorigin href="../assets/dev-Df2wqcTt.css">
       <script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
@@ -212,7 +201,7 @@
       <script id="sw-register">
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js').catch(function () {});
+    navigator.serviceWorker.register('../sw.js').catch(function () {});
   });
 }
 </script>
@@ -248,7 +237,7 @@ if ('serviceWorker' in navigator) {
 </noscript>
     <div id="portrait-orientation-fallback" class="portrait-orientation-gate portrait-orientation-gate--static" aria-live="assertive">
   <div class="portrait-orientation-gate-card">
-    <p><img src="./sibs-logo.png" alt="" width="56" height="56" decoding="async" /></p>
+    <p><img src="../sibs-logo.png" alt="" width="56" height="56" decoding="async" /></p>
     <h1>请旋转设备至横屏</h1>
     <p>本站仅支持横屏使用。请将手机或平板转至横屏后再继续。</p>
     <p lang="en">Please rotate to landscape. This site only works in landscape mode.</p>
@@ -318,6 +307,6 @@ if ('serviceWorker' in navigator) {
   }, 15000);
 })();
 </script>
-      <script type="module" crossorigin src="./assets/dev-D7xXWCv0.js"></script>
+      <script type="module" crossorigin src="../assets/dev-D7xXWCv0.js"></script>
   </body>
 </html>

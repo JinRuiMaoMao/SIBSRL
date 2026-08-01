@@ -7,6 +7,7 @@ import {
   DRAW_MIN_ZOOM_RATIO,
 } from '../utils/mapDrawOverlayZoom'
 import { useLocale } from '../i18n/LocaleContext'
+import { getTabPageHref } from '../utils/appTabNavigation'
 import {
   buildWorldMapRouteExportPayload,
   copyWorldMapRouteJson,
@@ -1391,7 +1392,7 @@ export function IslandMapDrawEditor({
               {t('mapDrawOverlayClose')}
             </button>
           ) : (
-            <a className="route-editor-btn route-editor-back" href="./routes.html">
+            <a className="route-editor-btn route-editor-back" href={getTabPageHref('routes')}>
               {t('mapDrawPageBack')}
             </a>
           )}

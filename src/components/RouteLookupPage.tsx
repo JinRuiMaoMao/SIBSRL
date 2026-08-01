@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
   buildDailyChallengeFromScheduleDay,
@@ -33,7 +33,8 @@ import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
-import { useAppPreferences } from '../contexts/AppPreferencesContext'
+import { isRealLayoutMode } from '../utils/appLayoutMode'
+import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
@@ -203,9 +204,8 @@ export function RouteLookupPage({
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
-  const { routeLookupLayout, setRouteLookupLayout } = useAppPreferences()
-  const splitLayoutActive = routeLookupLayout === 'split'
-  const { setRouteOverlay, setEmbeddedMapHost } = useIslandMapOverlay()
+  const splitLayoutActive = isRealLayoutMode()
+  const { setRouteOverlay } = useIslandMapOverlay()
   const { openTour, registerAutoStartTimer, cancelAutoStartTimer } = useGuidedTourControl()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
@@ -247,7 +247,6 @@ export function RouteLookupPage({
     pageData: RoutePageData | null
   } | null>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
-  const mapHostRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
   const openAnimsRef = useRef<Animation[]>([])
   const closeAnimsRef = useRef<Animation[]>([])
@@ -569,18 +568,6 @@ export function RouteLookupPage({
       cancelled = true
     }
   }, [detailOverlay])
-
-  useEffect(() => {
-    if (!splitLayoutActive) setEmbeddedMapHost(null)
-  }, [setEmbeddedMapHost, splitLayoutActive])
-
-  const attachMapHost = useCallback(
-    (node: HTMLDivElement | null) => {
-      mapHostRef.current = node
-      if (splitLayoutActive) setEmbeddedMapHost(node)
-    },
-    [setEmbeddedMapHost, splitLayoutActive],
-  )
 
   useEffect(() => {
     if (!splitLayoutActive || filteredRoutes.length === 0) return
@@ -1339,8 +1326,6 @@ export function RouteLookupPage({
       searchInputRef={searchInputRef}
       syntaxVisible={splitLayoutActive ? false : syntaxExpanded}
       onSyntaxToggle={splitLayoutActive ? undefined : handleSyntaxToggle}
-      routeLookupLayout={routeLookupLayout}
-      onRouteLookupLayoutChange={setRouteLookupLayout}
     />
   )
 
@@ -1374,7 +1359,9 @@ export function RouteLookupPage({
               onOpenDetail={handleOpenDetailInSplit}
             />
           </aside>
-          <div ref={attachMapHost} className="route-map-pane" aria-label={t('islandMapAria')} />
+          <div className="route-map-pane" aria-label={t('islandMapAria')}>
+            <IslandMapEmbeddedPane />
+          </div>
         </div>
       ) : (
         <>

@@ -1,4 +1,5 @@
 import type { AppTab } from '../types/appTab'
+import { getLayoutScopedHref, isLayoutScopedPage, readAppLayoutMode } from './appLayoutMode'
 
 export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates']
 
@@ -7,8 +8,8 @@ export function getRoutesPageFile(): string {
   return import.meta.env.DEV ? 'dev.html' : 'routes.html'
 }
 
-/** 各栏目对应的根目录 HTML（开发时线路查询用 dev.html） */
-const TAB_PAGE_HREF: Record<AppTab, string> = {
+/** 各栏目对应的 HTML 文件名 */
+const TAB_PAGE_FILE: Record<AppTab, string> = {
   routes: getRoutesPageFile(),
   broadcast: 'ann.html',
   music: 'music.html',
@@ -31,12 +32,12 @@ export function isAppTab(value: string): value is AppTab {
   return (APP_TABS as string[]).includes(value)
 }
 
-/** 顶栏链接：线路查询 → routes.html，广播 → ann.html，其余同理 */
+/** 同布局模式下栏目页链接（normal/… 或 real/…） */
 export function getTabPageHref(tab: AppTab): string {
-  return TAB_PAGE_HREF[tab]
+  return getLayoutScopedHref(TAB_PAGE_FILE[tab])
 }
 
-/** 从 meta、文件名或 legacy ?tab= 读取当前栏目 */
+/** 从 meta、路径或 legacy ?tab= 读取当前栏目 */
 export function readTabFromLocation(): AppTab | null {
   const meta = document.querySelector('meta[name="app-tab"]')?.getAttribute('content')?.trim()
   if (meta && isAppTab(meta)) return meta
@@ -54,4 +55,9 @@ export function readTabFromLocation(): AppTab | null {
 
 export function isRoutesPage(): boolean {
   return (readTabFromLocation() ?? 'routes') === 'routes'
+}
+
+export function getStartPageHrefForLayout(mode = readAppLayoutMode()): string {
+  if (isLayoutScopedPage()) return './index.html'
+  return `./${mode}/index.html`
 }

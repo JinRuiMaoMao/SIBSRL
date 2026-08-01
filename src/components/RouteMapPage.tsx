@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { getTabPageHref } from '../utils/appTabNavigation'
 import { saveRouteMapImport, UserApiError } from '../api/userApi'
 import { routes } from '../data/routes'
 import { useAppDialog } from '../contexts/AppDialogContext'
@@ -50,8 +51,9 @@ function readRouteIdFromLocation(): string {
 }
 
 function buildBackHref(routeId: string): string {
-  if (!routeId) return './routes.html'
-  return `./routes.html?route=${encodeURIComponent(routeId)}`
+  const base = getTabPageHref('routes')
+  if (!routeId) return base
+  return `${base}?route=${encodeURIComponent(routeId)}`
 }
 
 function readImportJsonText(text: string): unknown {
