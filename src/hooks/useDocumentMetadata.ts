@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import type { AppTab } from '../types/appTab'
 import { isAccountPage, isMapDrawPage, isSecretPage, isSettingsPage, isStartPage } from '../utils/appPage'
+import { isRealLayoutMode } from '../utils/appLayoutMode'
 import {
   formatDocumentTitle,
   syncFavicon,
@@ -24,7 +25,7 @@ export function useDocumentMetadata(activeTab: AppTab): void {
 
   useEffect(() => {
     if (start) {
-      document.title = t('startPageDocumentTitle')
+      document.title = t(isRealLayoutMode() ? 'realStartPageDocumentTitle' : 'startPageDocumentTitle')
       return
     }
     const pageKey = secret

@@ -139,6 +139,7 @@ interface AppPageEntry {
 }
 
 const LAYOUT_DEV_PAGE_SOURCES: Record<string, string> = {
+  'index.html': 'pages/start.html',
   'routes.html': 'dev.html',
   'dev.html': 'dev.html',
   'ann.html': 'pages/ann.html',
@@ -204,7 +205,7 @@ function devEntryRedirectPlugin(): Plugin {
         if (layoutScoped) {
           const layoutMode = layoutScoped[1] as 'normal' | 'real'
           const pageName = layoutScoped[2]!.toLowerCase()
-          if (layoutMode === 'real' && pageName !== 'routes.html' && pageName !== 'dev.html') {
+          if (layoutMode === 'real' && pageName !== 'routes.html' && pageName !== 'dev.html' && pageName !== 'index.html') {
             res.statusCode = 302
             res.setHeader('Location', `/normal/${pageName}${req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''}`)
             res.end()

@@ -1,4 +1,4 @@
-import { getLayoutScopedHref, isLayoutScopedPage } from './appLayoutMode'
+import { getLayoutScopedHref, isLayoutScopedPage, isRealLayoutMode } from './appLayoutMode'
 
 export function getSecretPageHref(): string {
   if (isLayoutScopedPage()) return '../secret.html'
@@ -15,7 +15,10 @@ export function isStartPage(): boolean {
 }
 
 export function getStartPageHref(): string {
-  if (isLayoutScopedPage()) return '../index.html'
+  if (isLayoutScopedPage()) {
+    if (isRealLayoutMode()) return './index.html'
+    return '../index.html'
+  }
   return './index.html'
 }
 

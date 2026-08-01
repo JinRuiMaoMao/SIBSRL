@@ -160,6 +160,18 @@ export function publishStandalone(options = {}) {
   writeFileSync(resolve(root, 'index.html'), startHtml)
   writeFileSync(resolve(root, 'dist', 'index.html'), startHtml)
 
+  let realStartHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
+  realStartHtml = realStartHtml.replace(
+    "window.location.replace('./normal/routes.html'",
+    "window.location.replace('./routes.html'",
+  )
+  realStartHtml = prepareLayoutScopedHtml(realStartHtml, 'real', true)
+  realStartHtml = adjustAppPageTitle(realStartHtml, '阳光群岛巴士模拟器', { standalone: true })
+  mkdirSync(resolve(root, 'real'), { recursive: true })
+  mkdirSync(resolve(root, 'dist', 'real'), { recursive: true })
+  writeFileSync(resolve(root, 'real', 'index.html'), realStartHtml)
+  writeFileSync(resolve(root, 'dist', 'real', 'index.html'), realStartHtml)
+
   let secretHtml = injectSecretPageMeta(baseHtml)
   secretHtml = adjustAppPageTitle(secretHtml, '???')
   if (!secretHtml.includes('name="robots"')) {

@@ -65,5 +65,6 @@ export function isRoutesPage(): boolean {
 
 export function getStartPageHrefForLayout(mode = readAppLayoutMode()): string {
   if (isLayoutScopedPage()) return './index.html'
-  return `./${mode}/index.html`
+  if (mode === 'real') return './real/index.html'
+  return './index.html'
 }

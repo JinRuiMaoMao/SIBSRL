@@ -351,7 +351,8 @@ code {
 }
 
 html[data-portrait-blocked='true'] .app,
-html[data-portrait-blocked='true'] .start-page {
+html[data-portrait-blocked='true'] .start-page,
+html[data-portrait-blocked='true'] .real-start-page {
   visibility: hidden;
   pointer-events: none;
 }

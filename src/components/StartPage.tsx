@@ -3,7 +3,7 @@ import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { START_PAGE_EXTERNAL_LINKS, getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { getLayoutRoutesHref } from '../utils/appLayoutMode'
-import { getTabPageHref } from '../utils/appTabNavigation'
+import { getStartPageHrefForLayout, getTabPageHref } from '../utils/appTabNavigation'
 import { getSettingsPageHref } from '../utils/appPage'
 import { getSiteLogoUrl } from '../data/siteBrand'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
@@ -14,7 +14,7 @@ export function StartPage() {
   const { locale, t } = useLocale()
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const normalRoutesHref = getLayoutRoutesHref('normal')
-  const realRoutesHref = getLayoutRoutesHref('real')
+  const realStartHref = getStartPageHrefForLayout('real')
   const updatesHref = getTabPageHref('updates')
 
   useEffect(() => {
@@ -40,8 +40,8 @@ export function StartPage() {
             <a className="start-page-cta start-page-cta--primary" href={normalRoutesHref}>
               {t('startPageRoutesCta')} ({t('routeLookupLayoutGrid')})
             </a>
-            <a className="start-page-cta start-page-cta--secondary" href={realRoutesHref}>
-              {t('startPageRoutesCta')} ({t('routeLookupLayoutSplit')})
+            <a className="start-page-cta start-page-cta--secondary" href={realStartHref}>
+              {t('startPageRealModeCta')}
             </a>
             <a className="start-page-cta start-page-cta--secondary" href={updatesHref}>
               {t('startPageUpdatesCta')}
