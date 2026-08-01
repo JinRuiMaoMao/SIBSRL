@@ -477,6 +477,54 @@ const START_ROUTE_REDIRECT_SCRIPT = `<script id="start-route-redirect">
 })();
 </script>`
 
+const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-bootstrap">
+(function () {
+  var layoutMeta = document.querySelector('meta[name="app-layout-mode"]');
+  if (!layoutMeta || layoutMeta.content.trim() !== 'real') return;
+  var pageMeta = document.querySelector('meta[name="app-page"]');
+  var tabMeta = document.querySelector('meta[name="app-tab"]');
+  var page = pageMeta && pageMeta.content ? pageMeta.content.trim() : '';
+  var tab = tabMeta && tabMeta.content ? tabMeta.content.trim() : '';
+  var track = page === 'start'
+    ? '../audio/broadcasts/music/music-main-menu.ogg'
+    : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu.ogg' : '');
+  if (!track) return;
+  try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
+  var audio = new Audio(track);
+  audio.loop = true;
+  audio.preload = 'auto';
+  window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
+  function unlock() {
+    try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
+    audio.muted = false;
+    audio.play().catch(function () {});
+  }
+  function tryPlay() {
+    audio.muted = false;
+    var attempt = audio.play();
+    if (attempt && attempt.catch) {
+      attempt.catch(function () {
+        audio.muted = true;
+        audio.play().catch(function () {});
+      });
+    }
+  }
+  tryPlay();
+  ['pointerdown', 'keydown', 'touchstart', 'click'].forEach(function (ev) {
+    document.addEventListener(ev, unlock, { capture: true, passive: true });
+  });
+  var splash = document.getElementById('start-boot-splash');
+  if (splash) splash.addEventListener('pointerdown', unlock, { capture: true, passive: true });
+  audio.addEventListener('canplaythrough', tryPlay, { once: true });
+})();
+</script>`
+
+/** @param {string} html */
+export function injectRealLayoutMusicEarlyBootstrap(html) {
+  if (html.includes('id="real-layout-music-early-bootstrap"')) return html
+  return html.replace('</head>', `    ${REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP}\n  </head>`)
+}
+
 /** @param {string} html */
 export function injectStartPageMeta(html) {
   let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')

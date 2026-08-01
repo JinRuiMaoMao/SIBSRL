@@ -15,10 +15,12 @@ import { LocaleProvider } from './i18n/LocaleContext.tsx'
 import { ThemeProvider } from './theme/ThemeContext.tsx'
 import { applyAppPreferences, readAppPreferences } from './storage/appPreferences.ts'
 import { applyAppLayoutModeAttributes } from './utils/appLayoutMode.ts'
+import { bootstrapRealLayoutMusicEarly } from './utils/realLayoutMusicPlayer.ts'
 import { installDevToolsBlock } from './utils/blockDevToolsShortcuts.ts'
 
 applyAppPreferences(readAppPreferences())
 applyAppLayoutModeAttributes()
+bootstrapRealLayoutMusicEarly()
 
 if (!import.meta.env.DEV) {
   installDevToolsBlock()

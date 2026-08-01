@@ -15,6 +15,7 @@ import {
   injectSecretPageMeta,
   injectServiceWorkerBootstrap,
   injectStartPageMeta,
+  injectRealLayoutMusicEarlyBootstrap,
   injectThemeBootstrap,
   injectPortraitBlockBootstrap,
   injectPortraitOrientationFallback,
@@ -75,7 +76,10 @@ function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot, options = {
   const layouts = options.layouts ?? ['normal', 'real']
   for (const { dir, mode } of APP_LAYOUT_PUBLISH) {
     if (!layouts.includes(mode)) continue
-    const scoped = prepareLayoutScopedHtml(html, mode, true)
+    let scoped = prepareLayoutScopedHtml(html, mode, true)
+    if (mode === 'real' && filename === 'routes.html') {
+      scoped = injectRealLayoutMusicEarlyBootstrap(scoped)
+    }
     const layoutDir = resolve(siteRoot, dir)
     const distLayoutDir = resolve(distRoot, dir)
     mkdirSync(layoutDir, { recursive: true })
@@ -166,6 +170,7 @@ export function publishStandalone(options = {}) {
     "window.location.replace('./routes.html'",
   )
   realStartHtml = prepareLayoutScopedHtml(realStartHtml, 'real', true)
+  realStartHtml = injectRealLayoutMusicEarlyBootstrap(realStartHtml)
   realStartHtml = adjustAppPageTitle(realStartHtml, '阳光群岛巴士模拟器', { standalone: true })
   mkdirSync(resolve(root, 'real'), { recursive: true })
   mkdirSync(resolve(root, 'dist', 'real'), { recursive: true })

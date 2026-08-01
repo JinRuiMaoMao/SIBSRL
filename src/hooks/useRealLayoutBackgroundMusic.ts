@@ -1,94 +1,76 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { musicTracks } from '../data/musicTracks'
-import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
+import { useCallback, useEffect, useState } from 'react'
+import {
+  attemptRealLayoutAutoplay,
+  bootstrapRealLayoutMusicEarly,
+  getRealLayoutMusicElement,
+  loadRealLayoutMusicTrack,
+  pauseRealLayoutMusic,
+} from '../utils/realLayoutMusicPlayer'
 import {
   readRealMusicMuted,
   writeRealMusicMuted,
   type RealLayoutMusicTrackId,
 } from '../utils/realLayoutMusicStorage'
 
-function resolveMusicTrackUrl(trackId: RealLayoutMusicTrackId): string | null {
-  const track = musicTracks.find((entry) => entry.id === trackId)
-  if (!track) return null
-  return resolveSiteAssetUrl(track.audioUrl.replace(/^\.\//, ''))
-}
-
 export function useRealLayoutBackgroundMusic(trackId: RealLayoutMusicTrackId) {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
   const [muted, setMuted] = useState(readRealMusicMuted)
 
-  const syncPlayback = useCallback((audio: HTMLAudioElement, nextMuted: boolean) => {
+  useEffect(() => {
+    bootstrapRealLayoutMusicEarly(trackId)
+    loadRealLayoutMusicTrack(trackId)
+    void attemptRealLayoutAutoplay()
+  }, [trackId])
+
+  const setMutedState = useCallback((nextMuted: boolean) => {
+    setMuted(nextMuted)
+    writeRealMusicMuted(nextMuted)
     if (nextMuted) {
-      audio.pause()
+      pauseRealLayoutMusic()
       return
     }
-    void audio.play().catch(() => {})
+    const element = getRealLayoutMusicElement()
+    if (element) element.muted = false
+    void attemptRealLayoutAutoplay()
   }, [])
-
-  const setMutedState = useCallback(
-    (nextMuted: boolean) => {
-      setMuted(nextMuted)
-      writeRealMusicMuted(nextMuted)
-      const audio = audioRef.current
-      if (audio) syncPlayback(audio, nextMuted)
-    },
-    [syncPlayback],
-  )
 
   const toggleMuted = useCallback(() => {
     setMuted((current) => {
       const next = !current
       writeRealMusicMuted(next)
-      const audio = audioRef.current
-      if (audio) syncPlayback(audio, next)
+      if (next) {
+        pauseRealLayoutMusic()
+      } else {
+        const element = getRealLayoutMusicElement()
+        if (element) element.muted = false
+        void attemptRealLayoutAutoplay()
+      }
       return next
     })
-  }, [syncPlayback])
+  }, [])
 
-  const switchTrack = useCallback(
-    (nextTrackId: RealLayoutMusicTrackId) => {
-      const audio = audioRef.current
-      const nextUrl = resolveMusicTrackUrl(nextTrackId)
-      if (!audio || !nextUrl) return
-
-      audio.pause()
-      audio.src = nextUrl
-      audio.loop = true
-      audio.currentTime = 0
-      syncPlayback(audio, readRealMusicMuted())
-    },
-    [syncPlayback],
-  )
-
-  useEffect(() => {
-    const url = resolveMusicTrackUrl(trackId)
-    if (!url) return
-
-    const audio = new Audio(url)
-    audio.loop = true
-    audio.preload = 'auto'
-    audioRef.current = audio
-    syncPlayback(audio, readRealMusicMuted())
-
-    return () => {
-      audio.pause()
-      audio.src = ''
-      if (audioRef.current === audio) {
-        audioRef.current = null
-      }
+  const switchTrack = useCallback((nextTrackId: RealLayoutMusicTrackId) => {
+    loadRealLayoutMusicTrack(nextTrackId)
+    if (readRealMusicMuted()) {
+      pauseRealLayoutMusic()
+      return
     }
-  }, [syncPlayback, trackId])
+    const element = getRealLayoutMusicElement()
+    if (element) {
+      element.currentTime = 0
+      element.muted = false
+    }
+    void attemptRealLayoutAutoplay()
+  }, [])
+
+  const retryPlay = useCallback(() => {
+    if (!readRealMusicMuted()) void attemptRealLayoutAutoplay()
+  }, [])
 
   return {
     muted,
     toggleMuted,
     switchTrack,
     setMuted: setMutedState,
-    retryPlay: useCallback(() => {
-      const audio = audioRef.current
-      if (audio && !readRealMusicMuted()) {
-        void audio.play().catch(() => {})
-      }
-    }, []),
+    retryPlay,
   }
 }
