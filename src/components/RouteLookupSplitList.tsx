@@ -87,7 +87,6 @@ export function RouteLookupSplitList({
             }}
             className="route-split-list-item"
             role="listitem"
-            onDoubleClick={() => onOpenDetail(route.id, directionIndex)}
           >
             <RouteCard
               route={route}
@@ -100,6 +99,7 @@ export function RouteLookupSplitList({
               onDirectionChange={() => {}}
               tourAnchor={index === 0 ? 'route-card' : undefined}
               onNavigate={() => onSelect(route.id, directionIndex)}
+              onOpenDetail={() => onOpenDetail(route.id, directionIndex)}
             />
           </div>
         )

@@ -40,6 +40,8 @@ interface RouteCardProps {
   tourAnchor?: string
   /** 站内打开线路详情（保留搜索状态）；未提供时仍走 href 整页跳转 */
   onNavigate?: (routeId: string) => void
+  /** real 分栏：双击打开地图详情面板 */
+  onOpenDetail?: () => void
   /** real 分栏列表：每方向单独成项，隐藏方向切换 */
   hideDirectionControls?: boolean
 }
@@ -59,6 +61,7 @@ export function RouteCard({
   appearance = 'promoted',
   tourAnchor,
   onNavigate,
+  onOpenDetail,
   hideDirectionControls = false,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
@@ -90,6 +93,12 @@ export function RouteCard({
     onNavigate(route.id)
   }
 
+  const handleCardDoubleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!onOpenDetail) return
+    event.preventDefault()
+    onOpenDetail()
+  }
+
   return (
     <div
       data-route-id={route.id}
@@ -104,6 +113,7 @@ export function RouteCard({
           aria-current={selected ? 'page' : undefined}
           tabIndex={-1}
           onClick={handleCardClick}
+          onDoubleClick={handleCardDoubleClick}
         />
         {lengthKm ? (
           <span className="route-card-km route-card-km--corner" key={`${route.id}-km-${directionIndex}`}>
