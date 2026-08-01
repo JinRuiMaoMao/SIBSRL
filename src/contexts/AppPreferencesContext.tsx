@@ -13,6 +13,7 @@ import {
   writeAppPreferences,
   type AppPreferences,
   type ListDensity,
+  type RouteLookupLayout,
 } from '../storage/appPreferences'
 
 interface AppPreferencesContextValue extends AppPreferences {
@@ -22,6 +23,7 @@ interface AppPreferencesContextValue extends AppPreferences {
   setPanelFill: (value: number) => void
   setPanelNoFill: (value: boolean) => void
   setDesktopTabBarPinned: (value: boolean) => void
+  setRouteLookupLayout: (value: RouteLookupLayout) => void
 }
 
 const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(null)
@@ -50,6 +52,7 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
       panelFill: preferences.panelFill,
       panelNoFill: preferences.panelNoFill,
       desktopTabBarPinned: preferences.desktopTabBarPinned,
+      routeLookupLayout: preferences.routeLookupLayout,
       setReduceMotion: (reduceMotion: boolean) => updatePreferences({ reduceMotion }),
       setListDensity: (listDensity: ListDensity) => updatePreferences({ listDensity }),
       setGuidedTourAutoStart: (guidedTourAutoStart: boolean) =>
@@ -58,9 +61,12 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
       setPanelNoFill: (panelNoFill: boolean) => updatePreferences({ panelNoFill }),
       setDesktopTabBarPinned: (desktopTabBarPinned: boolean) =>
         updatePreferences({ desktopTabBarPinned }),
+      setRouteLookupLayout: (routeLookupLayout: RouteLookupLayout) =>
+        updatePreferences({ routeLookupLayout }),
     }),
     [
       preferences.desktopTabBarPinned,
+      preferences.routeLookupLayout,
       preferences.guidedTourAutoStart,
       preferences.listDensity,
       preferences.panelFill,

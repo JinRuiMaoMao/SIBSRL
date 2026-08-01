@@ -1,4 +1,5 @@
 export type ListDensity = 'comfortable' | 'compact'
+export type RouteLookupLayout = 'grid' | 'split'
 
 export const PANEL_FILL_MIN = 25
 export const PANEL_FILL_MAX = 75
@@ -13,6 +14,7 @@ export interface AppPreferences {
   panelFill: number
   panelNoFill: boolean
   desktopTabBarPinned: boolean
+  routeLookupLayout: RouteLookupLayout
 }
 
 const DEFAULT_APP_PREFERENCES: AppPreferences = {
@@ -22,6 +24,7 @@ const DEFAULT_APP_PREFERENCES: AppPreferences = {
   panelFill: PANEL_FILL_DEFAULT,
   panelNoFill: false,
   desktopTabBarPinned: false,
+  routeLookupLayout: 'grid',
 }
 
 function clampPanelFill(value: number): number {
@@ -48,6 +51,8 @@ export function readAppPreferences(): AppPreferences {
       panelFill: readPanelFill(stored as Record<string, unknown>),
       panelNoFill: Boolean((stored as Record<string, unknown>).panelNoFill),
       desktopTabBarPinned: Boolean((stored as Record<string, unknown>).desktopTabBarPinned),
+      routeLookupLayout:
+        (stored as Record<string, unknown>).routeLookupLayout === 'split' ? 'split' : 'grid',
     }
   } catch {
     return { ...DEFAULT_APP_PREFERENCES }
@@ -82,6 +87,7 @@ export function applyAppPreferences(preferences: AppPreferences): void {
   } else {
     document.documentElement.removeAttribute('data-desktop-tab-bar-pinned')
   }
+  document.documentElement.setAttribute('data-route-lookup-layout', preferences.routeLookupLayout)
   document.documentElement.removeAttribute('data-panel-style')
 }
 

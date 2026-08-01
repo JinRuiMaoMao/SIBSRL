@@ -183,6 +183,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       },
       {
         title: {
+          zh: "线路查询",
+          en: "Route lookup",
+        },
+        additions: [
+          {
+            zh: "新增分屏布局：左侧横向单卡浏览线路，右侧嵌入群岛地图；搜索栏右上角可切换「网格／分屏」。",
+            en: "Added split layout: horizontal one-card route carousel on the left, embedded island map on the right; toggle Grid/Split in the search toolbar.",
+          },
+        ],
+      },
+      {
+        title: {
           zh: "线路与音频",
           en: "Routes & audio",
         },

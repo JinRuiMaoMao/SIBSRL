@@ -3548,6 +3548,158 @@ html[data-list-density='compact'] .transfer-plan-stop {
   margin-bottom: 2.5rem;
 }
 
+.content-layout--split {
+  display: grid;
+  grid-template-columns: minmax(280px, 42%) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  min-height: calc(
+    100dvh - var(--site-header-sticky-offset, 0px) - var(--route-toolbar-height, 7rem) - 3rem
+  );
+}
+
+.route-split-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 0;
+}
+
+.route-map-pane {
+  position: sticky;
+  top: calc(var(--site-header-sticky-offset, 0px) + 0.5rem);
+  min-height: min(72dvh, 640px);
+  height: calc(
+    100dvh - var(--site-header-sticky-offset, 0px) - var(--route-toolbar-height, 7rem) - 2rem
+  );
+  border-radius: 0.85rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.route-split-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 0;
+}
+
+.route-split-carousel-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.route-split-carousel-count {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.route-split-carousel-nav {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.route-split-carousel-btn {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.route-split-carousel-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.route-split-carousel-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.route-split-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.route-split-carousel-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-width: 0;
+}
+
+.route-split-carousel-slide .route-card-link {
+  max-width: none;
+}
+
+.route-split-open-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.route-split-empty {
+  margin: 1rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.route-layout-toggle-btn {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  border-radius: 0.55rem;
+  padding: 0.42rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.route-layout-toggle-btn--active {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+@media (max-width: 900px) {
+  .content-layout--split {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(280px, 42dvh);
+    min-height: 0;
+  }
+
+  .route-map-pane {
+    position: relative;
+    top: auto;
+    height: min(42dvh, 420px);
+    min-height: 280px;
+  }
+}
+
+html[data-route-lookup-layout='split'] .route-detail-open .content-layout--split {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+html.route-detail-open .content-layout--split {
+  opacity: 1;
+}
+
 .route-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));

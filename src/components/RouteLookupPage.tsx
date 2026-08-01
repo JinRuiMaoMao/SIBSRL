@@ -33,6 +33,8 @@ import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
+import { useAppPreferences } from '../contexts/AppPreferencesContext'
+import { RouteLookupCarousel } from './RouteLookupCarousel'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
@@ -201,7 +203,9 @@ export function RouteLookupPage({
   dailyChallenge,
 }: RouteLookupPageProps) {
   const { t, locale } = useLocale()
-  const { setRouteOverlay } = useIslandMapOverlay()
+  const { routeLookupLayout, setRouteLookupLayout } = useAppPreferences()
+  const splitLayoutActive = routeLookupLayout === 'split'
+  const { setRouteOverlay, setEmbeddedMapHost } = useIslandMapOverlay()
   const { openTour, registerAutoStartTimer, cancelAutoStartTimer } = useGuidedTourControl()
   const isWideLayout = useMediaQuery(WIDE_LAYOUT_MEDIA)
   useStickyLayoutOffsets()
@@ -243,6 +247,7 @@ export function RouteLookupPage({
     pageData: RoutePageData | null
   } | null>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
+  const mapHostRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
   const openAnimsRef = useRef<Animation[]>([])
   const closeAnimsRef = useRef<Animation[]>([])
@@ -565,7 +570,30 @@ export function RouteLookupPage({
     }
   }, [detailOverlay])
 
-  const overlayRoute = detailOverlay?.kind === 'route' ? detailOverlay.route : null
+  useEffect(() => {
+    if (!splitLayoutActive) setEmbeddedMapHost(null)
+  }, [setEmbeddedMapHost, splitLayoutActive])
+
+  const attachMapHost = useCallback(
+    (node: HTMLDivElement | null) => {
+      mapHostRef.current = node
+      if (splitLayoutActive) setEmbeddedMapHost(node)
+    },
+    [setEmbeddedMapHost, splitLayoutActive],
+  )
+
+  useEffect(() => {
+    if (!splitLayoutActive || filteredRoutes.length === 0) return
+    if (selectedRoute && filteredRoutes.some((route) => route.id === selectedRoute.id)) return
+    selectRoute(filteredRoutes[0]!.id)
+  }, [filteredRoutes, selectRoute, selectedRoute, splitLayoutActive])
+
+  const overlayRoute =
+    detailOverlay?.kind === 'route'
+      ? detailOverlay.route
+      : splitLayoutActive
+        ? selectedRoute
+        : null
   const overlayDirectionIndex = overlayRoute ? getDirectionIndex(overlayRoute) : null
 
   useEffect(() => {
@@ -633,7 +661,14 @@ export function RouteLookupPage({
       cancelled = true
       setRouteOverlay(null)
     }
-  }, [getLoopView, overlayDirectionIndex, overlayRoute, routePageDetail, setRouteOverlay])
+  }, [
+    getLoopView,
+    overlayDirectionIndex,
+    overlayRoute,
+    routePageDetail,
+    setRouteOverlay,
+    splitLayoutActive,
+  ])
 
   useEffect(() => {
     const routeId = readRouteQueryFromLocation()
@@ -692,9 +727,9 @@ export function RouteLookupPage({
   }, [clearSelection, findDisplayRoute, recordRecent, selectRoute, setDirectionIndex])
 
   useEffect(() => {
-    if (!selectedRoute) return
+    if (!selectedRoute || splitLayoutActive) return
     setDetailOverlay({ kind: 'route', route: selectedRoute })
-  }, [selectedRoute])
+  }, [selectedRoute, splitLayoutActive])
 
   useEffect(() => {
     const sheet = sheetRef.current
@@ -813,6 +848,23 @@ export function RouteLookupPage({
       setRouteInLocation(routeId, directionIndex)
     },
     [filters.query, findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
+  )
+
+  const handleCarouselSelect = useCallback(
+    (routeId: string) => {
+      if (selectedRoute?.id === routeId) return
+      selectRoute(routeId)
+    },
+    [selectRoute, selectedRoute?.id],
+  )
+
+  const handleOpenDetailInSplit = useCallback(
+    (routeId: string) => {
+      handleRouteNavigate(routeId)
+      const route = findDisplayRoute(routeId)
+      if (route) setDetailOverlay({ kind: 'route', route })
+    },
+    [findDisplayRoute, handleRouteNavigate],
   )
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
@@ -1292,6 +1344,8 @@ export function RouteLookupPage({
           searchInputRef={searchInputRef}
           syntaxVisible={syntaxExpanded}
           onSyntaxToggle={handleSyntaxToggle}
+          routeLookupLayout={routeLookupLayout}
+          onRouteLookupLayoutChange={setRouteLookupLayout}
         />
         {syntaxForceOpen ? (
           <div className="search-syntax-pinned">
@@ -1300,8 +1354,30 @@ export function RouteLookupPage({
         ) : null}
       </div>
 
-      <div className="content-layout">
+      <div className={`content-layout${splitLayoutActive ? ' content-layout--split' : ''}`}>
         <section className="route-list-section" aria-label={t('routeList')}>
+          {splitLayoutActive ? (
+            <div className="route-split-pane">
+              {dailyChallengeVisible ? (
+                <DailyChallengeBanner
+                  selected={dailyChallengeSelected}
+                  onSelect={handleSelectDailyChallenge}
+                  onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
+                  challenge={dailyChallenge}
+                />
+              ) : null}
+              <RouteLookupCarousel
+                routes={filteredRoutes}
+                selectedId={selectedRoute?.id ?? null}
+                getDirectionIndex={getDirectionIndex}
+                getLoopView={getLoopView}
+                setDirectionIndex={setDirectionIndex}
+                setLoopView={setLoopView}
+                onSelect={handleCarouselSelect}
+                onOpenDetail={handleOpenDetailInSplit}
+              />
+            </div>
+          ) : (
           <div className="route-display-group-list">
             <RouteSearchSyntaxDock
               panelRef={syntaxPanelRef}
@@ -1419,7 +1495,11 @@ export function RouteLookupPage({
               <p className="empty-state route-grid-span">{t('emptyState')}</p>
             ) : null}
           </div>
+          )}
         </section>
+        {splitLayoutActive ? (
+          <aside ref={attachMapHost} className="route-map-pane" aria-label={t('islandMapAria')} />
+        ) : null}
       </div>
 
       {detailOverlay && (

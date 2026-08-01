@@ -16,18 +16,23 @@ export interface IslandMapRouteOverlay {
 interface IslandMapOverlayContextValue {
   routeOverlay: IslandMapRouteOverlay | null
   setRouteOverlay: (overlay: IslandMapRouteOverlay | null) => void
+  embeddedMapHost: HTMLElement | null
+  setEmbeddedMapHost: (host: HTMLElement | null) => void
 }
 
 const IslandMapOverlayContext = createContext<IslandMapOverlayContextValue | null>(null)
 
 export function IslandMapOverlayProvider({ children }: { children: ReactNode }) {
   const [routeOverlay, setRouteOverlay] = useState<IslandMapRouteOverlay | null>(null)
+  const [embeddedMapHost, setEmbeddedMapHost] = useState<HTMLElement | null>(null)
   const value = useMemo(
     () => ({
       routeOverlay,
       setRouteOverlay,
+      embeddedMapHost,
+      setEmbeddedMapHost,
     }),
-    [routeOverlay],
+    [embeddedMapHost, routeOverlay],
   )
   return <IslandMapOverlayContext.Provider value={value}>{children}</IslandMapOverlayContext.Provider>
 }

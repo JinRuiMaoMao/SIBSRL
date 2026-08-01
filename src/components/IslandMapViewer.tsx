@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
+import { useAppPreferences } from '../contexts/AppPreferencesContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getMapDrawPageHref } from '../utils/appPage'
 import { stashMapDrawRouteHandoff } from '../utils/mapDrawRouteHandoff'
@@ -20,8 +21,11 @@ const MAP_URLS: Record<MapLayer, string> = {
 /** 线路查询页小地图：缩放、图层、走线展示；全屏下可跳转 map-draw.html。 */
 export function IslandMapViewer() {
   const { t } = useLocale()
+  const { routeLookupLayout } = useAppPreferences()
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
+  const embeddedMapHost = overlayContext?.embeddedMapHost ?? null
+  const isEmbedded = routeLookupLayout === 'split' && embeddedMapHost != null
   const importedPath = routeOverlay?.importedPath ?? null
   const [expanded, setExpanded] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
@@ -183,10 +187,10 @@ export function IslandMapViewer() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [closeFullscreen, expanded])
 
-  const renderSurface = (mode: 'widget' | 'fullscreen', className: string) => (
+  const renderSurface = (mode: 'widget' | 'fullscreen' | 'embedded', className: string) => (
     <IslandMapPanZoomSurface
       src={mapSrc}
-      mode={mode}
+      mode={mode === 'embedded' ? 'fullscreen' : mode}
       className={className}
       view={mapView}
       onViewChange={handleViewChange}
@@ -239,7 +243,45 @@ export function IslandMapViewer() {
         </div>
       </div>
     </div>
-  ) : (
+  ) : isEmbedded ? (
+    <div
+      className={`island-map island-map--embedded${routeOverlay ? ' island-map--embedded-route' : ''}`.trim()}
+      aria-label={t('islandMapAria')}
+    >
+      <div className="island-map-viewport-shell island-map-viewport-shell--embedded">
+        {renderSurface('embedded', 'island-map-viewport island-map-viewport--embedded')}
+        {stopDetailPopover}
+      </div>
+      <div className="island-map-widget-toolbar island-map-widget-toolbar--embedded">
+        <button
+          type="button"
+          className="island-map-btn island-map-btn--layers island-map-btn--layers-compact"
+          onClick={toggleLayer}
+          aria-label={t('islandMapLayersAria')}
+          title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
+        >
+          {t('islandMapLayers')}
+        </button>
+        <button
+          type="button"
+          className="island-map-btn island-map-btn--expand"
+          onClick={openFullscreen}
+          aria-label={t('islandMapExpand')}
+          title={t('islandMapExpand')}
+        >
+          <ExpandIcon />
+        </button>
+        <button
+          type="button"
+          className="island-map-btn island-map-btn--draw"
+          onClick={openDraw}
+          title={t('islandMapDrawStartHint')}
+        >
+          {t('islandMapDraw')}
+        </button>
+      </div>
+    </div>
+  ) : routeLookupLayout === 'split' ? null : (
     <div
       className={`island-map island-map--widget${widgetHidden ? ' island-map--widget-collapsed' : ''}${routeOverlay ? ' island-map--widget-route' : ''}`.trim()}
       aria-label={t('islandMapAria')}
@@ -297,5 +339,6 @@ export function IslandMapViewer() {
   )
 
   if (typeof document === 'undefined') return node
+  if (isEmbedded) return createPortal(node, embeddedMapHost!)
   return createPortal(node, document.body)
 }
