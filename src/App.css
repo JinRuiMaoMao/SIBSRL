@@ -3652,6 +3652,14 @@ html[data-route-lookup-layout='split'] .site-footer {
   margin: 0;
 }
 
+.route-split-route-count {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.35rem 0.65rem 0.15rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
 .route-split-list {
   flex: 1;
   min-height: 0;
@@ -3703,6 +3711,41 @@ html[data-route-lookup-layout='split'] .site-footer {
   overflow: hidden;
   border: none;
   background: var(--bg-elevated);
+}
+
+.route-map-pane-map {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.route-map-pane-map .island-map--embedded {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.route-split-map-detail {
+  flex-shrink: 0;
+  max-height: min(42vh, 24rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+  background: var(--route-detail-bg, var(--bg-deep));
+}
+
+.route-split-map-detail .route-detail {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  max-height: none;
+  overflow-y: auto;
+  padding: 0.85rem 1rem 1rem;
 }
 
 .route-split-empty {

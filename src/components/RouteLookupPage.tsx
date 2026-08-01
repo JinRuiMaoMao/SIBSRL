@@ -529,7 +529,9 @@ export function RouteLookupPage({
     clearRouteFromLocation()
   }, [clearSelection])
 
-  const detailChromeHidden = Boolean(detailOverlay) && !detailClosing
+  const detailChromeHidden =
+    Boolean(detailOverlay) && !detailClosing && !splitLayoutActive
+  const splitMapDetailOpen = splitLayoutActive && Boolean(detailOverlay) && !detailClosing
 
   useEffect(() => {
     if (detailOverlay?.kind !== 'route') return
@@ -714,14 +716,14 @@ export function RouteLookupPage({
   }, [clearSelection, findDisplayRoute, recordRecent, selectRoute, setDirectionIndex])
 
   useEffect(() => {
-    if (!selectedRoute || splitLayoutActive) return
+    if (!selectedRoute) return
     setDetailOverlay({ kind: 'route', route: selectedRoute })
-  }, [selectedRoute, splitLayoutActive])
+  }, [selectedRoute])
 
   useEffect(() => {
     const sheet = sheetRef.current
     const backdrop = backdropRef.current
-    if (!sheet || !detailOverlay) return
+    if (!sheet || !detailOverlay || splitLayoutActive) return
 
     const generation = ++animGenerationRef.current
     cancelAnimations(closeAnimsRef.current)
@@ -765,12 +767,12 @@ export function RouteLookupPage({
       if (animGenerationRef.current !== generation) return
       cancelAnimations(openAnimsRef.current)
     }
-  }, [activeOverlayKey, isWideLayout])
+  }, [activeOverlayKey, isWideLayout, splitLayoutActive])
 
   useEffect(() => {
-    if (!detailOverlay || detailClosing) return
+    if (!detailOverlay || detailClosing || splitLayoutActive) return
     return lockPageScroll()
-  }, [detailOverlay, detailClosing])
+  }, [detailOverlay, detailClosing, splitLayoutActive])
 
   useLayoutEffect(() => {
     document.documentElement.classList.toggle('route-detail-open', detailChromeHidden)
@@ -879,6 +881,10 @@ export function RouteLookupPage({
 
   const handleCloseDetail = () => {
     if (!detailOverlay || detailClosing) return
+    if (splitLayoutActive) {
+      finishDetailClose()
+      return
+    }
     setDetailClosing(true)
 
     const sheet = sheetRef.current
@@ -981,6 +987,32 @@ export function RouteLookupPage({
           dailyChallengeIntro: dailyChallengeRouteContext?.intro ?? null,
         }
       : null
+
+  const renderDetailContent = () => {
+    if (routeDetailProps) return <RouteDetail {...routeDetailProps} />
+    if (!detailOverlay) return null
+    if (detailOverlay.kind === 'daily-challenge') {
+      return (
+        <DailyChallengeDetail challenge={detailOverlay.challenge} onClose={handleCloseDetail} />
+      )
+    }
+    if (detailOverlay.kind === 'transfer-plan') {
+      return (
+        <TransferPlanDetail
+          plan={detailOverlay.plan}
+          planIndex={detailOverlay.planIndex}
+          from={detailOverlay.from}
+          to={detailOverlay.to}
+          onClose={handleCloseDetail}
+          onOpenLeg={handleOpenTransferLeg}
+        />
+      )
+    }
+    if (detailOverlay.kind === 'not-found') {
+      return <RouteNotFoundDetail routeId={detailOverlay.routeId} onClose={handleCloseDetail} />
+    }
+    return null
+  }
 
   const visibleDisplayGroups = useMemo(
     () =>
@@ -1293,7 +1325,7 @@ export function RouteLookupPage({
 
   useRouteListKeyboard({
     enabled: true,
-    detailOpen: detailChromeHidden,
+    detailOpen: detailChromeHidden || splitMapDetailOpen,
     onCloseDetail: handleCloseDetail,
     searchInputId: 'route-search',
   })
@@ -1326,8 +1358,14 @@ export function RouteLookupPage({
       searchInputRef={searchInputRef}
       syntaxVisible={splitLayoutActive ? false : syntaxExpanded}
       onSyntaxToggle={splitLayoutActive ? undefined : handleSyntaxToggle}
+      hideRouteCount={splitLayoutActive}
     />
   )
+
+  const splitRouteCountLabel = t('routeCount', {
+    count: filteredRoutes.length,
+    total: displayRoutes.length,
+  })
 
   return (
     <div className={`route-lookup-page${splitLayoutActive ? ' route-lookup-page--split' : ''}`}>
@@ -1340,6 +1378,9 @@ export function RouteLookupPage({
             >
               {searchToolbar}
             </div>
+            <p className="route-split-route-count" aria-live="polite">
+              {splitRouteCountLabel}
+            </p>
             <RouteLookupSplitList
               routes={filteredRoutes}
               selectedId={selectedRoute?.id ?? null}
@@ -1362,8 +1403,18 @@ export function RouteLookupPage({
               }
             />
           </aside>
-          <div className="route-map-pane" aria-label={t('islandMapAria')}>
-            <IslandMapEmbeddedPane />
+          <div
+            className={`route-map-pane${splitMapDetailOpen ? ' route-map-pane--detail-open' : ''}`}
+            aria-label={t('islandMapAria')}
+          >
+            <div className="route-map-pane-map">
+              <IslandMapEmbeddedPane />
+            </div>
+            {splitMapDetailOpen ? (
+              <div className="route-split-map-detail sibs-scrollbar" role="region">
+                {renderDetailContent()}
+              </div>
+            ) : null}
           </div>
         </div>
       ) : (
@@ -1504,7 +1555,7 @@ export function RouteLookupPage({
         </>
       )}
 
-      {detailOverlay && (
+      {!splitLayoutActive && detailOverlay && (
         <>
           <button
             ref={backdropRef}
@@ -1519,28 +1570,7 @@ export function RouteLookupPage({
             role="dialog"
             aria-modal="true"
           >
-            {routeDetailProps ? (
-              <RouteDetail {...routeDetailProps} />
-            ) : detailOverlay.kind === 'daily-challenge' ? (
-              <DailyChallengeDetail
-                challenge={detailOverlay.challenge}
-                onClose={handleCloseDetail}
-              />
-            ) : detailOverlay.kind === 'transfer-plan' ? (
-              <TransferPlanDetail
-                plan={detailOverlay.plan}
-                planIndex={detailOverlay.planIndex}
-                from={detailOverlay.from}
-                to={detailOverlay.to}
-                onClose={handleCloseDetail}
-                onOpenLeg={handleOpenTransferLeg}
-              />
-            ) : detailOverlay.kind === 'not-found' ? (
-              <RouteNotFoundDetail
-                routeId={detailOverlay.routeId}
-                onClose={handleCloseDetail}
-              />
-            ) : null}
+            {renderDetailContent()}
           </div>
         </>
       )}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useOptionalIslandMapOverlay } from '../contexts/IslandMapOverlayContext'
 import { useLocale } from '../i18n/LocaleContext'
+import { fitNormalizedViewToRoutePoints } from '../data/worldMapRoutes'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { buildRouteMapInteractiveLayerState } from '../utils/routeMapInteractiveLayer'
 import { routeDetailMapStopToDrawStop } from '../utils/routeDetailMapStops'
@@ -145,6 +146,12 @@ export function IslandMapEmbeddedPane() {
   useEffect(() => {
     setSelectedStopId(null)
   }, [routeOverlay?.directionIndex, routeOverlay?.importedPath, routeOverlay?.routeId])
+
+  useEffect(() => {
+    const points = routeOverlay?.points
+    if (!points || points.length < 2) return
+    setMapView(fitNormalizedViewToRoutePoints(points, 'fullscreen', 0.08))
+  }, [routeOverlay?.directionIndex, routeOverlay?.routeId, routeOverlay?.points])
 
   const toggleLayer = useCallback(() => {
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))

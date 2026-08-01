@@ -35,6 +35,7 @@ interface SearchToolbarProps {
   showShortcutHint?: boolean
   syntaxVisible?: boolean
   onSyntaxToggle?: () => void
+  hideRouteCount?: boolean
 }
 
 export function SearchToolbar({
@@ -65,6 +66,7 @@ export function SearchToolbar({
   showShortcutHint = true,
   syntaxVisible,
   onSyntaxToggle,
+  hideRouteCount = false,
 }: SearchToolbarProps) {
   const { t } = useLocale()
   const realLayout = isRealLayoutMode()
@@ -84,6 +86,7 @@ export function SearchToolbar({
         showShortcutHint={showShortcutHint}
         syntaxVisible={syntaxVisible}
         onSyntaxToggle={onSyntaxToggle}
+        hideRouteCount={hideRouteCount}
       />
       <div className="search-toolbar-actions">
         {!realLayout ? (

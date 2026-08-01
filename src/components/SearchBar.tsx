@@ -26,6 +26,7 @@ interface SearchBarProps {
   syntaxVisible?: boolean
   onSyntaxToggle?: () => void
   dataTour?: string
+  hideRouteCount?: boolean
 }
 
 function resolveCompletionDescription(
@@ -60,6 +61,7 @@ export function SearchBar({
   syntaxVisible = true,
   onSyntaxToggle,
   dataTour = 'route-search',
+  hideRouteCount = false,
 }: SearchBarProps) {
   const { t } = useLocale()
   const [focused, setFocused] = useState(false)
@@ -152,9 +154,11 @@ export function SearchBar({
               : undefined
           }
         />
-        <span className="search-meta" aria-live="polite">
-          {t('routeCount', { count: resultCount, total: totalCount })}
-        </span>
+        {hideRouteCount ? null : (
+          <span className="search-meta" aria-live="polite">
+            {t('routeCount', { count: resultCount, total: totalCount })}
+          </span>
+        )}
 
         {showCompletionPanel ? (
           <div
