@@ -98,6 +98,11 @@ import {
 import { isDirectRouteBetweenStopsFeasible, parseDepartureTimeInput, type TimetableFeasibilityOptions } from '../utils/routeTimetableFeasibility'
 import { getSortedDirectionIndexFromDataIndex } from '../utils/routeDirections'
 import {
+  buildRealRouteListEntries,
+  formatRealRouteDisplayNumber,
+  realRouteListKey,
+} from '../utils/realRouteListEntries'
+import {
   findTransferPlansBetweenStops,
   formatTransferPlanRouteChain,
   type TransferPlan,
@@ -144,6 +149,14 @@ function motionDurationMs(): number {
 function scrollRouteCardIntoView(routeId: string) {
   const el = document.querySelector<HTMLElement>(
     `[data-route-id="${CSS.escape(routeId)}"]`,
+  )
+  if (!el) return
+  el.scrollIntoView({ behavior: shouldReduceMotion() ? 'auto' : 'smooth', block: 'center' })
+}
+
+function scrollRealRouteCardIntoView(listKey: string) {
+  const el = document.querySelector<HTMLElement>(
+    `[data-real-list-key="${CSS.escape(listKey)}"]`,
   )
   if (!el) return
   el.scrollIntoView({ behavior: shouldReduceMotion() ? 'auto' : 'smooth', block: 'center' })
@@ -276,6 +289,18 @@ export function RouteLookupPage({
     operators,
     types,
   } = useRouteSearch(dailyChallenge)
+  const realFilteredEntries = useMemo(
+    () => (splitLayoutActive ? buildRealRouteListEntries(filteredRoutes) : []),
+    [filteredRoutes, splitLayoutActive],
+  )
+  const realTotalEntries = useMemo(
+    () => (splitLayoutActive ? buildRealRouteListEntries(displayRoutes) : []),
+    [displayRoutes, splitLayoutActive],
+  )
+  const selectedRealListKey = useMemo(() => {
+    if (!splitLayoutActive || !selectedRoute) return null
+    return realRouteListKey(selectedRoute.id, getDirectionIndex(selectedRoute))
+  }, [getDirectionIndex, selectedRoute, splitLayoutActive])
   const stickyToolbarFade = useRouteLookupStickyFade(stickyToolbarRef)
   const { scrollHidden: syntaxScrollHidden, forceOpen: syntaxForceOpen, clearScrollHidden: clearSyntaxScrollHidden, releaseForceOpen: releaseSyntaxForceOpen } =
     useSearchSyntaxScrollHide(stickyToolbarRef, syntaxPanelRef, {
@@ -573,10 +598,27 @@ export function RouteLookupPage({
   }, [detailOverlay])
 
   useEffect(() => {
-    if (!splitLayoutActive || filteredRoutes.length === 0) return
-    if (selectedRoute && filteredRoutes.some((route) => route.id === selectedRoute.id)) return
-    selectRoute(filteredRoutes[0]!.id)
-  }, [filteredRoutes, selectRoute, selectedRoute, splitLayoutActive])
+    if (!splitLayoutActive || realFilteredEntries.length === 0) return
+    if (selectedRoute) {
+      const directionIndex = getDirectionIndex(selectedRoute)
+      const stillVisible = realFilteredEntries.some(
+        (entry) => entry.route.id === selectedRoute.id && entry.directionIndex === directionIndex,
+      )
+      if (stillVisible) return
+    }
+    const first = realFilteredEntries[0]!
+    setDirectionIndex(first.route.id, first.directionIndex)
+    setLoopView(first.route.id, false)
+    selectRoute(first.route.id)
+  }, [
+    getDirectionIndex,
+    realFilteredEntries,
+    selectRoute,
+    selectedRoute,
+    setDirectionIndex,
+    setLoopView,
+    splitLayoutActive,
+  ])
 
   const overlayRoute =
     detailOverlay?.kind === 'route'
@@ -827,7 +869,7 @@ export function RouteLookupPage({
   )
 
   const handleRouteNavigate = useCallback(
-    (routeId: string) => {
+    (routeId: string, directionIndexOverride?: number) => {
       const q = filters.query.trim()
       const parsed = parseStructuredSearchQuery(q)
       if (q && (!parsed.from?.trim() || !parsed.to?.trim())) {
@@ -835,25 +877,49 @@ export function RouteLookupPage({
       }
       setDailyChallengeRouteContext(null)
       recordRecent(routeId)
+      if (directionIndexOverride != null) {
+        setDirectionIndex(routeId, directionIndexOverride)
+        setLoopView(routeId, false)
+      }
       selectRoute(routeId)
       const route = findDisplayRoute(routeId)
-      const directionIndex = route ? getDirectionIndex(route) : 0
+      const directionIndex =
+        directionIndexOverride ?? (route ? getDirectionIndex(route) : 0)
       setRouteInLocation(routeId, directionIndex)
     },
-    [filters.query, findDisplayRoute, getDirectionIndex, recordRecent, selectRoute],
+    [
+      filters.query,
+      findDisplayRoute,
+      getDirectionIndex,
+      recordRecent,
+      selectRoute,
+      setDirectionIndex,
+      setLoopView,
+    ],
   )
 
   const handleCarouselSelect = useCallback(
-    (routeId: string) => {
-      if (selectedRoute?.id === routeId) return
+    (routeId: string, directionIndex: number) => {
+      const route = findDisplayRoute(routeId)
+      const currentDirectionIndex = route ? getDirectionIndex(route) : 0
+      setDirectionIndex(routeId, directionIndex)
+      setLoopView(routeId, false)
+      if (selectedRoute?.id === routeId && currentDirectionIndex === directionIndex) return
       selectRoute(routeId)
     },
-    [selectRoute, selectedRoute?.id],
+    [
+      findDisplayRoute,
+      getDirectionIndex,
+      selectRoute,
+      selectedRoute?.id,
+      setDirectionIndex,
+      setLoopView,
+    ],
   )
 
   const handleOpenDetailInSplit = useCallback(
-    (routeId: string) => {
-      handleRouteNavigate(routeId)
+    (routeId: string, directionIndex: number) => {
+      handleRouteNavigate(routeId, directionIndex)
       const route = findDisplayRoute(routeId)
       if (route) setDetailOverlay({ kind: 'route', route })
     },
@@ -875,6 +941,18 @@ export function RouteLookupPage({
   }, [pendingDailyChallengeDetail, onPendingDailyChallengeDetailConsumed])
 
   const handleRandomRoute = () => {
+    if (splitLayoutActive) {
+      if (realFilteredEntries.length === 0) return
+      const pick = realFilteredEntries[Math.floor(Math.random() * realFilteredEntries.length)]!
+      setDirectionIndex(pick.route.id, pick.directionIndex)
+      setLoopView(pick.route.id, false)
+      recordRecent(pick.route.id)
+      selectRoute(pick.route.id)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => scrollRealRouteCardIntoView(pick.listKey))
+      })
+      return
+    }
     const id = selectRandomRoute()
     if (!id) return
     recordRecent(id)
@@ -970,27 +1048,34 @@ export function RouteLookupPage({
     detailOverlay?.kind === 'daily-challenge' || dailyChallengeRouteContext != null
   const routeDetailProps =
     detailOverlay?.kind === 'route'
-      ? {
-          route: routePageDetail?.route ?? detailOverlay.route,
-          pageData: routePageDetail?.pageData ?? null,
-          directionIndex: getDirectionIndex(detailOverlay.route),
-          loopView: getLoopView(detailOverlay.route),
-          onDirectionChange: (index: number) => {
-            setDirectionIndex(detailOverlay.route.id, index)
-            replaceRouteInLocation(detailOverlay.route.id, index)
-          },
-          onLoopViewChange: (loopView: boolean) => {
-            setLoopView(detailOverlay.route.id, loopView)
-          },
-          onClose: handleCloseDetail,
-          lockDirection: dailyChallengeRouteContext != null,
-          directionEndpoints:
-            dailyChallengeRouteContext?.loopView
-              ? null
-              : dailyChallengeRouteContext?.endpoints ?? null,
-          dailyChallengeIntro: dailyChallengeRouteContext?.intro ?? null,
-          hideStops: splitLayoutActive,
-        }
+      ? (() => {
+          const route = routePageDetail?.route ?? detailOverlay.route
+          const directionIndex = getDirectionIndex(detailOverlay.route)
+          return {
+            route,
+            pageData: routePageDetail?.pageData ?? null,
+            directionIndex,
+            loopView: splitLayoutActive ? false : getLoopView(detailOverlay.route),
+            onDirectionChange: (index: number) => {
+              setDirectionIndex(detailOverlay.route.id, index)
+              replaceRouteInLocation(detailOverlay.route.id, index)
+            },
+            onLoopViewChange: (loopView: boolean) => {
+              setLoopView(detailOverlay.route.id, loopView)
+            },
+            onClose: handleCloseDetail,
+            lockDirection: splitLayoutActive || dailyChallengeRouteContext != null,
+            directionEndpoints:
+              dailyChallengeRouteContext?.loopView
+                ? null
+                : dailyChallengeRouteContext?.endpoints ?? null,
+            dailyChallengeIntro: dailyChallengeRouteContext?.intro ?? null,
+            hideStops: splitLayoutActive,
+            displayNumber: splitLayoutActive
+              ? formatRealRouteDisplayNumber(route, directionIndex, t, locale)
+              : undefined,
+          }
+        })()
       : null
 
   const renderDetailContent = () => {
@@ -1346,8 +1431,8 @@ export function RouteLookupPage({
       value={filters.query}
       onChange={handleSearchQueryChange}
       onSearchCommit={handleSearchCommit}
-      resultCount={splitLayoutActive ? filteredRoutes.length : groupedRouteCount}
-      totalCount={splitLayoutActive ? displayRoutes.length : groupedTotalCount}
+      resultCount={splitLayoutActive ? realFilteredEntries.length : groupedRouteCount}
+      totalCount={splitLayoutActive ? realTotalEntries.length : groupedTotalCount}
       randomEligibleCount={randomEligibleCount}
       onRandom={handleRandomRoute}
       filtersActive={filtersActive}
@@ -1374,8 +1459,8 @@ export function RouteLookupPage({
   )
 
   const splitRouteCountLabel = t('routeCount', {
-    count: filteredRoutes.length,
-    total: displayRoutes.length,
+    count: realFilteredEntries.length,
+    total: realTotalEntries.length,
   })
 
   return (
@@ -1393,12 +1478,8 @@ export function RouteLookupPage({
               {splitRouteCountLabel}
             </p>
             <RouteLookupSplitList
-              routes={filteredRoutes}
-              selectedId={selectedRoute?.id ?? null}
-              getDirectionIndex={getDirectionIndex}
-              getLoopView={getLoopView}
-              setDirectionIndex={setDirectionIndex}
-              setLoopView={setLoopView}
+              entries={realFilteredEntries}
+              selectedListKey={selectedRealListKey}
               onSelect={handleCarouselSelect}
               onOpenDetail={handleOpenDetailInSplit}
               dailyChallenge={

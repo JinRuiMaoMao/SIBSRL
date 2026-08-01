@@ -42,6 +42,8 @@ interface RouteDetailRealPanelProps {
   dailyChallengeIntro?: DailyChallengeIntroContent | null
   lockDirection?: boolean
   directionEndpoints?: BilingualText | null
+  /** real 分栏：如 25（北行） */
+  displayNumber?: string
 }
 
 function DifficultyStars({ count }: { count: number }) {
@@ -79,10 +81,12 @@ export function RouteDetailRealPanel({
   dailyChallengeIntro = null,
   lockDirection = false,
   directionEndpoints: _directionEndpoints = null,
+  displayNumber,
 }: RouteDetailRealPanelProps) {
   const { locale, t } = useLocale()
   const { alert } = useAppDialog()
   const [collapsed, setCollapsed] = useState(false)
+  const panelNumber = displayNumber ?? route.number
 
   const hasDirectionControls =
     routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route)
@@ -119,7 +123,7 @@ export function RouteDetailRealPanel({
   return (
     <article
       className={`route-real-panel sibs-scrollbar${collapsed ? ' route-real-panel--collapsed' : ''}`}
-      aria-label={t('detailAria', { number: route.number })}
+      aria-label={t('detailAria', { number: panelNumber })}
     >
       <div className="route-real-panel-chrome">
         <button
@@ -151,7 +155,7 @@ export function RouteDetailRealPanel({
                 🚌
               </span>
               <div className="route-real-panel-route-title">
-                <span className="route-real-panel-number">{route.number}</span>
+                <span className="route-real-panel-number">{panelNumber}</span>
                 {showCircularLineBesideNumber(route) ? (
                   <span className="route-real-panel-loop-tag">{t('circularLineBadge')}</span>
                 ) : null}
@@ -266,7 +270,7 @@ export function RouteDetailRealPanel({
           <span className="route-real-panel-bus" aria-hidden="true">
             🚌
           </span>
-          <span className="route-real-panel-number">{route.number}</span>
+          <span className="route-real-panel-number">{panelNumber}</span>
           {journeyLabel ? <span className="route-real-panel-collapsed-meta">{journeyLabel}</span> : null}
         </div>
       )}

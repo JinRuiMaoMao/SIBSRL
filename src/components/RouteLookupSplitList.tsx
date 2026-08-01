@@ -3,18 +3,15 @@ import { DAILY_CHALLENGE_CARD_ID, type DailyChallengeInfo } from '../data/dailyC
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute } from '../types/route'
 import { shouldReduceMotion } from '../storage/appPreferences'
+import { formatRealRouteDisplayNumber, type RealRouteListEntry } from '../utils/realRouteListEntries'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
 
 interface RouteLookupSplitListProps {
-  routes: readonly BusRoute[]
-  selectedId: string | null
-  getDirectionIndex: (route: BusRoute) => number
-  getLoopView: (route: BusRoute) => boolean
-  setDirectionIndex: (routeId: string, index: number) => void
-  setLoopView: (routeId: string, loopView: boolean) => void
-  onSelect: (routeId: string) => void
-  onOpenDetail: (routeId: string) => void
+  entries: readonly RealRouteListEntry[]
+  selectedListKey: string | null
+  onSelect: (routeId: string, directionIndex: number) => void
+  onOpenDetail: (routeId: string, directionIndex: number) => void
   dailyChallenge?: {
     visible: boolean
     selected: boolean
@@ -25,37 +22,33 @@ interface RouteLookupSplitListProps {
 }
 
 export function RouteLookupSplitList({
-  routes,
-  selectedId,
-  getDirectionIndex,
-  getLoopView,
-  setDirectionIndex,
-  setLoopView,
+  entries,
+  selectedListKey,
   onSelect,
   onOpenDetail,
   dailyChallenge = null,
 }: RouteLookupSplitListProps) {
-  const { t } = useLocale()
+  const { locale, t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
 
-  const scrollTargetId =
+  const scrollTargetKey =
     dailyChallenge?.visible && dailyChallenge.selected
       ? DAILY_CHALLENGE_CARD_ID
-      : selectedId
+      : selectedListKey
 
   useEffect(() => {
-    if (!scrollTargetId) return
-    const node = itemRefs.current.get(scrollTargetId)
+    if (!scrollTargetKey) return
+    const node = itemRefs.current.get(scrollTargetKey)
     node?.scrollIntoView({
       behavior: shouldReduceMotion() ? 'auto' : 'smooth',
       block: 'nearest',
     })
-  }, [scrollTargetId, routes, dailyChallenge?.visible, dailyChallenge?.selected])
+  }, [scrollTargetKey, entries, dailyChallenge?.visible, dailyChallenge?.selected])
 
   const showDailyChallenge = dailyChallenge?.visible ?? false
 
-  if (routes.length === 0 && !showDailyChallenge) {
+  if (entries.length === 0 && !showDailyChallenge) {
     return <p className="route-split-empty">{t('routeSplitEmpty')}</p>
   }
 
@@ -80,30 +73,33 @@ export function RouteLookupSplitList({
           />
         </div>
       ) : null}
-      {routes.map((route, index) => {
-        const directionIndex = getDirectionIndex(route)
-        const loopView = getLoopView(route)
+      {entries.map((entry, index) => {
+        const { route, directionIndex, listKey } = entry
+        const displayNumber = formatRealRouteDisplayNumber(route, directionIndex, t, locale)
+
         return (
           <div
-            key={route.id}
+            key={listKey}
+            data-real-list-key={listKey}
             ref={(node) => {
-              if (node) itemRefs.current.set(route.id, node)
-              else itemRefs.current.delete(route.id)
+              if (node) itemRefs.current.set(listKey, node)
+              else itemRefs.current.delete(listKey)
             }}
             className="route-split-list-item"
             role="listitem"
-            onDoubleClick={() => onOpenDetail(route.id)}
+            onDoubleClick={() => onOpenDetail(route.id, directionIndex)}
           >
             <RouteCard
               route={route}
-              selected={selectedId === route.id}
+              selected={selectedListKey === listKey}
               directionIndex={directionIndex}
-              loopView={loopView}
+              loopView={false}
+              displayNumber={displayNumber}
+              hideDirectionControls
               appearance="classic"
-              onDirectionChange={(nextIndex) => setDirectionIndex(route.id, nextIndex)}
-              onLoopViewChange={(nextLoopView) => setLoopView(route.id, nextLoopView)}
+              onDirectionChange={() => {}}
               tourAnchor={index === 0 ? 'route-card' : undefined}
-              onNavigate={onSelect}
+              onNavigate={() => onSelect(route.id, directionIndex)}
             />
           </div>
         )

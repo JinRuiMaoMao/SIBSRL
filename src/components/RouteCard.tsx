@@ -40,6 +40,8 @@ interface RouteCardProps {
   tourAnchor?: string
   /** 站内打开线路详情（保留搜索状态）；未提供时仍走 href 整页跳转 */
   onNavigate?: (routeId: string) => void
+  /** real 分栏列表：每方向单独成项，隐藏方向切换 */
+  hideDirectionControls?: boolean
 }
 
 export function RouteCard({
@@ -57,6 +59,7 @@ export function RouteCard({
   appearance = 'promoted',
   tourAnchor,
   onNavigate,
+  hideDirectionControls = false,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -73,7 +76,8 @@ export function RouteCard({
       : (getDirectionServiceTime(route, directionIndex, locale) ??
         getOptionalText(route.serviceTime, locale))
   const hasDirectionControls =
-    routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route)
+    !hideDirectionControls &&
+    (routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route))
   const dataIncomplete = !isRouteStopDataComplete(route)
 
   const cardHref = href ?? getRoutePageHref(route.id)
