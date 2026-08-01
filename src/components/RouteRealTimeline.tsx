@@ -1,11 +1,21 @@
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { RouteStop } from '../types/route'
+import { resolveStopDisplay } from '../utils/stopTurningPoint'
 import { StopNameDisplay } from './StopNameDisplay'
 
 interface RouteRealTimelineProps {
   stops: readonly RouteStop[]
   className?: string
+}
+
+function findTimelineTurningStop(stops: readonly RouteStop[]): RouteStop | null {
+  if (stops.length < 3) return null
+  for (let index = 1; index < stops.length - 1; index += 1) {
+    const stop = stops[index]!
+    if (resolveStopDisplay(stop).turningPoint) return stop
+  }
+  return null
 }
 
 /** real 模式：横向起讫时间轴（参考游戏选线界面） */
@@ -16,13 +26,12 @@ export function RouteRealTimeline({ stops, className = '' }: RouteRealTimelinePr
 
   const origin = stops[0]!
   const destination = stops[stops.length - 1]!
-  const middle =
-    stops.length >= 3 ? stops[Math.floor(stops.length / 2)]! : null
+  const turningStop = findTimelineTurningStop(stops)
 
-  const nodes = middle
+  const nodes = turningStop
     ? [
         { stop: origin, key: 'origin' },
-        { stop: middle, key: 'middle' },
+        { stop: turningStop, key: 'turning' },
         { stop: destination, key: 'destination' },
       ]
     : [
