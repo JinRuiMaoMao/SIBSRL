@@ -135,10 +135,10 @@
     </script>
     <meta name="app-tab" content="routes" />
     <meta name="app-layout-mode" content="real" />
-    <meta name="app-build" content="2026-08-01T10:31:33.818Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A31%3A33.818Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A31%3A33.818Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A31%3A33.818Z" />
+    <meta name="app-build" content="2026-08-01T10:33:28.122Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A33%3A28.122Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A33%3A28.122Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A33%3A28.122Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -235,9 +235,9 @@ if ('serviceWorker' in navigator) {
   if (tab === 'routes') {
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
-    var introEnd = 30;
-    var mainStart = 189;
-    var mainEnd = 293;
+    var introFadeAt = 30;
+    var mainStart = 30;
+    var mainFadeAt = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
     var targetVolume = 1;
@@ -247,17 +247,17 @@ if ('serviceWorker' in navigator) {
     mainAudio.preload = 'auto';
     mainAudio.load();
     window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = mainAudio;
-    function rampVolume(el, currentTime, cutAt) {
-      var fadeStart = cutAt - fadeLead;
-      if (currentTime <= fadeStart) {
+    function rampVolume(el, currentTime, fadeAt) {
+      var fadeEnd = fadeAt + fadeLead;
+      if (currentTime <= fadeAt) {
         el.volume = targetVolume;
         return;
       }
-      if (currentTime >= cutAt) {
+      if (currentTime >= fadeEnd) {
         el.volume = 0;
         return;
       }
-      var progress = (currentTime - fadeStart) / fadeLead;
+      var progress = (currentTime - fadeAt) / fadeLead;
       el.volume = targetVolume * (1 - progress);
     }
     function startMainOverlap() {
@@ -303,14 +303,14 @@ if ('serviceWorker' in navigator) {
     var onTrackTime = function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro') {
-        if (audio.currentTime >= introEnd - fadeLead) startMainOverlap();
-        rampVolume(audio, audio.currentTime, introEnd);
-        if (audio.currentTime >= introEnd) handoffToMain();
+        if (audio.currentTime >= introFadeAt) startMainOverlap();
+        rampVolume(audio, audio.currentTime, introFadeAt);
+        if (audio.currentTime >= introFadeAt + fadeLead) handoffToMain();
         return;
       }
       if (phase === 'main') {
-        if (audio.currentTime >= mainEnd - fadeLead) startLoopOverlap();
-        rampVolume(audio, audio.currentTime, mainEnd);
+        if (audio.currentTime >= mainFadeAt) startLoopOverlap();
+        rampVolume(audio, audio.currentTime, mainFadeAt);
       }
     };
     audio.addEventListener('timeupdate', onTrackTime);
@@ -439,6 +439,6 @@ if ('serviceWorker' in navigator) {
   }, 15000);
 })();
 </script>
-      <script type="module" crossorigin src="../assets/dev-DYydbgBE.js"></script>
+      <script type="module" crossorigin src="../assets/dev-Bwd-M_nA.js"></script>
   </body>
 </html>

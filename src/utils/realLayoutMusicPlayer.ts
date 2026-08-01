@@ -154,17 +154,22 @@ function resolveNextSegmentIndex(
   return null
 }
 
-function rampVolumeForSplice(element: HTMLAudioElement, currentTime: number, cutAt: number, fadeLead: number): void {
-  const fadeStart = cutAt - fadeLead
-  if (currentTime <= fadeStart) {
+function rampVolumeForSplice(
+  element: HTMLAudioElement,
+  currentTime: number,
+  fadeAt: number,
+  fadeLead: number,
+): void {
+  const fadeEnd = fadeAt + fadeLead
+  if (currentTime <= fadeAt) {
     element.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
     return
   }
-  if (currentTime >= cutAt) {
+  if (currentTime >= fadeEnd) {
     element.volume = 0
     return
   }
-  const progress = (currentTime - fadeStart) / fadeLead
+  const progress = (currentTime - fadeAt) / fadeLead
   element.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME * (1 - progress)
 }
 
@@ -322,23 +327,23 @@ function attachCompositeSegmentHandlers(
   }
 
   if (segment.endAt != null) {
-    const cutAt = segment.endAt
+    const fadeAt = segment.endAt
+    const fadeEnd = fadeAt + fadeLead
 
     compositeTimeUpdateHandler = () => {
       if (finalized) return
       const t = element.currentTime
-      const fadeStart = cutAt - fadeLead
 
-      if (nextIndex != null && t >= fadeStart && !crossfadeStarted) {
+      if (nextIndex != null && t >= fadeAt && !crossfadeStarted) {
         crossfadeStarted = true
         beginIncomingCrossfade(nextIndex, config, element)
       }
 
-      if (t >= fadeStart) {
-        rampVolumeForSplice(element, t, cutAt, fadeLead)
+      if (t >= fadeAt) {
+        rampVolumeForSplice(element, t, fadeAt, fadeLead)
       }
 
-      if (t >= cutAt && nextIndex != null) {
+      if (t >= fadeEnd && nextIndex != null) {
         finalizeOnce()
       }
     }
@@ -361,15 +366,21 @@ function attachCompositeSegmentHandlers(
     if (finalized) return
     const duration = element.duration
     if (!Number.isFinite(duration)) return
-    const cutAt = duration
-    const fadeStart = cutAt - fadeLead
+    const fadeAt = duration
+    const fadeEnd = fadeAt + fadeLead
 
-    if (nextIndex != null && element.currentTime >= fadeStart && !crossfadeStarted) {
+    if (nextIndex != null && element.currentTime >= fadeAt && !crossfadeStarted) {
       crossfadeStarted = true
       beginIncomingCrossfade(nextIndex, config, element)
     }
 
-    rampVolumeForSplice(element, element.currentTime, cutAt, fadeLead)
+    if (element.currentTime >= fadeAt) {
+      rampVolumeForSplice(element, element.currentTime, fadeAt, fadeLead)
+    }
+
+    if (element.currentTime >= fadeEnd && nextIndex != null) {
+      finalizeOnce()
+    }
   }
   element.addEventListener('timeupdate', compositeTimeUpdateHandler)
 }

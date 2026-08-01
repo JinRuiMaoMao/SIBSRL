@@ -13,14 +13,14 @@ export type RealLayoutMusicCompositeConfig = {
   loopFromSegmentIndex?: number
 }
 
-/** Radium2 intro fades out at 0:30. */
-export const MAP_MENU_INTRO_END_AT = 30
-/** Original Radium loop body starts here (3:09). */
-export const MAP_MENU_MAIN_START_AT = 3 * 60 + 9
-/** Original Radium loop body ends here (4:53), then returns to MAP_MENU_MAIN_START_AT. */
-export const MAP_MENU_MAIN_END_AT = 4 * 60 + 53
+/** Radium2 intro begins fading at 0:30. */
+export const MAP_MENU_INTRO_FADE_AT = 30
+/** Original Radium loop body starts here (0:30). */
+export const MAP_MENU_MAIN_START_AT = 30
+/** Original Radium begins fading at 4:53, then loops from MAP_MENU_MAIN_START_AT. */
+export const MAP_MENU_MAIN_FADE_AT = 4 * 60 + 53
 
-/** Routes map music: Radium2 intro → Radium 3:09–4:53, loop from 3:09. */
+/** Routes map music: Radium2 intro → Radium 0:30–4:53, loop from 0:30. */
 export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
   Record<RealLayoutMusicTrackId, RealLayoutMusicCompositeConfig>
 > = {
@@ -28,12 +28,12 @@ export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
     segments: [
       {
         asset: 'audio/broadcasts/music/music-map-menu-intro.ogg',
-        endAt: MAP_MENU_INTRO_END_AT,
+        endAt: MAP_MENU_INTRO_FADE_AT,
       },
       {
         asset: 'audio/broadcasts/music/music-map-menu.ogg',
         startAt: MAP_MENU_MAIN_START_AT,
-        endAt: MAP_MENU_MAIN_END_AT,
+        endAt: MAP_MENU_MAIN_FADE_AT,
       },
     ],
     loop: true,

@@ -496,9 +496,9 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
   if (tab === 'routes') {
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
-    var introEnd = 30;
-    var mainStart = 189;
-    var mainEnd = 293;
+    var introFadeAt = 30;
+    var mainStart = 30;
+    var mainFadeAt = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
     var targetVolume = 1;
@@ -508,17 +508,17 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     mainAudio.preload = 'auto';
     mainAudio.load();
     window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = mainAudio;
-    function rampVolume(el, currentTime, cutAt) {
-      var fadeStart = cutAt - fadeLead;
-      if (currentTime <= fadeStart) {
+    function rampVolume(el, currentTime, fadeAt) {
+      var fadeEnd = fadeAt + fadeLead;
+      if (currentTime <= fadeAt) {
         el.volume = targetVolume;
         return;
       }
-      if (currentTime >= cutAt) {
+      if (currentTime >= fadeEnd) {
         el.volume = 0;
         return;
       }
-      var progress = (currentTime - fadeStart) / fadeLead;
+      var progress = (currentTime - fadeAt) / fadeLead;
       el.volume = targetVolume * (1 - progress);
     }
     function startMainOverlap() {
@@ -564,14 +564,14 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var onTrackTime = function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro') {
-        if (audio.currentTime >= introEnd - fadeLead) startMainOverlap();
-        rampVolume(audio, audio.currentTime, introEnd);
-        if (audio.currentTime >= introEnd) handoffToMain();
+        if (audio.currentTime >= introFadeAt) startMainOverlap();
+        rampVolume(audio, audio.currentTime, introFadeAt);
+        if (audio.currentTime >= introFadeAt + fadeLead) handoffToMain();
         return;
       }
       if (phase === 'main') {
-        if (audio.currentTime >= mainEnd - fadeLead) startLoopOverlap();
-        rampVolume(audio, audio.currentTime, mainEnd);
+        if (audio.currentTime >= mainFadeAt) startLoopOverlap();
+        rampVolume(audio, audio.currentTime, mainFadeAt);
       }
     };
     audio.addEventListener('timeupdate', onTrackTime);
