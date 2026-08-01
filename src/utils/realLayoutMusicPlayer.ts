@@ -42,11 +42,17 @@ let compositeSegmentIndex = 0
 let compositeTimeUpdateHandler: (() => void) | null = null
 let compositeFadeTransitionPending = false
 
+/** Drop inline bootstrap listeners; composite player owns all transitions. */
 function adoptEarlyAudio(): HTMLAudioElement | null {
   const early = window.__SIBS_REAL_LAYOUT_AUDIO__
   if (!(early instanceof HTMLAudioElement)) return null
-  audio = early
+  early.pause()
   delete window.__SIBS_REAL_LAYOUT_AUDIO__
+
+  audio = new Audio()
+  audio.preload = 'auto'
+  audio.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+  audio.muted = early.muted
   return audio
 }
 
@@ -83,28 +89,42 @@ async function runCompositeFadeTransition(action: () => void | Promise<void>): P
     compositeTimeUpdateHandler = null
   }
   await fadeOutAudio(element)
-  await action()
-  compositeFadeTransitionPending = false
+  try {
+    await action()
+  } finally {
+    compositeFadeTransitionPending = false
+  }
 }
 
 function beginCompositeSegmentPlayback(element: HTMLAudioElement, startAt: number, fadeIn: boolean): void {
-  try {
-    element.currentTime = startAt
-  } catch {
-    /* metadata may still be loading */
-  }
-  if (fadeIn) {
-    element.volume = 0
-  } else {
-    element.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
-  }
-  if (!readRealMusicMuted()) {
+  const startPlayback = () => {
+    try {
+      element.currentTime = startAt
+    } catch {
+      /* metadata may still be loading */
+    }
+    if (fadeIn) {
+      element.volume = 0
+    } else {
+      element.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+    }
+    if (readRealMusicMuted()) return
     const playPromise = element.play()
     if (fadeIn) {
-      void playPromise.then(() => fadeInAudio(element)).catch(() => {})
+      void playPromise
+        .then(() => fadeInAudio(element))
+        .catch(() => {
+          element.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+        })
     } else {
       void playPromise.catch(() => {})
     }
+  }
+
+  if (element.readyState >= HTMLMediaElement.HAVE_METADATA) {
+    startPlayback()
+  } else {
+    element.addEventListener('loadedmetadata', startPlayback, { once: true })
   }
 }
 
@@ -117,14 +137,8 @@ function attachCompositeSegmentHandlers(
   const fadeLead = fadeLeadSeconds()
   let fadeStarted = false
 
-  const advanceToSegment = (nextIndex: number, sameSourceLoop = false) => {
+  const advanceToSegment = (nextIndex: number) => {
     void runCompositeFadeTransition(async () => {
-      if (sameSourceLoop) {
-        element.pause()
-        beginCompositeSegmentPlayback(element, segment.startAt ?? 0, true)
-        attachCompositeSegmentHandlers(index, config, segment)
-        return
-      }
       playCompositeSegment(nextIndex, config, { fadeIn: true })
     })
   }
@@ -132,30 +146,24 @@ function attachCompositeSegmentHandlers(
   compositeTimeUpdateHandler = () => {
     if (compositeFadeTransitionPending || fadeStarted) return
 
-    if (segment.endAt != null) {
-      if (element.currentTime < segment.endAt - fadeLead) return
-      fadeStarted = true
-      const nextIndex = index + 1
-      if (nextIndex < config.segments.length) {
-        advanceToSegment(nextIndex)
-      } else if (config.loop) {
-        advanceToSegment(config.loopFromSegmentIndex ?? 0)
-      } else {
-        void fadeOutAudio(element).then(() => element.pause())
-      }
-      return
-    }
+    const cutAt =
+      segment.endAt ??
+      (Number.isFinite(element.duration) ? element.duration : Number.NaN)
 
-    const duration = element.duration
-    if (!Number.isFinite(duration) || duration <= fadeLead) return
-    if (element.currentTime < duration - fadeLead) return
+    if (!Number.isFinite(cutAt)) return
+    if (element.currentTime < cutAt - fadeLead) return
 
     fadeStarted = true
-    if (config.loop) {
-      advanceToSegment(config.loopFromSegmentIndex ?? index, true)
-    } else {
-      void fadeOutAudio(element).then(() => element.pause())
+    const nextIndex = index + 1
+    if (nextIndex < config.segments.length) {
+      advanceToSegment(nextIndex)
+      return
     }
+    if (config.loop) {
+      advanceToSegment(config.loopFromSegmentIndex ?? 0)
+      return
+    }
+    void fadeOutAudio(element).then(() => element.pause())
   }
 
   element.addEventListener('timeupdate', compositeTimeUpdateHandler)
@@ -185,16 +193,10 @@ function playCompositeSegment(
 
   const startAt = segment.startAt ?? 0
   const fadeIn = options.fadeIn ?? false
-  const beginPlayback = () => beginCompositeSegmentPlayback(element, startAt, fadeIn)
 
   attachCompositeSegmentHandlers(index, config, segment)
-
-  if (element.readyState >= HTMLMediaElement.HAVE_METADATA) {
-    beginPlayback()
-  } else {
-    element.addEventListener('loadedmetadata', beginPlayback, { once: true })
-  }
   element.load()
+  beginCompositeSegmentPlayback(element, startAt, fadeIn)
 }
 
 function loadCompositeRealLayoutMusicTrack(

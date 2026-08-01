@@ -496,8 +496,9 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
   if (tab === 'routes') {
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
-    var introEnd = 17;
+    var introEnd = 30;
     var mainStart = 17;
+    var mainEnd = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
     var phase = 'intro';
@@ -552,8 +553,8 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       fadeThenSwitch(true);
     };
     var onMainTime = function () {
-      if (phase !== 'main' || transitionPending || mainFadeStarted || !isFinite(audio.duration)) return;
-      if (audio.currentTime < audio.duration - fadeLead) return;
+      if (phase !== 'main' || transitionPending || mainFadeStarted) return;
+      if (audio.currentTime < mainEnd - fadeLead) return;
       mainFadeStarted = true;
       fadeThenSwitch(false);
     };
