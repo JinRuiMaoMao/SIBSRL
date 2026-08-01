@@ -37,6 +37,8 @@ import { RouteDetailRealPanel } from './RouteDetailRealPanel'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { RouteListGameSection } from './RouteListGameSection'
 import { RouteListViewAllFooter } from './RouteListViewAllFooter'
+import { RouteUnlockCategoryList } from './RouteUnlockCategoryList'
+import type { RouteUnlockCategoryKind } from './RouteUnlockCategoryCard'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
@@ -220,6 +222,9 @@ export function RouteLookupPage({
     useState<DailyChallengeInfo | null>(null)
   const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
+  const [unlockCategoryFocus, setUnlockCategoryFocus] = useState<RouteUnlockCategoryKind | null>(
+    null,
+  )
   const [searchHistory, setSearchHistory] = useState(readSearchHistory)
   const [stopSectionOpen, setStopSectionOpen] = useState(true)
   const [betweenStopsSectionOpen, setBetweenStopsSectionOpen] = useState(true)
@@ -229,6 +234,7 @@ export function RouteLookupPage({
   const [betweenStopsSortMode, setBetweenStopsSortMode] = useState<TransferPlanSortMode>('transfers')
   const stopPairFromUrlRef = useRef(false)
   const betweenStopsSectionRef = useRef<HTMLDivElement>(null)
+  const lockedSectionRef = useRef<HTMLDivElement>(null)
   const pendingBetweenStopsScrollRef = useRef(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const stickyToolbarRef = useRef<HTMLDivElement>(null)
@@ -287,7 +293,7 @@ export function RouteLookupPage({
         : [],
     [filteredRoutes, splitLayoutActive],
   )
-  const { unlockable: realUnlockableEntries, locked: realLockedEntries } = useMemo(
+  const { normal: realNormalEntries, locked: realLockedEntries } = useMemo(
     () => partitionRealRouteListEntries(realFilteredEntries),
     [realFilteredEntries],
   )
@@ -1173,6 +1179,16 @@ export function RouteLookupPage({
     )
   }, [listSectionTotalSlots])
 
+  const filteredLockedSlots = useMemo(() => {
+    const slots = listSectionSlots.specialSeasonal
+    if (!unlockCategoryFocus) return slots
+    return slots.filter(
+      (slot) =>
+        slot.entry != null &&
+        getRouteDisplayGroupsForRoute(slot.entry.route).includes(unlockCategoryFocus),
+    )
+  }, [listSectionSlots.specialSeasonal, unlockCategoryFocus])
+
   const betweenStopPairDraft =
     Boolean(structuredStopPair.from?.trim() && structuredStopPair.to?.trim()) &&
     !stopPairSearchCommitted
@@ -1187,6 +1203,7 @@ export function RouteLookupPage({
   const handleSearchQueryChange = useCallback(
     (q: string) => {
       updateFilter('query', q)
+      setUnlockCategoryFocus(null)
       setGroupOpen(defaultClosedRouteGroups())
       if (!q.trim()) {
         setCommittedStopPairQuery('')
@@ -1209,6 +1226,7 @@ export function RouteLookupPage({
     updateFilter('operator', 'all')
     updateFilter('type', 'all')
     setCommittedStopPairQuery('')
+    setUnlockCategoryFocus(null)
     clearStopPairFromLocation()
     clearSearchFromLocation()
     setGroupOpen((prev) => ({
@@ -1221,6 +1239,14 @@ export function RouteLookupPage({
     setStopSectionOpen(true)
     setBetweenStopsSectionOpen(true)
   }, [updateFilter])
+
+  const handleUnlockCategorySelect = useCallback((kind: RouteUnlockCategoryKind) => {
+    setUnlockCategoryFocus((prev) => (prev === kind ? null : kind))
+    setGroupOpen((prev) => ({ ...prev, normal: true, specialSeasonal: true }))
+    requestAnimationFrame(() => {
+      lockedSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    })
+  }, [])
 
   const handleSearchCommit = useCallback(() => {
     const q = filters.query.trim()
@@ -1267,8 +1293,11 @@ export function RouteLookupPage({
     setSearchHistory([])
   }, [])
 
-  const renderListSectionCards = (section: RouteListUiSectionKey) =>
-    listSectionSlots[section].map((slot, index) => {
+  const renderListSectionCards = (
+    section: RouteListUiSectionKey,
+    slotsOverride?: typeof listSectionSlots.normal,
+  ) =>
+    (slotsOverride ?? listSectionSlots[section]).map((slot, index) => {
       const { route, listedId, directionKey } = slot.entry!
       const directionIndex = getCardDirectionIndex(route, directionKey)
       const seasonalLabels = getSeasonalLabelsForRoute(route)
@@ -1481,8 +1510,10 @@ export function RouteLookupPage({
               {splitRouteCountLabel}
             </p>
             <RouteLookupSplitList
-              unlockableEntries={realUnlockableEntries}
+              normalEntries={realNormalEntries}
               lockedEntries={realLockedEntries}
+              unlockCategoryFocus={unlockCategoryFocus}
+              onUnlockCategorySelect={handleUnlockCategorySelect}
               unlockableOpen={groupOpen.normal}
               lockedOpen={groupOpen.specialSeasonal}
               onUnlockableOpenChange={(open) =>
@@ -1492,6 +1523,7 @@ export function RouteLookupPage({
                 setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
               }
               onViewAllPlayable={handleViewAllPlayable}
+              lockedSectionRef={lockedSectionRef}
               selectedListKey={selectedRealListKey}
               onSelect={handleCarouselSelect}
               onOpenDetail={handleOpenDetailInSplit}
@@ -1599,83 +1631,85 @@ export function RouteLookupPage({
               </RouteGroupCollapse>
             ) : null}
 
+            {dailyChallengeVisible ? (
+              <DailyChallengeBanner
+                selected={dailyChallengeSelected}
+                onSelect={handleSelectDailyChallenge}
+                onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
+                challenge={dailyChallenge}
+              />
+            ) : null}
+
+            {showFavoritesSection ? (
+              <RouteGroupCollapse
+                groupId="favorites"
+                dataTour="favorites"
+                count={favoriteRoutes.length}
+                open={groupOpen.favorites}
+                onOpenChange={(open) =>
+                  setGroupOpen((prev) => ({ ...prev, favorites: open }))
+                }
+              >
+                <FavoritesFolderBar />
+                {favoriteRoutes.length > 0 ? (
+                  <>
+                    <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
+                    <div className="route-grid route-grid--favorites">
+                      {renderFavoriteRouteCards()}
+                    </div>
+                  </>
+                ) : (
+                  <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
+                )}
+              </RouteGroupCollapse>
+            ) : null}
+
+            {recentRoutes.length > 0 ? (
+              <RouteGroupCollapse
+                groupId="recent"
+                count={recentRoutes.length}
+                open={groupOpen.recent}
+                onOpenChange={(open) =>
+                  setGroupOpen((prev) => ({ ...prev, recent: open }))
+                }
+              >
+                <div className="route-grid">{renderRecentRouteCards()}</div>
+              </RouteGroupCollapse>
+            ) : null}
+
+            {countVisibleSectionSlots('normal') > 0 ? (
+              <div className="route-grid">{renderListSectionCards('normal')}</div>
+            ) : null}
+
             <RouteListGameSection
               titleKey="routeListUnlockable"
-              dataTour="route-group-normal"
+              dataTour="route-group-unlockable"
               open={groupOpen.normal}
               onOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, normal: open }))}
             >
-              {dailyChallengeVisible ? (
-                <DailyChallengeBanner
-                  selected={dailyChallengeSelected}
-                  onSelect={handleSelectDailyChallenge}
-                  onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
-                  challenge={dailyChallenge}
-                />
-              ) : null}
-
-              {showFavoritesSection ? (
-                <RouteGroupCollapse
-                  groupId="favorites"
-                  dataTour="favorites"
-                  count={favoriteRoutes.length}
-                  open={groupOpen.favorites}
-                  onOpenChange={(open) =>
-                    setGroupOpen((prev) => ({ ...prev, favorites: open }))
-                  }
-                >
-                  <FavoritesFolderBar />
-                  {favoriteRoutes.length > 0 ? (
-                    <>
-                      <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
-                      <div className="route-grid route-grid--favorites">
-                        {renderFavoriteRouteCards()}
-                      </div>
-                    </>
-                  ) : (
-                    <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
-                  )}
-                </RouteGroupCollapse>
-              ) : null}
-
-              {recentRoutes.length > 0 ? (
-                <RouteGroupCollapse
-                  groupId="recent"
-                  count={recentRoutes.length}
-                  open={groupOpen.recent}
-                  onOpenChange={(open) =>
-                    setGroupOpen((prev) => ({ ...prev, recent: open }))
-                  }
-                >
-                  <div className="route-grid">{renderRecentRouteCards()}</div>
-                </RouteGroupCollapse>
-              ) : null}
-
-              {countVisibleSectionSlots('normal') === 0 &&
-              !dailyChallengeVisible &&
-              !showFavoritesSection &&
-              recentRoutes.length === 0 ? (
-                <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
-              ) : countVisibleSectionSlots('normal') > 0 ? (
-                <div className="route-grid">{renderListSectionCards('normal')}</div>
-              ) : null}
+              <RouteUnlockCategoryList
+                activeKind={unlockCategoryFocus}
+                onSelect={handleUnlockCategorySelect}
+              />
             </RouteListGameSection>
 
-            <RouteListGameSection
-              titleKey="routeListLocked"
-              open={groupOpen.specialSeasonal}
-              onOpenChange={(open) =>
-                setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
-              }
-            >
-              {countVisibleSectionSlots('specialSeasonal') === 0 ? (
-                <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
-              ) : (
-                <div className="route-grid route-grid--special-seasonal">
-                  {renderListSectionCards('specialSeasonal')}
-                </div>
-              )}
-            </RouteListGameSection>
+            <div ref={lockedSectionRef}>
+              <RouteListGameSection
+                titleKey="routeListLocked"
+                open={groupOpen.specialSeasonal}
+                onOpenChange={(open) =>
+                  setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
+                }
+              >
+                {filteredLockedSlots.length === 0 ? (
+                  <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
+                ) : (
+                  <div className="route-grid route-grid--special-seasonal">
+                    {renderListSectionCards('specialSeasonal', filteredLockedSlots)}
+                  </div>
+                )}
+              </RouteListGameSection>
+            </div>
 
             <RouteListViewAllFooter onClick={handleViewAllPlayable} />
 

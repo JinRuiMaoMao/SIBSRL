@@ -1,7 +1,7 @@
 import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
-import { isLockedDisplayRoute } from '../data/routeDisplayGroups'
+import { isLockedDisplayRoute, getRouteDisplayGroupsForRoute } from '../data/routeDisplayGroups'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 
 export interface RealRouteListEntry {
@@ -57,19 +57,27 @@ export function formatRealRouteDisplayNumber(
 }
 
 export function partitionRealRouteListEntries(entries: readonly RealRouteListEntry[]): {
-  unlockable: RealRouteListEntry[]
+  normal: RealRouteListEntry[]
   locked: RealRouteListEntry[]
 } {
-  const unlockable: RealRouteListEntry[] = []
+  const normal: RealRouteListEntry[] = []
   const locked: RealRouteListEntry[] = []
 
   for (const entry of entries) {
     if (isLockedDisplayRoute(entry.route)) {
       locked.push(entry)
     } else {
-      unlockable.push(entry)
+      normal.push(entry)
     }
   }
 
-  return { unlockable, locked }
+  return { normal, locked }
+}
+
+export function filterRealRouteListEntriesByUnlockCategory(
+  entries: readonly RealRouteListEntry[],
+  category: 'seasonal' | 'special' | null,
+): RealRouteListEntry[] {
+  if (!category) return [...entries]
+  return entries.filter((entry) => getRouteDisplayGroupsForRoute(entry.route).includes(category))
 }

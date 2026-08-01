@@ -1,21 +1,29 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 import { DAILY_CHALLENGE_CARD_ID, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
-import { type RealRouteListEntry } from '../utils/realRouteListEntries'
+import {
+  filterRealRouteListEntriesByUnlockCategory,
+  type RealRouteListEntry,
+} from '../utils/realRouteListEntries'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
 import { RouteListGameSection } from './RouteListGameSection'
 import { RouteListViewAllFooter } from './RouteListViewAllFooter'
+import { RouteUnlockCategoryList } from './RouteUnlockCategoryList'
+import type { RouteUnlockCategoryKind } from './RouteUnlockCategoryCard'
 
 interface RouteLookupSplitListProps {
-  unlockableEntries: readonly RealRouteListEntry[]
+  normalEntries: readonly RealRouteListEntry[]
   lockedEntries: readonly RealRouteListEntry[]
+  unlockCategoryFocus: RouteUnlockCategoryKind | null
+  onUnlockCategorySelect: (kind: RouteUnlockCategoryKind) => void
   unlockableOpen: boolean
   lockedOpen: boolean
   onUnlockableOpenChange: (open: boolean) => void
   onLockedOpenChange: (open: boolean) => void
   onViewAllPlayable: () => void
+  lockedSectionRef?: RefObject<HTMLElement | null>
   selectedListKey: string | null
   onSelect: (routeId: string, directionIndex: number) => void
   onOpenDetail: (routeId: string, directionIndex: number) => void
@@ -29,13 +37,16 @@ interface RouteLookupSplitListProps {
 }
 
 export function RouteLookupSplitList({
-  unlockableEntries,
+  normalEntries,
   lockedEntries,
+  unlockCategoryFocus,
+  onUnlockCategorySelect,
   unlockableOpen,
   lockedOpen,
   onUnlockableOpenChange,
   onLockedOpenChange,
   onViewAllPlayable,
+  lockedSectionRef,
   selectedListKey,
   onSelect,
   onOpenDetail,
@@ -44,6 +55,10 @@ export function RouteLookupSplitList({
   const { t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
+  const filteredLockedEntries = filterRealRouteListEntriesByUnlockCategory(
+    lockedEntries,
+    unlockCategoryFocus,
+  )
 
   const scrollTargetKey =
     dailyChallenge?.visible && dailyChallenge.selected
@@ -59,20 +74,20 @@ export function RouteLookupSplitList({
     })
   }, [
     scrollTargetKey,
-    unlockableEntries,
-    lockedEntries,
+    normalEntries,
+    filteredLockedEntries,
     dailyChallenge?.visible,
     dailyChallenge?.selected,
   ])
 
   const showDailyChallenge = dailyChallenge?.visible ?? false
-  const hasEntries = unlockableEntries.length > 0 || lockedEntries.length > 0
+  const hasEntries = normalEntries.length > 0 || lockedEntries.length > 0
 
   if (!hasEntries && !showDailyChallenge) {
     return <p className="route-split-empty">{t('routeSplitEmpty')}</p>
   }
 
-  const renderEntry = (entry: RealRouteListEntry, index: number) => {
+  const renderEntry = (entry: RealRouteListEntry, index: number, tourAnchor: boolean) => {
     const { route, directionIndex, listKey } = entry
 
     return (
@@ -92,7 +107,7 @@ export function RouteLookupSplitList({
           directionIndex={directionIndex}
           loopView={false}
           appearance="classic"
-          tourAnchor={index === 0 ? 'route-card' : undefined}
+          tourAnchor={tourAnchor ? 'route-card' : undefined}
           onNavigate={() => onSelect(route.id, directionIndex)}
           onOpenDetail={() => onOpenDetail(route.id, directionIndex)}
         />
@@ -100,62 +115,55 @@ export function RouteLookupSplitList({
     )
   }
 
-  const unlockableContent: ReactNode[] = []
-
-  if (showDailyChallenge) {
-    unlockableContent.push(
-      <div
-        key={DAILY_CHALLENGE_CARD_ID}
-        ref={(node) => {
-          if (node) itemRefs.current.set(DAILY_CHALLENGE_CARD_ID, node)
-          else itemRefs.current.delete(DAILY_CHALLENGE_CARD_ID)
-        }}
-        className="route-split-list-item route-split-list-item--daily-challenge"
-        role="listitem"
-      >
-        <DailyChallengeBanner
-          selected={dailyChallenge!.selected}
-          onSelect={dailyChallenge!.onSelect}
-          onOpenCalendar={dailyChallenge!.onOpenCalendar}
-          variant="split"
-          challenge={dailyChallenge!.challenge}
-        />
-      </div>,
-    )
-  }
-
-  for (const [index, entry] of unlockableEntries.entries()) {
-    unlockableContent.push(renderEntry(entry, index))
-  }
-
-  const lockedContent = lockedEntries.map((entry, index) => renderEntry(entry, index))
-
   return (
     <div ref={listRef} className="route-split-list" role="list">
+      {showDailyChallenge ? (
+        <div
+          key={DAILY_CHALLENGE_CARD_ID}
+          ref={(node) => {
+            if (node) itemRefs.current.set(DAILY_CHALLENGE_CARD_ID, node)
+            else itemRefs.current.delete(DAILY_CHALLENGE_CARD_ID)
+          }}
+          className="route-split-list-item route-split-list-item--daily-challenge"
+          role="listitem"
+        >
+          <DailyChallengeBanner
+            selected={dailyChallenge!.selected}
+            onSelect={dailyChallenge!.onSelect}
+            onOpenCalendar={dailyChallenge!.onOpenCalendar}
+            variant="split"
+            challenge={dailyChallenge!.challenge}
+          />
+        </div>
+      ) : null}
+
+      {normalEntries.map((entry, index) => renderEntry(entry, index, index === 0))}
+
       <RouteListGameSection
         titleKey="routeListUnlockable"
-        dataTour="route-group-normal"
+        dataTour="route-group-unlockable"
         open={unlockableOpen}
         onOpenChange={onUnlockableOpenChange}
       >
-        {unlockableContent.length > 0 ? (
-          unlockableContent
-        ) : (
-          <p className="route-split-empty route-group-empty">{t('routeGroupEmpty')}</p>
-        )}
+        <RouteUnlockCategoryList
+          activeKind={unlockCategoryFocus}
+          onSelect={onUnlockCategorySelect}
+        />
       </RouteListGameSection>
 
-      <RouteListGameSection
-        titleKey="routeListLocked"
-        open={lockedOpen}
-        onOpenChange={onLockedOpenChange}
-      >
-        {lockedContent.length > 0 ? (
-          lockedContent
-        ) : (
-          <p className="route-split-empty route-group-empty">{t('routeGroupEmpty')}</p>
-        )}
-      </RouteListGameSection>
+      <div ref={lockedSectionRef as RefObject<HTMLDivElement>}>
+        <RouteListGameSection
+          titleKey="routeListLocked"
+          open={lockedOpen}
+          onOpenChange={onLockedOpenChange}
+        >
+          {filteredLockedEntries.length > 0 ? (
+            filteredLockedEntries.map((entry, index) => renderEntry(entry, index, false))
+          ) : (
+            <p className="route-split-empty route-group-empty">{t('routeGroupEmpty')}</p>
+          )}
+        </RouteListGameSection>
+      </div>
 
       <RouteListViewAllFooter onClick={onViewAllPlayable} />
     </div>
