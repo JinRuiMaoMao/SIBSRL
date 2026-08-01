@@ -307,7 +307,7 @@ function attachCompositeSegmentHandlers(
   const element = getActiveAudio()
   const nextIndex = resolveNextSegmentIndex(index, config)
 
-  if (config.instantSegmentHandoff) {
+  if (config.instantSegmentHandoff && segment.endAt == null) {
     let handedOff = false
 
     const handoffOnce = () => {

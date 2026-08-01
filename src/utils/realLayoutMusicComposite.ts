@@ -19,13 +19,16 @@ const MAP_MENU_INTRO_ASSET = 'audio/broadcasts/music/music-map-menu-intro.ogg'
 const MAP_MENU_BRIDGE_ASSET = 'audio/broadcasts/music/music-map-menu-bridge.ogg'
 const MAP_MENU_LOOP_ASSET = 'audio/broadcasts/music/music-map-menu-loop.ogg'
 
-/** Routes map menu: pre-cut intro (31s) → bridge (104s) → loop (276s). */
+/** Intro begins fading at 0:30 and crossfades into the bridge segment. */
+export const MAP_MENU_INTRO_FADE_AT = 30
+
+/** Routes map menu: intro (fade at 30s) → bridge (104s) → loop (276s). */
 export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
   Record<RealLayoutMusicTrackId, RealLayoutMusicCompositeConfig>
 > = {
   'music-map-menu': {
     segments: [
-      { asset: MAP_MENU_INTRO_ASSET },
+      { asset: MAP_MENU_INTRO_ASSET, endAt: MAP_MENU_INTRO_FADE_AT },
       { asset: MAP_MENU_BRIDGE_ASSET },
       { asset: MAP_MENU_LOOP_ASSET },
     ],
