@@ -1824,6 +1824,37 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   cursor: not-allowed;
 }
 
+.random-route-btn--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  min-width: 3rem;
+  padding: 0;
+}
+
+.random-route-icon {
+  display: block;
+}
+
+.route-layout-toggle-btn--header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--header-control-btn-size, 2.25rem);
+  min-height: var(--header-control-btn-size, 2.25rem);
+  padding: 0 0.65rem;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  white-space: nowrap;
+}
+
+.route-layout-toggle-btn--header:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
 .filter-menu {
   position: relative;
   flex-shrink: 0;

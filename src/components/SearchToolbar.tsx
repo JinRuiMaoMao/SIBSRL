@@ -5,6 +5,7 @@ import type { RouteTypeFilter } from '../types/route'
 import { FilterMenu } from './FilterMenu'
 import { RouteFilters } from './RouteFilters'
 import { SearchBar } from './SearchBar'
+import { RandomRouteIcon } from './routeToolbarIcons'
 
 interface SearchToolbarProps {
   value: string
@@ -67,10 +68,9 @@ export function SearchToolbar({
 }: SearchToolbarProps) {
   const { t } = useLocale()
   const realLayout = isRealLayoutMode()
-  const alternateLayoutHref = getAlternateLayoutRoutesHref()
 
   return (
-    <div className="search-toolbar">
+    <div className={`search-toolbar${realLayout ? ' search-toolbar--real' : ''}`}>
       <SearchBar
         value={value}
         onChange={onChange}
@@ -86,24 +86,26 @@ export function SearchToolbar({
         onSyntaxToggle={onSyntaxToggle}
       />
       <div className="search-toolbar-actions">
-        <a
-          className={`route-layout-toggle-btn${realLayout ? ' route-layout-toggle-btn--active' : ''}`}
-          href={alternateLayoutHref}
-          aria-label={t('routeLookupLayoutToggleAria')}
-          title={realLayout ? t('routeLookupLayoutGrid') : t('routeLookupLayoutSplit')}
-        >
-          {realLayout ? t('routeLookupLayoutGrid') : t('routeLookupLayoutSplit')}
-        </a>
+        {!realLayout ? (
+          <a
+            className="route-layout-toggle-btn"
+            href={getAlternateLayoutRoutesHref()}
+            aria-label={t('routeLookupLayoutToggleAria')}
+            title={t('routeLookupLayoutSplit')}
+          >
+            {t('routeLookupLayoutSplit')}
+          </a>
+        ) : null}
         <button
           type="button"
-          className="random-route-btn"
+          className={`random-route-btn${realLayout ? ' random-route-btn--icon' : ''}`}
           data-tour="random-route"
           onClick={onRandom}
           disabled={randomEligibleCount === 0}
           aria-label={t('randomRouteAria')}
           title={t('randomRouteAria')}
         >
-          {t('randomRoute')}
+          {realLayout ? <RandomRouteIcon /> : t('randomRoute')}
         </button>
         <FilterMenu active={filtersActive}>
           <RouteFilters
