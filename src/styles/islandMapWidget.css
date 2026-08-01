@@ -9,6 +9,8 @@
   left: max(0.65rem, env(safe-area-inset-left, 0px));
   bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   z-index: 190;
+  display: flex;
+  flex-direction: column;
   width: min(9.5rem, 34vw);
   border-radius: 0.75rem;
   overflow: hidden;
@@ -30,6 +32,24 @@ html.has-compact-tab-nav .island-map--widget {
 .island-map-viewport-shell {
   position: relative;
   min-width: 0;
+}
+
+.island-map-widget-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  padding: 0.28rem 0.35rem;
+  border-top: 1px solid var(--island-map-control-border);
+  background: var(--island-map-control-bg);
+}
+
+.island-map--widget-collapsed {
+  width: auto;
+}
+
+.island-map--widget-collapsed .island-map-widget-toolbar {
+  border-top: none;
 }
 
 .island-map-layers-control {
