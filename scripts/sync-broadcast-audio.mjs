@@ -38,6 +38,7 @@ function copyMusicSet(srcDir, destDir) {
   const NAME_MAP = [
     { sourceIncludes: 'San Francisco Nights', dest: 'music-main-menu.ogg' },
     { sourceIncludes: '主界面', dest: 'music-main-menu.ogg' },
+    { sourceIncludes: 'Radiumintro', sourceIncludes2: 'cut_31sec', dest: 'music-map-menu-intro.ogg' },
     { sourceIncludes: 'Radiumintro', sourceIncludes2: 'cut_30sec', dest: 'music-map-menu-intro.ogg' },
     { sourceIncludes: 'cut_104sec', dest: 'music-map-menu-bridge.ogg' },
     { sourceIncludes: 'cut_276sec', dest: 'music-map-menu-loop.ogg' },

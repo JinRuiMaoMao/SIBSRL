@@ -19,7 +19,7 @@ const MAP_MENU_INTRO_ASSET = 'audio/broadcasts/music/music-map-menu-intro.ogg'
 const MAP_MENU_BRIDGE_ASSET = 'audio/broadcasts/music/music-map-menu-bridge.ogg'
 const MAP_MENU_LOOP_ASSET = 'audio/broadcasts/music/music-map-menu-loop.ogg'
 
-/** Routes map menu: pre-cut intro (30s) → bridge (104s) → loop (276s). */
+/** Routes map menu: pre-cut intro (31s) → bridge (104s) → loop (276s). */
 export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
   Record<RealLayoutMusicTrackId, RealLayoutMusicCompositeConfig>
 > = {
