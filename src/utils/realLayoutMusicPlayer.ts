@@ -194,15 +194,33 @@ function startSegmentPlayback(element: HTMLAudioElement, startAt: number, fadeIn
   }
 }
 
+function sameResolvedAudioSrc(element: HTMLAudioElement, url: string): boolean {
+  if (!element.src && !url) return true
+  try {
+    return new URL(element.src, window.location.href).href === new URL(url, window.location.href).href
+  } catch {
+    return element.src === url
+  }
+}
+
 function preloadIncomingSegment(
   incoming: HTMLAudioElement,
   segment: RealLayoutMusicCompositeSegment,
 ): void {
   const url = resolveCompositeAssetUrl(segment.asset)
-  if (incoming.src !== url) {
+  if (!sameResolvedAudioSrc(incoming, url)) {
     incoming.src = url
     incoming.load()
   }
+}
+
+function whenIncomingCanPlay(incoming: HTMLAudioElement): Promise<void> {
+  if (incoming.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+    return Promise.resolve()
+  }
+  return new Promise((resolve) => {
+    incoming.addEventListener('canplay', () => resolve(), { once: true })
+  })
 }
 
 function beginIncomingCrossfade(
@@ -214,29 +232,27 @@ function beginIncomingCrossfade(
   if (!segment || pendingCrossfade) return
 
   const incoming = getInactiveAudio()
+  if (incoming === outgoing) return
+
   incoming.loop = false
   incoming.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+  incoming.muted = outgoing.muted
 
   const startAt = segment.startAt ?? 0
-  const begin = () => {
+  preloadIncomingSegment(incoming, segment)
+
+  pendingCrossfade = { outgoing, incoming, nextIndex, config, segment }
+
+  void whenIncomingCanPlay(incoming).then(() => {
+    if (!pendingCrossfade || pendingCrossfade.incoming !== incoming) return
     try {
       incoming.currentTime = startAt
     } catch {
       /* metadata may still be loading */
     }
-    if (!readRealMusicMuted()) {
-      void incoming.play().catch(() => {})
-    }
-  }
-
-  preloadIncomingSegment(incoming, segment)
-  if (incoming.readyState >= HTMLMediaElement.HAVE_METADATA) {
-    begin()
-  } else {
-    incoming.addEventListener('loadedmetadata', begin, { once: true })
-  }
-
-  pendingCrossfade = { outgoing, incoming, nextIndex, config, segment }
+    if (readRealMusicMuted()) return
+    void incoming.play().catch(() => {})
+  })
 }
 
 function finalizeCrossfade(): void {
@@ -244,6 +260,17 @@ function finalizeCrossfade(): void {
 
   const { outgoing, incoming, nextIndex, config, segment } = pendingCrossfade
   pendingCrossfade = null
+
+  const startAt = segment.startAt ?? 0
+  if (incoming.paused) {
+    try {
+      incoming.currentTime = startAt
+    } catch {
+      /* metadata may still be loading */
+    }
+    incoming.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+    if (!readRealMusicMuted()) void incoming.play().catch(() => {})
+  }
 
   outgoing.pause()
   try {
@@ -282,7 +309,9 @@ function attachCompositeSegmentHandlers(
   if (nextIndex != null) {
     const nextSegment = config.segments[nextIndex]
     if (nextSegment) {
-      preloadIncomingSegment(getInactiveAudio(), nextSegment)
+      const inactive = getInactiveAudio()
+      preloadIncomingSegment(inactive, nextSegment)
+      void whenIncomingCanPlay(inactive).catch(() => {})
     }
   }
 
@@ -369,6 +398,17 @@ function playCompositeSegment(
 
   attachCompositeSegmentHandlers(index, config, segment)
   element.load()
+
+  const nextIndex = resolveNextSegmentIndex(index, config)
+  if (nextIndex != null) {
+    const nextSegment = config.segments[nextIndex]
+    if (nextSegment) {
+      const inactive = getInactiveAudio()
+      preloadIncomingSegment(inactive, nextSegment)
+      void whenIncomingCanPlay(inactive).catch(() => {})
+    }
+  }
+
   startSegmentPlayback(element, segment.startAt ?? 0, options.fadeIn ?? false)
 }
 
