@@ -16,6 +16,8 @@ import { readRealMusicMuted, type RealLayoutMusicTrackId } from './realLayoutMus
 declare global {
   interface Window {
     __SIBS_REAL_LAYOUT_AUDIO__?: HTMLAudioElement
+    /** Set when React player takes over; inline bootstrap must stop touching early audio. */
+    __SIBS_REAL_LAYOUT_MUSIC_ADOPTED__?: boolean
   }
 }
 
@@ -45,8 +47,17 @@ let compositeEndedHandler: (() => void) | null = null
 function adoptEarlyAudio(): HTMLAudioElement | null {
   const early = window.__SIBS_REAL_LAYOUT_AUDIO__
   if (!(early instanceof HTMLAudioElement)) return null
-  early.pause()
+
+  window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__ = true
   delete window.__SIBS_REAL_LAYOUT_AUDIO__
+
+  early.pause()
+  try {
+    early.removeAttribute('src')
+    early.load()
+  } catch {
+    /* ignore */
+  }
 
   audio = new Audio()
   audio.preload = 'auto'
@@ -265,6 +276,8 @@ export async function attemptRealLayoutAutoplay(): Promise<boolean> {
   if (!element.src) return false
 
   element.muted = false
+  if (!element.paused) return true
+
   try {
     await element.play()
     return true
@@ -279,20 +292,11 @@ export async function attemptRealLayoutAutoplay(): Promise<boolean> {
   }
 }
 
-function unlockAudibleFromGesture(): void {
-  if (readRealMusicMuted()) return
-  const element = audio
-  if (!element) return
-  element.muted = false
-  void element.play().catch(() => {})
-}
-
 export function installRealLayoutMusicGestureUnlock(): void {
   if (gestureUnlockInstalled) return
   gestureUnlockInstalled = true
 
   const handler = () => {
-    unlockAudibleFromGesture()
     void attemptRealLayoutAutoplay()
   }
 

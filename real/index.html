@@ -145,10 +145,10 @@
         window.addEventListener('resize', apply);
       })();
     </script>
-    <meta name="app-build" content="2026-08-01T10:20:52.296Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A20%3A52.296Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A20%3A52.296Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A20%3A52.296Z" />
+    <meta name="app-build" content="2026-08-01T10:22:46.479Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A22%3A46.479Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A22%3A46.479Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A22%3A46.479Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -368,6 +368,7 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
       fadeVolume(targetVolume);
     }
     var onTrackTime = function () {
+      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro') {
         rampVolume(audio.currentTime, introEnd);
         if (audio.currentTime >= introEnd) spliceToMain();
@@ -380,31 +381,25 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
     };
     audio.addEventListener('timeupdate', onTrackTime);
     audio.addEventListener('ended', function () {
+      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro' && !spliced) spliceToMain();
     });
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
-  function unlock() {
-    try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
-    audio.muted = false;
-    audio.play().catch(function () {});
-  }
   function tryPlay() {
+    if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
+    if (!audio.paused) return;
     audio.muted = false;
     var attempt = audio.play();
     if (attempt && attempt.catch) {
       attempt.catch(function () {
+        if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
         audio.muted = true;
         audio.play().catch(function () {});
       });
     }
   }
   tryPlay();
-  ['pointerdown', 'keydown', 'touchstart', 'click'].forEach(function (ev) {
-    document.addEventListener(ev, unlock, { capture: true, passive: true });
-  });
-  var splash = document.getElementById('start-boot-splash');
-  if (splash) splash.addEventListener('pointerdown', unlock, { capture: true, passive: true });
   audio.addEventListener('canplaythrough', tryPlay, { once: true });
 })();
 </script>
@@ -587,6 +582,6 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
 })();
 </script>
 
-      <script type="module" crossorigin src="../assets/dev-1cLeyK68.js"></script>
+      <script type="module" crossorigin src="../assets/dev-DqHvlVPq.js"></script>
   </body>
 </html>

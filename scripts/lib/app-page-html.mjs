@@ -554,6 +554,7 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       fadeVolume(targetVolume);
     }
     var onTrackTime = function () {
+      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro') {
         rampVolume(audio.currentTime, introEnd);
         if (audio.currentTime >= introEnd) spliceToMain();
@@ -566,31 +567,25 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     };
     audio.addEventListener('timeupdate', onTrackTime);
     audio.addEventListener('ended', function () {
+      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro' && !spliced) spliceToMain();
     });
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
-  function unlock() {
-    try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
-    audio.muted = false;
-    audio.play().catch(function () {});
-  }
   function tryPlay() {
+    if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
+    if (!audio.paused) return;
     audio.muted = false;
     var attempt = audio.play();
     if (attempt && attempt.catch) {
       attempt.catch(function () {
+        if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
         audio.muted = true;
         audio.play().catch(function () {});
       });
     }
   }
   tryPlay();
-  ['pointerdown', 'keydown', 'touchstart', 'click'].forEach(function (ev) {
-    document.addEventListener(ev, unlock, { capture: true, passive: true });
-  });
-  var splash = document.getElementById('start-boot-splash');
-  if (splash) splash.addEventListener('pointerdown', unlock, { capture: true, passive: true });
   audio.addEventListener('canplaythrough', tryPlay, { once: true });
 })();
 </script>`
