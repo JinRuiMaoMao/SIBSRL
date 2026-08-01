@@ -11,8 +11,8 @@ export const ROUTE_GROUP_OPEN_STORAGE_KEY = 'sibs-route-group-open'
 const DEFAULT_GROUP_OPEN: Record<RouteListGroupKey, boolean> = {
   favorites: false,
   recent: false,
-  normal: false,
-  specialSeasonal: false,
+  normal: true,
+  specialSeasonal: true,
 }
 
 const DEFAULT_SAVED_FILTERS: Pick<RouteFilters, 'zone' | 'operator' | 'type'> = {
@@ -86,10 +86,13 @@ export function readStoredRouteGroupOpen(): Record<RouteListGroupKey, boolean> {
     return {
       favorites: Boolean(stored.favorites),
       recent: Boolean(stored.recent),
-      normal: Boolean(stored.normal),
-      specialSeasonal: Boolean(
-        stored.specialSeasonal ?? stored.special ?? stored.seasonal,
-      ),
+      normal: stored.normal !== undefined ? Boolean(stored.normal) : true,
+      specialSeasonal:
+        stored.specialSeasonal !== undefined
+          ? Boolean(stored.specialSeasonal)
+          : stored.special !== undefined || stored.seasonal !== undefined
+            ? Boolean(stored.special ?? stored.seasonal)
+            : true,
     }
   } catch {
     return { ...DEFAULT_GROUP_OPEN }

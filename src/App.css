@@ -3725,6 +3725,46 @@ html[data-route-lookup-layout='split'] .site-footer {
   padding: 0.45rem 0.5rem 0.65rem;
 }
 
+.route-split-list .route-list-game-section {
+  margin-top: 0.65rem;
+}
+
+.route-split-list .route-list-game-section:first-child {
+  margin-top: 0;
+}
+
+.route-list-view-all-footer {
+  display: flex;
+  justify-content: center;
+  padding: 1.1rem 0.5rem 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.route-list-view-all-link {
+  border: none;
+  background: transparent;
+  padding: 0.2rem 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.route-list-view-all-link:hover,
+.route-list-view-all-link:focus-visible {
+  color: var(--accent);
+}
+
+.route-list-view-all-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
 .route-split-list-item {
   flex: 0 0 auto;
 }

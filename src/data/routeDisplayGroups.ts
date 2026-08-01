@@ -211,6 +211,11 @@ export function getGroupDisplaySlots(
 }
 
 /** 仅出现在每日挑战分组、不在常规/特殊/季节列表中的线路。 */
+export function isLockedDisplayRoute(route: BusRoute): boolean {
+  const groups = getRouteDisplayGroupsForRoute(route)
+  return groups.includes('special') || groups.includes('seasonal')
+}
+
 export function isDailyOnlyDisplayRoute(route: BusRoute): boolean {
   const groups = getRouteDisplayGroupsForRoute(route)
   if (!groups.includes('daily')) return false

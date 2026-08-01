@@ -1,6 +1,7 @@
 import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
+import { isLockedDisplayRoute } from '../data/routeDisplayGroups'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 
 export interface RealRouteListEntry {
@@ -53,4 +54,22 @@ export function formatRealRouteDisplayNumber(
 
   const label = getDirectionShortLabel(route, directionIndex, t, locale)
   return `${route.number}（${label}）`
+}
+
+export function partitionRealRouteListEntries(entries: readonly RealRouteListEntry[]): {
+  unlockable: RealRouteListEntry[]
+  locked: RealRouteListEntry[]
+} {
+  const unlockable: RealRouteListEntry[] = []
+  const locked: RealRouteListEntry[] = []
+
+  for (const entry of entries) {
+    if (isLockedDisplayRoute(entry.route)) {
+      locked.push(entry)
+    } else {
+      unlockable.push(entry)
+    }
+  }
+
+  return { unlockable, locked }
 }

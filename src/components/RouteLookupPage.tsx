@@ -36,6 +36,7 @@ import { RouteDetail } from './RouteDetail'
 import { RouteDetailRealPanel } from './RouteDetailRealPanel'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { RouteListGameSection } from './RouteListGameSection'
+import { RouteListViewAllFooter } from './RouteListViewAllFooter'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
@@ -108,6 +109,7 @@ import { getSortedDirectionIndexFromDataIndex } from '../utils/routeDirections'
 import {
   buildRealRouteListEntries,
   formatRealRouteDisplayNumber,
+  partitionRealRouteListEntries,
   realRouteListKey,
 } from '../utils/realRouteListEntries'
 import {
@@ -284,6 +286,10 @@ export function RouteLookupPage({
         ? buildRealRouteListEntries(filterRoutesForMainRouteList(filteredRoutes))
         : [],
     [filteredRoutes, splitLayoutActive],
+  )
+  const { unlockable: realUnlockableEntries, locked: realLockedEntries } = useMemo(
+    () => partitionRealRouteListEntries(realFilteredEntries),
+    [realFilteredEntries],
   )
   const realTotalEntries = useMemo(
     () =>
@@ -1197,6 +1203,25 @@ export function RouteLookupPage({
     [updateFilter],
   )
 
+  const handleViewAllPlayable = useCallback(() => {
+    updateFilter('query', '')
+    updateFilter('zone', 'all')
+    updateFilter('operator', 'all')
+    updateFilter('type', 'all')
+    setCommittedStopPairQuery('')
+    clearStopPairFromLocation()
+    clearSearchFromLocation()
+    setGroupOpen((prev) => ({
+      ...prev,
+      normal: true,
+      specialSeasonal: true,
+      favorites: true,
+      recent: true,
+    }))
+    setStopSectionOpen(true)
+    setBetweenStopsSectionOpen(true)
+  }, [updateFilter])
+
   const handleSearchCommit = useCallback(() => {
     const q = filters.query.trim()
     if (!q) return
@@ -1456,7 +1481,17 @@ export function RouteLookupPage({
               {splitRouteCountLabel}
             </p>
             <RouteLookupSplitList
-              entries={realFilteredEntries}
+              unlockableEntries={realUnlockableEntries}
+              lockedEntries={realLockedEntries}
+              unlockableOpen={groupOpen.normal}
+              lockedOpen={groupOpen.specialSeasonal}
+              onUnlockableOpenChange={(open) =>
+                setGroupOpen((prev) => ({ ...prev, normal: open }))
+              }
+              onLockedOpenChange={(open) =>
+                setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
+              }
+              onViewAllPlayable={handleViewAllPlayable}
               selectedListKey={selectedRealListKey}
               onSelect={handleCarouselSelect}
               onOpenDetail={handleOpenDetailInSplit}
@@ -1641,6 +1676,8 @@ export function RouteLookupPage({
                 </div>
               )}
             </RouteListGameSection>
+
+            <RouteListViewAllFooter onClick={handleViewAllPlayable} />
 
             {listIsEmpty ? (
               <p className="empty-state route-grid-span">{t('emptyState')}</p>
