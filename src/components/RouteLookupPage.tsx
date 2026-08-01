@@ -31,7 +31,7 @@ import { FavoritesFolderBar } from './FavoritesFolderBar'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
-import { SeasonalPromotedRouteCard } from './SeasonalPromotedRouteCard'
+import { RouteLockedGameCard } from './RouteLockedGameCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteDetailRealPanel } from './RouteDetailRealPanel'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
@@ -1293,6 +1293,25 @@ export function RouteLookupPage({
     setSearchHistory([])
   }, [])
 
+  const renderLockedGameCards = (
+    slots: typeof listSectionSlots.specialSeasonal,
+  ) =>
+    slots.map((slot) => {
+      const { route, listedId, directionKey } = slot.entry!
+      const directionIndex = getCardDirectionIndex(route, directionKey)
+
+      return (
+        <RouteLockedGameCard
+          key={`locked-${listedId}`}
+          route={route}
+          displayNumber={listedId !== route.number ? listedId : undefined}
+          directionIndex={directionIndex}
+          selected={selectedRoute?.id === route.id}
+          onNavigate={handleRouteNavigate}
+        />
+      )
+    })
+
   const renderListSectionCards = (
     section: RouteListUiSectionKey,
     slotsOverride?: typeof listSectionSlots.normal,
@@ -1301,25 +1320,6 @@ export function RouteLookupPage({
       const { route, listedId, directionKey } = slot.entry!
       const directionIndex = getCardDirectionIndex(route, directionKey)
       const seasonalLabels = getSeasonalLabelsForRoute(route)
-      const seasonalWindow = getSeasonalRouteDisplayWindow(route)
-      const useSeasonalCard =
-        section === 'specialSeasonal' &&
-        getRouteDisplayGroupsForRoute(route).includes('seasonal') &&
-        seasonalWindow != null
-
-      if (useSeasonalCard) {
-        return (
-          <SeasonalPromotedRouteCard
-            key={`${section}-${listedId}`}
-            route={route}
-            displayNumber={listedId !== route.number ? listedId : undefined}
-            window={seasonalWindow}
-            selected={selectedRoute?.id === route.id}
-            directionIndex={directionIndex}
-            onNavigate={handleRouteNavigate}
-          />
-        )
-      }
 
       return (
         <RouteCard
@@ -1704,8 +1704,8 @@ export function RouteLookupPage({
                 {filteredLockedSlots.length === 0 ? (
                   <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
                 ) : (
-                  <div className="route-grid route-grid--special-seasonal">
-                    {renderListSectionCards('specialSeasonal', filteredLockedSlots)}
+                  <div className="route-grid route-grid--locked-game">
+                    {renderLockedGameCards(filteredLockedSlots)}
                   </div>
                 )}
               </RouteListGameSection>

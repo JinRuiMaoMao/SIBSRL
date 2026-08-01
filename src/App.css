@@ -3855,6 +3855,135 @@ html[data-route-lookup-layout='split'] .site-footer {
   font-size: 0.78rem;
 }
 
+.route-split-list-item--locked-game {
+  margin-top: 0;
+}
+
+.route-split-list-item--locked-game .route-card-link {
+  width: 100%;
+  max-width: none;
+}
+
+.route-locked-game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 0.95rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--text) 28%, var(--border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, #000 88%, var(--bg-card) 12%);
+}
+
+.route-locked-game-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.route-locked-game-card-id {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.route-locked-game-card-bus {
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.route-locked-game-card-number {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.route-locked-game-card-date {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  max-width: 52%;
+}
+
+.route-locked-game-card-date-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--text) 45%, transparent);
+  border-radius: 0.2rem;
+  color: var(--text);
+}
+
+.route-locked-game-card-date-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.route-locked-game-card-operators {
+  display: flex;
+  align-items: center;
+}
+
+.route-locked-game-card-operators .operator-logos {
+  gap: 0.35rem;
+}
+
+.route-locked-game-card-tags .route-type-tags {
+  gap: 0.35rem;
+}
+
+.route-locked-game-card-tags .route-type-tag {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--text) 50%, transparent);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.12rem 0.55rem;
+}
+
+.route-card-link--locked-game {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .route-card-link--locked-game:hover .route-locked-game-card {
+    border-color: color-mix(in srgb, var(--text) 45%, var(--accent));
+    background: color-mix(in srgb, #000 82%, var(--bg-elevated) 18%);
+  }
+}
+
+.route-card-link--locked-game.route-card-link--selected .route-locked-game-card {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--text));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.route-grid--locked-game {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.route-grid--locked-game > .route-card-link--locked-game {
+  grid-column: auto;
+}
+
+.route-list-game-section-panel-inner > .route-grid--locked-game {
+  margin-top: 0;
+}
+
 .route-split-list-item {
   flex: 0 0 auto;
 }

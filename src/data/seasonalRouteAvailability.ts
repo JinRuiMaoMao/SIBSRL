@@ -66,6 +66,40 @@ export function formatSeasonalGameDayShort(date: string, _locale: Locale): strin
   return `${month}/${day}`
 }
 
+const EN_MONTH_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+] as const
+
+/** 游戏内路线列表日期样式，如「10月 11」 */
+export function formatSeasonalGameDayInGame(date: string, locale: Locale): string {
+  const [, month, day] = date.split('-').map(Number)
+  if (locale === 'en') {
+    return `${EN_MONTH_SHORT[month - 1] ?? month} ${day}`
+  }
+  return `${month}月 ${day}`
+}
+
+export function formatSeasonalAvailabilityRangeInGame(
+  window: SeasonalAvailabilityWindow,
+  locale: Locale,
+): string {
+  const start = formatSeasonalGameDayInGame(window.start, locale)
+  if (!window.end) return start
+  const end = formatSeasonalGameDayInGame(window.end, locale)
+  return `${start} - ${end}`
+}
+
 export function getSeasonalUnavailableFromDate(window: SeasonalAvailabilityWindow): string | null {
   if (!window.end) return null
   return addGameDays(window.end, 1)

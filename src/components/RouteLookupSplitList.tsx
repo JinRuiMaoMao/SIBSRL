@@ -8,6 +8,7 @@ import {
 } from '../utils/realRouteListEntries'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
+import { RouteLockedGameCard } from './RouteLockedGameCard'
 import { RouteListGameSection } from './RouteListGameSection'
 import { RouteListViewAllFooter } from './RouteListViewAllFooter'
 import { RouteUnlockCategoryList } from './RouteUnlockCategoryList'
@@ -115,6 +116,31 @@ export function RouteLookupSplitList({
     )
   }
 
+  const renderLockedEntry = (entry: RealRouteListEntry) => {
+    const { route, directionIndex, listKey } = entry
+
+    return (
+      <div
+        key={listKey}
+        data-real-list-key={listKey}
+        ref={(node) => {
+          if (node) itemRefs.current.set(listKey, node)
+          else itemRefs.current.delete(listKey)
+        }}
+        className="route-split-list-item route-split-list-item--locked-game"
+        role="listitem"
+      >
+        <RouteLockedGameCard
+          route={route}
+          selected={selectedListKey === listKey}
+          directionIndex={directionIndex}
+          onNavigate={() => onSelect(route.id, directionIndex)}
+          onOpenDetail={() => onOpenDetail(route.id, directionIndex)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div ref={listRef} className="route-split-list" role="list">
       {showDailyChallenge ? (
@@ -158,7 +184,7 @@ export function RouteLookupSplitList({
           onOpenChange={onLockedOpenChange}
         >
           {filteredLockedEntries.length > 0 ? (
-            filteredLockedEntries.map((entry, index) => renderEntry(entry, index, false))
+            filteredLockedEntries.map((entry) => renderLockedEntry(entry))
           ) : (
             <p className="route-split-empty route-group-empty">{t('routeGroupEmpty')}</p>
           )}
