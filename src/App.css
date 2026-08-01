@@ -3558,102 +3558,94 @@ html[data-list-density='compact'] .transfer-plan-stop {
   );
 }
 
-.route-split-pane {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  min-height: 0;
+html[data-route-lookup-layout='split'] .main {
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
-.route-map-pane {
-  position: sticky;
-  top: calc(var(--site-header-sticky-offset, 0px) + 0.5rem);
-  min-height: min(72dvh, 640px);
-  height: calc(
-    100dvh - var(--site-header-sticky-offset, 0px) - var(--route-toolbar-height, 7rem) - 2rem
-  );
-  border-radius: 0.85rem;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-}
-
-.route-split-carousel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  min-height: 0;
-}
-
-.route-split-carousel-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.route-split-carousel-count {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.route-split-carousel-nav {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.route-split-carousel-btn {
-  min-width: 2rem;
-  height: 2rem;
-  border-radius: 0.55rem;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text);
-  font-size: 1.15rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.route-split-carousel-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.route-split-carousel-track {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  gap: 0;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.route-split-carousel-track::-webkit-scrollbar {
+html[data-route-lookup-layout='split'] .site-footer {
   display: none;
 }
 
-.route-split-carousel-slide {
-  flex: 0 0 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  min-width: 0;
+.route-lookup-page--split {
+  flex: 1;
+  min-height: 0;
 }
 
-.route-split-carousel-slide .route-card-link {
+.route-split-shell {
+  display: grid;
+  grid-template-columns: min(20rem, 34vw) minmax(0, 1fr);
+  gap: 0;
+  min-height: calc(
+    100dvh - var(--site-header-sticky-offset, 0px) - var(--app-tab-bar-reserve, 0px)
+  );
+  height: calc(
+    100dvh - var(--site-header-sticky-offset, 0px) - var(--app-tab-bar-reserve, 0px)
+  );
+}
+
+.route-split-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg-deep);
+}
+
+.route-split-sidebar-toolbar {
+  flex-shrink: 0;
+  padding: 0.65rem 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.route-split-sidebar-toolbar .search-toolbar {
+  margin: 0;
+}
+
+.route-split-sidebar .daily-challenge-banner {
+  flex-shrink: 0;
+  margin: 0.5rem 0.5rem 0;
+}
+
+.route-split-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.45rem 0.5rem 0.65rem;
+}
+
+.route-split-list-item {
+  flex: 0 0 auto;
+}
+
+.route-split-list-item .route-card-link {
+  width: 100%;
   max-width: none;
 }
 
-.route-split-open-hint {
-  margin: 0.45rem 0 0;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-align: center;
+.route-split-list-item .route-card {
+  font-size: 0.92rem;
+}
+
+.route-map-pane {
+  position: relative;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  border: none;
+  background: var(--bg-elevated);
 }
 
 .route-split-empty {
-  margin: 1rem 0;
+  margin: 1rem 0.65rem;
   color: var(--text-muted);
   font-size: 0.9rem;
 }
@@ -3677,26 +3669,16 @@ html[data-list-density='compact'] .transfer-plan-stop {
 }
 
 @media (max-width: 900px) {
-  .content-layout--split {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(280px, 42dvh);
-    min-height: 0;
-  }
-
-  .route-map-pane {
-    position: relative;
-    top: auto;
-    height: min(42dvh, 420px);
-    min-height: 280px;
+  .route-split-shell {
+    grid-template-columns: min(17rem, 42vw) minmax(0, 1fr);
   }
 }
 
-html[data-route-lookup-layout='split'] .route-detail-open .content-layout--split {
+html[data-route-lookup-layout='split'] .route-detail-open .route-split-shell {
   opacity: 1;
-  pointer-events: auto;
 }
 
-html.route-detail-open .content-layout--split {
+html.route-detail-open .route-split-shell {
   opacity: 1;
 }
 

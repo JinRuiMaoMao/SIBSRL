@@ -343,7 +343,8 @@ code {
   }
 }
 
-html[data-portrait-blocked='true'] #root {
+html[data-portrait-blocked='true'] .app,
+html[data-portrait-blocked='true'] .start-page {
   visibility: hidden;
   pointer-events: none;
 }
@@ -356,7 +357,7 @@ html[data-portrait-blocked='true'] {
   position: fixed;
   inset: 0;
   z-index: 20000;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
@@ -364,6 +365,12 @@ html[data-portrait-blocked='true'] {
   background: var(--bg-deep, #0f1419);
   color: var(--text, #eef2f8);
   text-align: center;
+}
+
+html[data-portrait-blocked='true'] .portrait-orientation-gate--static,
+html[data-portrait-blocked='true'] #portrait-orientation-fallback,
+html[data-portrait-blocked='true'] .portrait-orientation-gate--react {
+  display: flex;
 }
 
 .portrait-orientation-gate-card {

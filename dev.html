@@ -38,7 +38,7 @@
     </script>
     <script id="portrait-block-bootstrap">
       (function () {
-        var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px)');
+        var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px), (max-aspect-ratio: 1/1) and (max-width: 1024px)');
         function apply() {
           document.documentElement.setAttribute('data-portrait-blocked', mq.matches ? 'true' : 'false');
         }

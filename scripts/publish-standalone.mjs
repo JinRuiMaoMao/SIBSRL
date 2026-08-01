@@ -17,6 +17,7 @@ import {
   injectStartPageMeta,
   injectThemeBootstrap,
   injectPortraitBlockBootstrap,
+  injectPortraitOrientationFallback,
   injectAppSurfaceBootstrap,
   injectUserApiMeta,
   injectBootFailureGuard,
@@ -87,8 +88,10 @@ export function publishStandalone(options = {}) {
                 injectLocaleBootstrap(
                   injectThemeBootstrap(
                     injectPortraitBlockBootstrap(
-                      injectDevToolsBlock(
-                        injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+                      injectPortraitOrientationFallback(
+                        injectDevToolsBlock(
+                          injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+                        ),
                       ),
                     ),
                   ),

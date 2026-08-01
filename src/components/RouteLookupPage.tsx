@@ -34,7 +34,7 @@ import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { useAppPreferences } from '../contexts/AppPreferencesContext'
-import { RouteLookupCarousel } from './RouteLookupCarousel'
+import { RouteLookupSplitList } from './RouteLookupSplitList'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
@@ -1311,42 +1311,78 @@ export function RouteLookupPage({
     searchInputId: 'route-search',
   })
 
+  const searchToolbar = (
+    <SearchToolbar
+      value={filters.query}
+      onChange={handleSearchQueryChange}
+      onSearchCommit={handleSearchCommit}
+      resultCount={splitLayoutActive ? filteredRoutes.length : groupedRouteCount}
+      totalCount={splitLayoutActive ? displayRoutes.length : groupedTotalCount}
+      randomEligibleCount={randomEligibleCount}
+      onRandom={handleRandomRoute}
+      filtersActive={filtersActive}
+      zone={filterChipView.zone}
+      operator={filterChipView.operator}
+      type={filterChipView.type}
+      excludedZones={filterChipView.excludedZones}
+      excludedOperators={filterChipView.excludedOperators}
+      excludedTypes={filterChipView.excludedTypes}
+      zones={zones}
+      operators={operators}
+      types={types}
+      onZoneChange={handleZoneFilterChange}
+      onOperatorChange={handleOperatorFilterChange}
+      onTypeChange={handleTypeFilterChange}
+      searchHistory={searchHistory}
+      onApplyHistory={handleApplyHistory}
+      onClearHistory={handleClearHistory}
+      searchInputRef={searchInputRef}
+      syntaxVisible={splitLayoutActive ? false : syntaxExpanded}
+      onSyntaxToggle={splitLayoutActive ? undefined : handleSyntaxToggle}
+      routeLookupLayout={routeLookupLayout}
+      onRouteLookupLayoutChange={setRouteLookupLayout}
+    />
+  )
+
   return (
-    <div className="route-lookup-page">
+    <div className={`route-lookup-page${splitLayoutActive ? ' route-lookup-page--split' : ''}`}>
+      {splitLayoutActive ? (
+        <div className="route-split-shell">
+          <aside className="route-split-sidebar sibs-scrollbar" aria-label={t('routeList')}>
+            <div
+              ref={stickyToolbarRef}
+              className={`route-split-sidebar-toolbar${stickyToolbarFade ? ' route-lookup-sticky--fade' : ''}`}
+            >
+              {searchToolbar}
+            </div>
+            {dailyChallengeVisible ? (
+              <DailyChallengeBanner
+                selected={dailyChallengeSelected}
+                onSelect={handleSelectDailyChallenge}
+                onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
+                challenge={dailyChallenge}
+              />
+            ) : null}
+            <RouteLookupSplitList
+              routes={filteredRoutes}
+              selectedId={selectedRoute?.id ?? null}
+              getDirectionIndex={getDirectionIndex}
+              getLoopView={getLoopView}
+              setDirectionIndex={setDirectionIndex}
+              setLoopView={setLoopView}
+              onSelect={handleCarouselSelect}
+              onOpenDetail={handleOpenDetailInSplit}
+            />
+          </aside>
+          <div ref={attachMapHost} className="route-map-pane" aria-label={t('islandMapAria')} />
+        </div>
+      ) : (
+        <>
       <div
         ref={stickyToolbarRef}
         className={`route-lookup-sticky${stickyToolbarFade ? ' route-lookup-sticky--fade' : ''}`}
       >
-        <SearchToolbar
-          value={filters.query}
-          onChange={handleSearchQueryChange}
-          onSearchCommit={handleSearchCommit}
-          resultCount={groupedRouteCount}
-          totalCount={groupedTotalCount}
-          randomEligibleCount={randomEligibleCount}
-          onRandom={handleRandomRoute}
-          filtersActive={filtersActive}
-          zone={filterChipView.zone}
-          operator={filterChipView.operator}
-          type={filterChipView.type}
-          excludedZones={filterChipView.excludedZones}
-          excludedOperators={filterChipView.excludedOperators}
-          excludedTypes={filterChipView.excludedTypes}
-          zones={zones}
-          operators={operators}
-          types={types}
-          onZoneChange={handleZoneFilterChange}
-          onOperatorChange={handleOperatorFilterChange}
-          onTypeChange={handleTypeFilterChange}
-          searchHistory={searchHistory}
-          onApplyHistory={handleApplyHistory}
-          onClearHistory={handleClearHistory}
-          searchInputRef={searchInputRef}
-          syntaxVisible={syntaxExpanded}
-          onSyntaxToggle={handleSyntaxToggle}
-          routeLookupLayout={routeLookupLayout}
-          onRouteLookupLayoutChange={setRouteLookupLayout}
-        />
+        {searchToolbar}
         {syntaxForceOpen ? (
           <div className="search-syntax-pinned">
             <SearchSyntaxHelp stickyRef={stickyToolbarRef} visible />
@@ -1354,30 +1390,8 @@ export function RouteLookupPage({
         ) : null}
       </div>
 
-      <div className={`content-layout${splitLayoutActive ? ' content-layout--split' : ''}`}>
+      <div className="content-layout">
         <section className="route-list-section" aria-label={t('routeList')}>
-          {splitLayoutActive ? (
-            <div className="route-split-pane">
-              {dailyChallengeVisible ? (
-                <DailyChallengeBanner
-                  selected={dailyChallengeSelected}
-                  onSelect={handleSelectDailyChallenge}
-                  onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
-                  challenge={dailyChallenge}
-                />
-              ) : null}
-              <RouteLookupCarousel
-                routes={filteredRoutes}
-                selectedId={selectedRoute?.id ?? null}
-                getDirectionIndex={getDirectionIndex}
-                getLoopView={getLoopView}
-                setDirectionIndex={setDirectionIndex}
-                setLoopView={setLoopView}
-                onSelect={handleCarouselSelect}
-                onOpenDetail={handleOpenDetailInSplit}
-              />
-            </div>
-          ) : (
           <div className="route-display-group-list">
             <RouteSearchSyntaxDock
               panelRef={syntaxPanelRef}
@@ -1495,12 +1509,10 @@ export function RouteLookupPage({
               <p className="empty-state route-grid-span">{t('emptyState')}</p>
             ) : null}
           </div>
-          )}
         </section>
-        {splitLayoutActive ? (
-          <aside ref={attachMapHost} className="route-map-pane" aria-label={t('islandMapAria')} />
-        ) : null}
       </div>
+        </>
+      )}
 
       {detailOverlay && (
         <>

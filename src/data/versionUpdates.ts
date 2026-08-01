@@ -188,6 +188,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "分屏布局改为左侧竖条线路列表、右侧全屏地图（左右贴边无间距）；修复竖屏横屏提示被遮挡不显示。",
+            en: "Split layout is now a left route sidebar plus edge-to-edge full-height map; fixed portrait rotate prompt not appearing.",
+          },
+          {
             zh: "竖屏（手机/平板）不再可用，检测到竖屏时会提示请旋转至横屏。",
             en: "Portrait mode on phones and tablets is blocked; users are prompted to rotate to landscape.",
           },

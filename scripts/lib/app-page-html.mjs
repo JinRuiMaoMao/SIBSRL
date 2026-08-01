@@ -178,7 +178,7 @@ export function injectThemeBootstrap(html) {
 
 const PORTRAIT_BLOCK_BOOTSTRAP_SCRIPT = `<script id="portrait-block-bootstrap">
 (function () {
-  var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px)');
+  var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px), (max-aspect-ratio: 1/1) and (max-width: 1024px)');
   function apply() {
     document.documentElement.setAttribute('data-portrait-blocked', mq.matches ? 'true' : 'false');
   }
@@ -194,6 +194,24 @@ const PORTRAIT_BLOCK_BOOTSTRAP_SCRIPT = `<script id="portrait-block-bootstrap">
 export function injectPortraitBlockBootstrap(html) {
   if (html.includes('id="portrait-block-bootstrap"')) return html
   return html.replace('<head>', `<head>\n    ${PORTRAIT_BLOCK_BOOTSTRAP_SCRIPT}`)
+}
+
+const PORTRAIT_ORIENTATION_FALLBACK = `<div id="portrait-orientation-fallback" class="portrait-orientation-gate portrait-orientation-gate--static" aria-live="assertive">
+  <div class="portrait-orientation-gate-card">
+    <p><img src="./sibs-logo.png" alt="" width="56" height="56" decoding="async" /></p>
+    <h1>请旋转设备至横屏</h1>
+    <p>本站仅支持横屏使用。请将手机或平板转至横屏后再继续。</p>
+    <p lang="en">Please rotate to landscape. This site only works in landscape mode.</p>
+  </div>
+</div>`
+
+/** @param {string} html */
+export function injectPortraitOrientationFallback(html) {
+  if (html.includes('id="portrait-orientation-fallback"')) return html
+  return html.replace(
+    '<div id="root">',
+    `${PORTRAIT_ORIENTATION_FALLBACK}\n    <div id="root">`,
+  )
 }
 
 const LOCALE_STORAGE_KEY = 'sibs-locale'
