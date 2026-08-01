@@ -199,6 +199,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "线路 PA 报站栏加宽，播放时可完整使用进度与倍速；所有音频播放器新增下载按钮。",
             en: "Wider route PA column keeps progress and speed controls visible; download button added to all audio players.",
           },
+          {
+            zh: "NPC 语音分类标签改为与 E:\\SIBS资源\\NPC 文件夹名一致（不再翻译分类名）。",
+            en: "NPC category labels now match E:\\SIBS资源\\NPC folder names exactly (no translated category names).",
+          },
         ],
       },
     ],

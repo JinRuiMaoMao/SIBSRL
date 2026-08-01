@@ -12,12 +12,8 @@ export function npcAudioRelativeUrl(category, filename) {
 
 export const EXCLUDED_NPC_CATEGORIES = new Set(['没上车', '目的地错误'])
 
-/** Folder order in the NPC tab (includes empty categories). */
+/** Preferred folder order in the NPC tab (must match E:\\SIBS资源\\NPC folder names). */
 export const NPC_CATEGORY_ORDER = [
-  '行车抱怨',
-  '下车抱怨',
-  '服务抱怨',
-  '打招呼，感谢',
   'Hello',
   'Bye',
   'Angry',
@@ -37,23 +33,9 @@ export const NPC_CATEGORY_ORDER = [
 /** Categories with no licensed audio yet — manifest gets a placeholder row each. */
 export const NPC_PLACEHOLDER_CATEGORIES = new Set(['Cold', 'DoorClosed', 'Hot', 'NoKneel'])
 
-/** Display labels for category chips (folder name → UI label). */
-export const NPC_CATEGORY_LABELS = {
-  '打招呼，感谢': '感谢',
-}
-
-/** @deprecated Use npcCategoryText from npc-titles.mjs */
-export function npcCategoryLabel(category) {
-  return NPC_CATEGORY_LABELS[category] ?? category.replace(/抱怨/g, '')
-}
-
 /** @param {string[]} discovered */
 export function sortNpcCategories(discovered) {
-  const set = new Set(discovered)
-  for (const category of NPC_CATEGORY_ORDER) {
-    set.add(category)
-  }
-  return [...set].sort((a, b) => {
+  return [...new Set(discovered)].sort((a, b) => {
     const ai = NPC_CATEGORY_ORDER.indexOf(a)
     const bi = NPC_CATEGORY_ORDER.indexOf(b)
     if (ai === -1 && bi === -1) return a.localeCompare(b, 'zh-Hans')

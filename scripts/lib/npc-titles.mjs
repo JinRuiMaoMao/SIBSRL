@@ -8,31 +8,9 @@ export function cleanNpcRawTitle(stem) {
     .trim()
 }
 
-/** @type {Record<string, { zh: string, en: string }>} */
-export const NPC_CATEGORY_TEXTS = {
-  行车抱怨: { zh: '行车', en: 'Driving' },
-  下车抱怨: { zh: '下车', en: 'Alighting' },
-  服务抱怨: { zh: '服务', en: 'Service' },
-  '打招呼，感谢': { zh: '感谢', en: 'Thanks' },
-  Hello: { zh: '打招呼', en: 'Hello' },
-  Bye: { zh: '告别', en: 'Bye' },
-  Angry: { zh: '愤怒', en: 'Angry' },
-  Complaint: { zh: '抱怨', en: 'Complaint' },
-  ComplaintSerious: { zh: '严重抱怨', en: 'Serious complaint' },
-  StopSkipped: { zh: '跳站', en: 'Stop skipped' },
-  Wrong: { zh: '乘错车', en: 'Wrong route' },
-  FareWrong: { zh: '车费错误', en: 'Wrong fare' },
-  DoorOpened: { zh: '车门打开', en: 'Door opened' },
-  DoorClosed: { zh: '车门关闭', en: 'Door closed' },
-  Camera: { zh: '相机', en: 'Camera' },
-  Cold: { zh: '寒冷', en: 'Cold' },
-  Hot: { zh: '炎热', en: 'Hot' },
-  NoKneel: { zh: '请勿跪坐', en: 'No kneeling' },
-}
-
-/** @param {string} category */
+/** Category chip / detail label: always match the source folder name exactly. */
 export function npcCategoryText(category) {
-  return NPC_CATEGORY_TEXTS[category] ?? { zh: cleanNpcRawTitle(category) || category, en: category }
+  return { zh: category, en: category }
 }
 
 /** @type {Record<string, { zh: string, en: string }>} */

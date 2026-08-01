@@ -57,13 +57,12 @@ export function buildNpcManifest(options = {}) {
       })
 
       if (files.length === 0 && NPC_PLACEHOLDER_CATEGORIES.has(entry.name)) {
-        const categoryText = npcCategoryText(entry.name)
         items.push({
           id: `npc-${slugifyCategory(entry.name)}-placeholder`,
           category: entry.name,
           number: 1,
-          titleZh: `${categoryText.zh}（待补充）`,
-          titleEn: `${categoryText.en} (pending)`,
+          titleZh: `${entry.name}（待补充）`,
+          titleEn: `${entry.name} (pending)`,
           audioUrl: null,
           unavailable: true,
         })
