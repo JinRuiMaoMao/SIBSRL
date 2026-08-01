@@ -135,10 +135,10 @@
     </script>
     <meta name="app-tab" content="routes" />
     <meta name="app-layout-mode" content="real" />
-    <meta name="app-build" content="2026-08-01T10:24:37.072Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A24%3A37.072Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A24%3A37.072Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A24%3A37.072Z" />
+    <meta name="app-build" content="2026-08-01T10:30:26.510Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A30%3A26.510Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A30%3A26.510Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A30%3A26.510Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -236,60 +236,87 @@ if ('serviceWorker' in navigator) {
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
     var introEnd = 30;
-    var mainStart = 17;
+    var mainStart = 189;
     var mainEnd = 293;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
     var targetVolume = 1;
     var phase = 'intro';
-    var spliced = false;
-    function rampVolume(currentTime, cutAt) {
+    var crossfadeStarted = false;
+    var mainAudio = new Audio(mainUrl);
+    mainAudio.preload = 'auto';
+    mainAudio.load();
+    window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = mainAudio;
+    function rampVolume(el, currentTime, cutAt) {
       var fadeStart = cutAt - fadeLead;
       if (currentTime <= fadeStart) {
-        audio.volume = targetVolume;
+        el.volume = targetVolume;
         return;
       }
       if (currentTime >= cutAt) {
-        audio.volume = 0;
+        el.volume = 0;
         return;
       }
       var progress = (currentTime - fadeStart) / fadeLead;
-      audio.volume = targetVolume * (1 - progress);
+      el.volume = targetVolume * (1 - progress);
     }
-    function spliceToMain() {
-      if (spliced) return;
-      spliced = true;
+    function startMainOverlap() {
+      if (crossfadeStarted) return;
+      crossfadeStarted = true;
+      mainAudio.currentTime = mainStart;
+      mainAudio.volume = targetVolume;
+      if (!mainAudio.paused) return;
+      mainAudio.muted = audio.muted;
+      mainAudio.play().catch(function () {});
+    }
+    function handoffToMain() {
+      audio.pause();
+      audio.removeEventListener('timeupdate', onTrackTime);
+      audio = mainAudio;
       phase = 'main';
-      audio.src = mainUrl;
-      audio.addEventListener('loadedmetadata', function () {
-        audio.currentTime = mainStart;
-        audio.volume = targetVolume;
-        tryPlay();
-      }, { once: true });
-      audio.load();
+      crossfadeStarted = false;
+      window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
+      audio.addEventListener('timeupdate', onTrackTime);
     }
-    function spliceMainLoop() {
-      spliced = false;
-      audio.currentTime = mainStart;
-      audio.volume = targetVolume;
-      tryPlay();
+    function startLoopOverlap() {
+      if (crossfadeStarted) return;
+      crossfadeStarted = true;
+      var loopAudio = new Audio(mainUrl);
+      loopAudio.preload = 'auto';
+      loopAudio.addEventListener('loadedmetadata', function () {
+        loopAudio.currentTime = mainStart;
+        loopAudio.volume = targetVolume;
+        loopAudio.muted = audio.muted;
+        loopAudio.play().catch(function () {});
+        var outgoing = audio;
+        outgoing.pause();
+        outgoing.removeEventListener('timeupdate', onTrackTime);
+        audio = loopAudio;
+        mainAudio = loopAudio;
+        crossfadeStarted = false;
+        window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
+        window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = outgoing;
+        audio.addEventListener('timeupdate', onTrackTime);
+      }, { once: true });
+      loopAudio.load();
     }
     var onTrackTime = function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
       if (phase === 'intro') {
-        rampVolume(audio.currentTime, introEnd);
-        if (audio.currentTime >= introEnd) spliceToMain();
+        if (audio.currentTime >= introEnd - fadeLead) startMainOverlap();
+        rampVolume(audio, audio.currentTime, introEnd);
+        if (audio.currentTime >= introEnd) handoffToMain();
         return;
       }
       if (phase === 'main') {
-        rampVolume(audio.currentTime, mainEnd);
-        if (audio.currentTime >= mainEnd) spliceMainLoop();
+        if (audio.currentTime >= mainEnd - fadeLead) startLoopOverlap();
+        rampVolume(audio, audio.currentTime, mainEnd);
       }
     };
     audio.addEventListener('timeupdate', onTrackTime);
     audio.addEventListener('ended', function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-      if (phase === 'intro' && !spliced) spliceToMain();
+      if (phase === 'intro') handoffToMain();
     });
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
@@ -412,6 +439,6 @@ if ('serviceWorker' in navigator) {
   }, 15000);
 })();
 </script>
-      <script type="module" crossorigin src="../assets/dev-BpkufT3g.js"></script>
+      <script type="module" crossorigin src="../assets/dev-D5jUqMVk.js"></script>
   </body>
 </html>

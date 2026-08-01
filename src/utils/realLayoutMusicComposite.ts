@@ -15,12 +15,12 @@ export type RealLayoutMusicCompositeConfig = {
 
 /** Radium2 intro fades out at 0:30. */
 export const MAP_MENU_INTRO_END_AT = 30
-/** Original Radium loop body starts here. */
-export const MAP_MENU_MAIN_START_AT = 17
+/** Original Radium loop body starts here (3:09). */
+export const MAP_MENU_MAIN_START_AT = 3 * 60 + 9
 /** Original Radium loop body ends here (4:53), then returns to MAP_MENU_MAIN_START_AT. */
 export const MAP_MENU_MAIN_END_AT = 4 * 60 + 53
 
-/** Routes map music: Radium2 intro → Radium 0:17–4:53, loop from 0:17. */
+/** Routes map music: Radium2 intro → Radium 3:09–4:53, loop from 3:09. */
 export const REAL_LAYOUT_MUSIC_COMPOSITE: Partial<
   Record<RealLayoutMusicTrackId, RealLayoutMusicCompositeConfig>
 > = {

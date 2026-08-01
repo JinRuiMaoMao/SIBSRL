@@ -16,6 +16,7 @@ import { readRealMusicMuted, type RealLayoutMusicTrackId } from './realLayoutMus
 declare global {
   interface Window {
     __SIBS_REAL_LAYOUT_AUDIO__?: HTMLAudioElement
+    __SIBS_REAL_LAYOUT_AUDIO_EXTRA__?: HTMLAudioElement
     /** Set when React player takes over; inline bootstrap must stop touching early audio. */
     __SIBS_REAL_LAYOUT_MUSIC_ADOPTED__?: boolean
   }
@@ -36,13 +37,54 @@ function readDefaultRealTrackId(): RealLayoutMusicTrackId {
   return page === 'start' ? 'music-main-menu' : 'music-map-menu'
 }
 
-let audio: HTMLAudioElement | null = null
+let audioPrimary: HTMLAudioElement | null = null
+let audioSecondary: HTMLAudioElement | null = null
+let activeAudio: HTMLAudioElement | null = null
 let currentTrackId: RealLayoutMusicTrackId | null = null
 let gestureUnlockInstalled = false
 let compositeConfig: RealLayoutMusicCompositeConfig | null = null
 let compositeSegmentIndex = 0
 let compositeTimeUpdateHandler: (() => void) | null = null
 let compositeEndedHandler: (() => void) | null = null
+
+interface PendingCrossfade {
+  outgoing: HTMLAudioElement
+  incoming: HTMLAudioElement
+  nextIndex: number
+  config: RealLayoutMusicCompositeConfig
+  segment: RealLayoutMusicCompositeSegment
+}
+
+let pendingCrossfade: PendingCrossfade | null = null
+
+function createAudioElement(): HTMLAudioElement {
+  const element = new Audio()
+  element.preload = 'auto'
+  element.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+  return element
+}
+
+function ensureAudioPair(): [HTMLAudioElement, HTMLAudioElement] {
+  if (!audioPrimary) audioPrimary = createAudioElement()
+  if (!audioSecondary) audioSecondary = createAudioElement()
+  return [audioPrimary, audioSecondary]
+}
+
+function getActiveAudio(): HTMLAudioElement {
+  if (activeAudio) return activeAudio
+  if (window.__SIBS_REAL_LAYOUT_AUDIO__ instanceof HTMLAudioElement) {
+    const adopted = adoptEarlyAudio()
+    if (adopted) return adopted
+  }
+  const [primary] = ensureAudioPair()
+  activeAudio = primary
+  return activeAudio
+}
+
+function getInactiveAudio(): HTMLAudioElement {
+  const [primary, secondary] = ensureAudioPair()
+  return getActiveAudio() === primary ? secondary : primary
+}
 
 function adoptEarlyAudio(): HTMLAudioElement | null {
   const early = window.__SIBS_REAL_LAYOUT_AUDIO__
@@ -51,45 +93,53 @@ function adoptEarlyAudio(): HTMLAudioElement | null {
   window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__ = true
   delete window.__SIBS_REAL_LAYOUT_AUDIO__
 
-  early.pause()
-  try {
-    early.removeAttribute('src')
-    early.load()
-  } catch {
-    /* ignore */
+  const extra = window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__
+  delete window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__
+
+  for (const element of [early, extra]) {
+    if (!(element instanceof HTMLAudioElement)) continue
+    element.pause()
+    try {
+      element.removeAttribute('src')
+      element.load()
+    } catch {
+      /* ignore */
+    }
   }
 
-  audio = new Audio()
-  audio.preload = 'auto'
-  audio.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
-  audio.muted = early.muted
-  return audio
+  const [primary, secondary] = ensureAudioPair()
+  primary.muted = early.muted
+  secondary.muted = early.muted
+  activeAudio = primary
+  return primary
 }
 
 function getOrCreateAudio(): HTMLAudioElement {
-  if (audio) return audio
-  const adopted = adoptEarlyAudio()
-  if (adopted) return adopted
+  return getActiveAudio()
+}
 
-  audio = new Audio()
-  audio.loop = true
-  audio.preload = 'auto'
-  audio.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
-  return audio
+function pauseAllAudio(): void {
+  cancelAudioFade()
+  audioPrimary?.pause()
+  audioSecondary?.pause()
 }
 
 function clearCompositeHandlers(): void {
-  const element = audio
   cancelAudioFade()
-  if (!element) return
-  if (compositeTimeUpdateHandler) {
-    element.removeEventListener('timeupdate', compositeTimeUpdateHandler)
-    compositeTimeUpdateHandler = null
+  pendingCrossfade = null
+
+  for (const element of [audioPrimary, audioSecondary]) {
+    if (!element) continue
+    if (compositeTimeUpdateHandler) {
+      element.removeEventListener('timeupdate', compositeTimeUpdateHandler)
+    }
+    if (compositeEndedHandler) {
+      element.removeEventListener('ended', compositeEndedHandler)
+    }
   }
-  if (compositeEndedHandler) {
-    element.removeEventListener('ended', compositeEndedHandler)
-    compositeEndedHandler = null
-  }
+
+  compositeTimeUpdateHandler = null
+  compositeEndedHandler = null
   compositeConfig = null
   compositeSegmentIndex = 0
 }
@@ -144,42 +194,77 @@ function startSegmentPlayback(element: HTMLAudioElement, startAt: number, fadeIn
   }
 }
 
-function spliceToSegment(
+function preloadIncomingSegment(
+  incoming: HTMLAudioElement,
+  segment: RealLayoutMusicCompositeSegment,
+): void {
+  const url = resolveCompositeAssetUrl(segment.asset)
+  if (incoming.src !== url) {
+    incoming.src = url
+    incoming.load()
+  }
+}
+
+function beginIncomingCrossfade(
   nextIndex: number,
   config: RealLayoutMusicCompositeConfig,
-  options: { fadeIn?: boolean } = {},
+  outgoing: HTMLAudioElement,
 ): void {
-  const element = getOrCreateAudio()
-  const nextSegment = config.segments[nextIndex]
-  if (!nextSegment) return
+  const segment = config.segments[nextIndex]
+  if (!segment || pendingCrossfade) return
 
-  const fadeIn = options.fadeIn ?? false
-  const startAt = nextSegment.startAt ?? 0
-  const nextUrl = resolveCompositeAssetUrl(nextSegment.asset)
-  const sameSource = element.src === nextUrl
+  const incoming = getInactiveAudio()
+  incoming.loop = false
+  incoming.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
 
-  compositeSegmentIndex = nextIndex
-  clearCompositeHandlers()
+  const startAt = segment.startAt ?? 0
+  const begin = () => {
+    try {
+      incoming.currentTime = startAt
+    } catch {
+      /* metadata may still be loading */
+    }
+    if (!readRealMusicMuted()) {
+      void incoming.play().catch(() => {})
+    }
+  }
+
+  preloadIncomingSegment(incoming, segment)
+  if (incoming.readyState >= HTMLMediaElement.HAVE_METADATA) {
+    begin()
+  } else {
+    incoming.addEventListener('loadedmetadata', begin, { once: true })
+  }
+
+  pendingCrossfade = { outgoing, incoming, nextIndex, config, segment }
+}
+
+function finalizeCrossfade(): void {
+  if (!pendingCrossfade) return
+
+  const { outgoing, incoming, nextIndex, config, segment } = pendingCrossfade
+  pendingCrossfade = null
+
+  outgoing.pause()
+  try {
+    outgoing.volume = REAL_LAYOUT_MUSIC_TARGET_VOLUME
+  } catch {
+    /* ignore */
+  }
+
+  if (compositeTimeUpdateHandler) {
+    outgoing.removeEventListener('timeupdate', compositeTimeUpdateHandler)
+  }
+  if (compositeEndedHandler) {
+    outgoing.removeEventListener('ended', compositeEndedHandler)
+  }
+  compositeTimeUpdateHandler = null
+  compositeEndedHandler = null
+
+  activeAudio = incoming
   compositeConfig = config
   compositeSegmentIndex = nextIndex
-
-  element.loop = false
-  cancelAudioFade()
-  element.volume = fadeIn ? 0 : REAL_LAYOUT_MUSIC_TARGET_VOLUME
-
-  const afterReady = () => {
-    startSegmentPlayback(element, startAt, fadeIn)
-    attachCompositeSegmentHandlers(nextIndex, config, nextSegment)
-  }
-
-  if (sameSource) {
-    afterReady()
-    return
-  }
-
-  element.src = nextUrl
-  element.addEventListener('loadedmetadata', afterReady, { once: true })
-  element.load()
+  attachCompositeSegmentHandlers(nextIndex, config, segment)
 }
 
 function attachCompositeSegmentHandlers(
@@ -187,32 +272,54 @@ function attachCompositeSegmentHandlers(
   config: RealLayoutMusicCompositeConfig,
   segment: RealLayoutMusicCompositeSegment,
 ): void {
-  const element = getOrCreateAudio()
+  const element = getActiveAudio()
   const fadeLead = fadeLeadSeconds()
-  let spliced = false
+  let crossfadeStarted = false
+  let finalized = false
 
-  const performSplice = (nextIndex: number) => {
-    if (spliced) return
-    spliced = true
-    spliceToSegment(nextIndex, config, { fadeIn: false })
+  const nextIndex = segment.endAt != null ? resolveNextSegmentIndex(index, config) : null
+
+  if (nextIndex != null) {
+    const nextSegment = config.segments[nextIndex]
+    if (nextSegment) {
+      preloadIncomingSegment(getInactiveAudio(), nextSegment)
+    }
+  }
+
+  const finalizeOnce = () => {
+    if (finalized) return
+    finalized = true
+    finalizeCrossfade()
   }
 
   if (segment.endAt != null) {
     const cutAt = segment.endAt
-    const nextIndex = resolveNextSegmentIndex(index, config)
 
     compositeTimeUpdateHandler = () => {
-      if (spliced) return
+      if (finalized) return
       const t = element.currentTime
-      rampVolumeForSplice(element, t, cutAt, fadeLead)
+      const fadeStart = cutAt - fadeLead
+
+      if (nextIndex != null && t >= fadeStart && !crossfadeStarted) {
+        crossfadeStarted = true
+        beginIncomingCrossfade(nextIndex, config, element)
+      }
+
+      if (t >= fadeStart) {
+        rampVolumeForSplice(element, t, cutAt, fadeLead)
+      }
+
       if (t >= cutAt && nextIndex != null) {
-        performSplice(nextIndex)
+        finalizeOnce()
       }
     }
 
     if (nextIndex != null) {
       compositeEndedHandler = () => {
-        if (!spliced) performSplice(nextIndex)
+        if (!finalized && !crossfadeStarted) {
+          beginIncomingCrossfade(nextIndex, config, element)
+        }
+        if (!finalized) finalizeOnce()
       }
       element.addEventListener('ended', compositeEndedHandler)
     }
@@ -222,10 +329,17 @@ function attachCompositeSegmentHandlers(
   }
 
   compositeTimeUpdateHandler = () => {
-    if (spliced) return
+    if (finalized) return
     const duration = element.duration
     if (!Number.isFinite(duration)) return
     const cutAt = duration
+    const fadeStart = cutAt - fadeLead
+
+    if (nextIndex != null && element.currentTime >= fadeStart && !crossfadeStarted) {
+      crossfadeStarted = true
+      beginIncomingCrossfade(nextIndex, config, element)
+    }
+
     rampVolumeForSplice(element, element.currentTime, cutAt, fadeLead)
   }
   element.addEventListener('timeupdate', compositeTimeUpdateHandler)
@@ -236,7 +350,7 @@ function playCompositeSegment(
   config: RealLayoutMusicCompositeConfig,
   options: { fadeIn?: boolean } = {},
 ): void {
-  const element = getOrCreateAudio()
+  const element = getActiveAudio()
   const segment = config.segments[index]
   if (!segment) {
     if (config.loop && config.segments.length > 0) {
@@ -245,9 +359,9 @@ function playCompositeSegment(
     return
   }
 
-  compositeSegmentIndex = index
   clearCompositeHandlers()
   compositeConfig = config
+  compositeSegmentIndex = index
 
   element.loop = false
   element.src = resolveCompositeAssetUrl(segment.asset)
@@ -268,7 +382,7 @@ function loadCompositeRealLayoutMusicTrack(
 
 export async function attemptRealLayoutAutoplay(): Promise<boolean> {
   if (readRealMusicMuted()) {
-    audio?.pause()
+    pauseAllAudio()
     return false
   }
 
@@ -276,7 +390,11 @@ export async function attemptRealLayoutAutoplay(): Promise<boolean> {
   if (!element.src) return false
 
   element.muted = false
-  if (!element.paused) return true
+  getInactiveAudio().muted = false
+
+  const playing =
+    (audioPrimary && !audioPrimary.paused) || (audioSecondary && !audioSecondary.paused)
+  if (playing) return true
 
   try {
     await element.play()
@@ -322,10 +440,11 @@ export function loadRealLayoutMusicTrack(trackId: RealLayoutMusicTrackId): void 
 
   const url = resolveMusicTrackUrl(trackId)
   if (!url) return
-  if (currentTrackId === trackId && audio?.src) return
+  if (currentTrackId === trackId && getActiveAudio().src) return
 
   currentTrackId = trackId
-  const element = getOrCreateAudio()
+  const element = getActiveAudio()
+  pauseAllAudio()
   element.pause()
   element.src = url
   element.loop = true
@@ -334,8 +453,7 @@ export function loadRealLayoutMusicTrack(trackId: RealLayoutMusicTrackId): void 
 }
 
 export function pauseRealLayoutMusic(): void {
-  cancelAudioFade()
-  audio?.pause()
+  pauseAllAudio()
 }
 
 export function bootstrapRealLayoutMusicEarly(trackId = readDefaultRealTrackId()): void {
@@ -360,7 +478,7 @@ export function bootstrapRealLayoutMusicEarly(trackId = readDefaultRealTrackId()
 }
 
 export function getRealLayoutMusicElement(): HTMLAudioElement | null {
-  return audio
+  return activeAudio ?? audioPrimary
 }
 
 export function getRealLayoutMusicTrackId(): RealLayoutMusicTrackId | null {
