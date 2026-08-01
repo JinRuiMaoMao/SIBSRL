@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   DAILY_CHALLENGE_CARD_ID,
   buildDailyChallengeFromScheduleDay,
@@ -35,6 +35,7 @@ import { SeasonalPromotedRouteCard } from './SeasonalPromotedRouteCard'
 import { RouteDetail } from './RouteDetail'
 import { RouteDetailRealPanel } from './RouteDetailRealPanel'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
+import { RouteListGameSection } from './RouteListGameSection'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
@@ -1523,15 +1524,6 @@ export function RouteLookupPage({
               visible={syntaxInFlowVisible}
             />
 
-            {dailyChallengeVisible ? (
-              <DailyChallengeBanner
-                selected={dailyChallengeSelected}
-                onSelect={handleSelectDailyChallenge}
-                onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
-                challenge={dailyChallenge}
-              />
-            ) : null}
-
             {betweenStopPairDraft ? (
               <p className="stop-lookup-summary stop-lookup-pending">{t('betweenStopsPressEnter')}</p>
             ) : null}
@@ -1572,65 +1564,83 @@ export function RouteLookupPage({
               </RouteGroupCollapse>
             ) : null}
 
-            {ROUTE_LIST_UI_SECTION_ORDER.map((section) => (
-              <Fragment key={section}>
-                {section === 'normal' && showFavoritesSection ? (
-                  <RouteGroupCollapse
-                    groupId="favorites"
-                    dataTour="favorites"
-                    count={favoriteRoutes.length}
-                    open={groupOpen.favorites}
-                    onOpenChange={(open) =>
-                      setGroupOpen((prev) => ({ ...prev, favorites: open }))
-                    }
-                  >
-                    <FavoritesFolderBar />
-                    {favoriteRoutes.length > 0 ? (
-                      <>
-                        <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
-                        <div className="route-grid route-grid--favorites">{renderFavoriteRouteCards()}</div>
-                      </>
-                    ) : (
-                      <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
-                    )}
-                  </RouteGroupCollapse>
-                ) : null}
+            <RouteListGameSection
+              titleKey="routeListUnlockable"
+              dataTour="route-group-normal"
+              open={groupOpen.normal}
+              onOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, normal: open }))}
+            >
+              {dailyChallengeVisible ? (
+                <DailyChallengeBanner
+                  selected={dailyChallengeSelected}
+                  onSelect={handleSelectDailyChallenge}
+                  onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
+                  challenge={dailyChallenge}
+                />
+              ) : null}
 
-                {section === 'normal' && recentRoutes.length > 0 ? (
-                  <RouteGroupCollapse
-                    groupId="recent"
-                    count={recentRoutes.length}
-                    open={groupOpen.recent}
-                    onOpenChange={(open) =>
-                      setGroupOpen((prev) => ({ ...prev, recent: open }))
-                    }
-                  >
-                    <div className="route-grid">{renderRecentRouteCards()}</div>
-                  </RouteGroupCollapse>
-                ) : null}
-
+              {showFavoritesSection ? (
                 <RouteGroupCollapse
-                  groupId={section}
-                  variant="game"
-                  dataTour={section === 'normal' ? 'route-group-normal' : undefined}
-                  count={countVisibleSectionSlots(section)}
-                  open={groupOpen[section]}
+                  groupId="favorites"
+                  dataTour="favorites"
+                  count={favoriteRoutes.length}
+                  open={groupOpen.favorites}
                   onOpenChange={(open) =>
-                    setGroupOpen((prev) => ({ ...prev, [section]: open }))
+                    setGroupOpen((prev) => ({ ...prev, favorites: open }))
                   }
                 >
-                  {countVisibleSectionSlots(section) === 0 ? (
-                    <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
+                  <FavoritesFolderBar />
+                  {favoriteRoutes.length > 0 ? (
+                    <>
+                      <p className="favorite-drag-hint">{t('favoriteDragHint')}</p>
+                      <div className="route-grid route-grid--favorites">
+                        {renderFavoriteRouteCards()}
+                      </div>
+                    </>
                   ) : (
-                    <div
-                      className={`route-grid${section === 'specialSeasonal' ? ' route-grid--special-seasonal' : ''}`}
-                    >
-                      {renderListSectionCards(section)}
-                    </div>
+                    <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
                   )}
                 </RouteGroupCollapse>
-              </Fragment>
-            ))}
+              ) : null}
+
+              {recentRoutes.length > 0 ? (
+                <RouteGroupCollapse
+                  groupId="recent"
+                  count={recentRoutes.length}
+                  open={groupOpen.recent}
+                  onOpenChange={(open) =>
+                    setGroupOpen((prev) => ({ ...prev, recent: open }))
+                  }
+                >
+                  <div className="route-grid">{renderRecentRouteCards()}</div>
+                </RouteGroupCollapse>
+              ) : null}
+
+              {countVisibleSectionSlots('normal') === 0 &&
+              !dailyChallengeVisible &&
+              !showFavoritesSection &&
+              recentRoutes.length === 0 ? (
+                <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
+              ) : countVisibleSectionSlots('normal') > 0 ? (
+                <div className="route-grid">{renderListSectionCards('normal')}</div>
+              ) : null}
+            </RouteListGameSection>
+
+            <RouteListGameSection
+              titleKey="routeListLocked"
+              open={groupOpen.specialSeasonal}
+              onOpenChange={(open) =>
+                setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
+              }
+            >
+              {countVisibleSectionSlots('specialSeasonal') === 0 ? (
+                <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
+              ) : (
+                <div className="route-grid route-grid--special-seasonal">
+                  {renderListSectionCards('specialSeasonal')}
+                </div>
+              )}
+            </RouteListGameSection>
 
             {listIsEmpty ? (
               <p className="empty-state route-grid-span">{t('emptyState')}</p>
