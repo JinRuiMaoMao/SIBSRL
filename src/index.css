@@ -196,6 +196,7 @@ body {
 /* 自制滚动条（Firefox + Chromium / Edge） */
 .sibs-scrollbar,
 .route-detail,
+.route-real-panel,
 .settings-locale-grid,
 .safety-broadcast-section {
   scrollbar-width: thin;
@@ -204,6 +205,7 @@ body {
 
 .sibs-scrollbar::-webkit-scrollbar,
 .route-detail::-webkit-scrollbar,
+.route-real-panel::-webkit-scrollbar,
 .settings-locale-grid::-webkit-scrollbar,
 .safety-broadcast-section::-webkit-scrollbar,
 html::-webkit-scrollbar {
@@ -219,6 +221,7 @@ html::-webkit-scrollbar-track {
 
 .sibs-scrollbar::-webkit-scrollbar-track,
 .route-detail::-webkit-scrollbar-track,
+.route-real-panel::-webkit-scrollbar-track,
 .settings-locale-grid::-webkit-scrollbar-track,
 .safety-broadcast-section::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
@@ -240,6 +243,7 @@ html::-webkit-scrollbar-thumb {
 
 .sibs-scrollbar::-webkit-scrollbar-thumb,
 .route-detail::-webkit-scrollbar-thumb,
+.route-real-panel::-webkit-scrollbar-thumb,
 .settings-locale-grid::-webkit-scrollbar-thumb,
 .safety-broadcast-section::-webkit-scrollbar-thumb {
   background: linear-gradient(
@@ -262,6 +266,7 @@ html::-webkit-scrollbar-thumb:hover {
 
 .sibs-scrollbar::-webkit-scrollbar-thumb:hover,
 .route-detail::-webkit-scrollbar-thumb:hover,
+.route-real-panel::-webkit-scrollbar-thumb:hover,
 .settings-locale-grid::-webkit-scrollbar-thumb:hover,
 .safety-broadcast-section::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(
@@ -277,6 +282,7 @@ html::-webkit-scrollbar-thumb:active {
 
 .sibs-scrollbar::-webkit-scrollbar-thumb:active,
 .route-detail::-webkit-scrollbar-thumb:active,
+.route-real-panel::-webkit-scrollbar-thumb:active,
 .settings-locale-grid::-webkit-scrollbar-thumb:active,
 .safety-broadcast-section::-webkit-scrollbar-thumb:active {
   background: var(--scrollbar-thumb-active);
@@ -284,6 +290,7 @@ html::-webkit-scrollbar-thumb:active {
 
 .sibs-scrollbar::-webkit-scrollbar-corner,
 .route-detail::-webkit-scrollbar-corner,
+.route-real-panel::-webkit-scrollbar-corner,
 .settings-locale-grid::-webkit-scrollbar-corner,
 .safety-broadcast-section::-webkit-scrollbar-corner,
 html::-webkit-scrollbar-corner {

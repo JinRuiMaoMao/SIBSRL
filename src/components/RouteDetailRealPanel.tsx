@@ -114,7 +114,7 @@ export function RouteDetailRealPanel({
 
   return (
     <article
-      className={`route-real-panel${collapsed ? ' route-real-panel--collapsed' : ''}`}
+      className={`route-real-panel sibs-scrollbar${collapsed ? ' route-real-panel--collapsed' : ''}`}
       aria-label={t('detailAria', { number: route.number })}
     >
       <div className="route-real-panel-chrome">
