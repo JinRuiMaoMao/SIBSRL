@@ -138,18 +138,13 @@ export interface SeasonalAvailabilityLabels {
 export function getSeasonalAvailabilityLabels(
   window: SeasonalAvailabilityWindow,
   locale: Locale,
-  t: (key: 'seasonalAvailabilityRange' | 'seasonalAvailabilityUnavailableFrom', params: Record<string, string>) => string,
+  t: (key: 'seasonalAvailabilityUnavailableFrom', params: Record<string, string>) => string,
 ): SeasonalAvailabilityLabels {
-  const start = formatSeasonalGameDayShort(window.start, locale)
-  const end = window.end ? formatSeasonalGameDayShort(window.end, locale) : null
-  const range =
-    end != null
-      ? t('seasonalAvailabilityRange', { start, end })
-      : t('seasonalAvailabilityRange', { start, end: start })
+  const range = formatSeasonalAvailabilityRangeInGame(window, locale)
   const unavailableFromDate = getSeasonalUnavailableFromDate(window)
   const unavailableFrom = unavailableFromDate
     ? t('seasonalAvailabilityUnavailableFrom', {
-        date: formatSeasonalGameDayShort(unavailableFromDate, locale),
+        date: formatSeasonalGameDayInGame(unavailableFromDate, locale),
       })
     : null
   return { range, unavailableFrom }
