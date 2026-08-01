@@ -9,6 +9,7 @@ import {
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import { getDirectionLengthKm } from '../utils/routeDirections'
+import { getLoopViewLengthKm } from '../utils/routeLoopView'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { DailyChallengeResetCountdown } from './DailyChallengeResetCountdown'
 import { DailyChallengeCalendarButton } from './DailyChallengeCalendarButton'
@@ -46,7 +47,11 @@ export function DailyChallengeCard({
     linkedRoute != null
       ? (findDailyChallengeDirectionIndex(linkedRoute, challenge.directionKey) ?? 0)
       : 0
-  const lengthKm = linkedRoute ? getDirectionLengthKm(linkedRoute, directionIndex, locale) : null
+  const lengthKm = linkedRoute
+    ? challenge.loopView
+      ? getLoopViewLengthKm(linkedRoute, locale)
+      : getDirectionLengthKm(linkedRoute, directionIndex, locale)
+    : null
   const operatorsLabel = getDailyChallengeOperatorsLabel(challenge, locale)
 
   return (

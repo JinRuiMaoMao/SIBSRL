@@ -70,6 +70,8 @@ const EXACT_MERGE: Record<string, MergeTarget> = {
   '75PS': { base: '75P' },
   '141PE': { base: '141P', directionKey: 'E' },
   '141PW': { base: '141P', directionKey: 'W' },
+  '246XW': { base: '246X', directionKey: 'W' },
+  '246XE': { base: '246X', directionKey: 'E' },
   '246XA': { base: '246X' },
   '370AW': { base: '370A', directionKey: 'W' },
   '370AE': { base: '370A', directionKey: 'E' },

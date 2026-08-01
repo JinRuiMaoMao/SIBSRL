@@ -22,6 +22,7 @@ import {
   getDirectionKey,
   getSortedDirectionDataIndices,
 } from '../utils/routeDirectionCore'
+import { formatLoopViewEndpoints } from '../utils/routeLoopView'
 import { routeMatchesTypeFilter } from '../utils/routeTypes'
 import {
   challengeRouteNumberMatchesQuery,
@@ -46,6 +47,8 @@ export interface DailyChallengeInfo {
   privateHireStops?: readonly BilingualText[]
   /** 打开关联线路详情时预选的方向 */
   directionKey?: 'N' | 'S' | 'E' | 'W'
+  /** 打开关联环线详情时预选环线视图（如 246XA） */
+  loopView?: boolean
   /** 当日挑战简介 */
   intro?: DailyChallengeIntro
   /** 无日程或未公布当日挑战 */
@@ -94,12 +97,16 @@ export function isPrivateHireChallengeRoute(routeNumber?: string): boolean {
 export function resolveDailyChallengeRouteLookup(routeCode: string): {
   lookupNumber: string
   directionKey?: 'N' | 'S' | 'E' | 'W'
+  loopView?: boolean
 } {
   const trimmed = routeCode.trim()
   if (!trimmed || isPrivateHireChallengeRoute(trimmed)) {
     return { lookupNumber: trimmed }
   }
   const aliased = DAILY_CHALLENGE_ROUTE_ALIASES[trimmed] ?? trimmed
+  if (/^246XA$/i.test(aliased)) {
+    return { lookupNumber: '246X', loopView: true }
+  }
   const base = toMergeBaseRouteNumber(aliased)
   const lookupNumber = DISPLAY_ONLY_RENAMES[base] ?? base
   const dir = getMergeDirectionKey(aliased)
@@ -290,6 +297,7 @@ export function buildDailyChallengeFromScheduleDay(
   const routeNumber = entry.routeCode ?? undefined
   const privateHireStops = normalizePrivateHireStops(entry.privateHireStops)
   let directionKey: 'N' | 'S' | 'E' | 'W' | undefined
+  let loopView: boolean | undefined
   let endpoints: BilingualText | undefined
 
   if (routeNumber && isPrivateHireChallengeRoute(routeNumber) && privateHireStops?.length) {
@@ -297,9 +305,17 @@ export function buildDailyChallengeFromScheduleDay(
   } else if (routeNumber && !isPrivateHireChallengeRoute(routeNumber)) {
     const resolved = resolveDailyChallengeRouteLookup(routeNumber)
     directionKey = resolved.directionKey
+    loopView = resolved.loopView
     const linked = findRouteForDailyChallenge(routeNumber)
     if (linked) {
-      endpoints = buildEndpointsFromRoute(linked, directionKey)
+      if (loopView) {
+        endpoints = {
+          zh: formatLoopViewEndpoints(linked, 'zh') ?? buildEndpointsFromRoute(linked)?.zh ?? '',
+          en: formatLoopViewEndpoints(linked, 'en') ?? buildEndpointsFromRoute(linked)?.en ?? '',
+        }
+      } else {
+        endpoints = buildEndpointsFromRoute(linked, directionKey)
+      }
     }
   }
 
@@ -345,6 +361,7 @@ export function buildDailyChallengeFromScheduleDay(
     routeNumber,
     endpoints,
     directionKey,
+    loopView,
     intro,
     privateHireStops,
     isAvailable: true,

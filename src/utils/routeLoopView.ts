@@ -11,6 +11,13 @@ import {
 
 type StopGroup = NonNullable<BusRoute['stops']>[number]
 
+/** 246XA 东行段结束后折返至东锦葵海傍路的站序 */
+const ROUTE_246X_LOOP_RETURN: RouteStop[] = [
+  { name: { zh: '中环桥', en: 'Central Bridge' }, zone: 4 },
+  { name: { zh: '东锦葵大街', en: 'Eastmallow Main Street' }, zone: 4 },
+  { name: { zh: '东锦葵海傍路', en: 'Eastmallow Praya Road' }, zone: 4 },
+]
+
 function stopKey(stop: RouteStop): string {
   return `${stop.name.zh}\0${stop.name.en}`
 }
@@ -29,6 +36,17 @@ function mergeStopLists(lists: RouteStop[][]): RouteStop[] {
   return merged
 }
 
+function append246XLoopReturn(route: BusRoute, list: RouteStop[]): RouteStop[] {
+  if (route.id !== '246X' || !list.length) return list
+  const result = [...list]
+  for (const stop of ROUTE_246X_LOOP_RETURN) {
+    const last = result[result.length - 1]
+    if (last && stopKey(last) === stopKey(stop)) continue
+    result.push(stop)
+  }
+  return result
+}
+
 /** 环线且分站序按走向拆分（如 246X 西行／东行） */
 export function routeHasLoopDirectionLayout(route: BusRoute): boolean {
   return route.pattern === 'circular' && routeHasDirectionVariants(route)
@@ -39,7 +57,8 @@ export function mergeLoopDirectionStops(route: BusRoute): StopGroup | null {
   if (!groups?.length || groups.length < 2) return null
 
   const lists = getSortedDirectionDataIndices(route).map((index) => groups[index]?.list ?? [])
-  const list = mergeStopLists(lists.filter((entry) => entry.length > 0))
+  let list = mergeStopLists(lists.filter((entry) => entry.length > 0))
+  list = append246XLoopReturn(route, list)
   if (!list.length) return null
 
   const primary = groups[getDirectionDataIndex(route, 0)] ?? groups[0]!

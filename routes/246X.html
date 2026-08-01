@@ -168,26 +168,26 @@
     "en": "Loop approx. 19 km / Westbound approx. 6.3 km / Eastbound approx. 12.7 km"
   },
   "notes": {
-    "zh": "第 1/4 区繁忙时间环线（REBC · FTCC），东锦葵海傍路 ↺ 时间廊；普通班次游戏内编号 246XA，站序分西行／东行两段（时间廊为折返点）。特开 A：146W（东锦葵 → 货柜码头岛）；特开 B：246PE（艾迪城 → 枫树里，经 The ONE）。2024/6 起改经北环中心、不再停北环转车站及中环南。分段：南环街市起至东锦葵 $7.2。",
-    "en": "Zones 1/4 peak-hour loop (REBC · FTCC), Eastmallow Praya Road ↺ Timelapse Mall; regular trips use in-game code 246XA with westbound/eastbound lists (Timelapse Mall is the returning point). Special A: 146W (Eastmallow → Container's Island); Special B: 246PE (Addi City → Maple Lane via The ONE). Via Northern Plaza from Jun 2024; Northern Interchange and Southern Central removed. Section fare Southern Market → Eastmallow $7.2."
+    "zh": "第 1/4 区繁忙时间环线（REBC · FTCC），东锦葵海傍路 ↺ 东锦葵海傍路；游戏内编号 246XA（环线）、246XW（西行）、246XE（东行），时间廊为折返点。特开 A：146W（东锦葵 → 货柜码头岛）；特开 B：246PE（艾迪城 → 枫树里，经 The ONE）。2024/6 起改经北环中心、不再停北环转车站及中环南。分段：南环街市起至东锦葵 $7.2。",
+    "en": "Zones 1/4 peak-hour loop (REBC · FTCC), Eastmallow Praya Road ↺ Eastmallow Praya Road; in-game codes 246XA (loop), 246XW (westbound), 246XE (eastbound), Timelapse Mall is the returning point. Special A: 146W (Eastmallow → Container's Island); Special B: 246PE (Addi City → Maple Lane via The ONE). Via Northern Plaza from Jun 2024; Northern Interchange and Southern Central removed. Section fare Southern Market → Eastmallow $7.2."
   },
   "origin": {
     "zh": "东锦葵海傍路",
     "en": "Eastmallow Praya Road"
   },
   "destination": {
-    "zh": "时间廊",
-    "en": "Timelapse Mall"
+    "zh": "货柜码头岛",
+    "en": "Container's Island"
   },
   "via": {
-    "zh": "银行大厦、三哥大厦、购物廊、白鸽消防局、伊迪城、货柜码头、中西转车站、南环街市、枫树里、中环桥、东锦葵大街",
-    "en": "Bank Tower, Third Technology Building, Shopping Corridor, Dove Fire Station, Eddie City, Containers Terminal, Central - Western Interchange, Southern Market, Maple Lane, Central Bridge, Eastmallow Main Street"
+    "zh": "东锦葵邨 - 阳葵屋、东锦葵大街、中环桥、北环中心、西区海底隧道转车站、时间廊、银行大厦、三哥大厦、购物廊、白鸽消防局、艾迪城、伊迪城、货柜码头",
+    "en": "Eastmallow Estate - Sunny House, Eastmallow Main Street, Central Bridge, Northern Plaza, Western Habour Tunnel Interchange, Timelapse Mall, Bank Tower, Third Technology Building, Shopping Corridor, Dove Fire Station, Addi City, Eddie City, Containers Terminal"
   },
   "stops": [
     {
       "direction": {
-        "zh": "西行（环线 · 东锦葵海傍路 → 时间廊）",
-        "en": "Westbound loop (Eastmallow Praya Road → Timelapse Mall)"
+        "zh": "西行（东锦葵海傍路 → 货柜码头岛）",
+        "en": "Westbound (Eastmallow Praya Road → Container's Island)"
       },
       "directionKey": "W",
       "serviceTime": {
@@ -251,47 +251,11 @@
               "en": "Alighting reminder"
             }
           }
-        }
-      ]
-    },
-    {
-      "direction": {
-        "zh": "东行（环线 · 时间廊 → 东锦葵海傍路）",
-        "en": "Eastbound loop (Timelapse Mall → Eastmallow Praya Road)"
-      },
-      "directionKey": "E",
-      "serviceTime": {
-        "zh": "平日 07:00 – 08:55 / 17:40 – 18:35",
-        "en": "Mon–Fri 07:00 – 08:55 / 17:40 – 18:35"
-      },
-      "length": {
-        "zh": "12.7 km",
-        "en": "12.7 km"
-      },
-      "list": [
-        {
-          "zh": "时间廊",
-          "en": "Timelapse Mall",
-          "zone": 1,
-          "audio": {
-            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E9%93%B6%E8%A1%8C%E5%A4%A7%E5%8E%A61.mp3",
-            "nextStop": {
-              "zh": "银行大厦",
-              "en": "Bank Tower"
-            }
-          }
         },
         {
           "zh": "银行大厦",
           "en": "Bank Tower",
-          "zone": 1,
-          "audio": {
-            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E4%B8%89%E5%93%A5%E5%A4%A7%E5%8E%A61.mp3",
-            "nextStop": {
-              "zh": "三哥大厦",
-              "en": "Third Technology Building"
-            }
-          }
+          "zone": 1
         },
         {
           "zh": "三哥大厦",
@@ -305,26 +269,17 @@
         {
           "zh": "购物廊",
           "en": "Shopping Corridor",
-          "zone": 1,
-          "audio": {
-            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E7%99%BD%E9%B8%BD%E6%B6%88%E9%98%B2%E5%B1%801.mp3",
-            "nextStop": {
-              "zh": "白鸽消防局",
-              "en": "Dove Fire Station"
-            }
-          }
+          "zone": 1
         },
         {
           "zh": "白鸽消防局",
           "en": "Dove Fire Station",
-          "zone": 1,
-          "audio": {
-            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E4%BC%8A%E8%BF%AA%E5%9F%8E1.mp3",
-            "nextStop": {
-              "zh": "伊迪城",
-              "en": "Eddie City"
-            }
-          }
+          "zone": 1
+        },
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1
         },
         {
           "zh": "伊迪城",
@@ -337,6 +292,59 @@
           "zone": 1
         },
         {
+          "zh": "货柜码头岛",
+          "en": "Container's Island",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/common/alighting-reminder.mp3",
+            "nextStop": {
+              "zh": "下车提醒",
+              "en": "Alighting reminder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "direction": {
+        "zh": "东行（艾迪城 → 枫树里）",
+        "en": "Eastbound (Addi City → Maple Lane)"
+      },
+      "directionKey": "E",
+      "serviceTime": {
+        "zh": "平日 07:00 – 08:55 / 17:40 – 18:35",
+        "en": "Mon–Fri 07:00 – 08:55 / 17:40 – 18:35"
+      },
+      "length": {
+        "zh": "12.7 km",
+        "en": "12.7 km"
+      },
+      "list": [
+        {
+          "zh": "艾迪城",
+          "en": "Addi City",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E9%93%B6%E8%A1%8C%E5%A4%A7%E5%8E%A61.mp3",
+            "nextStop": {
+              "zh": "银行大厦",
+              "en": "Bank Tower"
+            }
+          }
+        },
+        {
+          "zh": "伊迪城",
+          "en": "Eddie City",
+          "zone": 1,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E4%B8%89%E5%93%A5%E5%A4%A7%E5%8E%A61.mp3",
+            "nextStop": {
+              "zh": "三哥大厦",
+              "en": "Third Technology Building"
+            }
+          }
+        },
+        {
           "zh": "中西转车站",
           "en": "Central - Western Interchange",
           "zone": 1
@@ -344,26 +352,34 @@
         {
           "zh": "南环街市",
           "en": "Southern Market",
-          "zone": 4
+          "zone": 4,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E7%99%BD%E9%B8%BD%E6%B6%88%E9%98%B2%E5%B1%801.mp3",
+            "nextStop": {
+              "zh": "白鸽消防局",
+              "en": "Dove Fire Station"
+            }
+          }
+        },
+        {
+          "zh": "The ONE",
+          "en": "The ONE",
+          "nameSub": {
+            "zh": "警察总部, 新纪元中心",
+            "en": "Police Headquarters, Ping Center"
+          },
+          "zone": 4,
+          "audio": {
+            "audioUrl": "./audio/routes/stop-names/21%E8%B7%AF%E4%BC%8A%E8%BF%AA%E5%9F%8E1.mp3",
+            "nextStop": {
+              "zh": "伊迪城",
+              "en": "Eddie City"
+            }
+          }
         },
         {
           "zh": "枫树里",
           "en": "Maple Lane",
-          "zone": 4
-        },
-        {
-          "zh": "中环桥",
-          "en": "Central Bridge",
-          "zone": 4
-        },
-        {
-          "zh": "东锦葵大街",
-          "en": "Eastmallow Main Street",
-          "zone": 4
-        },
-        {
-          "zh": "东锦葵海傍路",
-          "en": "Eastmallow Praya Road",
           "zone": 4,
           "audio": {
             "audioUrl": "./audio/routes/common/alighting-reminder.mp3",
@@ -378,7 +394,7 @@
   ],
   "stopAudio": [
     {
-      "atStopIndex": 6,
+      "atStopIndex": 14,
       "audioUrl": "./audio/routes/common/alighting-reminder.mp3",
       "nextStop": {
         "zh": "下车提醒",

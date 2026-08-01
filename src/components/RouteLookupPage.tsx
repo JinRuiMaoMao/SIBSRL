@@ -772,6 +772,7 @@ export function RouteLookupPage({
         if (route) {
           const directionIndex = findDailyChallengeDirectionIndex(route, challenge.directionKey)
           if (directionIndex != null) setDirectionIndex(route.id, directionIndex)
+          setLoopView(route.id, challenge.loopView ?? false)
           setDailyChallengeRouteContext(challenge)
           selectRoute(route.id)
           return
@@ -782,7 +783,7 @@ export function RouteLookupPage({
       clearSelection()
       setDetailOverlay({ kind: 'daily-challenge', challenge })
     },
-    [clearSelection, selectRoute, setDirectionIndex],
+    [clearSelection, selectRoute, setDirectionIndex, setLoopView],
   )
 
   const handleSelectDailyChallenge = useCallback(() => {

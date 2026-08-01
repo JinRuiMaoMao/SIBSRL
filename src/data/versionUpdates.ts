@@ -166,12 +166,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "同步 8/1 每日挑战：马拉松接驳（R370）。",
-            en: "Synced 8/1 daily challenge: Marathon Shuttle (R370).",
+            zh: "同步 8/1 每日挑战：[竞速] 浓雾天气（246XA）。",
+            en: "Synced 8/1 daily challenge: [Race] Foggy Day (246XA).",
           },
           {
             zh: "新增 2026 年 8–12 月每日挑战占位日程（JSON + Markdown），方便后续手动编辑。",
             en: "Added placeholder daily challenge schedules for Aug–Dec 2026 (JSON + Markdown) for manual editing.",
+          },
+        ],
+        fixes: [
+          {
+            zh: "246X：区分 246XW／246XE／246XA；每日挑战写 246XA 时自动打开环线视图，并更新站序。",
+            en: "246X: distinguish 246XW/246XE/246XA; daily challenge 246XA now opens loop view with updated stop lists.",
           },
         ],
       },

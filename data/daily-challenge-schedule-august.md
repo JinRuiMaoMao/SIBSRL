@@ -22,7 +22,7 @@ PH 站序每日随机；已知站序写入 JSON 的 `privateHireStops`，详情�
 
 ```
 ~August Daily Challenge~
-8/1: Marathon Shuttle (R370)
+8/1: [Race] Foggy Day (246XA)
 8/2:
 8/3:
 8/4:
