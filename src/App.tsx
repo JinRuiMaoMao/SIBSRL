@@ -39,9 +39,9 @@ import {
 } from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
+import { isRealLayoutMode } from './utils/appLayoutMode'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
-import { isRealLayoutMode } from './utils/appLayoutMode'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
@@ -363,18 +363,22 @@ function App() {
     )
   }
 
+  const realRoutesShell = realLayout && isRoutesPage()
+
   return (
     <>
       <LiquidGlassDefs />
       {favoritesSyncDialog}
       {guidedTourLayer}
       <IslandMapOverlayProvider>
-      <div className="app sibs-scrollbar">
-      <Header
-        activeTab={activeTab}
-        collapsed={headerCollapsed}
-        onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
-      />
+      <div className={`app sibs-scrollbar${realRoutesShell ? ' app--real-routes' : ''}`}>
+      {!realRoutesShell ? (
+        <Header
+          activeTab={activeTab}
+          collapsed={headerCollapsed}
+          onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
+        />
+      ) : null}
 
       {activeTab === 'routes' && !realLayout ? (
         <>
@@ -413,21 +417,23 @@ function App() {
         </ErrorBoundary>
       </ScrollRevealScope>
 
-      <footer className="site-footer">
-        <p>
-          {t('footer')} ·{' '}
-          <a
-            href="https://www.roblox.com/games/1588965415"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t('playGame')}
-          </a>
-        </p>
-        <p className="build-tag" title={t('buildTagHint')}>
-          {t('buildTag', { time: buildLabel })}
-        </p>
-      </footer>
+      {!realRoutesShell ? (
+        <footer className="site-footer">
+          <p>
+            {t('footer')} ·{' '}
+            <a
+              href="https://www.roblox.com/games/1588965415"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t('playGame')}
+            </a>
+          </p>
+          <p className="build-tag" title={t('buildTagHint')}>
+            {t('buildTag', { time: buildLabel })}
+          </p>
+        </footer>
+      ) : null}
       </div>
       {isRoutesPage() && !realLayout ? <IslandMapViewerLazy /> : null}
       {!realLayout ? <AppTabBar activeTab={tabFromLocation} /> : null}

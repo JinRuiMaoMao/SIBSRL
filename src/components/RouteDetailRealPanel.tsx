@@ -28,7 +28,6 @@ import { RouteDirectionControls } from './RouteDirectionControls'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
-import { RouteRealTimeline } from './RouteRealTimeline'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 
 interface RouteDetailRealPanelProps {
@@ -189,10 +188,6 @@ export function RouteDetailRealPanel({
                 </li>
               ) : null}
             </ul>
-
-            {activeStops?.list.length ? (
-              <RouteRealTimeline stops={activeStops.list} className="route-real-panel-timeline" />
-            ) : null}
 
             <DifficultyStars count={difficulty} />
             </div>

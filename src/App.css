@@ -3643,9 +3643,64 @@ html[data-route-lookup-layout='split'] .site-footer {
 
 .route-split-sidebar-toolbar {
   flex-shrink: 0;
-  padding: 0.65rem 0.65rem 0.5rem;
+  padding: 0.55rem 0.65rem 0.5rem;
   border-bottom: 1px solid var(--border);
-  background: var(--bg-surface);
+  background: var(--bg-deep);
+}
+
+.route-split-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+}
+
+.route-split-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.65rem;
+  line-height: 1;
+  border-radius: 0.35rem;
+}
+
+.route-split-back:hover,
+.route-split-back:focus-visible {
+  background: rgb(255 255 255 / 0.06);
+}
+
+.route-split-back-icon {
+  display: block;
+  transform: translateY(-0.05rem);
+}
+
+.route-split-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.app--real-routes {
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+.app--real-routes .main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app--real-routes .route-lookup-page--split {
+  flex: 1;
+  min-height: 0;
 }
 
 .route-split-sidebar-toolbar .search-toolbar {

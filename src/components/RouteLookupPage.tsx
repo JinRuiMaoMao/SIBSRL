@@ -38,6 +38,7 @@ import { isRealLayoutMode } from '../utils/appLayoutMode'
 import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
 import { RealRouteLookupMusic } from './RealRouteLookupMusic'
+import { RealRouteSplitHeader } from './RealRouteSplitHeader'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
@@ -599,25 +600,21 @@ export function RouteLookupPage({
   }, [detailOverlay])
 
   useEffect(() => {
-    if (!splitLayoutActive || realFilteredEntries.length === 0) return
-    if (selectedRoute) {
-      const directionIndex = getDirectionIndex(selectedRoute)
-      const stillVisible = realFilteredEntries.some(
-        (entry) => entry.route.id === selectedRoute.id && entry.directionIndex === directionIndex,
-      )
-      if (stillVisible) return
-    }
-    const first = realFilteredEntries[0]!
-    setDirectionIndex(first.route.id, first.directionIndex)
-    setLoopView(first.route.id, false)
-    selectRoute(first.route.id)
+    if (!splitLayoutActive) return
+    if (!selectedRoute) return
+    const directionIndex = getDirectionIndex(selectedRoute)
+    const stillVisible = realFilteredEntries.some(
+      (entry) => entry.route.id === selectedRoute.id && entry.directionIndex === directionIndex,
+    )
+    if (stillVisible) return
+    clearSelection()
+    clearRouteFromLocation()
+    setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
   }, [
+    clearSelection,
     getDirectionIndex,
     realFilteredEntries,
-    selectRoute,
     selectedRoute,
-    setDirectionIndex,
-    setLoopView,
     splitLayoutActive,
   ])
 
@@ -763,9 +760,15 @@ export function RouteLookupPage({
   }, [clearSelection, findDisplayRoute, recordRecent, selectRoute, setDirectionIndex])
 
   useEffect(() => {
-    if (!selectedRoute) return
+    if (!selectedRoute) {
+      if (splitLayoutActive) {
+        setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
+      }
+      return
+    }
+    if (splitLayoutActive) return
     setDetailOverlay({ kind: 'route', route: selectedRoute })
-  }, [selectedRoute])
+  }, [selectedRoute, splitLayoutActive])
 
   useEffect(() => {
     const sheet = sheetRef.current
@@ -903,12 +906,18 @@ export function RouteLookupPage({
     (routeId: string, directionIndex: number) => {
       const route = findDisplayRoute(routeId)
       const currentDirectionIndex = route ? getDirectionIndex(route) : 0
+      if (selectedRoute?.id === routeId && currentDirectionIndex === directionIndex) {
+        clearSelection()
+        clearRouteFromLocation()
+        setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
+        return
+      }
       setDirectionIndex(routeId, directionIndex)
       setLoopView(routeId, false)
-      if (selectedRoute?.id === routeId && currentDirectionIndex === directionIndex) return
       selectRoute(routeId)
     },
     [
+      clearSelection,
       findDisplayRoute,
       getDirectionIndex,
       selectRoute,
@@ -1475,6 +1484,7 @@ export function RouteLookupPage({
               ref={stickyToolbarRef}
               className={`route-split-sidebar-toolbar${stickyToolbarFade ? ' route-lookup-sticky--fade' : ''}`}
             >
+              <RealRouteSplitHeader />
               {searchToolbar}
             </div>
             <p className="route-split-route-count" aria-live="polite">
