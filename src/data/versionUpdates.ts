@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-07-13'
+export const CURRENT_CHANGELOG_DATE = '2026-08-01'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,32 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-08-01-summary",
+    date: "2026-08-01",
+    title: {
+      zh: "2026-08-01 更新",
+      en: "2026-08-01 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 8/1 每日挑战：马拉松接驳（R370）。",
+            en: "Synced 8/1 daily challenge: Marathon Shuttle (R370).",
+          },
+          {
+            zh: "新增 2026 年 8–12 月每日挑战占位日程（JSON + Markdown），方便后续手动编辑。",
+            en: "Added placeholder daily challenge schedules for Aug–Dec 2026 (JSON + Markdown) for manual editing.",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-07-13-summary",
     date: "2026-07-13",

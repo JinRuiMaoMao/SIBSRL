@@ -1,0 +1,188 @@
+{
+  "month": "2026-11",
+  "timezone": "Asia/Hong_Kong",
+  "resetHour": 8,
+  "note": "Placeholder schedule for November 2026 Daily Challenge list; fill in event/routeCode as community data becomes available.",
+  "days": [
+    {
+      "date": "2026-11-01",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-02",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-03",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-04",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-05",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-06",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-07",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-08",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-09",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-10",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-11",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-12",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-13",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-14",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-15",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-16",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-17",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-18",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-19",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-20",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-21",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-22",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-23",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-24",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-25",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-26",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-27",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-28",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-29",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    },
+    {
+      "date": "2026-11-30",
+      "event": null,
+      "routeCode": null,
+      "race": false
+    }
+  ]
+}

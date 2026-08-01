@@ -26,6 +26,11 @@ import scheduleAprilJson from '../../data/daily-challenge-schedule-2026-04.json'
 import scheduleMayJson from '../../data/daily-challenge-schedule-2026-05.json'
 import scheduleJuneJson from '../../data/daily-challenge-schedule-2026-06.json'
 import scheduleJulyJson from '../../data/daily-challenge-schedule-2026-07.json'
+import scheduleAugustJson from '../../data/daily-challenge-schedule-2026-08.json'
+import scheduleSeptemberJson from '../../data/daily-challenge-schedule-2026-09.json'
+import scheduleOctoberJson from '../../data/daily-challenge-schedule-2026-10.json'
+import scheduleNovemberJson from '../../data/daily-challenge-schedule-2026-11.json'
+import scheduleDecemberJson from '../../data/daily-challenge-schedule-2026-12.json'
 
 export interface DailyChallengeScheduleStopName {
   name: { zh: string; en: string }
@@ -74,6 +79,11 @@ export const DAILY_CHALLENGE_SCHEDULES: DailyChallengeSchedule[] = [
   scheduleMayJson as DailyChallengeSchedule,
   scheduleJuneJson as DailyChallengeSchedule,
   scheduleJulyJson as DailyChallengeSchedule,
+  scheduleAugustJson as DailyChallengeSchedule,
+  scheduleSeptemberJson as DailyChallengeSchedule,
+  scheduleOctoberJson as DailyChallengeSchedule,
+  scheduleNovemberJson as DailyChallengeSchedule,
+  scheduleDecemberJson as DailyChallengeSchedule,
 ]
 
 const dayByDate = new Map<string, DailyChallengeScheduleDay>()
