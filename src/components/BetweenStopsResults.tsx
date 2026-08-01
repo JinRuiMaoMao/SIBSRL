@@ -177,7 +177,6 @@ export function BetweenStopsResults({
                     route={route}
                     selected={selectedRouteId === route.id}
                     directionIndex={directionIndex}
-                    onDirectionChange={(index) => setDirectionIndex(route.id, index)}
                     onNavigate={onRouteNavigate}
                   />
                   {metrics ? <TransferPlanMetricsSummary metrics={metrics} /> : null}

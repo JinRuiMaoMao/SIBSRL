@@ -1267,8 +1267,6 @@ export function RouteLookupPage({
           selected={selectedRoute?.id === route.id}
           directionIndex={directionIndex}
           loopView={getLoopView(route)}
-          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-          onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
           tourAnchor={group === 'normal' && index === 0 ? 'route-card' : undefined}
@@ -1318,8 +1316,6 @@ export function RouteLookupPage({
           selected={selectedRoute?.id === route.id}
           directionIndex={getDirectionIndex(route)}
           loopView={getLoopView(route)}
-          onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-          onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
           muted={!routeMatchesFilters(route, filters)}
           onNavigate={handleRouteNavigate}
         />
@@ -1335,8 +1331,6 @@ export function RouteLookupPage({
         selected={selectedRoute?.id === route.id}
         directionIndex={getDirectionIndex(route)}
         loopView={getLoopView(route)}
-        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-        onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
         muted={!routeMatchesFilters(route, filters)}
         onNavigate={handleRouteNavigate}
       />
@@ -1350,8 +1344,6 @@ export function RouteLookupPage({
         selected={selectedRoute?.id === route.id}
         directionIndex={getDirectionIndex(route)}
         loopView={getLoopView(route)}
-        onDirectionChange={(index) => setDirectionIndex(route.id, index)}
-        onLoopViewChange={(loopView) => setLoopView(route.id, loopView)}
         onNavigate={handleRouteNavigate}
       />
     ))

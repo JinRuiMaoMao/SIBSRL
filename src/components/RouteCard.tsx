@@ -5,7 +5,6 @@ import type { BusRoute } from '../types/route'
 import { showCardLoopMark } from '../utils/routeCategory'
 import {
   getDirectionServiceTime,
-  routeHasDirectionVariants,
 } from '../utils/routeDirections'
 import { getDirectionLengthKm } from '../utils/routeDirections'
 import { OperatorLogos } from './OperatorLogos'
@@ -13,7 +12,6 @@ import { getRouteDisplayTypes } from '../utils/routeTypes'
 import { getRoutePageHref } from '../utils/routeNavigation'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
-import { RouteDirectionControls } from './RouteDirectionControls'
 import { RouteEndpoints } from './RouteEndpoints'
 import { RouteTypeTags } from './RouteTypeTags'
 
@@ -23,9 +21,7 @@ interface RouteCardProps {
   route: BusRoute
   selected: boolean
   directionIndex: number
-  onDirectionChange: (index: number) => void
   loopView?: boolean
-  onLoopViewChange?: (loopView: boolean) => void
   href?: string
   /** 分组列表中的展示编号；默认使用合并后的 route.number */
   displayNumber?: string
@@ -42,17 +38,13 @@ interface RouteCardProps {
   onNavigate?: (routeId: string) => void
   /** real 分栏：双击打开地图详情面板 */
   onOpenDetail?: () => void
-  /** real 分栏列表：每方向单独成项，隐藏方向切换 */
-  hideDirectionControls?: boolean
 }
 
 export function RouteCard({
   route,
   selected,
   directionIndex,
-  onDirectionChange,
   loopView = false,
-  onLoopViewChange,
   href,
   displayNumber,
   muted = false,
@@ -62,7 +54,6 @@ export function RouteCard({
   tourAnchor,
   onNavigate,
   onOpenDetail,
-  hideDirectionControls = false,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -78,9 +69,6 @@ export function RouteCard({
         getDirectionServiceTime(route, directionIndex, locale))
       : (getDirectionServiceTime(route, directionIndex, locale) ??
         getOptionalText(route.serviceTime, locale))
-  const hasDirectionControls =
-    !hideDirectionControls &&
-    (routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route))
   const dataIncomplete = !isRouteStopDataComplete(route)
 
   const cardHref = href ?? getRoutePageHref(route.id)
@@ -126,16 +114,6 @@ export function RouteCard({
             <span className="route-number">{cardNumber}</span>
             {availabilityRangeLabel ? (
               <span className="route-seasonal-availability">{availabilityRangeLabel}</span>
-            ) : null}
-            {hasDirectionControls ? (
-              <RouteDirectionControls
-                route={route}
-                directionIndex={directionIndex}
-                onDirectionChange={onDirectionChange}
-                loopView={loopView}
-                onLoopViewChange={onLoopViewChange ?? (() => {})}
-                compact
-              />
             ) : null}
             {dataIncomplete ? (
               <span className="route-completeness-badge" title={t('routeDataIncompleteHint')}>

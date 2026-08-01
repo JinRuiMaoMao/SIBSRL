@@ -235,7 +235,6 @@ export function SecretRoutesPage() {
                   route={route}
                   selected={selectedRoute?.id === route.id}
                   directionIndex={getDirectionIndex(route)}
-                  onDirectionChange={(index) => setDirectionIndex(route.id, index)}
                   href={secretRouteHref(route.id)}
                 />
               ))

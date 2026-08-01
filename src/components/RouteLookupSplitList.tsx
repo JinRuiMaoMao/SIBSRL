@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { DAILY_CHALLENGE_CARD_ID, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
-import type { BusRoute } from '../types/route'
 import { shouldReduceMotion } from '../storage/appPreferences'
-import { formatRealRouteDisplayNumber, type RealRouteListEntry } from '../utils/realRouteListEntries'
+import { type RealRouteListEntry } from '../utils/realRouteListEntries'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
 
@@ -28,7 +27,7 @@ export function RouteLookupSplitList({
   onOpenDetail,
   dailyChallenge = null,
 }: RouteLookupSplitListProps) {
-  const { locale, t } = useLocale()
+  const { t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
 
@@ -75,7 +74,6 @@ export function RouteLookupSplitList({
       ) : null}
       {entries.map((entry, index) => {
         const { route, directionIndex, listKey } = entry
-        const displayNumber = formatRealRouteDisplayNumber(route, directionIndex, t, locale)
 
         return (
           <div
@@ -93,10 +91,7 @@ export function RouteLookupSplitList({
               selected={selectedListKey === listKey}
               directionIndex={directionIndex}
               loopView={false}
-              displayNumber={displayNumber}
-              hideDirectionControls
               appearance="classic"
-              onDirectionChange={() => {}}
               tourAnchor={index === 0 ? 'route-card' : undefined}
               onNavigate={() => onSelect(route.id, directionIndex)}
               onOpenDetail={() => onOpenDetail(route.id, directionIndex)}
