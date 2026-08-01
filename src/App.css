@@ -3564,6 +3564,14 @@ html[data-route-lookup-layout='split'] .app {
   overflow: hidden;
 }
 
+html[data-app-layout-mode='real'] {
+  --app-tab-bar-reserve: 0px;
+}
+
+html[data-app-layout-mode='real'] .app-tab-bar-shell {
+  display: none !important;
+}
+
 html[data-route-lookup-layout='split'] .main {
   display: flex;
   flex-direction: column;

@@ -83,6 +83,14 @@ html.has-compact-tab-nav .island-map--widget {
   -webkit-user-select: none;
 }
 
+.island-map-panzoom.island-map-viewport--embedded,
+.island-map-panzoom.island-map-viewport--fullscreen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .island-map-panzoom--dragging {
   cursor: grabbing;
 }

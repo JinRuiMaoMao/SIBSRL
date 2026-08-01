@@ -204,6 +204,12 @@ function devEntryRedirectPlugin(): Plugin {
         if (layoutScoped) {
           const layoutMode = layoutScoped[1] as 'normal' | 'real'
           const pageName = layoutScoped[2]!.toLowerCase()
+          if (layoutMode === 'real' && pageName !== 'routes.html' && pageName !== 'dev.html') {
+            res.statusCode = 302
+            res.setHeader('Location', `/normal/${pageName}${req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''}`)
+            res.end()
+            return
+          }
           const sourceRel = LAYOUT_DEV_PAGE_SOURCES[pageName]
           if (sourceRel) {
             const file = resolve(root, sourceRel)

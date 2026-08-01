@@ -1,5 +1,5 @@
 import type { AppTab } from '../types/appTab'
-import { getLayoutScopedHref, isLayoutScopedPage, readAppLayoutMode } from './appLayoutMode'
+import { getLayoutScopedHref, isLayoutScopedPage, isRealLayoutMode, readAppLayoutMode } from './appLayoutMode'
 
 export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates']
 
@@ -32,13 +32,19 @@ export function isAppTab(value: string): value is AppTab {
   return (APP_TABS as string[]).includes(value)
 }
 
-/** 同布局模式下栏目页链接（normal/… 或 real/…） */
+/** 同布局模式下栏目页链接（real 仅线路查询，其他栏目指向 normal/） */
 export function getTabPageHref(tab: AppTab): string {
+  if (isRealLayoutMode() && tab !== 'routes') {
+    if (isLayoutScopedPage()) return `../normal/${TAB_PAGE_FILE[tab]}`
+    return `./normal/${TAB_PAGE_FILE[tab]}`
+  }
   return getLayoutScopedHref(TAB_PAGE_FILE[tab])
 }
 
 /** 从 meta、路径或 legacy ?tab= 读取当前栏目 */
 export function readTabFromLocation(): AppTab | null {
+  if (isRealLayoutMode()) return 'routes'
+
   const meta = document.querySelector('meta[name="app-tab"]')?.getAttribute('content')?.trim()
   if (meta && isAppTab(meta)) return meta
 

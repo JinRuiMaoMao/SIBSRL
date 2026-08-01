@@ -70,9 +70,11 @@ function prepareStandaloneHtml(html, buildTag) {
   return out
 }
 
-/** @param {string} html @param {string} filename @param {string} siteRoot @param {string} distRoot */
-function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot) {
+/** @param {string} html @param {string} filename @param {string} siteRoot @param {string} distRoot @param {{ layouts?: Array<'normal' | 'real'> }} [options] */
+function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot, options = {}) {
+  const layouts = options.layouts ?? ['normal', 'real']
   for (const { dir, mode } of APP_LAYOUT_PUBLISH) {
+    if (!layouts.includes(mode)) continue
     const scoped = prepareLayoutScopedHtml(html, mode, true)
     const layoutDir = resolve(siteRoot, dir)
     const distLayoutDir = resolve(distRoot, dir)
@@ -80,6 +82,18 @@ function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot) {
     mkdirSync(distLayoutDir, { recursive: true })
     writeFileSync(resolve(layoutDir, filename), scoped)
     writeFileSync(resolve(distLayoutDir, filename), scoped)
+  }
+}
+
+/** @param {string} filename @param {string} normalTargetPath e.g. normal/ann.html */
+function writeRealRedirectToNormal(filename, normalTargetPath, siteRoot, distRoot) {
+  const clean = normalTargetPath.replace(/^\.\//, '')
+  const redirectHtml = buildLegacyLayoutRedirectHtml(`../${clean}`)
+  for (const dir of ['real']) {
+    mkdirSync(resolve(siteRoot, dir), { recursive: true })
+    mkdirSync(resolve(distRoot, dir), { recursive: true })
+    writeFileSync(resolve(siteRoot, dir, filename), redirectHtml)
+    writeFileSync(resolve(distRoot, dir, filename), redirectHtml)
   }
 }
 
@@ -132,7 +146,12 @@ export function publishStandalone(options = {}) {
   for (const page of APP_PAGES) {
     let html = injectAppTabMeta(baseHtml, page.tab)
     html = adjustAppPageTitle(html, page.titleZh)
-    publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
+    if (page.tab === 'routes') {
+      publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
+    } else {
+      publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'), { layouts: ['normal'] })
+      writeRealRedirectToNormal(page.publishFile, `normal/${page.publishFile}`, root, resolve(root, 'dist'))
+    }
     writeLegacyRedirect(page.publishFile, `normal/${page.publishFile}`, root, resolve(root, 'dist'))
   }
 
@@ -154,22 +173,26 @@ export function publishStandalone(options = {}) {
 
   let accountHtml = injectAccountPageMeta(baseHtml)
   accountHtml = adjustAppPageTitle(accountHtml, '个人中心')
-  publishHtmlToLayoutDirs(accountHtml, 'account.html', root, resolve(root, 'dist'))
+  publishHtmlToLayoutDirs(accountHtml, 'account.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
+  writeRealRedirectToNormal('account.html', 'normal/account.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('account.html', 'normal/account.html', root, resolve(root, 'dist'))
 
   let settingsHtml = injectSettingsPageMeta(baseHtml)
   settingsHtml = adjustAppPageTitle(settingsHtml, '设置')
-  publishHtmlToLayoutDirs(settingsHtml, 'settings.html', root, resolve(root, 'dist'))
+  publishHtmlToLayoutDirs(settingsHtml, 'settings.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
+  writeRealRedirectToNormal('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
 
   let mapDrawHtml = injectMapDrawPageMeta(baseHtml)
   mapDrawHtml = adjustAppPageTitle(mapDrawHtml, '地图走线编辑')
-  publishHtmlToLayoutDirs(mapDrawHtml, 'map-draw.html', root, resolve(root, 'dist'))
+  publishHtmlToLayoutDirs(mapDrawHtml, 'map-draw.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
+  writeRealRedirectToNormal('map-draw.html', 'normal/map-draw.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('map-draw.html', 'normal/map-draw.html', root, resolve(root, 'dist'))
 
   let routeMapHtml = injectRouteMapPageMeta(baseHtml)
   routeMapHtml = adjustAppPageTitle(routeMapHtml, '线路走向图')
-  publishHtmlToLayoutDirs(routeMapHtml, 'route-map.html', root, resolve(root, 'dist'))
+  publishHtmlToLayoutDirs(routeMapHtml, 'route-map.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
+  writeRealRedirectToNormal('route-map.html', 'normal/route-map.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('route-map.html', 'normal/route-map.html', root, resolve(root, 'dist'))
 
   rmSync(resolve(root, 'tabs'), { recursive: true, force: true })

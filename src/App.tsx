@@ -40,6 +40,7 @@ import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
+import { isRealLayoutMode } from './utils/appLayoutMode'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
@@ -80,7 +81,8 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const tabFromLocation = readTabFromLocation()
-  const activeTab = tabFromLocation ?? 'routes'
+  const realLayout = isRealLayoutMode()
+  const activeTab = realLayout ? 'routes' : (tabFromLocation ?? 'routes')
   const {
     open: guidedTourOpen,
     tourMode,
@@ -199,7 +201,13 @@ function App() {
   }, [])
 
   const guidedTourLayer =
-    !isAccountPage() && !isMapDrawPage() && !isRouteMapPage() && !isSecretPage() && !isSettingsPage() && !isStartPage() ? (
+    !realLayout &&
+    !isAccountPage() &&
+    !isMapDrawPage() &&
+    !isRouteMapPage() &&
+    !isSecretPage() &&
+    !isSettingsPage() &&
+    !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
         mode={tourMode}
@@ -367,7 +375,7 @@ function App() {
         onToggleCollapse={() => setHeaderCollapsed((value) => !value)}
       />
 
-      {activeTab === 'routes' ? (
+      {activeTab === 'routes' && !realLayout ? (
         <>
           <DailyChallengePrompt
             open={dailyChallengePromptOpen}
@@ -420,8 +428,8 @@ function App() {
         </p>
       </footer>
       </div>
-      {isRoutesPage() ? <IslandMapViewerLazy /> : null}
-      <AppTabBar activeTab={tabFromLocation} />
+      {isRoutesPage() && !realLayout ? <IslandMapViewerLazy /> : null}
+      {!realLayout ? <AppTabBar activeTab={tabFromLocation} /> : null}
       </IslandMapOverlayProvider>
     </>
   )
