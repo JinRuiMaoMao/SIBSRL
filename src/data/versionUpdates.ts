@@ -181,6 +181,26 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: {
+          zh: "线路与音频",
+          en: "Routes & audio",
+        },
+        fixes: [
+          {
+            zh: "246X 里程更正为西行 10.9 km、东行 8.3 km；246XA 每日挑战起终点按当前语言显示（↺ 时间廊）。",
+            en: "246X lengths corrected to 10.9 km westbound and 8.3 km eastbound; 246XA daily challenge endpoints localize with Timelapse Mall as turnback.",
+          },
+          {
+            zh: "同步 E:\\SIBS资源\\NPC 新语音（45 条）；Cold／DoorClosed／Hot／NoKneel 暂无授权显示「待补充」。",
+            en: "Synced 45 clips from E:\\SIBS资源\\NPC; Cold/DoorClosed/Hot/NoKneel show pending placeholders without licensed audio.",
+          },
+          {
+            zh: "线路 PA 报站栏加宽，播放时可完整使用进度与倍速；所有音频播放器新增下载按钮。",
+            en: "Wider route PA column keeps progress and speed controls visible; download button added to all audio players.",
+          },
+        ],
+      },
     ],
   },
   {

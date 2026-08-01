@@ -13,7 +13,29 @@ export function npcAudioRelativeUrl(category, filename) {
 export const EXCLUDED_NPC_CATEGORIES = new Set(['没上车', '目的地错误'])
 
 /** Folder order in the NPC tab (includes empty categories). */
-export const NPC_CATEGORY_ORDER = ['行车抱怨', '下车抱怨', '服务抱怨', '打招呼，感谢']
+export const NPC_CATEGORY_ORDER = [
+  '行车抱怨',
+  '下车抱怨',
+  '服务抱怨',
+  '打招呼，感谢',
+  'Hello',
+  'Bye',
+  'Angry',
+  'Complaint',
+  'ComplaintSerious',
+  'StopSkipped',
+  'Wrong',
+  'FareWrong',
+  'DoorOpened',
+  'DoorClosed',
+  'Camera',
+  'Cold',
+  'Hot',
+  'NoKneel',
+]
+
+/** Categories with no licensed audio yet — manifest gets a placeholder row each. */
+export const NPC_PLACEHOLDER_CATEGORIES = new Set(['Cold', 'DoorClosed', 'Hot', 'NoKneel'])
 
 /** Display labels for category chips (folder name → UI label). */
 export const NPC_CATEGORY_LABELS = {

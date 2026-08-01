@@ -935,7 +935,10 @@ export function RouteLookupPage({
           },
           onClose: handleCloseDetail,
           lockDirection: dailyChallengeRouteContext != null,
-          directionEndpoints: dailyChallengeRouteContext?.endpoints ?? null,
+          directionEndpoints:
+            dailyChallengeRouteContext?.loopView
+              ? null
+              : dailyChallengeRouteContext?.endpoints ?? null,
           dailyChallengeIntro: dailyChallengeRouteContext?.intro ?? null,
         }
       : null

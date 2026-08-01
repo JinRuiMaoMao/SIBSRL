@@ -62,8 +62,15 @@ export function mergeLoopDirectionStops(route: BusRoute): StopGroup | null {
   if (!list.length) return null
 
   const primary = groups[getDirectionDataIndex(route, 0)] ?? groups[0]!
+  const loopDirection =
+    route.id === '246X'
+      ? {
+          zh: '环线（东锦葵海傍路 ↺ 时间廊）',
+          en: 'Loop (Eastmallow Praya Road ↺ Timelapse Mall)',
+        }
+      : { zh: '环线', en: 'Loop' }
   return {
-    direction: { zh: '环线', en: 'Loop' },
+    direction: loopDirection,
     directionKey: 'loop',
     serviceTime: primary.serviceTime,
     length: route.length,

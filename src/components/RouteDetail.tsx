@@ -289,6 +289,7 @@ export function RouteDetail({
                           playLabel={t('routePaPlayNext', { stop: nextName })}
                           pauseLabel={t('broadcastPause')}
                           compact
+                          stopTable
                         />
                       ) : (
                         <span className="stop-table-empty" aria-hidden="true">

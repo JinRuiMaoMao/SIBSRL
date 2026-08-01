@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import { audioDownloadFilename, triggerAudioDownload } from '../utils/audioDownload'
 
 const SPEED_PRESETS = [1, 2, 5, 10] as const
 const MIN_PLAYBACK_RATE = 0.25
@@ -21,9 +22,14 @@ interface BroadcastAudioButtonProps {
   pauseLabel: string
   /** 分站名旁紧凑喇叭 */
   compact?: boolean
+  /** 线路站序表等窄栏位：加宽播放器并保留倍速控件 */
+  stopTable?: boolean
   /** 播放结束后自动循环 */
   loop?: boolean
   dataTour?: string
+  /** 下载文件名；默认从 src 推断 */
+  downloadFilename?: string
+  showDownload?: boolean
 }
 
 function clampPlaybackRate(rate: number): number {
@@ -93,8 +99,11 @@ export function BroadcastAudioButton({
   playLabel,
   pauseLabel,
   compact = false,
+  stopTable = false,
   loop = false,
   dataTour,
+  downloadFilename,
+  showDownload = true,
 }: BroadcastAudioButtonProps) {
   const { t } = useLocale()
   const speedMenuId = useId()
@@ -368,12 +377,13 @@ export function BroadcastAudioButton({
 
   const progressPercent = Math.round(progress * 100)
   const rateLabel = `${formatPlaybackRate(playbackRate)}×`
+  const resolvedDownloadName = downloadFilename ?? audioDownloadFilename(src, id)
 
   return (
     <div
       className={`broadcast-audio-player ${compact ? 'broadcast-audio-player--compact' : ''} ${
-        engaged ? 'broadcast-audio-player--engaged' : ''
-      }`}
+        stopTable ? 'broadcast-audio-player--stop-table' : ''
+      } ${engaged ? 'broadcast-audio-player--engaged' : ''}`}
     >
       <audio ref={audioRef} src={src} preload="none" loop={loop} className="broadcast-audio-hidden" />
       <button
@@ -403,6 +413,27 @@ export function BroadcastAudioButton({
           )}
         </svg>
       </button>
+
+      {showDownload && src ? (
+        <button
+          type="button"
+          className={`broadcast-audio-download-btn ${compact ? 'broadcast-audio-download-btn--compact' : ''}`}
+          aria-label={t('audioDownload')}
+          title={t('audioDownload')}
+          onClick={(event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            triggerAudioDownload(src, resolvedDownloadName)
+          }}
+        >
+          <svg className="broadcast-download-icon" viewBox="0 0 24 24" aria-hidden>
+            <path
+              fill="currentColor"
+              d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 4h14v2H5v-2z"
+            />
+          </svg>
+        </button>
+      ) : null}
 
       {engaged ? (
         <div className="broadcast-audio-toolbar">

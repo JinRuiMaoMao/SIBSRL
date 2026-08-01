@@ -830,6 +830,8 @@ const messagesZhHans = {
   broadcastSpeedBrowserClamped:
     '浏览器不支持 {requested}× 倍速，已为您调整至浏览器最大支持倍速 {applied}× 播放。',
   broadcastSeek: '播放进度',
+  audioDownload: '下载音频',
+  audioUnavailable: '待补充',
   broadcastAudioUnsupported: '您的浏览器不支持音频播放。',
   routePaPlayNext: '播放下一站报站：{stop}',
 } as const
@@ -1673,6 +1675,8 @@ const messagesEn: Record<MessageKey, string> = {
   broadcastSpeedBrowserClamped:
     'Your browser does not support {requested}× playback. Adjusted to the maximum supported speed, {applied}×.',
   broadcastSeek: 'Playback position',
+  audioDownload: 'Download audio',
+  audioUnavailable: 'Pending',
   broadcastAudioUnsupported: 'Your browser does not support audio playback.',
   routePaPlayNext: 'Play next stop: {stop}',
 }

@@ -9,7 +9,7 @@ import {
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import { getDirectionLengthKm } from '../utils/routeDirections'
-import { getLoopViewLengthKm } from '../utils/routeLoopView'
+import { formatLoopViewEndpoints, getLoopViewLengthKm } from '../utils/routeLoopView'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { DailyChallengeResetCountdown } from './DailyChallengeResetCountdown'
 import { DailyChallengeCalendarButton } from './DailyChallengeCalendarButton'
@@ -35,9 +35,12 @@ export function DailyChallengeCard({
 }: DailyChallengeCardProps) {
   const { locale, t } = useLocale()
   const eventLabel = getPrimaryText(challenge.event, locale)
-  const endpointsLabel = challenge.endpoints
-    ? getPrimaryText(challenge.endpoints, locale)
-    : null
+  const endpointsLabel =
+    linkedRoute && challenge.loopView
+      ? formatLoopViewEndpoints(linkedRoute, locale)
+      : challenge.endpoints
+        ? getPrimaryText(challenge.endpoints, locale)
+        : null
   const routeNumber = challenge.routeNumber ?? '—'
   const linkedRoute =
     challenge.routeNumber && !isPrivateHireChallengeRoute(challenge.routeNumber)

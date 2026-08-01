@@ -711,6 +711,53 @@ html[data-reduce-motion='true'] .start-page-external-link:active {
   max-width: 9.5rem;
 }
 
+.broadcast-audio-player--stop-table {
+  width: 100%;
+  max-width: none;
+}
+
+.broadcast-audio-player--stop-table.broadcast-audio-player--compact.broadcast-audio-player--engaged {
+  max-width: none;
+  min-width: 0;
+}
+
+.broadcast-audio-download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.broadcast-audio-download-btn:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.broadcast-audio-download-btn--compact {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.broadcast-download-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.complaints-unavailable {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 .broadcast-audio-toolbar {
   display: flex;
   align-items: center;
@@ -5412,7 +5459,7 @@ html.route-detail-open .route-detail-backdrop {
 
 .stop-table-row {
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) 2.85rem 2.85rem;
+  grid-template-columns: 2rem minmax(0, 1fr) 2.85rem minmax(11rem, 18rem);
   gap: 0.35rem 0.5rem;
   align-items: center;
   padding: 0.45rem 0.6rem;
@@ -5449,7 +5496,31 @@ html.route-detail-open .route-detail-backdrop {
 .stop-table-audio {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  min-width: 0;
+  overflow: visible;
+}
+
+.stop-table-audio .broadcast-audio-player {
+  width: 100%;
+  max-width: none;
+}
+
+.stop-table-audio .broadcast-audio-player--engaged {
+  justify-content: flex-start;
+  max-width: none;
+}
+
+.stop-table-audio .broadcast-audio-player--compact .broadcast-audio-toolbar {
+  min-width: 0;
+}
+
+.stop-table-audio .broadcast-audio-progress {
+  min-width: 2.5rem;
+}
+
+.stop-table-audio .broadcast-audio-speed-btn {
+  flex-shrink: 0;
 }
 
 .stop-distance-estimated {
@@ -5458,11 +5529,6 @@ html.route-detail-open .route-detail-backdrop {
 
 .stop-table-audio .broadcast-play-btn--compact {
   margin-left: 0;
-}
-
-.stop-table-audio .broadcast-audio-player--engaged {
-  justify-content: flex-end;
-  max-width: 100%;
 }
 
 .zone-tag--table {

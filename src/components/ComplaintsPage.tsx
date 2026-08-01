@@ -52,16 +52,20 @@ export function ComplaintsPage() {
                     </span>
                     <span>{getPrimaryText(item.title, locale)}</span>
                   </h3>
-                  <BroadcastAudioButton
-                    id={item.id}
-                    src={item.audioUrl}
-                    activeId={playingId}
-                    onActiveChange={setPlayingId}
-                    playLabel={t('broadcastPlay')}
-                    pauseLabel={t('broadcastPause')}
-                    compact={compact}
-                    dataTour={index === 0 ? 'complaints-play' : undefined}
-                  />
+                  {item.unavailable || !item.audioUrl ? (
+                    <span className="complaints-unavailable">{t('audioUnavailable')}</span>
+                  ) : (
+                    <BroadcastAudioButton
+                      id={item.id}
+                      src={item.audioUrl}
+                      activeId={playingId}
+                      onActiveChange={setPlayingId}
+                      playLabel={t('broadcastPlay')}
+                      pauseLabel={t('broadcastPause')}
+                      compact={compact}
+                      dataTour={index === 0 ? 'complaints-play' : undefined}
+                    />
+                  )}
                 </div>
                 <p className="complaints-detail">{getPrimaryText(item.detail, locale)}</p>
               </li>

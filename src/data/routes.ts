@@ -2553,8 +2553,8 @@ const routesData: BusRoute[] = [
     fare: '$11.4',
     levelRequired: 74,
     length: {
-      zh: '环线约 19 km / 西行约 6.3 km / 东行约 12.7 km',
-      en: 'Loop approx. 19 km / Westbound approx. 6.3 km / Eastbound approx. 12.7 km',
+      zh: '环线约 19.2 km / 西行约 10.9 km / 东行约 8.3 km',
+      en: 'Loop approx. 19.2 km / Westbound approx. 10.9 km / Eastbound approx. 8.3 km',
     },
     stops: [
       {
@@ -2563,7 +2563,7 @@ const routesData: BusRoute[] = [
           zh: '西行（东锦葵海傍路 → 货柜码头岛）',
           en: 'Westbound (Eastmallow Praya Road → Container\'s Island)',
         },
-        length: { zh: '约 6.3 km', en: 'approx. 6.3 km' },
+        length: { zh: '约 10.9 km', en: 'approx. 10.9 km' },
         serviceTime: {
           zh: '平日 07:00 – 08:55 / 17:40 – 18:35',
           en: 'Mon–Fri 07:00 – 08:55 / 17:40 – 18:35',
@@ -2598,7 +2598,7 @@ const routesData: BusRoute[] = [
           zh: '东行（艾迪城 → 枫树里）',
           en: 'Eastbound (Addi City → Maple Lane)',
         },
-        length: { zh: '约 12.7 km', en: 'approx. 12.7 km' },
+        length: { zh: '约 8.3 km', en: 'approx. 8.3 km' },
         serviceTime: {
           zh: '平日 07:00 – 08:55 / 17:40 – 18:35',
           en: 'Mon–Fri 07:00 – 08:55 / 17:40 – 18:35',

@@ -5,6 +5,7 @@ import {
   encodeNpcPathSegment,
   EXCLUDED_NPC_CATEGORIES,
   NPC_CATEGORY_ORDER,
+  NPC_PLACEHOLDER_CATEGORIES,
   npcAudioRelativeUrl,
   sortNpcCategories,
 } from './lib/npc-audio-path.mjs'
@@ -30,7 +31,7 @@ export function buildNpcManifest(options = {}) {
   const sourceDir = options.sourceDir ?? NPC_AUDIO_PUBLIC
   /** @type {string[]} */
   const categories = []
-  /** @type {Array<{ id: string, category: string, number: number, titleZh: string, titleEn: string, audioUrl: string }>} */
+  /** @type {Array<{ id: string, category: string, number: number, titleZh: string, titleEn: string, audioUrl: string | null, unavailable?: boolean }>} */
   const items = []
 
   if (existsSync(sourceDir)) {
@@ -54,6 +55,19 @@ export function buildNpcManifest(options = {}) {
           audioUrl: npcAudioRelativeUrl(entry.name, file),
         })
       })
+
+      if (files.length === 0 && NPC_PLACEHOLDER_CATEGORIES.has(entry.name)) {
+        const categoryText = npcCategoryText(entry.name)
+        items.push({
+          id: `npc-${slugifyCategory(entry.name)}-placeholder`,
+          category: entry.name,
+          number: 1,
+          titleZh: `${categoryText.zh}（待补充）`,
+          titleEn: `${categoryText.en} (pending)`,
+          audioUrl: null,
+          unavailable: true,
+        })
+      }
     }
   }
 
@@ -72,7 +86,7 @@ export function buildNpcManifest(options = {}) {
   const itemLines = items
     .map((item) => {
       const categoryText = npcCategoryText(item.category)
-      return `  { id: ${JSON.stringify(item.id)}, category: ${JSON.stringify(item.category)}, number: ${item.number}, title: { zh: ${JSON.stringify(item.titleZh)}, en: ${JSON.stringify(item.titleEn)} }, detail: { zh: ${JSON.stringify(categoryText.zh)}, en: ${JSON.stringify(categoryText.en)} }, audioUrl: ${JSON.stringify(item.audioUrl)} },`
+      return `  { id: ${JSON.stringify(item.id)}, category: ${JSON.stringify(item.category)}, number: ${item.number}, title: { zh: ${JSON.stringify(item.titleZh)}, en: ${JSON.stringify(item.titleEn)} }, detail: { zh: ${JSON.stringify(categoryText.zh)}, en: ${JSON.stringify(categoryText.en)} }, audioUrl: ${item.audioUrl ? JSON.stringify(item.audioUrl) : 'null'},${item.unavailable ? ' unavailable: true,' : ''} },`
     })
     .join('\n')
 
@@ -88,7 +102,9 @@ export interface NpcAudioItem {
   number: number
   title: BilingualText
   detail: BilingualText
-  audioUrl: string
+  audioUrl: string | null
+  /** No licensed clip yet — show placeholder only */
+  unavailable?: boolean
 }
 
 export const NPC_CATEGORIES: readonly string[] = [
