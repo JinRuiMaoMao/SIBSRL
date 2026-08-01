@@ -102,7 +102,14 @@ function playCompositeSegment(index: number, config: RealLayoutMusicCompositeCon
   if (segment.endAt != null) {
     compositeTimeUpdateHandler = () => {
       if (element.currentTime >= segment.endAt! - 0.05) {
-        playCompositeSegment(index + 1, config)
+        const nextIndex = index + 1
+        if (nextIndex < config.segments.length) {
+          playCompositeSegment(nextIndex, config)
+        } else if (config.loop) {
+          playCompositeSegment(config.loopFromSegmentIndex ?? 0, config)
+        } else {
+          element.pause()
+        }
       }
     }
     element.addEventListener('timeupdate', compositeTimeUpdateHandler)

@@ -498,6 +498,7 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
     var introEnd = 30;
     var mainStart = 49;
+    var mainEnd = 293;
     var phase = 'intro';
     var onIntroTime = function () {
       if (phase !== 'intro' || audio.currentTime < introEnd) return;
@@ -506,21 +507,16 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       audio.src = mainUrl;
       audio.addEventListener('loadedmetadata', function () {
         audio.currentTime = mainStart;
+        audio.addEventListener('timeupdate', onMainTime);
         tryPlay();
       }, { once: true });
       audio.load();
     };
-    var onMainEnded = function () {
-      if (phase !== 'main') return;
-      phase = 'intro';
-      audio.src = introUrl;
-      audio.currentTime = 0;
-      audio.addEventListener('timeupdate', onIntroTime);
-      audio.addEventListener('canplay', tryPlay, { once: true });
-      audio.load();
+    var onMainTime = function () {
+      if (phase !== 'main' || audio.currentTime < mainEnd) return;
+      audio.currentTime = mainStart;
     };
     audio.addEventListener('timeupdate', onIntroTime);
-    audio.addEventListener('ended', onMainEnded);
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
   function unlock() {
