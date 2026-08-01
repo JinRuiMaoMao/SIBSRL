@@ -36,6 +36,19 @@
         } catch (e) {}
       })();
     </script>
+    <script id="portrait-block-bootstrap">
+      (function () {
+        var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px)');
+        function apply() {
+          document.documentElement.setAttribute('data-portrait-blocked', mq.matches ? 'true' : 'false');
+        }
+        apply();
+        if (typeof mq.addEventListener === 'function') mq.addEventListener('change', apply);
+        else if (typeof mq.addListener === 'function') mq.addListener(apply);
+        window.addEventListener('orientationchange', function () { window.setTimeout(apply, 120); });
+        window.addEventListener('resize', apply);
+      })();
+    </script>
     <meta name="app-tab" content="routes" />
     <meta name="app-build" content="development" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->

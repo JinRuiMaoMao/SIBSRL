@@ -176,6 +176,26 @@ export function injectThemeBootstrap(html) {
   return html.replace('<head>', `<head>\n    ${THEME_BOOTSTRAP_SCRIPT}`)
 }
 
+const PORTRAIT_BLOCK_BOOTSTRAP_SCRIPT = `<script id="portrait-block-bootstrap">
+(function () {
+  var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px)');
+  function apply() {
+    document.documentElement.setAttribute('data-portrait-blocked', mq.matches ? 'true' : 'false');
+  }
+  apply();
+  if (typeof mq.addEventListener === 'function') mq.addEventListener('change', apply);
+  else if (typeof mq.addListener === 'function') mq.addListener(apply);
+  window.addEventListener('orientationchange', function () { window.setTimeout(apply, 120); });
+  window.addEventListener('resize', apply);
+})();
+</script>`
+
+/** @param {string} html */
+export function injectPortraitBlockBootstrap(html) {
+  if (html.includes('id="portrait-block-bootstrap"')) return html
+  return html.replace('<head>', `<head>\n    ${PORTRAIT_BLOCK_BOOTSTRAP_SCRIPT}`)
+}
+
 const LOCALE_STORAGE_KEY = 'sibs-locale'
 
 const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'

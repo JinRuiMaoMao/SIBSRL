@@ -7,6 +7,7 @@ import { UserProfileProvider } from './contexts/UserProfileContext.tsx'
 import { GuidedTourProvider } from './contexts/GuidedTourContext.tsx'
 import { AppDialogProvider } from './contexts/AppDialogContext.tsx'
 import { CustomContextMenu } from './components/CustomContextMenu.tsx'
+import { PortraitOrientationGate } from './components/PortraitOrientationGate.tsx'
 import { AppPreferencesProvider } from './contexts/AppPreferencesContext.tsx'
 import { FavoriteRoutesProvider } from './contexts/FavoriteRoutesContext.tsx'
 import { RecentRoutesProvider } from './contexts/RecentRoutesContext.tsx'
@@ -37,6 +38,7 @@ createRoot(rootEl).render(
               <AppPreferencesProvider>
                 <FavoriteRoutesProvider>
                   <RecentRoutesProvider>
+                    <PortraitOrientationGate />
                     <App />
                     <CustomContextMenu />
                   </RecentRoutesProvider>

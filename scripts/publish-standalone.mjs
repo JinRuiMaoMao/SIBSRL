@@ -16,6 +16,7 @@ import {
   injectServiceWorkerBootstrap,
   injectStartPageMeta,
   injectThemeBootstrap,
+  injectPortraitBlockBootstrap,
   injectAppSurfaceBootstrap,
   injectUserApiMeta,
   injectBootFailureGuard,
@@ -85,8 +86,10 @@ export function publishStandalone(options = {}) {
               injectUserApiMeta(
                 injectLocaleBootstrap(
                   injectThemeBootstrap(
-                    injectDevToolsBlock(
-                      injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+                    injectPortraitBlockBootstrap(
+                      injectDevToolsBlock(
+                        injectNoScriptGuard(prepareStandaloneHtml(readFileSync(built, 'utf8'), buildTag)),
+                      ),
                     ),
                   ),
                 ),

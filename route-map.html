@@ -110,10 +110,23 @@
   }
 })();
 </script>
-    <meta name="app-build" content="2026-08-01T01:50:48.903Z" />
-    <link rel="icon" href="./sibs-logo.png?v=2026-08-01T01%3A50%3A48.903Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-08-01T01%3A50%3A48.903Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-08-01T01%3A50%3A48.903Z" />
+    <script id="portrait-block-bootstrap">
+      (function () {
+        var mq = window.matchMedia('(orientation: portrait) and (max-width: 1024px)');
+        function apply() {
+          document.documentElement.setAttribute('data-portrait-blocked', mq.matches ? 'true' : 'false');
+        }
+        apply();
+        if (typeof mq.addEventListener === 'function') mq.addEventListener('change', apply);
+        else if (typeof mq.addListener === 'function') mq.addListener(apply);
+        window.addEventListener('orientationchange', function () { window.setTimeout(apply, 120); });
+        window.addEventListener('resize', apply);
+      })();
+    </script>
+    <meta name="app-build" content="2026-08-01T01:53:31.786Z" />
+    <link rel="icon" href="./sibs-logo.png?v=2026-08-01T01%3A53%3A31.786Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-08-01T01%3A53%3A31.786Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-08-01T01%3A53%3A31.786Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -125,7 +138,7 @@
       content="Sunshine Islands Bus Simulator (SIBS) 巴士线路查询工具 - 阳光群岛 Roblox 巴士模拟器"
     />
     <title>线路走向图 · 阳光群岛线路查询</title>
-<link rel="stylesheet" crossorigin href="./assets/dev-BQ692Ugt.css">
+<link rel="stylesheet" crossorigin href="./assets/dev-CFi1m1zF.css">
       <script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
@@ -280,6 +293,6 @@ if ('serviceWorker' in navigator) {
   }, 15000);
 })();
 </script>
-      <script type="module" crossorigin src="./assets/dev-CplNpGm4.js"></script>
+      <script type="module" crossorigin src="./assets/dev-DOCLGbsI.js"></script>
   </body>
 </html>

@@ -188,6 +188,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "竖屏（手机/平板）不再可用，检测到竖屏时会提示请旋转至横屏。",
+            en: "Portrait mode on phones and tablets is blocked; users are prompted to rotate to landscape.",
+          },
+          {
             zh: "新增分屏布局：左侧横向单卡浏览线路，右侧嵌入群岛地图；搜索栏右上角可切换「网格／分屏」。",
             en: "Added split layout: horizontal one-card route carousel on the left, embedded island map on the right; toggle Grid/Split in the search toolbar.",
           },
