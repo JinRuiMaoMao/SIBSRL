@@ -6,6 +6,7 @@ import { showCircularLineBesideNumber } from '../utils/routeCategory'
 import { getRouteDisplayTypes } from '../utils/routeTypes'
 import type { DailyChallengeIntro as DailyChallengeIntroContent } from '../data/dailyChallenge'
 import type { BilingualText, BusRoute } from '../types/route'
+import { DailyChallengeIntro } from './DailyChallengeIntro'
 import {
   getDirectionLengthKm,
   getDirectionServiceTime,
