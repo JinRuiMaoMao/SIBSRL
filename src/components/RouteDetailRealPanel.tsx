@@ -28,7 +28,7 @@ import { RouteDirectionControls } from './RouteDirectionControls'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
-import { DailyChallengeIntro } from './DailyChallengeIntro'
+import { RouteRealTimeline } from './RouteRealTimeline'
 
 interface RouteDetailRealPanelProps {
   route: BusRoute
@@ -190,6 +190,10 @@ export function RouteDetailRealPanel({
             </ul>
 
             <DifficultyStars count={difficulty} />
+
+            {activeStops?.list.length ? (
+              <RouteRealTimeline stops={activeStops.list} className="route-real-panel-timeline" />
+            ) : null}
             </div>
           </div>
 

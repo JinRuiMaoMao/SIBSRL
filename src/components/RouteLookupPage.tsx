@@ -142,8 +142,6 @@ function overlayKey(overlay: DetailOverlay): string | null {
 /** 详情全屏滑入/滑出时长（毫秒） */
 const DETAIL_ANIM_MS = 500
 const DETAIL_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)'
-/** Delay deselect so double-click can open detail without toggling off first. */
-const REAL_ROUTE_DESELECT_DELAY_MS = 320
 
 
 function motionDurationMs(): number {
@@ -271,16 +269,6 @@ export function RouteLookupPage({
   const animGenerationRef = useRef(0)
   const lastPendingDailyChallengeDetailRef = useRef(0)
   const handleSelectDailyChallengeRef = useRef<() => void>(() => {})
-  const realRouteDeselectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const cancelPendingRealRouteDeselect = useCallback(() => {
-    if (realRouteDeselectTimerRef.current != null) {
-      clearTimeout(realRouteDeselectTimerRef.current)
-      realRouteDeselectTimerRef.current = null
-    }
-  }, [])
-
-  useEffect(() => () => cancelPendingRealRouteDeselect(), [cancelPendingRealRouteDeselect])
 
   const {
     filters,
@@ -570,12 +558,11 @@ export function RouteLookupPage({
   }, [clearSelection])
 
   const closeSplitDetail = useCallback(() => {
-    cancelPendingRealRouteDeselect()
     setDetailClosing(false)
     setDetailOverlay(null)
     setRoutePageDetail(null)
     setDailyChallengeRouteContext(null)
-  }, [cancelPendingRealRouteDeselect])
+  }, [])
 
   const detailChromeHidden =
     Boolean(detailOverlay) && !detailClosing && !splitLayoutActive
@@ -781,14 +768,11 @@ export function RouteLookupPage({
 
   useEffect(() => {
     if (!selectedRoute) {
-      if (splitLayoutActive) {
-        setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
-      }
+      setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
       return
     }
-    if (splitLayoutActive) return
     setDetailOverlay({ kind: 'route', route: selectedRoute })
-  }, [selectedRoute, splitLayoutActive])
+  }, [selectedRoute])
 
   useEffect(() => {
     const sheet = sheetRef.current
@@ -924,43 +908,14 @@ export function RouteLookupPage({
 
   const handleCarouselSelect = useCallback(
     (routeId: string, directionIndex: number) => {
-      cancelPendingRealRouteDeselect()
-      const route = findDisplayRoute(routeId)
-      const currentDirectionIndex = route ? getDirectionIndex(route) : 0
-      if (selectedRoute?.id === routeId && currentDirectionIndex === directionIndex) {
-        realRouteDeselectTimerRef.current = setTimeout(() => {
-          realRouteDeselectTimerRef.current = null
-          clearSelection()
-          clearRouteFromLocation()
-          setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
-        }, REAL_ROUTE_DESELECT_DELAY_MS)
-        return
-      }
-      setDirectionIndex(routeId, directionIndex)
-      setLoopView(routeId, false)
-      selectRoute(routeId)
-    },
-    [
-      cancelPendingRealRouteDeselect,
-      clearSelection,
-      findDisplayRoute,
-      getDirectionIndex,
-      selectRoute,
-      selectedRoute?.id,
-      setDirectionIndex,
-      setLoopView,
-    ],
-  )
-
-  const handleOpenDetailInSplit = useCallback(
-    (routeId: string, directionIndex: number) => {
-      cancelPendingRealRouteDeselect()
       handleRouteNavigate(routeId, directionIndex)
       const route = findDisplayRoute(routeId)
       if (route) setDetailOverlay({ kind: 'route', route })
     },
-    [cancelPendingRealRouteDeselect, findDisplayRoute, handleRouteNavigate],
+    [findDisplayRoute, handleRouteNavigate],
   )
+
+  const handleOpenDetailInSplit = handleCarouselSelect
 
   handleSelectDailyChallengeRef.current = handleSelectDailyChallenge
 
