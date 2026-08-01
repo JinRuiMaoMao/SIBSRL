@@ -83,8 +83,30 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
   var splash = document.getElementById('start-boot-splash');
   if (!splash) return;
   var BOOT_SEEN_KEY = 'sibs-start-boot-seen';
+  var BOOT_STUCK_MS = 12000;
   function isBootSeen() {
     try { return localStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch (e) { return false; }
+  }
+  function dismissSplash() {
+    document.documentElement.classList.remove('start-boot-active');
+    if (window.__SIBS_START_BOOT__ && window.__SIBS_START_BOOT__.finish) {
+      window.__SIBS_START_BOOT__.finish();
+      return;
+    }
+    splash.classList.add('is-done');
+    splash.setAttribute('aria-busy', 'false');
+    window.setTimeout(function () {
+      if (splash.parentNode) splash.parentNode.removeChild(splash);
+    }, 420);
+  }
+  function recoverSplashState() {
+    if (isBootSeen()) {
+      dismissSplash();
+      return;
+    }
+    if (document.documentElement.classList.contains('start-boot-active')) {
+      window.location.reload();
+    }
   }
   if (isBootSeen()) {
     splash.remove();
@@ -107,16 +129,20 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
   }
   window.__SIBS_START_BOOT__ = {
     setProgress: setProgress,
-    finish: function () {
-      document.documentElement.classList.remove('start-boot-active');
-      splash.classList.add('is-done');
-      splash.setAttribute('aria-busy', 'false');
-      window.setTimeout(function () {
-        if (splash.parentNode) splash.parentNode.removeChild(splash);
-      }, 420);
-    },
+    finish: dismissSplash,
   };
   setProgress(0, '本站加载中…');
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) recoverSplashState();
+  });
+  window.setTimeout(function () {
+    if (!document.getElementById('start-boot-splash')) return;
+    if (isBootSeen()) {
+      dismissSplash();
+      return;
+    }
+    window.location.reload();
+  }, BOOT_STUCK_MS);
 })();
 </script>`
 
@@ -127,8 +153,14 @@ export function injectStartBootSplash(html) {
   if (!out.includes('id="start-boot-critical"')) {
     out = out.replace('</head>', `    <style id="start-boot-critical">${START_BOOT_SPLASH_CRITICAL_CSS}</style>\n  </head>`)
   }
+  out = out.replace('<body>', `<body>\n    ${START_BOOT_SPLASH_HTML}`)
   if (!out.includes('id="start-boot-splash-script"')) {
-    out = out.replace('</body>', `    ${START_BOOT_SPLASH_SCRIPT}\n  </body>`)
+    const moduleMatch = out.match(/\s*<script type="module" crossorigin src="[^"]*\/assets\/[^"]+\.js"><\/script>\s*/)
+    if (moduleMatch) {
+      out = out.replace(moduleMatch[0], `\n    ${START_BOOT_SPLASH_SCRIPT}\n${moduleMatch[0]}`)
+    } else {
+      out = out.replace('</body>', `    ${START_BOOT_SPLASH_SCRIPT}\n  </body>`)
+    }
   }
-  return out.replace('<body>', `<body>\n    ${START_BOOT_SPLASH_HTML}`)
+  return out
 }

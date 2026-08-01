@@ -145,10 +145,10 @@
         window.addEventListener('resize', apply);
       })();
     </script>
-    <meta name="app-build" content="2026-08-01T10:18:01.559Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A18%3A01.559Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A18%3A01.559Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A18%3A01.559Z" />
+    <meta name="app-build" content="2026-08-01T10:20:52.296Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-01T10%3A20%3A52.296Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-01T10%3A20%3A52.296Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-01T10%3A20%3A52.296Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -519,14 +519,35 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   }, 15000);
 })();
 </script>
-      <script type="module" crossorigin src="../assets/dev-CuLXbK5L.js"></script>
-      <script id="start-boot-splash-script">
+    <script id="start-boot-splash-script">
 (function () {
   var splash = document.getElementById('start-boot-splash');
   if (!splash) return;
   var BOOT_SEEN_KEY = 'sibs-start-boot-seen';
+  var BOOT_STUCK_MS = 12000;
   function isBootSeen() {
     try { return localStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch (e) { return false; }
+  }
+  function dismissSplash() {
+    document.documentElement.classList.remove('start-boot-active');
+    if (window.__SIBS_START_BOOT__ && window.__SIBS_START_BOOT__.finish) {
+      window.__SIBS_START_BOOT__.finish();
+      return;
+    }
+    splash.classList.add('is-done');
+    splash.setAttribute('aria-busy', 'false');
+    window.setTimeout(function () {
+      if (splash.parentNode) splash.parentNode.removeChild(splash);
+    }, 420);
+  }
+  function recoverSplashState() {
+    if (isBootSeen()) {
+      dismissSplash();
+      return;
+    }
+    if (document.documentElement.classList.contains('start-boot-active')) {
+      window.location.reload();
+    }
   }
   if (isBootSeen()) {
     splash.remove();
@@ -549,17 +570,23 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   }
   window.__SIBS_START_BOOT__ = {
     setProgress: setProgress,
-    finish: function () {
-      document.documentElement.classList.remove('start-boot-active');
-      splash.classList.add('is-done');
-      splash.setAttribute('aria-busy', 'false');
-      window.setTimeout(function () {
-        if (splash.parentNode) splash.parentNode.removeChild(splash);
-      }, 420);
-    },
+    finish: dismissSplash,
   };
   setProgress(0, '本站加载中…');
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) recoverSplashState();
+  });
+  window.setTimeout(function () {
+    if (!document.getElementById('start-boot-splash')) return;
+    if (isBootSeen()) {
+      dismissSplash();
+      return;
+    }
+    window.location.reload();
+  }, BOOT_STUCK_MS);
 })();
 </script>
+
+      <script type="module" crossorigin src="../assets/dev-1cLeyK68.js"></script>
   </body>
 </html>

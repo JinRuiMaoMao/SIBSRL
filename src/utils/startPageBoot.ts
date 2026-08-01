@@ -14,6 +14,32 @@ declare global {
   }
 }
 
+/** Remove splash + unblock #root (safe to call repeatedly). */
+export function dismissStartBootSplash(): void {
+  document.documentElement.classList.remove('start-boot-active')
+  window.__SIBS_START_BOOT__?.finish()
+  const splash = document.getElementById('start-boot-splash')
+  if (!splash) return
+  splash.classList.add('is-done')
+  splash.setAttribute('aria-busy', 'false')
+  window.setTimeout(() => {
+    splash.remove()
+  }, 420)
+}
+
+/** Recover from bfcache or stale splash after routes → index navigation. */
+export function syncStartBootSplashState(): void {
+  if (hasStartBootBeenSeen()) {
+    dismissStartBootSplash()
+    return
+  }
+
+  const splash = document.getElementById('start-boot-splash')
+  if (splash && document.documentElement.classList.contains('start-boot-active')) {
+    window.location.reload()
+  }
+}
+
 function preloadImage(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const image = new Image()
@@ -50,9 +76,7 @@ export async function runStartPageBoot(
   options?: { reduceMotion?: boolean },
 ): Promise<void> {
   if (hasStartBootBeenSeen()) {
-    window.__SIBS_START_BOOT__?.finish()
-    document.documentElement.classList.remove('start-boot-active')
-    document.getElementById('start-boot-splash')?.remove()
+    dismissStartBootSplash()
     return
   }
 
@@ -82,8 +106,12 @@ export async function runStartPageBoot(
   }
 
   markStartBootBeenSeen()
-  bridge?.finish()
+  dismissStartBootSplash()
+}
 
-  document.documentElement.classList.remove('start-boot-active')
-  document.getElementById('start-boot-splash')?.remove()
+export function installStartBootSplashRecovery(): void {
+  const onPageShow = (event: PageTransitionEvent) => {
+    if (event.persisted) syncStartBootSplashState()
+  }
+  window.addEventListener('pageshow', onPageShow)
 }
