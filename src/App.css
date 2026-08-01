@@ -3621,11 +3621,6 @@ html[data-route-lookup-layout='split'] .site-footer {
   margin: 0;
 }
 
-.route-split-sidebar .daily-challenge-banner {
-  flex-shrink: 0;
-  margin: 0.5rem 0.5rem 0;
-}
-
 .route-split-list {
   flex: 1;
   min-height: 0;
@@ -3647,6 +3642,23 @@ html[data-route-lookup-layout='split'] .site-footer {
 
 .route-split-list-item .route-card {
   font-size: 0.92rem;
+}
+
+.route-split-list-item .daily-challenge-card.route-card--classic {
+  min-height: 7.5rem;
+  font-size: 0.92rem;
+}
+
+.route-split-list-item .daily-challenge-card .route-endpoints,
+.route-split-list-item .daily-challenge-card .route-meta {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.route-split-list-item .daily-challenge-card .route-card-bottom {
+  margin-top: auto;
 }
 
 .route-map-pane {
@@ -6256,6 +6268,10 @@ html[data-list-density='compact'] .direction-toggle--compact .direction-toggle-b
 html[data-list-density='compact'] .daily-challenge-card {
   padding: 0.7rem 0.8rem;
   min-height: 5rem;
+}
+
+html[data-list-density='compact'] .route-split-list-item .daily-challenge-card.route-card--classic {
+  min-height: 6.5rem;
 }
 
 html[data-list-density='compact'] .daily-challenge-reset-countdown {

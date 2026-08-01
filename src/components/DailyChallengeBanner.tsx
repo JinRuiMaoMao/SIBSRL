@@ -5,6 +5,7 @@ interface DailyChallengeBannerProps {
   selected: boolean
   onSelect: () => void
   onOpenCalendar?: () => void
+  variant?: 'default' | 'split'
   challenge: DailyChallengeInfo
 }
 
@@ -12,6 +13,7 @@ export function DailyChallengeBanner({
   selected,
   onSelect,
   onOpenCalendar,
+  variant = 'default',
   challenge,
 }: DailyChallengeBannerProps) {
   return (
@@ -19,6 +21,7 @@ export function DailyChallengeBanner({
       selected={selected}
       onSelect={onSelect}
       onOpenCalendar={onOpenCalendar}
+      variant={variant}
       challenge={challenge}
     />
   )

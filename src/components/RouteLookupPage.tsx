@@ -1340,14 +1340,6 @@ export function RouteLookupPage({
             >
               {searchToolbar}
             </div>
-            {dailyChallengeVisible ? (
-              <DailyChallengeBanner
-                selected={dailyChallengeSelected}
-                onSelect={handleSelectDailyChallenge}
-                onOpenCalendar={() => setDailyChallengeCalendarOpen(true)}
-                challenge={dailyChallenge}
-              />
-            ) : null}
             <RouteLookupSplitList
               routes={filteredRoutes}
               selectedId={selectedRoute?.id ?? null}
@@ -1357,6 +1349,17 @@ export function RouteLookupPage({
               setLoopView={setLoopView}
               onSelect={handleCarouselSelect}
               onOpenDetail={handleOpenDetailInSplit}
+              dailyChallenge={
+                dailyChallengeVisible
+                  ? {
+                      visible: true,
+                      selected: dailyChallengeSelected,
+                      challenge: dailyChallenge,
+                      onSelect: handleSelectDailyChallenge,
+                      onOpenCalendar: () => setDailyChallengeCalendarOpen(true),
+                    }
+                  : null
+              }
             />
           </aside>
           <div className="route-map-pane" aria-label={t('islandMapAria')}>

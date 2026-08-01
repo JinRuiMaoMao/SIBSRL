@@ -21,6 +21,8 @@ interface DailyChallengeCardProps {
   className?: string
   showPlaceholderNote?: boolean
   showResetCountdown?: boolean
+  /** split 侧栏：与线路卡同高、精简内容 */
+  variant?: 'default' | 'split'
   challenge: DailyChallengeInfo
 }
 
@@ -31,9 +33,13 @@ export function DailyChallengeCard({
   className = '',
   showPlaceholderNote = true,
   showResetCountdown = true,
+  variant = 'default',
   challenge,
 }: DailyChallengeCardProps) {
   const { locale, t } = useLocale()
+  const splitVariant = variant === 'split'
+  const showCountdown = showResetCountdown && !splitVariant
+  const showNotes = showPlaceholderNote && !splitVariant
   const eventLabel = getPrimaryText(challenge.event, locale)
   const linkedRoute =
     challenge.routeNumber && !isPrivateHireChallengeRoute(challenge.routeNumber)
@@ -63,7 +69,7 @@ export function DailyChallengeCard({
       data-tour="daily-challenge"
       role="button"
       tabIndex={0}
-      className={`route-card daily-challenge-card ${selected ? 'selected' : ''} ${className}`.trim()}
+      className={`route-card daily-challenge-card${splitVariant ? ' route-card--classic' : ''} ${selected ? 'selected' : ''} ${className}`.trim()}
       onClick={onSelect}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -74,7 +80,7 @@ export function DailyChallengeCard({
       aria-pressed={selected}
       aria-label={t('dailyChallengeAria')}
     >
-      {showResetCountdown ? <DailyChallengeResetCountdown /> : null}
+      {showCountdown ? <DailyChallengeResetCountdown /> : null}
 
       {lengthKm ? (
         <span className="route-card-km route-card-km--corner" key={`${routeNumber}-km-${directionIndex}`}>
@@ -97,15 +103,15 @@ export function DailyChallengeCard({
 
       {endpointsLabel ? <p className="route-meta">{eventLabel}</p> : null}
 
-      {challenge.intro ? (
+      {challenge.intro && !splitVariant ? (
         <DailyChallengeIntro intro={challenge.intro} compact className="route-meta" />
       ) : null}
 
-      {showPlaceholderNote && challenge.fromSchedule ? (
+      {showNotes && challenge.fromSchedule ? (
         <p className="route-meta">{t('dailyChallengeScheduleNote')}</p>
       ) : null}
 
-      {showPlaceholderNote && challenge.isPlaceholder ? (
+      {showNotes && challenge.isPlaceholder ? (
         <p className="route-meta">{t('dailyChallengePlaceholderNote')}</p>
       ) : null}
 
