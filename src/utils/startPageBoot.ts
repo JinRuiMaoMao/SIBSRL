@@ -1,3 +1,4 @@
+import { getSiteLogoUrl } from '../data/siteBrand'
 import { hasStartBootBeenSeen, markStartBootBeenSeen } from '../storage/startPageBootSeen'
 
 export const START_PAGE_BOOT_DURATION_MS = 5000
@@ -60,7 +61,7 @@ export async function runStartPageBoot(
     bridge?.setProgress(percent, label)
   }
 
-  void preloadImage('./sibs-logo.png').catch(() => undefined)
+  void preloadImage(getSiteLogoUrl()).catch(() => undefined)
   void waitForFonts()
 
   const steps = options?.reduceMotion

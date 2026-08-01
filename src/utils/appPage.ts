@@ -1,5 +1,10 @@
 import { getLayoutScopedHref, isLayoutScopedPage } from './appLayoutMode'
 
+export function getSecretPageHref(): string {
+  if (isLayoutScopedPage()) return '../secret.html'
+  return './secret.html'
+}
+
 export function isStartPage(): boolean {
   const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
   if (meta === 'start') return true

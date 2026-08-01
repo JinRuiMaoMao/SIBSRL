@@ -206,6 +206,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
         fixes: [
           {
+            zh: "修复 GitHub Pages 上 normal/real 子目录 Logo 与地图资源路径，以及 secret.html 从子目录无法打开的问题。",
+            en: "Fixed logo/map asset paths under normal/real on GitHub Pages and secret.html being unreachable from layout subdirs.",
+          },
+          {
             zh: "修复 real 布局下右侧群岛地图不显示（布局改由 URL 决定，不再被本地偏好覆盖）。",
             en: "Fixed the island map not showing in real layout (layout is now driven by URL, not overridden by stored preferences).",
           },

@@ -1,4 +1,4 @@
-import { SITE_LOGO_URL } from '../data/siteBrand'
+import { getSiteLogoUrl } from '../data/siteBrand'
 import { getHtmlLang } from '../i18n/htmlLang'
 import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
@@ -48,7 +48,7 @@ function upsertHeadLink(rel: string, href: string, extra: Record<string, string>
   }
 }
 
-export function syncFavicon(href: string = SITE_LOGO_URL): void {
+export function syncFavicon(href: string = getSiteLogoUrl()): void {
   const versioned = withFaviconVersion(href)
   upsertHeadLink('icon', versioned, { type: 'image/png', sizes: '53x53' })
   upsertHeadLink('apple-touch-icon', versioned, { sizes: '180x180' })

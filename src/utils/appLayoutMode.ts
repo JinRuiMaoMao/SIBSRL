@@ -21,8 +21,12 @@ export function isLayoutScopedPage(): boolean {
   return LAYOUT_SEGMENT_RE.test(window.location.pathname.replace(/\\/g, '/'))
 }
 
-/** Asset/audio/map paths: ../ when under normal/ or real/, ./ at site root. */
+/** Asset/audio/map paths: use Vite BASE on GitHub Pages; ../ under normal|real when relative. */
 export function getSiteAssetRoot(): string {
+  const base = import.meta.env.BASE ?? './'
+  if (base.startsWith('/')) {
+    return base.endsWith('/') ? base : `${base}/`
+  }
   return isLayoutScopedPage() ? '../' : './'
 }
 

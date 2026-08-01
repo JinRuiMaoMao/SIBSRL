@@ -1,4 +1,4 @@
-import { SITE_LOGO_URL } from '../data/siteBrand'
+import { getSiteLogoUrl } from '../data/siteBrand'
 
 interface SiteLogoProps {
   className?: string
@@ -7,7 +7,7 @@ interface SiteLogoProps {
 export function SiteLogo({ className = '' }: SiteLogoProps) {
   return (
     <img
-      src={SITE_LOGO_URL}
+      src={getSiteLogoUrl()}
       alt=""
       className={`brand-logo ${className}`.trim()}
       width={32}

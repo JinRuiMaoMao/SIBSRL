@@ -5,6 +5,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import { getLayoutRoutesHref } from '../utils/appLayoutMode'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { getSettingsPageHref } from '../utils/appPage'
+import { getSiteLogoUrl } from '../data/siteBrand'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
@@ -32,7 +33,7 @@ export function StartPage() {
 
       <main className="start-page-main">
         <div className="start-page-hero scroll-reveal is-revealed">
-          <img className="start-page-logo" src="./sibs-logo.png" alt="" width={72} height={72} decoding="async" />
+          <img className="start-page-logo" src={getSiteLogoUrl()} alt="" width={72} height={72} decoding="async" />
           <h1 className="start-page-title">{t('startPageTitle')}</h1>
           <p className="start-page-lead">{t('startPageLead')}</p>
           <div className="start-page-cta-row">
