@@ -499,7 +499,7 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var introFadeAt = 30;
     var mainEntryStart = 189;
     var mainLoopStart = 17;
-    var mainFadeAt = 293;
+    var mainFadeAt = 292.45;
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
     var targetVolume = 1;
