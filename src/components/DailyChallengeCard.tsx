@@ -12,6 +12,7 @@ import { getDirectionLengthKm } from '../utils/routeDirections'
 import { formatLoopViewEndpoints, getLoopViewLengthKm } from '../utils/routeLoopView'
 import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { DailyChallengeResetCountdown } from './DailyChallengeResetCountdown'
+import { DailyChallengeCalendarButton } from './DailyChallengeCalendarButton'
 import { OperatorLogos } from './OperatorLogos'
 
 interface DailyChallengeCardProps {
