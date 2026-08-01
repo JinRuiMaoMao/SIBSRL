@@ -504,22 +504,6 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
     var targetVolume = 1;
     var phase = 'intro';
     var spliced = false;
-    var fadeFrame = null;
-    function cancelFade() {
-      if (fadeFrame != null) { cancelAnimationFrame(fadeFrame); fadeFrame = null; }
-    }
-    function fadeVolume(target, done) {
-      cancelFade();
-      var start = audio.volume;
-      var t0 = performance.now();
-      function step(t) {
-        var p = Math.min(1, (t - t0) / fadeMs);
-        audio.volume = start + (target - start) * p;
-        if (p < 1) fadeFrame = requestAnimationFrame(step);
-        else { fadeFrame = null; audio.volume = target; if (done) done(); }
-      }
-      fadeFrame = requestAnimationFrame(step);
-    }
     function rampVolume(currentTime, cutAt) {
       var fadeStart = cutAt - fadeLead;
       if (currentTime <= fadeStart) {
@@ -537,21 +521,19 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       if (spliced) return;
       spliced = true;
       phase = 'main';
-      audio.volume = 0;
       audio.src = mainUrl;
       audio.addEventListener('loadedmetadata', function () {
         audio.currentTime = mainStart;
+        audio.volume = targetVolume;
         tryPlay();
-        fadeVolume(targetVolume);
       }, { once: true });
       audio.load();
     }
     function spliceMainLoop() {
       spliced = false;
-      audio.volume = 0;
       audio.currentTime = mainStart;
+      audio.volume = targetVolume;
       tryPlay();
-      fadeVolume(targetVolume);
     }
     var onTrackTime = function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;

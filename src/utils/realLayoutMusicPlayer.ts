@@ -153,7 +153,7 @@ function spliceToSegment(
   const nextSegment = config.segments[nextIndex]
   if (!nextSegment) return
 
-  const fadeIn = options.fadeIn ?? true
+  const fadeIn = options.fadeIn ?? false
   const startAt = nextSegment.startAt ?? 0
   const nextUrl = resolveCompositeAssetUrl(nextSegment.asset)
   const sameSource = element.src === nextUrl
@@ -165,7 +165,7 @@ function spliceToSegment(
 
   element.loop = false
   cancelAudioFade()
-  element.volume = 0
+  element.volume = fadeIn ? 0 : REAL_LAYOUT_MUSIC_TARGET_VOLUME
 
   const afterReady = () => {
     startSegmentPlayback(element, startAt, fadeIn)
@@ -194,7 +194,7 @@ function attachCompositeSegmentHandlers(
   const performSplice = (nextIndex: number) => {
     if (spliced) return
     spliced = true
-    spliceToSegment(nextIndex, config, { fadeIn: true })
+    spliceToSegment(nextIndex, config, { fadeIn: false })
   }
 
   if (segment.endAt != null) {
