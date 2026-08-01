@@ -20,6 +20,7 @@ import { formatRouteOperators } from '../utils/routeDisplay'
 import {
   formatShortJourneyTime,
   routeDifficultyStars,
+  ROUTE_DIFFICULTY_STAR_MAX,
 } from '../utils/routeRealDisplay'
 import { buildRouteShareUrl } from '../utils/routeNavigation'
 import type { RoutePageData } from '../types/routePageData'
@@ -48,10 +49,13 @@ function DifficultyStars({ count }: { count: number }) {
   if (count <= 0) return null
 
   return (
-    <div className="route-real-panel-difficulty" aria-label={t('realRouteDifficulty')}>
+    <div
+      className="route-real-panel-difficulty"
+      aria-label={t('realRouteDifficultyStars', { count, max: ROUTE_DIFFICULTY_STAR_MAX })}
+    >
       <span className="route-real-panel-difficulty-label">{t('realRouteDifficulty')}</span>
       <span className="route-real-panel-stars" aria-hidden="true">
-        {[1, 2, 3].map((star) => (
+        {Array.from({ length: ROUTE_DIFFICULTY_STAR_MAX }, (_, index) => index + 1).map((star) => (
           <span
             key={star}
             className={`route-real-panel-star${star <= count ? ' route-real-panel-star--filled' : ''}`}
@@ -140,7 +144,8 @@ export function RouteDetailRealPanel({
 
       {!collapsed ? (
         <>
-          <div className="route-real-panel-overview">
+          <div className="route-real-panel-overview-scroll">
+            <div className="route-real-panel-overview">
             <div className="route-real-panel-route-id">
               <span className="route-real-panel-bus" aria-hidden="true">
                 🚌
@@ -186,9 +191,8 @@ export function RouteDetailRealPanel({
             ) : null}
 
             <DifficultyStars count={difficulty} />
+            </div>
           </div>
-
-          <div className="route-real-panel-divider" aria-hidden="true" />
 
           {dailyChallengeIntro ? (
             <DailyChallengeIntro intro={dailyChallengeIntro} className="route-real-panel-section" />

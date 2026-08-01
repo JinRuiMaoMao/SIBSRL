@@ -2,12 +2,15 @@ import { getPrimaryText } from '../i18n/displayText'
 import type { Locale } from '../i18n/types'
 import type { BilingualText, BusRoute } from '../types/route'
 
-/** 参考游戏界面：从 levelRequired 映射 0–3 星难度 */
+export const ROUTE_DIFFICULTY_STAR_MAX = 5
+
+/** 参考游戏界面：从 levelRequired 映射 0–5 星难度 */
 export function routeDifficultyStars(levelRequired?: number): number {
-  if (levelRequired == null) return 0
-  if (levelRequired <= 25) return 1
-  if (levelRequired <= 60) return 2
-  return 3
+  if (levelRequired == null || levelRequired <= 0) return 0
+  return Math.min(
+    ROUTE_DIFFICULTY_STAR_MAX,
+    Math.max(1, Math.ceil(levelRequired / 20)),
+  )
 }
 
 /** 卡片上显示的简短行车时间 */
