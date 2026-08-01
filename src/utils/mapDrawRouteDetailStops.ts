@@ -1,3 +1,5 @@
+import { resolveSiteAssetUrl } from './appLayoutMode'
+
 export type MapDrawRouteDetailStopName = { zh: string; en: string }
 
 let routeDetailStopsCache: MapDrawRouteDetailStopName[] | null = null
@@ -5,9 +7,12 @@ let routeDetailStopsCache: MapDrawRouteDetailStopName[] | null = null
 export async function loadAllRouteDetailStopNames(): Promise<MapDrawRouteDetailStopName[]> {
   if (routeDetailStopsCache) return routeDetailStopsCache
 
-  const response = await fetch(`./route-detail-stops.json?v=${encodeURIComponent(__APP_BUILD__)}`, {
-    cache: 'no-cache',
-  })
+  const response = await fetch(
+    resolveSiteAssetUrl(`route-detail-stops.json?v=${encodeURIComponent(__APP_BUILD__)}`),
+    {
+      cache: 'no-cache',
+    },
+  )
   if (!response.ok) {
     throw new Error(`Failed to load route-detail-stops.json (${response.status})`)
   }

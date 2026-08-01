@@ -1,4 +1,5 @@
 import type { BusRoute } from '../types/route'
+import { resolveSiteAssetUrl } from './appLayoutMode'
 import type { RoutePageData } from '../types/routePageData'
 import { pageDataToNormalizedStops } from './routePageDataFormat'
 import { getRoutePageDataHref } from './routeNavigation'
@@ -35,5 +36,5 @@ export function applyRoutePageData(base: BusRoute, page: RoutePageData): BusRout
 }
 
 export function getRoutePageHtmlUrl(routeId: string): string {
-  return `./${getRoutePageDataHref(routeId)}`
+  return resolveSiteAssetUrl(getRoutePageDataHref(routeId))
 }

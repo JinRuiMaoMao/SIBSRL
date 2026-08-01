@@ -206,6 +206,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
         fixes: [
           {
+            zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
+            en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
+          },
+          {
             zh: "修复 GitHub Pages 上 normal/real 子目录 Logo 与地图资源路径，以及 secret.html 从子目录无法打开的问题。",
             en: "Fixed logo/map asset paths under normal/real on GitHub Pages and secret.html being unreachable from layout subdirs.",
           },

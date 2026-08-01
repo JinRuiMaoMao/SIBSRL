@@ -21,13 +21,22 @@ export function isLayoutScopedPage(): boolean {
   return LAYOUT_SEGMENT_RE.test(window.location.pathname.replace(/\\/g, '/'))
 }
 
-/** Asset/audio/map paths: use Vite BASE on GitHub Pages; ../ under normal|real when relative. */
+/** Asset/audio/map paths: use Vite BASE on GitHub Pages; ../ under normal|real|routes when relative. */
 export function getSiteAssetRoot(): string {
   const base = import.meta.env.BASE ?? './'
   if (base.startsWith('/')) {
     return base.endsWith('/') ? base : `${base}/`
   }
-  return isLayoutScopedPage() ? '../' : './'
+  const path = window.location.pathname.replace(/\\/g, '/')
+  if (/\/(normal|real|routes)\//i.test(path)) return '../'
+  return './'
+}
+
+/** Resolve ./audio/... or audio/... against the site root (handles normal/real subdirs + GitHub Pages BASE). */
+export function resolveSiteAssetUrl(relativePath: string): string {
+  if (/^(https?:|\/|data:|blob:)/.test(relativePath)) return relativePath
+  const clean = relativePath.replace(/^\.\//, '')
+  return `${getSiteAssetRoot()}${clean}`
 }
 
 export function getLayoutScopedHref(filename: string): string {

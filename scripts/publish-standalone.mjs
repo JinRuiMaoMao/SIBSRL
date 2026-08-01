@@ -207,6 +207,17 @@ export function publishStandalone(options = {}) {
     console.log('[publish] 已复制线路图到 route-maps/')
   }
 
+  const publicWorldMapRoutes = resolve(root, 'public', 'world-map-routes')
+  const distWorldMapRoutes = resolve(root, 'dist', 'world-map-routes')
+  const rootWorldMapRoutes = resolve(root, 'world-map-routes')
+  if (existsSync(distWorldMapRoutes)) {
+    cpSync(distWorldMapRoutes, rootWorldMapRoutes, { recursive: true })
+    console.log('[publish] 已复制走线 JSON 到 world-map-routes/')
+  } else if (existsSync(publicWorldMapRoutes)) {
+    cpSync(publicWorldMapRoutes, rootWorldMapRoutes, { recursive: true })
+    console.log('[publish] 已复制走线 JSON 到 world-map-routes/')
+  }
+
   const publicWorldMaps = resolve(root, 'public', 'maps')
   const distWorldMaps = resolve(root, 'dist', 'maps')
   const rootWorldMaps = resolve(root, 'maps')

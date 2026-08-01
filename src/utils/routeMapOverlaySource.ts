@@ -16,6 +16,7 @@ import {
 import { isRouteMapImportStorage } from './routeMapImportBundle'
 import { parseRouteMapImportPayload, type RouteMapImportPayload } from './routeMapImportPayload'
 import { resolveRouteMapLookupIds } from './routeMapLookup'
+import { resolveSiteAssetUrl, getSiteAssetRoot } from './appLayoutMode'
 import type { WorldMapCatalogStop } from './worldMapStopCatalog'
 import { buildRouteMapViewerDisplay, type RouteMapViewerDisplay } from './routeMapViewerDisplay'
 
@@ -43,7 +44,7 @@ export async function loadGeneralMapImageSize(): Promise<{ width: number; height
       resolve(null)
     }
     img.onerror = () => resolve(null)
-    img.src = './maps/SIMapGerenal.png'
+    img.src = `${getSiteAssetRoot()}maps/SIMapGerenal.png`
   })
 
   return generalMapSizePromise
@@ -59,7 +60,7 @@ export async function resolveRouteMapImportRaw(routeId: string): Promise<unknown
 
   for (const id of resolveRouteMapLookupIds(routeId)) {
     try {
-      const response = await fetch(`./world-map-routes/${encodeURIComponent(id)}.json`)
+      const response = await fetch(resolveSiteAssetUrl(`world-map-routes/${encodeURIComponent(id)}.json`))
       if (!response.ok) continue
       const raw: unknown = await response.json()
       if (isRouteMapImportStorage(raw)) return raw

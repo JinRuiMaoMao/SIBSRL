@@ -1,4 +1,5 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
+import { resolveSiteAssetUrl } from './appLayoutMode'
 
 export interface WorldMapCatalogStop {
   name: { zh: string; en: string }
@@ -63,9 +64,12 @@ export function invalidateWorldMapStopCatalogCache(): void {
 
 export async function loadWorldMapStopCatalog(): Promise<WorldMapCatalogStop[]> {
   if (catalogCache) return catalogCache
-  const response = await fetch(`./world-map-stops.json?v=${encodeURIComponent(__APP_BUILD__)}`, {
-    cache: 'no-cache',
-  })
+  const response = await fetch(
+    resolveSiteAssetUrl(`world-map-stops.json?v=${encodeURIComponent(__APP_BUILD__)}`),
+    {
+      cache: 'no-cache',
+    },
+  )
   if (!response.ok) {
     throw new Error(`Failed to load world-map-stops.json (${response.status})`)
   }

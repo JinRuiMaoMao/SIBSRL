@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { audioDownloadFilename, triggerAudioDownload } from '../utils/audioDownload'
 
 const SPEED_PRESETS = [1, 2, 5, 10] as const
@@ -106,6 +107,7 @@ export function BroadcastAudioButton({
   showDownload = true,
 }: BroadcastAudioButtonProps) {
   const { t } = useLocale()
+  const resolvedSrc = resolveSiteAssetUrl(src)
   const speedMenuId = useId()
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
@@ -385,7 +387,7 @@ export function BroadcastAudioButton({
         stopTable ? 'broadcast-audio-player--stop-table' : ''
       } ${engaged ? 'broadcast-audio-player--engaged' : ''}`}
     >
-      <audio ref={audioRef} src={src} preload="none" loop={loop} className="broadcast-audio-hidden" />
+      <audio ref={audioRef} src={resolvedSrc} preload="none" loop={loop} className="broadcast-audio-hidden" />
       <button
         type="button"
         className={`broadcast-play-btn ${compact ? 'broadcast-play-btn--compact' : ''} ${
@@ -414,7 +416,7 @@ export function BroadcastAudioButton({
         </svg>
       </button>
 
-      {showDownload && src ? (
+      {showDownload && resolvedSrc ? (
         <button
           type="button"
           className={`broadcast-audio-download-btn ${compact ? 'broadcast-audio-download-btn--compact' : ''}`}
@@ -423,7 +425,7 @@ export function BroadcastAudioButton({
           onClick={(event) => {
             event.preventDefault()
             event.stopPropagation()
-            triggerAudioDownload(src, resolvedDownloadName)
+            triggerAudioDownload(resolvedSrc, resolvedDownloadName)
           }}
         >
           <svg className="broadcast-download-icon" viewBox="0 0 24 24" aria-hidden>

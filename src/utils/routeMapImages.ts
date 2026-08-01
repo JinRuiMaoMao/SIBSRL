@@ -1,5 +1,6 @@
 import { routeIdToPageFilename } from './routeNavigation'
 import { resolveRouteMapRouteId, type RouteMapViewKind } from '../data/routeMapsManifest'
+import { getLayoutScopedHref, getSiteAssetRoot } from './appLayoutMode'
 
 export type { RouteMapViewKind }
 
@@ -10,9 +11,10 @@ const KIND_FILENAMES: Record<RouteMapViewKind, string> = {
   height: 'height',
 }
 
-/** Relative asset prefix when the current page sits under routes/*.html */
+/** @deprecated Prefer getSiteAssetRoot(); kept for routes/*.html callers */
 export function resolveRouteAssetPrefix(fromRoutesDir = false): string {
-  return fromRoutesDir ? '../' : './'
+  if (fromRoutesDir) return getSiteAssetRoot()
+  return getSiteAssetRoot()
 }
 
 export function routeMapImageBasename(kind: RouteMapViewKind): string {
@@ -36,11 +38,10 @@ export function getRouteMapImageUrl(
 export function buildRouteMapViewerUrl(
   routeId: string,
   kind: RouteMapViewKind,
-  fromRoutesDir = false,
+  _fromRoutesDir = false,
   directionIndex?: number,
 ): string {
   const canonicalId = resolveRouteMapRouteId(routeId) ?? routeId
-  const prefix = resolveRouteAssetPrefix(fromRoutesDir)
   const params = new URLSearchParams({
     route: canonicalId,
     view: kind,
@@ -48,5 +49,5 @@ export function buildRouteMapViewerUrl(
   if (directionIndex != null && directionIndex >= 0) {
     params.set('dir', String(directionIndex))
   }
-  return `${prefix}route-map.html?${params.toString()}`
+  return `${getLayoutScopedHref('route-map.html')}?${params.toString()}`
 }
