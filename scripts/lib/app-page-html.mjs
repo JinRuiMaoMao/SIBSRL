@@ -495,20 +495,21 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
   audio.preload = 'auto';
   if (tab === 'routes') {
     var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
-    var mainUrl = '../audio/broadcasts/music/music-map-menu.ogg';
-    var introFadeAt = 30;
-    var mainEntryStart = 189;
-    var mainLoopStart = 17;
-    var mainFadeAt = 292.45;
+    var bridgeUrl = '../audio/broadcasts/music/music-map-menu-bridge.ogg';
+    var loopUrl = '../audio/broadcasts/music/music-map-menu-loop.ogg';
     var fadeMs = 900;
     var fadeLead = fadeMs / 1000;
     var targetVolume = 1;
     var phase = 'intro';
     var crossfadeStarted = false;
-    var mainAudio = new Audio(mainUrl);
-    mainAudio.preload = 'auto';
-    mainAudio.load();
-    window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = mainAudio;
+    var pendingNext = null;
+    var bridgeAudio = new Audio(bridgeUrl);
+    var loopAudio = new Audio(loopUrl);
+    bridgeAudio.preload = 'auto';
+    loopAudio.preload = 'auto';
+    bridgeAudio.load();
+    loopAudio.load();
+    window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = bridgeAudio;
     function rampVolume(el, currentTime, fadeAt) {
       var fadeEnd = fadeAt + fadeLead;
       if (currentTime <= fadeAt) {
@@ -522,63 +523,51 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
       var progress = (currentTime - fadeAt) / fadeLead;
       el.volume = targetVolume * (1 - progress);
     }
-    function startMainOverlap() {
+    function resolveNext() {
+      if (phase === 'intro') return { el: bridgeAudio, nextPhase: 'bridge' };
+      if (phase === 'bridge') return { el: loopAudio, nextPhase: 'loop' };
+      if (audio === loopAudio) return { el: new Audio(loopUrl), nextPhase: 'loop' };
+      return { el: loopAudio, nextPhase: 'loop' };
+    }
+    function startOverlap() {
       if (crossfadeStarted) return;
       crossfadeStarted = true;
-      mainAudio.currentTime = mainEntryStart;
-      mainAudio.volume = targetVolume;
-      if (!mainAudio.paused) return;
-      mainAudio.muted = audio.muted;
-      mainAudio.play().catch(function () {});
+      var next = resolveNext();
+      pendingNext = next.el;
+      if (phase === 'loop') loopAudio = pendingNext;
+      pendingNext.currentTime = 0;
+      pendingNext.volume = targetVolume;
+      pendingNext.muted = audio.muted;
+      pendingNext.preload = 'auto';
+      if (pendingNext.paused) pendingNext.play().catch(function () {});
     }
-    function handoffToMain() {
+    function handoff() {
+      var nextEl = pendingNext || resolveNext().el;
+      pendingNext = null;
+      var nextPhase = phase === 'intro' ? 'bridge' : 'loop';
       audio.pause();
       audio.removeEventListener('timeupdate', onTrackTime);
-      audio = mainAudio;
-      phase = 'main';
+      audio = nextEl;
+      phase = nextPhase;
       crossfadeStarted = false;
       window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
+      if (phase === 'bridge') window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = loopAudio;
+      if (phase === 'loop') window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = bridgeAudio;
       audio.addEventListener('timeupdate', onTrackTime);
-    }
-    function startLoopOverlap() {
-      if (crossfadeStarted) return;
-      crossfadeStarted = true;
-      var loopAudio = new Audio(mainUrl);
-      loopAudio.preload = 'auto';
-      loopAudio.addEventListener('loadedmetadata', function () {
-        loopAudio.currentTime = mainLoopStart;
-        loopAudio.volume = targetVolume;
-        loopAudio.muted = audio.muted;
-        loopAudio.play().catch(function () {});
-        var outgoing = audio;
-        outgoing.pause();
-        outgoing.removeEventListener('timeupdate', onTrackTime);
-        audio = loopAudio;
-        mainAudio = loopAudio;
-        crossfadeStarted = false;
-        window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
-        window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = outgoing;
-        audio.addEventListener('timeupdate', onTrackTime);
-      }, { once: true });
-      loopAudio.load();
     }
     var onTrackTime = function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-      if (phase === 'intro') {
-        if (audio.currentTime >= introFadeAt) startMainOverlap();
-        rampVolume(audio, audio.currentTime, introFadeAt);
-        if (audio.currentTime >= introFadeAt + fadeLead) handoffToMain();
-        return;
-      }
-      if (phase === 'main') {
-        if (audio.currentTime >= mainFadeAt) startLoopOverlap();
-        rampVolume(audio, audio.currentTime, mainFadeAt);
-      }
+      var fadeAt = audio.duration;
+      if (!isFinite(fadeAt) || fadeAt <= 0) return;
+      if (audio.currentTime >= fadeAt) startOverlap();
+      rampVolume(audio, audio.currentTime, fadeAt);
+      if (audio.currentTime >= fadeAt + fadeLead) handoff();
     };
     audio.addEventListener('timeupdate', onTrackTime);
     audio.addEventListener('ended', function () {
       if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-      if (phase === 'intro') handoffToMain();
+      if (!crossfadeStarted) startOverlap();
+      handoff();
     });
   }
   window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;

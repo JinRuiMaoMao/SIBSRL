@@ -38,6 +38,9 @@ function copyMusicSet(srcDir, destDir) {
   const NAME_MAP = [
     { sourceIncludes: 'San Francisco Nights', dest: 'music-main-menu.ogg' },
     { sourceIncludes: '主界面', dest: 'music-main-menu.ogg' },
+    { sourceIncludes: 'Radiumintro', sourceIncludes2: 'cut_30sec', dest: 'music-map-menu-intro.ogg' },
+    { sourceIncludes: 'cut_104sec', dest: 'music-map-menu-bridge.ogg' },
+    { sourceIncludes: 'cut_276sec', dest: 'music-map-menu-loop.ogg' },
     { sourceIncludes: 'Radium', dest: 'music-map-menu.ogg' },
     { sourceIncludes: '地图界面', dest: 'music-map-menu.ogg' },
     { sourceIncludes: 'Shiawase', dest: 'music-spawn-01.ogg' },
@@ -56,10 +59,17 @@ function copyMusicSet(srcDir, destDir) {
 
   let copied = 0
   for (const rule of NAME_MAP) {
-    const source = files.find((f) => f.includes(rule.sourceIncludes))
+    const source = files.find((f) => {
+      if (!f.includes(rule.sourceIncludes)) return false
+      if (rule.sourceIncludes2 && !f.includes(rule.sourceIncludes2)) return false
+      return true
+    })
     if (!source) continue
     copyFileSync(join(srcDir, source), join(destDir, rule.dest))
     copied++
+    if (rule.dest === 'music-map-menu-loop.ogg') {
+      copyFileSync(join(srcDir, source), join(destDir, 'music-map-menu.ogg'))
+    }
   }
   return copied
 }
