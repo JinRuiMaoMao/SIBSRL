@@ -8113,3 +8113,502 @@ html[data-reduce-motion='true'] .real-start-challenge:hover,
 html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
   transform: none;
 }
+
+/* Real layout — in-game shop dialog */
+.real-shop-root {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.real-shop-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(0 0 0 / 0.62);
+  cursor: pointer;
+}
+
+.real-shop-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 56rem);
+  max-height: min(92dvh, 40rem);
+  border: 3px solid #2f4f9c;
+  border-radius: 0.55rem;
+  background: linear-gradient(180deg, #0b1030 0%, #12082a 100%);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.55);
+  color: #f8fafc;
+}
+
+.real-shop-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.65rem 0.65rem 0.45rem;
+}
+
+.real-shop-tabs {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.real-shop-tab {
+  border: 2px solid #4a88f5;
+  border-radius: 0.45rem;
+  background: rgb(15 23 42 / 0.92);
+  color: #f8fafc;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.38rem 0.7rem;
+  cursor: pointer;
+}
+
+.real-shop-tab--active {
+  border-color: #d4a017;
+  background: linear-gradient(180deg, #9a6b2f 0%, #6b4423 100%);
+  box-shadow: inset 0 0 0 1px rgb(255 220 120 / 0.35);
+}
+
+.real-shop-tab--gift {
+  border-color: #d946ef;
+  background: linear-gradient(180deg, #c026d3 0%, #86198f 100%);
+  margin-left: auto;
+}
+
+.real-shop-close {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: #f8fafc;
+  font-size: 1.45rem;
+  line-height: 1;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
+.real-shop-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.55rem 0.75rem 0.35rem;
+}
+
+.real-shop-footnote {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.45rem 0.85rem 0.65rem;
+  font-size: 0.74rem;
+  font-style: italic;
+  color: #fde68a;
+  text-align: center;
+}
+
+.real-shop-gift-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: linear-gradient(180deg, #d946ef 0%, #a21caf 100%);
+  color: #fff;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  cursor: pointer;
+}
+
+.real-shop-owned {
+  margin: 0.35rem 0;
+  font-size: 0.78rem;
+  color: rgb(248 250 252 / 0.88);
+}
+
+.real-shop-robux-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.real-shop-robux-icon {
+  color: #e5e7eb;
+  font-size: 0.95em;
+}
+
+.real-shop-pass-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.real-shop-pass-card {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 38%) minmax(0, 1fr);
+  gap: 0.45rem;
+  min-height: 8.5rem;
+  padding: 0.55rem;
+  border-radius: 0.45rem;
+  border: 2px solid rgb(255 255 255 / 0.12);
+}
+
+.real-shop-pass-card--vip {
+  background: linear-gradient(135deg, #7f1d1d 0%, #4c1d95 100%);
+}
+
+.real-shop-pass-card--developer {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.real-shop-pass-card--ultimate {
+  background: linear-gradient(135deg, #581c87 0%, #db2777 100%);
+}
+
+.real-shop-pass-card--master {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-color: rgb(255 255 255 / 0.82);
+}
+
+.real-shop-pass-card-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.real-shop-pass-card-right {
+  min-width: 0;
+}
+
+.real-shop-pass-card-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.real-shop-pass-perks {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.real-shop-pass-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.05;
+}
+
+.real-shop-pass-visual-vip {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #fbbf24;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.real-shop-pass-visual-vip-sub {
+  font-size: 0.62rem;
+  color: #fde68a;
+}
+
+.real-shop-pass-visual-dev-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0.2rem;
+  background: #dc2626;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.real-shop-pass-visual-dev-label {
+  margin-top: 0.25rem;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.real-shop-pass-visual-exp-badge {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  background: #dc2626;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.real-shop-pass-visual-ultimate-label {
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.real-shop-pass-visual-master-card {
+  display: inline-block;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: 0.25rem;
+  background: #111827;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.real-shop-boost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.real-shop-boost-card {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 3px solid #a855f7;
+  background: linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%);
+  color: #fff;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.real-shop-boost-card--gold {
+  border-color: #facc15;
+  background: linear-gradient(90deg, #fde047 0%, #f59e0b 100%);
+  color: #1f2937;
+}
+
+.real-shop-boost-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  border-radius: 0.45rem;
+  background: rgb(0 0 0 / 0.18);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.real-shop-boost-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.real-shop-boost-copy strong {
+  font-size: 1rem;
+}
+
+.real-shop-boost-copy span {
+  font-size: 0.78rem;
+  opacity: 0.92;
+}
+
+.real-shop-shards-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.5rem;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.real-shop-shards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.real-shop-shard-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 5.5rem;
+  padding: 0.55rem 0.35rem 0.45rem;
+  border: 3px solid #78350f;
+  border-radius: 0.55rem;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 100%);
+  color: #1f2937;
+  font: inherit;
+  cursor: pointer;
+}
+
+.real-shop-shard-card--wide {
+  min-height: 6.5rem;
+}
+
+.real-shop-shards-grid .real-shop-shard-card:nth-child(4) {
+  grid-column: 1 / 2;
+}
+
+.real-shop-shards-grid .real-shop-shard-card:nth-child(5) {
+  grid-column: 2 / 4;
+}
+
+.real-shop-shard-badge {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.real-shop-shard-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.real-shop-shard-sun {
+  font-size: 1.1rem;
+}
+
+.real-shop-shards-decor {
+  position: relative;
+  min-height: 8rem;
+}
+
+.real-shop-shards-sun {
+  position: absolute;
+  font-size: 1.6rem;
+  filter: drop-shadow(0 0 8px rgb(250 204 21 / 0.65));
+}
+
+.real-shop-shards-sun--a {
+  top: 0.5rem;
+  right: 0.2rem;
+}
+
+.real-shop-shards-sun--b {
+  top: 2.2rem;
+  right: 1.4rem;
+  font-size: 1.15rem;
+}
+
+.real-shop-shards-crate {
+  position: absolute;
+  bottom: 0.2rem;
+  right: 0;
+  font-size: 2.6rem;
+  transform: rotate(-8deg);
+}
+
+.real-shop-donate-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(10rem, 0.9fr);
+  gap: 0.65rem;
+  min-height: 14rem;
+}
+
+.real-shop-donate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.real-shop-donate-tier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.6rem;
+  border: 2px solid #60a5fa;
+  border-radius: 0.55rem;
+  background: linear-gradient(180deg, #1d4ed8 0%, #1e3a8a 100%);
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.real-shop-donate-leaderboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-radius: 0.35rem;
+  overflow: hidden;
+  background: rgb(15 23 42 / 0.55);
+}
+
+.real-shop-donate-leaderboard-title {
+  margin: 0;
+  padding: 0.4rem 0.55rem;
+  background: linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.real-shop-donate-leaderboard-list {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.real-shop-donate-leaderboard-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.74rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.06);
+}
+
+.real-shop-donate-you {
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  background: rgb(120 53 15 / 0.55);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .real-shop-panel {
+    max-height: 94dvh;
+  }
+
+  .real-shop-pass-grid,
+  .real-shop-donate-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .real-shop-shards-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .real-shop-shards-decor {
+    display: none;
+  }
+
+  .real-shop-shards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

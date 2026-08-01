@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type MouseEvent } from 'react'
+import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { getTodaysDailyChallenge, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { getSiteLogoUrl } from '../data/siteBrand'
@@ -12,6 +12,7 @@ import { getAccountPageHref, getSettingsPageHref } from '../utils/appPage'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
+import { RealShopDialog } from './RealShopDialog'
 
 interface RealStartMenuItem {
   id: string
@@ -95,6 +96,7 @@ export function RealStartPage() {
   const bootReady = useStartPageBoot()
   const { locale, t } = useLocale()
   const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
+  const [shopOpen, setShopOpen] = useState(false)
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
@@ -126,7 +128,7 @@ export function RealStartPage() {
     { id: 'music', labelKey: 'tabMusic', icon: muted ? '🔇' : '♪', onClick: toggleMuted },
     { id: 'faq', href: wikiHref, labelKey: 'realStartFaq', icon: '?', external: true },
     { id: 'about', href: getTabPageHref('updates'), labelKey: 'realStartAbout', icon: 'i' },
-    { id: 'shop', href: robloxHref, labelKey: 'realStartShop', icon: '🛒', external: true },
+    { id: 'shop', labelKey: 'realStartShop', icon: '🛒', onClick: () => setShopOpen(true) },
   ]
 
   useEffect(() => {
@@ -223,6 +225,7 @@ export function RealStartPage() {
           </ul>
         </nav>
       </div>
+      <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />
     </div>
   )
 }
