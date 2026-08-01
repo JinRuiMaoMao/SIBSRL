@@ -3728,13 +3728,444 @@ html[data-route-lookup-layout='split'] .site-footer {
 }
 
 .route-split-map-detail {
-  flex-shrink: 0;
-  max-height: min(42vh, 24rem);
-  overflow: hidden;
+  position: absolute;
+  left: max(0.65rem, env(safe-area-inset-left, 0px));
+  right: max(0.65rem, env(safe-area-inset-right, 0px));
+  bottom: max(0.55rem, env(safe-area-inset-bottom, 0px));
+  z-index: 6;
+  pointer-events: none;
+}
+
+.route-split-map-detail > * {
+  pointer-events: auto;
+}
+
+.route-map-pane--detail-open .route-map-pane-map {
+  flex: 1;
+  min-height: 0;
+}
+
+.route-real-back-btn {
+  position: absolute;
+  top: max(0.55rem, env(safe-area-inset-top, 0px));
+  left: max(0.55rem, env(safe-area-inset-left, 0px));
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.42rem 0.85rem 0.42rem 0.65rem;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, #4c1d95 35%, transparent);
+}
+
+.route-real-back-btn-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.route-real-map-hints {
+  position: absolute;
+  top: max(0.55rem, env(safe-area-inset-top, 0px));
+  right: max(0.55rem, env(safe-area-inset-right, 0px));
+  z-index: 4;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--border);
-  background: var(--route-detail-bg, var(--bg-deep));
+  align-items: flex-end;
+  gap: 0.25rem;
+  pointer-events: none;
+}
+
+.route-real-map-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #fff 88%, transparent);
+  color: #1f2937;
+  font-size: 0.72rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px color-mix(in srgb, #000 12%, transparent);
+}
+
+.route-real-map-hint-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.route-real-map-info-banner {
+  position: absolute;
+  top: calc(max(0.55rem, env(safe-area-inset-top, 0px)) + 3.1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  max-width: min(28rem, calc(100% - 1.5rem));
+  margin: 0;
+  padding: 0.38rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #334155 82%, transparent);
+  color: #f8fafc;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none;
+}
+
+.route-real-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: min(46vh, 26rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  background: #fff;
+  color: #111827;
+  box-shadow:
+    0 16px 40px color-mix(in srgb, #000 18%, transparent),
+    0 0 0 1px color-mix(in srgb, #fff 40%, transparent);
+}
+
+.route-real-panel--collapsed {
+  max-height: none;
+}
+
+.route-real-panel-chrome {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.55rem 0;
+}
+
+.route-real-panel-collapse,
+.route-real-panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.45rem;
+  background: transparent;
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.route-real-panel-tab {
+  margin: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 3px solid #22c55e;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.route-real-panel-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr) minmax(0, 1.45fr) auto;
+  gap: 0.65rem 0.75rem;
+  align-items: center;
+  padding: 0.55rem 0.85rem 0.65rem;
+}
+
+.route-real-panel-route-id {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.route-real-panel-bus {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.route-real-panel-route-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+  min-width: 0;
+}
+
+.route-real-panel-number {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.route-real-panel-loop-tag {
+  padding: 0.08rem 0.35rem;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.route-real-panel-stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.route-real-panel-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.route-real-panel-stat-icon {
+  width: 1rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.route-real-panel-timeline {
+  min-width: 0;
+}
+
+.route-real-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.route-real-timeline-track {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.route-real-timeline-node-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.route-real-timeline-node-wrap:last-child {
+  flex: 0 0 auto;
+}
+
+.route-real-timeline-dot {
+  width: 0.72rem;
+  height: 0.72rem;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 2px #16a34a;
+  flex-shrink: 0;
+}
+
+.route-real-timeline-segment {
+  flex: 1 1 auto;
+  height: 0.28rem;
+  margin: 0 0.08rem;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+.route-real-timeline-labels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.route-real-timeline-label {
+  min-width: 0;
+  text-align: center;
+}
+
+.route-real-timeline-name {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #111827;
+}
+
+.route-real-panel-difficulty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 3.5rem;
+}
+
+.route-real-panel-difficulty-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.route-real-panel-stars {
+  display: inline-flex;
+  gap: 0.08rem;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.route-real-panel-star {
+  color: #cbd5e1;
+}
+
+.route-real-panel-star--filled {
+  color: #f59e0b;
+}
+
+.route-real-panel-divider {
+  height: 0.28rem;
+  margin: 0 0.55rem;
+  border-radius: 999px;
+  background: #facc15;
+}
+
+.route-real-panel-section {
+  padding: 0.45rem 0.85rem 0;
+}
+
+.route-real-panel-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.45rem 0.75rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.74rem;
+}
+
+.route-real-panel-meta-label {
+  display: block;
+  margin-bottom: 0.12rem;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.route-real-panel-meta-value {
+  color: #111827;
+  line-height: 1.35;
+}
+
+.route-real-panel-direction {
+  padding: 0 0.85rem 0.35rem;
+}
+
+.route-real-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.route-real-panel-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.55rem;
+  background: #f8fafc;
+  color: #111827;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.route-real-panel-action--share {
+  background: #ecfdf5;
+  border-color: #86efac;
+}
+
+.route-real-panel-action--link {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.route-real-panel-collapsed-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem 0.65rem;
+}
+
+.route-real-panel-collapsed-meta {
+  margin-left: auto;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.route-real-panel .route-type-tags {
+  gap: 0.2rem;
+}
+
+.route-real-panel .route-type-tag {
+  font-size: 0.62rem;
+  padding: 0.05rem 0.28rem;
+}
+
+.route-real-panel .route-map-view-actions {
+  margin: 0;
+}
+
+.route-real-panel .route-map-view-btn {
+  min-height: 2rem;
+  font-size: 0.78rem;
+}
+
+.route-favorite-btn--real {
+  min-height: 2rem;
+}
+
+@media (max-width: 900px) {
+  .route-real-panel-overview {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .route-real-panel-timeline,
+  .route-real-panel-difficulty {
+    grid-column: 1 / -1;
+  }
+
+  .route-real-panel-difficulty {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .route-real-panel-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .route-real-map-info-banner {
+    display: none;
+  }
 }
 
 .route-split-map-detail .route-detail {

@@ -28,6 +28,7 @@ import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
 import { SeasonalPromotedRouteCard } from './SeasonalPromotedRouteCard'
 import { RouteDetail } from './RouteDetail'
+import { RouteDetailRealPanel } from './RouteDetailRealPanel'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
 import { RouteSearchSyntaxDock } from './RouteSearchSyntaxDock'
 import { SearchSyntaxHelp } from './SearchSyntaxHelp'
@@ -993,7 +994,13 @@ export function RouteLookupPage({
       : null
 
   const renderDetailContent = () => {
-    if (routeDetailProps) return <RouteDetail {...routeDetailProps} />
+    if (routeDetailProps) {
+      if (splitLayoutActive) {
+        const { hideStops: _hideStops, ...realPanelProps } = routeDetailProps
+        return <RouteDetailRealPanel {...realPanelProps} />
+      }
+      return <RouteDetail {...routeDetailProps} />
+    }
     if (!detailOverlay) return null
     if (detailOverlay.kind === 'daily-challenge') {
       return (
@@ -1413,9 +1420,22 @@ export function RouteLookupPage({
           >
             <div className="route-map-pane-map">
               <IslandMapEmbeddedPane />
+              {splitMapDetailOpen ? (
+                <button
+                  type="button"
+                  className="route-real-back-btn"
+                  onClick={handleCloseDetail}
+                  aria-label={t('realMapBack')}
+                >
+                  <span className="route-real-back-btn-icon" aria-hidden="true">
+                    ←
+                  </span>
+                  {t('realMapBack')}
+                </button>
+              ) : null}
             </div>
             {splitMapDetailOpen ? (
-              <div className="route-split-map-detail sibs-scrollbar" role="region">
+              <div className="route-split-map-detail" role="region">
                 {renderDetailContent()}
               </div>
             ) : null}

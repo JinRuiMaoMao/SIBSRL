@@ -191,6 +191,17 @@ export function IslandMapEmbeddedPane() {
         >
           {t('islandMapLayers')}
         </button>
+        <div className="route-real-map-hints" aria-hidden="true">
+          <span className="route-real-map-hint">
+            <span className="route-real-map-hint-icon">🖱</span>
+            {t('realMapMoveHint')}
+          </span>
+          <span className="route-real-map-hint">
+            <span className="route-real-map-hint-icon">🖱</span>
+            {t('realMapZoomHint')}
+          </span>
+        </div>
+        <p className="route-real-map-info-banner">{t('realMapCommunityHint')}</p>
       </div>
     </div>
   )
