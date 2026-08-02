@@ -21,6 +21,7 @@
     "build:sibs-routes": "node scripts/compose-476-from-wiki.mjs && node scripts/build-route-unlocks.mjs && node scripts/build-sibs-routes-ts.mjs",
     "build": "node scripts/sync-broadcast-audio.mjs && node scripts/sync-route-broadcast-audio.mjs && tsc -b && vite build",
     "build:only": "vite build",
+    "build:pages": "node scripts/build-pages.mjs",
     "bot:daily": "node scripts/daily-challenge-bot.mjs",
     "bot:daily:api": "node scripts/daily-challenge-bot.mjs --api-only",
     "user-api": "node --env-file=.env scripts/user-api.mjs",

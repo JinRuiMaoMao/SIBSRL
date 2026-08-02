@@ -145,10 +145,10 @@
         window.addEventListener('resize', apply);
       })();
     </script>
-    <meta name="app-build" content="2026-08-02T01:50:18.303Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-02T01%3A50%3A18.303Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-02T01%3A50%3A18.303Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-02T01%3A50%3A18.303Z" />
+    <meta name="app-build" content="2026-08-02T01:54:31.473Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-02T01%3A54%3A31.473Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-02T01%3A54%3A31.473Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-02T01%3A54%3A31.473Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -160,7 +160,7 @@
       content="Sunshine Islands Bus Simulator (SIBS) 巴士线路查询工具 - 阳光群岛 Roblox 巴士模拟器"
     />
     <title>阳光群岛巴士模拟器</title>
-<link rel="stylesheet" crossorigin href="../assets/dev-Cp8Hselt.css">
+<link rel="stylesheet" crossorigin href="/SIBSRL/assets/dev-Cp8Hselt.css">
       <script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
@@ -195,12 +195,13 @@
 </script>
       <script id="sw-version-bootstrap">
 (function () {
-  var VERSION = "sibs-offline-v10";
+  var VERSION = "sibs-offline-v11";
   var KEY = 'sibs-sw-version';
   try {
     var prev = localStorage.getItem(KEY);
     if (prev && prev !== VERSION) {
       localStorage.setItem(KEY, VERSION);
+      try { sessionStorage.removeItem('sibs-boot-cache-reload'); } catch (e) {}
       var tasks = [];
       if ('serviceWorker' in navigator) {
         tasks.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -468,14 +469,21 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   var root = document.getElementById('root');
   if (!root || document.getElementById('start-boot-splash')) return;
   var ghPagesHint = 'GitHub Pages 请访问 https://jinruimaomao.github.io/SIBSRL/normal/routes.html ，并 Ctrl+F5 强制刷新。';
+  var retryKey = 'sibs-boot-cache-reload';
   function showFailure(title, detail, extra) {
-    if (!root.querySelector('.boot-hint')) return;
+    if (!root.querySelector('.boot-hint') && !root.querySelector('.boot-failure')) return;
     root.innerHTML =
       '<div class="boot-failure" style="margin:2rem auto;max-width:28rem;padding:1.25rem;font-family:system-ui,sans-serif;color:#eef2f8;line-height:1.6">' +
       '<h1 style="font-size:1.05rem;margin:0 0 .75rem">' + title + '</h1>' +
       '<p style="margin:0 0 .5rem;opacity:.9">' + detail + '</p>' +
-      '<p style="margin:0;font-size:.82rem;opacity:.65">' + (extra || ghPagesHint) + '</p>' +
+      '<p style="margin:0 0 .75rem;font-size:.82rem;opacity:.65">' + (extra || ghPagesHint) + '</p>' +
+      '<button type="button" id="boot-cache-retry" style="margin-top:.25rem;padding:.45rem .85rem;border-radius:.5rem;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit;cursor:pointer">清除缓存并重试</button>' +
       '</div>';
+    var btn = document.getElementById('boot-cache-retry');
+    if (btn) btn.addEventListener('click', function () {
+      try { sessionStorage.removeItem(retryKey); localStorage.removeItem('sibs-sw-version'); } catch (e) {}
+      clearSiteCaches().finally(function () { location.reload(); });
+    });
   }
   function clearSiteCaches() {
     var tasks = [];
@@ -491,6 +499,17 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
     }
     return Promise.all(tasks);
   }
+  function recoverFromStaleCache(title, detail) {
+    var retries = parseInt(sessionStorage.getItem(retryKey) || '0', 10) || 0;
+    if (retries >= 3) {
+      showFailure(title, detail + ' 若仍失败，请点击下方按钮或清除浏览器站点数据。');
+      return;
+    }
+    sessionStorage.setItem(retryKey, String(retries + 1));
+    try { localStorage.removeItem('sibs-sw-version'); } catch (e) {}
+    showFailure(title, detail + ' 正在尝试清除 Service Worker 缓存（' + (retries + 1) + '/3）…');
+    clearSiteCaches().finally(function () { location.reload(); });
+  }
   if (location.protocol === 'file:') {
     showFailure('无法直接打开 HTML 文件', '请使用 npm run dev 或 GitHub Pages 在线地址访问。', ghPagesHint);
     return;
@@ -500,11 +519,7 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
     if (target && target.tagName === 'SCRIPT') {
       var src = String(target.src || target.getAttribute('src') || '');
       if (src.indexOf('/assets/') >= 0 || src.indexOf('/src/main.tsx') >= 0) {
-        showFailure('应用脚本加载失败', '可能是缓存了旧版本资源。正在尝试清除 Service Worker 缓存…');
-        if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
-          sessionStorage.setItem('sibs-boot-cache-reload', '1');
-          clearSiteCaches().finally(function () { location.reload(); });
-        }
+        recoverFromStaleCache('应用脚本加载失败', '可能是缓存了旧版本资源。');
       }
     }
   }, true);
@@ -512,17 +527,12 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
     var reason = event.reason;
     var message = reason && reason.message ? reason.message : String(reason || '');
     if (/preamble|Failed to fetch dynamically imported module|Loading chunk/i.test(message)) {
-      showFailure('应用启动失败', message, ghPagesHint);
+      recoverFromStaleCache('应用启动失败', message);
     }
   });
   window.setTimeout(function () {
     if (!root.querySelector('.boot-hint')) return;
-    if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
-      sessionStorage.setItem('sibs-boot-cache-reload', '1');
-      clearSiteCaches().finally(function () { location.reload(); });
-      return;
-    }
-    showFailure('页面加载时间过长', '请 Ctrl+F5 强制刷新；若刚更新过站点，请清除浏览器站点数据。', ghPagesHint);
+    recoverFromStaleCache('页面加载时间过长', '请稍候或强制刷新；若刚更新过站点，可能需要清除旧缓存。');
   }, 15000);
 })();
 </script>
@@ -594,6 +604,6 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
 })();
 </script>
 
-      <script type="module" crossorigin src="../assets/dev-DXFLs41Y.js"></script>
+      <script type="module" crossorigin src="/SIBSRL/assets/dev-2-4XoCqN.js"></script>
   </body>
 </html>

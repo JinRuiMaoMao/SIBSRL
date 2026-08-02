@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sibs-offline-v10'
+const CACHE_VERSION = 'sibs-offline-v11'
 const SHELL_URLS = ['./sibs-logo.png', './apple-touch-icon.png']
 
 self.addEventListener('install', (event) => {
@@ -68,11 +68,12 @@ self.addEventListener('fetch', (event) => {
             cache.put(request, response.clone())
             return response
           }
+          await cache.delete(request)
         } catch {
           const cached = await cache.match(request)
           if (cached) return cached
         }
-        throw new Error('offline')
+        return fetch(request)
       }
 
       const cached = await cache.match(request)

@@ -696,14 +696,21 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
   var root = document.getElementById('root');
   if (!root || document.getElementById('start-boot-splash')) return;
   var ghPagesHint = 'GitHub Pages 请访问 https://jinruimaomao.github.io/SIBSRL/normal/routes.html ，并 Ctrl+F5 强制刷新。';
+  var retryKey = 'sibs-boot-cache-reload';
   function showFailure(title, detail, extra) {
-    if (!root.querySelector('.boot-hint')) return;
+    if (!root.querySelector('.boot-hint') && !root.querySelector('.boot-failure')) return;
     root.innerHTML =
       '<div class="boot-failure" style="margin:2rem auto;max-width:28rem;padding:1.25rem;font-family:system-ui,sans-serif;color:#eef2f8;line-height:1.6">' +
       '<h1 style="font-size:1.05rem;margin:0 0 .75rem">' + title + '</h1>' +
       '<p style="margin:0 0 .5rem;opacity:.9">' + detail + '</p>' +
-      '<p style="margin:0;font-size:.82rem;opacity:.65">' + (extra || ghPagesHint) + '</p>' +
+      '<p style="margin:0 0 .75rem;font-size:.82rem;opacity:.65">' + (extra || ghPagesHint) + '</p>' +
+      '<button type="button" id="boot-cache-retry" style="margin-top:.25rem;padding:.45rem .85rem;border-radius:.5rem;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit;cursor:pointer">清除缓存并重试</button>' +
       '</div>';
+    var btn = document.getElementById('boot-cache-retry');
+    if (btn) btn.addEventListener('click', function () {
+      try { sessionStorage.removeItem(retryKey); localStorage.removeItem('sibs-sw-version'); } catch (e) {}
+      clearSiteCaches().finally(function () { location.reload(); });
+    });
   }
   function clearSiteCaches() {
     var tasks = [];
@@ -719,6 +726,17 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
     }
     return Promise.all(tasks);
   }
+  function recoverFromStaleCache(title, detail) {
+    var retries = parseInt(sessionStorage.getItem(retryKey) || '0', 10) || 0;
+    if (retries >= 3) {
+      showFailure(title, detail + ' 若仍失败，请点击下方按钮或清除浏览器站点数据。');
+      return;
+    }
+    sessionStorage.setItem(retryKey, String(retries + 1));
+    try { localStorage.removeItem('sibs-sw-version'); } catch (e) {}
+    showFailure(title, detail + ' 正在尝试清除 Service Worker 缓存（' + (retries + 1) + '/3）…');
+    clearSiteCaches().finally(function () { location.reload(); });
+  }
   if (location.protocol === 'file:') {
     showFailure('无法直接打开 HTML 文件', '请使用 npm run dev 或 GitHub Pages 在线地址访问。', ghPagesHint);
     return;
@@ -728,11 +746,7 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
     if (target && target.tagName === 'SCRIPT') {
       var src = String(target.src || target.getAttribute('src') || '');
       if (src.indexOf('/assets/') >= 0 || src.indexOf('/src/main.tsx') >= 0) {
-        showFailure('应用脚本加载失败', '可能是缓存了旧版本资源。正在尝试清除 Service Worker 缓存…');
-        if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
-          sessionStorage.setItem('sibs-boot-cache-reload', '1');
-          clearSiteCaches().finally(function () { location.reload(); });
-        }
+        recoverFromStaleCache('应用脚本加载失败', '可能是缓存了旧版本资源。');
       }
     }
   }, true);
@@ -740,24 +754,18 @@ const BOOT_FAILURE_GUARD_SCRIPT = `<script id="boot-failure-guard">
     var reason = event.reason;
     var message = reason && reason.message ? reason.message : String(reason || '');
     if (/preamble|Failed to fetch dynamically imported module|Loading chunk/i.test(message)) {
-      showFailure('应用启动失败', message, ghPagesHint);
+      recoverFromStaleCache('应用启动失败', message);
     }
   });
   window.setTimeout(function () {
     if (!root.querySelector('.boot-hint')) return;
-    if (sessionStorage.getItem('sibs-boot-cache-reload') !== '1') {
-      sessionStorage.setItem('sibs-boot-cache-reload', '1');
-      clearSiteCaches().finally(function () { location.reload(); });
-      return;
-    }
-    showFailure('页面加载时间过长', '请 Ctrl+F5 强制刷新；若刚更新过站点，请清除浏览器站点数据。', ghPagesHint);
+    recoverFromStaleCache('页面加载时间过长', '请稍候或强制刷新；若刚更新过站点，可能需要清除旧缓存。');
   }, 15000);
 })();
 </script>`
 
 /** @param {string} html @param {string} swVersion */
 export function injectSwVersionBootstrap(html, swVersion) {
-  if (html.includes('id="sw-version-bootstrap"')) return html
   const script = `<script id="sw-version-bootstrap">
 (function () {
   var VERSION = ${JSON.stringify(swVersion)};
@@ -766,6 +774,7 @@ export function injectSwVersionBootstrap(html, swVersion) {
     var prev = localStorage.getItem(KEY);
     if (prev && prev !== VERSION) {
       localStorage.setItem(KEY, VERSION);
+      try { sessionStorage.removeItem('sibs-boot-cache-reload'); } catch (e) {}
       var tasks = [];
       if ('serviceWorker' in navigator) {
         tasks.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -784,6 +793,9 @@ export function injectSwVersionBootstrap(html, swVersion) {
   } catch (e) {}
 })();
 </script>`
+  if (html.includes('id="sw-version-bootstrap"')) {
+    return html.replace(/<script id="sw-version-bootstrap">[\s\S]*?<\/script>/, script)
+  }
   return html.replace('</head>', `    ${script}\n  </head>`)
 }
 
@@ -800,7 +812,9 @@ export function relocateAppBundleScript(html) {
 
 /** @param {string} html */
 export function injectBootFailureGuard(html) {
-  if (html.includes('id="boot-failure-guard"')) return html
+  if (html.includes('id="boot-failure-guard"')) {
+    return html.replace(/<script id="boot-failure-guard">[\s\S]*?<\/script>/, BOOT_FAILURE_GUARD_SCRIPT)
+  }
   return html.replace('</body>', `    ${BOOT_FAILURE_GUARD_SCRIPT}\n  </body>`)
 }
 
