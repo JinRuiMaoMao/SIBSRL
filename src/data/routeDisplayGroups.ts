@@ -1,5 +1,7 @@
 import type { BusRoute } from '../types/route'
 import routeDisplayGroupsJson from '../../data/route-display-groups.json'
+import { routeLevelRequired, routeUsesSunshardUnlock } from './routeUnlocks'
+import { getShiftUnlockPrerequisites } from './routeShiftUnlocks'
 import {
   DISPLAY_ONLY_RENAMES,
   getMergeDirectionKey,
@@ -210,10 +212,57 @@ export function getGroupDisplaySlots(
   return shown
 }
 
-/** 仅出现在每日挑战分组、不在常规/特殊/季节列表中的线路。 */
+function routeHasShiftOrSunshardGameUnlock(route: BusRoute): boolean {
+  if (routeUsesSunshardUnlock(route)) return true
+  const prereqs = getShiftUnlockPrerequisites(route)
+  return (prereqs?.prerequisiteRouteNumbers.length ?? 0) > 0
+}
+
+/**
+ * 特别分组中仅等级解锁的线路：进入常规列表，仍保留 serviceTypes 等属性。
+ * 节日限定、阳光碎片、班次解锁仍留在锁定区。
+ */
+export function isLevelOnlySpecialListRoute(route: BusRoute): boolean {
+  const groups = getRouteDisplayGroupsForRoute(route)
+  if (!groups.includes('special') || groups.includes('seasonal')) return false
+  if (routeHasShiftOrSunshardGameUnlock(route)) return false
+  return (routeLevelRequired(route) ?? 0) > 0
+}
+
+/** 仅出现在锁定区：节日限定，或需阳光碎片/班次解锁的特别路线。纯等级特别线见 isLevelOnlySpecialListRoute。 */
 export function isLockedDisplayRoute(route: BusRoute): boolean {
   const groups = getRouteDisplayGroupsForRoute(route)
-  return groups.includes('special') || groups.includes('seasonal')
+  if (groups.includes('seasonal')) return true
+  if (groups.includes('special') && !isLevelOnlySpecialListRoute(route)) return true
+  return false
+}
+
+/** 常规列表：合并仅等级解锁的特别路线（保留 listedId / 方向与类型标签）。 */
+export function mergeLevelOnlySpecialIntoNormalSlots(
+  normalSlots: readonly GroupedRouteDisplaySlot[],
+  visibleRoutes: BusRoute[],
+): GroupedRouteDisplaySlot[] {
+  const seenRouteIds = new Set(
+    normalSlots.map((slot) => slot.entry?.route.id).filter((id): id is string => Boolean(id)),
+  )
+  const merged = [...normalSlots]
+
+  for (const slot of getGroupDisplaySlots('special', visibleRoutes)) {
+    if (!slot.entry || seenRouteIds.has(slot.entry.route.id)) continue
+    if (!isLevelOnlySpecialListRoute(slot.entry.route)) continue
+    seenRouteIds.add(slot.entry.route.id)
+    merged.push(slot)
+  }
+
+  merged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
+  return merged
+}
+
+/** 锁定区列表：去掉已归入常规列表的纯等级特别线。 */
+export function filterLockedSectionDisplaySlots(
+  slots: readonly GroupedRouteDisplaySlot[],
+): GroupedRouteDisplaySlot[] {
+  return slots.filter((slot) => !slot.entry || isLockedDisplayRoute(slot.entry.route))
 }
 
 export function isDailyOnlyDisplayRoute(route: BusRoute): boolean {

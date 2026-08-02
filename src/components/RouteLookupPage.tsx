@@ -11,10 +11,12 @@ import {
 import type { DailyChallengeScheduleDay } from '../data/dailyChallengeSchedule'
 import {
   countVisibleMergedSlots,
+  filterLockedSectionDisplaySlots,
   filterRoutesForMainRouteList,
   getGroupDisplaySlots,
   getRouteDisplayGroupsForRoute,
   mergeGroupDisplaySlots,
+  mergeLevelOnlySpecialIntoNormalSlots,
   ROUTE_DISPLAY_GROUP_ORDER,
   ROUTE_LIST_UI_SECTION_GROUPS,
   ROUTE_LIST_UI_SECTION_ORDER,
@@ -1157,32 +1159,42 @@ export function RouteLookupPage({
   )
 
   const listSectionSlots = useMemo(() => {
-    const normal = groupedSlots.normal.filter(
-      (slot) => !slot.entry || !sunshardLockedRouteIds.has(slot.entry.route.id),
+    const normal = mergeLevelOnlySpecialIntoNormalSlots(
+      groupedSlots.normal.filter(
+        (slot) => !slot.entry || !sunshardLockedRouteIds.has(slot.entry.route.id),
+      ),
+      filteredRoutes,
     )
     const specialSeasonal = sortLockedDisplaySlots(
-      mergeSunshardUnlockLockedDisplaySlots(
-        mergeShiftUnlockLockedDisplaySlots(
-          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
-          getShiftUnlockLockedDisplaySlots(displayRoutes),
+      filterLockedSectionDisplaySlots(
+        mergeSunshardUnlockLockedDisplaySlots(
+          mergeShiftUnlockLockedDisplaySlots(
+            mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
+            getShiftUnlockLockedDisplaySlots(displayRoutes),
+          ),
+          getSunshardUnlockLockedDisplaySlots(displayRoutes),
         ),
-        getSunshardUnlockLockedDisplaySlots(displayRoutes),
       ),
     )
     return { normal, specialSeasonal }
-  }, [groupedSlots, displayRoutes, sunshardLockedRouteIds])
+  }, [groupedSlots, displayRoutes, filteredRoutes, sunshardLockedRouteIds])
 
   const listSectionTotalSlots = useMemo(() => {
-    const normal = groupedTotalSlots.normal.filter(
-      (slot) => !slot.entry || !sunshardLockedRouteIds.has(slot.entry.route.id),
+    const normal = mergeLevelOnlySpecialIntoNormalSlots(
+      groupedTotalSlots.normal.filter(
+        (slot) => !slot.entry || !sunshardLockedRouteIds.has(slot.entry.route.id),
+      ),
+      displayRoutes,
     )
     const specialSeasonal = sortLockedDisplaySlots(
-      mergeSunshardUnlockLockedDisplaySlots(
-        mergeShiftUnlockLockedDisplaySlots(
-          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
-          getShiftUnlockLockedDisplaySlots(displayRoutes),
+      filterLockedSectionDisplaySlots(
+        mergeSunshardUnlockLockedDisplaySlots(
+          mergeShiftUnlockLockedDisplaySlots(
+            mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
+            getShiftUnlockLockedDisplaySlots(displayRoutes),
+          ),
+          getSunshardUnlockLockedDisplaySlots(displayRoutes),
         ),
-        getSunshardUnlockLockedDisplaySlots(displayRoutes),
       ),
     )
     return { normal, specialSeasonal }

@@ -16,3 +16,8 @@ export function applyRouteUnlocks(route: BusRoute): BusRoute {
 export function routeUsesSunshardUnlock(route: BusRoute): boolean {
   return (route.sunshardsRequired ?? 0) > 0
 }
+
+export function routeLevelRequired(route: BusRoute): number | undefined {
+  const unlock = ROUTE_UNLOCK_MAP[route.id] ?? ROUTE_UNLOCK_MAP[route.number]
+  return route.levelRequired ?? unlock?.levelRequired
+}
