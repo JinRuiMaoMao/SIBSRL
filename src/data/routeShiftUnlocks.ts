@@ -1,11 +1,13 @@
+import routeShiftUnlocksJson from '../../data/route-shift-unlocks.json'
 import routeTimetablesJson from '../../data/route-timetables.json'
 import type { BusRoute } from '../types/route'
 import type { RouteTimetablesFile, TimetableScheduleEntry } from '../types/routeTimetableData'
 import { getListedRouteIdsForRoute } from './routeDisplayGroups'
-import { resolveSpecialRouteCodeToId } from '../utils/routeMerge'
+import { DISPLAY_ONLY_RENAMES, resolveSpecialRouteCodeToId } from '../utils/routeMerge'
 import { compareRouteNumber } from '../utils/routeSort'
 
 const file = routeTimetablesJson as unknown as RouteTimetablesFile
+const staticShiftUnlocks = routeShiftUnlocksJson as Record<string, { unlockRoutes: string[] }>
 
 /** 游戏内：满足条件后保证解锁所需班次（与 UI 文案一致） */
 export const SHIFT_UNLOCK_GUARANTEED_SHIFTS = 50
@@ -31,7 +33,24 @@ function routeLookupKeys(route: BusRoute): string[] {
     const trimmed = value.trim()
     if (trimmed) keys.add(trimmed)
   }
+  for (const value of [route.id, route.number]) {
+    const renamed = DISPLAY_ONLY_RENAMES[value]
+    if (renamed) keys.add(renamed)
+  }
+  for (const [from, to] of Object.entries(DISPLAY_ONLY_RENAMES)) {
+    if (to === route.id || to === route.number) keys.add(from)
+  }
   return [...keys]
+}
+
+function applyShiftUnlockEntry(
+  targetRouteId: string,
+  unlockRoutes: readonly string[],
+  prerequisitesByTarget: Map<string, Set<string>>,
+  targetsByPrerequisite: Map<string, Map<string, string>>,
+): void {
+  addPrerequisiteMapping(targetRouteId, unlockRoutes, prerequisitesByTarget)
+  addUnlockTargetMapping(targetRouteId, unlockRoutes, targetsByPrerequisite)
 }
 
 function addPrerequisiteMapping(
@@ -86,6 +105,16 @@ function buildShiftUnlockMaps(): {
         }
       }
     }
+  }
+
+  for (const [targetRouteId, entry] of Object.entries(staticShiftUnlocks)) {
+    if (!entry.unlockRoutes?.length) continue
+    applyShiftUnlockEntry(
+      targetRouteId,
+      entry.unlockRoutes,
+      prerequisitesByTarget,
+      targetsByPrerequisite,
+    )
   }
 
   return { prerequisitesByTarget, targetsByPrerequisite }
