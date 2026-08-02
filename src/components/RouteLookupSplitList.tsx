@@ -4,6 +4,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
 import {
   filterRealRouteListEntriesByUnlockCategory,
+  sortLockedRealRouteListEntries,
   type RealRouteListEntry,
 } from '../utils/realRouteListEntries'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
@@ -56,9 +57,8 @@ export function RouteLookupSplitList({
   const { t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
-  const filteredLockedEntries = filterRealRouteListEntriesByUnlockCategory(
-    lockedEntries,
-    unlockCategoryFocus,
+  const filteredLockedEntries = sortLockedRealRouteListEntries(
+    filterRealRouteListEntriesByUnlockCategory(lockedEntries, unlockCategoryFocus),
   )
 
   const scrollTargetKey =

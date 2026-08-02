@@ -113,6 +113,7 @@ import {
   formatRealRouteDisplayNumber,
   partitionRealRouteListEntries,
   realRouteListKey,
+  sortLockedRealRouteListEntries,
 } from '../utils/realRouteListEntries'
 import {
   findTransferPlansBetweenStops,
@@ -293,10 +294,13 @@ export function RouteLookupPage({
         : [],
     [filteredRoutes, splitLayoutActive],
   )
-  const { normal: realNormalEntries, locked: realLockedEntries } = useMemo(
-    () => partitionRealRouteListEntries(realFilteredEntries),
-    [realFilteredEntries],
-  )
+  const { normal: realNormalEntries, locked: realLockedEntries } = useMemo(() => {
+    const partitioned = partitionRealRouteListEntries(realFilteredEntries)
+    return {
+      normal: partitioned.normal,
+      locked: sortLockedRealRouteListEntries(partitioned.locked),
+    }
+  }, [realFilteredEntries])
   const realTotalEntries = useMemo(
     () =>
       splitLayoutActive

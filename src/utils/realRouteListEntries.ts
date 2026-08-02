@@ -2,6 +2,7 @@ import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 import { isLockedDisplayRoute, getRouteDisplayGroupsForRoute } from '../data/routeDisplayGroups'
+import { compareRouteNumber } from './routeSort'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 
 export interface RealRouteListEntry {
@@ -72,6 +73,24 @@ export function partitionRealRouteListEntries(entries: readonly RealRouteListEnt
   }
 
   return { normal, locked }
+}
+
+function lockedRouteGroupRank(route: BusRoute): number {
+  const groups = getRouteDisplayGroupsForRoute(route)
+  if (groups.includes('seasonal')) return 0
+  if (groups.includes('special')) return 1
+  return 2
+}
+
+/** 锁定列表：节日限定成组在前，特别路线成组在后，组内按线路号排序。 */
+export function sortLockedRealRouteListEntries(
+  entries: readonly RealRouteListEntry[],
+): RealRouteListEntry[] {
+  return [...entries].sort((a, b) => {
+    const rankDiff = lockedRouteGroupRank(a.route) - lockedRouteGroupRank(b.route)
+    if (rankDiff !== 0) return rankDiff
+    return compareRouteNumber(a.route.number, b.route.number)
+  })
 }
 
 export function filterRealRouteListEntriesByUnlockCategory(

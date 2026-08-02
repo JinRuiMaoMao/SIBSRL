@@ -28,7 +28,7 @@ export const ROUTE_LIST_UI_SECTION_GROUPS: Record<
   readonly RouteDisplayGroupKey[]
 > = {
   normal: ['normal'],
-  specialSeasonal: ['special', 'seasonal'],
+  specialSeasonal: ['seasonal', 'special'],
 }
 
 const groupRouteIds = routeDisplayGroupsJson as Record<RouteDisplayGroupKey, string[]>
@@ -234,15 +234,17 @@ export function mergeGroupDisplaySlots(
   const merged: GroupedRouteDisplaySlot[] = []
 
   for (const group of groups) {
+    const groupMerged: GroupedRouteDisplaySlot[] = []
     for (const slot of slotsByGroup[group] ?? []) {
       if (!slot.isVisible || !slot.entry) continue
       if (seenRouteIds.has(slot.entry.route.id)) continue
       seenRouteIds.add(slot.entry.route.id)
-      merged.push(slot)
+      groupMerged.push(slot)
     }
+    groupMerged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
+    merged.push(...groupMerged)
   }
 
-  merged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
   return merged
 }
 
