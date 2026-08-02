@@ -5,6 +5,7 @@ import {
   resolveGroupedRouteEntry,
   type GroupedRouteDisplaySlot,
 } from './routeDisplayGroups'
+import { getRouteServiceTypes } from './routeServiceTypes'
 import { routeUsesSunshardUnlock } from './routeUnlocks'
 import type { DirectionKey } from '../utils/routeMerge'
 import { compareLockedDisplaySlotOrder } from '../utils/lockedRouteDisplayOrder'
@@ -43,7 +44,13 @@ function lockedSpecialSeasonalRouteIds(): Set<string> {
   return ids
 }
 
-/** 常规列表中、需阳光碎片解锁但未列入 special/seasonal 的锁定卡片（如 U47* 分方向）。 */
+/** 开线路（工作人员接驳）阳光碎片解锁：C01 / C401 / F701 / F702 */
+export function isStaffShuttleSunshardUnlockRoute(route: BusRoute): boolean {
+  return routeUsesSunshardUnlock(route) && getRouteServiceTypes(route.id).includes('staffShuttle')
+}
+
+/** 常规列表中、需阳光碎片解锁但未列入 special/seasonal 的锁定卡片（如 U47* 分方向）；
+ *  工作人员接驳线即使在 special 分组也始终生成阳光碎片卡。 */
 export function getSunshardUnlockLockedDisplaySlots(
   visibleRoutes: readonly BusRoute[],
 ): GroupedRouteDisplaySlot[] {
@@ -72,7 +79,12 @@ export function getSunshardUnlockLockedDisplaySlots(
       continue
     }
 
-    if (lockedRouteIds.has(route.id.toLowerCase()) || isLockedDisplayRoute(route)) continue
+    if (
+      !isStaffShuttleSunshardUnlockRoute(route) &&
+      (lockedRouteIds.has(route.id.toLowerCase()) || isLockedDisplayRoute(route))
+    ) {
+      continue
+    }
 
     slots.push({
       listedId: route.number,

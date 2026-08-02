@@ -3,6 +3,7 @@ import {
   type GroupedRouteDisplaySlot,
 } from '../data/routeDisplayGroups'
 import { getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
+import { isStaffShuttleSunshardUnlockRoute } from '../data/routeSunshardUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import type { BusRoute } from '../types/route'
 import type { DirectionKey } from './routeMerge'
@@ -34,10 +35,11 @@ export function routeHasShiftUnlockPrereqDisplay(
 function lockedDisplayRank(route: BusRoute, hasShiftPrereq: boolean): number {
   const groups = getRouteDisplayGroupsForRoute(route)
   if (groups.includes('seasonal')) return 0
-  if (hasShiftPrereq) return 1
-  if (routeUsesSunshardUnlock(route)) return 2
-  if (groups.includes('special')) return 3
-  return 4
+  if (isStaffShuttleSunshardUnlockRoute(route)) return 1
+  if (hasShiftPrereq) return 2
+  if (routeUsesSunshardUnlock(route)) return 3
+  if (groups.includes('special')) return 4
+  return 5
 }
 
 function compareLockedRouteOrder(
