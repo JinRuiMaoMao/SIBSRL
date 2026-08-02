@@ -1,3 +1,4 @@
+import type { RouteUnlockCategoryKind } from '../components/RouteUnlockCategoryCard'
 import type { GroupedRouteDisplaySlot } from '../data/routeDisplayGroups'
 import { parseShiftUnlockSlotKey, getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
 import { parseSunshardUnlockSlotKey } from '../data/routeSunshardUnlocks'
@@ -91,6 +92,31 @@ export function sortLockedDisplaySlots(
   return [...slots].sort(compareLockedDisplaySlotOrder)
 }
 
+function compareLockedSunshardCategorySlotOrder(
+  a: GroupedRouteDisplaySlot,
+  b: GroupedRouteDisplaySlot,
+): number {
+  const routeA = a.entry?.route
+  const routeB = b.entry?.route
+  if (!routeA || !routeB) return compareRouteNumber(a.listedId, b.listedId)
+
+  const shardDiff = (routeA.sunshardsRequired ?? 0) - (routeB.sunshardsRequired ?? 0)
+  if (shardDiff !== 0) return shardDiff
+
+  return compareLockedDisplaySlotOrder(a, b)
+}
+
+/** 锁定区分区内排序：季节/路线解锁按线路号+方向；碎片解锁先按碎片数。 */
+export function sortLockedDisplaySlotsForUnlockCategory(
+  slots: readonly GroupedRouteDisplaySlot[],
+  category: RouteUnlockCategoryKind,
+): GroupedRouteDisplaySlot[] {
+  if (category === 'special') {
+    return [...slots].sort(compareLockedSunshardCategorySlotOrder)
+  }
+  return sortLockedDisplaySlots(slots)
+}
+
 function listedIdFromRealListKey(listKey: string): string | undefined {
   const colon = listKey.indexOf(':')
   if (colon < 0) return undefined
@@ -129,4 +155,23 @@ export function sortLockedRealRouteListEntries(
   entries: readonly RealRouteListEntry[],
 ): RealRouteListEntry[] {
   return [...entries].sort(compareLockedRealRouteEntryOrder)
+}
+
+function compareLockedSunshardCategoryEntryOrder(
+  a: RealRouteListEntry,
+  b: RealRouteListEntry,
+): number {
+  const shardDiff = (a.route.sunshardsRequired ?? 0) - (b.route.sunshardsRequired ?? 0)
+  if (shardDiff !== 0) return shardDiff
+  return compareLockedRealRouteEntryOrder(a, b)
+}
+
+export function sortLockedRealRouteListEntriesForUnlockCategory(
+  entries: readonly RealRouteListEntry[],
+  category: RouteUnlockCategoryKind,
+): RealRouteListEntry[] {
+  if (category === 'special') {
+    return [...entries].sort(compareLockedSunshardCategoryEntryOrder)
+  }
+  return sortLockedRealRouteListEntries(entries)
 }
