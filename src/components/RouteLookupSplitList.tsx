@@ -7,10 +7,10 @@ import {
   type RealRouteListEntry,
 } from '../utils/realRouteListEntries'
 import { listedIdFromRealRouteListKey } from '../utils/lockedRouteDisplayOrder'
-import { getLockedRouteCardDisplayProps } from '../utils/lockedRouteCardProps'
-import { resolveShiftUnlockListedRouteId } from '../data/routeShiftUnlocks'
+import { lockedCardDisplayNumber, resolveShiftUnlockListedRouteId } from '../data/routeShiftUnlocks'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
+import { RouteLockedGameCard } from './RouteLockedGameCard'
 import { RouteLockedUnlockCategorySections } from './RouteLockedUnlockCategorySections'
 import { RouteListGameSection } from './RouteListGameSection'
 import { RouteListViewAllFooter } from './RouteListViewAllFooter'
@@ -56,7 +56,7 @@ export function RouteLookupSplitList({
   onOpenDetail,
   dailyChallenge = null,
 }: RouteLookupSplitListProps) {
-  const { locale, t } = useLocale()
+  const { t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
   const lockedEntriesByCategory = useMemo(
@@ -123,15 +123,9 @@ export function RouteLookupSplitList({
 
   const renderLockedEntry = (entry: RealRouteListEntry) => {
     const { route, directionIndex, listKey } = entry
+    const directionKey = route.stops?.[directionIndex]?.directionKey
     const sunshardListedId = listedIdFromRealRouteListKey(listKey)
     const listedId = sunshardListedId ?? resolveShiftUnlockListedRouteId(route, directionIndex)
-    const lockedLabels = getLockedRouteCardDisplayProps(
-      route,
-      directionIndex,
-      listedId,
-      locale,
-      t,
-    )
 
     return (
       <div
@@ -141,19 +135,19 @@ export function RouteLookupSplitList({
           if (node) itemRefs.current.set(listKey, node)
           else itemRefs.current.delete(listKey)
         }}
-        className="route-split-list-item"
+        className="route-split-list-item route-split-list-item--locked-game"
         role="listitem"
       >
-        <RouteCard
+        <RouteLockedGameCard
           route={route}
+          listedId={listedId}
+          displayNumber={
+            listedId && listedId !== route.number && listedId !== route.id
+              ? listedId
+              : lockedCardDisplayNumber(route, listedId, directionKey)
+          }
           selected={selectedListKey === listKey}
           directionIndex={directionIndex}
-          loopView={false}
-          appearance="classic"
-          muted
-          displayNumber={lockedLabels.displayNumber}
-          availabilityRangeLabel={lockedLabels.availabilityRangeLabel}
-          availabilityUnavailableLabel={lockedLabels.availabilityUnavailableLabel}
           onNavigate={() => onSelect(route.id, directionIndex)}
           onOpenDetail={() => onOpenDetail(route.id, directionIndex)}
         />

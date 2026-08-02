@@ -49,7 +49,7 @@ export function RouteLockedUnlockCategorySections<T>({
               <span className="route-locked-unlock-category-group-count">{items.length}</span>
             </header>
             {layout === 'grid' ? (
-              <div className="route-grid">{renderItems(items)}</div>
+              <div className="route-grid route-grid--locked-game">{renderItems(items)}</div>
             ) : (
               <div className="route-locked-unlock-category-list-items">{renderItems(items)}</div>
             )}

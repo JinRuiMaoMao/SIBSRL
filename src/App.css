@@ -4142,6 +4142,203 @@ html[data-route-lookup-layout='split'] .site-footer {
   padding-inline: 0.45rem;
 }
 
+.route-split-list-item--locked-game {
+  margin-top: 0;
+}
+
+.route-split-list-item--locked-game .route-card-link {
+  width: 100%;
+  max-width: none;
+}
+
+.route-locked-game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 7.5rem;
+  padding: 1rem;
+  border: var(--route-card-promoted-border-width) solid var(--route-card-promoted-border);
+  border-radius: var(--radius);
+  background: var(--route-card-promoted-bg);
+  box-shadow: var(--route-card-promoted-shadow);
+  color: var(--text);
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.route-locked-game-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.route-locked-game-card-id {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.route-locked-game-card-bus {
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.route-locked-game-card-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+
+.route-locked-game-card-date {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  max-width: 52%;
+}
+
+.route-locked-game-card-date-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--text) 45%, transparent);
+  border-radius: 0.2rem;
+  color: var(--text);
+}
+
+.route-locked-game-card-date-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.route-locked-game-card-operators {
+  display: flex;
+  align-items: center;
+}
+
+.route-locked-game-card-operators .operator-logos {
+  gap: 0.35rem;
+}
+
+.route-locked-game-card-tags .route-type-tags {
+  gap: 0.35rem;
+}
+
+.route-locked-game-card-operators:last-child,
+.route-locked-game-card-tags:last-child {
+  margin-top: auto;
+}
+
+.route-locked-game-card-tags .route-type-tag {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--text) 50%, transparent);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.12rem 0.55rem;
+}
+
+.route-card-link--locked-game {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: var(--radius);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .route-card-link--locked-game:hover .route-locked-game-card {
+    background: var(--route-card-promoted-bg-hover);
+    border-color: var(--route-card-promoted-border-hover);
+    box-shadow: var(--route-card-promoted-shadow-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.route-card-link--locked-game.route-card-link--selected .route-locked-game-card {
+  border-color: var(--route-card-promoted-border-selected);
+  box-shadow: var(--route-card-promoted-shadow-selected);
+}
+
+.route-grid--locked-game > .route-card-link--locked-game {
+  min-width: 0;
+}
+
+.route-list-game-section-panel-inner > .route-grid--locked-game {
+  margin-top: 0;
+}
+
+.route-locked-game-card-unlock-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.route-locked-game-card-unlock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  max-width: 52%;
+  border: 1px solid color-mix(in srgb, #6eb5ff 72%, var(--border));
+  border-radius: 999px;
+  padding: 0.18rem 0.45rem 0.18rem 0.55rem;
+  color: var(--text);
+}
+
+.route-locked-game-card-unlock-pill-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.route-locked-game-card-unlock-sun-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--text) 45%, transparent);
+  border-radius: 0.2rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.route-locked-game-card-sun-icon {
+  display: block;
+}
+
+.route-locked-game-card-lock {
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.route-locked-game-card-prereq {
+  display: inline-block;
+  border: 1px solid color-mix(in srgb, #ffb6c1 75%, var(--border));
+  border-radius: 999px;
+  padding: 0.22rem 0.7rem;
+  color: #ffb6c1;
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
 .route-shift-unlock-targets {
   display: flex;
   flex-direction: column;
