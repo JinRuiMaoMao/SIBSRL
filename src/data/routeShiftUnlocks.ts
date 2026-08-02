@@ -99,12 +99,26 @@ function resolveShiftUnlockLookupKeys(
   options?: ShiftUnlockLookupOptions,
 ): string[] {
   const keys: string[] = []
-  if (options?.listedId?.trim()) keys.push(options.listedId.trim())
+  const listedId = options?.listedId?.trim()
+  if (listedId) keys.push(listedId)
+
+  const listedHasDirection = listedId?.includes('|') ?? false
+  const listedIsWholeRoute =
+    listedId != null &&
+    !listedHasDirection &&
+    (listedId.toLowerCase() === route.id.toLowerCase() ||
+      listedId.toLowerCase() === route.number.toLowerCase())
 
   const directionKey = resolveDirectionKey(route, options?.directionIndex)
-  if (directionKey) keys.push(shiftUnlockSlotKey(route.id, directionKey))
+  if (directionKey && !listedIsWholeRoute) {
+    const slotKey = shiftUnlockSlotKey(route.id, directionKey)
+    if (!keys.includes(slotKey)) keys.push(slotKey)
+  }
 
-  keys.push(...routeLookupKeys(route))
+  if (!listedHasDirection) {
+    keys.push(...routeLookupKeys(route))
+  }
+
   return keys
 }
 

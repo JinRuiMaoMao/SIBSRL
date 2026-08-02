@@ -11,6 +11,7 @@ import {
   lockedCardDisplayNumber,
 } from '../data/routeShiftUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
+import { isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import { getRoutePageHref } from '../utils/routeNavigation'
@@ -115,12 +116,15 @@ export function RouteLockedGameCard({
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
   const usesSunshardUnlock = routeUsesSunshardUnlock(route)
-  const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId, directionIndex })
+  const isSunshardSlot = isSunshardDirectionLockedSlot(route, listedId)
+  const shiftUnlock = isSunshardSlot
+    ? null
+    : getShiftUnlockPrerequisites(route, { listedId, directionIndex })
   const shiftUnlockLabel = shiftUnlock
     ? formatShiftUnlockPrerequisitesForLockedCard(route, { listedId, directionIndex })
     : null
   const showSunshardUnlock =
-    usesSunshardUnlock && route.sunshardsRequired != null && shiftUnlock == null
+    usesSunshardUnlock && route.sunshardsRequired != null && (isSunshardSlot || shiftUnlock == null)
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {

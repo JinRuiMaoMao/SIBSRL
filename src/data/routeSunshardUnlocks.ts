@@ -58,6 +58,22 @@ export function isStaffShuttleSunshardUnlockRoute(route: BusRoute): boolean {
   return routeUsesSunshardUnlock(route) && getRouteServiceTypes(route.id).includes('staffShuttle')
 }
 
+/** 锁定列表中的阳光碎片方向槽（如 C401|N），与整线班次解锁 C401 区分。 */
+export function isSunshardDirectionLockedSlot(
+  route: BusRoute,
+  listedId?: string,
+): boolean {
+  if (!listedId || !routeUsesSunshardUnlock(route) || !routeHasPerDirectionSunshardUnlock(route)) {
+    return false
+  }
+  const { routeId, directionKey } = parseSunshardUnlockSlotKey(listedId)
+  if (routeId.toLowerCase() !== route.id.toLowerCase() || !directionKey) return false
+  if (isStaffShuttleSunshardUnlockRoute(route)) {
+    return directionKey === staffShuttleSunshardDirectionKey(route)
+  }
+  return true
+}
+
 /** 常规列表中、需阳光碎片解锁但未列入 special/seasonal 的锁定卡片（如 U47* 分方向）；
  *  工作人员接驳线即使在 special 分组也始终生成阳光碎片卡。 */
 export function getSunshardUnlockLockedDisplaySlots(
