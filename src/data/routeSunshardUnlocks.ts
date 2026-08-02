@@ -74,6 +74,14 @@ export function isSunshardDirectionLockedSlot(
   return true
 }
 
+/** 员工接驳北向阳光碎片槽已单独成卡时，不再另出整线班次解锁卡（如 C401 + C401 (N) 合并为后者）。 */
+export function shouldOmitWholeRouteShiftUnlockSlot(route: BusRoute, targetKey: string): boolean {
+  if (!isStaffShuttleSunshardUnlockRoute(route)) return false
+  const { routeId, directionKey } = parseSunshardUnlockSlotKey(targetKey)
+  if (directionKey) return false
+  return routeId.toLowerCase() === route.id.toLowerCase()
+}
+
 /** 常规列表中、需阳光碎片解锁但未列入 special/seasonal 的锁定卡片（如 U47* 分方向）；
  *  工作人员接驳线即使在 special 分组也始终生成阳光碎片卡。 */
 export function getSunshardUnlockLockedDisplaySlots(

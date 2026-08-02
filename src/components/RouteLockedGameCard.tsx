@@ -11,7 +11,7 @@ import {
   lockedCardDisplayNumber,
 } from '../data/routeShiftUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
-import { isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
+import { isStaffShuttleSunshardUnlockRoute, isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import { getRoutePageHref } from '../utils/routeNavigation'
@@ -118,7 +118,9 @@ export function RouteLockedGameCard({
   const usesSunshardUnlock = routeUsesSunshardUnlock(route)
   const isSunshardSlot = isSunshardDirectionLockedSlot(route, listedId)
   const shiftUnlock = isSunshardSlot
-    ? null
+    ? isStaffShuttleSunshardUnlockRoute(route)
+      ? getShiftUnlockPrerequisites(route, { listedId: route.id })
+      : null
     : getShiftUnlockPrerequisites(route, { listedId, directionIndex })
   const shiftUnlockLabel = shiftUnlock
     ? formatShiftUnlockPrerequisitesForLockedCard(route, { listedId, directionIndex })

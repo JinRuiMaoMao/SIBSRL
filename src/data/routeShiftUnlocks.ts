@@ -8,6 +8,7 @@ import {
   getRouteDisplayIdsForGroup,
   type GroupedRouteDisplaySlot,
 } from './routeDisplayGroups'
+import { shouldOmitWholeRouteShiftUnlockSlot } from './routeSunshardUnlocks'
 import {
   DISPLAY_ONLY_RENAMES,
   resolveSpecialRouteCodeToId,
@@ -358,6 +359,7 @@ export function getShiftUnlockLockedDisplaySlots(
     const { routeId, directionKey } = parseShiftUnlockSlotKey(targetKey)
     const route = resolveRouteForShiftUnlockSlot(routeId, visibleRoutes)
     if (!route || !visibleIds.has(route.id.toLowerCase())) continue
+    if (shouldOmitWholeRouteShiftUnlockSlot(route, targetKey)) continue
     if (lockedRouteIds.has(route.id.toLowerCase()) && !routeHasDirectionalShiftUnlockSlots(route)) continue
 
     slots.push({
