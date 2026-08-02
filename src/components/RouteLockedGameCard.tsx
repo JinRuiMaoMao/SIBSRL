@@ -105,14 +105,20 @@ export function RouteLockedGameCard({
   onOpenDetail,
 }: RouteLockedGameCardProps) {
   const { locale, t } = useLocale()
-  const cardNumber = displayNumber ?? route.number
+  const directionKey = route.stops?.[directionIndex]?.directionKey
+  const cardNumber =
+    displayNumber ?? lockedCardDisplayNumber(route, listedId, directionKey) ?? route.number
   const displayTypes = getLockedGameDisplayTypes(route, directionIndex)
   const seasonalWindow = getSeasonalRouteDisplayWindow(route)
   const dateRange = seasonalWindow
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
   const usesSunshardUnlock = routeUsesSunshardUnlock(route)
+  const isShiftUnlockRoute = routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
   const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId, directionIndex })
+  const shiftUnlockLabel = shiftUnlock
+    ? formatShiftUnlockPrerequisitesForLockedCard(route, { listedId, directionIndex })
+    : null
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {
