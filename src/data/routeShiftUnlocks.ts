@@ -6,14 +6,27 @@ import {
   getListedRouteIdsForRoute,
   resolveGroupedRouteEntry,
   getRouteDisplayIdsForGroup,
-  ROUTE_DISPLAY_GROUP_ORDER,
   type GroupedRouteDisplaySlot,
 } from './routeDisplayGroups'
-import { DISPLAY_ONLY_RENAMES, getMergeDirectionKey, resolveSpecialRouteCodeToId, toMergeBaseRouteNumber } from '../utils/routeMerge'
+import {
+  DISPLAY_ONLY_RENAMES,
+  resolveSpecialRouteCodeToId,
+  toMergeBaseRouteNumber,
+  type DirectionKey,
+} from '../utils/routeMerge'
 import { compareRouteNumber } from '../utils/routeSort'
 
 const file = routeTimetablesJson as unknown as RouteTimetablesFile
-const staticShiftUnlocks = routeShiftUnlocksJson as Record<string, { unlockRoutes: string[] }>
+
+export interface StaticShiftUnlockEntry {
+  unlockRoutes: string[]
+  unlockFromDirectionKey?: DirectionKey
+  targetRouteNumber?: string
+  /** 为 false 时，该锁定项本身不能作为解锁其他线路的前置来源（如 C401A 北行） */
+  canUnlockOthers?: boolean
+}
+
+const staticShiftUnlocks = routeShiftUnlocksJson as Record<string, StaticShiftUnlockEntry>
 
 /** 游戏内：满足条件后保证解锁所需班次（与 UI 文案一致） */
 export const SHIFT_UNLOCK_GUARANTEED_SHIFTS = 50
@@ -29,8 +42,32 @@ export interface RouteShiftUnlockTarget {
   guaranteedShifts: number
 }
 
+export interface ShiftUnlockLookupOptions {
+  listedId?: string
+  directionIndex?: number
+}
+
+interface ShiftUnlockTargetEdge {
+  prerequisiteRoute: string
+  prerequisiteDirectionKey?: DirectionKey
+  targetRouteNumber: string
+}
+
 function resolveUnlockTargetRouteId(routeCode: string): string {
   return resolveSpecialRouteCodeToId(routeCode)
+}
+
+export function shiftUnlockSlotKey(routeId: string, directionKey?: DirectionKey): string {
+  return directionKey ? `${routeId}|${directionKey}` : routeId
+}
+
+export function parseShiftUnlockSlotKey(key: string): { routeId: string; directionKey?: DirectionKey } {
+  const pipe = key.indexOf('|')
+  if (pipe < 0) return { routeId: key }
+  return {
+    routeId: key.slice(0, pipe),
+    directionKey: key.slice(pipe + 1) as DirectionKey,
+  }
 }
 
 function routeLookupKeys(route: BusRoute): string[] {
@@ -49,6 +86,25 @@ function routeLookupKeys(route: BusRoute): string[] {
   return [...keys]
 }
 
+function resolveDirectionKey(route: BusRoute, directionIndex?: number): DirectionKey | undefined {
+  if (directionIndex == null) return undefined
+  return route.stops?.[directionIndex]?.directionKey
+}
+
+function resolveShiftUnlockLookupKeys(
+  route: BusRoute,
+  options?: ShiftUnlockLookupOptions,
+): string[] {
+  const keys: string[] = []
+  if (options?.listedId?.trim()) keys.push(options.listedId.trim())
+
+  const directionKey = resolveDirectionKey(route, options?.directionIndex)
+  if (directionKey) keys.push(shiftUnlockSlotKey(route.id, directionKey))
+
+  keys.push(...routeLookupKeys(route))
+  return keys
+}
+
 function addPrerequisiteMapping(
   targetKey: string,
   prerequisiteRoutes: readonly string[],
@@ -61,24 +117,12 @@ function addPrerequisiteMapping(
   prerequisitesByTarget.set(targetKey, prereqSet)
 }
 
-function addUnlockTargetMapping(
-  displayTargetNumber: string,
-  prerequisiteRoutes: readonly string[],
-  targetsByPrerequisite: Map<string, Map<string, string>>,
-): void {
-  for (const prereq of prerequisiteRoutes) {
-    const byTarget = targetsByPrerequisite.get(prereq) ?? new Map<string, string>()
-    byTarget.set(displayTargetNumber, displayTargetNumber)
-    targetsByPrerequisite.set(prereq, byTarget)
-  }
-}
-
 function buildShiftUnlockMaps(): {
   prerequisitesByTarget: Map<string, Set<string>>
-  targetsByPrerequisite: Map<string, Map<string, string>>
+  targetEdges: ShiftUnlockTargetEdge[]
 } {
   const prerequisitesByTarget = new Map<string, Set<string>>()
-  const targetsByPrerequisite = new Map<string, Map<string, string>>()
+  const targetEdges: ShiftUnlockTargetEdge[] = []
 
   for (const record of file.data) {
     const parentRouteNumber = record.route?.trim() || null
@@ -97,29 +141,38 @@ function buildShiftUnlockMaps(): {
             addPrerequisiteMapping(parentRouteNumber, entry.unlockRoutes, prerequisitesByTarget)
           }
 
-          addUnlockTargetMapping(displayTargetNumber, entry.unlockRoutes, targetsByPrerequisite)
+          for (const prereq of entry.unlockRoutes) {
+            targetEdges.push({
+              prerequisiteRoute: prereq,
+              targetRouteNumber: displayTargetNumber,
+            })
+          }
         }
       }
     }
   }
 
-  for (const [targetRouteId, entry] of Object.entries(staticShiftUnlocks)) {
+  for (const [targetKey, entry] of Object.entries(staticShiftUnlocks)) {
     if (!entry.unlockRoutes?.length) continue
 
-    addPrerequisiteMapping(targetRouteId, entry.unlockRoutes, prerequisitesByTarget)
+    addPrerequisiteMapping(targetKey, entry.unlockRoutes, prerequisitesByTarget)
 
-    const displayTargetNumber = toMergeBaseRouteNumber(targetRouteId)
-    if (displayTargetNumber !== targetRouteId) {
-      // 变体编号（如 C401AW）只注册自身；不合并到展示线路 id，避免 C401A 出现混合前置条件。
+    const { routeId } = parseShiftUnlockSlotKey(targetKey)
+    const displayTargetNumber = entry.targetRouteNumber ?? toMergeBaseRouteNumber(routeId)
+
+    for (const prereq of entry.unlockRoutes) {
+      targetEdges.push({
+        prerequisiteRoute: prereq,
+        prerequisiteDirectionKey: entry.unlockFromDirectionKey,
+        targetRouteNumber: displayTargetNumber,
+      })
     }
-
-    addUnlockTargetMapping(displayTargetNumber, entry.unlockRoutes, targetsByPrerequisite)
   }
 
-  return { prerequisitesByTarget, targetsByPrerequisite }
+  return { prerequisitesByTarget, targetEdges }
 }
 
-const { prerequisitesByTarget, targetsByPrerequisite } = buildShiftUnlockMaps()
+const { prerequisitesByTarget, targetEdges } = buildShiftUnlockMaps()
 
 export function hasShiftUnlockPrerequisitesKey(key: string): boolean {
   const trimmed = key.trim()
@@ -127,19 +180,21 @@ export function hasShiftUnlockPrerequisitesKey(key: string): boolean {
   return (prerequisitesByTarget.get(trimmed)?.size ?? 0) > 0
 }
 
+export function routeHasDirectionalShiftUnlockSlots(route: BusRoute): boolean {
+  const prefix = `${route.id}|`
+  return Object.keys(staticShiftUnlocks).some((key) => key.startsWith(prefix))
+}
+
+/** @deprecated 使用 routeHasDirectionalShiftUnlockSlots */
 export function routeHasVariantShiftUnlockListedIds(route: BusRoute): boolean {
-  return getListedRouteIdsForRoute(route).some((listedId) => hasShiftUnlockPrerequisitesKey(listedId))
+  return routeHasDirectionalShiftUnlockSlots(route)
 }
 
 export function getShiftUnlockPrerequisites(
   route: BusRoute,
-  options?: { listedId?: string },
+  options?: ShiftUnlockLookupOptions,
 ): RouteShiftUnlockPrerequisites | null {
-  const keys: string[] = []
-  if (options?.listedId?.trim()) keys.push(options.listedId.trim())
-  keys.push(...routeLookupKeys(route))
-
-  for (const key of keys) {
+  for (const key of resolveShiftUnlockLookupKeys(route, options)) {
     const prereqs = prerequisitesByTarget.get(key)
     if (!prereqs?.size) continue
     return {
@@ -150,22 +205,31 @@ export function getShiftUnlockPrerequisites(
   return null
 }
 
-export function getShiftUnlockTargets(route: BusRoute): RouteShiftUnlockTarget[] {
+export function getShiftUnlockTargets(
+  route: BusRoute,
+  options?: ShiftUnlockLookupOptions,
+): RouteShiftUnlockTarget[] {
   const seen = new Set<string>()
   const targets: RouteShiftUnlockTarget[] = []
+  const currentDirectionKey = resolveDirectionKey(route, options?.directionIndex)
+  const sourceRoutes = new Set(routeLookupKeys(route))
 
-  for (const key of routeLookupKeys(route)) {
-    const byTarget = targetsByPrerequisite.get(key)
-    if (!byTarget) continue
-    for (const [targetId, targetRouteNumber] of byTarget) {
-      if (seen.has(targetId)) continue
-      seen.add(targetId)
-      targets.push({
-        targetRouteId: targetId,
-        targetRouteNumber,
-        guaranteedShifts: SHIFT_UNLOCK_GUARANTEED_SHIFTS,
-      })
+  for (const edge of targetEdges) {
+    if (!sourceRoutes.has(edge.prerequisiteRoute)) continue
+    if (
+      edge.prerequisiteDirectionKey &&
+      currentDirectionKey &&
+      edge.prerequisiteDirectionKey !== currentDirectionKey
+    ) {
+      continue
     }
+    if (seen.has(edge.targetRouteNumber)) continue
+    seen.add(edge.targetRouteNumber)
+    targets.push({
+      targetRouteId: edge.targetRouteNumber,
+      targetRouteNumber: edge.targetRouteNumber,
+      guaranteedShifts: SHIFT_UNLOCK_GUARANTEED_SHIFTS,
+    })
   }
 
   return targets.sort((a, b) => compareRouteNumber(a.targetRouteNumber, b.targetRouteNumber))
@@ -175,7 +239,6 @@ export function formatShiftUnlockPrerequisiteRoutes(numbers: readonly string[]):
   return numbers.map((n) => `Route ${n}`).join(', ')
 }
 
-/** 详情页解锁目标：编号用逗号连接，前缀 Route 由 i18n 模板提供。 */
 export function formatShiftUnlockTargetRoutes(numbers: readonly string[]): string {
   return numbers.join(', ')
 }
@@ -184,17 +247,29 @@ export function resolveShiftUnlockListedRouteId(
   route: BusRoute,
   directionIndex: number,
 ): string | undefined {
-  const listedIds = getListedRouteIdsForRoute(route)
-  const unlockListedIds = listedIds.filter((listedId) => hasShiftUnlockPrerequisitesKey(listedId))
-  if (unlockListedIds.length === 1) return unlockListedIds[0]
-  if (unlockListedIds.length >= 2) {
-    const directionKey = route.stops?.[directionIndex]?.directionKey
-    if (directionKey) {
-      const match = unlockListedIds.find((listedId) => getMergeDirectionKey(listedId) === directionKey)
-      if (match) return match
-    }
+  const directionKey = route.stops?.[directionIndex]?.directionKey
+  if (directionKey) {
+    const slotKey = shiftUnlockSlotKey(route.id, directionKey)
+    if (hasShiftUnlockPrerequisitesKey(slotKey)) return slotKey
   }
   return undefined
+}
+
+function compareShiftUnlockSlotOrder(a: GroupedRouteDisplaySlot, b: GroupedRouteDisplaySlot): number {
+  const routeCmp = compareRouteNumber(a.entry?.route.number ?? a.listedId, b.entry?.route.number ?? b.listedId)
+  if (routeCmp !== 0) return routeCmp
+  const dirA = a.entry?.directionKey
+  const dirB = b.entry?.directionKey
+  if (dirA === 'N' && dirB === 'S') return -1
+  if (dirA === 'S' && dirB === 'N') return 1
+  return compareRouteNumber(a.listedId, b.listedId)
+}
+
+function resolveRouteForShiftUnlockSlot(
+  routeId: string,
+  visibleRoutes: readonly BusRoute[],
+): BusRoute | null {
+  return visibleRoutes.find((route) => route.id === routeId) ?? null
 }
 
 /** 常规分组内、需班次解锁但未列入 special/seasonal 的锁定卡片（如员工接驳）。 */
@@ -212,34 +287,28 @@ export function getShiftUnlockLockedDisplaySlots(
   )
 
   const slots: GroupedRouteDisplaySlot[] = []
-  const seenListedIds = new Set<string>()
 
-  for (const listedId of getRouteDisplayIdsForGroup('normal')) {
-    const key = listedId.trim()
-    const lower = key.toLowerCase()
-    if (!key || seenListedIds.has(lower)) continue
+  for (const targetKey of Object.keys(staticShiftUnlocks).sort(compareRouteNumber)) {
+    const entryConfig = staticShiftUnlocks[targetKey]
+    if (!entryConfig?.unlockRoutes?.length) continue
 
-    const entry = resolveGroupedRouteEntry(listedId)
-    if (!entry || !visibleIds.has(entry.route.id.toLowerCase())) continue
-    if (lockedRouteIds.has(entry.route.id.toLowerCase())) continue
+    const { routeId, directionKey } = parseShiftUnlockSlotKey(targetKey)
+    const route = resolveRouteForShiftUnlockSlot(routeId, visibleRoutes)
+    if (!route || !visibleIds.has(route.id.toLowerCase())) continue
+    if (lockedRouteIds.has(route.id.toLowerCase()) && !routeHasDirectionalShiftUnlockSlots(route)) continue
 
-    if (hasShiftUnlockPrerequisitesKey(key)) {
-      seenListedIds.add(lower)
-      slots.push({ listedId: key, entry, isVisible: true })
-      continue
-    }
-
-    if (
-      hasShiftUnlockPrerequisitesKey(entry.route.id) &&
-      !routeHasVariantShiftUnlockListedIds(entry.route) &&
-      !slots.some((slot) => slot.entry?.route.id.toLowerCase() === entry.route.id.toLowerCase())
-    ) {
-      seenListedIds.add(lower)
-      slots.push({ listedId: key, entry, isVisible: true })
-    }
+    slots.push({
+      listedId: targetKey,
+      entry: {
+        listedId: targetKey,
+        route,
+        directionKey,
+      },
+      isVisible: true,
+    })
   }
 
-  return slots.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
+  return slots.sort(compareShiftUnlockSlotOrder)
 }
 
 export function mergeShiftUnlockLockedDisplaySlots(
@@ -256,5 +325,5 @@ export function mergeShiftUnlockLockedDisplaySlots(
     merged.push(slot)
   }
 
-  return merged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
+  return merged.sort(compareShiftUnlockSlotOrder)
 }

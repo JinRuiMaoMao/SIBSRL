@@ -14,22 +14,31 @@
   "476X": {
     "unlockRoutes": ["476", "476*", "476P", "476S", "N476"]
   },
-  "C01": {
-    "unlockRoutes": ["C01"]
+  "C01|S": {
+    "unlockRoutes": ["C01"],
+    "unlockFromDirectionKey": "S"
   },
-  "C401": {
-    "unlockRoutes": ["C401"]
+  "C401|S": {
+    "unlockRoutes": ["C401"],
+    "unlockFromDirectionKey": "S"
   },
-  "C401AW": {
-    "unlockRoutes": ["C401"]
+  "C401A|N": {
+    "unlockRoutes": ["C401"],
+    "unlockFromDirectionKey": "S",
+    "targetRouteNumber": "C401A"
   },
-  "C401AE": {
-    "unlockRoutes": ["C401A"]
+  "C401A|S": {
+    "unlockRoutes": ["C401A"],
+    "unlockFromDirectionKey": "N",
+    "targetRouteNumber": "C401A",
+    "canUnlockOthers": false
   },
-  "F701": {
-    "unlockRoutes": ["F701"]
+  "F701|S": {
+    "unlockRoutes": ["F701"],
+    "unlockFromDirectionKey": "S"
   },
-  "F702": {
-    "unlockRoutes": ["F702"]
+  "F702|S": {
+    "unlockRoutes": ["F702"],
+    "unlockFromDirectionKey": "S"
   }
 }

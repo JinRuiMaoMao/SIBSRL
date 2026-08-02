@@ -88,7 +88,7 @@ export function RouteDetail({
       ? getLoopViewLengthKm(route, locale)
       : getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
-  const shiftUnlockTargets = getShiftUnlockTargets(route)
+  const shiftUnlockTargets = getShiftUnlockTargets(route, { directionIndex })
 
   useEffect(() => {
     setSelectedStopIndex(null)

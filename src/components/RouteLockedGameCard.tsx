@@ -33,6 +33,12 @@ function getLockedGameDisplayTypes(route: BusRoute, directionIndex: number): Rou
   if (groups.includes('seasonal') && !types.includes('festival')) {
     return ['festival', ...types]
   }
+  if (route.id === 'C401A') {
+    const directionKey = route.stops?.[directionIndex]?.directionKey
+    if (directionKey === 'N' && !types.includes('specialDeparture')) {
+      return ['specialDeparture', ...types]
+    }
+  }
   return types
 }
 
@@ -87,7 +93,7 @@ export function RouteLockedGameCard({
   const dateRange = seasonalWindow
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
-  const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId })
+  const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId, directionIndex })
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {

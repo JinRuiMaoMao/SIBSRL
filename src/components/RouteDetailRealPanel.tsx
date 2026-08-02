@@ -105,7 +105,7 @@ export function RouteDetailRealPanel({
         getDirectionServiceTime(route, directionIndex, locale))
       : getDirectionServiceTime(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
-  const shiftUnlockTargets = getShiftUnlockTargets(route)
+  const shiftUnlockTargets = getShiftUnlockTargets(route, { directionIndex })
   const difficulty = routeDifficultyStars(route.levelRequired)
   const operators = route.operators
   const fareText =

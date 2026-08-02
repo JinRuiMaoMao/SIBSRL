@@ -5,9 +5,9 @@ import { isLockedDisplayRoute, getRouteDisplayGroupsForRoute } from '../data/rou
 import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
 import {
   getShiftUnlockLockedDisplaySlots,
-  routeHasVariantShiftUnlockListedIds,
+  parseShiftUnlockSlotKey,
+  routeHasDirectionalShiftUnlockSlots,
 } from '../data/routeShiftUnlocks'
-import { getMergeDirectionKey } from './routeMerge'
 import { compareRouteNumber } from './routeSort'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 
@@ -116,8 +116,8 @@ export function buildShiftUnlockRealRouteEntries(
     const route = slot.entry?.route
     if (!route) continue
 
-    if (routeHasVariantShiftUnlockListedIds(route)) {
-      const directionKey = getMergeDirectionKey(slot.listedId)
+    if (routeHasDirectionalShiftUnlockSlots(route)) {
+      const { directionKey } = parseShiftUnlockSlotKey(slot.listedId)
       let directionIndex = 0
       if (directionKey) {
         const idx = route.stops?.findIndex((stop) => stop.directionKey === directionKey) ?? -1

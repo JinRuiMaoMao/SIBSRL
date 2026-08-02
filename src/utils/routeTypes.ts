@@ -47,6 +47,18 @@ export function getRouteDisplayTypes(
     if (contextual) return contextual
   }
 
+  if (route.id === 'C401A' && options) {
+    const directionKey = getDirectionKey(route, getDirectionDataIndex(route, options.directionIndex ?? 0))
+    const tags: RouteTypeFilter[] = [...(route.serviceTypes ?? [])]
+    if (directionKey === 'N' && !tags.includes('specialDeparture')) {
+      tags.push('specialDeparture')
+    }
+    if (route.category === 'centralAxis' && !tags.includes('centralAxis')) {
+      tags.unshift('centralAxis')
+    }
+    return sortTypes([...new Set(tags)])
+  }
+
   const tags: RouteTypeFilter[] = [...(route.serviceTypes ?? [])]
   if (route.category === 'centralAxis' && !tags.includes('centralAxis')) {
     tags.unshift('centralAxis')
