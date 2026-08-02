@@ -8,6 +8,15 @@ const DIRECTION_SORT_ORDER: Record<string, number> = {
   S: 3,
 }
 
+export function compareDirectionKeys(
+  dirA?: string | null,
+  dirB?: string | null,
+): number {
+  const pa = dirA ? (DIRECTION_SORT_ORDER[dirA] ?? 50) : -1
+  const pb = dirB ? (DIRECTION_SORT_ORDER[dirB] ?? 50) : -1
+  return pa - pb
+}
+
 export function routeHasDirectionVariants(route: BusRoute): boolean {
   return (route.stops?.length ?? 0) > 1
 }

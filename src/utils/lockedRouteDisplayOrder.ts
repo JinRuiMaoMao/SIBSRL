@@ -1,11 +1,8 @@
-import {
-  getRouteDisplayGroupsForRoute,
-  type GroupedRouteDisplaySlot,
-} from '../data/routeDisplayGroups'
+import type { GroupedRouteDisplaySlot } from '../data/routeDisplayGroups'
 import { getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
-import { isStaffShuttleSunshardUnlockRoute } from '../data/routeSunshardUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import type { BusRoute } from '../types/route'
+import { compareDirectionKeys } from './routeDirectionCore'
 import type { DirectionKey } from './routeMerge'
 import { compareRouteNumber } from './routeSort'
 import type { RealRouteListEntry } from './realRouteListEntries'
@@ -31,49 +28,37 @@ export function routeHasShiftUnlockPrereqDisplay(
   return (prereqs?.prerequisiteRouteNumbers.length ?? 0) > 0
 }
 
-function lockedDisplayRank(route: BusRoute, hasShiftPrereq: boolean): number {
-  const groups = getRouteDisplayGroupsForRoute(route)
-  if (groups.includes('seasonal')) return 0
-  if (isStaffShuttleSunshardUnlockRoute(route)) return 1
-  if (hasShiftPrereq) return 2
-  if (routeUsesSunshardUnlock(route)) return 3
-  if (groups.includes('special')) return 4
-  return 5
+function sortListedIdForRoute(route: BusRoute, listedId?: string): string {
+  const trimmed = listedId?.trim()
+  if (trimmed) return trimmed.split('|')[0] ?? trimmed
+  return route.number
 }
 
 function compareLockedRouteOrder(
   routeA: BusRoute,
   routeB: BusRoute,
-  hasShiftPrereqA: boolean,
-  hasShiftPrereqB: boolean,
   dirA?: DirectionKey,
   dirB?: DirectionKey,
   listedIdA?: string,
   listedIdB?: string,
 ): number {
-  const rankDiff =
-    lockedDisplayRank(routeA, hasShiftPrereqA) - lockedDisplayRank(routeB, hasShiftPrereqB)
-  if (rankDiff !== 0) return rankDiff
-
-  if (routeUsesSunshardUnlock(routeA) && routeUsesSunshardUnlock(routeB)) {
+  const bothSunshard = routeUsesSunshardUnlock(routeA) && routeUsesSunshardUnlock(routeB)
+  if (bothSunshard) {
     const shardDiff = (routeA.sunshardsRequired ?? 0) - (routeB.sunshardsRequired ?? 0)
     if (shardDiff !== 0) return shardDiff
   }
 
-  const routeCmp = compareRouteNumber(routeA.number, routeB.number)
+  const routeCmp = compareRouteNumber(
+    sortListedIdForRoute(routeA, listedIdA),
+    sortListedIdForRoute(routeB, listedIdB),
+  )
   if (routeCmp !== 0) return routeCmp
 
-  const dirCmp = compareSameRouteDirectionKeys(dirA, dirB)
+  const dirCmp = compareDirectionKeys(dirA, dirB)
   if (dirCmp !== 0) return dirCmp
 
   if (listedIdA && listedIdB) return compareRouteNumber(listedIdA, listedIdB)
-  return 0
-}
-
-function compareSameRouteDirectionKeys(dirA?: DirectionKey, dirB?: DirectionKey): number {
-  if (dirA === 'N' && dirB === 'S') return -1
-  if (dirA === 'S' && dirB === 'N') return 1
-  return 0
+  return compareRouteNumber(routeA.number, routeB.number)
 }
 
 export function compareLockedDisplaySlotOrder(
@@ -84,20 +69,9 @@ export function compareLockedDisplaySlotOrder(
   const routeB = b.entry?.route
   if (!routeA || !routeB) return compareRouteNumber(a.listedId, b.listedId)
 
-  const prereqA = routeHasShiftUnlockPrereqDisplay(routeA, {
-    listedId: a.listedId,
-    directionKey: a.entry?.directionKey,
-  })
-  const prereqB = routeHasShiftUnlockPrereqDisplay(routeB, {
-    listedId: b.listedId,
-    directionKey: b.entry?.directionKey,
-  })
-
   return compareLockedRouteOrder(
     routeA,
     routeB,
-    prereqA,
-    prereqB,
     a.entry?.directionKey,
     b.entry?.directionKey,
     a.listedId,
@@ -129,27 +103,16 @@ export function compareLockedRealRouteEntryOrder(
   const listedIdA = listedIdFromRealListKey(a.listKey)
   const listedIdB = listedIdFromRealListKey(b.listKey)
 
-  const prereqA = routeHasShiftUnlockPrereqDisplay(a.route, {
-    listedId: listedIdA,
-    directionIndex: a.directionIndex,
-  })
-  const prereqB = routeHasShiftUnlockPrereqDisplay(b.route, {
-    listedId: listedIdB,
-    directionIndex: b.directionIndex,
-  })
-
   const dirA = a.route.stops?.[a.directionIndex]?.directionKey
   const dirB = b.route.stops?.[b.directionIndex]?.directionKey
 
   return compareLockedRouteOrder(
     a.route,
     b.route,
-    prereqA,
-    prereqB,
     dirA,
     dirB,
-    a.listKey,
-    b.listKey,
+    listedIdA,
+    listedIdB,
   )
 }
 
