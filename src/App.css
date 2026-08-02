@@ -3990,6 +3990,41 @@ html[data-route-lookup-layout='split'] .site-footer {
   gap: 0.45rem;
 }
 
+.route-locked-game-card-unlock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  max-width: 52%;
+  border: 1px solid color-mix(in srgb, #6eb5ff 72%, var(--border));
+  border-radius: 999px;
+  padding: 0.18rem 0.45rem 0.18rem 0.55rem;
+  color: var(--text);
+}
+
+.route-locked-game-card-unlock-pill-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.route-locked-game-card-unlock-sun-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--text) 45%, transparent);
+  border-radius: 0.2rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.route-locked-game-card-sun-icon {
+  display: block;
+}
+
 .route-locked-game-card-lock {
   flex-shrink: 0;
   color: var(--text);
@@ -4001,22 +4036,6 @@ html[data-route-lookup-layout='split'] .site-footer {
   border-radius: 999px;
   padding: 0.22rem 0.7rem;
   color: #ffb6c1;
-  font-style: italic;
-  font-size: 0.82rem;
-  line-height: 1.35;
-}
-
-.route-locked-game-card-sun {
-  flex-shrink: 0;
-  color: #f5c842;
-}
-
-.route-locked-game-card-sunshards {
-  display: inline-block;
-  border: 1px solid color-mix(in srgb, #f5c842 75%, var(--border));
-  border-radius: 999px;
-  padding: 0.22rem 0.7rem;
-  color: #f5c842;
   font-style: italic;
   font-size: 0.82rem;
   line-height: 1.35;

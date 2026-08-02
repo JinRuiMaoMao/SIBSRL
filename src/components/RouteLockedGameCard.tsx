@@ -65,12 +65,16 @@ function CalendarGlyph() {
   )
 }
 
-function SunGlyph() {
+function SunShardGlyph() {
   return (
-    <svg className="route-locked-game-card-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+    <svg className="route-locked-game-card-sun-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+      <circle cx="12" cy="12" r="4" fill="currentColor" />
       <path
         fill="currentColor"
-        d="M12 2.5 14.6 9l6.9.5-5.2 4.4 1.6 6.7L12 17.8 5.1 20.6l1.6-6.7-5.2-4.4 6.9-.5z"
+        d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
       />
     </svg>
   )
@@ -153,17 +157,19 @@ export function RouteLockedGameCard({
               </span>
               <span className="route-locked-game-card-date-text">{dateRange}</span>
             </div>
+          ) : usesSunshardUnlock && route.sunshardsRequired != null ? (
+            <div className="route-locked-game-card-unlock-pill">
+              <span className="route-locked-game-card-unlock-pill-text">
+                {t('routeLockedGameUnlockSunshards', { n: route.sunshardsRequired })}
+              </span>
+              <span className="route-locked-game-card-unlock-sun-wrap">
+                <SunShardGlyph />
+              </span>
+            </div>
           ) : null}
         </div>
 
-        {usesSunshardUnlock && route.sunshardsRequired != null ? (
-          <div className="route-locked-game-card-unlock-row">
-            <SunGlyph />
-            <span className="route-locked-game-card-sunshards">
-              {t('unlockSunshardsLine', { n: route.sunshardsRequired })}
-            </span>
-          </div>
-        ) : shiftUnlock ? (
+        {shiftUnlock ? (
           <div className="route-locked-game-card-unlock-row">
             <LockGlyph />
             <span className="route-locked-game-card-prereq">

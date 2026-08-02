@@ -25,7 +25,12 @@ import {
   getShiftUnlockLockedDisplaySlots,
   mergeShiftUnlockLockedDisplaySlots,
 } from '../data/routeShiftUnlocks'
+import {
+  getSunshardUnlockLockedDisplaySlots,
+  mergeSunshardUnlockLockedDisplaySlots,
+} from '../data/routeSunshardUnlocks'
 import { sortLockedDisplaySlots } from '../utils/lockedRouteDisplayOrder'
+import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import {
   getSeasonalAvailabilityLabels,
   getSeasonalRouteDisplayWindow,
@@ -1148,9 +1153,12 @@ export function RouteLookupPage({
   const listSectionSlots = useMemo(() => {
     const normal = groupedSlots.normal
     const specialSeasonal = sortLockedDisplaySlots(
-      mergeShiftUnlockLockedDisplaySlots(
-        mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
-        getShiftUnlockLockedDisplaySlots(displayRoutes),
+      mergeSunshardUnlockLockedDisplaySlots(
+        mergeShiftUnlockLockedDisplaySlots(
+          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
+          getShiftUnlockLockedDisplaySlots(displayRoutes),
+        ),
+        getSunshardUnlockLockedDisplaySlots(displayRoutes),
       ),
     )
     return { normal, specialSeasonal }
@@ -1158,9 +1166,14 @@ export function RouteLookupPage({
 
   const listSectionTotalSlots = useMemo(() => {
     const normal = groupedTotalSlots.normal
-    const specialSeasonal = mergeShiftUnlockLockedDisplaySlots(
-      mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
-      getShiftUnlockLockedDisplaySlots(displayRoutes),
+    const specialSeasonal = sortLockedDisplaySlots(
+      mergeSunshardUnlockLockedDisplaySlots(
+        mergeShiftUnlockLockedDisplaySlots(
+          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
+          getShiftUnlockLockedDisplaySlots(displayRoutes),
+        ),
+        getSunshardUnlockLockedDisplaySlots(displayRoutes),
+      ),
     )
     return { normal, specialSeasonal }
   }, [groupedTotalSlots, displayRoutes])
@@ -1189,11 +1202,12 @@ export function RouteLookupPage({
     const slots = listSectionSlots.specialSeasonal
     const filtered = !unlockCategoryFocus
       ? slots
-      : slots.filter(
-          (slot) =>
-            slot.entry != null &&
-            getRouteDisplayGroupsForRoute(slot.entry.route).includes(unlockCategoryFocus),
-        )
+      : slots.filter((slot) => {
+          if (slot.entry == null) return false
+          const groups = getRouteDisplayGroupsForRoute(slot.entry.route)
+          if (groups.includes(unlockCategoryFocus)) return true
+          return unlockCategoryFocus === 'special' && routeUsesSunshardUnlock(slot.entry.route)
+        })
     return sortLockedDisplaySlots(filtered)
   }, [listSectionSlots.specialSeasonal, unlockCategoryFocus])
 

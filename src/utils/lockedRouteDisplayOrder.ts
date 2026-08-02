@@ -87,6 +87,10 @@ function listedIdFromRealListKey(listKey: string): string | undefined {
   return suffix.includes('|') ? suffix : undefined
 }
 
+export function listedIdFromRealRouteListKey(listKey: string): string | undefined {
+  return listedIdFromRealListKey(listKey)
+}
+
 export function compareLockedRealRouteEntryOrder(
   a: RealRouteListEntry,
   b: RealRouteListEntry,

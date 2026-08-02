@@ -7,6 +7,7 @@ import {
   sortLockedRealRouteListEntries,
   type RealRouteListEntry,
 } from '../utils/realRouteListEntries'
+import { listedIdFromRealRouteListKey } from '../utils/lockedRouteDisplayOrder'
 import { resolveShiftUnlockListedRouteId } from '../data/routeShiftUnlocks'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
@@ -119,6 +120,8 @@ export function RouteLookupSplitList({
 
   const renderLockedEntry = (entry: RealRouteListEntry) => {
     const { route, directionIndex, listKey } = entry
+    const sunshardListedId = listedIdFromRealRouteListKey(listKey)
+    const listedId = sunshardListedId ?? resolveShiftUnlockListedRouteId(route, directionIndex)
 
     return (
       <div

@@ -1,13 +1,20 @@
 import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
-import { isLockedDisplayRoute, getRouteDisplayGroupsForRoute } from '../data/routeDisplayGroups'
+import { getRouteDisplayGroupsForRoute, isLockedDisplayRoute } from '../data/routeDisplayGroups'
+import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
 import {
   getShiftUnlockLockedDisplaySlots,
   parseShiftUnlockSlotKey,
   routeHasDirectionalShiftUnlockSlots,
 } from '../data/routeShiftUnlocks'
+import {
+  getSunshardUnlockLockedDisplaySlots,
+  getSunshardUnlockLockedRouteIds,
+  parseSunshardUnlockSlotKey,
+  routeHasPerDirectionSunshardUnlock,
+} from '../data/routeSunshardUnlocks'
 import { getMergeDirectionKey } from './routeMerge'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 import { sortLockedRealRouteListEntries as sortLockedEntriesByDisplayOrder } from './lockedRouteDisplayOrder'
@@ -127,6 +134,36 @@ export function buildShiftUnlockRealRouteEntries(
   return entries
 }
 
+export function buildSunshardUnlockRealRouteEntries(
+  visibleRoutes: readonly BusRoute[],
+): RealRouteListEntry[] {
+  const entries: RealRouteListEntry[] = []
+
+  for (const slot of getSunshardUnlockLockedDisplaySlots(visibleRoutes)) {
+    const route = slot.entry?.route
+    if (!route) continue
+
+    if (routeHasPerDirectionSunshardUnlock(route)) {
+      const { directionKey } = parseSunshardUnlockSlotKey(slot.listedId)
+      let directionIndex = 0
+      if (directionKey) {
+        const idx = route.stops?.findIndex((stop) => stop.directionKey === directionKey) ?? -1
+        if (idx >= 0) directionIndex = idx
+      }
+      entries.push({
+        route,
+        directionIndex,
+        listKey: `${route.id}:${slot.listedId}`,
+      })
+      continue
+    }
+
+    entries.push(...buildRealRouteListEntries([route]))
+  }
+
+  return entries
+}
+
 export function partitionRealRouteListWithShiftUnlocks(
   entries: readonly RealRouteListEntry[],
   visibleRoutes: readonly BusRoute[],
@@ -136,16 +173,24 @@ export function partitionRealRouteListWithShiftUnlocks(
 } {
   const { normal, locked } = partitionRealRouteListEntries(entries)
   const shiftUnlockEntries = buildShiftUnlockRealRouteEntries(visibleRoutes)
-  if (shiftUnlockEntries.length === 0) {
-    return { normal, locked: sortLockedRealRouteListEntries(locked) }
-  }
+  const sunshardUnlockEntries = buildSunshardUnlockRealRouteEntries(visibleRoutes)
+  const hiddenRouteIds = new Set([
+    ...shiftUnlockEntries.map((entry) => entry.route.id),
+    ...getSunshardUnlockLockedRouteIds(visibleRoutes),
+  ])
+  const normalFiltered = normal.filter((entry) => !hiddenRouteIds.has(entry.route.id))
 
-  const shiftUnlockRouteIds = new Set(shiftUnlockEntries.map((entry) => entry.route.id))
-  const normalFiltered = normal.filter((entry) => !shiftUnlockRouteIds.has(entry.route.id))
+  if (shiftUnlockEntries.length === 0 && sunshardUnlockEntries.length === 0) {
+    return { normal: normalFiltered, locked: sortLockedRealRouteListEntries(locked) }
+  }
 
   return {
     normal: normalFiltered,
-    locked: sortLockedRealRouteListEntries([...locked, ...shiftUnlockEntries]),
+    locked: sortLockedRealRouteListEntries([
+      ...locked,
+      ...shiftUnlockEntries,
+      ...sunshardUnlockEntries,
+    ]),
   }
 }
 
@@ -154,5 +199,10 @@ export function filterRealRouteListEntriesByUnlockCategory(
   category: 'seasonal' | 'special' | null,
 ): RealRouteListEntry[] {
   if (!category) return [...entries]
-  return entries.filter((entry) => getRouteDisplayGroupsForRoute(entry.route).includes(category))
+  return entries.filter((entry) => {
+    const groups = getRouteDisplayGroupsForRoute(entry.route)
+    if (groups.includes(category)) return true
+    if (category === 'special' && routeUsesSunshardUnlock(entry.route)) return true
+    return false
+  })
 }
