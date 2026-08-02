@@ -5,7 +5,7 @@
   "note": "Community-provided August 2026 Daily Challenge list (~August Daily Challenge~). Discord emoji/custom emoji notes were removed; shorthand entries such as 25whYN, Rare Appeaeance, and Marathon Road Closure (N) were normalized.",
   "days": [
     { "date": "2026-08-01", "event": "Foggy Day", "routeCode": "246XA", "race": true },
-    { "date": "2026-08-02", "event": "Rush Hour", "routeCode": null, "race": true },
+    { "date": "2026-08-02", "event": "Rush Hour", "routeCode": "171W", "race": true },
     { "date": "2026-08-03", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-04", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-05", "event": null, "routeCode": null, "race": false },
