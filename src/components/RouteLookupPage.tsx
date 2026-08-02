@@ -22,6 +22,10 @@ import {
   type RouteListUiSectionKey,
 } from '../data/routeDisplayGroups'
 import {
+  getShiftUnlockLockedDisplaySlots,
+  mergeShiftUnlockLockedDisplaySlots,
+} from '../data/routeShiftUnlocks'
+import {
   getSeasonalAvailabilityLabels,
   getSeasonalRouteDisplayWindow,
 } from '../data/seasonalRouteAvailability'
@@ -111,9 +115,8 @@ import { getSortedDirectionIndexFromDataIndex } from '../utils/routeDirections'
 import {
   buildRealRouteListEntries,
   formatRealRouteDisplayNumber,
-  partitionRealRouteListEntries,
+  partitionRealRouteListWithShiftUnlocks,
   realRouteListKey,
-  sortLockedRealRouteListEntries,
 } from '../utils/realRouteListEntries'
 import {
   findTransferPlansBetweenStops,
@@ -295,12 +298,8 @@ export function RouteLookupPage({
     [filteredRoutes, splitLayoutActive],
   )
   const { normal: realNormalEntries, locked: realLockedEntries } = useMemo(() => {
-    const partitioned = partitionRealRouteListEntries(realFilteredEntries)
-    return {
-      normal: partitioned.normal,
-      locked: sortLockedRealRouteListEntries(partitioned.locked),
-    }
-  }, [realFilteredEntries])
+    return partitionRealRouteListWithShiftUnlocks(realFilteredEntries, filteredRoutes)
+  }, [realFilteredEntries, filteredRoutes])
   const realTotalEntries = useMemo(
     () =>
       splitLayoutActive
@@ -1147,21 +1146,21 @@ export function RouteLookupPage({
 
   const listSectionSlots = useMemo(() => {
     const normal = groupedSlots.normal
-    const specialSeasonal = mergeGroupDisplaySlots(
-      ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal,
-      groupedSlots,
+    const specialSeasonal = mergeShiftUnlockLockedDisplaySlots(
+      mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
+      getShiftUnlockLockedDisplaySlots(displayRoutes),
     )
     return { normal, specialSeasonal }
-  }, [groupedSlots])
+  }, [groupedSlots, displayRoutes])
 
   const listSectionTotalSlots = useMemo(() => {
     const normal = groupedTotalSlots.normal
-    const specialSeasonal = mergeGroupDisplaySlots(
-      ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal,
-      groupedTotalSlots,
+    const specialSeasonal = mergeShiftUnlockLockedDisplaySlots(
+      mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
+      getShiftUnlockLockedDisplaySlots(routes),
     )
     return { normal, specialSeasonal }
-  }, [groupedTotalSlots])
+  }, [groupedTotalSlots, routes])
 
   const countVisibleSectionSlots = useCallback(
     (section: RouteListUiSectionKey) =>
@@ -1308,7 +1307,7 @@ export function RouteLookupPage({
         <RouteLockedGameCard
           key={`locked-${listedId}`}
           route={route}
-          displayNumber={listedId !== route.number ? listedId : undefined}
+          listedId={listedId}
           directionIndex={directionIndex}
           selected={selectedRoute?.id === route.id}
           onNavigate={handleRouteNavigate}

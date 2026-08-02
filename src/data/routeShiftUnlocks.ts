@@ -2,8 +2,14 @@ import routeShiftUnlocksJson from '../../data/route-shift-unlocks.json'
 import routeTimetablesJson from '../../data/route-timetables.json'
 import type { BusRoute } from '../types/route'
 import type { RouteTimetablesFile, TimetableScheduleEntry } from '../types/routeTimetableData'
-import { getListedRouteIdsForRoute } from './routeDisplayGroups'
-import { DISPLAY_ONLY_RENAMES, resolveSpecialRouteCodeToId } from '../utils/routeMerge'
+import {
+  getListedRouteIdsForRoute,
+  resolveGroupedRouteEntry,
+  getRouteDisplayIdsForGroup,
+  ROUTE_DISPLAY_GROUP_ORDER,
+  type GroupedRouteDisplaySlot,
+} from './routeDisplayGroups'
+import { DISPLAY_ONLY_RENAMES, getMergeDirectionKey, resolveSpecialRouteCodeToId, toMergeBaseRouteNumber } from '../utils/routeMerge'
 import { compareRouteNumber } from '../utils/routeSort'
 
 const file = routeTimetablesJson as unknown as RouteTimetablesFile
@@ -41,16 +47,6 @@ function routeLookupKeys(route: BusRoute): string[] {
     if (to === route.id || to === route.number) keys.add(from)
   }
   return [...keys]
-}
-
-function applyShiftUnlockEntry(
-  targetRouteId: string,
-  unlockRoutes: readonly string[],
-  prerequisitesByTarget: Map<string, Set<string>>,
-  targetsByPrerequisite: Map<string, Map<string, string>>,
-): void {
-  addPrerequisiteMapping(targetRouteId, unlockRoutes, prerequisitesByTarget)
-  addUnlockTargetMapping(targetRouteId, unlockRoutes, targetsByPrerequisite)
 }
 
 function addPrerequisiteMapping(
@@ -109,12 +105,15 @@ function buildShiftUnlockMaps(): {
 
   for (const [targetRouteId, entry] of Object.entries(staticShiftUnlocks)) {
     if (!entry.unlockRoutes?.length) continue
-    applyShiftUnlockEntry(
-      targetRouteId,
-      entry.unlockRoutes,
-      prerequisitesByTarget,
-      targetsByPrerequisite,
-    )
+
+    addPrerequisiteMapping(targetRouteId, entry.unlockRoutes, prerequisitesByTarget)
+
+    const displayTargetNumber = toMergeBaseRouteNumber(targetRouteId)
+    if (displayTargetNumber !== targetRouteId) {
+      // 变体编号（如 C401AW）只注册自身；不合并到展示线路 id，避免 C401A 出现混合前置条件。
+    }
+
+    addUnlockTargetMapping(displayTargetNumber, entry.unlockRoutes, targetsByPrerequisite)
   }
 
   return { prerequisitesByTarget, targetsByPrerequisite }
@@ -122,8 +121,25 @@ function buildShiftUnlockMaps(): {
 
 const { prerequisitesByTarget, targetsByPrerequisite } = buildShiftUnlockMaps()
 
-export function getShiftUnlockPrerequisites(route: BusRoute): RouteShiftUnlockPrerequisites | null {
-  for (const key of routeLookupKeys(route)) {
+export function hasShiftUnlockPrerequisitesKey(key: string): boolean {
+  const trimmed = key.trim()
+  if (!trimmed) return false
+  return (prerequisitesByTarget.get(trimmed)?.size ?? 0) > 0
+}
+
+export function routeHasVariantShiftUnlockListedIds(route: BusRoute): boolean {
+  return getListedRouteIdsForRoute(route).some((listedId) => hasShiftUnlockPrerequisitesKey(listedId))
+}
+
+export function getShiftUnlockPrerequisites(
+  route: BusRoute,
+  options?: { listedId?: string },
+): RouteShiftUnlockPrerequisites | null {
+  const keys: string[] = []
+  if (options?.listedId?.trim()) keys.push(options.listedId.trim())
+  keys.push(...routeLookupKeys(route))
+
+  for (const key of keys) {
     const prereqs = prerequisitesByTarget.get(key)
     if (!prereqs?.size) continue
     return {
@@ -162,4 +178,83 @@ export function formatShiftUnlockPrerequisiteRoutes(numbers: readonly string[]):
 /** 详情页解锁目标：编号用逗号连接，前缀 Route 由 i18n 模板提供。 */
 export function formatShiftUnlockTargetRoutes(numbers: readonly string[]): string {
   return numbers.join(', ')
+}
+
+export function resolveShiftUnlockListedRouteId(
+  route: BusRoute,
+  directionIndex: number,
+): string | undefined {
+  const listedIds = getListedRouteIdsForRoute(route)
+  const unlockListedIds = listedIds.filter((listedId) => hasShiftUnlockPrerequisitesKey(listedId))
+  if (unlockListedIds.length === 1) return unlockListedIds[0]
+  if (unlockListedIds.length >= 2) {
+    const directionKey = route.stops?.[directionIndex]?.directionKey
+    if (directionKey) {
+      const match = unlockListedIds.find((listedId) => getMergeDirectionKey(listedId) === directionKey)
+      if (match) return match
+    }
+  }
+  return undefined
+}
+
+/** 常规分组内、需班次解锁但未列入 special/seasonal 的锁定卡片（如员工接驳）。 */
+export function getShiftUnlockLockedDisplaySlots(
+  visibleRoutes: readonly BusRoute[],
+): GroupedRouteDisplaySlot[] {
+  const visibleIds = new Set(visibleRoutes.map((route) => route.id.toLowerCase()))
+  const lockedRouteIds = new Set(
+    ['special', 'seasonal'].flatMap((group) =>
+      getRouteDisplayIdsForGroup(group as 'special' | 'seasonal').map((listedId) => {
+        const entry = resolveGroupedRouteEntry(listedId)
+        return entry?.route.id.toLowerCase() ?? ''
+      }),
+    ),
+  )
+
+  const slots: GroupedRouteDisplaySlot[] = []
+  const seenListedIds = new Set<string>()
+
+  for (const listedId of getRouteDisplayIdsForGroup('normal')) {
+    const key = listedId.trim()
+    const lower = key.toLowerCase()
+    if (!key || seenListedIds.has(lower)) continue
+
+    const entry = resolveGroupedRouteEntry(listedId)
+    if (!entry || !visibleIds.has(entry.route.id.toLowerCase())) continue
+    if (lockedRouteIds.has(entry.route.id.toLowerCase())) continue
+
+    if (hasShiftUnlockPrerequisitesKey(key)) {
+      seenListedIds.add(lower)
+      slots.push({ listedId: key, entry, isVisible: true })
+      continue
+    }
+
+    if (
+      hasShiftUnlockPrerequisitesKey(entry.route.id) &&
+      !routeHasVariantShiftUnlockListedIds(entry.route) &&
+      !slots.some((slot) => slot.entry?.route.id.toLowerCase() === entry.route.id.toLowerCase())
+    ) {
+      seenListedIds.add(lower)
+      slots.push({ listedId: key, entry, isVisible: true })
+    }
+  }
+
+  return slots.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
+}
+
+export function mergeShiftUnlockLockedDisplaySlots(
+  lockedSlots: readonly GroupedRouteDisplaySlot[],
+  shiftUnlockSlots: readonly GroupedRouteDisplaySlot[],
+): GroupedRouteDisplaySlot[] {
+  const seenListedIds = new Set(lockedSlots.map((slot) => slot.listedId.toLowerCase()))
+  const merged = [...lockedSlots]
+
+  for (const slot of shiftUnlockSlots) {
+    const lower = slot.listedId.toLowerCase()
+    if (seenListedIds.has(lower)) continue
+    seenListedIds.add(lower)
+    merged.push(slot)
+  }
+
+  return merged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
 }

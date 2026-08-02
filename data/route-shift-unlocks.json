@@ -13,5 +13,23 @@
   },
   "476X": {
     "unlockRoutes": ["476", "476*", "476P", "476S", "N476"]
+  },
+  "C01": {
+    "unlockRoutes": ["C01"]
+  },
+  "C401": {
+    "unlockRoutes": ["C401"]
+  },
+  "C401AW": {
+    "unlockRoutes": ["C401"]
+  },
+  "C401AE": {
+    "unlockRoutes": ["C401A"]
+  },
+  "F701": {
+    "unlockRoutes": ["F701"]
+  },
+  "F702": {
+    "unlockRoutes": ["F702"]
   }
 }

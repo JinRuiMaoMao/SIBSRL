@@ -7,6 +7,7 @@ import {
   sortLockedRealRouteListEntries,
   type RealRouteListEntry,
 } from '../utils/realRouteListEntries'
+import { resolveShiftUnlockListedRouteId } from '../data/routeShiftUnlocks'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
 import { RouteLockedGameCard } from './RouteLockedGameCard'
@@ -132,6 +133,7 @@ export function RouteLookupSplitList({
       >
         <RouteLockedGameCard
           route={route}
+          listedId={resolveShiftUnlockListedRouteId(route, directionIndex)}
           selected={selectedListKey === listKey}
           directionIndex={directionIndex}
           onNavigate={() => onSelect(route.id, directionIndex)}

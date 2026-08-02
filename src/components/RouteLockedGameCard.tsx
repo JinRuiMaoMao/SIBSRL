@@ -19,6 +19,7 @@ interface RouteLockedGameCardProps {
   route: BusRoute
   directionIndex: number
   displayNumber?: string
+  listedId?: string
   selected: boolean
   href?: string
   tourAnchor?: string
@@ -72,6 +73,7 @@ export function RouteLockedGameCard({
   route,
   directionIndex,
   displayNumber,
+  listedId,
   selected,
   href,
   tourAnchor,
@@ -85,7 +87,7 @@ export function RouteLockedGameCard({
   const dateRange = seasonalWindow
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
-  const shiftUnlock = getShiftUnlockPrerequisites(route)
+  const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId })
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {

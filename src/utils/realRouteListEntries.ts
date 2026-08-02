@@ -3,6 +3,10 @@ import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 import { isLockedDisplayRoute, getRouteDisplayGroupsForRoute } from '../data/routeDisplayGroups'
 import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
+import {
+  getShiftUnlockLockedDisplaySlots,
+  routeHasVariantShiftUnlockListedIds,
+} from '../data/routeShiftUnlocks'
 import { getMergeDirectionKey } from './routeMerge'
 import { compareRouteNumber } from './routeSort'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
@@ -101,6 +105,58 @@ export function sortLockedRealRouteListEntries(
     if (rankDiff !== 0) return rankDiff
     return compareRouteNumber(a.route.number, b.route.number)
   })
+}
+
+export function buildShiftUnlockRealRouteEntries(
+  visibleRoutes: readonly BusRoute[],
+): RealRouteListEntry[] {
+  const entries: RealRouteListEntry[] = []
+
+  for (const slot of getShiftUnlockLockedDisplaySlots(visibleRoutes)) {
+    const route = slot.entry?.route
+    if (!route) continue
+
+    if (routeHasVariantShiftUnlockListedIds(route)) {
+      const directionKey = getMergeDirectionKey(slot.listedId)
+      let directionIndex = 0
+      if (directionKey) {
+        const idx = route.stops?.findIndex((stop) => stop.directionKey === directionKey) ?? -1
+        if (idx >= 0) directionIndex = idx
+      }
+      entries.push({
+        route,
+        directionIndex,
+        listKey: `${route.id}:${slot.listedId}`,
+      })
+      continue
+    }
+
+    entries.push(...buildRealRouteListEntries([route]))
+  }
+
+  return entries
+}
+
+export function partitionRealRouteListWithShiftUnlocks(
+  entries: readonly RealRouteListEntry[],
+  visibleRoutes: readonly BusRoute[],
+): {
+  normal: RealRouteListEntry[]
+  locked: RealRouteListEntry[]
+} {
+  const { normal, locked } = partitionRealRouteListEntries(entries)
+  const shiftUnlockEntries = buildShiftUnlockRealRouteEntries(visibleRoutes)
+  if (shiftUnlockEntries.length === 0) {
+    return { normal, locked: sortLockedRealRouteListEntries(locked) }
+  }
+
+  const shiftUnlockRouteIds = new Set(shiftUnlockEntries.map((entry) => entry.route.id))
+  const normalFiltered = normal.filter((entry) => !shiftUnlockRouteIds.has(entry.route.id))
+
+  return {
+    normal: normalFiltered,
+    locked: sortLockedRealRouteListEntries([...locked, ...shiftUnlockEntries]),
+  }
 }
 
 export function filterRealRouteListEntriesByUnlockCategory(
