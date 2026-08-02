@@ -98,7 +98,7 @@ export function RouteLockedGameCard({
   onNavigate,
   onOpenDetail,
 }: RouteLockedGameCardProps) {
-  const { locale } = useLocale()
+  const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
   const displayTypes = getLockedGameDisplayTypes(route, directionIndex)
   const seasonalWindow = getSeasonalRouteDisplayWindow(route)
