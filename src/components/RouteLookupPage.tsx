@@ -1133,11 +1133,12 @@ export function RouteLookupPage({
       ),
       filteredRoutes,
     )
+    // 锁定区与班次/分方向阳光碎片卡一致：不受 zone/operator/type 筛选影响
     const specialSeasonal = sortLockedDisplaySlots(
       filterLockedSectionDisplaySlots(
         mergeSunshardUnlockLockedDisplaySlots(
           mergeShiftUnlockLockedDisplaySlots(
-            mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
+            mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
             getShiftUnlockLockedDisplaySlots(displayRoutes),
           ),
           getSunshardUnlockLockedDisplaySlots(displayRoutes),
@@ -1145,7 +1146,7 @@ export function RouteLookupPage({
       ),
     )
     return { normal, specialSeasonal }
-  }, [groupedSlots, displayRoutes, filteredRoutes, lockedGameRouteIds])
+  }, [groupedSlots, groupedTotalSlots, displayRoutes, filteredRoutes, lockedGameRouteIds])
 
   const listSectionTotalSlots = useMemo(() => {
     const normal = mergeLevelOnlySpecialIntoNormalSlots(
