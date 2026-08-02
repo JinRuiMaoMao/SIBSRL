@@ -9,6 +9,7 @@ import {
   routeHasDirectionalShiftUnlockSlots,
 } from '../data/routeShiftUnlocks'
 import { compareRouteNumber } from './routeSort'
+import { getMergeDirectionKey } from './routeMerge'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 
 export interface RealRouteListEntry {
