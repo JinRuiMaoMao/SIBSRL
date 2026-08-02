@@ -5489,6 +5489,10 @@ html.route-detail-open .route-split-shell {
   --route-list-game-section-duration: 0.5s;
   --route-list-game-section-easing: cubic-bezier(0.32, 0.72, 0, 1);
   margin-top: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--bg-surface) 92%, transparent);
+  overflow: hidden;
 }
 
 .route-list-game-section:first-child {
@@ -5564,7 +5568,7 @@ html.route-detail-open .route-split-shell {
 }
 
 .route-list-game-section.is-open .route-list-game-section-panel-inner {
-  padding-top: 0.35rem;
+  padding: 0.35rem 0.85rem 0.85rem;
   overflow: visible;
 }
 

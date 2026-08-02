@@ -1419,7 +1419,6 @@ export function RouteLookupPage({
       <RouteCard
         key={`recent-${route.id}`}
         route={route}
-        appearance="classic"
         selected={selectedRoute?.id === route.id}
         directionIndex={getDirectionIndex(route)}
         loopView={getLoopView(route)}
@@ -1687,10 +1686,9 @@ export function RouteLookupPage({
             ) : null}
 
             {showFavoritesSection ? (
-              <RouteGroupCollapse
-                groupId="favorites"
+              <RouteListGameSection
+                titleKey="favoriteRoutes"
                 dataTour="favorites"
-                count={favoriteRoutes.length}
                 open={groupOpen.favorites}
                 onOpenChange={(open) =>
                   setGroupOpen((prev) => ({ ...prev, favorites: open }))
@@ -1707,20 +1705,19 @@ export function RouteLookupPage({
                 ) : (
                   <p className="route-group-empty">{t('favoriteFolderEmpty')}</p>
                 )}
-              </RouteGroupCollapse>
+              </RouteListGameSection>
             ) : null}
 
             {recentRoutes.length > 0 ? (
-              <RouteGroupCollapse
-                groupId="recent"
-                count={recentRoutes.length}
+              <RouteListGameSection
+                titleKey="recentRoutes"
                 open={groupOpen.recent}
                 onOpenChange={(open) =>
                   setGroupOpen((prev) => ({ ...prev, recent: open }))
                 }
               >
                 <div className="route-grid">{renderRecentRouteCards()}</div>
-              </RouteGroupCollapse>
+              </RouteListGameSection>
             ) : null}
 
             {countVisibleSectionSlots('normal') > 0 ? (
