@@ -6,6 +6,7 @@ import type { AppTab } from '../types/appTab'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
 import { SiteLogo } from './SiteLogo'
+import { LogoSecretFloatingHint } from './LogoSecretFloatingHint'
 
 interface HeaderProps {
   activeTab: AppTab
@@ -42,6 +43,7 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
               >
                 <SiteLogo />
               </button>
+              <LogoSecretFloatingHint />
             </div>
             <div>
               <h1>{t('appTitle')}</h1>
