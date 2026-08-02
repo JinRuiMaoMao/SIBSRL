@@ -3781,9 +3781,6 @@ html[data-route-lookup-layout='split'] .site-footer {
 }
 
 .route-split-list-sections {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -3791,8 +3788,6 @@ html[data-route-lookup-layout='split'] .site-footer {
   margin-top: 0.65rem;
   padding-top: 0.55rem;
   border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
-  background: color-mix(in srgb, var(--bg-deep) 92%, #000 8%);
-  box-shadow: 0 -10px 24px rgb(0 0 0 / 0.18);
 }
 
 .route-split-list-sections .route-list-game-section {
