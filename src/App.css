@@ -9439,3 +9439,63 @@ html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Real layout — alpha entry overlay */
+.real-alpha-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgb(180 180 180 / 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  cursor: pointer;
+}
+
+.real-alpha-overlay-card {
+  max-width: 22rem;
+  padding: 1.35rem 1.5rem 1.15rem;
+  text-align: center;
+  background: rgb(255 255 255 / 0.96);
+  border: 1px solid rgb(0 0 0 / 0.08);
+  border-radius: var(--radius-lg, 0.65rem);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.18);
+  color: #1a1a1a;
+  pointer-events: none;
+}
+
+.real-alpha-overlay-badge {
+  display: inline-block;
+  margin: 0 0 0.65rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgb(100 116 139 / 0.14);
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.real-alpha-overlay-title {
+  margin: 0 0 0.55rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.real-alpha-overlay-desc {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.real-alpha-overlay-hint {
+  margin: 0.85rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}

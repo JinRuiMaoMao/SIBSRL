@@ -22,6 +22,7 @@ import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { StartPage } from './components/StartPage'
 import { RealStartPage } from './components/RealStartPage'
+import { RealAlphaOverlay } from './components/RealAlphaOverlay'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
@@ -218,10 +219,13 @@ function App() {
       />
     ) : null
 
+  const realAlphaOverlay = realLayout ? <RealAlphaOverlay /> : null
+
   if (isStartPage()) {
     return (
       <>
         <LiquidGlassDefs />
+        {realAlphaOverlay}
         {realLayout ? <RealStartPage /> : <StartPage />}
       </>
     )
@@ -231,6 +235,7 @@ function App() {
     return (
       <>
         <LiquidGlassDefs />
+        {realAlphaOverlay}
         <IslandMapOverlayProvider>
           <ErrorBoundary>
             <MapDrawPage />
@@ -244,6 +249,7 @@ function App() {
     return (
       <>
         <LiquidGlassDefs />
+        {realAlphaOverlay}
         <ErrorBoundary>
           <RouteMapPage />
         </ErrorBoundary>
@@ -255,6 +261,7 @@ function App() {
     return (
       <>
         <LiquidGlassDefs />
+        {realAlphaOverlay}
         {favoritesSyncDialog}
         <div className="app sibs-scrollbar">
           <Header
@@ -295,6 +302,7 @@ function App() {
     return (
       <>
         <LiquidGlassDefs />
+        {realAlphaOverlay}
         {favoritesSyncDialog}
         <div className="app sibs-scrollbar">
         <Header
@@ -371,6 +379,7 @@ function App() {
   return (
     <>
       <LiquidGlassDefs />
+      {realAlphaOverlay}
       {favoritesSyncDialog}
       {guidedTourLayer}
       <IslandMapOverlayProvider>
