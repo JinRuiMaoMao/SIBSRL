@@ -327,3 +327,11 @@ export function mergeShiftUnlockLockedDisplaySlots(
 
   return merged
 }
+
+export function getShiftUnlockLockedRouteIds(
+  visibleRoutes: readonly BusRoute[],
+): Set<string> {
+  return new Set(
+    getShiftUnlockLockedDisplaySlots(visibleRoutes).map((slot) => slot.entry!.route.id),
+  )
+}

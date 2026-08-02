@@ -136,7 +136,7 @@ export function RouteLookupSplitList({
       >
         <RouteLockedGameCard
           route={route}
-          listedId={resolveShiftUnlockListedRouteId(route, directionIndex)}
+          listedId={listedId}
           selected={selectedListKey === listKey}
           directionIndex={directionIndex}
           onNavigate={() => onSelect(route.id, directionIndex)}
