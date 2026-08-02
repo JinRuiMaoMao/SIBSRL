@@ -124,8 +124,8 @@ import { isDirectRouteBetweenStopsFeasible, parseDepartureTimeInput, type Timeta
 import { getSortedDirectionIndexFromDataIndex } from '../utils/routeDirections'
 import {
   buildRealRouteListEntries,
+  buildRealRouteListEntriesFromDisplaySlots,
   formatRealRouteDisplayNumber,
-  partitionRealRouteListWithShiftUnlocks,
   realRouteListKey,
 } from '../utils/realRouteListEntries'
 import {
@@ -300,23 +300,6 @@ export function RouteLookupPage({
     operators,
     types,
   } = useRouteSearch(dailyChallenge)
-  const realFilteredEntries = useMemo(
-    () =>
-      splitLayoutActive
-        ? buildRealRouteListEntries(filterRoutesForMainRouteList(filteredRoutes))
-        : [],
-    [filteredRoutes, splitLayoutActive],
-  )
-  const { normal: realNormalEntries, locked: realLockedEntries } = useMemo(() => {
-    return partitionRealRouteListWithShiftUnlocks(realFilteredEntries, filteredRoutes)
-  }, [realFilteredEntries, filteredRoutes])
-  const realTotalEntries = useMemo(
-    () =>
-      splitLayoutActive
-        ? buildRealRouteListEntries(filterRoutesForMainRouteList(displayRoutes))
-        : [],
-    [displayRoutes, splitLayoutActive],
-  )
   const selectedRealListKey = useMemo(() => {
     if (!splitLayoutActive || !selectedRoute) return null
     return realRouteListKey(selectedRoute.id, getDirectionIndex(selectedRoute))
@@ -623,25 +606,6 @@ export function RouteLookupPage({
       cancelled = true
     }
   }, [detailOverlay])
-
-  useEffect(() => {
-    if (!splitLayoutActive) return
-    if (!selectedRoute) return
-    const directionIndex = getDirectionIndex(selectedRoute)
-    const stillVisible = realFilteredEntries.some(
-      (entry) => entry.route.id === selectedRoute.id && entry.directionIndex === directionIndex,
-    )
-    if (stillVisible) return
-    clearSelection()
-    clearRouteFromLocation()
-    setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
-  }, [
-    clearSelection,
-    getDirectionIndex,
-    realFilteredEntries,
-    selectedRoute,
-    splitLayoutActive,
-  ])
 
   const overlayRoute =
     detailOverlay?.kind === 'route'
@@ -1203,6 +1167,54 @@ export function RouteLookupPage({
     )
     return { normal, specialSeasonal }
   }, [groupedTotalSlots, displayRoutes, lockedGameRouteIds])
+
+  const realNormalEntries = useMemo(
+    () =>
+      splitLayoutActive
+        ? buildRealRouteListEntriesFromDisplaySlots(listSectionSlots.normal)
+        : [],
+    [listSectionSlots.normal, splitLayoutActive],
+  )
+
+  const realLockedEntries = useMemo(
+    () =>
+      splitLayoutActive
+        ? buildRealRouteListEntriesFromDisplaySlots(listSectionSlots.specialSeasonal)
+        : [],
+    [listSectionSlots.specialSeasonal, splitLayoutActive],
+  )
+
+  const realFilteredEntries = useMemo(
+    () => (splitLayoutActive ? [...realNormalEntries, ...realLockedEntries] : []),
+    [realLockedEntries, realNormalEntries, splitLayoutActive],
+  )
+
+  const realTotalEntries = useMemo(() => {
+    if (!splitLayoutActive) return []
+    return [
+      ...buildRealRouteListEntriesFromDisplaySlots(listSectionTotalSlots.normal),
+      ...buildRealRouteListEntriesFromDisplaySlots(listSectionTotalSlots.specialSeasonal),
+    ]
+  }, [listSectionTotalSlots, splitLayoutActive])
+
+  useEffect(() => {
+    if (!splitLayoutActive) return
+    if (!selectedRoute) return
+    const directionIndex = getDirectionIndex(selectedRoute)
+    const stillVisible = realFilteredEntries.some(
+      (entry) => entry.route.id === selectedRoute.id && entry.directionIndex === directionIndex,
+    )
+    if (stillVisible) return
+    clearSelection()
+    clearRouteFromLocation()
+    setDetailOverlay((prev) => (prev?.kind === 'route' ? null : prev))
+  }, [
+    clearSelection,
+    getDirectionIndex,
+    realFilteredEntries,
+    selectedRoute,
+    splitLayoutActive,
+  ])
 
   const countVisibleSectionSlots = useCallback(
     (section: RouteListUiSectionKey) =>

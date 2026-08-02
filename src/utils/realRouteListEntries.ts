@@ -1,7 +1,11 @@
 import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
-import { getRouteDisplayGroupsForRoute, isLockedDisplayRoute } from '../data/routeDisplayGroups'
+import {
+  getRouteDisplayGroupsForRoute,
+  isLockedDisplayRoute,
+  type GroupedRouteDisplaySlot,
+} from '../data/routeDisplayGroups'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
 import {
@@ -77,6 +81,34 @@ export function formatRealRouteDisplayNumber(
 
   const label = getDirectionShortLabel(route, directionIndex, t, locale)
   return `${route.number}（${label}）`
+}
+
+/** 与 normal 网格共用 listSectionSlots，保证 real 锁定区线路一致（含阳光碎片/班次解锁卡）。 */
+export function buildRealRouteListEntriesFromDisplaySlots(
+  slots: readonly GroupedRouteDisplaySlot[],
+): RealRouteListEntry[] {
+  const entries: RealRouteListEntry[] = []
+  const seenListKeys = new Set<string>()
+
+  for (const slot of slots) {
+    if (!slot.entry) continue
+    const { route, directionKey } = slot.entry
+    let directionIndex = 0
+    if (directionKey) {
+      const idx = route.stops?.findIndex((stop) => stop.directionKey === directionKey) ?? -1
+      if (idx >= 0) directionIndex = idx
+    }
+
+    const listKey = slot.listedId.includes('|')
+      ? `${route.id}:${slot.listedId}`
+      : realRouteListKey(route.id, directionIndex)
+
+    if (seenListKeys.has(listKey)) continue
+    seenListKeys.add(listKey)
+    entries.push({ route, directionIndex, listKey })
+  }
+
+  return entries
 }
 
 export function partitionRealRouteListEntries(entries: readonly RealRouteListEntry[]): {
