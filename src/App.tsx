@@ -7,6 +7,7 @@ import { DailyChallengePrompt } from './components/DailyChallengePrompt'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { GuidedTour } from './components/GuidedTour'
 import { Header } from './components/Header'
+import { LogoSecretFloatingHint } from './components/LogoSecretFloatingHint'
 import { IslandMapOverlayProvider } from './contexts/IslandMapOverlayContext'
 import { AppTabBar } from './components/AppTabBar'
 import { LiquidGlassDefs } from './components/LiquidGlassDefs'
@@ -283,6 +284,7 @@ function App() {
             </p>
           </footer>
         </div>
+        <LogoSecretFloatingHint />
         <AppTabBar activeTab={tabFromLocation} />
       </>
     )
@@ -322,6 +324,7 @@ function App() {
           </p>
         </footer>
         </div>
+        <LogoSecretFloatingHint />
         <AppTabBar activeTab={tabFromLocation} />
       </>
     )
@@ -435,6 +438,7 @@ function App() {
       ) : null}
       </div>
       {isRoutesPage() && !realLayout ? <IslandMapViewerLazy /> : null}
+      {!realLayout ? <LogoSecretFloatingHint /> : null}
       {!realLayout ? <AppTabBar activeTab={tabFromLocation} /> : null}
       </IslandMapOverlayProvider>
     </>

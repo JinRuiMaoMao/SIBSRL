@@ -42,7 +42,6 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
               >
                 <SiteLogo />
               </button>
-              <span className="brand-logo-hint">{t('logoSecretHint')}</span>
             </div>
             <div>
               <h1>{t('appTitle')}</h1>
