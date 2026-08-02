@@ -8,7 +8,6 @@ import {
   formatShiftUnlockPrerequisitesForLockedCard,
   getShiftUnlockPrerequisites,
   lockedCardDisplayNumber,
-  routeBelongsToShiftUnlockCategory,
 } from '../data/routeShiftUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
@@ -114,11 +113,11 @@ export function RouteLockedGameCard({
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
   const usesSunshardUnlock = routeUsesSunshardUnlock(route)
-  const isShiftUnlockRoute = routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
   const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId, directionIndex })
-  const shiftUnlockLabel = shiftUnlock
-    ? formatShiftUnlockPrerequisitesForLockedCard(route, { listedId, directionIndex })
-    : null
+  const shiftUnlockLabel =
+    shiftUnlock && !usesSunshardUnlock
+      ? formatShiftUnlockPrerequisitesForLockedCard(route, { listedId, directionIndex })
+      : null
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -163,7 +162,7 @@ export function RouteLockedGameCard({
               </span>
               <span className="route-locked-game-card-date-text">{dateRange}</span>
             </div>
-          ) : usesSunshardUnlock && route.sunshardsRequired != null && !isShiftUnlockRoute ? (
+          ) : usesSunshardUnlock && route.sunshardsRequired != null ? (
             <div className="route-locked-game-card-unlock-pill">
               <span className="route-locked-game-card-unlock-pill-text">
                 {t('routeLockedGameUnlockSunshards', { n: route.sunshardsRequired })}

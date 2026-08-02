@@ -38,13 +38,14 @@ export function listedIdFromRealRouteListEntry(entry: RealRouteListEntry): strin
   return suffix.includes('|') ? suffix : undefined
 }
 
-/** Assign each locked item to exactly one unlock category (shift > seasonal > special). */
+/** Assign each locked item to exactly one unlock category (seasonal > sunshard special > shift). */
 export function resolveLockedUnlockCategory(
   route: BusRoute,
   options?: LockedUnlockLookupOptions,
 ): RouteUnlockCategoryKind {
-  if (routeBelongsToShiftUnlockCategory(route, options)) return 'shift'
   if (getRouteDisplayGroupsForRoute(route).includes('seasonal')) return 'seasonal'
+  if (routeUsesSunshardUnlock(route)) return 'special'
+  if (routeBelongsToShiftUnlockCategory(route, options)) return 'shift'
   return 'special'
 }
 
