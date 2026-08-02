@@ -1389,15 +1389,23 @@ html[data-reduce-motion='true'] .start-page-external-link:active {
   border-radius: 6px;
 }
 
+.site-header-shell:has(.logo-secret-floating-hint) .site-header {
+  overflow: visible;
+}
+
 .brand-logo-cluster {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.3rem;
+  align-items: center;
+  gap: 0.35rem;
   flex-shrink: 0;
 }
 
 .logo-secret-floating-hint {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -1410,6 +1418,7 @@ html[data-reduce-motion='true'] .start-page-external-link:active {
   color: var(--text-muted);
   font-size: 0.72rem;
   line-height: 1.25;
+  white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   transform: translateY(0.35rem);
