@@ -5,7 +5,7 @@ import {
   type GroupedRouteDisplaySlot,
 } from '../data/routeDisplayGroups'
 import { routeBelongsToShiftUnlockCategory, getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
-import { isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
+import { isStaffShuttleSunshardUnlockRoute, isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import type { BusRoute } from '../types/route'
 import { sortLockedDisplaySlots } from './lockedRouteDisplayOrder'
@@ -50,6 +50,7 @@ export function resolveLockedUnlockCategory(
   options?: LockedUnlockLookupOptions,
 ): RouteUnlockCategoryKind {
   if (options?.listedId && isSunshardDirectionLockedSlot(route, options.listedId)) {
+    if (isStaffShuttleSunshardUnlockRoute(route)) return 'shift'
     return 'special'
   }
   if ((getShiftUnlockPrerequisites(route, options)?.prerequisiteRouteNumbers.length ?? 0) > 0) {

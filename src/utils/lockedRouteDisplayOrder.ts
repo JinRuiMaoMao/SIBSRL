@@ -1,11 +1,23 @@
 import type { GroupedRouteDisplaySlot } from '../data/routeDisplayGroups'
-import { getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
-import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
+import { parseShiftUnlockSlotKey, getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
+import { parseSunshardUnlockSlotKey } from '../data/routeSunshardUnlocks'
 import type { BusRoute } from '../types/route'
 import { compareDirectionKeys } from './routeDirectionCore'
 import type { DirectionKey } from './routeMerge'
 import { compareRouteNumber } from './routeSort'
 import type { RealRouteListEntry } from './realRouteListEntries'
+
+function directionKeyFromListedId(listedId?: string): DirectionKey | undefined {
+  if (!listedId?.includes('|')) return undefined
+  return (
+    parseShiftUnlockSlotKey(listedId).directionKey ??
+    parseSunshardUnlockSlotKey(listedId).directionKey
+  )
+}
+
+function resolveSlotDirectionKey(slot: GroupedRouteDisplaySlot): DirectionKey | undefined {
+  return slot.entry?.directionKey ?? directionKeyFromListedId(slot.listedId)
+}
 
 function directionIndexForKey(route: BusRoute, directionKey?: DirectionKey): number | undefined {
   if (!directionKey) return undefined
@@ -42,12 +54,6 @@ function compareLockedRouteOrder(
   listedIdA?: string,
   listedIdB?: string,
 ): number {
-  const bothSunshard = routeUsesSunshardUnlock(routeA) && routeUsesSunshardUnlock(routeB)
-  if (bothSunshard) {
-    const shardDiff = (routeA.sunshardsRequired ?? 0) - (routeB.sunshardsRequired ?? 0)
-    if (shardDiff !== 0) return shardDiff
-  }
-
   const routeCmp = compareRouteNumber(
     sortListedIdForRoute(routeA, listedIdA),
     sortListedIdForRoute(routeB, listedIdB),
@@ -72,8 +78,8 @@ export function compareLockedDisplaySlotOrder(
   return compareLockedRouteOrder(
     routeA,
     routeB,
-    a.entry?.directionKey,
-    b.entry?.directionKey,
+    resolveSlotDirectionKey(a),
+    resolveSlotDirectionKey(b),
     a.listedId,
     b.listedId,
   )
@@ -106,8 +112,8 @@ export function compareLockedRealRouteEntryOrder(
   const listedIdA = listedIdFromRealListKey(a.listKey)
   const listedIdB = listedIdFromRealListKey(b.listKey)
 
-  const dirA = a.route.stops?.[a.directionIndex]?.directionKey
-  const dirB = b.route.stops?.[b.directionIndex]?.directionKey
+  const dirA = directionKeyFromListedId(listedIdA) ?? a.route.stops?.[a.directionIndex]?.directionKey
+  const dirB = directionKeyFromListedId(listedIdB) ?? b.route.stops?.[b.directionIndex]?.directionKey
 
   return compareLockedRouteOrder(
     a.route,
