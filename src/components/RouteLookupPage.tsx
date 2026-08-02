@@ -1372,11 +1372,7 @@ export function RouteLookupPage({
           route={route}
           listedId={listedId}
           directionIndex={directionIndex}
-          displayNumber={
-            listedId !== route.number && listedId !== route.id
-              ? listedId
-              : lockedCardDisplayNumber(route, listedId, directionKey)
-          }
+          displayNumber={lockedCardDisplayNumber(route, listedId, directionKey) ?? route.number}
           selected={selectedRoute?.id === route.id}
           onNavigate={handleRouteNavigate}
         />

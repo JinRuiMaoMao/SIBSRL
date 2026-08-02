@@ -5,6 +5,7 @@ import {
   getSeasonalRouteDisplayWindow,
 } from '../data/seasonalRouteAvailability'
 import {
+  directionKeyForLockedDisplay,
   formatShiftUnlockPrerequisitesForLockedCard,
   getShiftUnlockPrerequisites,
   lockedCardDisplayNumber,
@@ -104,9 +105,10 @@ export function RouteLockedGameCard({
   onOpenDetail,
 }: RouteLockedGameCardProps) {
   const { locale, t } = useLocale()
-  const directionKey = route.stops?.[directionIndex]?.directionKey
   const cardNumber =
-    displayNumber ?? lockedCardDisplayNumber(route, listedId, directionKey) ?? route.number
+    displayNumber ??
+    lockedCardDisplayNumber(route, listedId, directionKeyForLockedDisplay(listedId)) ??
+    route.number
   const displayTypes = getLockedGameDisplayTypes(route, directionIndex)
   const seasonalWindow = getSeasonalRouteDisplayWindow(route)
   const dateRange = seasonalWindow

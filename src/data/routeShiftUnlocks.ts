@@ -267,15 +267,24 @@ export function formatShiftUnlockPrerequisitesForLockedCard(
   return formatShiftUnlockPrerequisiteRoutes(prereqs.prerequisiteRouteNumbers)
 }
 
+/** 锁定卡标题方向：仅来自 slot 配置或 listedId 中的 `|N`/`|S`，不用 stops[directionIndex] 推断。 */
+export function directionKeyForLockedDisplay(
+  listedId?: string,
+  slotDirectionKey?: DirectionKey,
+): DirectionKey | undefined {
+  if (slotDirectionKey) return slotDirectionKey
+  if (!listedId) return undefined
+  return parseShiftUnlockSlotKey(listedId).directionKey
+}
+
 export function lockedCardDisplayNumber(
   route: BusRoute,
   listedId?: string,
-  directionKey?: DirectionKey,
+  slotDirectionKey?: DirectionKey,
 ): string | undefined {
-  const resolvedDirectionKey =
-    directionKey ?? (listedId ? parseShiftUnlockSlotKey(listedId).directionKey : undefined)
+  const resolvedDirectionKey = directionKeyForLockedDisplay(listedId, slotDirectionKey)
   if (resolvedDirectionKey) return `${route.number} (${resolvedDirectionKey})`
-  if (listedId && listedId !== route.number) return listedId
+  if (listedId && listedId !== route.number && listedId !== route.id) return listedId
   return undefined
 }
 

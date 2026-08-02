@@ -104,10 +104,13 @@ export function buildRealRouteListEntriesFromDisplaySlots(
       if (idx >= 0) directionIndex = idx
     }
 
+    const listedIdLower = slot.listedId.toLowerCase()
+    const isWholeRouteSlot =
+      listedIdLower === route.number.toLowerCase() || listedIdLower === route.id.toLowerCase()
     const listKey =
-      slot.entry.directionKey && slot.listedId.toLowerCase() !== route.number.toLowerCase()
+      slot.entry.directionKey && listedIdLower !== route.number.toLowerCase()
         ? `${route.id}:${slot.listedId}`
-        : slot.listedId.includes('|')
+        : slot.listedId.includes('|') || isWholeRouteSlot
           ? `${route.id}:${slot.listedId}`
           : realRouteListKey(route.id, directionIndex)
 
