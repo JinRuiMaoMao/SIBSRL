@@ -34,6 +34,30 @@ function routeLookupKeys(route: BusRoute): string[] {
   return [...keys]
 }
 
+function addPrerequisiteMapping(
+  targetKey: string,
+  prerequisiteRoutes: readonly string[],
+  prerequisitesByTarget: Map<string, Set<string>>,
+): void {
+  const prereqSet = prerequisitesByTarget.get(targetKey) ?? new Set<string>()
+  for (const prereq of prerequisiteRoutes) {
+    prereqSet.add(prereq)
+  }
+  prerequisitesByTarget.set(targetKey, prereqSet)
+}
+
+function addUnlockTargetMapping(
+  displayTargetNumber: string,
+  prerequisiteRoutes: readonly string[],
+  targetsByPrerequisite: Map<string, Map<string, string>>,
+): void {
+  for (const prereq of prerequisiteRoutes) {
+    const byTarget = targetsByPrerequisite.get(prereq) ?? new Map<string, string>()
+    byTarget.set(displayTargetNumber, displayTargetNumber)
+    targetsByPrerequisite.set(prereq, byTarget)
+  }
+}
+
 function buildShiftUnlockMaps(): {
   prerequisitesByTarget: Map<string, Set<string>>
   targetsByPrerequisite: Map<string, Map<string, string>>
@@ -42,24 +66,23 @@ function buildShiftUnlockMaps(): {
   const targetsByPrerequisite = new Map<string, Map<string, string>>()
 
   for (const record of file.data) {
+    const parentRouteNumber = record.route?.trim() || null
     for (const bound of Object.values(record.timetable ?? {})) {
       for (const shiftEntries of Object.values(bound)) {
         for (const rawEntry of shiftEntries) {
           const entry = rawEntry as TimetableScheduleEntry
           if (!entry.unlockRoutes?.length || !entry.routeCode) continue
 
-          const targetId = resolveUnlockTargetRouteId(entry.routeCode)
-          const prereqSet = prerequisitesByTarget.get(targetId) ?? new Set<string>()
-          for (const prereq of entry.unlockRoutes) {
-            prereqSet.add(prereq)
-          }
-          prerequisitesByTarget.set(targetId, prereqSet)
+          const variantTargetId = resolveUnlockTargetRouteId(entry.routeCode)
+          const displayTargetNumber = parentRouteNumber ?? variantTargetId
 
-          for (const prereq of entry.unlockRoutes) {
-            const byTarget = targetsByPrerequisite.get(prereq) ?? new Map<string, string>()
-            byTarget.set(targetId, targetId)
-            targetsByPrerequisite.set(prereq, byTarget)
+          addPrerequisiteMapping(variantTargetId, entry.unlockRoutes, prerequisitesByTarget)
+
+          if (parentRouteNumber && parentRouteNumber !== variantTargetId) {
+            addPrerequisiteMapping(parentRouteNumber, entry.unlockRoutes, prerequisitesByTarget)
           }
+
+          addUnlockTargetMapping(displayTargetNumber, entry.unlockRoutes, targetsByPrerequisite)
         }
       }
     }
