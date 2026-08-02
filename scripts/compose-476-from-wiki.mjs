@@ -11,6 +11,33 @@ const WIKI = 'https://sunshine-islands-roblox.fandom.com/api.php'
 
 const VARIANT_IDS = ['476', '476*', '476#', '476#*', '476%']
 
+/** 游戏内特别班次变体仅单向（东行）；主线 476 仍双向。 */
+const SINGLE_DIRECTION_VARIANT = new Set(['476*', '476#', '476#*', '476%'])
+const SINGLE_DIRECTION_KEY = 'E'
+
+function pickOnewayLength(length, directionKey) {
+  if (!length?.zh || !length?.en) return length
+  const index = directionKey === 'E' ? 0 : 1
+  const zhParts = length.zh.split(' / ')
+  const enParts = length.en.split(' / ')
+  return {
+    zh: zhParts[index] ?? length.zh,
+    en: enParts[index] ?? length.en,
+  }
+}
+
+function pickOnewayServiceTime(serviceTime, stop) {
+  if (stop?.serviceTime) return stop.serviceTime
+  if (!serviceTime?.zh || !serviceTime?.en) return serviceTime
+  const zhParts = serviceTime.zh.split(' / ')
+  const enParts = serviceTime.en.split(' / ')
+  const index = SINGLE_DIRECTION_KEY === 'E' ? 0 : 1
+  return {
+    zh: zhParts[index] ?? serviceTime.zh,
+    en: enParts[index] ?? serviceTime.en,
+  }
+}
+
 function readMeta(id) {
   const path = wikiImportPath(OUT_DIR, id)
   if (existsSync(path)) return JSON.parse(readFileSync(path, 'utf8'))
@@ -292,15 +319,23 @@ async function main() {
       console.warn('Skip', variant, '(no metadata)')
       continue
     }
-    const stops = buildVariantStops(variant, tables, meta)
+    let stops = buildVariantStops(variant, tables, meta)
+    if (SINGLE_DIRECTION_VARIANT.has(variant)) {
+      stops = stops.filter((group) => group.directionKey === SINGLE_DIRECTION_KEY)
+    }
     const route = {
       ...meta,
       id: variant,
       number: variant,
+      pattern: SINGLE_DIRECTION_VARIANT.has(variant) ? 'oneway' : (meta.pattern ?? 'bidirectional'),
       origin: stops[0]?.list[0]?.name ?? meta.origin,
       destination: stops[0]?.list[stops[0].list.length - 1]?.name ?? meta.destination,
       stops,
       wikiUrl: `https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476#Stop_List`,
+    }
+    if (SINGLE_DIRECTION_VARIANT.has(variant)) {
+      route.length = pickOnewayLength(meta.length, SINGLE_DIRECTION_KEY)
+      route.serviceTime = pickOnewayServiceTime(meta.serviceTime, stops[0])
     }
     if (variant !== '476') {
       route.wikiUrl = `https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476#Stop_List`

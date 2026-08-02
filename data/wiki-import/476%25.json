@@ -6,7 +6,7 @@
     "CSB"
   ],
   "category": "special",
-  "pattern": "bidirectional",
+  "pattern": "oneway",
   "zones": [
     4,
     7
@@ -33,12 +33,12 @@
   },
   "fare": "$12.1",
   "length": {
-    "zh": "往东锦葵海傍路 15.6 km / 往彩虹中心 16.8 km",
-    "en": "To Eastmallow Praya Road 15.6 km / To Rainbow Estate Complex 16.8 km"
+    "zh": "往东锦葵海傍路 15.6 km",
+    "en": "To Eastmallow Praya Road 15.6 km"
   },
   "serviceTime": {
-    "zh": "05:30 – 00:10 / 05:55 – 23:55",
-    "en": "05:30 – 00:10 / 05:55 – 23:55"
+    "zh": "05:30 – 00:10",
+    "en": "05:30 – 00:10"
   },
   "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_476#Stop_List",
   "stops": [
@@ -204,171 +204,6 @@
           "name": {
             "zh": "東錦葵海傍路",
             "en": "Eastmallow Praya Road"
-          }
-        }
-      ]
-    },
-    {
-      "directionKey": "W",
-      "direction": {
-        "zh": "西行（東錦葵海傍路 → 彩虹中心）",
-        "en": "Westbound (Eastmallow Praya Road → Rainbow Estate Complex)"
-      },
-      "serviceTime": {
-        "zh": "05:55 – 23:55",
-        "en": "05:55 – 23:55"
-      },
-      "list": [
-        {
-          "name": {
-            "zh": "東錦葵海傍路",
-            "en": "Eastmallow Praya Road"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "東錦葵邨 - 陽葵屋",
-            "en": "Eastmallow Estate - Sunny House"
-          }
-        },
-        {
-          "name": {
-            "zh": "東錦葵大街",
-            "en": "Eastmallow Main Street"
-          }
-        },
-        {
-          "name": {
-            "zh": "中環橋",
-            "en": "Central Bridge"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "楓樹里",
-            "en": "Maple Lane"
-          }
-        },
-        {
-          "name": {
-            "zh": "玻璃樓",
-            "en": "Glass Office"
-          }
-        },
-        {
-          "name": {
-            "zh": "The ONE",
-            "en": "The ONE"
-          }
-        },
-        {
-          "name": {
-            "zh": "強生街市",
-            "en": "Johnson Market"
-          },
-          "zone": 4
-        },
-        {
-          "name": {
-            "zh": "南環中心",
-            "en": "The Southern"
-          }
-        },
-        {
-          "name": {
-            "zh": "中環醫院",
-            "en": "Central Hospital"
-          }
-        },
-        {
-          "name": {
-            "zh": "陽光站",
-            "en": "Sunshine Station"
-          }
-        },
-        {
-          "name": {
-            "zh": "第七區轉車站",
-            "en": "Axis Road"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "葉角花園",
-            "en": "Leafy Bay Garden"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "葉角灣邨商場",
-            "en": "Leafy Bay Estate Shopping Center"
-          }
-        },
-        {
-          "name": {
-            "zh": "葉角灣邨",
-            "en": "Leafy Bay Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "葉角醫院",
-            "en": "Leafy Hospital"
-          }
-        },
-        {
-          "name": {
-            "zh": "中間花園",
-            "en": "Middle Garden"
-          }
-        },
-        {
-          "name": {
-            "zh": "勿莫商場",
-            "en": "Mo Shopping Center"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "勿莫街市",
-            "en": "Mo Market"
-          }
-        },
-        {
-          "name": {
-            "zh": "東門公園",
-            "en": "East Door Park"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "東門邨",
-            "en": "East Door Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "紅豆商場",
-            "en": "Redbean Center"
-          },
-          "zone": 7
-        },
-        {
-          "name": {
-            "zh": "彩虹邨",
-            "en": "Rainbow Estate"
-          }
-        },
-        {
-          "name": {
-            "zh": "彩虹中心",
-            "en": "Rainbow Estate Complex"
           }
         }
       ]
