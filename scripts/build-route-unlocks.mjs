@@ -7,6 +7,7 @@ import { legacyWikiImportBasename, wikiImportPath } from './wiki-import-path.mjs
 
 const IMPORT_DIR = resolve('data/wiki-import')
 const OVERRIDES_PATH = resolve('data/route-unlock-overrides.json')
+const TIMETABLES_PATH = resolve('data/route-timetables.json')
 const OUT = resolve('src/data/routeUnlocks.generated.ts')
 
 /** Wiki 编号 → 游戏内编号（与 build-sibs-routes-ts 一致） */
@@ -57,6 +58,27 @@ if (existsSync(OVERRIDES_PATH)) {
   const overrides = JSON.parse(readFileSync(OVERRIDES_PATH, 'utf8'))
   for (const [id, info] of Object.entries(overrides)) {
     setUnlock(id, { ...unlocks.get(id), ...info })
+  }
+}
+
+if (existsSync(TIMETABLES_PATH)) {
+  const { data } = JSON.parse(readFileSync(TIMETABLES_PATH, 'utf8'))
+  for (const record of data ?? []) {
+    const parentRoute = record.route?.trim()
+    for (const bound of Object.values(record.timetable ?? {})) {
+      for (const shiftEntries of Object.values(bound)) {
+        for (const entry of shiftEntries) {
+          if (entry.sunshards == null) continue
+          const routeCode = entry.routeCode?.trim()
+          if (routeCode) {
+            setUnlock(routeCode, { ...unlocks.get(routeCode), sunshardsRequired: entry.sunshards })
+          }
+          if (parentRoute) {
+            setUnlock(parentRoute, { ...unlocks.get(parentRoute), sunshardsRequired: entry.sunshards })
+          }
+        }
+      }
+    }
   }
 }
 

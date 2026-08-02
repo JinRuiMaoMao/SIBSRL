@@ -4006,6 +4006,22 @@ html[data-route-lookup-layout='split'] .site-footer {
   line-height: 1.35;
 }
 
+.route-locked-game-card-sun {
+  flex-shrink: 0;
+  color: #f5c842;
+}
+
+.route-locked-game-card-sunshards {
+  display: inline-block;
+  border: 1px solid color-mix(in srgb, #f5c842 75%, var(--border));
+  border-radius: 999px;
+  padding: 0.22rem 0.7rem;
+  color: #f5c842;
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
 .route-shift-unlock-targets {
   display: flex;
   flex-direction: column;

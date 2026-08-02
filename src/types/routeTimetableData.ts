@@ -14,6 +14,8 @@ export interface TimetableScheduleEntry {
   unlockLevel?: number
   /** 驾驶这些线路有机会解锁 routeCode 对应特别线 */
   unlockRoutes?: string[]
+  /** 以阳光碎片解锁该班次/走向 */
+  sunshards?: number
 }
 
 export interface GameRouteStopEntry {

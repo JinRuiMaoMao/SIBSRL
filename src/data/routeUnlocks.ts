@@ -11,3 +11,8 @@ export function applyRouteUnlocks(route: BusRoute): BusRoute {
     sunshardsRequired: route.sunshardsRequired ?? unlock.sunshardsRequired,
   }
 }
+
+/** 锁定线路以阳光碎片解锁（非班次解锁前置线路） */
+export function routeUsesSunshardUnlock(route: BusRoute): boolean {
+  return (route.sunshardsRequired ?? 0) > 0
+}

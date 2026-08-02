@@ -22,6 +22,7 @@ import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
 import type { RoutePageData } from '../types/routePageData'
 import { getPageStopAudioAtRow } from '../utils/routePageDataFormat'
 import { getShiftUnlockTargets } from '../data/routeShiftUnlocks'
+import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { OperatorLogos } from './OperatorLogos'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
@@ -88,7 +89,9 @@ export function RouteDetail({
       ? getLoopViewLengthKm(route, locale)
       : getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
-  const shiftUnlockTargets = getShiftUnlockTargets(route, { directionIndex })
+  const shiftUnlockTargets = routeUsesSunshardUnlock(route)
+    ? []
+    : getShiftUnlockTargets(route, { directionIndex })
 
   useEffect(() => {
     setSelectedStopIndex(null)

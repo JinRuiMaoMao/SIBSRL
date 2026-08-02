@@ -8,6 +8,7 @@ import {
   formatShiftUnlockPrerequisiteRoutes,
   getShiftUnlockPrerequisites,
 } from '../data/routeShiftUnlocks'
+import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import { getRoutePageHref } from '../utils/routeNavigation'
@@ -64,6 +65,17 @@ function CalendarGlyph() {
   )
 }
 
+function SunGlyph() {
+  return (
+    <svg className="route-locked-game-card-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+      <path
+        fill="currentColor"
+        d="M12 2.5 14.6 9l6.9.5-5.2 4.4 1.6 6.7L12 17.8 5.1 20.6l1.6-6.7-5.2-4.4 6.9-.5z"
+      />
+    </svg>
+  )
+}
+
 function LockGlyph() {
   return (
     <svg className="route-locked-game-card-lock" viewBox="0 0 24 24" width="18" height="18" aria-hidden>
@@ -93,7 +105,10 @@ export function RouteLockedGameCard({
   const dateRange = seasonalWindow
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
-  const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId, directionIndex })
+  const usesSunshardUnlock = routeUsesSunshardUnlock(route)
+  const shiftUnlock = usesSunshardUnlock
+    ? null
+    : getShiftUnlockPrerequisites(route, { listedId, directionIndex })
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -141,7 +156,14 @@ export function RouteLockedGameCard({
           ) : null}
         </div>
 
-        {shiftUnlock ? (
+        {usesSunshardUnlock && route.sunshardsRequired != null ? (
+          <div className="route-locked-game-card-unlock-row">
+            <SunGlyph />
+            <span className="route-locked-game-card-sunshards">
+              {t('unlockSunshardsLine', { n: route.sunshardsRequired })}
+            </span>
+          </div>
+        ) : shiftUnlock ? (
           <div className="route-locked-game-card-unlock-row">
             <LockGlyph />
             <span className="route-locked-game-card-prereq">

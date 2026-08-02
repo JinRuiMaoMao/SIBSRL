@@ -18,6 +18,7 @@ import {
   routeHasLoopDirectionLayout,
 } from '../utils/routeLoopView'
 import { getShiftUnlockTargets } from '../data/routeShiftUnlocks'
+import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { OperatorLogos } from './OperatorLogos'
 import {
   formatShortJourneyTime,
@@ -105,7 +106,10 @@ export function RouteDetailRealPanel({
         getDirectionServiceTime(route, directionIndex, locale))
       : getDirectionServiceTime(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
-  const shiftUnlockTargets = getShiftUnlockTargets(route, { directionIndex })
+  const usesSunshardUnlock = routeUsesSunshardUnlock(route)
+  const shiftUnlockTargets = usesSunshardUnlock
+    ? []
+    : getShiftUnlockTargets(route, { directionIndex })
   const difficulty = routeDifficultyStars(route.levelRequired)
   const operators = route.operators
   const fareText =
@@ -231,6 +235,14 @@ export function RouteDetailRealPanel({
                 <span className="route-real-panel-meta-label">{t('levelRequired')}</span>
                 <span className="route-real-panel-meta-value">
                   {t('unlockLevelLine', { n: route.levelRequired })}
+                </span>
+              </div>
+            ) : null}
+            {route.sunshardsRequired != null ? (
+              <div className="route-real-panel-meta-item">
+                <span className="route-real-panel-meta-label">{t('sunshardsRequired')}</span>
+                <span className="route-real-panel-meta-value">
+                  {t('unlockSunshardsLine', { n: route.sunshardsRequired })}
                 </span>
               </div>
             ) : null}
