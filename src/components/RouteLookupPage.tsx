@@ -1276,6 +1276,7 @@ export function RouteLookupPage({
     setGroupOpen((prev) => ({
       ...prev,
       normal: true,
+      unlockable: true,
       specialSeasonal: true,
       favorites: true,
       recent: true,
@@ -1286,7 +1287,7 @@ export function RouteLookupPage({
 
   const handleUnlockCategorySelect = useCallback((kind: RouteUnlockCategoryKind) => {
     setUnlockCategoryFocus((prev) => (prev === kind ? null : kind))
-    setGroupOpen((prev) => ({ ...prev, normal: true, specialSeasonal: true }))
+    setGroupOpen((prev) => ({ ...prev, unlockable: true, specialSeasonal: true }))
     requestAnimationFrame(() => {
       lockedSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     })
@@ -1312,6 +1313,7 @@ export function RouteLookupPage({
     for (const section of ROUTE_LIST_UI_SECTION_ORDER) {
       if (countVisibleSectionSlots(section) > 0) next[section] = true
     }
+    if (countVisibleSectionSlots('specialSeasonal') > 0) next.unlockable = true
     if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
     if (parsed.from?.trim() && parsed.to?.trim()) setBetweenStopsSectionOpen(true)
     setGroupOpen(next)
@@ -1558,10 +1560,10 @@ export function RouteLookupPage({
               lockedEntries={realLockedEntries}
               unlockCategoryFocus={unlockCategoryFocus}
               onUnlockCategorySelect={handleUnlockCategorySelect}
-              unlockableOpen={groupOpen.normal}
+              unlockableOpen={groupOpen.unlockable}
               lockedOpen={groupOpen.specialSeasonal}
               onUnlockableOpenChange={(open) =>
-                setGroupOpen((prev) => ({ ...prev, normal: open }))
+                setGroupOpen((prev) => ({ ...prev, unlockable: open }))
               }
               onLockedOpenChange={(open) =>
                 setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
@@ -1722,14 +1724,21 @@ export function RouteLookupPage({
             ) : null}
 
             {countVisibleSectionSlots('normal') > 0 ? (
-              <div className="route-grid">{renderListSectionCards('normal')}</div>
+              <RouteListGameSection
+                titleKey="routeGroupNormal"
+                dataTour="route-group-normal"
+                open={groupOpen.normal}
+                onOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, normal: open }))}
+              >
+                <div className="route-grid">{renderListSectionCards('normal')}</div>
+              </RouteListGameSection>
             ) : null}
 
             <RouteListGameSection
               titleKey="routeListUnlockable"
               dataTour="route-group-unlockable"
-              open={groupOpen.normal}
-              onOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, normal: open }))}
+              open={groupOpen.unlockable}
+              onOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, unlockable: open }))}
             >
               <RouteUnlockCategoryList
                 activeKind={unlockCategoryFocus}

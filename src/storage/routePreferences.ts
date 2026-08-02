@@ -2,7 +2,7 @@ import type { RouteListUiSectionKey } from '../data/routeDisplayGroups'
 import type { RouteFilters, RouteTypeFilter } from '../types/route'
 import { TYPE_FILTER_ORDER } from '../i18n/routeTypes'
 
-export type RouteListGroupKey = RouteListUiSectionKey | 'favorites' | 'recent'
+export type RouteListGroupKey = RouteListUiSectionKey | 'favorites' | 'recent' | 'unlockable'
 
 export const FAVORITE_ROUTES_STORAGE_KEY = 'sibs-favorite-routes'
 export const ROUTE_FILTERS_STORAGE_KEY = 'sibs-route-filters'
@@ -12,6 +12,7 @@ const DEFAULT_GROUP_OPEN: Record<RouteListGroupKey, boolean> = {
   favorites: false,
   recent: false,
   normal: true,
+  unlockable: true,
   specialSeasonal: true,
 }
 
@@ -83,10 +84,26 @@ export function readStoredRouteGroupOpen(): Record<RouteListGroupKey, boolean> {
   try {
     const stored = JSON.parse(localStorage.getItem(ROUTE_GROUP_OPEN_STORAGE_KEY) ?? 'null')
     if (!stored || typeof stored !== 'object') return { ...DEFAULT_GROUP_OPEN }
+    if (stored.unlockable !== undefined) {
+      return {
+        favorites: Boolean(stored.favorites),
+        recent: Boolean(stored.recent),
+        normal: stored.normal !== undefined ? Boolean(stored.normal) : true,
+        unlockable: Boolean(stored.unlockable),
+        specialSeasonal:
+          stored.specialSeasonal !== undefined
+            ? Boolean(stored.specialSeasonal)
+            : stored.special !== undefined || stored.seasonal !== undefined
+              ? Boolean(stored.special ?? stored.seasonal)
+              : true,
+      }
+    }
+
     return {
       favorites: Boolean(stored.favorites),
       recent: Boolean(stored.recent),
-      normal: stored.normal !== undefined ? Boolean(stored.normal) : true,
+      normal: true,
+      unlockable: stored.normal !== undefined ? Boolean(stored.normal) : true,
       specialSeasonal:
         stored.specialSeasonal !== undefined
           ? Boolean(stored.specialSeasonal)
