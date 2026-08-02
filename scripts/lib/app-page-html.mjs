@@ -270,6 +270,8 @@ export function rewritePublishedHtmlForLayoutSubdir(html) {
     .replace(/"\.\/route-maps\//g, '"../route-maps/')
     .replace(/href="\.\/sibs-logo/g, 'href="../sibs-logo')
     .replace(/src="\.\/sibs-logo/g, 'src="../sibs-logo')
+    .replace(/"\.\/company-logos\//g, '"../company-logos/')
+    .replace(/'\.\/company-logos\//g, "'../company-logos/")
     .replace(/var INDEX = '\.\/index\.html';/g, "var INDEX = '../index.html';")
     .replace(/register\('\.\/sw\.js'/g, "register('../sw.js'")
 }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { getIslandMapLayerUrl } from '../utils/appLayoutMode'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { saveRouteMapImport, UserApiError } from '../api/userApi'
 import { routes } from '../data/routes'
@@ -38,11 +39,6 @@ import { StopDetailPanel } from './StopDetailPanel'
 import '../styles/routeMapPage.css'
 
 type MapLayer = 'general' | 'detailed'
-
-const MAP_URLS: Record<MapLayer, string> = {
-  general: './maps/SIMapGerenal.png',
-  detailed: './maps/SIMap.png',
-}
 
 const STATIC_IMAGE_EXTENSIONS = ['png', 'webp', 'jpg', 'jpeg']
 
@@ -85,7 +81,7 @@ export function RouteMapPage() {
   const [catalogStops, setCatalogStops] = useState<RouteDetailMapStop[]>([])
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
 
-  const mapSrc = MAP_URLS[layer]
+  const mapSrc = getIslandMapLayerUrl(layer)
   const title = routeId ? `${routeId} · ${t('routeMapViewPath')}` : t('routeMapViewPath')
   const resolvedRoute = useMemo(
     () => findRouteForMapPage(routeId, mergeRoutesByBaseNumber(routes)),

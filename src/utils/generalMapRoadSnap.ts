@@ -1,8 +1,7 @@
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import type { WorldMapVirtualNodeKind } from '../types/worldMapDraw'
+import { getIslandMapLayerUrl } from './appLayoutMode'
 import { absoluteExitDirForKind } from './mapSurfaceKind'
-
-const GENERAL_MAP_URL = './maps/SIMapGerenal.png'
 const ROAD_CELL_PX = 8
 const SNAP_SEARCH_PX = 72
 const PATHFIND_MAX_NODES = 120_000
@@ -1022,7 +1021,7 @@ export async function loadGeneralMapRoadSnapIndex(): Promise<GeneralMapRoadSnapI
   if (typeof document === 'undefined') return null
 
   try {
-    const image = await loadImage(GENERAL_MAP_URL)
+    const image = await loadImage(getIslandMapLayerUrl('general'))
     const width = image.naturalWidth
     const height = image.naturalHeight
     if (width <= 0 || height <= 0) return null

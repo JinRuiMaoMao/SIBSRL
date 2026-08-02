@@ -206,6 +206,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
         fixes: [
           {
+            zh: "修复 normal/real 子目录下运营商 Logo 与 map-draw 群岛底图路径错误（含 GitHub Pages 部署）。",
+            en: "Fixed operator logo and map-draw island map URLs under normal/real (including GitHub Pages deploy).",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },

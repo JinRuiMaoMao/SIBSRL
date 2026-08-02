@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const out = resolve(root, process.argv[2] ?? '_site')
 
-const COPY_DIRS = ['assets', 'audio', 'maps', 'route-maps', 'routes', 'normal', 'real', 'world-map-routes']
+const COPY_DIRS = ['assets', 'audio', 'company-logos', 'maps', 'route-maps', 'routes', 'normal', 'real', 'world-map-routes']
 const COPY_FILES = [
   'sw.js',
   '.nojekyll',

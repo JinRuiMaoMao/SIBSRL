@@ -77,6 +77,7 @@ import {
   parseDrawRouteHeaderFields,
   resolveDrawDirectionDataIndex,
 } from '../utils/mapDrawStopCatalogSnap'
+import { getIslandMapLayerUrl } from '../utils/appLayoutMode'
 import { getDirectionKey } from '../utils/routeDirectionCore'
 import { loadWorldMapStopCatalog, mergeWorldMapCatalogStops, type WorldMapCatalogStop } from '../utils/worldMapStopCatalog'
 
@@ -86,11 +87,6 @@ function readImportJsonText(text: string): unknown {
 
 type MapLayer = 'general' | 'detailed'
 type StopPlacementMode = 'auto' | 'manual'
-
-const MAP_URLS: Record<MapLayer, string> = {
-  general: './maps/SIMapGerenal.png',
-  detailed: './maps/SIMap.png',
-}
 
 interface MapImageSize {
   width: number
@@ -981,7 +977,7 @@ export function IslandMapDrawEditor({
           )
           await exportWorldMapDrawImage(
             {
-              mapImageUrl: MAP_URLS[layer],
+              mapImageUrl: getIslandMapLayerUrl(layer),
               routeId: resolvedRouteId,
               points: pointsForExport,
               stops: merged.stops.length > 0 ? merged.stops : sibsDraft.stops,
@@ -1230,7 +1226,7 @@ export function IslandMapDrawEditor({
   )
 
   const mapDrawMode = editorMode === 'addStop' || editorMode === 'addPoint'
-  const mapSrc = MAP_URLS[layer]
+  const mapSrc = getIslandMapLayerUrl(layer)
   const surfaceRouteOverlay = routeOverlay
     ? { routeNumber: routeOverlay.routeNumber, points: routeOverlay.points }
     : null
