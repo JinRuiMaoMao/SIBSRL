@@ -335,3 +335,14 @@ export function getShiftUnlockLockedRouteIds(
     getShiftUnlockLockedDisplaySlots(visibleRoutes).map((slot) => slot.entry!.route.id),
   )
 }
+
+/** 可解锁路线 · 开特定线路：需完成前置班次，或跑本线有机会解锁后续线路。 */
+export function routeBelongsToShiftUnlockCategory(
+  route: BusRoute,
+  options?: ShiftUnlockLookupOptions,
+): boolean {
+  if ((getShiftUnlockPrerequisites(route, options)?.prerequisiteRouteNumbers.length ?? 0) > 0) {
+    return true
+  }
+  return getShiftUnlockTargets(route, options).length > 0
+}

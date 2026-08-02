@@ -18,6 +18,11 @@ export function RouteUnlockCategoryList({ activeKind, onSelect }: RouteUnlockCat
         active={activeKind === 'special'}
         onClick={() => onSelect('special')}
       />
+      <RouteUnlockCategoryCard
+        kind="shift"
+        active={activeKind === 'shift'}
+        onClick={() => onSelect('shift')}
+      />
     </div>
   )
 }

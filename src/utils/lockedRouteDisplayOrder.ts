@@ -16,12 +16,11 @@ function directionIndexForKey(route: BusRoute, directionKey?: DirectionKey): num
   return idx >= 0 ? idx : undefined
 }
 
-/** 锁定卡片是否显示粉框（班次解锁前置线路，非阳光碎片解锁） */
+/** 锁定卡片是否显示粉框（班次解锁前置线路） */
 export function routeHasShiftUnlockPrereqDisplay(
   route: BusRoute,
   options?: { listedId?: string; directionIndex?: number; directionKey?: DirectionKey },
 ): boolean {
-  if (routeUsesSunshardUnlock(route)) return false
   const directionIndex =
     options?.directionIndex ??
     (options?.directionKey != null ? directionIndexForKey(route, options.directionKey) : undefined)

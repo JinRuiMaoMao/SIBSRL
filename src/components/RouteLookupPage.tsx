@@ -27,6 +27,7 @@ import {
   getShiftUnlockLockedDisplaySlots,
   getShiftUnlockLockedRouteIds,
   mergeShiftUnlockLockedDisplaySlots,
+  routeBelongsToShiftUnlockCategory,
 } from '../data/routeShiftUnlocks'
 import {
   getSunshardUnlockLockedDisplaySlots,
@@ -1243,9 +1244,27 @@ export function RouteLookupPage({
       ? slots
       : slots.filter((slot) => {
           if (slot.entry == null) return false
-          const groups = getRouteDisplayGroupsForRoute(slot.entry.route)
-          if (groups.includes(unlockCategoryFocus)) return true
-          return unlockCategoryFocus === 'special' && routeUsesSunshardUnlock(slot.entry.route)
+          const { route, listedId, directionKey } = slot.entry
+          const directionIndex = directionKey
+            ? route.stops?.findIndex((stop) => stop.directionKey === directionKey) ?? 0
+            : 0
+          if (unlockCategoryFocus === 'shift') {
+            return routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
+          }
+          const groups = getRouteDisplayGroupsForRoute(route)
+          if (groups.includes(unlockCategoryFocus)) {
+            if (
+              unlockCategoryFocus === 'special' &&
+              routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
+            ) {
+              return false
+            }
+            return true
+          }
+          if (unlockCategoryFocus === 'special' && routeUsesSunshardUnlock(route)) {
+            return !routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
+          }
+          return false
         })
     return sortLockedDisplaySlots(filtered)
   }, [listSectionSlots.specialSeasonal, unlockCategoryFocus])

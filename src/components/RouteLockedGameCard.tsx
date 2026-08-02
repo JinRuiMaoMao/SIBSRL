@@ -110,9 +110,7 @@ export function RouteLockedGameCard({
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
   const usesSunshardUnlock = routeUsesSunshardUnlock(route)
-  const shiftUnlock = usesSunshardUnlock
-    ? null
-    : getShiftUnlockPrerequisites(route, { listedId, directionIndex })
+  const shiftUnlock = getShiftUnlockPrerequisites(route, { listedId, directionIndex })
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {

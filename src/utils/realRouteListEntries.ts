@@ -11,6 +11,7 @@ import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
 import {
   getShiftUnlockLockedDisplaySlots,
   parseShiftUnlockSlotKey,
+  routeBelongsToShiftUnlockCategory,
   routeHasDirectionalShiftUnlockSlots,
 } from '../data/routeShiftUnlocks'
 import {
@@ -228,13 +229,33 @@ export function partitionRealRouteListWithShiftUnlocks(
 
 export function filterRealRouteListEntriesByUnlockCategory(
   entries: readonly RealRouteListEntry[],
-  category: 'seasonal' | 'special' | null,
+  category: 'seasonal' | 'special' | 'shift' | null,
 ): RealRouteListEntry[] {
   if (!category) return [...entries]
   return entries.filter((entry) => {
+    const listedId =
+      entry.listKey.includes(':') && entry.listKey.slice(entry.listKey.indexOf(':') + 1).includes('|')
+        ? entry.listKey.slice(entry.listKey.indexOf(':') + 1)
+        : undefined
+    if (category === 'shift') {
+      return routeBelongsToShiftUnlockCategory(entry.route, {
+        listedId,
+        directionIndex: entry.directionIndex,
+      })
+    }
     const groups = getRouteDisplayGroupsForRoute(entry.route)
-    if (groups.includes(category)) return true
-    if (category === 'special' && routeUsesSunshardUnlock(entry.route)) return true
+    if (groups.includes(category)) {
+      if (category === 'special' && routeBelongsToShiftUnlockCategory(entry.route, { listedId, directionIndex: entry.directionIndex })) {
+        return false
+      }
+      return true
+    }
+    if (category === 'special' && routeUsesSunshardUnlock(entry.route)) {
+      if (routeBelongsToShiftUnlockCategory(entry.route, { listedId, directionIndex: entry.directionIndex })) {
+        return false
+      }
+      return true
+    }
     return false
   })
 }

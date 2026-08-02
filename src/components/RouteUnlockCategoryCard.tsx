@@ -1,7 +1,7 @@
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 
-export type RouteUnlockCategoryKind = 'seasonal' | 'special'
+export type RouteUnlockCategoryKind = 'seasonal' | 'special' | 'shift'
 
 interface RouteUnlockCategoryCardProps {
   kind: RouteUnlockCategoryKind
@@ -12,11 +12,13 @@ interface RouteUnlockCategoryCardProps {
 const TITLE_KEYS: Record<RouteUnlockCategoryKind, MessageKey> = {
   seasonal: 'routeUnlockCategoryEvents',
   special: 'routeUnlockCategorySpecial',
+  shift: 'routeUnlockCategoryShift',
 }
 
 const DESC_KEYS: Record<RouteUnlockCategoryKind, MessageKey> = {
   seasonal: 'routeUnlockCategoryEventsDesc',
   special: 'routeUnlockCategorySpecialDesc',
+  shift: 'routeUnlockCategoryShiftDesc',
 }
 
 function CategoryIcon({ kind }: { kind: RouteUnlockCategoryKind }) {
@@ -26,6 +28,17 @@ function CategoryIcon({ kind }: { kind: RouteUnlockCategoryKind }) {
         <path
           fill="currentColor"
           d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a1 1 0 0 1 1-1m12 6H5v12h14zm-9 2h2v2H10zm4 0h2v2h-2zm-8 4h2v2H6zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H6zm4 0h2v2h-2zm4 0h2v2h-2z"
+        />
+      </svg>
+    )
+  }
+
+  if (kind === 'shift') {
+    return (
+      <svg className="route-unlock-category-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden>
+        <path
+          fill="currentColor"
+          d="M7 10V8a5 5 0 0 1 10 0v2h1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2zm2 0h6V8a3 3 0 0 0-6 0z"
         />
       </svg>
     )

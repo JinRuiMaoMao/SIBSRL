@@ -14,6 +14,12 @@
   "476X": {
     "unlockRoutes": ["476", "476*", "476P", "476S", "N476"]
   },
+  "C401": {
+    "unlockRoutes": ["C01"]
+  },
+  "F702": {
+    "unlockRoutes": ["F701"]
+  },
   "C401A|N": {
     "unlockRoutes": ["C401"],
     "unlockFromDirectionKey": "S",
