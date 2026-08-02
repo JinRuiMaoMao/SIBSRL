@@ -32,6 +32,7 @@ import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
 import { RouteShiftUnlockTargetsSection } from './RouteShiftUnlockTargetsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
+import { RouteDirectionControls } from './RouteDirectionControls'
 import { StopDetailPanel } from './StopDetailPanel'
 import { StopNameDisplay } from './StopNameDisplay'
 
