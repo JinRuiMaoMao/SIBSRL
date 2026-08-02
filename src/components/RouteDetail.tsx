@@ -21,6 +21,7 @@ import { getOptionalText } from '../i18n/displayText'
 import { getRouteStopAudioAtRow } from '../data/routeBroadcasts'
 import type { RoutePageData } from '../types/routePageData'
 import { getPageStopAudioAtRow } from '../utils/routePageDataFormat'
+import { getShiftUnlockTargets } from '../data/routeShiftUnlocks'
 import { OperatorLogos } from './OperatorLogos'
 import { RouteTypeTags } from './RouteTypeTags'
 import { RouteEndpoints } from './RouteEndpoints'
@@ -29,6 +30,7 @@ import { DailyChallengeIntro } from './DailyChallengeIntro'
 import { buildRouteShareUrl } from '../utils/routeNavigation'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
+import { RouteShiftUnlockTargetsSection } from './RouteShiftUnlockTargetsSection'
 import { RouteDataFeedbackDialog } from './RouteDataFeedbackDialog'
 import { StopDetailPanel } from './StopDetailPanel'
 import { StopNameDisplay } from './StopNameDisplay'
@@ -86,6 +88,7 @@ export function RouteDetail({
       ? getLoopViewLengthKm(route, locale)
       : getDirectionLengthKm(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
+  const shiftUnlockTargets = getShiftUnlockTargets(route)
 
   useEffect(() => {
     setSelectedStopIndex(null)
@@ -215,6 +218,9 @@ export function RouteDetail({
             )}
           </div>
         )}
+
+        <RouteShiftUnlockTargetsSection targets={shiftUnlockTargets} />
+
         {lengthKm && (
           <div>
             <h4>{t('routeLength')}</h4>

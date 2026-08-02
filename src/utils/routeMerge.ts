@@ -138,6 +138,15 @@ export function toMergeBaseRouteNumber(routeNumber: string): string {
   return routeNumber
 }
 
+/** 时刻表 routeCode → 本站展示线路 id（如 140PW → 140P，370E → 370E） */
+export function resolveSpecialRouteCodeToId(routeCode: string): string {
+  const exact = EXACT_MERGE[routeCode]
+  if (exact) return exact.base
+  const renamed = DISPLAY_ONLY_RENAMES[routeCode]
+  if (renamed) return renamed
+  return routeCode
+}
+
 export function getMergeDirectionKey(routeNumber: string): DirectionKey | null {
   return inferDirectionSuffix(routeNumber)
 }

@@ -17,6 +17,7 @@ import {
   resolveActiveStopGroup,
   routeHasLoopDirectionLayout,
 } from '../utils/routeLoopView'
+import { getShiftUnlockTargets } from '../data/routeShiftUnlocks'
 import { OperatorLogos } from './OperatorLogos'
 import {
   formatShortJourneyTime,
@@ -30,6 +31,7 @@ import { RouteTypeTags } from './RouteTypeTags'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteMapViewButtons } from './RouteMapViewButtons'
 import { RouteRealTimeline } from './RouteRealTimeline'
+import { RouteShiftUnlockTargetsSection } from './RouteShiftUnlockTargetsSection'
 
 interface RouteDetailRealPanelProps {
   route: BusRoute
@@ -103,6 +105,7 @@ export function RouteDetailRealPanel({
         getDirectionServiceTime(route, directionIndex, locale))
       : getDirectionServiceTime(route, directionIndex, locale)
   const displayTypes = getRouteDisplayTypes(route, { directionIndex, loopView })
+  const shiftUnlockTargets = getShiftUnlockTargets(route)
   const difficulty = routeDifficultyStars(route.levelRequired)
   const operators = route.operators
   const fareText =
@@ -232,6 +235,11 @@ export function RouteDetailRealPanel({
               </div>
             ) : null}
           </div>
+
+          <RouteShiftUnlockTargetsSection
+            targets={shiftUnlockTargets}
+            className="route-real-panel-section"
+          />
 
           {hasDirectionControls && !lockDirection ? (
             <div className="route-real-panel-direction">

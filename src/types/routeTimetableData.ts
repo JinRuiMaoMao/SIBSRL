@@ -12,6 +12,8 @@ export interface TimetableScheduleEntry {
   customDaysCn?: string
   customDaysEn?: string
   unlockLevel?: number
+  /** 驾驶这些线路有机会解锁 routeCode 对应特别线 */
+  unlockRoutes?: string[]
 }
 
 export interface GameRouteStopEntry {

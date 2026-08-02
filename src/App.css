@@ -3984,6 +3984,74 @@ html[data-route-lookup-layout='split'] .site-footer {
   margin-top: 0;
 }
 
+.route-locked-game-card-unlock-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.route-locked-game-card-lock {
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.route-locked-game-card-prereq {
+  display: inline-block;
+  border: 1px solid color-mix(in srgb, #ffb6c1 75%, var(--border));
+  border-radius: 999px;
+  padding: 0.22rem 0.7rem;
+  color: #ffb6c1;
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.route-shift-unlock-targets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.route-shift-unlock-target-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.route-shift-unlock-star {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: color-mix(in srgb, var(--accent) 85%, #3b6fd4 15%);
+}
+
+.route-shift-unlock-target-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.route-shift-unlock-target-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--accent) 80%, #3b6fd4 20%);
+}
+
+.route-shift-unlock-target-desc {
+  margin: 0;
+  font-size: 0.86rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--accent) 70%, var(--text-muted) 30%);
+}
+
+.route-real-panel .route-shift-unlock-target-title,
+.route-real-panel .route-shift-unlock-target-desc {
+  color: color-mix(in srgb, #2f5fb8 85%, var(--text) 15%);
+}
+
 .route-split-list-item {
   flex: 0 0 auto;
 }

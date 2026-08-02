@@ -4,6 +4,10 @@ import {
   formatSeasonalAvailabilityRangeInGame,
   getSeasonalRouteDisplayWindow,
 } from '../data/seasonalRouteAvailability'
+import {
+  formatShiftUnlockPrerequisiteRoutes,
+  getShiftUnlockPrerequisites,
+} from '../data/routeShiftUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import { getRoutePageHref } from '../utils/routeNavigation'
@@ -53,6 +57,17 @@ function CalendarGlyph() {
   )
 }
 
+function LockGlyph() {
+  return (
+    <svg className="route-locked-game-card-lock" viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+      <path
+        fill="currentColor"
+        d="M7 10V8a5 5 0 0 1 10 0v2h1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2zm2 0h6V8a3 3 0 0 0-6 0z"
+      />
+    </svg>
+  )
+}
+
 export function RouteLockedGameCard({
   route,
   directionIndex,
@@ -70,6 +85,7 @@ export function RouteLockedGameCard({
   const dateRange = seasonalWindow
     ? formatSeasonalAvailabilityRangeInGame(seasonalWindow, locale)
     : null
+  const shiftUnlock = getShiftUnlockPrerequisites(route)
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -116,6 +132,15 @@ export function RouteLockedGameCard({
             </div>
           ) : null}
         </div>
+
+        {shiftUnlock ? (
+          <div className="route-locked-game-card-unlock-row">
+            <LockGlyph />
+            <span className="route-locked-game-card-prereq">
+              {formatShiftUnlockPrerequisiteRoutes(shiftUnlock.prerequisiteRouteNumbers)}
+            </span>
+          </div>
+        ) : null}
 
         {route.operators.length > 0 ? (
           <div className="route-locked-game-card-operators">
