@@ -206,6 +206,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
         fixes: [
           {
+            zh: "运营商 Logo 改为构建产物绝对地址加载，加载失败时回退为代号文字，避免部分设备出现方框、问号或仅显示文件名。",
+            en: "Operator logos now use absolute bundled asset URLs with a text fallback when load fails, fixing boxes/question marks or filename-only display on some devices.",
+          },
+          {
             zh: "修复 normal/real 子目录下运营商 Logo 与 map-draw 群岛底图路径错误（含 GitHub Pages 部署）。",
             en: "Fixed operator logo and map-draw island map URLs under normal/real (including GitHub Pages deploy).",
           },

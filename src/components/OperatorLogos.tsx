@@ -2,6 +2,7 @@ import { OPERATORS } from '../data/routes'
 import { getOperatorLogoUrl, operatorHasLogo } from '../data/operatorLogos'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
+import { OperatorLogoImage } from './OperatorLogoImage'
 
 interface OperatorLogosProps {
   operators: readonly string[]
@@ -31,14 +32,7 @@ export function OperatorLogos({ operators, className = '', size = 'card' }: Oper
 
         if (logoUrl) {
           return (
-            <img
-              key={code}
-              className="operator-logo"
-              src={logoUrl}
-              alt={alt}
-              title={alt}
-              decoding="async"
-            />
+            <OperatorLogoImage key={code} code={code} logoUrl={logoUrl} alt={alt} />
           )
         }
 

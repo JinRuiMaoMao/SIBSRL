@@ -47,11 +47,37 @@ export function getSiteAssetRoot(): string {
   return './'
 }
 
+/** Absolute site root URL (trailing slash) for resolving static assets on any page depth. */
+export function getSiteBaseUrl(): string {
+  const root = getSiteAssetRoot()
+  try {
+    if (/^https?:\/\//i.test(root)) return siteRootWithTrailingSlash(root)
+    return new URL(root, window.location.href).href
+  } catch {
+    try {
+      return new URL('/', window.location.href).href
+    } catch {
+      return `${window.location.origin}/`
+    }
+  }
+}
+
 /** Resolve ./audio/... or audio/... against the site root (handles normal/real subdirs + GitHub Pages BASE). */
 export function resolveSiteAssetUrl(relativePath: string): string {
-  if (/^(https?:|\/|data:|blob:)/.test(relativePath)) return relativePath
+  if (/^(https?:|data:|blob:)/i.test(relativePath)) return relativePath
+  if (relativePath.startsWith('/')) {
+    try {
+      return new URL(relativePath, window.location.origin).href
+    } catch {
+      return relativePath
+    }
+  }
   const clean = relativePath.replace(/^\.\//, '')
-  return `${getSiteAssetRoot()}${clean}`
+  try {
+    return new URL(clean, getSiteBaseUrl()).href
+  } catch {
+    return `${getSiteAssetRoot()}${clean}`
+  }
 }
 
 export function getIslandMapLayerUrl(layer: 'general' | 'detailed'): string {
