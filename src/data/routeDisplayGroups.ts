@@ -229,15 +229,29 @@ export function isLevelOnlySpecialListRoute(route: BusRoute): boolean {
   return (routeLevelRequired(route) ?? 0) > 0
 }
 
-/** 仅出现在锁定区：节日限定，或需阳光碎片/班次解锁的特别路线。纯等级特别线见 isLevelOnlySpecialListRoute。 */
+/** 特别班次但无需等级/碎片/班次解锁（如 476*）：与常规线同列展示。 */
+export function isUnlockFreeSpecialListRoute(route: BusRoute): boolean {
+  const groups = getRouteDisplayGroupsForRoute(route)
+  if (!groups.includes('special') || groups.includes('seasonal')) return false
+  if (routeHasShiftOrSunshardGameUnlock(route)) return false
+  if ((routeLevelRequired(route) ?? 0) > 0) return false
+  return true
+}
+
+/** 应从锁定区移入常规列表的特别路线（纯等级或无需解锁）。 */
+export function isNormalListEligibleSpecialRoute(route: BusRoute): boolean {
+  return isLevelOnlySpecialListRoute(route) || isUnlockFreeSpecialListRoute(route)
+}
+
+/** 仅出现在锁定区：节日限定，或需阳光碎片/班次解锁的特别路线。 */
 export function isLockedDisplayRoute(route: BusRoute): boolean {
   const groups = getRouteDisplayGroupsForRoute(route)
   if (groups.includes('seasonal')) return true
-  if (groups.includes('special') && !isLevelOnlySpecialListRoute(route)) return true
+  if (groups.includes('special') && !isNormalListEligibleSpecialRoute(route)) return true
   return false
 }
 
-/** 常规列表：合并仅等级解锁的特别路线（保留 listedId / 方向与类型标签）。 */
+/** 常规列表：合并应展示在常规区的特别路线（保留 listedId / 方向与类型标签）。 */
 export function mergeLevelOnlySpecialIntoNormalSlots(
   normalSlots: readonly GroupedRouteDisplaySlot[],
   visibleRoutes: BusRoute[],
@@ -249,7 +263,7 @@ export function mergeLevelOnlySpecialIntoNormalSlots(
 
   for (const slot of getGroupDisplaySlots('special', visibleRoutes)) {
     if (!slot.entry || seenRouteIds.has(slot.entry.route.id)) continue
-    if (!isLevelOnlySpecialListRoute(slot.entry.route)) continue
+    if (!isNormalListEligibleSpecialRoute(slot.entry.route)) continue
     seenRouteIds.add(slot.entry.route.id)
     merged.push(slot)
   }
@@ -258,11 +272,11 @@ export function mergeLevelOnlySpecialIntoNormalSlots(
   return merged
 }
 
-/** 锁定区列表：去掉已归入常规列表的纯等级特别线。 */
+/** 锁定区列表：去掉已归入常规列表的特别路线；保留阳光碎片/班次解锁卡片。 */
 export function filterLockedSectionDisplaySlots(
   slots: readonly GroupedRouteDisplaySlot[],
 ): GroupedRouteDisplaySlot[] {
-  return slots.filter((slot) => !slot.entry || isLockedDisplayRoute(slot.entry.route))
+  return slots.filter((slot) => !slot.entry || !isNormalListEligibleSpecialRoute(slot.entry.route))
 }
 
 export function isDailyOnlyDisplayRoute(route: BusRoute): boolean {
