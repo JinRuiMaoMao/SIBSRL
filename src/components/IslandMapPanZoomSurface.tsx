@@ -81,6 +81,7 @@ interface IslandMapPanZoomSurfaceProps {
   maxZoomRatio?: number
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
+  onMapLayerLoadingChange?: (loading: boolean) => void
   trajectoryPath?: readonly WorldMapPoint[]
   referenceEditor?: {
     nodes: readonly RouteEditorNode[]
@@ -321,6 +322,7 @@ export function IslandMapPanZoomSurface({
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
   onMapPointerMove,
   onImageSizeChange,
+  onMapLayerLoadingChange,
   trajectoryPath = [],
   referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
@@ -333,9 +335,11 @@ export function IslandMapPanZoomSurface({
   const onViewChangeRef = useRef(onViewChange)
   const onMapPointerMoveRef = useRef(onMapPointerMove)
   const onImageSizeChangeRef = useRef(onImageSizeChange)
+  const onMapLayerLoadingChangeRef = useRef(onMapLayerLoadingChange)
   const referenceEditorRef = useRef(referenceEditor)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
+  const layerPreloadRef = useRef<HTMLImageElement | null>(null)
   const panZoomRef = useRef<PanZoomState | null>(null)
   const dragRafRef = useRef(0)
   const stopDragRef = useRef<{
@@ -364,10 +368,11 @@ export function IslandMapPanZoomSurface({
   onViewChangeRef.current = onViewChange
   onMapPointerMoveRef.current = onMapPointerMove
   onImageSizeChangeRef.current = onImageSizeChange
+  onMapLayerLoadingChangeRef.current = onMapLayerLoadingChange
   referenceEditorRef.current = referenceEditor
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
-  const [incomingSrc, setIncomingSrc] = useState<string | null>(null)
+  const [mapLayerLoading, setMapLayerLoading] = useState(false)
   const [imageSize, setImageSize] = useState<ImageSize | null>(() => imageSizeCacheRef.current.get(src) ?? null)
   const [panZoom, setPanZoom] = useState<PanZoomState | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -479,19 +484,26 @@ export function IslandMapPanZoomSurface({
     [imageSize, publishPanZoom, readViewportSize],
   )
 
+  const applyLayerFromCache = useCallback((nextSrc: string, size: ImageSize) => {
+    imageSizeCacheRef.current.set(nextSrc, size)
+    displayedSrcRef.current = nextSrc
+    setDisplayedSrc(nextSrc)
+    setImageSize(size)
+    onImageSizeChangeRef.current?.(size)
+    const domImg = imageRef.current
+    if (domImg) {
+      domImg.src = nextSrc
+    }
+  }, [])
+
   const activateMapLayer = useCallback(
     (nextSrc: string, image: HTMLImageElement) => {
       const size = readImageSize(image)
       if (!size) return false
-      imageSizeCacheRef.current.set(nextSrc, size)
-      displayedSrcRef.current = nextSrc
-      setDisplayedSrc(nextSrc)
-      setImageSize(size)
-      setIncomingSrc(null)
-      onImageSizeChangeRef.current?.(size)
+      applyLayerFromCache(nextSrc, size)
       return true
     },
-    [],
+    [applyLayerFromCache],
   )
 
   const adoptImage = useCallback(
@@ -501,12 +513,67 @@ export function IslandMapPanZoomSurface({
 
   useEffect(() => {
     if (src === displayedSrcRef.current) {
-      setIncomingSrc(null)
+      setMapLayerLoading(false)
+      onMapLayerLoadingChangeRef.current?.(false)
       return
     }
-    if (src === incomingSrc) return
-    setIncomingSrc(src)
-  }, [incomingSrc, src])
+
+    const cachedSize = imageSizeCacheRef.current.get(src)
+    if (cachedSize) {
+      applyLayerFromCache(src, cachedSize)
+      setMapLayerLoading(false)
+      onMapLayerLoadingChangeRef.current?.(false)
+      window.requestAnimationFrame(() => {
+        syncPanZoomRef.current({ publish: true })
+      })
+      return
+    }
+
+    let cancelled = false
+    setMapLayerLoading(true)
+    onMapLayerLoadingChangeRef.current?.(true)
+
+    const preloader = new Image()
+    preloader.decoding = 'async'
+    layerPreloadRef.current = preloader
+
+    const clearPreloader = () => {
+      preloader.onload = null
+      preloader.onerror = null
+      preloader.src = ''
+      if (layerPreloadRef.current === preloader) layerPreloadRef.current = null
+    }
+
+    preloader.onload = () => {
+      if (cancelled) return
+      if (activateMapLayer(src, preloader)) {
+        const domImg = imageRef.current
+        if (domImg) domImg.src = src
+        window.requestAnimationFrame(() => {
+          syncPanZoomRef.current({ publish: true })
+        })
+      }
+      setMapLayerLoading(false)
+      onMapLayerLoadingChangeRef.current?.(false)
+      clearPreloader()
+    }
+
+    preloader.onerror = () => {
+      if (cancelled) return
+      setMapLayerLoading(false)
+      onMapLayerLoadingChangeRef.current?.(false)
+      clearPreloader()
+    }
+
+    preloader.src = src
+
+    return () => {
+      cancelled = true
+      clearPreloader()
+      setMapLayerLoading(false)
+      onMapLayerLoadingChangeRef.current?.(false)
+    }
+  }, [activateMapLayer, applyLayerFromCache, src])
 
   useLayoutEffect(() => {
     const image = imageRef.current
@@ -943,16 +1010,6 @@ export function IslandMapPanZoomSurface({
     adoptImage(displayedSrcRef.current, event.currentTarget)
   }
 
-  const onIncomingImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    const layerSrc = incomingSrc
-    if (!layerSrc) return
-    if (activateMapLayer(layerSrc, event.currentTarget)) {
-      window.requestAnimationFrame(() => {
-        syncPanZoomRef.current({ publish: true })
-      })
-    }
-  }
-
   const layerSizeStyle: CSSProperties | undefined = imageSize
     ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
     : undefined
@@ -1155,16 +1212,6 @@ export function IslandMapPanZoomSurface({
             draggable={false}
             onLoad={onImageLoad}
           />
-          {incomingSrc ? (
-            <img
-              src={incomingSrc}
-              alt=""
-              className="island-map-panzoom-image island-map-panzoom-image--incoming"
-              decoding="async"
-              draggable={false}
-              onLoad={onIncomingImageLoad}
-            />
-          ) : null}
           {overlayChildren}
         </div>
       ) : (

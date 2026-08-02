@@ -113,6 +113,7 @@ export function IslandMapDrawEditor({
   const editor = useRouteEditor(routeOverlay?.routeNumber ?? '默认线路')
 
   const [layer, setLayer] = useState<MapLayer>(initialLayer)
+  const [mapLayerLoading, setMapLayerLoading] = useState(false)
   const [mapView, setMapView] = useState<NormalizedMapView | null>(initialMapView)
   const [imageSize, setImageSize] = useState<MapImageSize | null>(null)
   const [editorMode, setEditorMode] = useState<RouteEditorMode>('select')
@@ -261,7 +262,11 @@ export function IslandMapDrawEditor({
     if (!imageSize) return
     const prev = prevImageSizeRef.current
     if (prev && (prev.width !== imageSize.width || prev.height !== imageSize.height)) {
-      editor.manager.rescaleNodes(imageSize.width / prev.width, imageSize.height / prev.height)
+      const scaleX = imageSize.width / prev.width
+      const scaleY = imageSize.height / prev.height
+      window.requestAnimationFrame(() => {
+        editor.manager.rescaleNodes(scaleX, scaleY)
+      })
     }
     prevImageSizeRef.current = imageSize
   }, [editor.manager, imageSize])
@@ -1441,7 +1446,16 @@ export function IslandMapDrawEditor({
               <section className="route-editor-panel">
                 <h3>{t('mapDrawPanelMap')}</h3>
                 <div className="route-editor-btn-row route-editor-btn-row--stack">
-                  <button type="button" className="route-editor-btn" onClick={() => setLayer((current) => (current === 'general' ? 'detailed' : 'general'))}>
+                  <button
+                    type="button"
+                    className="route-editor-btn"
+                    disabled={mapLayerLoading}
+                    aria-busy={mapLayerLoading}
+                    onClick={() => {
+                      if (mapLayerLoading) return
+                      setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
+                    }}
+                  >
                     {t('islandMapLayers')}
                   </button>
                 </div>
@@ -1647,6 +1661,7 @@ export function IslandMapDrawEditor({
               stopLabelScale={stopLabelScale}
               onMapPointerMove={handleMapPointerMove}
               onImageSizeChange={setImageSize}
+              onMapLayerLoadingChange={setMapLayerLoading}
               referenceEditor={
                 imageSize
                   ? {

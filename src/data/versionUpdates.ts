@@ -214,6 +214,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed operator logo and map-draw island map URLs under normal/real (including GitHub Pages deploy).",
           },
           {
+            zh: "修复 iPad Safari 上 map-draw／群岛地图切换 Layers 时因同时解码两张全尺寸底图导致页面崩溃：改为离屏预加载、单张显示，并在加载期间禁用图层按钮。",
+            en: "Fixed iPad Safari crashes when toggling Layers on map-draw/island map (dual full-size decode): off-DOM preload with a single visible image and disabled layer button while loading.",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },
