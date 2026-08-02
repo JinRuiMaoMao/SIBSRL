@@ -27,6 +27,7 @@ import {
 } from '../data/routeShiftUnlocks'
 import {
   getSunshardUnlockLockedDisplaySlots,
+  getSunshardUnlockLockedRouteIds,
   mergeSunshardUnlockLockedDisplaySlots,
 } from '../data/routeSunshardUnlocks'
 import { sortLockedDisplaySlots } from '../utils/lockedRouteDisplayOrder'
@@ -1150,8 +1151,15 @@ export function RouteLookupPage({
     [locale, t],
   )
 
+  const sunshardLockedRouteIds = useMemo(
+    () => getSunshardUnlockLockedRouteIds(displayRoutes),
+    [displayRoutes],
+  )
+
   const listSectionSlots = useMemo(() => {
-    const normal = groupedSlots.normal
+    const normal = groupedSlots.normal.filter(
+      (slot) => !slot.entry || !sunshardLockedRouteIds.has(slot.entry.route.id),
+    )
     const specialSeasonal = sortLockedDisplaySlots(
       mergeSunshardUnlockLockedDisplaySlots(
         mergeShiftUnlockLockedDisplaySlots(
@@ -1162,10 +1170,12 @@ export function RouteLookupPage({
       ),
     )
     return { normal, specialSeasonal }
-  }, [groupedSlots, displayRoutes])
+  }, [groupedSlots, displayRoutes, sunshardLockedRouteIds])
 
   const listSectionTotalSlots = useMemo(() => {
-    const normal = groupedTotalSlots.normal
+    const normal = groupedTotalSlots.normal.filter(
+      (slot) => !slot.entry || !sunshardLockedRouteIds.has(slot.entry.route.id),
+    )
     const specialSeasonal = sortLockedDisplaySlots(
       mergeSunshardUnlockLockedDisplaySlots(
         mergeShiftUnlockLockedDisplaySlots(
@@ -1176,7 +1186,7 @@ export function RouteLookupPage({
       ),
     )
     return { normal, specialSeasonal }
-  }, [groupedTotalSlots, displayRoutes])
+  }, [groupedTotalSlots, displayRoutes, sunshardLockedRouteIds])
 
   const countVisibleSectionSlots = useCallback(
     (section: RouteListUiSectionKey) =>

@@ -35,8 +35,38 @@ function lockedDisplayRank(route: BusRoute, hasShiftPrereq: boolean): number {
   const groups = getRouteDisplayGroupsForRoute(route)
   if (groups.includes('seasonal')) return 0
   if (hasShiftPrereq) return 1
-  if (groups.includes('special') || routeUsesSunshardUnlock(route)) return 2
-  return 3
+  if (routeUsesSunshardUnlock(route)) return 2
+  if (groups.includes('special')) return 3
+  return 4
+}
+
+function compareLockedRouteOrder(
+  routeA: BusRoute,
+  routeB: BusRoute,
+  hasShiftPrereqA: boolean,
+  hasShiftPrereqB: boolean,
+  dirA?: DirectionKey,
+  dirB?: DirectionKey,
+  listedIdA?: string,
+  listedIdB?: string,
+): number {
+  const rankDiff =
+    lockedDisplayRank(routeA, hasShiftPrereqA) - lockedDisplayRank(routeB, hasShiftPrereqB)
+  if (rankDiff !== 0) return rankDiff
+
+  if (routeUsesSunshardUnlock(routeA) && routeUsesSunshardUnlock(routeB)) {
+    const shardDiff = (routeA.sunshardsRequired ?? 0) - (routeB.sunshardsRequired ?? 0)
+    if (shardDiff !== 0) return shardDiff
+  }
+
+  const routeCmp = compareRouteNumber(routeA.number, routeB.number)
+  if (routeCmp !== 0) return routeCmp
+
+  const dirCmp = compareSameRouteDirectionKeys(dirA, dirB)
+  if (dirCmp !== 0) return dirCmp
+
+  if (listedIdA && listedIdB) return compareRouteNumber(listedIdA, listedIdB)
+  return 0
 }
 
 function compareSameRouteDirectionKeys(dirA?: DirectionKey, dirB?: DirectionKey): number {
@@ -62,16 +92,16 @@ export function compareLockedDisplaySlotOrder(
     directionKey: b.entry?.directionKey,
   })
 
-  const rankDiff = lockedDisplayRank(routeA, prereqA) - lockedDisplayRank(routeB, prereqB)
-  if (rankDiff !== 0) return rankDiff
-
-  const routeCmp = compareRouteNumber(routeA.number, routeB.number)
-  if (routeCmp !== 0) return routeCmp
-
-  const dirCmp = compareSameRouteDirectionKeys(a.entry?.directionKey, b.entry?.directionKey)
-  if (dirCmp !== 0) return dirCmp
-
-  return compareRouteNumber(a.listedId, b.listedId)
+  return compareLockedRouteOrder(
+    routeA,
+    routeB,
+    prereqA,
+    prereqB,
+    a.entry?.directionKey,
+    b.entry?.directionKey,
+    a.listedId,
+    b.listedId,
+  )
 }
 
 export function sortLockedDisplaySlots(
@@ -107,18 +137,19 @@ export function compareLockedRealRouteEntryOrder(
     directionIndex: b.directionIndex,
   })
 
-  const rankDiff = lockedDisplayRank(a.route, prereqA) - lockedDisplayRank(b.route, prereqB)
-  if (rankDiff !== 0) return rankDiff
-
-  const routeCmp = compareRouteNumber(a.route.number, b.route.number)
-  if (routeCmp !== 0) return routeCmp
-
   const dirA = a.route.stops?.[a.directionIndex]?.directionKey
   const dirB = b.route.stops?.[b.directionIndex]?.directionKey
-  const dirCmp = compareSameRouteDirectionKeys(dirA, dirB)
-  if (dirCmp !== 0) return dirCmp
 
-  return compareRouteNumber(a.listKey, b.listKey)
+  return compareLockedRouteOrder(
+    a.route,
+    b.route,
+    prereqA,
+    prereqB,
+    dirA,
+    dirB,
+    a.listKey,
+    b.listKey,
+  )
 }
 
 export function sortLockedRealRouteListEntries(

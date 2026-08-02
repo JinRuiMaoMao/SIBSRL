@@ -97,7 +97,7 @@ export function partitionRealRouteListEntries(entries: readonly RealRouteListEnt
   return { normal, locked }
 }
 
-/** 锁定列表：节日限定 → 粉框班次解锁 → 其余特别路线，组内按线路号排序。 */
+/** 锁定列表：节日限定 → 粉框班次解锁 → 阳光碎片解锁 → 其余特别路线，组内按碎片数/线路号排序。 */
 export function sortLockedRealRouteListEntries(
   entries: readonly RealRouteListEntry[],
 ): RealRouteListEntry[] {
