@@ -21,6 +21,7 @@ import { ScrollRevealScope } from './components/ScrollRevealScope'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { StartPage } from './components/StartPage'
+import { RealStartPage } from './components/RealStartPage'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
@@ -221,7 +222,7 @@ function App() {
     return (
       <>
         <LiquidGlassDefs />
-        <StartPage />
+        {realLayout ? <RealStartPage /> : <StartPage />}
       </>
     )
   }
