@@ -3688,6 +3688,8 @@ html[data-route-lookup-layout='split'] .site-footer {
   flex-direction: column;
   min-height: 0;
   min-width: 0;
+  height: 100%;
+  overflow: hidden;
   border-right: 1px solid var(--border);
   background: var(--bg-deep);
 }
@@ -3766,36 +3768,30 @@ html[data-route-lookup-layout='split'] .site-footer {
   color: var(--text-muted);
 }
 
-.route-split-list-shell {
+.route-split-list {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.route-split-list {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
   padding: 0.45rem 0.5rem 0.65rem;
-}
-
-.route-split-list--playable {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
 }
 
 .route-split-list-sections {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
   flex-shrink: 0;
-  max-height: min(52vh, 28rem);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  padding: 0.45rem 0.5rem 0.65rem;
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
   border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
-  background: color-mix(in srgb, var(--bg-deep) 88%, #000 12%);
+  background: color-mix(in srgb, var(--bg-deep) 92%, #000 8%);
   box-shadow: 0 -10px 24px rgb(0 0 0 / 0.18);
 }
 

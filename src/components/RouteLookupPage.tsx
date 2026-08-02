@@ -1567,7 +1567,7 @@ export function RouteLookupPage({
         <>
           <RealRouteLookupMusic />
           <div className="route-split-shell">
-          <aside className="route-split-sidebar sibs-scrollbar" aria-label={t('routeList')}>
+          <aside className="route-split-sidebar" aria-label={t('routeList')}>
             <div
               ref={stickyToolbarRef}
               className={`route-split-sidebar-toolbar${stickyToolbarFade ? ' route-lookup-sticky--fade' : ''}`}

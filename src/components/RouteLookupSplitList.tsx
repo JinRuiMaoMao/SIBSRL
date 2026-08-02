@@ -192,36 +192,34 @@ export function RouteLookupSplitList({
   )
 
   return (
-    <div className="route-split-list-shell">
-      <div ref={listRef} className="route-split-list route-split-list--playable sibs-scrollbar" role="list">
-        {!hasEntries && !showDailyChallenge ? (
-          <p className="route-split-empty">{t('routeSplitEmpty')}</p>
-        ) : null}
+    <div ref={listRef} className="route-split-list sibs-scrollbar" role="list">
+      {!hasEntries && !showDailyChallenge ? (
+        <p className="route-split-empty">{t('routeSplitEmpty')}</p>
+      ) : null}
 
-        {showDailyChallenge ? (
-          <div
-            key={DAILY_CHALLENGE_CARD_ID}
-            ref={(node) => {
-              if (node) itemRefs.current.set(DAILY_CHALLENGE_CARD_ID, node)
-              else itemRefs.current.delete(DAILY_CHALLENGE_CARD_ID)
-            }}
-            className="route-split-list-item route-split-list-item--daily-challenge"
-            role="listitem"
-          >
-            <DailyChallengeBanner
-              selected={dailyChallenge!.selected}
-              onSelect={dailyChallenge!.onSelect}
-              onOpenCalendar={dailyChallenge!.onOpenCalendar}
-              variant="split"
-              challenge={dailyChallenge!.challenge}
-            />
-          </div>
-        ) : null}
+      {showDailyChallenge ? (
+        <div
+          key={DAILY_CHALLENGE_CARD_ID}
+          ref={(node) => {
+            if (node) itemRefs.current.set(DAILY_CHALLENGE_CARD_ID, node)
+            else itemRefs.current.delete(DAILY_CHALLENGE_CARD_ID)
+          }}
+          className="route-split-list-item route-split-list-item--daily-challenge"
+          role="listitem"
+        >
+          <DailyChallengeBanner
+            selected={dailyChallenge!.selected}
+            onSelect={dailyChallenge!.onSelect}
+            onOpenCalendar={dailyChallenge!.onOpenCalendar}
+            variant="split"
+            challenge={dailyChallenge!.challenge}
+          />
+        </div>
+      ) : null}
 
-        {normalEntries.map((entry, index) => renderEntry(entry, index, index === 0))}
-      </div>
+      {normalEntries.map((entry, index) => renderEntry(entry, index, index === 0))}
 
-      <div className="route-split-list-sections sibs-scrollbar">{gameSections}</div>
+      <div className="route-split-list-sections">{gameSections}</div>
     </div>
   )
 }
