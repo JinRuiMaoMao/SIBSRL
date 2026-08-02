@@ -25,7 +25,6 @@ import {
 import {
   getShiftUnlockLockedDisplaySlots,
   getShiftUnlockLockedRouteIds,
-  lockedCardDisplayNumber,
   mergeShiftUnlockLockedDisplaySlots,
 } from '../data/routeShiftUnlocks'
 import {
@@ -34,6 +33,7 @@ import {
   mergeSunshardUnlockLockedDisplaySlots,
 } from '../data/routeSunshardUnlocks'
 import { sortLockedDisplaySlots } from '../utils/lockedRouteDisplayOrder'
+import { getLockedRouteCardDisplayProps } from '../utils/lockedRouteCardProps'
 import { partitionLockedDisplaySlotsByUnlockCategory } from '../utils/lockedUnlockCategories'
 import {
   getSeasonalAvailabilityLabels,
@@ -45,7 +45,6 @@ import { FavoritesFolderBar } from './FavoritesFolderBar'
 import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
-import { RouteLockedGameCard } from './RouteLockedGameCard'
 import { RouteLockedUnlockCategorySections } from './RouteLockedUnlockCategorySections'
 import { RouteDetail } from './RouteDetail'
 import { RouteDetailRealPanel } from './RouteDetailRealPanel'
@@ -1365,19 +1364,24 @@ export function RouteLookupPage({
     slots.map((slot) => {
       const { route, listedId, directionKey } = slot.entry!
       const directionIndex = getCardDirectionIndex(route, directionKey)
+      const lockedLabels = getLockedRouteCardDisplayProps(
+        route,
+        directionIndex,
+        listedId,
+        locale,
+        t,
+      )
 
       return (
-        <RouteLockedGameCard
+        <RouteCard
           key={`locked-${listedId}`}
           route={route}
-          listedId={listedId}
           directionIndex={directionIndex}
-          displayNumber={
-            listedId !== route.number && listedId !== route.id
-              ? listedId
-              : lockedCardDisplayNumber(route, listedId, directionKey)
-          }
+          displayNumber={lockedLabels.displayNumber}
+          availabilityRangeLabel={lockedLabels.availabilityRangeLabel}
+          availabilityUnavailableLabel={lockedLabels.availabilityUnavailableLabel}
           selected={selectedRoute?.id === route.id}
+          muted
           onNavigate={handleRouteNavigate}
         />
       )
