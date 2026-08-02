@@ -218,8 +218,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed iPad Safari crashes when toggling Layers on map-draw/island map (dual full-size decode): off-DOM preload with a single visible image and disabled layer button while loading.",
           },
           {
-            zh: "进一步修复 iPad Safari 切换 Layers 崩溃：详细图在 Apple 设备上降采样解码（约 4096 边长）、切换前释放旧图，并修正图层尺寸与 DOM 图片不同步的问题。",
-            en: "Further iPad Safari Layers fix: downsampled detailed-map decode on Apple devices (~4096 max edge), release previous bitmap before swap, and fix layer size vs DOM image mismatch.",
+            zh: "进一步修复 iPad Safari 切换 Layers 崩溃：仅 iPad 对详细图降采样解码（约 3072 边长）；iPhone Safari 仍加载完整详细图。",
+            en: "Further iPad Safari Layers fix: downsampled detailed map decode only on iPad (~3072 max edge); iPhone Safari still loads the full detailed map.",
           },
           {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",

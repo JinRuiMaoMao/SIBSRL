@@ -1,8 +1,30 @@
 export const ISLAND_MAP_GENERAL_PIXEL_SIZE = 4000
 export const ISLAND_MAP_DETAILED_PIXEL_SIZE = 8000
 
-/** Max decoded edge length on memory-limited WebKit (iPad / iPhone Safari). */
-export const ISLAND_MAP_RASTER_DECODE_MAX_EDGE = 4096
+/** Max decoded edge length on iPad Safari (large fullscreen map layers). */
+export const ISLAND_MAP_RASTER_DECODE_MAX_EDGE_IPAD = 3072
+
+export function isIPhoneDevice(): boolean {
+  if (typeof navigator === 'undefined') return false
+  return /iPhone|iPod/i.test(navigator.userAgent)
+}
+
+/** iPad and iPadOS “desktop” Safari (MacIntel + touch). */
+export function isIPadDevice(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  if (/iPad/i.test(ua)) return true
+  if (isIPhoneDevice()) return false
+  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
+}
+
+export function getIslandMapRasterDecodeMaxEdge(): number {
+  return ISLAND_MAP_RASTER_DECODE_MAX_EDGE_IPAD
+}
+
+export function shouldCapIslandMapRasterDecode(): boolean {
+  return isIPadDevice()
+}
 
 export interface IslandMapRasterLoadResult {
   layerUrl: string
@@ -19,15 +41,6 @@ export function getIslandMapLogicalPixelSize(layerUrl: string): { width: number;
     return { width: ISLAND_MAP_DETAILED_PIXEL_SIZE, height: ISLAND_MAP_DETAILED_PIXEL_SIZE }
   }
   return null
-}
-
-export function shouldCapIslandMapRasterDecode(): boolean {
-  if (typeof navigator === 'undefined') return false
-  const ua = navigator.userAgent
-  const isAppleMobile =
-    /iPad|iPhone|iPod/i.test(ua) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-  return isAppleMobile
 }
 
 function computeCappedRasterSize(
@@ -50,7 +63,7 @@ async function loadCappedRaster(layerUrl: string, logicalSize: { width: number; 
   const target = computeCappedRasterSize(
     logicalSize.width,
     logicalSize.height,
-    ISLAND_MAP_RASTER_DECODE_MAX_EDGE,
+    getIslandMapRasterDecodeMaxEdge(),
   )
 
   const response = await fetch(layerUrl)
@@ -107,7 +120,7 @@ export async function loadIslandMapRasterForDisplay(layerUrl: string): Promise<I
   }
 
   const longest = Math.max(logicalSize.width, logicalSize.height)
-  if (longest <= ISLAND_MAP_RASTER_DECODE_MAX_EDGE) {
+  if (longest <= getIslandMapRasterDecodeMaxEdge()) {
     return { layerUrl, logicalSize, imageSrc: layerUrl }
   }
 
