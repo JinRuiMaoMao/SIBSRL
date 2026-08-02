@@ -89,11 +89,9 @@ export function RouteLookupSplitList({
   ])
 
   const showDailyChallenge = dailyChallenge?.visible ?? false
-  const hasEntries = normalEntries.length > 0 || lockedEntries.length > 0
-
-  if (!hasEntries && !showDailyChallenge) {
-    return <p className="route-split-empty">{t('routeSplitEmpty')}</p>
-  }
+  const hasPlayableEntries = normalEntries.length > 0
+  const hasLockedEntries = lockedEntries.length > 0
+  const hasEntries = hasPlayableEntries || hasLockedEntries
 
   const renderEntry = (entry: RealRouteListEntry, index: number, tourAnchor: boolean) => {
     const { route, directionIndex, listKey } = entry
@@ -157,30 +155,8 @@ export function RouteLookupSplitList({
     )
   }
 
-  return (
-    <div ref={listRef} className="route-split-list" role="list">
-      {showDailyChallenge ? (
-        <div
-          key={DAILY_CHALLENGE_CARD_ID}
-          ref={(node) => {
-            if (node) itemRefs.current.set(DAILY_CHALLENGE_CARD_ID, node)
-            else itemRefs.current.delete(DAILY_CHALLENGE_CARD_ID)
-          }}
-          className="route-split-list-item route-split-list-item--daily-challenge"
-          role="listitem"
-        >
-          <DailyChallengeBanner
-            selected={dailyChallenge!.selected}
-            onSelect={dailyChallenge!.onSelect}
-            onOpenCalendar={dailyChallenge!.onOpenCalendar}
-            variant="split"
-            challenge={dailyChallenge!.challenge}
-          />
-        </div>
-      ) : null}
-
-      {normalEntries.map((entry, index) => renderEntry(entry, index, index === 0))}
-
+  const gameSections = (
+    <>
       <RouteListGameSection
         titleKey="routeListUnlockable"
         dataTour="route-group-unlockable"
@@ -212,6 +188,40 @@ export function RouteLookupSplitList({
       </div>
 
       <RouteListViewAllFooter onClick={onViewAllPlayable} />
+    </>
+  )
+
+  return (
+    <div className="route-split-list-shell">
+      <div ref={listRef} className="route-split-list route-split-list--playable sibs-scrollbar" role="list">
+        {!hasEntries && !showDailyChallenge ? (
+          <p className="route-split-empty">{t('routeSplitEmpty')}</p>
+        ) : null}
+
+        {showDailyChallenge ? (
+          <div
+            key={DAILY_CHALLENGE_CARD_ID}
+            ref={(node) => {
+              if (node) itemRefs.current.set(DAILY_CHALLENGE_CARD_ID, node)
+              else itemRefs.current.delete(DAILY_CHALLENGE_CARD_ID)
+            }}
+            className="route-split-list-item route-split-list-item--daily-challenge"
+            role="listitem"
+          >
+            <DailyChallengeBanner
+              selected={dailyChallenge!.selected}
+              onSelect={dailyChallenge!.onSelect}
+              onOpenCalendar={dailyChallenge!.onOpenCalendar}
+              variant="split"
+              challenge={dailyChallenge!.challenge}
+            />
+          </div>
+        ) : null}
+
+        {normalEntries.map((entry, index) => renderEntry(entry, index, index === 0))}
+      </div>
+
+      <div className="route-split-list-sections sibs-scrollbar">{gameSections}</div>
     </div>
   )
 }

@@ -3766,22 +3766,45 @@ html[data-route-lookup-layout='split'] .site-footer {
   color: var(--text-muted);
 }
 
-.route-split-list {
+.route-split-list-shell {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.route-split-list {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
   padding: 0.45rem 0.5rem 0.65rem;
 }
 
-.route-split-list .route-list-game-section {
-  margin-top: 0.65rem;
+.route-split-list--playable {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
-.route-split-list .route-list-game-section:first-child {
+.route-split-list-sections {
+  flex-shrink: 0;
+  max-height: min(52vh, 28rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.45rem 0.5rem 0.65rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  background: color-mix(in srgb, var(--bg-deep) 88%, #000 12%);
+  box-shadow: 0 -10px 24px rgb(0 0 0 / 0.18);
+}
+
+.route-split-list-sections .route-list-game-section {
   margin-top: 0;
+}
+
+.route-split-list-sections .route-list-view-all-footer {
+  padding-top: 0.35rem;
 }
 
 .route-list-view-all-footer {
@@ -3894,14 +3917,17 @@ html[data-route-lookup-layout='split'] .site-footer {
   color: var(--text-muted);
 }
 
+.route-split-list-sections .route-unlock-category-card,
 .route-split-list .route-unlock-category-card {
   padding: 0.82rem 0.9rem;
 }
 
+.route-split-list-sections .route-unlock-category-title,
 .route-split-list .route-unlock-category-title {
   font-size: 0.94rem;
 }
 
+.route-split-list-sections .route-unlock-category-desc,
 .route-split-list .route-unlock-category-desc {
   font-size: 0.78rem;
 }
@@ -3955,10 +3981,12 @@ html[data-route-lookup-layout='split'] .site-footer {
   gap: 0.45rem;
 }
 
+.route-split-list-sections .route-locked-unlock-category-group,
 .route-split-list .route-locked-unlock-category-group {
   padding-inline: 0.15rem;
 }
 
+.route-split-list-sections .route-locked-unlock-category-group.is-highlighted,
 .route-split-list .route-locked-unlock-category-group.is-highlighted {
   padding-inline: 0.45rem;
 }
