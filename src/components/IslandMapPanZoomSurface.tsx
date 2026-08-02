@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, startTransition, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { IslandMapRouteOverlayLayer } from './IslandMapRouteOverlayLayer'
 import { IslandMapDraftPathEditLayer } from './IslandMapDraftPathEditLayer'
@@ -16,12 +16,18 @@ import type {
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { RouteMapTrajectoryBall } from './RouteMapTrajectoryBall'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
+import type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
+
 import {
   DRAW_MAX_ZOOM_RATIO,
   DRAW_MIN_ZOOM_RATIO,
 } from '../utils/mapDrawOverlayZoom'
-
-import type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
+import {
+  getIslandMapLogicalPixelSize,
+  islandMapImageMatchesLayerUrl,
+  loadIslandMapRasterForDisplay,
+  shouldCapIslandMapRasterDecode,
+} from '../utils/islandMapRasterLoad'
 
 export { DRAW_MAX_ZOOM_RATIO, DRAW_MIN_ZOOM_RATIO } from '../utils/mapDrawOverlayZoom'
 export type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
@@ -339,7 +345,7 @@ export function IslandMapPanZoomSurface({
   const referenceEditorRef = useRef(referenceEditor)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
-  const layerPreloadRef = useRef<HTMLImageElement | null>(null)
+  const displayRasterCacheRef = useRef<Map<string, { imageSrc: string; revoke?: () => void }>>(new Map())
   const panZoomRef = useRef<PanZoomState | null>(null)
   const dragRafRef = useRef(0)
   const stopDragRef = useRef<{
@@ -372,6 +378,7 @@ export function IslandMapPanZoomSurface({
   referenceEditorRef.current = referenceEditor
 
   const [displayedSrc, setDisplayedSrc] = useState(src)
+  const [displayImageSrc, setDisplayImageSrc] = useState('')
   const [mapLayerLoading, setMapLayerLoading] = useState(false)
   const [imageSize, setImageSize] = useState<ImageSize | null>(() => imageSizeCacheRef.current.get(src) ?? null)
   const [panZoom, setPanZoom] = useState<PanZoomState | null>(null)
@@ -484,48 +491,50 @@ export function IslandMapPanZoomSurface({
     [imageSize, publishPanZoom, readViewportSize],
   )
 
-  const applyLayerFromCache = useCallback((nextSrc: string, size: ImageSize) => {
-    imageSizeCacheRef.current.set(nextSrc, size)
-    displayedSrcRef.current = nextSrc
-    setDisplayedSrc(nextSrc)
-    setImageSize(size)
-    onImageSizeChangeRef.current?.(size)
+  const releaseDomMapImage = useCallback(() => {
     const domImg = imageRef.current
-    if (domImg) {
-      domImg.src = nextSrc
+    if (!domImg) return
+    domImg.onload = null
+    domImg.onerror = null
+    domImg.removeAttribute('src')
+  }, [])
+
+  const commitMapLayer = useCallback((layerUrl: string, size: ImageSize, imageSrc: string) => {
+    const previousLayerUrl = displayedSrcRef.current
+    const prevSize = imageSizeCacheRef.current.get(previousLayerUrl)
+    imageSizeCacheRef.current.set(layerUrl, size)
+    displayedSrcRef.current = layerUrl
+    setDisplayedSrc(layerUrl)
+    setDisplayImageSrc(imageSrc)
+    const applySize = () => {
+      setImageSize(size)
+      onImageSizeChangeRef.current?.(size)
+    }
+    if (prevSize && (prevSize.width !== size.width || prevSize.height !== size.height)) {
+      startTransition(applySize)
+    } else {
+      applySize()
+    }
+    const domImg = imageRef.current
+    if (domImg && domImg.src !== imageSrc) {
+      domImg.src = imageSrc
     }
   }, [])
 
-  const activateMapLayer = useCallback(
-    (nextSrc: string, image: HTMLImageElement) => {
-      const size = readImageSize(image)
-      if (!size) return false
-      applyLayerFromCache(nextSrc, size)
-      return true
-    },
-    [applyLayerFromCache],
-  )
-
-  const adoptImage = useCallback(
-    (nextSrc: string, image: HTMLImageElement) => activateMapLayer(nextSrc, image),
-    [activateMapLayer],
-  )
+  useEffect(() => {
+    return () => {
+      for (const entry of displayRasterCacheRef.current.values()) {
+        entry.revoke?.()
+      }
+      displayRasterCacheRef.current.clear()
+      releaseDomMapImage()
+    }
+  }, [releaseDomMapImage])
 
   useEffect(() => {
-    if (src === displayedSrcRef.current) {
+    if (src === displayedSrcRef.current && displayImageSrc) {
       setMapLayerLoading(false)
       onMapLayerLoadingChangeRef.current?.(false)
-      return
-    }
-
-    const cachedSize = imageSizeCacheRef.current.get(src)
-    if (cachedSize) {
-      applyLayerFromCache(src, cachedSize)
-      setMapLayerLoading(false)
-      onMapLayerLoadingChangeRef.current?.(false)
-      window.requestAnimationFrame(() => {
-        syncPanZoomRef.current({ publish: true })
-      })
       return
     }
 
@@ -533,53 +542,71 @@ export function IslandMapPanZoomSurface({
     setMapLayerLoading(true)
     onMapLayerLoadingChangeRef.current?.(true)
 
-    const preloader = new Image()
-    preloader.decoding = 'async'
-    layerPreloadRef.current = preloader
+    const waitForSafariImageRelease = () =>
+      new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => resolve())
+        })
+      })
 
-    const clearPreloader = () => {
-      preloader.onload = null
-      preloader.onerror = null
-      preloader.src = ''
-      if (layerPreloadRef.current === preloader) layerPreloadRef.current = null
-    }
-
-    preloader.onload = () => {
+    const run = async () => {
+      releaseDomMapImage()
+      await waitForSafariImageRelease()
       if (cancelled) return
-      if (activateMapLayer(src, preloader)) {
-        const domImg = imageRef.current
-        if (domImg) domImg.src = src
+
+      const logicalSize = getIslandMapLogicalPixelSize(src)
+      if (!logicalSize) {
+        setMapLayerLoading(false)
+        onMapLayerLoadingChangeRef.current?.(false)
+        return
+      }
+
+      const cachedRaster = displayRasterCacheRef.current.get(src)
+      if (cachedRaster) {
+        const cachedSize = imageSizeCacheRef.current.get(src) ?? logicalSize
+        commitMapLayer(src, cachedSize, cachedRaster.imageSrc)
         window.requestAnimationFrame(() => {
           syncPanZoomRef.current({ publish: true })
         })
+        setMapLayerLoading(false)
+        onMapLayerLoadingChangeRef.current?.(false)
+        return
       }
+
+      try {
+        const loaded = await loadIslandMapRasterForDisplay(src)
+        if (cancelled) {
+          loaded.revoke?.()
+          return
+        }
+
+        if (loaded.revoke) {
+          displayRasterCacheRef.current.set(src, { imageSrc: loaded.imageSrc, revoke: loaded.revoke })
+        }
+
+        commitMapLayer(loaded.layerUrl, loaded.logicalSize, loaded.imageSrc)
+        window.requestAnimationFrame(() => {
+          syncPanZoomRef.current({ publish: true })
+        })
+      } catch {
+        if (cancelled) return
+        commitMapLayer(src, logicalSize, src)
+        const domImg = imageRef.current
+        if (domImg) domImg.src = src
+      }
+
       setMapLayerLoading(false)
       onMapLayerLoadingChangeRef.current?.(false)
-      clearPreloader()
     }
 
-    preloader.onerror = () => {
-      if (cancelled) return
-      setMapLayerLoading(false)
-      onMapLayerLoadingChangeRef.current?.(false)
-      clearPreloader()
-    }
-
-    preloader.src = src
+    void run()
 
     return () => {
       cancelled = true
-      clearPreloader()
       setMapLayerLoading(false)
       onMapLayerLoadingChangeRef.current?.(false)
     }
-  }, [activateMapLayer, applyLayerFromCache, src])
-
-  useLayoutEffect(() => {
-    const image = imageRef.current
-    if (!image?.complete) return
-    adoptImage(displayedSrcRef.current, image)
-  }, [adoptImage, displayedSrc])
+  }, [commitMapLayer, displayImageSrc, releaseDomMapImage, src])
 
   useLayoutEffect(() => {
     if (!imageSize) return
@@ -1007,8 +1034,25 @@ export function IslandMapPanZoomSurface({
   )
 
   const onImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    adoptImage(displayedSrcRef.current, event.currentTarget)
+    const image = event.currentTarget
+    const layerUrl = displayedSrcRef.current
+    const cachedSize = imageSizeCacheRef.current.get(layerUrl)
+    const capActive = shouldCapIslandMapRasterDecode()
+    if (!capActive && !islandMapImageMatchesLayerUrl(image, layerUrl)) return
+
+    const size = cachedSize ?? readImageSize(image)
+    if (!size) return
+    if (imageSize?.width === size.width && imageSize?.height === size.height) return
+
+    imageSizeCacheRef.current.set(layerUrl, size)
+    setImageSize(size)
+    onImageSizeChangeRef.current?.(size)
+    window.requestAnimationFrame(() => {
+      syncPanZoomRef.current({ publish: true })
+    })
   }
+
+  const mapImageSrc = displayImageSrc || displayedSrc
 
   const layerSizeStyle: CSSProperties | undefined = imageSize
     ? { width: `${imageSize.width}px`, height: `${imageSize.height}px` }
@@ -1205,7 +1249,7 @@ export function IslandMapPanZoomSurface({
         >
           <img
             ref={imageRef}
-            src={displayedSrc}
+            src={mapImageSrc}
             alt=""
             className="island-map-panzoom-image"
             decoding="async"
@@ -1217,7 +1261,7 @@ export function IslandMapPanZoomSurface({
       ) : (
         <img
           ref={imageRef}
-          src={displayedSrc}
+          src={mapImageSrc}
           alt=""
           className="island-map-panzoom-image"
           decoding="async"
