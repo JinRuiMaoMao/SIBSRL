@@ -26,6 +26,7 @@ import {
 import {
   getShiftUnlockLockedDisplaySlots,
   getShiftUnlockLockedRouteIds,
+  lockedCardDisplayNumber,
   mergeShiftUnlockLockedDisplaySlots,
   routeBelongsToShiftUnlockCategory,
 } from '../data/routeShiftUnlocks'
@@ -1388,6 +1389,7 @@ export function RouteLookupPage({
           route={route}
           listedId={listedId}
           directionIndex={directionIndex}
+          displayNumber={lockedCardDisplayNumber(route, listedId, directionKey)}
           selected={selectedRoute?.id === route.id}
           onNavigate={handleRouteNavigate}
         />

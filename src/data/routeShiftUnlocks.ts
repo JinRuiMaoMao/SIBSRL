@@ -239,6 +239,41 @@ export function formatShiftUnlockPrerequisiteRoutes(numbers: readonly string[]):
   return numbers.map((n) => `Route ${n}`).join(', ')
 }
 
+/** Locked-card copy: include required direction when a slot config specifies unlockFromDirectionKey. */
+export function formatShiftUnlockPrerequisitesForLockedCard(
+  route: BusRoute,
+  options?: ShiftUnlockLookupOptions,
+): string | null {
+  const prereqs = getShiftUnlockPrerequisites(route, options)
+  if (!prereqs) return null
+
+  for (const key of resolveShiftUnlockLookupKeys(route, options)) {
+    const staticEntry = staticShiftUnlocks[key]
+    const prereqSet = prerequisitesByTarget.get(key)
+    if (!staticEntry || !prereqSet?.size) continue
+
+    const directionKey = staticEntry.unlockFromDirectionKey
+    if (directionKey && prereqs.prerequisiteRouteNumbers.length === 1) {
+      return `Route ${prereqs.prerequisiteRouteNumbers[0]} (${directionKey})`
+    }
+    break
+  }
+
+  return formatShiftUnlockPrerequisiteRoutes(prereqs.prerequisiteRouteNumbers)
+}
+
+export function lockedCardDisplayNumber(
+  route: BusRoute,
+  listedId?: string,
+  directionKey?: DirectionKey,
+): string | undefined {
+  const resolvedDirectionKey =
+    directionKey ?? (listedId ? parseShiftUnlockSlotKey(listedId).directionKey : undefined)
+  if (resolvedDirectionKey) return `${route.number} (${resolvedDirectionKey})`
+  if (listedId && listedId !== route.number) return listedId
+  return undefined
+}
+
 export function formatShiftUnlockTargetRoutes(numbers: readonly string[]): string {
   return numbers.join(', ')
 }

@@ -5,8 +5,10 @@ import {
   getSeasonalRouteDisplayWindow,
 } from '../data/seasonalRouteAvailability'
 import {
-  formatShiftUnlockPrerequisiteRoutes,
+  formatShiftUnlockPrerequisitesForLockedCard,
   getShiftUnlockPrerequisites,
+  lockedCardDisplayNumber,
+  routeBelongsToShiftUnlockCategory,
 } from '../data/routeShiftUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
@@ -155,7 +157,7 @@ export function RouteLockedGameCard({
               </span>
               <span className="route-locked-game-card-date-text">{dateRange}</span>
             </div>
-          ) : usesSunshardUnlock && route.sunshardsRequired != null ? (
+          ) : usesSunshardUnlock && route.sunshardsRequired != null && !isShiftUnlockRoute ? (
             <div className="route-locked-game-card-unlock-pill">
               <span className="route-locked-game-card-unlock-pill-text">
                 {t('routeLockedGameUnlockSunshards', { n: route.sunshardsRequired })}
@@ -167,12 +169,10 @@ export function RouteLockedGameCard({
           ) : null}
         </div>
 
-        {shiftUnlock ? (
+        {shiftUnlockLabel ? (
           <div className="route-locked-game-card-unlock-row">
             <LockGlyph />
-            <span className="route-locked-game-card-prereq">
-              {formatShiftUnlockPrerequisiteRoutes(shiftUnlock.prerequisiteRouteNumbers)}
-            </span>
+            <span className="route-locked-game-card-prereq">{shiftUnlockLabel}</span>
           </div>
         ) : null}
 

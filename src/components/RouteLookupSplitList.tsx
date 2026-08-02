@@ -8,7 +8,7 @@ import {
   type RealRouteListEntry,
 } from '../utils/realRouteListEntries'
 import { listedIdFromRealRouteListKey } from '../utils/lockedRouteDisplayOrder'
-import { resolveShiftUnlockListedRouteId } from '../data/routeShiftUnlocks'
+import { lockedCardDisplayNumber, resolveShiftUnlockListedRouteId } from '../data/routeShiftUnlocks'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
 import { RouteLockedGameCard } from './RouteLockedGameCard'
@@ -120,6 +120,7 @@ export function RouteLookupSplitList({
 
   const renderLockedEntry = (entry: RealRouteListEntry) => {
     const { route, directionIndex, listKey } = entry
+    const directionKey = route.stops?.[directionIndex]?.directionKey
     const sunshardListedId = listedIdFromRealRouteListKey(listKey)
     const listedId = sunshardListedId ?? resolveShiftUnlockListedRouteId(route, directionIndex)
 
@@ -137,6 +138,7 @@ export function RouteLookupSplitList({
         <RouteLockedGameCard
           route={route}
           listedId={listedId}
+          displayNumber={lockedCardDisplayNumber(route, listedId, directionKey)}
           selected={selectedListKey === listKey}
           directionIndex={directionIndex}
           onNavigate={() => onSelect(route.id, directionIndex)}
