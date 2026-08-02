@@ -158,3 +158,8 @@ export function getShiftUnlockTargets(route: BusRoute): RouteShiftUnlockTarget[]
 export function formatShiftUnlockPrerequisiteRoutes(numbers: readonly string[]): string {
   return numbers.map((n) => `Route ${n}`).join(', ')
 }
+
+/** 详情页解锁目标：编号用逗号连接，前缀 Route 由 i18n 模板提供。 */
+export function formatShiftUnlockTargetRoutes(numbers: readonly string[]): string {
+  return numbers.join(', ')
+}

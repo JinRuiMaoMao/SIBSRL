@@ -1,5 +1,8 @@
+import {
+  formatShiftUnlockTargetRoutes,
+  type RouteShiftUnlockTarget,
+} from '../data/routeShiftUnlocks'
 import { useLocale } from '../i18n/LocaleContext'
-import type { RouteShiftUnlockTarget } from '../data/routeShiftUnlocks'
 
 interface RouteShiftUnlockTargetsSectionProps {
   targets: readonly RouteShiftUnlockTarget[]
@@ -24,21 +27,22 @@ export function RouteShiftUnlockTargetsSection({
   const { t } = useLocale()
   if (targets.length === 0) return null
 
+  const routeList = formatShiftUnlockTargetRoutes(targets.map((target) => target.targetRouteNumber))
+  const guaranteedShifts = targets[0]?.guaranteedShifts ?? 50
+
   return (
     <section className={`route-shift-unlock-targets ${className}`.trim()} aria-label={t('unlockRequirements')}>
-      {targets.map((target) => (
-        <div key={target.targetRouteId} className="route-shift-unlock-target-item">
-          <StarGlyph />
-          <div className="route-shift-unlock-target-copy">
-            <p className="route-shift-unlock-target-title">
-              {t('routeUnlockShiftTargetChance', { route: target.targetRouteNumber })}
-            </p>
-            <p className="route-shift-unlock-target-desc">
-              {t('routeUnlockShiftTargetGuaranteed', { n: target.guaranteedShifts })}
-            </p>
-          </div>
+      <div className="route-shift-unlock-target-item">
+        <StarGlyph />
+        <div className="route-shift-unlock-target-copy">
+          <p className="route-shift-unlock-target-title">
+            {t('routeUnlockShiftTargetChance', { route: routeList })}
+          </p>
+          <p className="route-shift-unlock-target-desc">
+            {t('routeUnlockShiftTargetGuaranteed', { n: guaranteedShifts })}
+          </p>
         </div>
-      ))}
+      </div>
     </section>
   )
 }
