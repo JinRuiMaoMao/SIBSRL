@@ -319,16 +319,6 @@ export function resolveShiftUnlockListedRouteId(
   return undefined
 }
 
-function compareShiftUnlockSlotOrder(a: GroupedRouteDisplaySlot, b: GroupedRouteDisplaySlot): number {
-  const routeCmp = compareRouteNumber(a.entry?.route.number ?? a.listedId, b.entry?.route.number ?? b.listedId)
-  if (routeCmp !== 0) return routeCmp
-  const dirA = a.entry?.directionKey
-  const dirB = b.entry?.directionKey
-  if (dirA === 'N' && dirB === 'S') return -1
-  if (dirA === 'S' && dirB === 'N') return 1
-  return compareRouteNumber(a.listedId, b.listedId)
-}
-
 function resolveRouteForShiftUnlockSlot(
   routeId: string,
   visibleRoutes: readonly BusRoute[],
@@ -373,7 +363,7 @@ export function getShiftUnlockLockedDisplaySlots(
     })
   }
 
-  return slots.sort(compareShiftUnlockSlotOrder)
+  return slots
 }
 
 export function mergeShiftUnlockLockedDisplaySlots(

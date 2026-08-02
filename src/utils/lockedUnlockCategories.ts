@@ -8,9 +8,7 @@ import { routeBelongsToShiftUnlockCategory, getShiftUnlockPrerequisites } from '
 import { isStaffShuttleSunshardUnlockRoute, isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import type { BusRoute } from '../types/route'
-import { sortLockedDisplaySlots } from './lockedRouteDisplayOrder'
 import type { RealRouteListEntry } from './realRouteListEntries'
-import { sortLockedRealRouteListEntries } from './realRouteListEntries'
 
 export const UNLOCK_CATEGORY_ORDER: RouteUnlockCategoryKind[] = ['seasonal', 'special', 'shift']
 
@@ -97,11 +95,7 @@ export function partitionLockedDisplaySlotsByUnlockCategory(
     groups[category].push(slot)
   }
 
-  return {
-    seasonal: sortLockedDisplaySlots(groups.seasonal),
-    special: sortLockedDisplaySlots(groups.special),
-    shift: sortLockedDisplaySlots(groups.shift),
-  }
+  return groups
 }
 
 export function partitionRealRouteListEntriesByUnlockCategory(
@@ -118,11 +112,7 @@ export function partitionRealRouteListEntriesByUnlockCategory(
     groups[category].push(entry)
   }
 
-  return {
-    seasonal: sortLockedRealRouteListEntries(groups.seasonal),
-    special: sortLockedRealRouteListEntries(groups.special),
-    shift: sortLockedRealRouteListEntries(groups.shift),
-  }
+  return groups
 }
 
 export function countLockedUnlockCategoryItems(

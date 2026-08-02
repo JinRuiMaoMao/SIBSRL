@@ -8,7 +8,7 @@ import {
 import { getRouteServiceTypes } from './routeServiceTypes'
 import { routeUsesSunshardUnlock } from './routeUnlocks'
 import type { DirectionKey } from '../utils/routeMerge'
-import { compareLockedDisplaySlotOrder } from '../utils/lockedRouteDisplayOrder'
+import { compareDirectionKeys } from '../utils/routeDirectionCore'
 
 /** 每个方向单独计阳光碎片解锁（如 U47* 北/南各 300；员工接驳仅北行/西行需碎片） */
 const PER_DIRECTION_SUNSHARD_ROUTE_IDS = new Set(['U47*', 'C01', 'C401', 'F701', 'F702'])
@@ -146,7 +146,40 @@ export function getSunshardUnlockLockedDisplaySlots(
     })
   }
 
-  return slots.sort(compareLockedDisplaySlotOrder)
+  return slots
+}
+
+function directionKeyForSunshardInsert(slot: GroupedRouteDisplaySlot): DirectionKey | undefined {
+  return (
+    slot.entry?.directionKey ??
+    parseSunshardUnlockSlotKey(slot.listedId).directionKey
+  )
+}
+
+/** 阳光碎片卡插入同线路已有卡片之前（北向在南向班次卡前），不全局重排。 */
+function findInsertIndexForSunshardSlot(
+  merged: readonly GroupedRouteDisplaySlot[],
+  slot: GroupedRouteDisplaySlot,
+): number {
+  const routeId = slot.entry?.route.id.toLowerCase()
+  if (!routeId) return merged.length
+
+  const slotDir = directionKeyForSunshardInsert(slot)
+  let lastSameRouteIndex = -1
+
+  for (let i = 0; i < merged.length; i++) {
+    const existing = merged[i]
+    if (existing.entry?.route.id.toLowerCase() !== routeId) continue
+
+    lastSameRouteIndex = i
+    const existingDir = directionKeyForSunshardInsert(existing)
+    if (slotDir && existingDir && compareDirectionKeys(slotDir, existingDir) < 0) {
+      return i
+    }
+  }
+
+  if (lastSameRouteIndex >= 0) return lastSameRouteIndex + 1
+  return merged.length
 }
 
 export function mergeSunshardUnlockLockedDisplaySlots(
@@ -160,10 +193,11 @@ export function mergeSunshardUnlockLockedDisplaySlots(
     const lower = slot.listedId.toLowerCase()
     if (seenListedIds.has(lower)) continue
     seenListedIds.add(lower)
-    merged.push(slot)
+    const insertAt = findInsertIndexForSunshardSlot(merged, slot)
+    merged.splice(insertAt, 0, slot)
   }
 
-  return merged.sort(compareLockedDisplaySlotOrder)
+  return merged
 }
 
 export function getSunshardUnlockLockedRouteIds(

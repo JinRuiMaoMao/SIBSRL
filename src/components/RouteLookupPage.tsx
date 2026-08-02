@@ -33,7 +33,6 @@ import {
   getSunshardUnlockLockedRouteIds,
   mergeSunshardUnlockLockedDisplaySlots,
 } from '../data/routeSunshardUnlocks'
-import { sortLockedDisplaySlots } from '../utils/lockedRouteDisplayOrder'
 import { partitionLockedDisplaySlotsByUnlockCategory } from '../utils/lockedUnlockCategories'
 import {
   getSeasonalAvailabilityLabels,
@@ -1137,15 +1136,13 @@ export function RouteLookupPage({
       filteredRoutes,
     )
     // 锁定区与班次/分方向阳光碎片卡一致：不受 zone/operator/type 筛选影响
-    const specialSeasonal = sortLockedDisplaySlots(
-      filterLockedSectionDisplaySlots(
-        mergeSunshardUnlockLockedDisplaySlots(
-          mergeShiftUnlockLockedDisplaySlots(
-            mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
-            getShiftUnlockLockedDisplaySlots(displayRoutes),
-          ),
-          getSunshardUnlockLockedDisplaySlots(displayRoutes),
+    const specialSeasonal = filterLockedSectionDisplaySlots(
+      mergeSunshardUnlockLockedDisplaySlots(
+        mergeShiftUnlockLockedDisplaySlots(
+          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
+          getShiftUnlockLockedDisplaySlots(displayRoutes),
         ),
+        getSunshardUnlockLockedDisplaySlots(displayRoutes),
       ),
     )
     return { normal, specialSeasonal }
@@ -1158,15 +1155,13 @@ export function RouteLookupPage({
       ),
       displayRoutes,
     )
-    const specialSeasonal = sortLockedDisplaySlots(
-      filterLockedSectionDisplaySlots(
-        mergeSunshardUnlockLockedDisplaySlots(
-          mergeShiftUnlockLockedDisplaySlots(
-            mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
-            getShiftUnlockLockedDisplaySlots(displayRoutes),
-          ),
-          getSunshardUnlockLockedDisplaySlots(displayRoutes),
+    const specialSeasonal = filterLockedSectionDisplaySlots(
+      mergeSunshardUnlockLockedDisplaySlots(
+        mergeShiftUnlockLockedDisplaySlots(
+          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
+          getShiftUnlockLockedDisplaySlots(displayRoutes),
         ),
+        getSunshardUnlockLockedDisplaySlots(displayRoutes),
       ),
     )
     return { normal, specialSeasonal }
