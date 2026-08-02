@@ -325,5 +325,5 @@ export function mergeShiftUnlockLockedDisplaySlots(
     merged.push(slot)
   }
 
-  return merged.sort(compareShiftUnlockSlotOrder)
+  return merged
 }

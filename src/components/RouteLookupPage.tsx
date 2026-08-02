@@ -25,6 +25,7 @@ import {
   getShiftUnlockLockedDisplaySlots,
   mergeShiftUnlockLockedDisplaySlots,
 } from '../data/routeShiftUnlocks'
+import { sortLockedDisplaySlots } from '../utils/lockedRouteDisplayOrder'
 import {
   getSeasonalAvailabilityLabels,
   getSeasonalRouteDisplayWindow,
@@ -1146,9 +1147,11 @@ export function RouteLookupPage({
 
   const listSectionSlots = useMemo(() => {
     const normal = groupedSlots.normal
-    const specialSeasonal = mergeShiftUnlockLockedDisplaySlots(
-      mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
-      getShiftUnlockLockedDisplaySlots(displayRoutes),
+    const specialSeasonal = sortLockedDisplaySlots(
+      mergeShiftUnlockLockedDisplaySlots(
+        mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedSlots),
+        getShiftUnlockLockedDisplaySlots(displayRoutes),
+      ),
     )
     return { normal, specialSeasonal }
   }, [groupedSlots, displayRoutes])
@@ -1184,12 +1187,14 @@ export function RouteLookupPage({
 
   const filteredLockedSlots = useMemo(() => {
     const slots = listSectionSlots.specialSeasonal
-    if (!unlockCategoryFocus) return slots
-    return slots.filter(
-      (slot) =>
-        slot.entry != null &&
-        getRouteDisplayGroupsForRoute(slot.entry.route).includes(unlockCategoryFocus),
-    )
+    const filtered = !unlockCategoryFocus
+      ? slots
+      : slots.filter(
+          (slot) =>
+            slot.entry != null &&
+            getRouteDisplayGroupsForRoute(slot.entry.route).includes(unlockCategoryFocus),
+        )
+    return sortLockedDisplaySlots(filtered)
   }, [listSectionSlots.specialSeasonal, unlockCategoryFocus])
 
   const betweenStopPairDraft =

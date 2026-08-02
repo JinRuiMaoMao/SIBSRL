@@ -8,9 +8,9 @@ import {
   parseShiftUnlockSlotKey,
   routeHasDirectionalShiftUnlockSlots,
 } from '../data/routeShiftUnlocks'
-import { compareRouteNumber } from './routeSort'
 import { getMergeDirectionKey } from './routeMerge'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
+import { sortLockedRealRouteListEntries as sortLockedEntriesByDisplayOrder } from './lockedRouteDisplayOrder'
 
 export interface RealRouteListEntry {
   route: BusRoute
@@ -90,22 +90,11 @@ export function partitionRealRouteListEntries(entries: readonly RealRouteListEnt
   return { normal, locked }
 }
 
-function lockedRouteGroupRank(route: BusRoute): number {
-  const groups = getRouteDisplayGroupsForRoute(route)
-  if (groups.includes('seasonal')) return 0
-  if (groups.includes('special')) return 1
-  return 2
-}
-
-/** 锁定列表：节日限定成组在前，特别路线成组在后，组内按线路号排序。 */
+/** 锁定列表：节日限定 → 粉框班次解锁 → 其余特别路线，组内按线路号排序。 */
 export function sortLockedRealRouteListEntries(
   entries: readonly RealRouteListEntry[],
 ): RealRouteListEntry[] {
-  return [...entries].sort((a, b) => {
-    const rankDiff = lockedRouteGroupRank(a.route) - lockedRouteGroupRank(b.route)
-    if (rankDiff !== 0) return rankDiff
-    return compareRouteNumber(a.route.number, b.route.number)
-  })
+  return sortLockedEntriesByDisplayOrder(entries)
 }
 
 export function buildShiftUnlockRealRouteEntries(
