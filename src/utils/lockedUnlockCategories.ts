@@ -4,7 +4,7 @@ import {
   getRouteDisplayGroupsForRoute,
   type GroupedRouteDisplaySlot,
 } from '../data/routeDisplayGroups'
-import { routeBelongsToShiftUnlockCategory } from '../data/routeShiftUnlocks'
+import { routeBelongsToShiftUnlockCategory, getShiftUnlockPrerequisites } from '../data/routeShiftUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import type { BusRoute } from '../types/route'
 import { sortLockedDisplaySlots } from './lockedRouteDisplayOrder'
@@ -38,11 +38,14 @@ export function listedIdFromRealRouteListEntry(entry: RealRouteListEntry): strin
   return suffix.includes('|') ? suffix : undefined
 }
 
-/** Assign each locked item to exactly one unlock category (seasonal > sunshard special > shift). */
+/** Assign each locked item to exactly one unlock category (shift prereq > seasonal > sunshard special > shift). */
 export function resolveLockedUnlockCategory(
   route: BusRoute,
   options?: LockedUnlockLookupOptions,
 ): RouteUnlockCategoryKind {
+  if ((getShiftUnlockPrerequisites(route, options)?.prerequisiteRouteNumbers.length ?? 0) > 0) {
+    return 'shift'
+  }
   if (getRouteDisplayGroupsForRoute(route).includes('seasonal')) return 'seasonal'
   if (routeUsesSunshardUnlock(route)) return 'special'
   if (routeBelongsToShiftUnlockCategory(route, options)) return 'shift'

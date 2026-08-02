@@ -10,11 +10,20 @@ import { routeUsesSunshardUnlock } from './routeUnlocks'
 import type { DirectionKey } from '../utils/routeMerge'
 import { compareLockedDisplaySlotOrder } from '../utils/lockedRouteDisplayOrder'
 
-/** 每个方向单独计阳光碎片解锁（如 U47* 北/南各 300） */
-const PER_DIRECTION_SUNSHARD_ROUTE_IDS = new Set(['U47*'])
+/** 每个方向单独计阳光碎片解锁（如 U47* 北/南各 300；员工接驳仅北行/西行需碎片） */
+const PER_DIRECTION_SUNSHARD_ROUTE_IDS = new Set(['U47*', 'C01', 'C401', 'F701', 'F702'])
+
+/** 员工接驳：仅北行（游戏内 W/N 去程）需阳光碎片，反向走班次解锁 */
+const STAFF_SHUTTLE_SUNSHARD_DIRECTION: DirectionKey = 'N'
 
 export function routeHasPerDirectionSunshardUnlock(route: BusRoute): boolean {
   return PER_DIRECTION_SUNSHARD_ROUTE_IDS.has(route.id)
+}
+
+export function staffShuttleSunshardDirectionKey(route: BusRoute): DirectionKey | undefined {
+  if (!isStaffShuttleSunshardUnlockRoute(route)) return undefined
+  const hasNorth = route.stops?.some((stop) => stop.directionKey === STAFF_SHUTTLE_SUNSHARD_DIRECTION)
+  return hasNorth ? STAFF_SHUTTLE_SUNSHARD_DIRECTION : route.stops?.[0]?.directionKey as DirectionKey | undefined
 }
 
 export function sunshardUnlockSlotKey(routeId: string, directionKey?: DirectionKey): string {
@@ -62,6 +71,23 @@ export function getSunshardUnlockLockedDisplaySlots(
     if (!routeUsesSunshardUnlock(route) || !visibleIds.has(route.id.toLowerCase())) continue
 
     if (routeHasPerDirectionSunshardUnlock(route)) {
+      if (isStaffShuttleSunshardUnlockRoute(route)) {
+        const directionKey = staffShuttleSunshardDirectionKey(route)
+        if (directionKey) {
+          const listedId = sunshardUnlockSlotKey(route.id, directionKey)
+          slots.push({
+            listedId,
+            entry: {
+              listedId,
+              route,
+              directionKey,
+            },
+            isVisible: true,
+          })
+        }
+        continue
+      }
+
       for (const stop of route.stops ?? []) {
         const directionKey = stop.directionKey as DirectionKey | undefined
         if (!directionKey) continue

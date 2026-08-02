@@ -1,4 +1,10 @@
 {
+  "370E": {
+    "unlockRoutes": ["270A", "370A", "370B", "R370", "Y370"]
+  },
+  "370W": {
+    "unlockRoutes": ["270A", "370A", "370B", "R370", "Y370"]
+  },
   "475P": {
     "unlockRoutes": ["475", "475A"]
   },
@@ -19,6 +25,30 @@
   },
   "F702": {
     "unlockRoutes": ["F701"]
+  },
+  "C01|S": {
+    "unlockRoutes": ["C01"],
+    "unlockFromDirectionKey": "N",
+    "targetRouteNumber": "C01S",
+    "guaranteedShifts": 1
+  },
+  "C401|S": {
+    "unlockRoutes": ["C401"],
+    "unlockFromDirectionKey": "N",
+    "targetRouteNumber": "C401E",
+    "guaranteedShifts": 1
+  },
+  "F701|S": {
+    "unlockRoutes": ["F701"],
+    "unlockFromDirectionKey": "N",
+    "targetRouteNumber": "F701E",
+    "guaranteedShifts": 1
+  },
+  "F702|S": {
+    "unlockRoutes": ["F702"],
+    "unlockFromDirectionKey": "N",
+    "targetRouteNumber": "F702E",
+    "guaranteedShifts": 1
   },
   "C401A|N": {
     "unlockRoutes": ["C401"],

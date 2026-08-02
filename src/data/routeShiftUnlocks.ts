@@ -24,6 +24,8 @@ export interface StaticShiftUnlockEntry {
   targetRouteNumber?: string
   /** 为 false 时，该锁定项本身不能作为解锁其他线路的前置来源（如 C401A 北行） */
   canUnlockOthers?: boolean
+  /** 满足前置后保证解锁所需班次数；1 表示 100% 解锁（如员工接驳反向） */
+  guaranteedShifts?: number
 }
 
 const staticShiftUnlocks = routeShiftUnlocksJson as Record<string, StaticShiftUnlockEntry>
@@ -51,6 +53,7 @@ interface ShiftUnlockTargetEdge {
   prerequisiteRoute: string
   prerequisiteDirectionKey?: DirectionKey
   targetRouteNumber: string
+  guaranteedShifts: number
 }
 
 function resolveUnlockTargetRouteId(routeCode: string): string {
@@ -145,6 +148,7 @@ function buildShiftUnlockMaps(): {
             targetEdges.push({
               prerequisiteRoute: prereq,
               targetRouteNumber: displayTargetNumber,
+              guaranteedShifts: SHIFT_UNLOCK_GUARANTEED_SHIFTS,
             })
           }
         }
@@ -165,6 +169,7 @@ function buildShiftUnlockMaps(): {
         prerequisiteRoute: prereq,
         prerequisiteDirectionKey: entry.unlockFromDirectionKey,
         targetRouteNumber: displayTargetNumber,
+        guaranteedShifts: entry.guaranteedShifts ?? SHIFT_UNLOCK_GUARANTEED_SHIFTS,
       })
     }
   }
@@ -199,7 +204,7 @@ export function getShiftUnlockPrerequisites(
     if (!prereqs?.size) continue
     return {
       prerequisiteRouteNumbers: [...prereqs].sort(compareRouteNumber),
-      guaranteedShifts: SHIFT_UNLOCK_GUARANTEED_SHIFTS,
+      guaranteedShifts: staticShiftUnlocks[key]?.guaranteedShifts ?? SHIFT_UNLOCK_GUARANTEED_SHIFTS,
     }
   }
   return null
@@ -228,7 +233,7 @@ export function getShiftUnlockTargets(
     targets.push({
       targetRouteId: edge.targetRouteNumber,
       targetRouteNumber: edge.targetRouteNumber,
-      guaranteedShifts: SHIFT_UNLOCK_GUARANTEED_SHIFTS,
+      guaranteedShifts: edge.guaranteedShifts,
     })
   }
 

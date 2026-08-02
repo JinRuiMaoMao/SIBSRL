@@ -29,6 +29,7 @@ export function RouteShiftUnlockTargetsSection({
 
   const routeList = formatShiftUnlockTargetRoutes(targets.map((target) => target.targetRouteNumber))
   const guaranteedShifts = targets[0]?.guaranteedShifts ?? 50
+  const isFullGuaranteed = guaranteedShifts === 1
 
   return (
     <section className={`route-shift-unlock-targets ${className}`.trim()} aria-label={t('unlockRequirements')}>
@@ -36,10 +37,14 @@ export function RouteShiftUnlockTargetsSection({
         <StarGlyph />
         <div className="route-shift-unlock-target-copy">
           <p className="route-shift-unlock-target-title">
-            {t('routeUnlockShiftTargetChance', { route: routeList })}
+            {t(isFullGuaranteed ? 'routeUnlockShiftTargetCertain' : 'routeUnlockShiftTargetChance', {
+              route: routeList,
+            })}
           </p>
           <p className="route-shift-unlock-target-desc">
-            {t('routeUnlockShiftTargetGuaranteed', { n: guaranteedShifts })}
+            {isFullGuaranteed
+              ? t('routeUnlockShiftTargetGuaranteedFull')
+              : t('routeUnlockShiftTargetGuaranteed', { n: guaranteedShifts })}
           </p>
         </div>
       </div>
