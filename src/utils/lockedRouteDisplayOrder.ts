@@ -35,7 +35,7 @@ function lockedDisplayRank(route: BusRoute, hasShiftPrereq: boolean): number {
   const groups = getRouteDisplayGroupsForRoute(route)
   if (groups.includes('seasonal')) return 0
   if (hasShiftPrereq) return 1
-  if (groups.includes('special')) return 2
+  if (groups.includes('special') || routeUsesSunshardUnlock(route)) return 2
   return 3
 }
 
