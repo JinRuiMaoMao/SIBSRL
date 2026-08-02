@@ -2,6 +2,8 @@ import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 import { isLockedDisplayRoute, getRouteDisplayGroupsForRoute } from '../data/routeDisplayGroups'
+import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
+import { getMergeDirectionKey } from './routeMerge'
 import { compareRouteNumber } from './routeSort'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 
@@ -15,8 +17,16 @@ export function realRouteListKey(routeId: string, directionIndex: number): strin
   return `${routeId}:${directionIndex}`
 }
 
+/** 仅当分组内存在多个不同走向的列表编号（如 370E + 370W）时才按方向拆卡。 */
 function shouldExpandRouteDirections(route: BusRoute): boolean {
-  return getSortedDirectionCount(route) > 1
+  if (getSortedDirectionCount(route) <= 1) return false
+
+  const directionKeys = new Set(
+    getListedRouteIdsForRoute(route)
+      .map((listedId) => getMergeDirectionKey(listedId))
+      .filter((key): key is NonNullable<typeof key> => key != null),
+  )
+  return directionKeys.size >= 2
 }
 
 export function buildRealRouteListEntries(routes: readonly BusRoute[]): RealRouteListEntry[] {
