@@ -62,7 +62,7 @@ import { isRealLayoutMode } from '../utils/appLayoutMode'
 import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
 import { RealRouteLookupMusic } from './RealRouteLookupMusic'
-import { RealRouteSplitHeader } from './RealRouteSplitHeader'
+import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
@@ -236,6 +236,7 @@ export function RouteLookupPage({
   const [dailyChallengeRouteContext, setDailyChallengeRouteContext] =
     useState<DailyChallengeInfo | null>(null)
   const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
+  const [playableRoutesDialogOpen, setPlayableRoutesDialogOpen] = useState(false)
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
   const [unlockCategoryFocus, setUnlockCategoryFocus] = useState<RouteUnlockCategoryKind | null>(
     null,
@@ -1275,6 +1276,11 @@ export function RouteLookupPage({
   )
 
   const handleViewAllPlayable = useCallback(() => {
+    if (splitLayoutActive) {
+      setPlayableRoutesDialogOpen(true)
+      return
+    }
+
     updateFilter('query', '')
     updateFilter('zone', 'all')
     updateFilter('operator', 'all')
@@ -1293,7 +1299,7 @@ export function RouteLookupPage({
     }))
     setStopSectionOpen(true)
     setBetweenStopsSectionOpen(true)
-  }, [updateFilter])
+  }, [splitLayoutActive, updateFilter])
 
   const handleUnlockCategorySelect = useCallback((kind: RouteUnlockCategoryKind) => {
     setUnlockCategoryFocus((prev) => (prev === kind ? null : kind))
@@ -1817,6 +1823,14 @@ export function RouteLookupPage({
         onSelectDay={handleSelectScheduleDay}
         todayDate={dailyChallenge.date}
       />
+
+      {splitLayoutActive ? (
+        <RealPlayableRoutesDialog
+          open={playableRoutesDialogOpen}
+          onClose={() => setPlayableRoutesDialogOpen(false)}
+          onSelectRoute={handleCarouselSelect}
+        />
+      ) : null}
     </div>
   )
 }

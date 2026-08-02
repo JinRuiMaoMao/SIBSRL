@@ -36,7 +36,7 @@ export const DISPLAY_ONLY_RENAMES: Record<string, string> = {
 
 type MergeTarget = { base: string; directionKey?: DirectionKey }
 
-const EXACT_MERGE: Record<string, MergeTarget> = {
+export const EXACT_MERGE: Record<string, MergeTarget> = {
   '47A': { base: '47', directionKey: 'N' },
   '48A': { base: '47', directionKey: 'S' },
   '673A': { base: '73A' },
