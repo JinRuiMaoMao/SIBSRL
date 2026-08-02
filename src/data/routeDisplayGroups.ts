@@ -96,22 +96,37 @@ export function resolveGroupedRouteEntry(listedId: string): GroupedRouteEntry | 
   }
 }
 
+/** 列表槽位去重键：分方向编号（73SS、370W）按 listedId，其余按 route.id */
+export function groupedRouteDisplaySlotKey(entry: GroupedRouteEntry): string {
+  if (entry.directionKey) return entry.listedId.toLowerCase()
+  return entry.route.id.toLowerCase()
+}
+
+export function groupedRouteDisplaySlotKeyFromSlot(
+  slot: GroupedRouteDisplaySlot,
+): string | null {
+  if (!slot.entry) return slot.listedId.toLowerCase()
+  return groupedRouteDisplaySlotKey(slot.entry)
+}
+
 export function getRouteDisplayIdsForGroup(group: RouteDisplayGroupKey): string[] {
   return groupRouteIds[group] ?? []
 }
 
 export function getRouteDisplayEntriesForGroup(group: RouteDisplayGroupKey): GroupedRouteEntry[] {
-  const seenRouteIds = new Set<string>()
+  const seenKeys = new Set<string>()
   const entries: GroupedRouteEntry[] = []
 
   for (const listedId of getRouteDisplayIdsForGroup(group)) {
     const entry = resolveGroupedRouteEntry(listedId)
-    if (!entry || seenRouteIds.has(entry.route.id)) continue
-    seenRouteIds.add(entry.route.id)
+    if (!entry) continue
+    const key = groupedRouteDisplaySlotKey(entry)
+    if (seenKeys.has(key)) continue
+    seenKeys.add(key)
     entries.push(entry)
   }
 
-  return entries.sort((a, b) => compareRouteNumber(a.route.number, b.route.number))
+  return entries.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
 }
 
 export function getMissingRouteDisplayIds(): string[] {
@@ -183,7 +198,7 @@ export function getGroupDisplaySlots(
   prependListedIds: string[] = [],
 ): GroupedRouteDisplaySlot[] {
   const visibleIds = new Set(visibleRoutes.map((route) => route.id))
-  const seenRouteIds = new Set<string>()
+  const seenSlotKeys = new Set<string>()
   const seenListedIds = new Set<string>()
   const shown: GroupedRouteDisplaySlot[] = []
 
@@ -196,10 +211,12 @@ export function getGroupDisplaySlots(
 
   for (const listedId of listedIds) {
     const entry = resolveGroupedRouteEntry(listedId)
-    if (!entry || seenRouteIds.has(entry.route.id)) continue
+    if (!entry) continue
+    const slotKey = groupedRouteDisplaySlotKey(entry)
+    if (seenSlotKeys.has(slotKey)) continue
     if (!visibleIds.has(entry.route.id)) continue
 
-    seenRouteIds.add(entry.route.id)
+    seenSlotKeys.add(slotKey)
     shown.push({
       listedId,
       entry,
@@ -293,15 +310,16 @@ export function mergeGroupDisplaySlots(
   groups: readonly RouteDisplayGroupKey[],
   slotsByGroup: Record<RouteDisplayGroupKey, GroupedRouteDisplaySlot[]>,
 ): GroupedRouteDisplaySlot[] {
-  const seenRouteIds = new Set<string>()
+  const seenSlotKeys = new Set<string>()
   const merged: GroupedRouteDisplaySlot[] = []
 
   for (const group of groups) {
     const groupMerged: GroupedRouteDisplaySlot[] = []
     for (const slot of slotsByGroup[group] ?? []) {
       if (!slot.isVisible || !slot.entry) continue
-      if (seenRouteIds.has(slot.entry.route.id)) continue
-      seenRouteIds.add(slot.entry.route.id)
+      const slotKey = groupedRouteDisplaySlotKeyFromSlot(slot)
+      if (!slotKey || seenSlotKeys.has(slotKey)) continue
+      seenSlotKeys.add(slotKey)
       groupMerged.push(slot)
     }
     groupMerged.sort((a, b) => compareRouteNumber(a.listedId, b.listedId))
@@ -312,12 +330,13 @@ export function mergeGroupDisplaySlots(
 }
 
 export function countVisibleMergedSlots(slots: readonly GroupedRouteDisplaySlot[]): number {
-  const seenRouteIds = new Set<string>()
+  const seenSlotKeys = new Set<string>()
   let count = 0
   for (const slot of slots) {
     if (!slot.isVisible || !slot.entry) continue
-    if (seenRouteIds.has(slot.entry.route.id)) continue
-    seenRouteIds.add(slot.entry.route.id)
+    const slotKey = groupedRouteDisplaySlotKeyFromSlot(slot)
+    if (!slotKey || seenSlotKeys.has(slotKey)) continue
+    seenSlotKeys.add(slotKey)
     count++
   }
   return count

@@ -89,7 +89,10 @@ function listedIdFromRealListKey(listKey: string): string | undefined {
   const colon = listKey.indexOf(':')
   if (colon < 0) return undefined
   const suffix = listKey.slice(colon + 1)
-  return suffix.includes('|') ? suffix : undefined
+  if (!suffix) return undefined
+  if (suffix.includes('|')) return suffix
+  if (!/^\d+$/.test(suffix)) return suffix
+  return undefined
 }
 
 export function listedIdFromRealRouteListKey(listKey: string): string | undefined {

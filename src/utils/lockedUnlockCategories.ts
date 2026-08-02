@@ -34,8 +34,13 @@ export function directionIndexForLockedSlot(
 }
 
 export function listedIdFromRealRouteListEntry(entry: RealRouteListEntry): string | undefined {
-  const suffix = entry.listKey.slice(entry.listKey.indexOf(':') + 1)
-  return suffix.includes('|') ? suffix : undefined
+  const colon = entry.listKey.indexOf(':')
+  if (colon < 0) return undefined
+  const suffix = entry.listKey.slice(colon + 1)
+  if (!suffix) return undefined
+  if (suffix.includes('|')) return suffix
+  if (!/^\d+$/.test(suffix)) return suffix
+  return undefined
 }
 
 /** Assign each locked item to exactly one unlock category (shift prereq > seasonal > sunshard special > shift). */

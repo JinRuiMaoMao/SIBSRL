@@ -143,7 +143,11 @@ export function RouteLookupSplitList({
         <RouteLockedGameCard
           route={route}
           listedId={listedId}
-          displayNumber={lockedCardDisplayNumber(route, listedId, directionKey)}
+          displayNumber={
+            listedId && listedId !== route.number && listedId !== route.id
+              ? listedId
+              : lockedCardDisplayNumber(route, listedId, directionKey)
+          }
           selected={selectedListKey === listKey}
           directionIndex={directionIndex}
           onNavigate={() => onSelect(route.id, directionIndex)}

@@ -104,9 +104,12 @@ export function buildRealRouteListEntriesFromDisplaySlots(
       if (idx >= 0) directionIndex = idx
     }
 
-    const listKey = slot.listedId.includes('|')
-      ? `${route.id}:${slot.listedId}`
-      : realRouteListKey(route.id, directionIndex)
+    const listKey =
+      slot.entry.directionKey && slot.listedId.toLowerCase() !== route.number.toLowerCase()
+        ? `${route.id}:${slot.listedId}`
+        : slot.listedId.includes('|')
+          ? `${route.id}:${slot.listedId}`
+          : realRouteListKey(route.id, directionIndex)
 
     if (seenListKeys.has(listKey)) continue
     seenListKeys.add(listKey)
