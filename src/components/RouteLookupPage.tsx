@@ -1157,10 +1157,10 @@ export function RouteLookupPage({
     const normal = groupedTotalSlots.normal
     const specialSeasonal = mergeShiftUnlockLockedDisplaySlots(
       mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
-      getShiftUnlockLockedDisplaySlots(routes),
+      getShiftUnlockLockedDisplaySlots(displayRoutes),
     )
     return { normal, specialSeasonal }
-  }, [groupedTotalSlots, routes])
+  }, [groupedTotalSlots, displayRoutes])
 
   const countVisibleSectionSlots = useCallback(
     (section: RouteListUiSectionKey) =>
