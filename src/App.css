@@ -1846,6 +1846,30 @@ html[data-reduce-motion='true'] .route-lookup-sticky::after {
   align-self: stretch;
 }
 
+.search-toolbar-actions .route-layout-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 3rem;
+  padding: 0 1rem;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.search-toolbar-actions .route-layout-toggle-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
 .random-route-btn {
   flex-shrink: 0;
   align-self: stretch;
