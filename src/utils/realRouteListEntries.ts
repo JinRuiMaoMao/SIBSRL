@@ -2,16 +2,13 @@ import type { MessageKey } from '../i18n/messages'
 import type { Locale } from '../i18n/types'
 import type { BusRoute } from '../types/route'
 import {
-  getRouteDisplayGroupsForRoute,
   isLockedDisplayRoute,
   type GroupedRouteDisplaySlot,
 } from '../data/routeDisplayGroups'
-import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { getListedRouteIdsForRoute } from '../data/routeDisplayGroups'
 import {
   getShiftUnlockLockedDisplaySlots,
   parseShiftUnlockSlotKey,
-  routeBelongsToShiftUnlockCategory,
   routeHasDirectionalShiftUnlockSlots,
 } from '../data/routeShiftUnlocks'
 import {
@@ -23,6 +20,13 @@ import {
 import { getMergeDirectionKey } from './routeMerge'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 import { sortLockedRealRouteListEntries as sortLockedEntriesByDisplayOrder } from './lockedRouteDisplayOrder'
+import {
+  listedIdFromRealRouteListEntry,
+  lockedItemBelongsToUnlockCategory,
+  partitionRealRouteListEntriesByUnlockCategory,
+} from './lockedUnlockCategories'
+
+export { partitionRealRouteListEntriesByUnlockCategory } from './lockedUnlockCategories'
 
 export interface RealRouteListEntry {
   route: BusRoute
@@ -232,30 +236,10 @@ export function filterRealRouteListEntriesByUnlockCategory(
   category: 'seasonal' | 'special' | 'shift' | null,
 ): RealRouteListEntry[] {
   if (!category) return [...entries]
-  return entries.filter((entry) => {
-    const listedId =
-      entry.listKey.includes(':') && entry.listKey.slice(entry.listKey.indexOf(':') + 1).includes('|')
-        ? entry.listKey.slice(entry.listKey.indexOf(':') + 1)
-        : undefined
-    if (category === 'shift') {
-      return routeBelongsToShiftUnlockCategory(entry.route, {
-        listedId,
-        directionIndex: entry.directionIndex,
-      })
-    }
-    const groups = getRouteDisplayGroupsForRoute(entry.route)
-    if (groups.includes(category)) {
-      if (category === 'special' && routeBelongsToShiftUnlockCategory(entry.route, { listedId, directionIndex: entry.directionIndex })) {
-        return false
-      }
-      return true
-    }
-    if (category === 'special' && routeUsesSunshardUnlock(entry.route)) {
-      if (routeBelongsToShiftUnlockCategory(entry.route, { listedId, directionIndex: entry.directionIndex })) {
-        return false
-      }
-      return true
-    }
-    return false
-  })
+  return entries.filter((entry) =>
+    lockedItemBelongsToUnlockCategory(entry.route, category, {
+      listedId: listedIdFromRealRouteListEntry(entry),
+      directionIndex: entry.directionIndex,
+    }),
+  )
 }

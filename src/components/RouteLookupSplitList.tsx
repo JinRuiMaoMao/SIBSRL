@@ -1,10 +1,9 @@
-import { useEffect, useRef, type RefObject } from 'react'
+import { useEffect, useMemo, useRef, type RefObject } from 'react'
 import { DAILY_CHALLENGE_CARD_ID, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { useLocale } from '../i18n/LocaleContext'
 import { shouldReduceMotion } from '../storage/appPreferences'
 import {
-  filterRealRouteListEntriesByUnlockCategory,
-  sortLockedRealRouteListEntries,
+  partitionRealRouteListEntriesByUnlockCategory,
   type RealRouteListEntry,
 } from '../utils/realRouteListEntries'
 import { listedIdFromRealRouteListKey } from '../utils/lockedRouteDisplayOrder'
@@ -12,6 +11,7 @@ import { lockedCardDisplayNumber, resolveShiftUnlockListedRouteId } from '../dat
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { RouteCard } from './RouteCard'
 import { RouteLockedGameCard } from './RouteLockedGameCard'
+import { RouteLockedUnlockCategorySections } from './RouteLockedUnlockCategorySections'
 import { RouteListGameSection } from './RouteListGameSection'
 import { RouteListViewAllFooter } from './RouteListViewAllFooter'
 import { RouteUnlockCategoryList } from './RouteUnlockCategoryList'
@@ -59,8 +59,13 @@ export function RouteLookupSplitList({
   const { t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
-  const filteredLockedEntries = sortLockedRealRouteListEntries(
-    filterRealRouteListEntriesByUnlockCategory(lockedEntries, unlockCategoryFocus),
+  const lockedEntriesByCategory = useMemo(
+    () => partitionRealRouteListEntriesByUnlockCategory(lockedEntries),
+    [lockedEntries],
+  )
+  const visibleLockedEntries = useMemo(
+    () => [...lockedEntriesByCategory.seasonal, ...lockedEntriesByCategory.special, ...lockedEntriesByCategory.shift],
+    [lockedEntriesByCategory],
   )
 
   const scrollTargetKey =
@@ -78,7 +83,7 @@ export function RouteLookupSplitList({
   }, [
     scrollTargetKey,
     normalEntries,
-    filteredLockedEntries,
+    visibleLockedEntries,
     dailyChallenge?.visible,
     dailyChallenge?.selected,
   ])
@@ -190,11 +195,15 @@ export function RouteLookupSplitList({
           open={lockedOpen}
           onOpenChange={onLockedOpenChange}
         >
-          {filteredLockedEntries.length > 0 ? (
-            filteredLockedEntries.map((entry) => renderLockedEntry(entry))
-          ) : (
-            <p className="route-split-empty route-group-empty">{t('routeGroupEmpty')}</p>
-          )}
+          <RouteLockedUnlockCategorySections
+            groups={lockedEntriesByCategory}
+            highlightKind={unlockCategoryFocus}
+            layout="list"
+            renderItems={(entries) => entries.map((entry) => renderLockedEntry(entry))}
+            emptyFallback={
+              <p className="route-split-empty route-group-empty">{t('routeGroupEmpty')}</p>
+            }
+          />
         </RouteListGameSection>
       </div>
 

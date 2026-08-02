@@ -14,7 +14,6 @@ import {
   filterLockedSectionDisplaySlots,
   filterRoutesForMainRouteList,
   getGroupDisplaySlots,
-  getRouteDisplayGroupsForRoute,
   mergeGroupDisplaySlots,
   mergeLevelOnlySpecialIntoNormalSlots,
   ROUTE_DISPLAY_GROUP_ORDER,
@@ -28,7 +27,6 @@ import {
   getShiftUnlockLockedRouteIds,
   lockedCardDisplayNumber,
   mergeShiftUnlockLockedDisplaySlots,
-  routeBelongsToShiftUnlockCategory,
 } from '../data/routeShiftUnlocks'
 import {
   getSunshardUnlockLockedDisplaySlots,
@@ -36,7 +34,7 @@ import {
   mergeSunshardUnlockLockedDisplaySlots,
 } from '../data/routeSunshardUnlocks'
 import { sortLockedDisplaySlots } from '../utils/lockedRouteDisplayOrder'
-import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
+import { partitionLockedDisplaySlotsByUnlockCategory } from '../utils/lockedUnlockCategories'
 import {
   getSeasonalAvailabilityLabels,
   getSeasonalRouteDisplayWindow,
@@ -48,6 +46,7 @@ import { DailyChallengeDetail } from './DailyChallengeDetail'
 import { RouteNotFoundDetail } from './RouteNotFoundDetail'
 import { RouteCard } from './RouteCard'
 import { RouteLockedGameCard } from './RouteLockedGameCard'
+import { RouteLockedUnlockCategorySections } from './RouteLockedUnlockCategorySections'
 import { RouteDetail } from './RouteDetail'
 import { RouteDetailRealPanel } from './RouteDetailRealPanel'
 import { RouteGroupCollapse } from './RouteGroupCollapse'
@@ -1239,36 +1238,10 @@ export function RouteLookupPage({
     )
   }, [listSectionTotalSlots])
 
-  const filteredLockedSlots = useMemo(() => {
-    const slots = listSectionSlots.specialSeasonal
-    const filtered = !unlockCategoryFocus
-      ? slots
-      : slots.filter((slot) => {
-          if (slot.entry == null) return false
-          const { route, listedId, directionKey } = slot.entry
-          const directionIndex = directionKey
-            ? route.stops?.findIndex((stop) => stop.directionKey === directionKey) ?? 0
-            : 0
-          if (unlockCategoryFocus === 'shift') {
-            return routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
-          }
-          const groups = getRouteDisplayGroupsForRoute(route)
-          if (groups.includes(unlockCategoryFocus)) {
-            if (
-              unlockCategoryFocus === 'special' &&
-              routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
-            ) {
-              return false
-            }
-            return true
-          }
-          if (unlockCategoryFocus === 'special' && routeUsesSunshardUnlock(route)) {
-            return !routeBelongsToShiftUnlockCategory(route, { listedId, directionIndex })
-          }
-          return false
-        })
-    return sortLockedDisplaySlots(filtered)
-  }, [listSectionSlots.specialSeasonal, unlockCategoryFocus])
+  const lockedSlotsByCategory = useMemo(
+    () => partitionLockedDisplaySlotsByUnlockCategory(listSectionSlots.specialSeasonal),
+    [listSectionSlots.specialSeasonal],
+  )
 
   const betweenStopPairDraft =
     Boolean(structuredStopPair.from?.trim() && structuredStopPair.to?.trim()) &&
@@ -1326,7 +1299,10 @@ export function RouteLookupPage({
     setUnlockCategoryFocus((prev) => (prev === kind ? null : kind))
     setGroupOpen((prev) => ({ ...prev, unlockable: true, specialSeasonal: true }))
     requestAnimationFrame(() => {
-      lockedSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      document.getElementById(`locked-unlock-category-${kind}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      })
     })
   }, [])
 
@@ -1789,13 +1765,14 @@ export function RouteLookupPage({
                   setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
                 }
               >
-                {filteredLockedSlots.length === 0 ? (
-                  <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
-                ) : (
-                  <div className="route-grid route-grid--locked-game">
-                    {renderLockedGameCards(filteredLockedSlots)}
-                  </div>
-                )}
+                <RouteLockedUnlockCategorySections
+                  groups={lockedSlotsByCategory}
+                  highlightKind={unlockCategoryFocus}
+                  renderItems={(slots) => renderLockedGameCards(slots)}
+                  emptyFallback={
+                    <p className="empty-state route-group-empty">{t('routeGroupEmpty')}</p>
+                  }
+                />
               </RouteListGameSection>
             </div>
 
