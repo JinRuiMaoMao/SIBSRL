@@ -345,7 +345,6 @@ export function IslandMapPanZoomSurface({
   const referenceEditorRef = useRef(referenceEditor)
   const imageSizeCacheRef = useRef<Map<string, ImageSize>>(new Map())
   const displayedSrcRef = useRef(src)
-  const displayRasterCacheRef = useRef<Map<string, { imageSrc: string; revoke?: () => void }>>(new Map())
   const displayImageSrcRef = useRef('')
   const panZoomRef = useRef<PanZoomState | null>(null)
   const dragRafRef = useRef(0)
@@ -525,10 +524,6 @@ export function IslandMapPanZoomSurface({
 
   useEffect(() => {
     return () => {
-      for (const entry of displayRasterCacheRef.current.values()) {
-        entry.revoke?.()
-      }
-      displayRasterCacheRef.current.clear()
       releaseDomMapImage()
     }
   }, [releaseDomMapImage])
@@ -541,7 +536,13 @@ export function IslandMapPanZoomSurface({
       return
     }
 
-    if (src === displayedSrcRef.current && displayImageSrcRef.current) {
+    const loaded = loadIslandMapRasterForDisplay(src)
+
+    if (
+      src === displayedSrcRef.current &&
+      displayImageSrcRef.current &&
+      displayImageSrcRef.current === loaded.imageSrc
+    ) {
       setMapLayerLoading(false)
       onMapLayerLoadingChangeRef.current?.(false)
       return
@@ -568,53 +569,16 @@ export function IslandMapPanZoomSurface({
     const run = async () => {
       if (cancelled) return
 
-      const cachedRaster = displayRasterCacheRef.current.get(src)
-      if (cachedRaster) {
-        const cachedSize = imageSizeCacheRef.current.get(src) ?? logicalSize
-        if (displayImageSrcRef.current && displayedSrcRef.current !== src) {
-          releaseDomMapImage()
-          await waitForSafariImageRelease()
-          if (cancelled) return
-        }
-        commitMapLayer(src, cachedSize, cachedRaster.imageSrc)
-        window.requestAnimationFrame(() => {
-          syncPanZoomRef.current({ publish: true })
-        })
-        setMapLayerLoading(false)
-        onMapLayerLoadingChangeRef.current?.(false)
-        return
-      }
-
-      try {
-        const loaded = await loadIslandMapRasterForDisplay(src)
-        if (cancelled) {
-          loaded.revoke?.()
-          return
-        }
-
-        if (displayImageSrcRef.current) {
-          releaseDomMapImage()
-          await waitForSafariImageRelease()
-          if (cancelled) {
-            loaded.revoke?.()
-            return
-          }
-        }
-
-        if (loaded.revoke) {
-          displayRasterCacheRef.current.set(src, { imageSrc: loaded.imageSrc, revoke: loaded.revoke })
-        }
-
-        commitMapLayer(loaded.layerUrl, loaded.logicalSize, loaded.imageSrc)
-        window.requestAnimationFrame(() => {
-          syncPanZoomRef.current({ publish: true })
-        })
-      } catch {
+      if (displayImageSrcRef.current && displayImageSrcRef.current !== loaded.imageSrc) {
+        releaseDomMapImage()
+        await waitForSafariImageRelease()
         if (cancelled) return
-        commitMapLayer(src, logicalSize, src)
-        const domImg = imageRef.current
-        if (domImg) domImg.src = src
       }
+
+      commitMapLayer(loaded.layerUrl, loaded.logicalSize, loaded.imageSrc)
+      window.requestAnimationFrame(() => {
+        syncPanZoomRef.current({ publish: true })
+      })
 
       setMapLayerLoading(false)
       onMapLayerLoadingChangeRef.current?.(false)

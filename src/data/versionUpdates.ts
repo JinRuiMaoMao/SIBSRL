@@ -218,8 +218,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed iPad Safari crashes when toggling Layers on map-draw/island map (dual full-size decode): off-DOM preload with a single visible image and disabled layer button while loading.",
           },
           {
-            zh: "修复 iPad 切换 Layers 后地图全黑：避免图层 effect 重复清空图片、概览图不再降采样，详细图降采样改用 PNG。",
-            en: "Fixed black island map on iPad after Layers toggle: stop layer effect from clearing the image repeatedly, keep overview native, downsample detailed layer with PNG.",
+            zh: "修复 iPad 点 Layers 后地图空白：详细图层改为显示概览底图（逻辑 8000²），不再使用易黑屏的 blob 降采样。",
+            en: "Fixed blank map after Layers on iPad: detailed layer now shows the overview raster in an 8000² logical box instead of broken blob downsample.",
           },
           {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
