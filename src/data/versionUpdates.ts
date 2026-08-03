@@ -226,6 +226,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Published and per-route landing pages now include SEO keywords, canonical URLs, Open Graph, and Twitter Card meta for richer link previews and search indexing.",
           },
           {
+            zh: "新增 1200×630 社交分享图 og-share.png（标题与 CTA），并加长页面与 og:title；默认分享图含 og:image 宽高元数据。",
+            en: "Added 1200×630 og-share.png with headline and CTA, longer page/og titles, and og:image width/height meta for the default share image.",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },

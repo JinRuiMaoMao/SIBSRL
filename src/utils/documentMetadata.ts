@@ -14,6 +14,15 @@ export const TAB_TITLE_KEYS: Record<AppTab, MessageKey> = {
   updates: 'tabUpdates',
 }
 
+export const TAB_SOCIAL_TITLE_KEYS: Record<AppTab, MessageKey> = {
+  routes: 'socialShareTitleRoutes',
+  broadcast: 'socialShareTitleBroadcast',
+  music: 'socialShareTitleMusic',
+  complaints: 'socialShareTitleComplaints',
+  trivia: 'socialShareTitleTrivia',
+  updates: 'socialShareTitleUpdates',
+}
+
 function resolveFaviconVersion(): string | null {
   return (
     readPublishedBuild() ??

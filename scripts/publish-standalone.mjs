@@ -41,6 +41,7 @@ import { syncBrandAssets } from './sync-brand-assets.mjs'
 import { syncCompanyLogos } from './sync-company-logos.mjs'
 import { syncWorldMapImages } from './sync-world-map-images.mjs'
 import { buildWorldMapRoutesManifest } from './build-world-map-routes-manifest.mjs'
+import { generateOgShareImage } from './generate-og-share.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const built = resolve(root, 'dist', 'dev.html')
@@ -118,7 +119,7 @@ function writeLegacyRedirect(filename, targetPath, siteRoot, distRoot) {
  * 将 dist/dev.html 同步为根目录各栏目 HTML（index / ann / music …）。
  * @param {{ buildTag?: string }} [options]
  */
-export function publishStandalone(options = {}) {
+export async function publishStandalone(options = {}) {
   const buildTag = options.buildTag ?? new Date().toISOString()
 
   if (!existsSync(built)) {
@@ -153,10 +154,26 @@ export function publishStandalone(options = {}) {
     ),
   )
 
+  syncBrandAssets()
+  try {
+    await generateOgShareImage()
+  } catch (err) {
+    console.warn('[publish] og-share.png 生成失败，将回退默认分享图:', err?.message ?? err)
+  }
+
   for (const page of APP_PAGES) {
     let html = injectAppTabMeta(baseHtml, page.tab)
-    html = adjustAppPageTitle(html, page.titleZh)
-    html = injectSocialMeta(html, socialMetaForAppPage({ tab: page.tab, titleZh: page.titleZh, buildTag }))
+    const seoTitle = page.seoTitleZh
+    html = adjustAppPageTitle(html, seoTitle ?? page.titleZh, { standalone: Boolean(seoTitle) })
+    html = injectSocialMeta(
+      html,
+      socialMetaForAppPage({
+        tab: page.tab,
+        titleZh: page.titleZh,
+        seoTitleZh: page.seoTitleZh,
+        buildTag,
+      }),
+    )
     if (page.tab === 'routes') {
       publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
     } else {
@@ -169,7 +186,8 @@ export function publishStandalone(options = {}) {
   let startHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
   startHtml = adjustAppPageTitle(startHtml, '阳光群岛巴士线路查询', { standalone: true })
   startHtml = injectSocialMeta(startHtml, {
-    title: '阳光群岛巴士线路查询',
+    title:
+      '阳光群岛 Roblox 巴士模拟器线路查询入口 | SIBS 站序、车费、群岛地图与每日挑战工具',
     description:
       '阳光群岛 Roblox 巴士模拟器 (SIBS) 官方向线路查询入口：站序、车费、群岛地图、每日挑战与工具下载。Sunshine Islands Bus Simulator (SIBS) route lookup hub.',
     url: buildCanonicalSiteUrl('index.html'),
@@ -189,7 +207,8 @@ export function publishStandalone(options = {}) {
   realStartHtml = injectRealLayoutMusicEarlyBootstrap(realStartHtml)
   realStartHtml = adjustAppPageTitle(realStartHtml, '阳光群岛巴士模拟器', { standalone: true })
   realStartHtml = injectSocialMeta(realStartHtml, {
-    title: '阳光群岛巴士模拟器',
+    title:
+      '阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图',
     description:
       '阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map.',
     url: buildCanonicalSiteUrl('real/index.html'),
@@ -398,10 +417,10 @@ const isMain =
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 
 if (isMain) {
-  try {
-    publishStandalone()
-  } catch (err) {
-    console.error(err instanceof Error ? err.message : err)
-    process.exit(1)
-  }
+  publishStandalone()
+    .then(() => {})
+    .catch((err) => {
+      console.error(err instanceof Error ? err.message : err)
+      process.exit(1)
+    })
 }

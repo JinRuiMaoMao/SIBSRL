@@ -8,6 +8,7 @@ import {
   syncFavicon,
   syncHtmlLang,
   syncSocialShareMeta,
+  TAB_SOCIAL_TITLE_KEYS,
   TAB_TITLE_KEYS,
 } from '../utils/documentMetadata'
 
@@ -26,9 +27,9 @@ export function useDocumentMetadata(activeTab: AppTab): void {
 
   useEffect(() => {
     if (start) {
-      const title = t(isRealLayoutMode() ? 'realStartPageDocumentTitle' : 'startPageDocumentTitle')
-      document.title = title
-      syncSocialShareMeta({ title })
+      const tabTitle = t(isRealLayoutMode() ? 'realStartPageDocumentTitle' : 'startPageDocumentTitle')
+      document.title = tabTitle
+      syncSocialShareMeta({ title: t('socialShareTitleStart') })
       return
     }
     const pageKey = secret
@@ -42,6 +43,9 @@ export function useDocumentMetadata(activeTab: AppTab): void {
             : TAB_TITLE_KEYS[activeTab]
     const title = formatDocumentTitle(t(pageKey), t('documentTitleSuffix'))
     document.title = title
-    syncSocialShareMeta({ title })
+    const socialTitle = secret || mapDraw || account || settings
+      ? title
+      : t(TAB_SOCIAL_TITLE_KEYS[activeTab])
+    syncSocialShareMeta({ title: socialTitle })
   }, [activeTab, account, locale, mapDraw, secret, settings, start, t])
 }

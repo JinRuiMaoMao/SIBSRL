@@ -64,6 +64,12 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
 
 export function renderRoutePageHtml(routeId, routeData) {
   const landing = buildRouteLandingUrl(routeId, true)
+  const buildTag =
+    process.env.VITE_BUILD_TAG?.trim() || process.env.BUILD_TAG?.trim() || ''
+  const social = socialMetaForRoutePage(routeId, routeData, buildTag)
+  const safePageTitle = social.title.replace(/[<>&"]/g, (ch) =>
+    ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[ch] ?? ch,
+  )
   const safeTitle = routeId.replace(/[<>&"]/g, (ch) =>
     ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[ch] ?? ch,
   )
@@ -75,7 +81,7 @@ export function renderRoutePageHtml(routeId, routeData) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   ${buildFaviconLinks('', '../')}
-  <title>${safeTitle} · 阳光群岛线路查询</title>
+  <title>${safePageTitle}</title>
   <meta http-equiv="refresh" content="0;url=${landing}" />
   <style>
     :root {
@@ -123,9 +129,7 @@ ${json}
 </body>
 </html>
 `)))
-  const buildTag =
-    process.env.VITE_BUILD_TAG?.trim() || process.env.BUILD_TAG?.trim() || ''
-  return injectSocialMeta(html, socialMetaForRoutePage(routeId, routeData, buildTag))
+  return injectSocialMeta(html, social)
 }
 
 export { routeIdToPageFilename }

@@ -10,6 +10,10 @@ const DEFAULT_DESCRIPTION =
 
 const DEFAULT_SITE_NAME = '阳光群岛线路查询 · SIBS Route Lookup'
 
+const DEFAULT_OG_IMAGE_PATH = 'og-share.png'
+const DEFAULT_OG_IMAGE_WIDTH = 1200
+const DEFAULT_OG_IMAGE_HEIGHT = 630
+
 /** @param {string} value */
 function escapeHtml(value) {
   return String(value)
@@ -30,10 +34,18 @@ export function resolveSitePublicOrigin() {
 /** @param {string} [buildTag] */
 export function buildOgImageUrl(buildTag = '') {
   const imagePath =
-    process.env.SITE_OG_IMAGE_PATH?.trim().replace(/^\//, '') || 'apple-touch-icon.png'
+    process.env.SITE_OG_IMAGE_PATH?.trim().replace(/^\//, '') || DEFAULT_OG_IMAGE_PATH
   const origin = resolveSitePublicOrigin()
   const version = buildTag ? `?v=${encodeURIComponent(buildTag)}` : ''
   return `${origin}/${imagePath}${version}`
+}
+
+export function resolveOgImageDimensions(imagePath = DEFAULT_OG_IMAGE_PATH) {
+  const normalized = imagePath.replace(/^\//, '')
+  if (normalized === DEFAULT_OG_IMAGE_PATH || normalized === 'og-share.png') {
+    return { width: DEFAULT_OG_IMAGE_WIDTH, height: DEFAULT_OG_IMAGE_HEIGHT }
+  }
+  return null
 }
 
 /** @param {string} path e.g. normal/routes.html */
@@ -54,13 +66,20 @@ export function buildCanonicalSiteUrl(path) {
  *   locale?: string
  *   siteName?: string
  *   twitterCard?: string
+ *   imageWidth?: number
+ *   imageHeight?: number
  * }} options
  */
 export function buildSocialMetaBlock(options) {
   const title = escapeHtml(options.title)
   const description = escapeHtml(options.description ?? DEFAULT_DESCRIPTION)
   const url = escapeHtml(options.url)
+  const rawImagePath =
+    process.env.SITE_OG_IMAGE_PATH?.trim().replace(/^\//, '') || DEFAULT_OG_IMAGE_PATH
   const imageUrl = escapeHtml(options.imageUrl ?? buildOgImageUrl())
+  const dims = resolveOgImageDimensions(rawImagePath)
+  const imageWidth = options.imageWidth ?? dims?.width
+  const imageHeight = options.imageHeight ?? dims?.height
   const type = escapeHtml(options.type ?? 'website')
   const keywords = escapeHtml(options.keywords ?? DEFAULT_KEYWORDS)
   const locale = escapeHtml(options.locale ?? 'zh_CN')
@@ -78,6 +97,8 @@ export function buildSocialMetaBlock(options) {
     `<meta property="og:description" content="${description}" />`,
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:image" content="${imageUrl}" />`,
+    imageWidth ? `<meta property="og:image:width" content="${imageWidth}" />` : '',
+    imageHeight ? `<meta property="og:image:height" content="${imageHeight}" />` : '',
     `<meta property="og:image:alt" content="${title}" />`,
     `<meta property="og:locale" content="${locale}" />`,
     `<meta name="twitter:card" content="${twitterCard}" />`,
@@ -85,7 +106,9 @@ export function buildSocialMetaBlock(options) {
     `<meta name="twitter:description" content="${description}" />`,
     `<meta name="twitter:image" content="${imageUrl}" />`,
     '<!-- /site-social-meta -->',
-  ].join('\n    ')
+  ]
+    .filter(Boolean)
+    .join('\n    ')
 }
 
 const SOCIAL_META_BLOCK_RE = /<!-- site-social-meta -->[\s\S]*?<!-- \/site-social-meta -->/
@@ -115,11 +138,15 @@ export const SITE_SOCIAL_DEFAULTS = {
   siteName: DEFAULT_SITE_NAME,
 }
 
-/** @param {{ tab: string, titleZh: string, buildTag?: string, standalone?: boolean }} page */
+/** @param {{ tab: string, titleZh: string, seoTitleZh?: string, buildTag?: string, standalone?: boolean }} page */
 export function socialMetaForAppPage(page, buildTag = '') {
   const versionTag = page.buildTag ?? buildTag
   const suffix = '阳光群岛线路查询'
-  const title = page.standalone ? page.titleZh : `${page.titleZh} · ${suffix}`
+  const title = page.seoTitleZh
+    ? page.seoTitleZh
+    : page.standalone
+      ? page.titleZh
+      : `${page.titleZh} · ${suffix}`
   const pathByTab = {
     routes: 'normal/routes.html',
     broadcast: 'normal/ann.html',
@@ -151,7 +178,6 @@ export function socialMetaForAppPage(page, buildTag = '') {
 /** @param {string} routeId @param {Record<string, unknown>} [routeData] @param {string} [buildTag] */
 export function socialMetaForRoutePage(routeId, routeData = {}, buildTag = '') {
   const safeId = String(routeId)
-  const title = `${safeId} · 阳光群岛线路查询`
   const name = routeData.name
   let routeLabel = ''
   if (name && typeof name === 'object') {
@@ -159,6 +185,9 @@ export function socialMetaForRoutePage(routeId, routeData = {}, buildTag = '') {
     const en = /** @type {{ en?: string }} */ (name).en
     routeLabel = (zh || en || '').trim()
   }
+  const title = routeLabel
+    ? `${safeId} 路 ${routeLabel} | 阳光群岛 SIBS Roblox 巴士站序车费与报站查询`
+    : `${safeId} 路巴士线路 | 阳光群岛 SIBS Roblox 站序、车费与报站音频查询`
   const description = routeLabel
     ? `阳光群岛 Roblox 巴士 ${safeId} 路：${routeLabel}。站序、车费与报站音频 — SIBS 线路查询。Sunshine Islands (SIBS) bus route ${safeId}: ${routeLabel}. Stops, fare, and audio.`
     : `阳光群岛 Roblox 巴士 ${safeId} 路线路查询：站序、车费与报站音频。Sunshine Islands (SIBS) bus route ${safeId} stops, fare, and announcement audio.`
