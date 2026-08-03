@@ -281,7 +281,6 @@ export function IslandMapViewer() {
               type="button"
               className="island-map-btn island-map-btn--layers island-map-btn--layers-compact"
               onClick={toggleLayer}
-              disabled={mapLayerLoading}
               aria-busy={mapLayerLoading}
               aria-label={t('islandMapLayersAria')}
               title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
