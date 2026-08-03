@@ -1,8 +1,8 @@
 export const ISLAND_MAP_GENERAL_PIXEL_SIZE = 4000
 export const ISLAND_MAP_DETAILED_PIXEL_SIZE = 8000
 
-/** Max decoded edge length on iPad Safari (large fullscreen map layers). */
-export const ISLAND_MAP_RASTER_DECODE_MAX_EDGE_IPAD = 3072
+/** Max decoded edge length for the 8000² detailed map on iPad Safari. */
+export const ISLAND_MAP_RASTER_DECODE_MAX_EDGE_IPAD = 4096
 
 export function isIPhoneDevice(): boolean {
   if (typeof navigator === 'undefined') return false
@@ -22,8 +22,12 @@ export function getIslandMapRasterDecodeMaxEdge(): number {
   return ISLAND_MAP_RASTER_DECODE_MAX_EDGE_IPAD
 }
 
-export function shouldCapIslandMapRasterDecode(): boolean {
-  return isIPadDevice()
+/** iPad only: downsample the 8000² detailed asset (overview stays native 4000²). */
+export function shouldDownsampleIslandMapLayer(layerUrl: string): boolean {
+  if (!isIPadDevice()) return false
+  const logical = getIslandMapLogicalPixelSize(layerUrl)
+  if (!logical) return false
+  return logical.width > ISLAND_MAP_GENERAL_PIXEL_SIZE
 }
 
 export interface IslandMapRasterLoadResult {
@@ -59,7 +63,10 @@ function computeCappedRasterSize(
   }
 }
 
-async function loadCappedRaster(layerUrl: string, logicalSize: { width: number; height: number }): Promise<IslandMapRasterLoadResult> {
+async function loadCappedRaster(
+  layerUrl: string,
+  logicalSize: { width: number; height: number },
+): Promise<IslandMapRasterLoadResult> {
   const target = computeCappedRasterSize(
     logicalSize.width,
     logicalSize.height,
@@ -76,11 +83,21 @@ async function loadCappedRaster(layerUrl: string, logicalSize: { width: number; 
     return { layerUrl, logicalSize, imageSrc: layerUrl }
   }
 
-  const bitmap = await createImageBitmap(blob, {
-    resizeWidth: target.width,
-    resizeHeight: target.height,
-    resizeQuality: 'high',
-  })
+  let bitmap: ImageBitmap
+  try {
+    bitmap = await createImageBitmap(blob, {
+      resizeWidth: target.width,
+      resizeHeight: target.height,
+      resizeQuality: 'high',
+    })
+  } catch {
+    return { layerUrl, logicalSize, imageSrc: layerUrl }
+  }
+
+  if (bitmap.width <= 0 || bitmap.height <= 0) {
+    bitmap.close()
+    return { layerUrl, logicalSize, imageSrc: layerUrl }
+  }
 
   const canvas = document.createElement('canvas')
   canvas.width = bitmap.width
@@ -94,7 +111,7 @@ async function loadCappedRaster(layerUrl: string, logicalSize: { width: number; 
   bitmap.close()
 
   const outBlob = await new Promise<Blob | null>((resolve) => {
-    canvas.toBlob(resolve, 'image/jpeg', 0.9)
+    canvas.toBlob(resolve, 'image/png')
   })
   if (!outBlob) {
     return { layerUrl, logicalSize, imageSrc: layerUrl }
@@ -115,12 +132,7 @@ export async function loadIslandMapRasterForDisplay(layerUrl: string): Promise<I
     return { layerUrl, logicalSize: { width: 0, height: 0 }, imageSrc: layerUrl }
   }
 
-  if (!shouldCapIslandMapRasterDecode()) {
-    return { layerUrl, logicalSize, imageSrc: layerUrl }
-  }
-
-  const longest = Math.max(logicalSize.width, logicalSize.height)
-  if (longest <= getIslandMapRasterDecodeMaxEdge()) {
+  if (!shouldDownsampleIslandMapLayer(layerUrl)) {
     return { layerUrl, logicalSize, imageSrc: layerUrl }
   }
 
@@ -131,6 +143,7 @@ export function islandMapImageMatchesLayerUrl(image: HTMLImageElement, layerUrl:
   if (!layerUrl) return false
   const current = image.currentSrc || image.src
   if (!current) return false
+  if (current.startsWith('blob:')) return false
   try {
     const resolvedLayer = new URL(layerUrl, window.location.href).href
     const resolvedCurrent = new URL(current, window.location.href).href
