@@ -64,6 +64,7 @@ export {
   socialMetaForRoutePage,
   buildCanonicalSiteUrl,
   buildOgImageUrl,
+  readOgImageContentVersion,
   SITE_SOCIAL_DEFAULTS,
 } from './site-social-meta.mjs'
 

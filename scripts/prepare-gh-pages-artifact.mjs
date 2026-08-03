@@ -12,6 +12,7 @@ const COPY_FILES = [
   'sibs-logo.png',
   'apple-touch-icon.png',
   'og-share.png',
+  'og-share-v2.png',
   'world-map-stops.json',
   'route-detail-stops.json',
 ]
@@ -39,10 +40,10 @@ for (const file of COPY_FILES) {
   }
 }
 
-const distOgShare = join(root, 'dist', 'og-share.png')
-if (!existsSync(join(out, 'og-share.png')) && existsSync(distOgShare)) {
-  cpSync(distOgShare, join(out, 'og-share.png'))
-  console.log('[gh-pages] copied og-share.png from dist/')
+const distOgShare = join(root, 'dist', 'og-share-v2.png')
+if (!existsSync(join(out, 'og-share-v2.png')) && existsSync(distOgShare)) {
+  cpSync(distOgShare, join(out, 'og-share-v2.png'))
+  console.log('[gh-pages] copied og-share-v2.png from dist/')
 }
 
 console.log(`[gh-pages] artifact prepared → ${out}`)

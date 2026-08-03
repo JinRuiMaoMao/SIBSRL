@@ -1,4 +1,10 @@
 import { buildRoutePagePath } from './route-page-filename.mjs'
+import { createHash } from 'node:crypto'
+import { existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const packageRoot = resolve(fileURLToPath(new URL('..', import.meta.url)), '..')
 
 const DEFAULT_SITE_PUBLIC_URL = 'https://jinruimaomao.github.io/SIBSRL'
 
@@ -10,7 +16,7 @@ const DEFAULT_DESCRIPTION =
 
 const DEFAULT_SITE_NAME = '阳光群岛线路查询 · SIBS Route Lookup'
 
-const DEFAULT_OG_IMAGE_PATH = 'og-share.png'
+const DEFAULT_OG_IMAGE_PATH = 'og-share-v2.png'
 const DEFAULT_OG_IMAGE_WIDTH = 1200
 const DEFAULT_OG_IMAGE_HEIGHT = 630
 
@@ -31,18 +37,40 @@ export function resolveSitePublicOrigin() {
   return raw.replace(/\/$/, '')
 }
 
-/** @param {string} [buildTag] */
-export function buildOgImageUrl(buildTag = '') {
+/** @param {{ root?: string }} [options] */
+export function readOgImageContentVersion(options = {}) {
+  const root = options.root ?? packageRoot
+  const imagePath =
+    process.env.SITE_OG_IMAGE_PATH?.trim().replace(/^\//, '') || DEFAULT_OG_IMAGE_PATH
+  const candidates = [
+    resolve(root, 'public', imagePath),
+    resolve(root, imagePath),
+    resolve(root, 'public', 'og-share.png'),
+  ]
+  for (const file of candidates) {
+    if (!existsSync(file)) continue
+    return createHash('md5').update(readFileSync(file)).digest('hex').slice(0, 12)
+  }
+  return ''
+}
+
+/** @param {string} [buildTag] @param {string} [contentVersion] */
+export function buildOgImageUrl(buildTag = '', contentVersion = '') {
   const imagePath =
     process.env.SITE_OG_IMAGE_PATH?.trim().replace(/^\//, '') || DEFAULT_OG_IMAGE_PATH
   const origin = resolveSitePublicOrigin()
-  const version = buildTag ? `?v=${encodeURIComponent(buildTag)}` : ''
+  const content =
+    contentVersion?.trim() ||
+    process.env.OG_IMAGE_CONTENT_VERSION?.trim() ||
+    readOgImageContentVersion()
+  const versionKey = [content, buildTag].filter(Boolean).join('.')
+  const version = versionKey ? `?v=${encodeURIComponent(versionKey)}` : ''
   return `${origin}/${imagePath}${version}`
 }
 
 export function resolveOgImageDimensions(imagePath = DEFAULT_OG_IMAGE_PATH) {
   const normalized = imagePath.replace(/^\//, '')
-  if (normalized === DEFAULT_OG_IMAGE_PATH || normalized === 'og-share.png') {
+  if (normalized === DEFAULT_OG_IMAGE_PATH || normalized === 'og-share.png' || normalized === 'og-share-v2.png') {
     return { width: DEFAULT_OG_IMAGE_WIDTH, height: DEFAULT_OG_IMAGE_HEIGHT }
   }
   return null

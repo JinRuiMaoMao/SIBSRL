@@ -29,6 +29,7 @@ import {
   socialMetaForAppPage,
   buildCanonicalSiteUrl,
   buildOgImageUrl,
+  readOgImageContentVersion,
   SITE_SOCIAL_DEFAULTS,
   APP_LAYOUT_PUBLISH,
   prepareLayoutScopedHtml,
@@ -155,11 +156,30 @@ export async function publishStandalone(options = {}) {
   )
 
   syncBrandAssets()
-  try {
-    await generateOgShareImage()
-  } catch (err) {
-    console.warn('[publish] og-share.png 生成失败，将回退默认分享图:', err?.message ?? err)
+
+  const ogSharePublic = resolve(root, 'public', 'og-share.png')
+  const ogShareV2Public = resolve(root, 'public', 'og-share-v2.png')
+  const shouldRegenerateOgShare =
+    process.env.REGENERATE_OG_SHARE === '1' ||
+    (process.env.CI !== 'true' && !existsSync(ogShareV2Public))
+
+  if (shouldRegenerateOgShare) {
+    try {
+      await generateOgShareImage()
+    } catch (err) {
+      console.warn('[publish] og-share.png 生成失败，将回退默认分享图:', err?.message ?? err)
+    }
+  } else if (process.env.CI === 'true') {
+    console.log('[publish] CI：使用仓库内已提交的 og-share 图，跳过 Playwright 重新生成')
   }
+
+  if (existsSync(ogSharePublic)) {
+    cpSync(ogSharePublic, ogShareV2Public)
+    cpSync(ogSharePublic, resolve(root, 'og-share-v2.png'))
+    cpSync(ogSharePublic, resolve(root, 'dist', 'og-share-v2.png'))
+  }
+
+  process.env.OG_IMAGE_CONTENT_VERSION = readOgImageContentVersion({ root })
 
   for (const page of APP_PAGES) {
     let html = injectAppTabMeta(baseHtml, page.tab)
