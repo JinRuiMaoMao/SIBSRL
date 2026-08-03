@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium (og-share.png)
+        run: npx playwright install chromium
+
       - name: Build for GitHub Pages
         run: npm run build:only
         env:

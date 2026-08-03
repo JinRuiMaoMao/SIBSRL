@@ -11,6 +11,7 @@ const COPY_FILES = [
   '.nojekyll',
   'sibs-logo.png',
   'apple-touch-icon.png',
+  'og-share.png',
   'world-map-stops.json',
   'route-detail-stops.json',
 ]
@@ -36,6 +37,12 @@ for (const file of COPY_FILES) {
   if (existsSync(src)) {
     cpSync(src, join(out, file))
   }
+}
+
+const distOgShare = join(root, 'dist', 'og-share.png')
+if (!existsSync(join(out, 'og-share.png')) && existsSync(distOgShare)) {
+  cpSync(distOgShare, join(out, 'og-share.png'))
+  console.log('[gh-pages] copied og-share.png from dist/')
 }
 
 console.log(`[gh-pages] artifact prepared → ${out}`)

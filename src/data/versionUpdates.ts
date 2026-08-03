@@ -230,6 +230,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Added 1200×630 og-share.png with headline and CTA, longer page/og titles, and og:image width/height meta for the default share image.",
           },
           {
+            zh: "修复 GitHub Pages 部署未包含 og-share.png 导致社交预览图 404 的问题。",
+            en: "Fixed GitHub Pages deploy omitting og-share.png, which broke Open Graph image previews (404).",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },
