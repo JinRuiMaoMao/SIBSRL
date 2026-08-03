@@ -202,6 +202,8 @@ GitHub Pages **只能放静态页面**，注册/登录需要单独部署 `sibs-u
 | `RESEND_API_KEY` | [Resend](https://resend.com) API Key（Render 上 **不要用 Outlook SMTP**，云端 IP 常被微软拦截） |
 | `MAIL_FROM` | 发件人。未验证域名时用 `SIBS Route Lookup <onboarding@resend.dev>`；验证自有域名后改为 `SIBS Route Lookup <noreply@你的域名>` |
 | `USER_API_CORS_ORIGIN` | 你的 GitHub Pages 来源，默认 `https://jinruimaomao.github.io` |
+| `FEEDBACK_NOTIFICATION_EMAIL` | 线路资料反馈通知收件人（默认与 `MAP_DRAW_APPROVAL_EMAIL` 相同，见下） |
+| `MAP_DRAW_APPROVAL_EMAIL` | 地图绘制权限申请审批邮件收件人（默认 `gengyue_sun@outlook.com`） |
 
 **邮件说明（Resend）**
 
@@ -209,6 +211,7 @@ GitHub Pages **只能放静态页面**，注册/登录需要单独部署 `sibs-u
 - 使用默认 `onboarding@resend.dev` 时，**只能把验证码发到你在 Resend 注册用的那个邮箱**（用于自测）。
 - 要让任意用户收到验证码，请在 Resend **Domains** 添加并验证你的域名，然后把 `MAIL_FROM` 改成该域名下的地址。
 - 本地开发仍可用 Outlook SMTP（见 `.env.example` 的 `SMTP_*`）；未设置 `RESEND_API_KEY` 时 API 会走 SMTP。
+- **线路资料反馈**（设置 / 线路详情里的「反馈」）会写入用户 API 数据库，并在邮件服务已配置时向 `FEEDBACK_NOTIFICATION_EMAIL` 发送通知；此前仅入库不发信，因此邮箱收不到反馈。
 
 4. 部署完成后记下域名，例如：
 

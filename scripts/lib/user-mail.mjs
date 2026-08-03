@@ -258,8 +258,8 @@ export function resolveMailProvider() {
   }
 }
 
-/** @param {{ to: string, subject: string, text: string, html: string, from: string, category?: string, preheader?: string }} params */
-async function sendViaSendGrid({ to, subject, text, html, from, category, preheader }) {
+/** @param {{ to: string, subject: string, text: string, html: string, from: string, category?: string, preheader?: string, replyTo?: string }} params */
+async function sendViaSendGrid({ to, subject, text, html, from, category, preheader, replyTo }) {
   const apiKey = getSendGridApiKey()
   if (!apiKey) return false
 
@@ -282,7 +282,9 @@ async function sendViaSendGrid({ to, subject, text, html, from, category, prehea
     payload.headers['X-Preheader'] = preheader
   }
 
-  if (fromParsed.email) {
+  if (replyTo) {
+    payload.reply_to = { email: replyTo }
+  } else if (fromParsed.email) {
     payload.reply_to = { email: fromParsed.email, name: fromParsed.name }
   }
 
@@ -386,6 +388,128 @@ const DEFAULT_MAP_DRAW_APPROVAL_EMAIL = 'gengyue_sun@outlook.com'
 
 export function resolveMapDrawApprovalEmail() {
   return process.env.MAP_DRAW_APPROVAL_EMAIL?.trim().toLowerCase() || DEFAULT_MAP_DRAW_APPROVAL_EMAIL
+}
+
+export function resolveFeedbackNotificationEmail() {
+  return (
+    process.env.FEEDBACK_NOTIFICATION_EMAIL?.trim().toLowerCase() || resolveMapDrawApprovalEmail()
+  )
+}
+
+/** @param {{ routeId: string | null, category: string, message: string, contactEmail: string | null, feedbackId: string, clientIp: string | null }} params */
+export function buildRouteFeedbackNotificationContent({
+  routeId,
+  category,
+  message,
+  contactEmail,
+  feedbackId,
+  clientIp,
+}) {
+  const routeLine = routeId ? `线路 Route: ${routeId}` : '线路 Route: （未指定 / not specified）'
+  const contactLine = contactEmail
+    ? `用户联系邮箱 Contact: ${contactEmail}`
+    : '用户联系邮箱 Contact: （未提供 / not provided）'
+  const subject = `SIBS 线路资料反馈 / Route data feedback [${category}]`
+  const safeMessage = escapeHtml(message)
+  const text = [
+    '收到新的线路资料反馈。',
+    'New route data feedback submitted.',
+    '',
+    `ID: ${feedbackId}`,
+    routeLine,
+    `类型 Category: ${category}`,
+    contactLine,
+    clientIp ? `IP: ${clientIp}` : '',
+    '',
+    '---',
+    message,
+    '',
+    '可在用户 API 数据库 route_feedback 表中查看完整记录。',
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  const html = `<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="utf-8" /><title>${escapeHtml(subject)}</title></head>
+<body style="margin:0;padding:24px;background:#f3f4f6;font-family:Segoe UI,system-ui,sans-serif;color:#111827;">
+  <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:12px;padding:28px;border:1px solid #e5e7eb;">
+    <h1 style="margin:0 0 12px;font-size:20px;">线路资料反馈 / Route data feedback</h1>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#374151;">收到新的反馈，详情如下。</p>
+    <table style="width:100%;font-size:14px;line-height:1.7;color:#374151;border-collapse:collapse;">
+      <tr><td style="padding:4px 0;color:#6b7280;width:120px;">ID</td><td>${escapeHtml(feedbackId)}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b7280;">线路</td><td>${escapeHtml(routeId ?? '—')}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b7280;">类型</td><td>${escapeHtml(category)}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b7280;">联系邮箱</td><td>${escapeHtml(contactEmail ?? '—')}</td></tr>
+      ${clientIp ? `<tr><td style="padding:4px 0;color:#6b7280;">IP</td><td>${escapeHtml(clientIp)}</td></tr>` : ''}
+    </table>
+    <div style="margin:20px 0 0;padding:16px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;">
+      <p style="margin:0;font-size:14px;line-height:1.7;white-space:pre-wrap;">${safeMessage}</p>
+    </div>
+  </div>
+</body>
+</html>`
+
+  return { subject, text, html, preheader: `反馈 ${category}${routeId ? ` · ${routeId}` : ''}` }
+}
+
+/** @param {{ routeId: string | null, category: string, message: string, contactEmail: string | null, feedbackId: string, clientIp: string | null }} params */
+export async function sendRouteFeedbackNotificationEmail(params) {
+  const { subject, text, html, preheader } = buildRouteFeedbackNotificationContent(params)
+  const provider = assertMailProviderConfigured()
+  const from =
+    process.env.MAIL_FROM?.trim() ||
+    (provider === 'smtp' ? requireSmtpConfig().from : DEFAULT_RESEND_FROM)
+  const to = resolveFeedbackNotificationEmail()
+
+  const replyTo = params.contactEmail?.trim()
+  const headers = preheader ? { 'X-Preheader': preheader } : undefined
+
+  if (provider === 'resend') {
+    const apiKey = process.env.RESEND_API_KEY?.trim()
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        subject,
+        text,
+        html,
+        headers,
+        reply_to: replyTo ? [replyTo] : undefined,
+      }),
+    })
+    if (!res.ok) {
+      const detail = await res.text()
+      throw new Error(`Resend failed (${res.status}): ${detail}`)
+    }
+    return
+  }
+
+  if (provider === 'sendgrid') {
+    await sendViaSendGrid({
+      to,
+      subject,
+      text,
+      html,
+      from,
+      category: 'route-feedback',
+      preheader,
+      replyTo: replyTo || undefined,
+    })
+    return
+  }
+
+  await getTransporter().sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html,
+    replyTo: replyTo || undefined,
+    headers,
+  })
 }
 
 /** @param {{ applicantEmail: string, approveUrl: string }} params */

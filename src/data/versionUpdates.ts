@@ -218,8 +218,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed iPad Safari crashes when toggling Layers on map-draw/island map (dual full-size decode): off-DOM preload with a single visible image and disabled layer button while loading.",
           },
           {
-            zh: "修复 iPad Layers 无法切换详细图：详细层恢复降采样 SIMap 显示，并修正同 URL 时不换图、加载中禁用按钮等问题。",
-            en: "Fixed iPad Layers not switching to detailed: downsampled SIMap display restored, img swap on layer change, and layer button no longer stuck disabled.",
+            zh: "线路资料反馈提交后会向维护者邮箱发送通知（需配置用户 API 邮件服务与 FEEDBACK_NOTIFICATION_EMAIL）；此前仅写入数据库。",
+            en: "Route data feedback now emails the maintainer when mail is configured (FEEDBACK_NOTIFICATION_EMAIL); previously it was database-only.",
           },
           {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
