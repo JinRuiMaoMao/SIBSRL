@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
@@ -6,6 +6,7 @@ import { chromium } from 'playwright'
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const logoPath = resolve(root, 'public', 'sibs-logo.png')
 const outPath = resolve(root, 'public', 'og-share.png')
+const NOTO_FONT_DIR = resolve(root, 'node_modules/@fontsource/noto-sans-sc/files')
 
 function readLogoDataUri() {
   if (!existsSync(logoPath)) return ''
@@ -13,18 +14,44 @@ function readLogoDataUri() {
   return `data:image/png;base64,${base64}`
 }
 
-function buildOgShareHtml(logoDataUri) {
+function buildEmbeddedNotoSansScFontCss() {
+  const weights = [400, 700, 800]
+  return weights
+    .map((weight) => {
+      const file = resolve(
+        NOTO_FONT_DIR,
+        `noto-sans-sc-chinese-simplified-${weight}-normal.woff2`,
+      )
+      if (!existsSync(file)) {
+        throw new Error(
+          `Missing Noto Sans SC (run npm install). Expected: ${file}`,
+        )
+      }
+      const data = readFileSync(file).toString('base64')
+      return `@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: ${weight};
+  font-display: block;
+  src: url('data:font/woff2;base64,${data}') format('woff2');
+}`
+    })
+    .join('\n')
+}
+
+function buildOgShareHtml(logoDataUri, fontCss) {
   return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <style>
+    ${fontCss}
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       width: 1200px;
       height: 630px;
       overflow: hidden;
-      font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: 'Noto Sans SC', sans-serif;
     }
     .card {
       width: 1200px;
@@ -77,6 +104,7 @@ function buildOgShareHtml(logoDataUri) {
     .sub {
       margin-top: 20px;
       font-size: 30px;
+      font-weight: 400;
       color: #94a3b8;
       z-index: 1;
     }
@@ -97,6 +125,7 @@ function buildOgShareHtml(logoDataUri) {
     }
     .cta-note {
       font-size: 24px;
+      font-weight: 400;
       color: #c8d3e4;
     }
   </style>
@@ -121,7 +150,8 @@ function buildOgShareHtml(logoDataUri) {
 export async function generateOgShareImage(options = {}) {
   const dest = options.dest ?? outPath
   const logoDataUri = readLogoDataUri()
-  const html = buildOgShareHtml(logoDataUri)
+  const fontCss = buildEmbeddedNotoSansScFontCss()
+  const html = buildOgShareHtml(logoDataUri, fontCss)
 
   const browser = await chromium.launch({ headless: true })
   try {
@@ -130,6 +160,16 @@ export async function generateOgShareImage(options = {}) {
       deviceScaleFactor: 1,
     })
     await page.setContent(html, { waitUntil: 'load' })
+    await page.evaluate(async () => {
+      const loads = [
+        document.fonts.load('600 28px "Noto Sans SC"'),
+        document.fonts.load('800 64px "Noto Sans SC"'),
+        document.fonts.load('400 30px "Noto Sans SC"'),
+        document.fonts.load('700 28px "Noto Sans SC"'),
+      ]
+      await Promise.all(loads)
+      await document.fonts.ready
+    })
     await page.screenshot({ path: dest, type: 'png' })
     return { ok: true, dest }
   } finally {

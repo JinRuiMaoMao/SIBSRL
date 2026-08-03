@@ -234,6 +234,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed GitHub Pages deploy omitting og-share.png, which broke Open Graph image previews (404).",
           },
           {
+            zh: "修复 og-share 分享图在 Linux/CI 无中文字体导致中文显示为方框：生成时嵌入 Noto Sans SC。",
+            en: "Fixed tofu squares in og-share.png by embedding Noto Sans SC when rendering on Linux/CI.",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },
