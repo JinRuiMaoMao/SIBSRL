@@ -222,6 +222,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Route data feedback now emails the maintainer when mail is configured (FEEDBACK_NOTIFICATION_EMAIL); previously it was database-only.",
           },
           {
+            zh: "发布页与线路落地页增加 SEO 关键词、canonical、Open Graph 与 Twitter Card 元数据，便于 Discord / QQ / 微信等链接预览与搜索引擎收录。",
+            en: "Published and per-route landing pages now include SEO keywords, canonical URLs, Open Graph, and Twitter Card meta for richer link previews and search indexing.",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },

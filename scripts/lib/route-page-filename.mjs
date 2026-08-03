@@ -11,6 +11,11 @@ export function routeIdToPageFilename(routeId) {
     .join('')
 }
 
+/** @param {string} routeId */
+export function buildRoutePagePath(routeId) {
+  return `routes/${routeIdToPageFilename(routeId)}.html`
+}
+
 /** @param {string} routeId @param {boolean} [fromRoutesDir] */
 export function buildRouteLandingUrl(routeId, fromRoutesDir = true) {
   const prefix = fromRoutesDir ? '../' : './'

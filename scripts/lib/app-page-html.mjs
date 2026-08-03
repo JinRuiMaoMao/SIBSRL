@@ -21,6 +21,15 @@ export function findAppPageByPath(pathOnly) {
   return APP_PAGES.find((page) => page.devFile === name || page.publishFile === name)
 }
 
+export {
+  injectSocialMeta,
+  socialMetaForAppPage,
+  socialMetaForRoutePage,
+  buildCanonicalSiteUrl,
+  buildOgImageUrl,
+  SITE_SOCIAL_DEFAULTS,
+} from './site-social-meta.mjs'
+
 /** @param {string} html @param {AppTabId} tab */
 export function injectAppTabMeta(html, tab) {
   const meta = `<meta name="app-tab" content="${tab}" />`

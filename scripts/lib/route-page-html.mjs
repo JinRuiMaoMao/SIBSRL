@@ -1,4 +1,11 @@
-import { injectDevToolsBlock, injectNoScriptGuard, injectThemeBootstrap, buildFaviconLinks } from './app-page-html.mjs'
+import {
+  injectDevToolsBlock,
+  injectNoScriptGuard,
+  injectThemeBootstrap,
+  buildFaviconLinks,
+  injectSocialMeta,
+  socialMetaForRoutePage,
+} from './app-page-html.mjs'
 import { routeIdToPageFilename, buildRouteLandingUrl } from './route-page-filename.mjs'
 import { ROUTE_DATA_SCRIPT_ID } from './extract-route-page-data.mjs'
 
@@ -12,14 +19,13 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
   const safeTitle = aliasId.replace(/[<>&"]/g, (ch) =>
     ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[ch] ?? ch,
   )
-  return injectNoScriptGuard(injectThemeBootstrap(injectDevToolsBlock(`<!DOCTYPE html>
+  const html = injectNoScriptGuard(injectThemeBootstrap(injectDevToolsBlock(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   ${buildFaviconLinks('', '../')}
   <title>${safeTitle} · 阳光群岛线路查询</title>
-  <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
   <style>
     :root {
@@ -53,6 +59,7 @@ export function renderRouteAliasRedirectHtml(aliasId, displayId) {
 </body>
 </html>
 `)))
+  return injectSocialMeta(html, socialMetaForRoutePage(displayId, { id: displayId }))
 }
 
 export function renderRoutePageHtml(routeId, routeData) {
@@ -62,14 +69,13 @@ export function renderRoutePageHtml(routeId, routeData) {
   )
   const json = JSON.stringify(routeData, null, 2)
 
-  return injectNoScriptGuard(injectThemeBootstrap(injectDevToolsBlock(`<!DOCTYPE html>
+  const html = injectNoScriptGuard(injectThemeBootstrap(injectDevToolsBlock(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   ${buildFaviconLinks('', '../')}
   <title>${safeTitle} · 阳光群岛线路查询</title>
-  <link rel="canonical" href="${landing}" />
   <meta http-equiv="refresh" content="0;url=${landing}" />
   <style>
     :root {
@@ -117,6 +123,9 @@ ${json}
 </body>
 </html>
 `)))
+  const buildTag =
+    process.env.VITE_BUILD_TAG?.trim() || process.env.BUILD_TAG?.trim() || ''
+  return injectSocialMeta(html, socialMetaForRoutePage(routeId, routeData, buildTag))
 }
 
 export { routeIdToPageFilename }
