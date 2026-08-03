@@ -177,9 +177,8 @@ export function IslandMapViewer() {
     window.location.href = getMapDrawPageHref()
   }, [routeOverlay])
   const toggleLayer = useCallback(() => {
-    if (mapLayerLoading) return
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
-  }, [mapLayerLoading])
+  }, [])
 
   useEffect(() => {
     document.documentElement.classList.toggle('island-map-fullscreen-open', expanded)
@@ -228,7 +227,6 @@ export function IslandMapViewer() {
             type="button"
             className="island-map-btn island-map-btn--layers"
             onClick={toggleLayer}
-            disabled={mapLayerLoading}
             aria-busy={mapLayerLoading}
             aria-label={t('islandMapLayersAria')}
             title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}

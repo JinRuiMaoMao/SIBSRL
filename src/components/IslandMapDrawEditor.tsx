@@ -1449,10 +1449,8 @@ export function IslandMapDrawEditor({
                   <button
                     type="button"
                     className="route-editor-btn"
-                    disabled={mapLayerLoading}
                     aria-busy={mapLayerLoading}
                     onClick={() => {
-                      if (mapLayerLoading) return
                       setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
                     }}
                   >

@@ -178,9 +178,8 @@ export function IslandMapEmbeddedPane() {
   ])
 
   const toggleLayer = useCallback(() => {
-    if (mapLayerLoading) return
     setLayer((current) => (current === 'general' ? 'detailed' : 'general'))
-  }, [mapLayerLoading])
+  }, [])
 
   return (
     <div
@@ -205,7 +204,6 @@ export function IslandMapEmbeddedPane() {
           type="button"
           className="island-map-btn island-map-btn--layers island-map-layers-control"
           onClick={toggleLayer}
-          disabled={mapLayerLoading}
           aria-busy={mapLayerLoading}
           aria-label={t('islandMapLayersAria')}
           title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
