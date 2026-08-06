@@ -5,12 +5,14 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const out = resolve(root, process.argv[2] ?? '_site')
 
-const COPY_DIRS = ['assets', 'audio', 'maps', 'route-maps', 'routes', 'normal', 'real', 'world-map-routes']
+const COPY_DIRS = ['assets', 'audio', 'company-logos', 'maps', 'route-maps', 'routes', 'normal', 'real', 'world-map-routes']
 const COPY_FILES = [
   'sw.js',
   '.nojekyll',
   'sibs-logo.png',
   'apple-touch-icon.png',
+  'og-share.png',
+  'og-share-v2.png',
   'world-map-stops.json',
   'route-detail-stops.json',
 ]
@@ -36,6 +38,12 @@ for (const file of COPY_FILES) {
   if (existsSync(src)) {
     cpSync(src, join(out, file))
   }
+}
+
+const distOgShare = join(root, 'dist', 'og-share-v2.png')
+if (!existsSync(join(out, 'og-share-v2.png')) && existsSync(distOgShare)) {
+  cpSync(distOgShare, join(out, 'og-share-v2.png'))
+  console.log('[gh-pages] copied og-share-v2.png from dist/')
 }
 
 console.log(`[gh-pages] artifact prepared → ${out}`)

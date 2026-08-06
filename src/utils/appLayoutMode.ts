@@ -1,6 +1,13 @@
 export type AppLayoutMode = 'normal' | 'real'
 
 const LAYOUT_SEGMENT_RE = /\/(normal|real)(?:\/|$)/i
+const LAYOUT_SUBDIR_RE = /\/(normal|real|routes)\//i
+
+function siteRootWithTrailingSlash(root: string): string {
+  if (!root) return './'
+  if (root.endsWith('/')) return root
+  return `${root}/`
+}
 
 export function readAppLayoutMode(): AppLayoutMode {
   const meta = document.querySelector('meta[name="app-layout-mode"]')?.getAttribute('content')?.trim()
@@ -24,19 +31,59 @@ export function isLayoutScopedPage(): boolean {
 /** Asset/audio/map paths: use Vite BASE on GitHub Pages; ../ under normal|real|routes when relative. */
 export function getSiteAssetRoot(): string {
   const base = import.meta.env.BASE ?? './'
-  if (base.startsWith('/')) {
-    return base.endsWith('/') ? base : `${base}/`
-  }
   const path = window.location.pathname.replace(/\\/g, '/')
-  if (/\/(normal|real|routes)\//i.test(path)) return '../'
+  const inLayoutSubdir = LAYOUT_SUBDIR_RE.test(path)
+  if (base.startsWith('/')) {
+    if (inLayoutSubdir) {
+      try {
+        return siteRootWithTrailingSlash(new URL('../', window.location.href).pathname)
+      } catch {
+        return siteRootWithTrailingSlash(base)
+      }
+    }
+    return siteRootWithTrailingSlash(base)
+  }
+  if (inLayoutSubdir) return '../'
   return './'
+}
+
+/** Absolute site root URL (trailing slash) for resolving static assets on any page depth. */
+export function getSiteBaseUrl(): string {
+  const root = getSiteAssetRoot()
+  try {
+    if (/^https?:\/\//i.test(root)) return siteRootWithTrailingSlash(root)
+    return new URL(root, window.location.href).href
+  } catch {
+    try {
+      return new URL('/', window.location.href).href
+    } catch {
+      return `${window.location.origin}/`
+    }
+  }
 }
 
 /** Resolve ./audio/... or audio/... against the site root (handles normal/real subdirs + GitHub Pages BASE). */
 export function resolveSiteAssetUrl(relativePath: string): string {
-  if (/^(https?:|\/|data:|blob:)/.test(relativePath)) return relativePath
+  if (/^(https?:|data:|blob:)/i.test(relativePath)) return relativePath
+  if (relativePath.startsWith('/')) {
+    try {
+      return new URL(relativePath, window.location.origin).href
+    } catch {
+      return relativePath
+    }
+  }
   const clean = relativePath.replace(/^\.\//, '')
-  return `${getSiteAssetRoot()}${clean}`
+  try {
+    return new URL(clean, getSiteBaseUrl()).href
+  } catch {
+    return `${getSiteAssetRoot()}${clean}`
+  }
+}
+
+export function getIslandMapLayerUrl(layer: 'general' | 'detailed'): string {
+  return resolveSiteAssetUrl(
+    layer === 'general' ? 'maps/SIMapGerenal.png' : 'maps/SIMap.png',
+  )
 }
 
 export function getLayoutScopedHref(filename: string): string {

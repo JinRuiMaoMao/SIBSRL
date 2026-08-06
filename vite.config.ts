@@ -126,7 +126,7 @@ function publishStandalonePlugin(buildTag: string): Plugin {
     name: 'publish-standalone-root',
     apply: 'build',
     closeBundle() {
-      publishStandalone({ buildTag })
+      return publishStandalone({ buildTag })
     },
   }
 }

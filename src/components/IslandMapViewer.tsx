@@ -29,6 +29,7 @@ export function IslandMapViewer() {
   const [expanded, setExpanded] = useState(false)
   const [widgetHidden, setWidgetHidden] = useState(false)
   const [layer, setLayer] = useState<MapLayer>('general')
+  const [mapLayerLoading, setMapLayerLoading] = useState(false)
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
@@ -204,6 +205,7 @@ export function IslandMapViewer() {
       routeOverlay={surfaceRouteOverlay}
       maxZoomRatio={8}
       onImageSizeChange={setImageSize}
+      onMapLayerLoadingChange={setMapLayerLoading}
       {...stopSurfaceProps}
     />
   )
@@ -225,6 +227,7 @@ export function IslandMapViewer() {
             type="button"
             className="island-map-btn island-map-btn--layers"
             onClick={toggleLayer}
+            aria-busy={mapLayerLoading}
             aria-label={t('islandMapLayersAria')}
             title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
           >
@@ -278,6 +281,7 @@ export function IslandMapViewer() {
               type="button"
               className="island-map-btn island-map-btn--layers island-map-btn--layers-compact"
               onClick={toggleLayer}
+              aria-busy={mapLayerLoading}
               aria-label={t('islandMapLayersAria')}
               title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
             >

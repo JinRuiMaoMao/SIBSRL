@@ -206,6 +206,38 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         ],
         fixes: [
           {
+            zh: "运营商 Logo 改为构建产物绝对地址加载，加载失败时回退为代号文字，避免部分设备出现方框、问号或仅显示文件名。",
+            en: "Operator logos now use absolute bundled asset URLs with a text fallback when load fails, fixing boxes/question marks or filename-only display on some devices.",
+          },
+          {
+            zh: "修复 normal/real 子目录下运营商 Logo 与 map-draw 群岛底图路径错误（含 GitHub Pages 部署）。",
+            en: "Fixed operator logo and map-draw island map URLs under normal/real (including GitHub Pages deploy).",
+          },
+          {
+            zh: "修复 iPad Safari 上 map-draw／群岛地图切换 Layers 时因同时解码两张全尺寸底图导致页面崩溃：改为离屏预加载、单张显示，并在加载期间禁用图层按钮。",
+            en: "Fixed iPad Safari crashes when toggling Layers on map-draw/island map (dual full-size decode): off-DOM preload with a single visible image and disabled layer button while loading.",
+          },
+          {
+            zh: "线路资料反馈提交后会向维护者邮箱发送通知（需配置用户 API 邮件服务与 FEEDBACK_NOTIFICATION_EMAIL）；此前仅写入数据库。",
+            en: "Route data feedback now emails the maintainer when mail is configured (FEEDBACK_NOTIFICATION_EMAIL); previously it was database-only.",
+          },
+          {
+            zh: "发布页与线路落地页增加 SEO 关键词、canonical、Open Graph 与 Twitter Card 元数据，便于 Discord / QQ / 微信等链接预览与搜索引擎收录。",
+            en: "Published and per-route landing pages now include SEO keywords, canonical URLs, Open Graph, and Twitter Card meta for richer link previews and search indexing.",
+          },
+          {
+            zh: "新增 1200×630 社交分享图 og-share.png（标题与 CTA），并加长页面与 og:title；默认分享图含 og:image 宽高元数据。",
+            en: "Added 1200×630 og-share.png with headline and CTA, longer page/og titles, and og:image width/height meta for the default share image.",
+          },
+          {
+            zh: "修复 GitHub Pages 部署未包含 og-share.png 导致社交预览图 404 的问题。",
+            en: "Fixed GitHub Pages deploy omitting og-share.png, which broke Open Graph image previews (404).",
+          },
+          {
+            zh: "修复 og-share 分享图在 Linux/CI 无中文字体导致中文显示为方框：生成时嵌入 Noto Sans SC。",
+            en: "Fixed tofu squares in og-share.png by embedding Noto Sans SC when rendering on Linux/CI.",
+          },
+          {
             zh: "修复 normal/real 子目录下音频、走向图与地图走线资源路径错误。",
             en: "Fixed audio, path-map, and route overlay asset URLs under normal/real subdirectories.",
           },

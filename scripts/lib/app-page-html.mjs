@@ -1,13 +1,50 @@
 /** @typedef {'routes' | 'broadcast' | 'music' | 'complaints' | 'trivia' | 'updates'} AppTabId */
 
-/** @type {Array<{ tab: AppTabId, devFile: string, publishFile: string, titleZh: string }>} */
+/** @type {Array<{ tab: AppTabId, devFile: string, publishFile: string, titleZh: string, seoTitleZh?: string }>} */
 export const APP_PAGES = [
-  { tab: 'routes', devFile: 'dev.html', publishFile: 'routes.html', titleZh: '线路查询' },
-  { tab: 'broadcast', devFile: 'pages/ann.html', publishFile: 'ann.html', titleZh: '广播' },
-  { tab: 'music', devFile: 'pages/music.html', publishFile: 'music.html', titleZh: '音乐' },
-  { tab: 'complaints', devFile: 'pages/complaints.html', publishFile: 'complaints.html', titleZh: 'NPC' },
-  { tab: 'trivia', devFile: 'pages/trivia.html', publishFile: 'trivia.html', titleZh: '你知道吗' },
-  { tab: 'updates', devFile: 'pages/updates.html', publishFile: 'updates.html', titleZh: '版本更新' },
+  {
+    tab: 'routes',
+    devFile: 'dev.html',
+    publishFile: 'routes.html',
+    titleZh: '线路查询',
+    seoTitleZh:
+      '阳光群岛 Roblox 巴士模拟器 (SIBS) 官方线路查询工具 | 站序、车费、群岛地图与报站音频',
+  },
+  {
+    tab: 'broadcast',
+    devFile: 'pages/ann.html',
+    publishFile: 'ann.html',
+    titleZh: '广播',
+    seoTitleZh: '阳光群岛 SIBS 广播与报站资源 | Roblox 巴士模拟器线路音频参考',
+  },
+  {
+    tab: 'music',
+    devFile: 'pages/music.html',
+    publishFile: 'music.html',
+    titleZh: '音乐',
+    seoTitleZh: '阳光群岛巴士线路音乐与车厂音乐试听 | SIBS Roblox 巴士模拟器',
+  },
+  {
+    tab: 'complaints',
+    devFile: 'pages/complaints.html',
+    publishFile: 'complaints.html',
+    titleZh: 'NPC',
+    seoTitleZh: '阳光群岛 NPC 乘客语音试听 | SIBS Roblox 巴士模拟器投诉与互动音频',
+  },
+  {
+    tab: 'trivia',
+    devFile: 'pages/trivia.html',
+    publishFile: 'trivia.html',
+    titleZh: '你知道吗',
+    seoTitleZh: '阳光群岛巴士冷知识与你知道吗 | SIBS Roblox 巴士模拟器趣味资料',
+  },
+  {
+    tab: 'updates',
+    devFile: 'pages/updates.html',
+    publishFile: 'updates.html',
+    titleZh: '版本更新',
+    seoTitleZh: '阳光群岛线路查询版本更新日志 | SIBS Route Lookup 功能与数据更新',
+  },
 ]
 
 /** @param {AppTabId} tab */
@@ -20,6 +57,16 @@ export function findAppPageByPath(pathOnly) {
   const name = pathOnly.split('/').pop()?.toLowerCase() ?? ''
   return APP_PAGES.find((page) => page.devFile === name || page.publishFile === name)
 }
+
+export {
+  injectSocialMeta,
+  socialMetaForAppPage,
+  socialMetaForRoutePage,
+  buildCanonicalSiteUrl,
+  buildOgImageUrl,
+  readOgImageContentVersion,
+  SITE_SOCIAL_DEFAULTS,
+} from './site-social-meta.mjs'
 
 /** @param {string} html @param {AppTabId} tab */
 export function injectAppTabMeta(html, tab) {
@@ -270,6 +317,8 @@ export function rewritePublishedHtmlForLayoutSubdir(html) {
     .replace(/"\.\/route-maps\//g, '"../route-maps/')
     .replace(/href="\.\/sibs-logo/g, 'href="../sibs-logo')
     .replace(/src="\.\/sibs-logo/g, 'src="../sibs-logo')
+    .replace(/"\.\/company-logos\//g, '"../company-logos/')
+    .replace(/'\.\/company-logos\//g, "'../company-logos/")
     .replace(/var INDEX = '\.\/index\.html';/g, "var INDEX = '../index.html';")
     .replace(/register\('\.\/sw\.js'/g, "register('../sw.js'")
 }

@@ -54,7 +54,7 @@ import {
   isGitHubOAuthConfigured,
   isGoogleOAuthConfigured,
 } from './lib/user-oauth.mjs'
-import { resolveMailProvider, sendVerificationEmail, sendMapDrawPermissionRequestEmail, buildMapDrawApprovalResultHtml } from './lib/user-mail.mjs'
+import { resolveMailProvider, sendVerificationEmail, sendMapDrawPermissionRequestEmail, buildMapDrawApprovalResultHtml, sendRouteFeedbackNotificationEmail, resolveFeedbackNotificationEmail } from './lib/user-mail.mjs'
 
 const DEFAULT_PORT = 8788
 
@@ -672,8 +672,9 @@ async function handleRouteFeedback(req, res) {
     return error(req, res, 400, 'invalid_message', 'Feedback message is too long')
   }
 
+  const feedbackId = randomUserId()
   insertRouteFeedback(db, {
-    id: randomUserId(),
+    id: feedbackId,
     routeId,
     category,
     message,
@@ -681,6 +682,22 @@ async function handleRouteFeedback(req, res) {
     clientIp: ip,
     createdAt: Date.now(),
   })
+
+  try {
+    await sendRouteFeedbackNotificationEmail({
+      routeId,
+      category,
+      message,
+      contactEmail,
+      feedbackId,
+      clientIp: ip,
+    })
+    console.info(
+      `[user-api] route feedback notification sent to ${resolveFeedbackNotificationEmail()}`,
+    )
+  } catch (err) {
+    console.error('[user-api] route feedback mail failed:', err)
+  }
 
   json(req, res, 201, { ok: true })
 }

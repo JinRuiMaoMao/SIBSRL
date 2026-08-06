@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, startTransition } from 'react'
 import type { IslandMapRouteOverlay } from '../contexts/IslandMapOverlayContext'
 import { buildRouteMapViewerDisplay, type RouteMapViewerDisplay } from '../utils/routeMapViewerDisplay'
 import { resolveRouteMapImportPayload } from '../utils/routeMapOverlaySource'
@@ -42,7 +42,9 @@ export function useRouteMapViewerDisplayForImageSize(
         imageSize.height,
         routeOverlay.routeNumber || parsed.routeId,
       )
-      setDisplay(rebuilt ?? routeOverlay.importedPath)
+      startTransition(() => {
+        setDisplay(rebuilt ?? routeOverlay.importedPath)
+      })
     })()
 
     return () => {

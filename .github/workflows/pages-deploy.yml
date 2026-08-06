@@ -32,10 +32,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium (og-share.png)
+        run: npx playwright install chromium
+
       - name: Build for GitHub Pages
         run: npm run build:only
         env:
           VITE_BASE: /SIBSRL/
+
+      - name: Verify social share image
+        run: node scripts/verify-og-share.mjs
 
       - name: Prepare Pages artifact
         run: node scripts/prepare-gh-pages-artifact.mjs _site

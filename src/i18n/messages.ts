@@ -883,6 +883,17 @@ const messagesZhHans = {
   directionWestCompact: '西行',
   navMain: '主导航',
   tabRoutes: '线路查询',
+  socialShareTitleRoutes:
+    '阳光群岛 Roblox 巴士模拟器 (SIBS) 官方线路查询工具 | 站序、车费、群岛地图与报站音频',
+  socialShareTitleBroadcast:
+    '阳光群岛 SIBS 广播与报站资源 | Roblox 巴士模拟器线路音频参考',
+  socialShareTitleMusic: '阳光群岛巴士线路音乐与车厂音乐试听 | SIBS Roblox 巴士模拟器',
+  socialShareTitleComplaints:
+    '阳光群岛 NPC 乘客语音试听 | SIBS Roblox 巴士模拟器投诉与互动音频',
+  socialShareTitleTrivia: '阳光群岛巴士冷知识与你知道吗 | SIBS Roblox 巴士模拟器趣味资料',
+  socialShareTitleUpdates: '阳光群岛线路查询版本更新日志 | SIBS Route Lookup 功能与数据更新',
+  socialShareTitleStart:
+    '阳光群岛 Roblox 巴士模拟器线路查询入口 | SIBS 站序、车费、群岛地图与每日挑战工具',
   tabBroadcast: '广播',
   tabMusic: '音乐',
   tabComplaints: 'NPC',
@@ -1836,6 +1847,18 @@ const messagesEn: Record<MessageKey, string> = {
   directionWestCompact: 'West',
   navMain: 'Main navigation',
   tabRoutes: 'Routes',
+  socialShareTitleRoutes:
+    'Sunshine Islands Roblox bus routes | SIBS stops, fares, island map & stop audio',
+  socialShareTitleBroadcast:
+    'SIBS Sunshine Islands broadcast & stop audio references | Roblox bus simulator',
+  socialShareTitleMusic:
+    'Sunshine Islands route & depot music | SIBS Roblox bus simulator audio',
+  socialShareTitleComplaints:
+    'Sunshine Islands NPC passenger voices | SIBS Roblox bus simulator clips',
+  socialShareTitleTrivia: 'Sunshine Islands bus trivia | SIBS Roblox bus simulator facts',
+  socialShareTitleUpdates: 'SIBS Route Lookup changelog | Sunshine Islands tool updates',
+  socialShareTitleStart:
+    'Sunshine Islands Roblox bus route hub | SIBS stops, fares, map & daily challenge',
   tabBroadcast: 'Broadcast',
   tabMusic: 'Music',
   tabComplaints: 'NPC',

@@ -5,14 +5,15 @@ alwaysApply: true
 
 # Push after changes
 
-After completing code or data changes in this project, **always commit and push to `origin/master`** before finishing the task (unless the user explicitly says not to push).
+After completing code or data changes in this project, **always commit and push directly to `origin/master`** before finishing the task (unless the user explicitly says not to push). Do **not** use feature branches or open PRs for routine work—merge target is always `master`.
 
 Workflow:
 
 1. Run `npm run build:only` (see `build-after-changes.mdc`).
-2. `git add` relevant files (not secrets).
-3. Commit with a concise message focused on why.
-4. `git push origin master`
+2. `git checkout master` and `git pull origin master` if needed.
+3. `git add` relevant files (not secrets).
+4. Commit with a concise message focused on why.
+5. `git push origin master`
 
 Do not force-push unless the user explicitly requests it.
 Do not push if there are no changes to commit.

@@ -23,6 +23,7 @@ export function IslandMapEmbeddedPane() {
   const overlayContext = useOptionalIslandMapOverlay()
   const routeOverlay = overlayContext?.routeOverlay ?? null
   const [layer, setLayer] = useState<MapLayer>('general')
+  const [mapLayerLoading, setMapLayerLoading] = useState(false)
   const [mapView, setMapView] = useState<NormalizedMapView | null>(null)
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
@@ -195,6 +196,7 @@ export function IslandMapEmbeddedPane() {
           routeOverlay={surfaceRouteOverlay}
           maxZoomRatio={8}
           onImageSizeChange={setImageSize}
+          onMapLayerLoadingChange={setMapLayerLoading}
           {...stopSurfaceProps}
         />
         {stopDetailPopover}
@@ -202,6 +204,7 @@ export function IslandMapEmbeddedPane() {
           type="button"
           className="island-map-btn island-map-btn--layers island-map-layers-control"
           onClick={toggleLayer}
+          aria-busy={mapLayerLoading}
           aria-label={t('islandMapLayersAria')}
           title={layer === 'general' ? t('islandMapLayerDetailed') : t('islandMapLayerGeneral')}
         >

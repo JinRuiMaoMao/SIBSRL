@@ -25,6 +25,12 @@ import {
   injectSwVersionBootstrap,
   relocateAppBundleScript,
   syncFaviconLink,
+  injectSocialMeta,
+  socialMetaForAppPage,
+  buildCanonicalSiteUrl,
+  buildOgImageUrl,
+  readOgImageContentVersion,
+  SITE_SOCIAL_DEFAULTS,
   APP_LAYOUT_PUBLISH,
   prepareLayoutScopedHtml,
   buildLegacyLayoutRedirectHtml,
@@ -36,6 +42,7 @@ import { syncBrandAssets } from './sync-brand-assets.mjs'
 import { syncCompanyLogos } from './sync-company-logos.mjs'
 import { syncWorldMapImages } from './sync-world-map-images.mjs'
 import { buildWorldMapRoutesManifest } from './build-world-map-routes-manifest.mjs'
+import { generateOgShareImage } from './generate-og-share.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const built = resolve(root, 'dist', 'dev.html')
@@ -113,7 +120,7 @@ function writeLegacyRedirect(filename, targetPath, siteRoot, distRoot) {
  * 将 dist/dev.html 同步为根目录各栏目 HTML（index / ann / music …）。
  * @param {{ buildTag?: string }} [options]
  */
-export function publishStandalone(options = {}) {
+export async function publishStandalone(options = {}) {
   const buildTag = options.buildTag ?? new Date().toISOString()
 
   if (!existsSync(built)) {
@@ -148,9 +155,45 @@ export function publishStandalone(options = {}) {
     ),
   )
 
+  syncBrandAssets()
+
+  const ogSharePublic = resolve(root, 'public', 'og-share.png')
+  const ogShareV2Public = resolve(root, 'public', 'og-share-v2.png')
+  const shouldRegenerateOgShare =
+    process.env.REGENERATE_OG_SHARE === '1' ||
+    (process.env.CI !== 'true' && !existsSync(ogShareV2Public))
+
+  if (shouldRegenerateOgShare) {
+    try {
+      await generateOgShareImage()
+    } catch (err) {
+      console.warn('[publish] og-share.png 生成失败，将回退默认分享图:', err?.message ?? err)
+    }
+  } else if (process.env.CI === 'true') {
+    console.log('[publish] CI：使用仓库内已提交的 og-share 图，跳过 Playwright 重新生成')
+  }
+
+  if (existsSync(ogSharePublic)) {
+    cpSync(ogSharePublic, ogShareV2Public)
+    cpSync(ogSharePublic, resolve(root, 'og-share-v2.png'))
+    cpSync(ogSharePublic, resolve(root, 'dist', 'og-share-v2.png'))
+  }
+
+  process.env.OG_IMAGE_CONTENT_VERSION = readOgImageContentVersion({ root })
+
   for (const page of APP_PAGES) {
     let html = injectAppTabMeta(baseHtml, page.tab)
-    html = adjustAppPageTitle(html, page.titleZh)
+    const seoTitle = page.seoTitleZh
+    html = adjustAppPageTitle(html, seoTitle ?? page.titleZh, { standalone: Boolean(seoTitle) })
+    html = injectSocialMeta(
+      html,
+      socialMetaForAppPage({
+        tab: page.tab,
+        titleZh: page.titleZh,
+        seoTitleZh: page.seoTitleZh,
+        buildTag,
+      }),
+    )
     if (page.tab === 'routes') {
       publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
     } else {
@@ -162,6 +205,16 @@ export function publishStandalone(options = {}) {
 
   let startHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
   startHtml = adjustAppPageTitle(startHtml, '阳光群岛巴士线路查询', { standalone: true })
+  startHtml = injectSocialMeta(startHtml, {
+    title:
+      '阳光群岛 Roblox 巴士模拟器线路查询入口 | SIBS 站序、车费、群岛地图与每日挑战工具',
+    description:
+      '阳光群岛 Roblox 巴士模拟器 (SIBS) 官方向线路查询入口：站序、车费、群岛地图、每日挑战与工具下载。Sunshine Islands Bus Simulator (SIBS) route lookup hub.',
+    url: buildCanonicalSiteUrl('index.html'),
+    imageUrl: buildOgImageUrl(buildTag),
+    keywords: SITE_SOCIAL_DEFAULTS.keywords,
+    siteName: SITE_SOCIAL_DEFAULTS.siteName,
+  })
   writeFileSync(resolve(root, 'index.html'), startHtml)
   writeFileSync(resolve(root, 'dist', 'index.html'), startHtml)
 
@@ -173,6 +226,16 @@ export function publishStandalone(options = {}) {
   realStartHtml = prepareLayoutScopedHtml(realStartHtml, 'real', true)
   realStartHtml = injectRealLayoutMusicEarlyBootstrap(realStartHtml)
   realStartHtml = adjustAppPageTitle(realStartHtml, '阳光群岛巴士模拟器', { standalone: true })
+  realStartHtml = injectSocialMeta(realStartHtml, {
+    title:
+      '阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图',
+    description:
+      '阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map.',
+    url: buildCanonicalSiteUrl('real/index.html'),
+    imageUrl: buildOgImageUrl(buildTag),
+    keywords: SITE_SOCIAL_DEFAULTS.keywords,
+    siteName: SITE_SOCIAL_DEFAULTS.siteName,
+  })
   mkdirSync(resolve(root, 'real'), { recursive: true })
   mkdirSync(resolve(root, 'dist', 'real'), { recursive: true })
   writeFileSync(resolve(root, 'real', 'index.html'), realStartHtml)
@@ -191,24 +254,56 @@ export function publishStandalone(options = {}) {
 
   let accountHtml = injectAccountPageMeta(baseHtml)
   accountHtml = adjustAppPageTitle(accountHtml, '个人中心')
+  accountHtml = injectSocialMeta(accountHtml, {
+    title: '个人中心 · 阳光群岛线路查询',
+    description: 'SIBS 线路查询账号：收藏线路、同步设置与资料反馈。SIBS Route Lookup account and profile.',
+    url: buildCanonicalSiteUrl('normal/account.html'),
+    imageUrl: buildOgImageUrl(buildTag),
+    keywords: SITE_SOCIAL_DEFAULTS.keywords,
+    siteName: SITE_SOCIAL_DEFAULTS.siteName,
+  })
   publishHtmlToLayoutDirs(accountHtml, 'account.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
   writeRealRedirectToNormal('account.html', 'normal/account.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('account.html', 'normal/account.html', root, resolve(root, 'dist'))
 
   let settingsHtml = injectSettingsPageMeta(baseHtml)
   settingsHtml = adjustAppPageTitle(settingsHtml, '设置')
+  settingsHtml = injectSocialMeta(settingsHtml, {
+    title: '设置 · 阳光群岛线路查询',
+    description: '主题、语言、线路列表与资料反馈等站点设置。Site preferences and route data feedback.',
+    url: buildCanonicalSiteUrl('normal/settings.html'),
+    imageUrl: buildOgImageUrl(buildTag),
+    keywords: SITE_SOCIAL_DEFAULTS.keywords,
+    siteName: SITE_SOCIAL_DEFAULTS.siteName,
+  })
   publishHtmlToLayoutDirs(settingsHtml, 'settings.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
   writeRealRedirectToNormal('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
 
   let mapDrawHtml = injectMapDrawPageMeta(baseHtml)
   mapDrawHtml = adjustAppPageTitle(mapDrawHtml, '地图走线编辑')
+  mapDrawHtml = injectSocialMeta(mapDrawHtml, {
+    title: '地图走线编辑 · 阳光群岛线路查询',
+    description: '阳光群岛地图走线绘制与编辑工具 (Beta)。Sunshine Islands island map route draw editor.',
+    url: buildCanonicalSiteUrl('normal/map-draw.html'),
+    imageUrl: buildOgImageUrl(buildTag),
+    keywords: SITE_SOCIAL_DEFAULTS.keywords,
+    siteName: SITE_SOCIAL_DEFAULTS.siteName,
+  })
   publishHtmlToLayoutDirs(mapDrawHtml, 'map-draw.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
   writeRealRedirectToNormal('map-draw.html', 'normal/map-draw.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('map-draw.html', 'normal/map-draw.html', root, resolve(root, 'dist'))
 
   let routeMapHtml = injectRouteMapPageMeta(baseHtml)
   routeMapHtml = adjustAppPageTitle(routeMapHtml, '线路走向图')
+  routeMapHtml = injectSocialMeta(routeMapHtml, {
+    title: '线路走向图 · 阳光群岛线路查询',
+    description: '查看阳光群岛巴士线路走向图与导入走线。Sunshine Islands bus route path maps.',
+    url: buildCanonicalSiteUrl('normal/route-map.html'),
+    imageUrl: buildOgImageUrl(buildTag),
+    keywords: SITE_SOCIAL_DEFAULTS.keywords,
+    siteName: SITE_SOCIAL_DEFAULTS.siteName,
+  })
   publishHtmlToLayoutDirs(routeMapHtml, 'route-map.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
   writeRealRedirectToNormal('route-map.html', 'normal/route-map.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('route-map.html', 'normal/route-map.html', root, resolve(root, 'dist'))
@@ -295,6 +390,13 @@ export function publishStandalone(options = {}) {
     cpSync(publicLogo, resolve(root, 'dist', 'apple-touch-icon.png'))
   }
 
+  const publicOgShare = resolve(root, 'public', 'og-share.png')
+  if (existsSync(publicOgShare)) {
+    cpSync(publicOgShare, resolve(root, 'og-share.png'))
+    cpSync(publicOgShare, resolve(root, 'dist', 'og-share.png'))
+    console.log('[publish] 已复制 og-share.png（社交分享缩略图）')
+  }
+
   const publicCompanyLogos = resolve(root, 'public', 'company-logos')
   if (existsSync(publicCompanyLogos)) {
     cpSync(publicCompanyLogos, resolve(root, 'company-logos'), { recursive: true })
@@ -335,10 +437,10 @@ const isMain =
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 
 if (isMain) {
-  try {
-    publishStandalone()
-  } catch (err) {
-    console.error(err instanceof Error ? err.message : err)
-    process.exit(1)
-  }
+  publishStandalone()
+    .then(() => {})
+    .catch((err) => {
+      console.error(err instanceof Error ? err.message : err)
+      process.exit(1)
+    })
 }
