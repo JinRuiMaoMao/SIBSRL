@@ -6,10 +6,22 @@
   "days": [
     { "date": "2026-08-01", "event": "Foggy Day", "routeCode": "246XA", "race": true },
     { "date": "2026-08-02", "event": "Rush Hour", "routeCode": "171W", "race": true },
-    { "date": "2026-08-03", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-04", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-05", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-06", "event": null, "routeCode": null, "race": false },
+    { "date": "2026-08-03", "event": "Marathon Road Closure", "routeCode": "473A", "race": false },
+    {
+      "date": "2026-08-04",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "时间廊", "en": "Timelapse Mall" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "亚历山教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "东门公园", "en": "East Door Park" } },
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminal" } }
+      ]
+    },
+    { "date": "2026-08-05", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
+    { "date": "2026-08-06", "event": "E-Payment Outage", "routeCode": "41AN", "race": false },
     { "date": "2026-08-07", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-08", "event": "Marathon Shuttle", "routeCode": null, "race": true},
     { "date": "2026-08-09", "event": "Rare Appearance", "routeCode": null, "race": true },
