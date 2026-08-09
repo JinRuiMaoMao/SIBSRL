@@ -24,7 +24,7 @@
     { "date": "2026-08-06", "event": "E-Payment Outage", "routeCode": "41AN", "race": false },
     { "date": "2026-08-07", "event": "Marathon Road Closure", "routeCode": "240A", "race": false },
     { "date": "2026-08-08", "event": "Marathon Shuttle", "routeCode": "R370", "race": true},
-    { "date": "2026-08-09", "event": "Rare Appearance", "routeCode": null, "race": true },
+    { "date": "2026-08-09", "event": "Rare Appearance", "routeCode": "142W", "race": true },
     { "date": "2026-08-10", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },
     { "date": "2026-08-11", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-12", "event": "Rare Appearance x Private Hire", "routeCode": "PH1", "race": false },
