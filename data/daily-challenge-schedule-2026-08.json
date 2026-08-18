@@ -66,8 +66,18 @@
     },
     { "date": "2026-08-15", "event": "Urban Odyssey", "routeCode": "77XA", "race": true },
     { "date": "2026-08-16", "event": "Rush Hour", "routeCode": "370A", "race": true },
-    { "date": "2026-08-17", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-18", "event": null, "routeCode": null, "race": false },
+    { "date": "2026-08-17", "event": "Marathon Road Closure", "routeCode": "N171EM", "race": false },
+    { "date": "2026-08-18",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
+        { "name": { "zh": "长岛码头", "en": "Long Island Bus Terminal" } },
+        { "name": { "zh": "叶角湾坟场", "en": "Leafy Bay Cemetery" } },
+        { "name": { "zh": "北滩", "en": "East Door Bus Terminal" } }
+      ]
+    },
     { "date": "2026-08-19", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-20", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-21", "event": null, "routeCode": null, "race": false },
