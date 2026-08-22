@@ -75,13 +75,25 @@
         { "name": { "zh": "阿周电视", "en": "Roblox TV" } },
         { "name": { "zh": "长岛码头", "en": "Long Island Bus Terminal" } },
         { "name": { "zh": "叶角湾坟场", "en": "Leafy Bay Cemetery" } },
-        { "name": { "zh": "北滩", "en": "East Door Bus Terminal" } }
+        { "name": { "zh": "东门总站", "en": "East Door Bus Terminal" } }
       ]
     },
-    { "date": "2026-08-19", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-20", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-21", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-08-22", "event": "Concert Crowd Disperal", "routeCode": "140E", "race": true },
+    { "date": "2026-08-19", "event": "Foggy Day", "routeCode": "370AW", "race": false },
+    { "date": "2026-08-20", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
+    { "date": "2026-08-21",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "枫树里", "en": "Maple Lane" } },
+        { "name": { "zh": "北岛山顶", "en": "North Island Hill Peak" } },
+        { "name": { "zh": "阳光码头", "en": "Sunshine Pier" } },
+        { "name": { "zh": "亚历山教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "仙贝广场", "en": "Senpai Shopping Center" } },
+        { "name": { "zh": "安灵台灵灰安置所", "en": "Ambling Peak" } }
+      ]
+    },
+    { "date": "2026-08-22", "event": "Concert Crowd Dispersal", "routeCode": "140E", "race": true },
     { "date": "2026-08-23", "event": "Rush Hour", "routeCode": null, "race": true },
     { "date": "2026-08-24", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-25", "event": null, "routeCode": null, "race": false },
