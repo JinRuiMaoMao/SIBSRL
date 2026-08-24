@@ -94,8 +94,8 @@
       ]
     },
     { "date": "2026-08-22", "event": "Concert Crowd Dispersal", "routeCode": "140E", "race": true },
-    { "date": "2026-08-23", "event": "Rush Hour", "routeCode": null, "race": true },
-    { "date": "2026-08-24", "event": null, "routeCode": null, "race": false },
+    { "date": "2026-08-23", "event": "Rush Hour", "routeCode": "74AS", "race": true },
+    { "date": "2026-08-24", "event": "Marathon Day", "routeCode": "242", "race": false },
     { "date": "2026-08-25", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-26", "event": null, "routeCode": null, "race": false },
     { "date": "2026-08-27", "event": null, "routeCode": null, "race": false },
