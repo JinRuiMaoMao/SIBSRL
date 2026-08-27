@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-08-01'
+export const CURRENT_CHANGELOG_DATE = '2026-08-27'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,64 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-08-27-summary",
+    date: "2026-08-27",
+    title: {
+      zh: "2026-08-27 更新",
+      en: "2026-08-27 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "NPC 语音",
+          en: "NPC voice",
+        },
+        additions: [
+          {
+            zh: "从 E:\\SIBS资源\\NPC 同步 68 条乘客语音（14 个分类），支持 MP3 与 OGG；Cold、DoorClosed、Hot、NoKneel 等分类现已可试听。",
+            en: "Synced 68 passenger voice clips (14 categories) from E:\\SIBS资源\\NPC with MP3 and OGG support; Cold, DoorClosed, Hot, NoKneel and more are now playable.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "分屏布局",
+          en: "Split layout",
+        },
+        additions: [
+          {
+            zh: "Real 分屏各栏目统一使用 real/ 单页 URL（#routes、#complaints 等 hash 切换），便于栏目间过渡动画；旧 real/*.html 链接自动跳转。",
+            en: "Real split-layout tabs now share one URL (real/ with #routes, #complaints, etc.) for smoother transitions; legacy real/*.html links redirect automatically.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "走向图",
+          en: "Path maps",
+        },
+        additions: [
+          {
+            zh: "线路走向页新增「下载 JSON」「下载 PNG」按钮：可导出当前方向走线数据或合成走向图图片。",
+            en: "Route path map page: Download JSON and Download PNG for the current direction’s path data or a rendered map image.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "地图",
+          en: "Map",
+        },
+        additions: [
+          {
+            zh: "群岛小地图、走向页与 Real 分屏嵌入地图新增放大/缩小按钮，方便手机与平板操作（仍支持双指缩放与拖拽）。",
+            en: "Zoom in/out buttons on the island mini-map, path map page, and Real split embedded map for phones and tablets (pinch and drag still work).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-08-01-summary",
     date: "2026-08-01",
