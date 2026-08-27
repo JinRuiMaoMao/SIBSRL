@@ -7,7 +7,7 @@ import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Locale } from '../i18n/types'
-import { getLayoutScopedHref, resolveSiteAssetUrl } from '../utils/appLayoutMode'
+import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { getAccountPageHref, getSettingsPageHref } from '../utils/appPage'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
@@ -107,7 +107,11 @@ export function RealStartPage() {
   const handlePlayClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
     event.preventDefault()
     switchTrack('music-map-menu')
-    window.location.href = href
+    if (href.startsWith('#')) {
+      window.location.hash = href.slice(1)
+      return
+    }
+    window.location.assign(href)
   }
 
   const mainMenu: RealStartMenuItem[] = [

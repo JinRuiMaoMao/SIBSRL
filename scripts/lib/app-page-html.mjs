@@ -353,10 +353,16 @@ const APP_PREFERENCES_STORAGE_KEY = 'sibs-app-preferences'
 const APP_SURFACE_BOOTSTRAP_SCRIPT = `<script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
-  if (tab && tab.content) document.documentElement.setAttribute('data-app-tab', tab.content.trim());
+  var tabId = tab && tab.content ? tab.content.trim() : '';
+  var layout = document.querySelector('meta[name="app-layout-mode"]');
+  var isReal = layout && layout.content && layout.content.trim() === 'real';
+  if (isReal) {
+    var hashTab = (window.location.hash || '').replace(/^#/, '').trim();
+    if (hashTab) tabId = hashTab;
+  }
+  if (tabId) document.documentElement.setAttribute('data-app-tab', tabId);
   var page = document.querySelector('meta[name="app-page"]');
   if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
-  var layout = document.querySelector('meta[name="app-layout-mode"]');
   if (layout && layout.content) {
     document.documentElement.setAttribute('data-app-layout-mode', layout.content.trim());
     document.documentElement.setAttribute('data-route-lookup-layout', layout.content.trim() === 'real' ? 'split' : 'grid');
@@ -521,7 +527,13 @@ const START_ROUTE_REDIRECT_SCRIPT = `<script id="start-route-redirect">
   if (!q) return;
   var params = new URLSearchParams(q);
   if (params.has('route') || params.has('from') || params.has('to') || params.has('q')) {
-    window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
+    var path = String(window.location.pathname || '').replace(/\\\\/g, '/');
+    var isReal = /\\/real(?:\\/|$)/i.test(path);
+    if (isReal) {
+      window.location.replace('./index.html' + q + '#routes');
+    } else {
+      window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
+    }
   }
 })();
 </script>`
@@ -534,7 +546,9 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
   var tabMeta = document.querySelector('meta[name="app-tab"]');
   var page = pageMeta && pageMeta.content ? pageMeta.content.trim() : '';
   var tab = tabMeta && tabMeta.content ? tabMeta.content.trim() : '';
-  var track = page === 'start'
+  var hashTab = (window.location.hash || '').replace(/^#/, '').trim();
+  if (!tab && hashTab) tab = hashTab;
+  var track = page === 'start' && !tab
     ? '../audio/broadcasts/music/music-main-menu.ogg'
     : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu-intro.ogg' : '');
   if (!track) return;

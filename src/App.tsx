@@ -42,6 +42,7 @@ import { markUpdateSeen } from './storage/updatesViewing'
 import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { isRealLayoutMode } from './utils/appLayoutMode'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
+import { useAppTabFromLocation } from './hooks/useAppTabFromLocation'
 import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
@@ -82,7 +83,7 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 
 function App() {
   const { t, locale } = useLocale()
-  const tabFromLocation = readTabFromLocation()
+  const tabFromLocation = useAppTabFromLocation()
   const realLayout = isRealLayoutMode()
   const activeTab = tabFromLocation ?? 'routes'
   const {

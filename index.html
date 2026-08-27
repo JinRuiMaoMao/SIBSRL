@@ -7,7 +7,13 @@
   if (!q) return;
   var params = new URLSearchParams(q);
   if (params.has('route') || params.has('from') || params.has('to') || params.has('q')) {
-    window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
+    var path = String(window.location.pathname || '').replace(/\\/g, '/');
+    var isReal = /\/real(?:\/|$)/i.test(path);
+    if (isReal) {
+      window.location.replace('./index.html' + q + '#routes');
+    } else {
+      window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
+    }
   }
 })();
 </script>
@@ -144,10 +150,10 @@
         window.addEventListener('resize', apply);
       })();
     </script>
-    <meta name="app-build" content="2026-08-27T09:27:23.045Z" />
-    <link rel="icon" href="./sibs-logo.png?v=2026-08-27T09%3A27%3A23.045Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-08-27T09%3A27%3A23.045Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-08-27T09%3A27%3A23.045Z" />
+    <meta name="app-build" content="2026-08-27T09:31:04.038Z" />
+    <link rel="icon" href="./sibs-logo.png?v=2026-08-27T09%3A31%3A04.038Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="./sibs-logo.png?v=2026-08-27T09%3A31%3A04.038Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="./sibs-logo.png?v=2026-08-27T09%3A31%3A04.038Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -161,7 +167,7 @@
     <meta property="og:title" content="阳光群岛 Roblox 巴士模拟器线路查询入口 | SIBS 站序、车费、群岛地图与每日挑战工具" />
     <meta property="og:description" content="阳光群岛 Roblox 巴士模拟器 (SIBS) 官方向线路查询入口：站序、车费、群岛地图、每日挑战与工具下载。Sunshine Islands Bus Simulator (SIBS) route lookup hub." />
     <meta property="og:url" content="https://jinruimaomao.github.io/SIBSRL/index.html" />
-    <meta property="og:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-27T09%3A27%3A23.045Z" />
+    <meta property="og:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-27T09%3A31%3A04.038Z" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="阳光群岛 Roblox 巴士模拟器线路查询入口 | SIBS 站序、车费、群岛地图与每日挑战工具" />
@@ -169,7 +175,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="阳光群岛 Roblox 巴士模拟器线路查询入口 | SIBS 站序、车费、群岛地图与每日挑战工具" />
     <meta name="twitter:description" content="阳光群岛 Roblox 巴士模拟器 (SIBS) 官方向线路查询入口：站序、车费、群岛地图、每日挑战与工具下载。Sunshine Islands Bus Simulator (SIBS) route lookup hub." />
-    <meta name="twitter:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-27T09%3A27%3A23.045Z" />
+    <meta name="twitter:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-27T09%3A31%3A04.038Z" />
     <!-- /site-social-meta -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -178,10 +184,16 @@
       <script id="app-surface-bootstrap">
 (function () {
   var tab = document.querySelector('meta[name="app-tab"]');
-  if (tab && tab.content) document.documentElement.setAttribute('data-app-tab', tab.content.trim());
+  var tabId = tab && tab.content ? tab.content.trim() : '';
+  var layout = document.querySelector('meta[name="app-layout-mode"]');
+  var isReal = layout && layout.content && layout.content.trim() === 'real';
+  if (isReal) {
+    var hashTab = (window.location.hash || '').replace(/^#/, '').trim();
+    if (hashTab) tabId = hashTab;
+  }
+  if (tabId) document.documentElement.setAttribute('data-app-tab', tabId);
   var page = document.querySelector('meta[name="app-page"]');
   if (page && page.content) document.documentElement.setAttribute('data-app-page', page.content.trim());
-  var layout = document.querySelector('meta[name="app-layout-mode"]');
   if (layout && layout.content) {
     document.documentElement.setAttribute('data-app-layout-mode', layout.content.trim());
     document.documentElement.setAttribute('data-route-lookup-layout', layout.content.trim() === 'real' ? 'split' : 'grid');
@@ -494,6 +506,6 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
 })();
 </script>
 
-      <script type="module" crossorigin src="/SIBSRL/assets/dev-D0vnyIW5.js"></script>
+      <script type="module" crossorigin src="/SIBSRL/assets/dev-CilWO3Zv.js"></script>
   </body>
 </html>

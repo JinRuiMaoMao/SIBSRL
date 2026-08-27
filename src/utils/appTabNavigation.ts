@@ -32,13 +32,39 @@ export function isAppTab(value: string): value is AppTab {
   return (APP_TABS as string[]).includes(value)
 }
 
-/** 同布局模式下栏目页链接（real 与 normal 各自目录，便于 Real 页面间切换动画）。 */
+/** Real 分屏壳页：real/ 或 real/index.html，栏目由 hash 切换。 */
+export function isRealAppShellPage(): boolean {
+  if (!isRealLayoutMode()) return false
+  const path = window.location.pathname.replace(/\\/g, '/')
+  if (!/\/real(?:\/|$)/i.test(path)) return false
+  const file = path.split('/').filter(Boolean).pop()?.toLowerCase() ?? ''
+  return file === 'index.html' || file === 'real'
+}
+
+export function readRealTabFromHash(): AppTab | null {
+  const hash = window.location.hash.replace(/^#/, '').trim().toLowerCase()
+  if (hash && isAppTab(hash)) return hash
+  return null
+}
+
+function getRealShellHref(tab: AppTab): string {
+  if (isRealAppShellPage()) return `#${tab}`
+  if (isLayoutScopedPage()) return `./index.html#${tab}`
+  return `./real/index.html#${tab}`
+}
+
+/** normal 各栏目独立 HTML；real 分屏统一 real/index.html#栏目。 */
 export function getTabPageHref(tab: AppTab): string {
+  if (isRealLayoutMode()) return getRealShellHref(tab)
   return getLayoutScopedHref(TAB_PAGE_FILE[tab])
 }
 
-/** 从 meta、路径或 legacy ?tab= 读取当前栏目 */
+/** 从 hash（real 壳页）、meta、路径或 legacy ?tab= 读取当前栏目 */
 export function readTabFromLocation(): AppTab | null {
+  if (isRealAppShellPage()) {
+    return readRealTabFromHash()
+  }
+
   const meta = document.querySelector('meta[name="app-tab"]')?.getAttribute('content')?.trim()
   if (meta && isAppTab(meta)) return meta
 

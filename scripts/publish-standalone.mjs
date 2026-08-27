@@ -85,15 +85,33 @@ function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot, options = {
   for (const { dir, mode } of APP_LAYOUT_PUBLISH) {
     if (!layouts.includes(mode)) continue
     let scoped = prepareLayoutScopedHtml(html, mode, true)
-    if (mode === 'real' && filename === 'routes.html') {
-      scoped = injectRealLayoutMusicEarlyBootstrap(scoped)
-    }
     const layoutDir = resolve(siteRoot, dir)
     const distLayoutDir = resolve(distRoot, dir)
     mkdirSync(layoutDir, { recursive: true })
     mkdirSync(distLayoutDir, { recursive: true })
     writeFileSync(resolve(layoutDir, filename), scoped)
     writeFileSync(resolve(distLayoutDir, filename), scoped)
+  }
+}
+
+/** @param {string} tab @param {string} filename @param {string} siteRoot @param {string} distRoot */
+function writeRealTabHashRedirect(tab, filename, siteRoot, distRoot) {
+  const target = `./index.html#${tab}`
+  const redirectHtml = `<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <script>location.replace('${target}'+location.search);</script>
+  <meta http-equiv="refresh" content="0;url=${target}" />
+  <title>Redirecting…</title>
+</head>
+<body><p><a href="${target}">Continue</a></p></body>
+</html>`
+  for (const dir of ['real']) {
+    mkdirSync(resolve(siteRoot, dir), { recursive: true })
+    mkdirSync(resolve(distRoot, dir), { recursive: true })
+    writeFileSync(resolve(siteRoot, dir, filename), redirectHtml)
+    writeFileSync(resolve(distRoot, dir, filename), redirectHtml)
   }
 }
 
@@ -194,7 +212,8 @@ export async function publishStandalone(options = {}) {
         buildTag,
       }),
     )
-    publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
+    publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'), { layouts: ['normal'] })
+    writeRealTabHashRedirect(page.tab, page.publishFile, root, resolve(root, 'dist'))
     writeLegacyRedirect(page.publishFile, `normal/${page.publishFile}`, root, resolve(root, 'dist'))
   }
 
@@ -214,10 +233,6 @@ export async function publishStandalone(options = {}) {
   writeFileSync(resolve(root, 'dist', 'index.html'), startHtml)
 
   let realStartHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
-  realStartHtml = realStartHtml.replace(
-    "window.location.replace('./normal/routes.html'",
-    "window.location.replace('./routes.html'",
-  )
   realStartHtml = prepareLayoutScopedHtml(realStartHtml, 'real', true)
   realStartHtml = injectRealLayoutMusicEarlyBootstrap(realStartHtml)
   realStartHtml = adjustAppPageTitle(realStartHtml, '阳光群岛巴士模拟器', { standalone: true })

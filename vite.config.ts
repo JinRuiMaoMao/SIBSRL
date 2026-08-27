@@ -191,6 +191,16 @@ function serveTransformedDevHtml(
     })
 }
 
+const REAL_LAYOUT_DEV_TAB_BY_PAGE: Record<string, string> = {
+  'routes.html': 'routes',
+  'dev.html': 'routes',
+  'ann.html': 'broadcast',
+  'music.html': 'music',
+  'complaints.html': 'complaints',
+  'trivia.html': 'trivia',
+  'updates.html': 'updates',
+}
+
 function devEntryRedirectPlugin(): Plugin {
   const devAppPages = (APP_PAGES as AppPageEntry[]).filter((page) => page.tab !== 'routes')
 
@@ -201,15 +211,25 @@ function devEntryRedirectPlugin(): Plugin {
       server.middlewares.use((req, res, next) => {
         const pathOnly = normalizeDevRequestPath(req.url)
 
+        if (pathOnly === '/real' || pathOnly === '/real/') {
+          const file = resolve(root, 'pages/start.html')
+          serveTransformedDevHtml(server, req, res, next, file, '/real/index.html', 'real')
+          return
+        }
+
         const layoutScoped = pathOnly.match(/^\/(normal|real)\/([^/]+\.html)$/)
         if (layoutScoped) {
           const layoutMode = layoutScoped[1] as 'normal' | 'real'
           const pageName = layoutScoped[2]!.toLowerCase()
-          if (layoutMode === 'real' && pageName !== 'routes.html' && pageName !== 'dev.html' && pageName !== 'index.html') {
-            res.statusCode = 302
-            res.setHeader('Location', `/normal/${pageName}${req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''}`)
-            res.end()
-            return
+          if (layoutMode === 'real' && pageName !== 'index.html') {
+            const tab = REAL_LAYOUT_DEV_TAB_BY_PAGE[pageName]
+            if (tab) {
+              const query = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+              res.statusCode = 302
+              res.setHeader('Location', `/real/index.html#${tab}${query}`)
+              res.end()
+              return
+            }
           }
           const sourceRel = LAYOUT_DEV_PAGE_SOURCES[pageName]
           if (sourceRel) {
