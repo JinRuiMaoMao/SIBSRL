@@ -210,6 +210,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Route path map page: Download JSON and Download PNG for the current direction’s path data or a rendered map image.",
           },
         ],
+        fixes: [
+          {
+            zh: "修复走向图下载 JSON/PNG 缺少走线：导出改用与页面相同的采样路径，并优先从当前显示数据生成而非仅含站点的旧导入缓存。",
+            en: "Fixed path map JSON/PNG downloads missing route lines—exports now use the same sampled path as the viewer and prefer live display data over stops-only import cache.",
+          },
+        ],
       },
       {
         title: {

@@ -4,6 +4,7 @@ import type { Locale } from '../i18n/types'
 import { isRouteMapImportStorage } from './routeMapImportBundle'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 import { userBendIndicesToFlags } from './routeMapViewerDisplay'
+import { resolveRouteMapDisplayPathPoints } from './routeMapTrajectory'
 import { exportWorldMapDrawImage } from './worldMapDrawImageExport'
 import {
   buildWorldMapRouteExportPayload,
@@ -16,6 +17,19 @@ function readDirectionIndex(entry: unknown): number | null {
   const value = (entry as { directionIndex?: unknown }).directionIndex
   if (typeof value !== 'number' || !Number.isFinite(value)) return null
   return Math.round(value)
+}
+
+function directionEntryHasPath(entry: unknown): boolean {
+  if (typeof entry !== 'object' || entry == null) return false
+  const record = entry as {
+    points?: unknown
+    editorGraph?: { segments?: unknown[] }
+  }
+  if (Array.isArray(record.points) && record.points.length >= 2) return true
+  if (Array.isArray(record.editorGraph?.segments) && record.editorGraph.segments.length > 0) {
+    return true
+  }
+  return false
 }
 
 function buildEditorGraphExport(
@@ -43,33 +57,28 @@ function buildEditorGraphExport(
   }
 }
 
-export function buildRouteMapDownloadJsonPayload(
+function resolveExportPathPoints(
+  display: RouteMapViewerDisplay,
+  imageSize?: { width: number; height: number } | null,
+): RouteMapViewerDisplay['points'] {
+  if (imageSize) {
+    const sampled = resolveRouteMapDisplayPathPoints(display, imageSize)
+    if (sampled.length >= 2) return [...sampled]
+  }
+  return display.points.length >= 2 ? [...display.points] : []
+}
+
+function buildPayloadFromDisplay(
   routeId: string,
   directionIndex: number,
-  display: RouteMapViewerDisplay | null,
-  importPayload: unknown | null,
+  display: RouteMapViewerDisplay,
   imageSize?: { width: number; height: number } | null,
 ): object | null {
-  if (importPayload && isRouteMapImportStorage(importPayload)) {
-    const entry = importPayload.directions.find(
-      (direction) => readDirectionIndex(direction) === directionIndex,
-    )
-    if (entry) {
-      return {
-        routeId: importPayload.routeId,
-        ...(typeof importPayload.note === 'string' && importPayload.note.trim()
-          ? { note: importPayload.note.trim() }
-          : {}),
-        directions: [entry],
-      }
-    }
+  const exportPoints = resolveExportPathPoints(display, imageSize)
+  const hasEditorGraph = Boolean(display.referenceEditor?.segments.length)
+  if (exportPoints.length < 2 && display.stops.length === 0 && display.pathNodes.length === 0 && !hasEditorGraph) {
+    return null
   }
-
-  if (importPayload && typeof importPayload === 'object') {
-    return importPayload
-  }
-
-  if (!display) return null
 
   const width = imageSize?.width ?? 4000
   const height = imageSize?.height ?? 4000
@@ -77,7 +86,7 @@ export function buildRouteMapDownloadJsonPayload(
   return buildWorldMapRouteExportPayload(
     display.routeNumber,
     directionIndex,
-    display.points,
+    exportPoints,
     display.stops,
     routeId,
     {
@@ -94,6 +103,40 @@ export function buildRouteMapDownloadJsonPayload(
     display.pathNodes,
     buildEditorGraphExport(display, width, height),
   )
+}
+
+export function buildRouteMapDownloadJsonPayload(
+  routeId: string,
+  directionIndex: number,
+  display: RouteMapViewerDisplay | null,
+  importPayload: unknown | null,
+  imageSize?: { width: number; height: number } | null,
+): object | null {
+  if (display) {
+    const fromDisplay = buildPayloadFromDisplay(routeId, directionIndex, display, imageSize)
+    if (fromDisplay) return fromDisplay
+  }
+
+  if (importPayload && isRouteMapImportStorage(importPayload)) {
+    const entry = importPayload.directions.find(
+      (direction) => readDirectionIndex(direction) === directionIndex,
+    )
+    if (entry && directionEntryHasPath(entry)) {
+      return {
+        routeId: importPayload.routeId,
+        ...(typeof importPayload.note === 'string' && importPayload.note.trim()
+          ? { note: importPayload.note.trim() }
+          : {}),
+        directions: [entry],
+      }
+    }
+  }
+
+  if (importPayload && typeof importPayload === 'object') {
+    return importPayload
+  }
+
+  return null
 }
 
 export function downloadRouteMapJson(
@@ -139,6 +182,31 @@ async function downloadStaticImage(url: string, filename: string): Promise<void>
   URL.revokeObjectURL(objectUrl)
 }
 
+function resolvePngSegmentLines(
+  display: RouteMapViewerDisplay,
+  imageSize: { width: number; height: number },
+  pathPoints: readonly RouteMapViewerDisplay['points'][number][],
+): ReturnType<typeof routeEditorLineToExportSegmentLines> {
+  if (pathPoints.length >= 2) return []
+
+  const ref = display.referenceEditor
+  if (!ref) return []
+
+  const editorLine: RouteEditorLine = {
+    id: 1,
+    name: display.routeNumber,
+    nodes: [...ref.nodes],
+    segments: [...ref.segments],
+  }
+
+  return routeEditorLineToExportSegmentLines(
+    editorLine,
+    imageSize.width,
+    imageSize.height,
+    true,
+  )
+}
+
 export async function downloadRouteMapPng(options: {
   routeId: string
   directionIndex: number
@@ -160,34 +228,21 @@ export async function downloadRouteMapPng(options: {
   if (!options.display || !options.imageSize) return false
 
   const { display, imageSize } = options
-  const editorLine: RouteEditorLine | null = display.referenceEditor
-    ? {
-        id: 1,
-        name: display.routeNumber,
-        nodes: [...display.referenceEditor.nodes],
-        segments: [...display.referenceEditor.segments],
-      }
-    : null
-
-  const segmentLines =
-    editorLine != null
-      ? routeEditorLineToExportSegmentLines(
-          editorLine,
-          imageSize.width,
-          imageSize.height,
-          display.referenceEditor?.config.showPointLines ?? false,
-        )
-      : []
+  const pathPoints = resolveExportPathPoints(display, imageSize)
+  const segmentLines = resolvePngSegmentLines(display, imageSize, pathPoints)
 
   await exportWorldMapDrawImage(
     {
       mapImageUrl: options.mapImageUrl,
       routeId: options.routeId || display.routeNumber,
-      points: display.points,
+      points: pathPoints,
       stops: display.stops,
-      legStarts: display.legStarts,
-      legHidden: display.pathLegHidden,
-      pathUserBends: userBendIndicesToFlags(display.userBendIndices, display.points.length),
+      legStarts: pathPoints.length >= 2 ? [0] : display.legStarts,
+      legHidden: pathPoints.length >= 2 ? [] : display.pathLegHidden,
+      pathUserBends:
+        pathPoints.length >= 2
+          ? []
+          : userBendIndicesToFlags(display.userBendIndices, display.points.length),
       segmentLines,
       strokeColor: display.strokeColor ?? '#ffffff',
       strokeWidth: display.referenceEditor?.lineStyle.width,
