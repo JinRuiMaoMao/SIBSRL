@@ -161,6 +161,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
     groups: [
       {
         title: {
+          zh: "线路查询",
+          en: "Route lookup",
+        },
+        fixes: [
+          {
+            zh: "修复在 normal/ 线路页点击「分屏」误跳转到 normal/index.html#routes（404）的问题，现正确进入 real/index.html#routes。",
+            en: "Fixed Split layout toggle from normal/routes linking to normal/index.html#routes (404); it now opens real/index.html#routes.",
+          },
+        ],
+      },
+      {
+        title: {
           zh: "NPC 语音",
           en: "NPC voice",
         },

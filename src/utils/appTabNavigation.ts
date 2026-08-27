@@ -1,5 +1,5 @@
 import type { AppTab } from '../types/appTab'
-import { getLayoutScopedHref, isLayoutScopedPage, isRealLayoutMode, readAppLayoutMode } from './appLayoutMode'
+import { getLayoutScopedHref, isLayoutScopedPage, isNormalLayoutScopedPage, isRealLayoutMode, isRealLayoutScopedPage, readAppLayoutMode } from './appLayoutMode'
 
 export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates']
 
@@ -49,7 +49,8 @@ export function readRealTabFromHash(): AppTab | null {
 
 function getRealShellHref(tab: AppTab): string {
   if (isRealAppShellPage()) return `#${tab}`
-  if (isLayoutScopedPage()) return `./index.html#${tab}`
+  if (isRealLayoutScopedPage()) return `./index.html#${tab}`
+  if (isNormalLayoutScopedPage()) return `../real/index.html#${tab}`
   return `./real/index.html#${tab}`
 }
 

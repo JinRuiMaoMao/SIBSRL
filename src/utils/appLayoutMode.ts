@@ -28,6 +28,14 @@ export function isLayoutScopedPage(): boolean {
   return LAYOUT_SEGMENT_RE.test(window.location.pathname.replace(/\\/g, '/'))
 }
 
+export function isNormalLayoutScopedPage(): boolean {
+  return /\/normal(?:\/|$)/i.test(window.location.pathname.replace(/\\/g, '/'))
+}
+
+export function isRealLayoutScopedPage(): boolean {
+  return /\/real(?:\/|$)/i.test(window.location.pathname.replace(/\\/g, '/'))
+}
+
 /** Asset/audio/map paths: use Vite BASE on GitHub Pages; ../ under normal|real|routes when relative. */
 export function getSiteAssetRoot(): string {
   const base = import.meta.env.BASE ?? './'
@@ -102,7 +110,8 @@ export function getAlternateLayoutRoutesHref(): string {
 
 export function getLayoutRoutesHref(mode: AppLayoutMode): string {
   if (mode === 'real') {
-    if (isLayoutScopedPage()) return './index.html#routes'
+    if (isRealLayoutScopedPage()) return './index.html#routes'
+    if (isNormalLayoutScopedPage()) return '../real/index.html#routes'
     return './real/index.html#routes'
   }
   const routesFile = import.meta.env.DEV ? 'dev.html' : 'routes.html'
