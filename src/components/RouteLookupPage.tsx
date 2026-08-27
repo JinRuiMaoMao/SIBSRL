@@ -33,7 +33,7 @@ import {
   getSunshardUnlockLockedRouteIds,
   mergeSunshardUnlockLockedDisplaySlots,
 } from '../data/routeSunshardUnlocks'
-import { partitionLockedDisplaySlotsByUnlockCategory } from '../utils/lockedUnlockCategories'
+import { partitionLockedDisplaySlotsByUnlockCategory, UNLOCK_CATEGORY_ORDER } from '../utils/lockedUnlockCategories'
 import {
   getSeasonalAvailabilityLabels,
   getSeasonalRouteDisplayWindow,
@@ -111,7 +111,7 @@ import {
   setRouteInLocation,
 } from '../utils/routeNavigation'
 import { scheduleRoutePagePrefetch } from '../utils/routePagePrefetch'
-import { routeMatchesFilters } from '../utils/routeFilterMatch'
+import { routeMatchesFilters, filterLockedDisplaySlotsBySearchQuery } from '../utils/routeFilterMatch'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import {
   findStopsMatchingQuery,
@@ -1128,6 +1128,23 @@ export function RouteLookupPage({
     return ids
   }, [displayRoutes])
 
+  const lockedSectionDisplaySlots = useMemo(
+    () =>
+      filterLockedDisplaySlotsBySearchQuery(
+        filterLockedSectionDisplaySlots(
+          mergeSunshardUnlockLockedDisplaySlots(
+            mergeShiftUnlockLockedDisplaySlots(
+              mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
+              getShiftUnlockLockedDisplaySlots(displayRoutes),
+            ),
+            getSunshardUnlockLockedDisplaySlots(displayRoutes),
+          ),
+        ),
+        filters,
+      ),
+    [displayRoutes, filters, groupedTotalSlots],
+  )
+
   const listSectionSlots = useMemo(() => {
     const normal = mergeLevelOnlySpecialIntoNormalSlots(
       groupedSlots.normal.filter(
@@ -1135,18 +1152,8 @@ export function RouteLookupPage({
       ),
       filteredRoutes,
     )
-    // 锁定区与班次/分方向阳光碎片卡一致：不受 zone/operator/type 筛选影响
-    const specialSeasonal = filterLockedSectionDisplaySlots(
-      mergeSunshardUnlockLockedDisplaySlots(
-        mergeShiftUnlockLockedDisplaySlots(
-          mergeGroupDisplaySlots(ROUTE_LIST_UI_SECTION_GROUPS.specialSeasonal, groupedTotalSlots),
-          getShiftUnlockLockedDisplaySlots(displayRoutes),
-        ),
-        getSunshardUnlockLockedDisplaySlots(displayRoutes),
-      ),
-    )
-    return { normal, specialSeasonal }
-  }, [groupedSlots, groupedTotalSlots, displayRoutes, filteredRoutes, lockedGameRouteIds])
+    return { normal, specialSeasonal: lockedSectionDisplaySlots }
+  }, [groupedSlots, filteredRoutes, lockedGameRouteIds, lockedSectionDisplaySlots])
 
   const listSectionTotalSlots = useMemo(() => {
     const normal = mergeLevelOnlySpecialIntoNormalSlots(
@@ -1332,7 +1339,16 @@ export function RouteLookupPage({
     if (stopLookupRoutes.length > 0) setStopSectionOpen(true)
     if (parsed.from?.trim() && parsed.to?.trim()) setBetweenStopsSectionOpen(true)
     setGroupOpen(next)
-  }, [countVisibleSectionSlots, filters.query, stopLookupRoutes.length])
+
+    if (parsed.text.trim()) {
+      const matchingCategories = UNLOCK_CATEGORY_ORDER.filter(
+        (kind) => partitionLockedDisplaySlotsByUnlockCategory(lockedSectionDisplaySlots)[kind].length > 0,
+      )
+      setUnlockCategoryFocus(matchingCategories.length === 1 ? matchingCategories[0]! : null)
+    } else {
+      setUnlockCategoryFocus(null)
+    }
+  }, [countVisibleSectionSlots, filters.query, lockedSectionDisplaySlots, stopLookupRoutes.length])
 
   const handleApplyHistory = useCallback(
     (query: string) => {

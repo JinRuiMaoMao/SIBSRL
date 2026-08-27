@@ -1,3 +1,5 @@
+import type { GroupedRouteDisplaySlot } from '../data/routeDisplayGroups'
+import { lockedCardDisplayNumber } from '../data/routeShiftUnlocks'
 import type { BusRoute, RouteFilters } from '../types/route'
 import { routeMatchesTypeFilter } from './routeTypes'
 import { matchesRouteSearchQuery } from './routeSearchQuery'
@@ -47,4 +49,52 @@ export function routeMatchesFilters(route: BusRoute, filters: RouteFilters): boo
   }
 
   return matchesRouteSearchQuery(route, structured.text)
+}
+
+/** 锁定区：仅按编号/起终点等文本过滤；zone/operator/type 仍不影响锁定列表。 */
+export function lockedDisplaySlotMatchesSearchQuery(
+  slot: GroupedRouteDisplaySlot,
+  filters: RouteFilters,
+): boolean {
+  if (!slot.entry) return false
+
+  const text = parseStructuredSearchQuery(filters.query).text.trim()
+  if (!text) return true
+
+  const { route, listedId, directionKey } = slot.entry
+  if (matchesRouteSearchQuery(route, text)) return true
+
+  const textLower = text.toLowerCase()
+  const listedLower = listedId.toLowerCase()
+  if (listedLower.includes(textLower)) return true
+
+  const listedRouteId = listedLower.split('|')[0] ?? listedLower
+  if (listedRouteId.startsWith(textLower) || textLower.startsWith(listedRouteId)) return true
+
+  const displayNumber = lockedCardDisplayNumber(route, listedId, directionKey)
+  if (displayNumber?.toLowerCase().includes(textLower)) return true
+
+  const directionQuery = text.match(/^(.+)([nsew])$/i)
+  if (directionQuery) {
+    const base = directionQuery[1]!.trim()
+    const dir = directionQuery[2]!.toUpperCase()
+    if (!base) return false
+    const routeMatches = matchesRouteSearchQuery(route, base)
+    const dirMatches =
+      directionKey?.toUpperCase() === dir ||
+      listedLower.endsWith(`|${dir.toLowerCase()}`) ||
+      listedLower.endsWith(dir.toLowerCase())
+    if (routeMatches && dirMatches) return true
+  }
+
+  return false
+}
+
+export function filterLockedDisplaySlotsBySearchQuery(
+  slots: readonly GroupedRouteDisplaySlot[],
+  filters: RouteFilters,
+): GroupedRouteDisplaySlot[] {
+  const text = parseStructuredSearchQuery(filters.query).text.trim()
+  if (!text) return [...slots]
+  return slots.filter((slot) => lockedDisplaySlotMatchesSearchQuery(slot, filters))
 }
