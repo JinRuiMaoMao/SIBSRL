@@ -84,7 +84,7 @@ function App() {
   const { t, locale } = useLocale()
   const tabFromLocation = readTabFromLocation()
   const realLayout = isRealLayoutMode()
-  const activeTab = realLayout ? 'routes' : (tabFromLocation ?? 'routes')
+  const activeTab = tabFromLocation ?? 'routes'
   const {
     open: guidedTourOpen,
     tourMode,
@@ -445,7 +445,7 @@ function App() {
       ) : null}
       </div>
       {isRoutesPage() && !realLayout ? <IslandMapViewerLazy /> : null}
-      {!realLayout ? <AppTabBar activeTab={tabFromLocation} /> : null}
+      {!realLayout || !isRoutesPage() ? <AppTabBar activeTab={tabFromLocation} /> : null}
       </IslandMapOverlayProvider>
     </>
   )

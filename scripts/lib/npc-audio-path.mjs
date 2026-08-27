@@ -30,8 +30,8 @@ export const NPC_CATEGORY_ORDER = [
   'NoKneel',
 ]
 
-/** Categories with no licensed audio yet — manifest gets a placeholder row each. */
-export const NPC_PLACEHOLDER_CATEGORIES = new Set(['Cold', 'DoorClosed', 'Hot', 'NoKneel'])
+/** Categories listed in the tab before clips exist; keep empty when folder has audio. */
+export const NPC_PLACEHOLDER_CATEGORIES = new Set()
 
 /** @param {string[]} discovered */
 export function sortNpcCategories(discovered) {

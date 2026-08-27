@@ -194,12 +194,7 @@ export async function publishStandalone(options = {}) {
         buildTag,
       }),
     )
-    if (page.tab === 'routes') {
-      publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
-    } else {
-      publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'), { layouts: ['normal'] })
-      writeRealRedirectToNormal(page.publishFile, `normal/${page.publishFile}`, root, resolve(root, 'dist'))
-    }
+    publishHtmlToLayoutDirs(html, page.publishFile, root, resolve(root, 'dist'))
     writeLegacyRedirect(page.publishFile, `normal/${page.publishFile}`, root, resolve(root, 'dist'))
   }
 
