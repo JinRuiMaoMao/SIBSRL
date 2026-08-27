@@ -100,7 +100,7 @@ export function RealStartPage() {
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
-  const routesHref = getLayoutScopedHref(import.meta.env.DEV ? 'dev.html' : 'routes.html')
+  const routesHref = getTabPageHref('routes')
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
   const wikiHref = getStartPageExternalLinkUrl('wiki', locale)
 

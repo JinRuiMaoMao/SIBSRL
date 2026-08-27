@@ -166,6 +166,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         fixes: [
           {
+            zh: "修复 real/index.html#routes 等分屏深链因开始页 boot 遮挡 #root 而显示空白的问题。",
+            en: "Fixed blank real/index.html#routes deep links caused by the start-page boot splash hiding #root.",
+          },
+          {
             zh: "修复在 normal/ 线路页点击「分屏」误跳转到 normal/index.html#routes（404）的问题，现正确进入 real/index.html#routes。",
             en: "Fixed Split layout toggle from normal/routes linking to normal/index.html#routes (404); it now opens real/index.html#routes.",
           },

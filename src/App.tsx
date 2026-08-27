@@ -43,10 +43,11 @@ import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsP
 import { isRealLayoutMode } from './utils/appLayoutMode'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { useAppTabFromLocation } from './hooks/useAppTabFromLocation'
-import { readTabFromLocation, isRoutesPage } from './utils/appTabNavigation'
+import { readTabFromLocation, isRoutesPage, isRealAppShellPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
 import { formatBuildLabel, readPublishedBuild } from './utils/buildLabel'
+import { dismissStartBootSplash } from './utils/startPageBoot'
 
 const IslandMapViewer = lazy(() =>
   import('./components/IslandMapViewer').then((module) => ({ default: module.IslandMapViewer })),
@@ -111,6 +112,12 @@ function App() {
     document.documentElement.classList.toggle('overlay-prompt-open', open)
     return () => document.documentElement.classList.remove('overlay-prompt-open')
   }, [dailyChallengePromptOpen, updatesPromptOpen])
+
+  useEffect(() => {
+    if (isRealAppShellPage() && !isStartPage()) {
+      dismissStartBootSplash()
+    }
+  }, [tabFromLocation])
 
   const prepareGuidedTour = useCallback(() => {
     setHeaderCollapsed(false)

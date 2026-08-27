@@ -87,6 +87,12 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
   function isBootSeen() {
     try { return localStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch (e) { return false; }
   }
+  function isRealAppTabDeepLink() {
+    var path = String(window.location.pathname || '').replace(/\\\\/g, '/');
+    if (!/\\/real(?:\\/|$)/i.test(path)) return false;
+    var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
+    return ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'].indexOf(hash) >= 0;
+  }
   function dismissSplash() {
     document.documentElement.classList.remove('start-boot-active');
     if (window.__SIBS_START_BOOT__ && window.__SIBS_START_BOOT__.finish) {
@@ -107,6 +113,15 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
     if (document.documentElement.classList.contains('start-boot-active')) {
       window.location.reload();
     }
+  }
+  if (isRealAppTabDeepLink()) {
+    document.documentElement.classList.remove('start-boot-active');
+    splash.remove();
+    window.__SIBS_START_BOOT__ = {
+      setProgress: function () {},
+      finish: function () {},
+    };
+    return;
   }
   if (isBootSeen()) {
     splash.remove();
