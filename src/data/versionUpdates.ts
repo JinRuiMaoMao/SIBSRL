@@ -170,8 +170,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed blank real/index.html#routes deep links caused by the start-page boot splash hiding #root.",
           },
           {
-            zh: "修复在 normal/ 线路页点击「分屏」误跳转到 normal/index.html#routes（404）的问题，现正确进入 real/index.html#routes。",
-            en: "Fixed Split layout toggle from normal/routes linking to normal/index.html#routes (404); it now opens real/index.html#routes.",
+            zh: "修复在 normal/ 线路页点击「分屏」误跳转到 normal/index.html#routes（404）的问题。",
+            en: "Fixed Split layout toggle from normal/routes linking to normal/index.html#routes (404).",
+          },
+          {
+            zh: "从 normal 点击「分屏」现先进入 real/index.html 开始页，再由菜单进入各栏目。",
+            en: "Split from normal now opens the real/index.html start page first; tabs are entered from the menu.",
           },
         ],
       },

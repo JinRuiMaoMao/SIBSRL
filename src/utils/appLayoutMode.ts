@@ -105,7 +105,16 @@ export function getAlternateLayoutMode(): AppLayoutMode {
 }
 
 export function getAlternateLayoutRoutesHref(): string {
-  return getLayoutRoutesHref(getAlternateLayoutMode())
+  const mode = getAlternateLayoutMode()
+  if (mode === 'real') return getRealStartPageHref()
+  return getLayoutRoutesHref('normal')
+}
+
+/** Real 分屏开始页（无 hash）；从 normal 点「分屏」先进入此页。 */
+export function getRealStartPageHref(): string {
+  if (isRealLayoutScopedPage()) return './index.html'
+  if (isNormalLayoutScopedPage()) return '../real/index.html'
+  return './real/index.html'
 }
 
 export function getLayoutRoutesHref(mode: AppLayoutMode): string {
