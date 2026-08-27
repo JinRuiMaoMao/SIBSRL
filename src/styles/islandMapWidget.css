@@ -115,6 +115,32 @@ html.has-compact-tab-nav .island-map--widget {
   cursor: grabbing;
 }
 
+.island-map-panzoom-zoom-controls {
+  position: absolute;
+  right: max(0.55rem, env(safe-area-inset-right, 0px));
+  bottom: max(0.55rem, env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  pointer-events: none;
+}
+
+.island-map-panzoom-zoom-controls .island-map-btn {
+  pointer-events: auto;
+  min-width: 2.35rem;
+  min-height: 2.35rem;
+  padding: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.island-map-btn--zoom-in,
+.island-map-btn--zoom-out {
+  font-weight: 700;
+}
+
 .island-map-viewport--fullscreen {
   position: absolute;
   inset: 0;

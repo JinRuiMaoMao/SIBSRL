@@ -195,6 +195,7 @@ export function IslandMapEmbeddedPane() {
           onViewChange={setMapView}
           routeOverlay={surfaceRouteOverlay}
           maxZoomRatio={8}
+          showZoomControls
           onImageSizeChange={setImageSize}
           onMapLayerLoadingChange={setMapLayerLoading}
           {...stopSurfaceProps}

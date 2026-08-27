@@ -21,7 +21,8 @@ import { getRouteMapImageUrl } from '../utils/routeMapImages'
 import { parseRouteMapImportPayload } from '../utils/routeMapImportPayload'
 import { mergeRouteMapImportStorage, listRouteMapImportDirectionIndexes, normalizeIncomingRouteMapImport } from '../utils/routeMapImportBundle'
 import { findRouteForMapPage, routeMapIdsMatch } from '../utils/routeMapLookup'
-import { resolveRouteMapImportRaw } from '../utils/routeMapOverlaySource'
+import { resolveRouteMapImportRaw, resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
+import { downloadRouteMapJson, downloadRouteMapPng } from '../utils/routeMapDownload'
 import { resolveActiveStopGroup } from '../utils/routeLoopView'
 import { mergeRoutesByBaseNumber } from '../utils/routeMerge'
 import { readDirectionQueryFromLocation } from '../utils/routeNavigation'
@@ -31,7 +32,6 @@ import {
   userBendIndicesToFlags,
   type RouteMapViewerDisplay,
 } from '../utils/routeMapViewerDisplay'
-import { resolveRouteMapOverlaySource } from '../utils/routeMapOverlaySource'
 import { loadWorldMapStopCatalog } from '../utils/worldMapStopCatalog'
 import { resolveRouteMapDisplayPathPoints } from '../utils/routeMapTrajectory'
 import { IslandMapPanZoomSurface, type NormalizedMapView } from './IslandMapPanZoomSurface'
@@ -62,7 +62,7 @@ async function resolveImportPayload(routeId: string): Promise<unknown | null> {
 
 export function RouteMapPage() {
   const routeId = readRouteIdFromLocation()
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const { token } = useAuth()
   const isAdmin = useIsMapAdmin()
   const { alert, confirm } = useAppDialog()
@@ -77,6 +77,7 @@ export function RouteMapPage() {
   const [staticImageUrl, setStaticImageUrl] = useState<string | null>(null)
   const [staticImageVisible, setStaticImageVisible] = useState(false)
   const [importing, setImporting] = useState(false)
+  const [downloading, setDownloading] = useState<'json' | 'png' | null>(null)
   const [importInvalid, setImportInvalid] = useState(false)
   const [catalogStops, setCatalogStops] = useState<RouteDetailMapStop[]>([])
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
@@ -382,6 +383,48 @@ export function RouteMapPage() {
   const preparingDisplay = Boolean(importPayload && !display && !importInvalid)
   const showEmpty = !loading && !preparingDisplay && !showInteractiveMap && !staticImageVisible
 
+  const canDownloadJson = Boolean(importPayload || display)
+  const canDownloadPng = Boolean((showInteractiveMap && display) || (staticImageVisible && staticImageUrl))
+
+  const handleDownloadJson = async () => {
+    if (!canDownloadJson) {
+      await alert({ message: t('routeMapDownloadUnavailable') })
+      return
+    }
+    setDownloading('json')
+    try {
+      const ok = downloadRouteMapJson(routeId, directionIndex, display, importPayload, imageSize)
+      if (!ok) await alert({ message: t('routeMapDownloadJsonFailed') })
+    } finally {
+      setDownloading(null)
+    }
+  }
+
+  const handleDownloadPng = async () => {
+    if (!canDownloadPng) {
+      await alert({ message: t('routeMapDownloadUnavailable') })
+      return
+    }
+    setDownloading('png')
+    try {
+      const ok = await downloadRouteMapPng({
+        routeId,
+        directionIndex,
+        display: showInteractiveMap ? display : null,
+        mapImageUrl: mapSrc,
+        locale,
+        staticImageUrl: staticImageVisible ? staticImageUrl : null,
+        imageSize,
+      })
+      if (!ok) await alert({ message: t('routeMapDownloadPngFailed') })
+    } catch (error) {
+      console.error('[route-map] png download failed', error)
+      await alert({ message: t('routeMapDownloadPngFailed') })
+    } finally {
+      setDownloading(null)
+    }
+  }
+
   return (
     <div className="route-map-page-root">
       <header className="route-map-page-toolbar">
@@ -390,6 +433,28 @@ export function RouteMapPage() {
         </a>
         <h1 className="route-map-page-title">{title}</h1>
         <div className="route-map-page-actions">
+          {canDownloadJson ? (
+            <button
+              type="button"
+              className="island-map-btn island-map-btn--export"
+              onClick={() => void handleDownloadJson()}
+              disabled={downloading != null}
+              title={t('routeMapDownloadJsonHint')}
+            >
+              {downloading === 'json' ? t('routeMapDownloading') : t('routeMapDownloadJson')}
+            </button>
+          ) : null}
+          {canDownloadPng ? (
+            <button
+              type="button"
+              className="island-map-btn island-map-btn--export"
+              onClick={() => void handleDownloadPng()}
+              disabled={downloading != null}
+              title={t('routeMapDownloadPngHint')}
+            >
+              {downloading === 'png' ? t('routeMapDownloading') : t('routeMapDownloadPng')}
+            </button>
+          ) : null}
           <button
             type="button"
             className="island-map-btn island-map-btn--layers"
@@ -442,6 +507,7 @@ export function RouteMapPage() {
               onStopClick={stopClickEnabled ? handleStopClick : undefined}
               trajectoryPath={trajectoryPath}
               maxZoomRatio={8}
+              showZoomControls
               onImageSizeChange={setImageSize}
               referenceEditor={referenceEditor}
             />

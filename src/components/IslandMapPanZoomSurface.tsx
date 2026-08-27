@@ -15,6 +15,8 @@ import type {
 } from '../routeEditor/types'
 import { ReferenceRouteEditorOverlay } from './ReferenceRouteEditorOverlay'
 import { RouteMapTrajectoryBall } from './RouteMapTrajectoryBall'
+import { ZoomInIcon, ZoomOutIcon } from './islandMapControlIcons'
+import { useLocale } from '../i18n/LocaleContext'
 import { pickDrawRouteTarget, isNearDrawAnchor } from '../utils/mapDrawPickTarget'
 import type { NormalizedMapView, PanZoomState } from '../types/islandMapPanZoom'
 
@@ -86,6 +88,8 @@ interface IslandMapPanZoomSurfaceProps {
   isOnRoad?: (point: WorldMapPoint) => boolean
   traceSelectedStopId?: string | null
   maxZoomRatio?: number
+  /** 显示放大/缩小按钮（移动端友好） */
+  showZoomControls?: boolean
   onMapPointerMove?: (point: WorldMapPoint | null) => void
   onImageSizeChange?: (size: ImageSize) => void
   onMapLayerLoadingChange?: (loading: boolean) => void
@@ -327,12 +331,14 @@ export function IslandMapPanZoomSurface({
   isOnRoad: _isOnRoad,
   traceSelectedStopId = null,
   maxZoomRatio = DEFAULT_MAX_SCALE_RATIO,
+  showZoomControls = false,
   onMapPointerMove,
   onImageSizeChange,
   onMapLayerLoadingChange,
   trajectoryPath = [],
   referenceEditor = null,
 }: IslandMapPanZoomSurfaceProps) {
+  const { t } = useLocale()
   const viewportRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -491,6 +497,20 @@ export function IslandMapPanZoomSurface({
       })
     },
     [imageSize, publishPanZoom, readViewportSize],
+  )
+
+  const handleZoomButton = useCallback(
+    (direction: 'in' | 'out') => {
+      const viewport = readViewportSize()
+      const size = imageSize ?? imageSizeCacheRef.current.get(displayedSrcRef.current) ?? null
+      const current = panZoomRef.current ?? panZoom
+      if (!viewport || !size || !current) return
+      const center = { x: viewport.width / 2, y: viewport.height / 2 }
+      applyPanZoom(
+        zoomAtPoint(current, center, direction, viewport, size, maxZoomRatioRef.current),
+      )
+    },
+    [applyPanZoom, imageSize, panZoom, readViewportSize],
   )
 
   const releaseDomMapImage = useCallback(() => {
@@ -1281,6 +1301,28 @@ export function IslandMapPanZoomSurface({
       onPointerCancel={onPointerUp}
       onContextMenu={drawMode ? (event) => event.preventDefault() : undefined}
     >
+      {showZoomControls ? (
+        <div className="island-map-panzoom-zoom-controls" role="group" aria-label={t('islandMapZoomControlsAria')}>
+          <button
+            type="button"
+            className="island-map-btn island-map-btn--zoom-in"
+            onClick={() => handleZoomButton('in')}
+            aria-label={t('islandMapZoomIn')}
+            title={t('islandMapZoomIn')}
+          >
+            <ZoomInIcon />
+          </button>
+          <button
+            type="button"
+            className="island-map-btn island-map-btn--zoom-out"
+            onClick={() => handleZoomButton('out')}
+            aria-label={t('islandMapZoomOut')}
+            title={t('islandMapZoomOut')}
+          >
+            <ZoomOutIcon />
+          </button>
+        </div>
+      ) : null}
       {layerSizeStyle ? (
         <div
           ref={contentRef}
