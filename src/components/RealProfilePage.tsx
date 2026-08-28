@@ -5,7 +5,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import { getAccountPageHref } from '../utils/appPage'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
-import { AccountAvatar } from './AccountAvatar'
+import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
 
 type RealProfileTabId = 'stats' | 'title' | 'icon' | 'leaderboard' | 'achievements'
 
@@ -109,13 +109,11 @@ export function RealProfilePage({
                         <h2 className="real-profile-license-title">{t('realProfileLicenseTitle')}</h2>
                       </header>
                       <div className="real-profile-license-body">
-                        <div className="real-profile-license-photo">
-                          <AccountAvatar
+                        <div className="real-profile-license-photo-wrap">
+                          <RealProfileLicensePhoto
                             displayName={profile?.displayName}
                             email={profile?.email ?? email}
                             avatarDataUrl={profile?.avatarDataUrl}
-                            size="profile"
-                            className="real-profile-license-avatar"
                           />
                         </div>
                         <dl className="real-profile-license-fields">
@@ -190,6 +188,19 @@ export function RealProfilePage({
                       <p className="real-profile-stats-demo">{t('realProfileStatsDemoNote')}</p>
                     </article>
                   </>
+                ) : activeTab === 'icon' ? (
+                  <div className="real-profile-icon-tab">
+                    <RealProfileLicensePhoto
+                      displayName={profile?.displayName}
+                      email={profile?.email ?? email}
+                      avatarDataUrl={profile?.avatarDataUrl}
+                      size="icon"
+                    />
+                    <p className="real-profile-icon-hint">{t('realProfileIconHint')}</p>
+                    <a className="real-profile-icon-link" href={accountHref}>
+                      {isLoggedIn ? t('realProfileIconManageLink') : t('realProfileSignInLink')}
+                    </a>
+                  </div>
                 ) : (
                   <div className="real-profile-tab-placeholder">
                     <p>{t('realProfileTabComingSoon')}</p>

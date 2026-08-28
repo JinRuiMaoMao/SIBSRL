@@ -185,6 +185,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 个人档案：主菜单内嵌打开，黑板风格界面（统计、执照卡片），与语言页相同的 2s 滑入动效。",
             en: "Real profile opens in-shell from the start menu with chalkboard UI (stats, license card) and the same 2s slide transition as language.",
           },
+          {
+            zh: "Real 个人档案执照头像改为证件矩形框；未上传时显示默认占位，已登录无头像显示首字母；「图标」页可预览并跳转账号设置。",
+            en: "Real profile license avatar uses an ID-style rectangular frame with default placeholder; signed-in users without upload see initials; Icon tab previews and links to account settings.",
+          },
         ],
       },
     ],
