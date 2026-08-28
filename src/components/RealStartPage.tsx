@@ -16,7 +16,7 @@ import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealShopDialog } from './RealShopDialog'
 import { RealLanguagePage } from './RealLanguagePage'
 
-const REAL_LANGUAGE_TRANSITION_MS = 420
+const REAL_LANGUAGE_TRANSITION_MS = 2000
 
 type LanguageViewPhase = 'closed' | 'opening' | 'open' | 'closing'
 

@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "Real 开始页与语言页切换：进入时开始页向上滑出、语言页自底部滑入；返回时相反。",
-            en: "Real start ↔ language: start slides up while language slides in from the bottom; reverse on back.",
+            zh: "Real 开始页与语言页切换：进入时开始页向上滑出、语言页自底部滑入；返回时相反（2s）。",
+            en: "Real start ↔ language: start slides up while language slides in from the bottom; reverse on back (2s).",
           },
         ],
       },
