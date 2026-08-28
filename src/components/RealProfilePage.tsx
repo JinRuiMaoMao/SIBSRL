@@ -22,17 +22,21 @@ const PROFILE_TABS: Array<{
   { id: 'achievements', labelKey: 'realProfileTabAchievements', icon: '★' },
 ]
 
-const DEMO_STATS = {
-  distanceKm: 9129,
-  routesCompleted: 621,
-  busStopLines: 13475,
-  passengers: 63367,
-  dangerousDriving: 21637,
-  destinationError: 682,
-  earlyDeparture: 2545,
-  otherComplaints: 489,
-  driverLevel: 122,
+const DEFAULT_STATS = {
+  distanceKm: 0,
+  routesCompleted: 0,
+  busStopLines: 0,
+  passengers: 0,
+  dangerousDriving: 0,
+  destinationError: 0,
+  earlyDeparture: 0,
+  otherComplaints: 0,
+  driverLevel: 0,
 } as const
+
+function formatStatCount(value: number): string {
+  return value.toLocaleString()
+}
 
 function formatProfileDate(locale: string): string {
   return new Intl.DateTimeFormat(locale.startsWith('zh') ? 'zh-Hant' : locale, {
@@ -101,7 +105,7 @@ export function RealProfilePage({
 
               <div className="real-profile-board-content">
                 {activeTab === 'stats' ? (
-                  <>
+                  <div className="real-profile-stats-stage">
                     <article className="real-profile-license" aria-label={t('realProfileLicenseTitle')}>
                       <header className="real-profile-license-header">
                         <span className="real-profile-license-sun" aria-hidden="true">
@@ -128,7 +132,7 @@ export function RealProfilePage({
                           </div>
                           <div>
                             <dt>{t('realProfileLicenseLevel')}</dt>
-                            <dd>{DEMO_STATS.driverLevel}</dd>
+                            <dd>{DEFAULT_STATS.driverLevel}</dd>
                           </div>
                         </dl>
                       </div>
@@ -153,42 +157,41 @@ export function RealProfilePage({
                       <dl className="real-profile-stats-list">
                         <div>
                           <dt>{t('realProfileStatDistance')}</dt>
-                          <dd>{DEMO_STATS.distanceKm.toLocaleString()} km</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.distanceKm)} km</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatRoutes')}</dt>
-                          <dd>{DEMO_STATS.routesCompleted.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.routesCompleted)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatStopLines')}</dt>
-                          <dd>{DEMO_STATS.busStopLines.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.busStopLines)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatPassengers')}</dt>
-                          <dd>{DEMO_STATS.passengers.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.passengers)}</dd>
                         </div>
                       </dl>
                       <dl className="real-profile-stats-list real-profile-stats-list--negative">
                         <div>
                           <dt>{t('realProfileStatDangerous')}</dt>
-                          <dd>{DEMO_STATS.dangerousDriving.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.dangerousDriving)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatDestinationError')}</dt>
-                          <dd>{DEMO_STATS.destinationError.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.destinationError)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatEarlyDeparture')}</dt>
-                          <dd>{DEMO_STATS.earlyDeparture.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.earlyDeparture)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatComplaints')}</dt>
-                          <dd>{DEMO_STATS.otherComplaints.toLocaleString()}</dd>
+                          <dd>{formatStatCount(DEFAULT_STATS.otherComplaints)}</dd>
                         </div>
                       </dl>
-                      <p className="real-profile-stats-demo">{t('realProfileStatsDemoNote')}</p>
                     </article>
-                  </>
+                  </div>
                 ) : activeTab === 'title' ? (
                   <RealProfileTitleTab />
                 ) : activeTab === 'icon' ? (

@@ -193,6 +193,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 个人档案名称规则与账号页一致：留空显示名称时使用邮箱；「标题」页可编辑 Display name 并同步到执照。",
             en: "Real profile naming matches the account page: blank display name falls back to email; Title tab edits Display name and syncs to the license card.",
           },
+          {
+            zh: "Real 个人档案统计与等级默认显示 0；黑板改为居中浮窗（非全屏），执照右上、统计纸右下布局。",
+            en: "Real profile stats and level default to 0; chalkboard is a centered panel (not full-screen) with license top-right and stats note bottom-right.",
+          },
         ],
       },
     ],
