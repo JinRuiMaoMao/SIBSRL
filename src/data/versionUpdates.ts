@@ -170,6 +170,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Real start menu buttons now scale to ~1.14× on hover, closer to in-game UI.",
           },
           {
+            zh: "修复 Real 开始页共用地图背景被内容层纯色底挡住而不显示的问题。",
+            en: "Fixed Real start map background hidden behind an opaque content layer.",
+          },
+          {
             zh: "Real 开始页与路线选择切换：开始页向下滑出、选线页从上方滑入；返回主界面时相反（2s，背景固定）。",
             en: "Real start ↔ route list: start slides down while routes enter from the top; reverse on back (2s, fixed bg).",
           },
