@@ -189,6 +189,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 个人档案执照头像改为证件矩形框；未上传时显示默认占位，已登录无头像显示首字母；「图标」页可预览并跳转账号设置。",
             en: "Real profile license avatar uses an ID-style rectangular frame with default placeholder; signed-in users without upload see initials; Icon tab previews and links to account settings.",
           },
+          {
+            zh: "Real 个人档案名称规则与账号页一致：留空显示名称时使用邮箱；「标题」页可编辑 Display name 并同步到执照。",
+            en: "Real profile naming matches the account page: blank display name falls back to email; Title tab edits Display name and syncs to the license card.",
+          },
         ],
       },
     ],

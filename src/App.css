@@ -10211,6 +10211,126 @@ html:not([data-reduce-motion='true']) .real-profile-tab:hover {
   color: #fff;
 }
 
+.real-profile-title-tab {
+  display: flex;
+  justify-content: center;
+  min-height: clamp(12rem, 40vh, 20rem);
+  padding: 0.5rem 0;
+}
+
+.real-profile-title-tab-lead {
+  margin: 0 0 0.85rem;
+  max-width: 24rem;
+  text-align: center;
+  font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+  line-height: 1.55;
+  color: rgb(243 244 246 / 0.82);
+}
+
+.real-profile-title-note {
+  width: min(100%, 24rem);
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+  border: 1px solid rgb(31 41 55 / 0.12);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #fff9e8 0%, #f5eecf 100%);
+  color: #1f2937;
+  box-shadow: 0 10px 22px rgb(0 0 0 / 0.24);
+  transform: rotate(-1.2deg);
+}
+
+.real-profile-title-note-heading {
+  margin: 0 0 0.45rem;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
+  font-weight: 800;
+}
+
+.real-profile-title-note-hint {
+  margin: 0 0 0.85rem;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.real-profile-title-field {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.real-profile-title-field-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.real-profile-title-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #c4a574;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.88);
+  color: #111827;
+  font: inherit;
+  font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+}
+
+.real-profile-title-input:focus {
+  outline: 2px solid rgb(74 124 89 / 0.55);
+  outline-offset: 1px;
+}
+
+.real-profile-title-preview {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.85rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.55);
+  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
+}
+
+.real-profile-title-preview-label {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.real-profile-title-preview-value {
+  font-weight: 800;
+  text-align: right;
+  word-break: break-word;
+}
+
+.real-profile-title-save {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #4a7c59 0%, #3d6649 100%);
+  color: #f8fafc;
+  font: inherit;
+  font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.18s ease;
+}
+
+.real-profile-title-save:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabled) {
+  transform: scale(1.03);
+}
+
+.real-profile-title-save:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .real-profile-license-fields {
   display: grid;
   gap: 0.45rem;

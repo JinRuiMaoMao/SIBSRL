@@ -6,6 +6,7 @@ import type { MessageKey } from '../i18n/messages'
 import { getAccountPageHref } from '../utils/appPage'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
+import { RealProfileTitleTab } from './RealProfileTitleTab'
 
 type RealProfileTabId = 'stats' | 'title' | 'icon' | 'leaderboard' | 'achievements'
 
@@ -53,8 +54,8 @@ export function RealProfilePage({
   const { profile, displayLabel } = useUserProfile()
   const [activeTab, setActiveTab] = useState<RealProfileTabId>('stats')
   const accountHref = getAccountPageHref()
-
-  const displayName = profile?.displayName?.trim() || displayLabel || t('realProfileGuestName')
+  const profileEmail = profile?.email ?? email
+  const licenseName = isLoggedIn ? displayLabel : t('realProfileGuestName')
   const issueDate = useMemo(() => formatProfileDate(locale), [locale])
 
   useEffect(() => {
@@ -112,14 +113,14 @@ export function RealProfilePage({
                         <div className="real-profile-license-photo-wrap">
                           <RealProfileLicensePhoto
                             displayName={profile?.displayName}
-                            email={profile?.email ?? email}
+                            email={profileEmail}
                             avatarDataUrl={profile?.avatarDataUrl}
                           />
                         </div>
                         <dl className="real-profile-license-fields">
                           <div>
-                            <dt>{t('realProfileLicenseName')}</dt>
-                            <dd>{displayName}</dd>
+                            <dt>{t('authDisplayNameLabel')}</dt>
+                            <dd>{licenseName}</dd>
                           </div>
                           <div>
                             <dt>{t('realProfileLicenseIssueDate')}</dt>
@@ -131,7 +132,7 @@ export function RealProfilePage({
                           </div>
                         </dl>
                       </div>
-                      <p className="real-profile-license-signature">{displayName}</p>
+                      <p className="real-profile-license-signature">{licenseName}</p>
                       {!isLoggedIn ? (
                         <a className="real-profile-account-link" href={accountHref}>
                           {t('realProfileSignInLink')}
@@ -188,11 +189,13 @@ export function RealProfilePage({
                       <p className="real-profile-stats-demo">{t('realProfileStatsDemoNote')}</p>
                     </article>
                   </>
+                ) : activeTab === 'title' ? (
+                  <RealProfileTitleTab />
                 ) : activeTab === 'icon' ? (
                   <div className="real-profile-icon-tab">
                     <RealProfileLicensePhoto
                       displayName={profile?.displayName}
-                      email={profile?.email ?? email}
+                      email={profileEmail}
                       avatarDataUrl={profile?.avatarDataUrl}
                       size="icon"
                     />
