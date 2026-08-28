@@ -4,7 +4,7 @@ import { useAppDialog } from '../contexts/AppDialogContext'
 import { useUserProfile } from '../contexts/UserProfileContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getAccountPageHref } from '../utils/appPage'
-import { resolveAccountDisplayLabel } from '../utils/accountAvatar'
+import { resolveAccountLicenseName } from '../utils/accountAvatar'
 
 export function RealProfileTitleTab() {
   const { t } = useLocale()
@@ -20,7 +20,7 @@ export function RealProfileTitleTab() {
   }, [profile?.displayName])
 
   const profileDirty = displayNameDraft.trim() !== (profile?.displayName ?? '')
-  const previewLabel = resolveAccountDisplayLabel(displayNameDraft.trim() || null, profile?.email ?? email)
+  const previewLabel = resolveAccountLicenseName(displayNameDraft.trim() || null, profile?.email ?? email)
 
   const handleSave = async () => {
     if (!token) return

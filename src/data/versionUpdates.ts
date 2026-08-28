@@ -201,6 +201,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 Real 个人档案统计页执照遮挡统计纸、标签被裁切的问题（上下分区布局）。",
             en: "Fix Real profile stats tab where the license covered the stats note and clipped labels (stacked layout).",
           },
+          {
+            zh: "Real 执照显示名称：无昵称时改为邮箱 @ 前本地名（头像仍用首字母），并加高黑板避免统计纸底部被裁切。",
+            en: "Real license display name uses the email local part when nickname is blank (avatar still uses initial); taller board avoids clipping stats.",
+          },
         ],
       },
     ],

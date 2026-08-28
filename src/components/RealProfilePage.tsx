@@ -4,6 +4,7 @@ import { useUserProfile } from '../contexts/UserProfileContext'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import { getAccountPageHref } from '../utils/appPage'
+import { resolveAccountLicenseName } from '../utils/accountAvatar'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
 import { RealProfileTitleTab } from './RealProfileTitleTab'
@@ -55,11 +56,13 @@ export function RealProfilePage({
 }) {
   const { locale, t } = useLocale()
   const { isLoggedIn, email } = useAuth()
-  const { profile, displayLabel } = useUserProfile()
+  const { profile } = useUserProfile()
   const [activeTab, setActiveTab] = useState<RealProfileTabId>('stats')
   const accountHref = getAccountPageHref()
   const profileEmail = profile?.email ?? email
-  const licenseName = isLoggedIn ? displayLabel : t('realProfileGuestName')
+  const licenseName = isLoggedIn
+    ? resolveAccountLicenseName(profile?.displayName, profileEmail)
+    : t('realProfileGuestName')
   const issueDate = useMemo(() => formatProfileDate(locale), [locale])
 
   useEffect(() => {

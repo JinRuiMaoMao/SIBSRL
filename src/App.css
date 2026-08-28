@@ -10016,7 +10016,7 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   display: flex;
   flex: 0 0 auto;
   width: min(100%, 54rem);
-  height: min(72vh, 32rem);
+  height: min(76vh, 34rem);
   max-height: calc(100dvh - 7.5rem);
   padding: clamp(0.75rem, 1.8vw, 1rem);
   border-radius: 12px;
@@ -10030,7 +10030,7 @@ html[data-reduce-motion='true'] .real-language-option:hover {
     inset 0 2px 0 rgb(255 255 255 / 0.08),
     inset 0 -3px 8px rgb(0 0 0 / 0.22),
     0 14px 34px rgb(0 0 0 / 0.42);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .real-profile-tabs {
@@ -10098,14 +10098,14 @@ html:not([data-reduce-motion='true']) .real-profile-tab:hover {
 
 .real-profile-stats-stage {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+  grid-template-rows: auto minmax(0, 1fr);
   align-content: stretch;
-  justify-items: end;
-  gap: 0.35rem;
+  gap: 0.4rem 0.65rem;
   width: 100%;
   height: 100%;
   min-height: 100%;
-  padding: 0.2rem 0.45rem 0.55rem 0.15rem;
+  padding: 0.15rem 0.35rem 0.45rem 0.1rem;
   box-sizing: border-box;
 }
 
@@ -10113,8 +10113,12 @@ html:not([data-reduce-motion='true']) .real-profile-tab:hover {
   position: relative;
   top: auto;
   right: auto;
+  grid-column: 2;
+  grid-row: 1;
   z-index: 2;
-  width: min(100%, 14rem);
+  width: 100%;
+  max-width: 15rem;
+  justify-self: end;
   margin: 0;
   padding: clamp(0.7rem, 1.6vw, 0.95rem) clamp(0.8rem, 1.8vw, 1rem);
   border: 2px solid #c4a574;
@@ -10382,6 +10386,7 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
   font-size: clamp(0.72rem, 1.6vw, 0.82rem);
   font-weight: 700;
   word-break: break-word;
+  line-height: 1.25;
 }
 
 .real-profile-license-signature {
@@ -10410,18 +10415,22 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
   top: auto;
   right: auto;
   bottom: auto;
+  grid-column: 2;
+  grid-row: 2;
   z-index: 1;
-  width: min(100%, 18rem);
-  margin: -0.35rem 0.15rem 0 0;
-  padding: clamp(0.8rem, 1.8vw, 1rem) clamp(0.85rem, 2vw, 1.1rem);
+  width: 100%;
+  max-width: 19rem;
+  justify-self: end;
+  margin: -0.25rem 0 0;
+  padding: clamp(0.75rem, 1.7vw, 0.95rem) clamp(0.8rem, 1.85vw, 1rem);
   border: 1px solid rgb(31 41 55 / 0.12);
   border-radius: 4px;
   background:
     repeating-linear-gradient(
       transparent,
-      transparent 1.45rem,
-      rgb(59 130 246 / 0.14) 1.45rem,
-      rgb(59 130 246 / 0.14) calc(1.45rem + 1px)
+      transparent 1.35rem,
+      rgb(59 130 246 / 0.14) 1.35rem,
+      rgb(59 130 246 / 0.14) calc(1.35rem + 1px)
     ),
     #fffef8;
   color: #111827;
@@ -10461,8 +10470,8 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
 
 .real-profile-stats-list {
   display: grid;
-  gap: 0.35rem;
-  margin: 0 0 0.75rem;
+  gap: 0.28rem;
+  margin: 0 0 0.55rem;
 }
 
 .real-profile-stats-list div {
@@ -10544,17 +10553,20 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
 @media (max-width: 720px) {
   .real-profile-chalkboard {
     width: min(100%, 36rem);
-    height: min(76vh, 34rem);
+    height: min(80vh, 36rem);
   }
 
   .real-profile-stats-stage {
+    grid-template-columns: 1fr;
     justify-items: center;
     padding-inline: 0.35rem;
   }
 
   .real-profile-license,
   .real-profile-stats-note {
+    grid-column: 1;
     width: min(100%, 18rem);
+    max-width: 18rem;
     margin-inline: auto;
     transform: none;
   }
