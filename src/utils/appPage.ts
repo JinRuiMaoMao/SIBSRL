@@ -39,6 +39,19 @@ export function getSettingsPageHref(): string {
   return getLayoutScopedHref('settings.html')
 }
 
+export function getRealLanguagePageHref(): string {
+  return getLayoutScopedHref('language.html')
+}
+
+export function isRealLanguagePage(): boolean {
+  const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
+  if (meta === 'language') return true
+
+  const file =
+    window.location.pathname.replace(/\\/g, '/').split('/').filter(Boolean).pop()?.toLowerCase() ?? ''
+  return file === 'language.html'
+}
+
 export function isSecretPage(): boolean {
   const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
   if (meta === 'secret') return true

@@ -171,6 +171,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: {
+          zh: "Real 分屏",
+          en: "Real split layout",
+        },
+        additions: [
+          {
+            zh: "Real 开始页「语言」改为独立全屏语言选择页（双列网格、地图背景、底部翻译说明），参照游戏内界面设计。",
+            en: "Real start page Language now opens a dedicated full-screen picker (two-column grid, map background, translation disclaimer) styled like the in-game UI.",
+          },
+        ],
+      },
     ],
   },
   {

@@ -9551,3 +9551,128 @@ html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
   font-size: 0.78rem;
   color: #64748b;
 }
+
+/* Real layout — language selection (game-style) */
+.real-language-page {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: #f3f4f6;
+  background: #05070d;
+}
+
+.real-language-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 3vw, 2rem) clamp(1.25rem, 2.5vw, 2rem);
+  box-sizing: border-box;
+}
+
+.real-language-header {
+  flex-shrink: 0;
+  margin-bottom: clamp(1.25rem, 3vh, 2rem);
+}
+
+.real-language-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #f3f4f6;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.real-language-back:hover {
+  opacity: 0.82;
+}
+
+.real-language-back-chevron {
+  font-size: 1.45em;
+  line-height: 1;
+  font-weight: 400;
+  opacity: 0.92;
+}
+
+.real-language-main {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.real-language-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.55rem, 1.6vw, 0.85rem);
+  width: min(100%, 42rem);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 0.15rem 0.35rem 0.5rem 0;
+  align-content: start;
+}
+
+.real-language-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(2.65rem, 6.5vw, 3.15rem);
+  padding: 0.55rem 0.65rem;
+  border-radius: 12px;
+  border: 1px solid rgb(255 255 255 / 0.42);
+  background: rgb(8 12 20 / 0.52);
+  color: #f8fafc;
+  font-size: clamp(0.82rem, 1.8vw, 0.95rem);
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.real-language-option:hover {
+  border-color: rgb(255 255 255 / 0.72);
+  background: rgb(12 18 28 / 0.68);
+}
+
+.real-language-option--active {
+  border-color: rgb(255 255 255 / 0.92);
+  background: rgb(18 24 36 / 0.78);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.18);
+  font-weight: 600;
+}
+
+.real-language-footer {
+  flex-shrink: 0;
+  margin-top: clamp(1rem, 2.5vh, 1.75rem);
+  text-align: center;
+}
+
+.real-language-disclaimer {
+  margin: 0 auto;
+  max-width: 36rem;
+  font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+  line-height: 1.55;
+  color: rgb(243 244 246 / 0.72);
+}
+
+.real-language-disclaimer a {
+  color: rgb(243 244 246 / 0.92);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.real-language-disclaimer a:hover {
+  color: #fff;
+}
+
+@media (max-width: 480px) {
+  .real-language-grid {
+    width: 100%;
+  }
+}

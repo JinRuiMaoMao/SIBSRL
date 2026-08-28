@@ -8,7 +8,7 @@ import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Locale } from '../i18n/types'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
-import { getAccountPageHref, getSettingsPageHref } from '../utils/appPage'
+import { getAccountPageHref, getRealLanguagePageHref } from '../utils/appPage'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
@@ -125,7 +125,7 @@ export function RealStartPage() {
     },
     { id: 'servers', href: robloxHref, labelKey: 'realStartServers', icon: '⛁', tone: 'green', external: true },
     { id: 'profile', href: getAccountPageHref(), labelKey: 'realStartProfile', icon: '👤', tone: 'blue' },
-    { id: 'language', href: getSettingsPageHref(), labelKey: 'language', icon: '文', tone: 'purple' },
+    { id: 'language', href: getRealLanguagePageHref(), labelKey: 'language', icon: '文', tone: 'purple' },
   ]
 
   const dockItems: RealStartDockItem[] = [

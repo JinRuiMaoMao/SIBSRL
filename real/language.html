@@ -1,22 +1,6 @@
 ﻿<!doctype html>
 <html lang="en">
   <head>
-    <script id="start-route-redirect">
-(function () {
-  var q = window.location.search || '';
-  if (!q) return;
-  var params = new URLSearchParams(q);
-  if (params.has('route') || params.has('from') || params.has('to') || params.has('q')) {
-    var path = String(window.location.pathname || '').replace(/\\/g, '/');
-    var isReal = /\/real(?:\/|$)/i.test(path);
-    if (isReal) {
-      window.location.replace('./index.html' + q + '#routes');
-    } else {
-      window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
-    }
-  }
-})();
-</script>
     <script id="devtools-block">
 (function () {
   var INDEX = '../index.html';
@@ -68,8 +52,8 @@
 })();
 </script>
     <meta charset="UTF-8" />
+    <meta name="app-page" content="language" />
     <meta name="app-layout-mode" content="real" />
-    <meta name="app-page" content="start" />
     <meta name="user-api-url" content="https://sibs-user-api.onrender.com" />
     <script id="theme-bootstrap">
       (function () {
@@ -161,26 +145,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- site-social-meta -->
     <meta data-site-social-meta="1" name="keywords" content="Roblox, 阳光群岛, Sunshine Islands, SIBS, 巴士线路, 公交车, Bus Simulator, 线路查询, Roblox 巴士" />
-    <meta name="description" content="阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map." />
-    <link rel="canonical" href="https://jinruimaomao.github.io/SIBSRL/real/index.html" />
+    <meta name="description" content="Sunshine Islands Bus Simulator (SIBS) language selection for the real layout start page." />
+    <link rel="canonical" href="https://jinruimaomao.github.io/SIBSRL/real/language.html" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="阳光群岛线路查询 · SIBS Route Lookup" />
-    <meta property="og:title" content="阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图" />
-    <meta property="og:description" content="阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map." />
-    <meta property="og:url" content="https://jinruimaomao.github.io/SIBSRL/real/index.html" />
+    <meta property="og:title" content="選擇語言 · 阳光群岛巴士模拟器" />
+    <meta property="og:description" content="Sunshine Islands Bus Simulator (SIBS) language selection for the real layout start page." />
+    <meta property="og:url" content="https://jinruimaomao.github.io/SIBSRL/real/language.html" />
     <meta property="og:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-28T08%3A40%3A43.288Z" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图" />
+    <meta property="og:image:alt" content="選擇語言 · 阳光群岛巴士模拟器" />
     <meta property="og:locale" content="zh_CN" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图" />
-    <meta name="twitter:description" content="阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map." />
+    <meta name="twitter:title" content="選擇語言 · 阳光群岛巴士模拟器" />
+    <meta name="twitter:description" content="Sunshine Islands Bus Simulator (SIBS) language selection for the real layout start page." />
     <meta name="twitter:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-28T08%3A40%3A43.288Z" />
     <!-- /site-social-meta -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <title>阳光群岛巴士模拟器</title>
+    <title>選擇語言 · 阳光群岛线路查询</title>
 <link rel="stylesheet" crossorigin href="/SIBSRL/assets/dev-BH51xX84.css">
       <script id="app-surface-bootstrap">
 (function () {
@@ -254,208 +238,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-      <style id="start-boot-critical">
-html.start-boot-active #root {
-  visibility: hidden;
-}
-.start-boot-splash {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  background: var(--page-background, linear-gradient(160deg, #070b14 0%, #101829 100%));
-  transition: opacity 0.38s ease, visibility 0.38s ease;
-}
-.start-boot-splash.is-done {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-.start-boot-splash__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.85rem;
-  width: min(100%, 16rem);
-  text-align: center;
-}
-.start-boot-splash__logo-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4.5rem;
-  height: 4.5rem;
-}
-.start-boot-splash__logo {
-  width: 3.5rem;
-  height: 3.5rem;
-  object-fit: contain;
-  animation: start-boot-logo-spin 1.15s linear infinite;
-}
-@keyframes start-boot-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-html[data-reduce-motion='true'] .start-boot-splash__logo {
-  animation: none;
-}
-.start-boot-splash__label {
-  margin: 0;
-  max-width: 100%;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: var(--text-muted, #94a3b8);
-}
-.start-boot-splash__percent {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent, #f5b942);
-  letter-spacing: 0.04em;
-}
-</style>
-      <script id="real-layout-music-early-bootstrap">
-(function () {
-  var layoutMeta = document.querySelector('meta[name="app-layout-mode"]');
-  if (!layoutMeta || layoutMeta.content.trim() !== 'real') return;
-  var pageMeta = document.querySelector('meta[name="app-page"]');
-  var tabMeta = document.querySelector('meta[name="app-tab"]');
-  var page = pageMeta && pageMeta.content ? pageMeta.content.trim() : '';
-  var tab = tabMeta && tabMeta.content ? tabMeta.content.trim() : '';
-  var hashTab = (window.location.hash || '').replace(/^#/, '').trim();
-  if (!tab && hashTab) tab = hashTab;
-  var track = page === 'start' && !tab
-    ? '../audio/broadcasts/music/music-main-menu.ogg'
-    : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu-intro.ogg' : '');
-  if (!track) return;
-  try { if (sessionStorage.getItem('sibs-real-music-muted') === '1') return; } catch (e) {}
-  var audio = new Audio(track);
-  audio.loop = false;
-  audio.preload = 'auto';
-  if (tab === 'routes') {
-    var introUrl = '../audio/broadcasts/music/music-map-menu-intro.ogg';
-    var bridgeUrl = '../audio/broadcasts/music/music-map-menu-bridge.ogg';
-    var loopUrl = '../audio/broadcasts/music/music-map-menu-loop.ogg';
-    var introFadeAt = 30;
-    var fadeMs = 900;
-    var fadeLead = fadeMs / 1000;
-    var targetVolume = 1;
-    var phase = 'intro';
-    var crossfadeStarted = false;
-    var bridgeAudio = new Audio(bridgeUrl);
-    var loopAudio = new Audio(loopUrl);
-    bridgeAudio.preload = 'auto';
-    loopAudio.preload = 'auto';
-    bridgeAudio.load();
-    loopAudio.load();
-    window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = bridgeAudio;
-    function rampVolume(el, currentTime, fadeAt) {
-      var fadeEnd = fadeAt + fadeLead;
-      if (currentTime <= fadeAt) {
-        el.volume = targetVolume;
-        return;
-      }
-      if (currentTime >= fadeEnd) {
-        el.volume = 0;
-        return;
-      }
-      var progress = (currentTime - fadeAt) / fadeLead;
-      el.volume = targetVolume * (1 - progress);
-    }
-    function resolveNext() {
-      if (phase === 'intro') return { el: bridgeAudio, nextPhase: 'bridge' };
-      if (phase === 'bridge') return { el: loopAudio, nextPhase: 'loop' };
-      if (audio === loopAudio) return { el: new Audio(loopUrl), nextPhase: 'loop' };
-      return { el: loopAudio, nextPhase: 'loop' };
-    }
-    function startBridgeOverlap() {
-      if (crossfadeStarted) return;
-      crossfadeStarted = true;
-      bridgeAudio.currentTime = 0;
-      bridgeAudio.volume = targetVolume;
-      bridgeAudio.muted = audio.muted;
-      if (bridgeAudio.paused) bridgeAudio.play().catch(function () {});
-    }
-    function handoffToBridge() {
-      audio.pause();
-      audio.removeEventListener('timeupdate', onIntroTime);
-      audio.removeEventListener('ended', onIntroEnded);
-      audio = bridgeAudio;
-      phase = 'bridge';
-      crossfadeStarted = false;
-      window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
-      window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = loopAudio;
-      audio.addEventListener('ended', onSegmentEnded);
-    }
-    function handoffToNext() {
-      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-      var next = resolveNext();
-      var nextEl = next.el;
-      if (phase === 'loop') loopAudio = nextEl;
-      audio.pause();
-      audio.removeEventListener('ended', onSegmentEnded);
-      audio = nextEl;
-      phase = next.nextPhase;
-      window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
-      if (phase === 'bridge') window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = loopAudio;
-      if (phase === 'loop') window.__SIBS_REAL_LAYOUT_AUDIO_EXTRA__ = bridgeAudio;
-      nextEl.currentTime = 0;
-      nextEl.volume = targetVolume;
-      nextEl.muted = audio.muted;
-      nextEl.addEventListener('ended', onSegmentEnded);
-      try { if (sessionStorage.getItem('sibs-real-music-muted') !== '1') nextEl.play().catch(function () {}); } catch (e) {}
-    }
-    function onIntroTime() {
-      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-      if (audio.currentTime >= introFadeAt) startBridgeOverlap();
-      rampVolume(audio, audio.currentTime, introFadeAt);
-      if (audio.currentTime >= introFadeAt + fadeLead) handoffToBridge();
-    }
-    function onIntroEnded() {
-      if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-      if (!crossfadeStarted) startBridgeOverlap();
-      handoffToBridge();
-    }
-    function onSegmentEnded() {
-      handoffToNext();
-    }
-    audio.addEventListener('timeupdate', onIntroTime);
-    audio.addEventListener('ended', onIntroEnded);
-  }
-  window.__SIBS_REAL_LAYOUT_AUDIO__ = audio;
-  function tryPlay() {
-    if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-    if (!audio.paused) return;
-    audio.muted = false;
-    var attempt = audio.play();
-    if (attempt && attempt.catch) {
-      attempt.catch(function () {
-        if (window.__SIBS_REAL_LAYOUT_MUSIC_ADOPTED__) return;
-        audio.muted = true;
-        audio.play().catch(function () {});
-      });
-    }
-  }
-  tryPlay();
-  audio.addEventListener('canplaythrough', tryPlay, { once: true });
-})();
-</script>
   </head>
   <body>
-    <div id="start-boot-splash" class="start-boot-splash" aria-live="polite" aria-busy="true" role="status" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-  <div class="start-boot-splash__inner">
-    <div class="start-boot-splash__logo-wrap">
-      <img class="start-boot-splash__logo" src="../sibs-logo.png" alt="" width="56" height="56" decoding="async" />
-    </div>
-    <p class="start-boot-splash__label" id="start-boot-label">本站加载中…</p>
-    <p class="start-boot-splash__percent" id="start-boot-percent">0%</p>
-  </div>
-</div>
     <noscript>
   <style>
     #root, .boot-hint { display: none !important; }
@@ -565,89 +349,6 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   }, 15000);
 })();
 </script>
-    <script id="start-boot-splash-script">
-(function () {
-  var splash = document.getElementById('start-boot-splash');
-  if (!splash) return;
-  var BOOT_SEEN_KEY = 'sibs-start-boot-seen';
-  var BOOT_STUCK_MS = 12000;
-  function isBootSeen() {
-    try { return localStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch (e) { return false; }
-  }
-  function isRealAppTabDeepLink() {
-    var path = String(window.location.pathname || '').replace(/\\/g, '/');
-    if (!/\/real(?:\/|$)/i.test(path)) return false;
-    var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
-    return ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'].indexOf(hash) >= 0;
-  }
-  function dismissSplash() {
-    document.documentElement.classList.remove('start-boot-active');
-    if (window.__SIBS_START_BOOT__ && window.__SIBS_START_BOOT__.finish) {
-      window.__SIBS_START_BOOT__.finish();
-      return;
-    }
-    splash.classList.add('is-done');
-    splash.setAttribute('aria-busy', 'false');
-    window.setTimeout(function () {
-      if (splash.parentNode) splash.parentNode.removeChild(splash);
-    }, 420);
-  }
-  function recoverSplashState() {
-    if (isBootSeen()) {
-      dismissSplash();
-      return;
-    }
-    if (document.documentElement.classList.contains('start-boot-active')) {
-      window.location.reload();
-    }
-  }
-  if (isRealAppTabDeepLink()) {
-    document.documentElement.classList.remove('start-boot-active');
-    splash.remove();
-    window.__SIBS_START_BOOT__ = {
-      setProgress: function () {},
-      finish: function () {},
-    };
-    return;
-  }
-  if (isBootSeen()) {
-    splash.remove();
-    window.__SIBS_START_BOOT__ = {
-      setProgress: function () {},
-      finish: function () {},
-    };
-    return;
-  }
-  document.documentElement.classList.add('start-boot-active');
-  var pctEl = document.getElementById('start-boot-percent');
-  var labelEl = document.getElementById('start-boot-label');
-  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-  function setProgress(p, label) {
-    var value = clamp(Math.round(p), 0, 100);
-    if (label && labelEl) labelEl.textContent = label;
-    if (pctEl) pctEl.textContent = value + '%';
-    splash.setAttribute('aria-valuenow', String(value));
-    if (label) splash.setAttribute('aria-valuetext', label + ' ' + value + '%');
-  }
-  window.__SIBS_START_BOOT__ = {
-    setProgress: setProgress,
-    finish: dismissSplash,
-  };
-  setProgress(0, '本站加载中…');
-  window.addEventListener('pageshow', function (event) {
-    if (event.persisted) recoverSplashState();
-  });
-  window.setTimeout(function () {
-    if (!document.getElementById('start-boot-splash')) return;
-    if (isBootSeen()) {
-      dismissSplash();
-      return;
-    }
-    window.location.reload();
-  }, BOOT_STUCK_MS);
-})();
-</script>
-
       <script type="module" crossorigin src="/SIBSRL/assets/dev-DQDaEDVZ.js"></script>
   </body>
 </html>

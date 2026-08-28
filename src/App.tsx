@@ -21,6 +21,7 @@ import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { StartPage } from './components/StartPage'
 import { RealStartPage } from './components/RealStartPage'
+import { RealLanguagePage } from './components/RealLanguagePage'
 import { RealAlphaOverlay } from './components/RealAlphaOverlay'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
@@ -39,7 +40,7 @@ import {
   isGuidedTourReplaySessionActive,
 } from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
-import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
+import { isAccountPage, isMapDrawPage, isRouteMapPage, isRealLanguagePage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { isRealLayoutMode } from './utils/appLayoutMode'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { useAppTabFromLocation } from './hooks/useAppTabFromLocation'
@@ -143,7 +144,7 @@ function App() {
   }, [openTour])
 
   useEffect(() => {
-    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage()) return
+    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage() || isRealLanguagePage()) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const pendingReplay = consumePendingGuidedTourReplay()
@@ -217,6 +218,7 @@ function App() {
     !isRouteMapPage() &&
     !isSecretPage() &&
     !isSettingsPage() &&
+    !isRealLanguagePage() &&
     !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
@@ -234,6 +236,18 @@ function App() {
         <LiquidGlassDefs />
         {realAlphaOverlay}
         {realLayout ? <RealStartPage /> : <StartPage />}
+      </>
+    )
+  }
+
+  if (isRealLanguagePage()) {
+    return (
+      <>
+        <LiquidGlassDefs />
+        {realAlphaOverlay}
+        <ErrorBoundary>
+          <RealLanguagePage />
+        </ErrorBoundary>
       </>
     )
   }
