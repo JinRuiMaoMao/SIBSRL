@@ -8644,6 +8644,86 @@ html[data-reduce-motion='true'] .site-header-shell {
 }
 
 /* Real layout — game-style start page */
+.real-shell-home-stack {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #05070d;
+}
+
+.real-shell-home-stack .real-start-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.real-shell-home-stack--ready .real-start-bg-map {
+  animation: real-start-bg-drift 100s ease-in-out infinite alternate;
+}
+
+.real-shell-home-start-layer,
+.real-shell-home-routes-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  transform: translate3d(0, 0, 0);
+  pointer-events: none;
+}
+
+.real-shell-home-routes-layer {
+  z-index: 2;
+}
+
+.real-shell-home-start-layer .real-start-stack,
+.real-shell-routes-panel {
+  position: absolute;
+  inset: 0;
+  min-height: 100dvh;
+  pointer-events: auto;
+}
+
+.real-shell-routes-panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-shell-routes-panel .app--real-routes {
+  min-height: 100dvh;
+}
+
+.real-shell-home-stack[data-routes-phase='start'] .real-shell-home-start-layer {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-home-start-layer {
+  animation: real-shell-slide-down-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  pointer-events: none;
+}
+
+.real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel {
+  animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.real-shell-home-stack[data-routes-phase='routes'] .real-shell-routes-panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer {
+  animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-routes-panel {
+  animation: real-shell-slide-up-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  pointer-events: none;
+}
+
+html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-home-start-layer,
+html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel,
+html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer,
+html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-routes-panel {
+  animation: none;
+}
+
 .real-start-stack {
   position: relative;
   min-height: 100dvh;
@@ -8763,6 +8843,10 @@ html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing']
   to {
     transform: translate3d(0, 100%, 0);
   }
+}
+
+.real-start-stack .real-start-page {
+  background: transparent;
 }
 
 .real-start-page {

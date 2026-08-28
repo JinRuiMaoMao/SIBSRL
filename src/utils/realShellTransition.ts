@@ -1,0 +1,1 @@
+export const REAL_SHELL_TRANSITION_MS = 2000

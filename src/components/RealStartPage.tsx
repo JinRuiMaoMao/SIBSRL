@@ -7,7 +7,6 @@ import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Locale } from '../i18n/types'
-import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { getAccountPageHref } from '../utils/appPage'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { navigateRealShellTab } from '../utils/realShellNavigation'
@@ -15,12 +14,13 @@ import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealShopDialog } from './RealShopDialog'
 import { RealLanguagePage } from './RealLanguagePage'
+import { RealStartBackground } from './RealStartBackground'
+import { isAppReduceMotionEnabled } from '../storage/appPreferences'
+import { REAL_SHELL_TRANSITION_MS } from '../utils/realShellTransition'
 
-const REAL_LANGUAGE_TRANSITION_MS = 2000
+const REAL_LANGUAGE_TRANSITION_MS = REAL_SHELL_TRANSITION_MS
 
 type LanguageViewPhase = 'closed' | 'opening' | 'open' | 'closing'
-
-import { isAppReduceMotionEnabled } from '../storage/appPreferences'
 
 interface RealStartMenuItem {
   id: string
@@ -106,7 +106,7 @@ function RealStartDailyChallengeCard({
   )
 }
 
-export function RealStartPage() {
+export function RealStartPage({ sharedBackground = false }: { sharedBackground?: boolean }) {
   const bootReady = useStartPageBoot()
   const { locale, t } = useLocale()
   const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
@@ -116,7 +116,6 @@ export function RealStartPage() {
   const languageActive = languagePhase !== 'closed'
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
-  const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
   const wikiHref = getStartPageExternalLinkUrl('wiki', locale)
 
@@ -222,13 +221,10 @@ export function RealStartPage() {
 
   return (
     <div
-      className={`real-start-stack${bootReady ? ' real-start-stack--ready' : ''}`}
+      className={`real-start-stack${!sharedBackground && bootReady ? ' real-start-stack--ready' : ''}`}
       data-language-phase={languagePhase}
     >
-      <div className="real-start-bg" aria-hidden="true">
-        <img className="real-start-bg-map" src={mapBackgroundUrl} alt="" decoding="async" />
-        <div className="real-start-bg-overlay" />
-      </div>
+      {sharedBackground ? null : <RealStartBackground />}
 
       <div className="real-start-page sibs-scrollbar">
         <div

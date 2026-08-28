@@ -20,7 +20,7 @@ import { ScrollRevealScope } from './components/ScrollRevealScope'
 import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { StartPage } from './components/StartPage'
-import { RealStartPage } from './components/RealStartPage'
+import { RealShellHomeView } from './components/RealShellHomeView'
 import { RealAlphaOverlay } from './components/RealAlphaOverlay'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
@@ -228,12 +228,41 @@ function App() {
 
   const realAlphaOverlay = realLayout ? <RealAlphaOverlay /> : null
 
+  const realShellHomeActive =
+    realLayout && isRealAppShellPage() && (tabFromLocation === null || tabFromLocation === 'routes')
+
+  if (realShellHomeActive) {
+    return (
+      <>
+        <LiquidGlassDefs />
+        {realAlphaOverlay}
+        {favoritesSyncDialog}
+        <IslandMapOverlayProvider>
+          <RealShellHomeView
+            shellTab={tabFromLocation === 'routes' ? 'routes' : null}
+            routesContent={
+              <div className="app sibs-scrollbar app--real-routes">
+                <ScrollRevealScope className="main">
+                  <RouteLookupPage
+                    pendingDailyChallengeDetail={pendingDailyChallengeDetail}
+                    onPendingDailyChallengeDetailConsumed={handlePendingDailyChallengeDetailConsumed}
+                    dailyChallenge={dailyChallenge}
+                  />
+                </ScrollRevealScope>
+              </div>
+            }
+          />
+        </IslandMapOverlayProvider>
+      </>
+    )
+  }
+
   if (isStartPage()) {
     return (
       <>
         <LiquidGlassDefs />
         {realAlphaOverlay}
-        {realLayout ? <RealStartPage /> : <StartPage />}
+        <StartPage />
       </>
     )
   }

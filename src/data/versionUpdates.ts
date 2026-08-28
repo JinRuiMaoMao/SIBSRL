@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "Real 开始页与语言页切换时地图背景固定不动，仅内容层滑入滑出。",
-            en: "Real start ↔ language keeps the map background fixed; only content panels slide.",
+            zh: "Real 开始页与路线选择切换：开始页向下滑出、选线页从上方滑入；返回主界面时相反（2s，背景固定）。",
+            en: "Real start ↔ route list: start slides down while routes enter from the top; reverse on back (2s, fixed bg).",
           },
         ],
       },
