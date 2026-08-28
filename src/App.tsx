@@ -40,10 +40,11 @@ import {
   isGuidedTourReplaySessionActive,
 } from './storage/guidedTourReplay'
 import { markUpdateSeen } from './storage/updatesViewing'
-import { isAccountPage, isMapDrawPage, isRouteMapPage, isRealLanguagePage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
+import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsPage, isStartPage } from './utils/appPage'
 import { isRealLayoutMode } from './utils/appLayoutMode'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { useAppTabFromLocation } from './hooks/useAppTabFromLocation'
+import { useRealShellLanguageOpen } from './hooks/useRealShellLanguageOpen'
 import { readTabFromLocation, isRoutesPage, isRealAppShellPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
@@ -86,6 +87,7 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const tabFromLocation = useAppTabFromLocation()
+  const realLanguageOpen = useRealShellLanguageOpen()
   const realLayout = isRealLayoutMode()
   const activeTab = tabFromLocation ?? 'routes'
   const {
@@ -118,7 +120,7 @@ function App() {
     if (isRealAppShellPage() && !isStartPage()) {
       dismissStartBootSplash()
     }
-  }, [tabFromLocation])
+  }, [tabFromLocation, realLanguageOpen])
 
   const prepareGuidedTour = useCallback(() => {
     setHeaderCollapsed(false)
@@ -144,7 +146,7 @@ function App() {
   }, [openTour])
 
   useEffect(() => {
-    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage() || isRealLanguagePage()) return
+    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage() || realLanguageOpen) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const pendingReplay = consumePendingGuidedTourReplay()
@@ -218,7 +220,7 @@ function App() {
     !isRouteMapPage() &&
     !isSecretPage() &&
     !isSettingsPage() &&
-    !isRealLanguagePage() &&
+    !realLanguageOpen &&
     !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
@@ -240,7 +242,7 @@ function App() {
     )
   }
 
-  if (isRealLanguagePage()) {
+  if (realLanguageOpen) {
     return (
       <>
         <LiquidGlassDefs />

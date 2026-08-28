@@ -149,7 +149,6 @@ const LAYOUT_DEV_PAGE_SOURCES: Record<string, string> = {
   'updates.html': 'pages/updates.html',
   'account.html': 'pages/account.html',
   'settings.html': 'pages/settings.html',
-  'language.html': 'pages/language.html',
   'route-map.html': 'pages/route-map.html',
   'map-draw.html': 'pages/map-draw.html',
 }
@@ -231,6 +230,13 @@ function devEntryRedirectPlugin(): Plugin {
               res.end()
               return
             }
+            if (pageName === 'language.html') {
+              const query = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+              res.statusCode = 302
+              res.setHeader('Location', `/real/index.html#language${query}`)
+              res.end()
+              return
+            }
           }
           const sourceRel = LAYOUT_DEV_PAGE_SOURCES[pageName]
           if (sourceRel) {
@@ -299,12 +305,6 @@ function devEntryRedirectPlugin(): Plugin {
         if (pathOnly === '/settings.html') {
           const file = resolve(root, 'pages/settings.html')
           serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly)
-          return
-        }
-
-        if (pathOnly === '/language.html') {
-          const file = resolve(root, 'pages/language.html')
-          serveTransformedDevHtml(server, req, res, next, file, req.url ?? pathOnly, 'real')
           return
         }
 

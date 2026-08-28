@@ -11,7 +11,6 @@ import {
   injectMapDrawPageMeta,
   injectRouteMapPageMeta,
   injectSettingsPageMeta,
-  injectLanguagePageMeta,
   injectNoScriptGuard,
   injectSecretPageMeta,
   injectServiceWorkerBootstrap,
@@ -251,6 +250,7 @@ export async function publishStandalone(options = {}) {
   mkdirSync(resolve(root, 'dist', 'real'), { recursive: true })
   writeFileSync(resolve(root, 'real', 'index.html'), realStartHtml)
   writeFileSync(resolve(root, 'dist', 'real', 'index.html'), realStartHtml)
+  writeRealTabHashRedirect('language', 'language.html', root, resolve(root, 'dist'))
 
   let secretHtml = injectSecretPageMeta(baseHtml)
   secretHtml = adjustAppPageTitle(secretHtml, '???')
@@ -290,18 +290,6 @@ export async function publishStandalone(options = {}) {
   publishHtmlToLayoutDirs(settingsHtml, 'settings.html', root, resolve(root, 'dist'), { layouts: ['normal'] })
   writeRealRedirectToNormal('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
   writeLegacyRedirect('settings.html', 'normal/settings.html', root, resolve(root, 'dist'))
-
-  let languageHtml = injectLanguagePageMeta(baseHtml)
-  languageHtml = adjustAppPageTitle(languageHtml, '選擇語言')
-  languageHtml = injectSocialMeta(languageHtml, {
-    title: '選擇語言 · 阳光群岛巴士模拟器',
-    description: 'Sunshine Islands Bus Simulator (SIBS) language selection for the real layout start page.',
-    url: buildCanonicalSiteUrl('real/language.html'),
-    imageUrl: buildOgImageUrl(buildTag),
-    keywords: SITE_SOCIAL_DEFAULTS.keywords,
-    siteName: SITE_SOCIAL_DEFAULTS.siteName,
-  })
-  publishHtmlToLayoutDirs(languageHtml, 'language.html', root, resolve(root, 'dist'), { layouts: ['real'] })
 
   let mapDrawHtml = injectMapDrawPageMeta(baseHtml)
   mapDrawHtml = adjustAppPageTitle(mapDrawHtml, '地图走线编辑')

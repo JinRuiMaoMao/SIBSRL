@@ -521,25 +521,6 @@ export function injectSettingsPageMeta(html) {
   return out
 }
 
-/** @param {string} html */
-export function injectLanguagePageMeta(html) {
-  let out = html.replace(/<meta name="app-tab"[^>]*>\s*/g, '')
-  out = injectAppLayoutModeMeta(out, 'real')
-  const head = out.split('</head>')[0] ?? out
-  if (/<meta name="app-page"[^>]*>/i.test(head)) {
-    out = out.replace(
-      /(<meta name="app-page" content=")[^"]*(")/i,
-      `$1language$2`,
-    )
-  } else {
-    out = out.replace(
-      '<meta charset="UTF-8" />',
-      `<meta charset="UTF-8" />\n    <meta name="app-page" content="language" />`,
-    )
-  }
-  return out
-}
-
 const START_ROUTE_REDIRECT_SCRIPT = `<script id="start-route-redirect">
 (function () {
   var q = window.location.search || '';

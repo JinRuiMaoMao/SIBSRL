@@ -41,10 +41,29 @@ export function isRealAppShellPage(): boolean {
   return file === 'index.html' || file === 'real'
 }
 
+export const REAL_SHELL_LANGUAGE_HASH = 'language'
+
+export function readRealShellHash(): string {
+  return window.location.hash.replace(/^#/, '').trim().toLowerCase()
+}
+
 export function readRealTabFromHash(): AppTab | null {
-  const hash = window.location.hash.replace(/^#/, '').trim().toLowerCase()
+  const hash = readRealShellHash()
   if (hash && isAppTab(hash)) return hash
   return null
+}
+
+export function readRealShellLanguageHash(): boolean {
+  if (!isRealAppShellPage()) return false
+  return readRealShellHash() === REAL_SHELL_LANGUAGE_HASH
+}
+
+/** Real 壳页语言选择：real/index.html#language */
+export function getRealLanguagePageHref(): string {
+  if (isRealAppShellPage()) return `#${REAL_SHELL_LANGUAGE_HASH}`
+  if (isRealLayoutScopedPage()) return `./index.html#${REAL_SHELL_LANGUAGE_HASH}`
+  if (isNormalLayoutScopedPage()) return `../real/index.html#${REAL_SHELL_LANGUAGE_HASH}`
+  return `./real/index.html#${REAL_SHELL_LANGUAGE_HASH}`
 }
 
 function getRealShellHref(tab: AppTab): string {
