@@ -8644,6 +8644,66 @@ html[data-reduce-motion='true'] .site-header-shell {
 }
 
 /* Real layout — game-style start page */
+.real-start-stack {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.real-start-stack .real-start-page,
+.real-start-stack .real-language-page {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  min-height: 100dvh;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.real-start-stack .real-language-page {
+  z-index: 2;
+}
+
+.real-start-stack[data-language-phase='closed'] .real-start-page {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-start-stack[data-language-phase='opening']:not([data-language-animating='true']) .real-language-page,
+.real-start-stack[data-language-phase='closing'][data-language-animating='true'] .real-language-page {
+  transform: translate3d(0, 100%, 0);
+}
+
+.real-start-stack[data-language-phase='opening'][data-language-animating='true'] .real-start-page,
+.real-start-stack[data-language-phase='open'] .real-start-page,
+.real-start-stack[data-language-phase='closing']:not([data-language-animating='true']) .real-start-page {
+  transform: translate3d(0, -100%, 0);
+  pointer-events: none;
+}
+
+.real-start-stack[data-language-phase='opening'][data-language-animating='true'] .real-language-page,
+.real-start-stack[data-language-phase='open'] .real-language-page,
+.real-start-stack[data-language-phase='closing']:not([data-language-animating='true']) .real-language-page {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-start-stack[data-language-phase='closing'][data-language-animating='true'] .real-start-page {
+  transform: translate3d(0, 0, 0);
+  pointer-events: none;
+}
+
+html[data-reduce-motion='true'] .real-start-stack .real-start-page,
+html[data-reduce-motion='true'] .real-start-stack .real-language-page {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .real-start-stack .real-start-page,
+  .real-start-stack .real-language-page {
+    transition: none;
+  }
+}
+
 .real-start-page {
   position: relative;
   min-height: 100dvh;
@@ -9564,6 +9624,10 @@ html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
   overflow: hidden;
   color: #f3f4f6;
   background: #05070d;
+}
+
+.real-start-stack .real-language-page {
+  position: fixed;
 }
 
 .real-language-shell {

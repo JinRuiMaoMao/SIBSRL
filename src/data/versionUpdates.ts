@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-08-28'
+export const CURRENT_CHANGELOG_DATE = '2026-08-29'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-08-29-summary",
+    date: "2026-08-29",
+    title: {
+      zh: "2026-08-29 更新",
+      en: "2026-08-29 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "Real 动效",
+          en: "Real animations",
+        },
+        additions: [
+          {
+            zh: "Real 开始页与语言页切换：进入时开始页向上滑出、语言页自底部滑入；返回时相反。",
+            en: "Real start ↔ language: start slides up while language slides in from the bottom; reverse on back.",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-08-28-summary",
     date: "2026-08-28",

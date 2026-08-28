@@ -1,11 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, type TransitionEvent } from 'react'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
-export function RealLanguagePage({ onClose }: { onClose: () => void }) {
+export function RealLanguagePage({
+  onClose,
+  onTransitionEnd,
+}: {
+  onClose: () => void
+  onTransitionEnd?: (event: TransitionEvent<HTMLDivElement>) => void
+}) {
   const { locale, setLocale, t } = useLocale()
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
   const discordHref = getStartPageExternalLinkUrl('discord', locale)
@@ -21,7 +27,10 @@ export function RealLanguagePage({ onClose }: { onClose: () => void }) {
   }, [locale, t])
 
   return (
-    <div className="real-language-page real-start-page--ready sibs-scrollbar">
+    <div
+      className="real-language-page real-start-page--ready sibs-scrollbar"
+      onTransitionEnd={onTransitionEnd}
+    >
       <div className="real-start-bg" aria-hidden="true">
         <img className="real-start-bg-map" src={mapBackgroundUrl} alt="" decoding="async" />
         <div className="real-start-bg-overlay" />

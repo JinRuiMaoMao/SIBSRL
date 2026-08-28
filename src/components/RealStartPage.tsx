@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type MouseEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState, type MouseEvent, type TransitionEvent } from 'react'
 import { getTodaysDailyChallenge, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { getSiteLogoUrl } from '../data/siteBrand'
@@ -15,6 +15,15 @@ import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealShopDialog } from './RealShopDialog'
 import { RealLanguagePage } from './RealLanguagePage'
+
+const REAL_LANGUAGE_TRANSITION_MS = 420
+
+type LanguageViewPhase = 'closed' | 'opening' | 'open' | 'closing'
+
+function prefersReducedMotion(): boolean {
+  if (typeof document === 'undefined') return false
+  return document.documentElement.getAttribute('data-reduce-motion') === 'true'
+}
 
 interface RealStartMenuItem {
   id: string
@@ -105,7 +114,10 @@ export function RealStartPage() {
   const { locale, t } = useLocale()
   const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
   const [shopOpen, setShopOpen] = useState(false)
-  const [languageOpen, setLanguageOpen] = useState(false)
+  const [languagePhase, setLanguagePhase] = useState<LanguageViewPhase>('closed')
+  const [languageAnimating, setLanguageAnimating] = useState(false)
+  const languageMounted = languagePhase !== 'closed'
+  const languageActive = languagePhase !== 'closed'
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
@@ -117,6 +129,73 @@ export function RealStartPage() {
     switchTrack('music-map-menu')
     navigateRealShellTab('routes')
   }
+
+  const openLanguage = useCallback(() => {
+    if (prefersReducedMotion()) {
+      setLanguagePhase('open')
+      setLanguageAnimating(false)
+      return
+    }
+    setLanguageAnimating(false)
+    setLanguagePhase('opening')
+  }, [])
+
+  const closeLanguage = useCallback(() => {
+    if (languagePhase === 'closed' || languagePhase === 'closing') return
+    if (prefersReducedMotion()) {
+      setLanguagePhase('closed')
+      setLanguageAnimating(false)
+      return
+    }
+    setLanguageAnimating(false)
+    setLanguagePhase('closing')
+  }, [languagePhase])
+
+  const handleLanguageTransitionEnd = useCallback(
+    (event: TransitionEvent<HTMLDivElement>) => {
+      if (event.propertyName !== 'transform') return
+      if (event.target !== event.currentTarget) return
+      if (languagePhase === 'opening' && languageAnimating) {
+        setLanguagePhase('open')
+        setLanguageAnimating(false)
+      } else if (languagePhase === 'closing' && languageAnimating) {
+        setLanguagePhase('closed')
+        setLanguageAnimating(false)
+      }
+    },
+    [languageAnimating, languagePhase],
+  )
+
+  useLayoutEffect(() => {
+    if (languagePhase !== 'opening' && languagePhase !== 'closing') return
+    if (prefersReducedMotion()) return
+
+    setLanguageAnimating(false)
+    let frame2 = 0
+    const frame1 = requestAnimationFrame(() => {
+      frame2 = requestAnimationFrame(() => {
+        setLanguageAnimating(true)
+      })
+    })
+    return () => {
+      cancelAnimationFrame(frame1)
+      cancelAnimationFrame(frame2)
+    }
+  }, [languagePhase])
+
+  useEffect(() => {
+    if (languagePhase !== 'opening' && languagePhase !== 'closing') return
+    if (!languageAnimating) return
+    const timer = window.setTimeout(() => {
+      setLanguagePhase((phase) => {
+        if (phase === 'opening') return 'open'
+        if (phase === 'closing') return 'closed'
+        return phase
+      })
+      setLanguageAnimating(false)
+    }, REAL_LANGUAGE_TRANSITION_MS + 40)
+    return () => window.clearTimeout(timer)
+  }, [languageAnimating, languagePhase])
 
   const mainMenu: RealStartMenuItem[] = [
     {
@@ -134,7 +213,7 @@ export function RealStartPage() {
       labelKey: 'language',
       icon: '文',
       tone: 'purple',
-      onClick: () => setLanguageOpen(true),
+      onClick: openLanguage,
     },
   ]
 
@@ -151,33 +230,34 @@ export function RealStartPage() {
   ]
 
   useEffect(() => {
-    if (languageOpen) return
+    if (languageActive) return
     syncFavicon()
     syncHtmlLang(locale)
     document.title = t('realStartPageDocumentTitle')
-  }, [languageOpen, locale, t])
+  }, [languageActive, locale, t])
 
   useEffect(() => {
     const legacyLanguageHash = window.location.hash.replace(/^#/, '').trim().toLowerCase()
     if (legacyLanguageHash !== 'language') return
     const cleanUrl = `${window.location.pathname}${window.location.search}`
     window.history.replaceState(null, '', cleanUrl)
-    setLanguageOpen(true)
-  }, [])
+    openLanguage()
+  }, [openLanguage])
 
   useEffect(() => {
-    if (!bootReady || muted || languageOpen) return
+    if (!bootReady || muted || languageActive) return
     retryPlay()
-  }, [bootReady, languageOpen, muted, retryPlay])
-
-  if (languageOpen) {
-    return <RealLanguagePage onClose={() => setLanguageOpen(false)} />
-  }
+  }, [bootReady, languageActive, muted, retryPlay])
 
   return (
     <div
-      className={`real-start-page sibs-scrollbar${bootReady ? ' real-start-page--ready' : ' real-start-page--booting'}`}
+      className="real-start-stack"
+      data-language-phase={languagePhase}
+      data-language-animating={languageAnimating ? 'true' : undefined}
     >
+      <div
+        className={`real-start-page sibs-scrollbar${bootReady ? ' real-start-page--ready' : ' real-start-page--booting'}`}
+      >
       <div className="real-start-bg" aria-hidden="true">
         <img className="real-start-bg-map" src={mapBackgroundUrl} alt="" decoding="async" />
         <div className="real-start-bg-overlay" />
@@ -271,6 +351,13 @@ export function RealStartPage() {
         </nav>
       </div>
       <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />
+      </div>
+      {languageMounted ? (
+        <RealLanguagePage
+          onClose={closeLanguage}
+          onTransitionEnd={handleLanguageTransitionEnd}
+        />
+      ) : null}
     </div>
   )
 }
