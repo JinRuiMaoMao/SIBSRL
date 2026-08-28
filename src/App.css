@@ -9004,11 +9004,12 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   cursor: pointer;
   box-shadow: 0 10px 28px rgb(0 0 0 / 0.28);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transform-origin: center;
 }
 
 .real-start-menu-btn:hover,
 .real-start-menu-btn:focus-visible {
-  transform: translateY(-2px);
+  transform: scale(1.04);
   box-shadow: 0 14px 32px rgb(0 0 0 / 0.34);
 }
 
@@ -9068,11 +9069,12 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
   backdrop-filter: blur(8px);
   transition: transform 0.18s ease, border-color 0.18s ease;
+  transform-origin: center;
 }
 
 .real-start-challenge:hover,
 .real-start-challenge:focus-visible {
-  transform: translateY(-2px);
+  transform: scale(1.03);
   border-color: #f5b942;
 }
 
@@ -9159,11 +9161,13 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   background: rgb(15 23 42 / 0.55);
   font-size: 1.1rem;
   backdrop-filter: blur(6px);
-  transition: background 0.18s ease, border-color 0.18s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  transform-origin: center;
 }
 
 .real-start-dock-btn:hover .real-start-dock-icon,
 .real-start-dock-btn:focus-visible .real-start-dock-icon {
+  transform: scale(1.08);
   background: rgb(30 41 59 / 0.82);
   border-color: #f5b942;
 }
@@ -9199,7 +9203,10 @@ html[data-reduce-motion='true'] .real-start-bg-map {
 html[data-reduce-motion='true'] .real-start-menu-btn:hover,
 html[data-reduce-motion='true'] .real-start-menu-btn:focus-visible,
 html[data-reduce-motion='true'] .real-start-challenge:hover,
-html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
+html[data-reduce-motion='true'] .real-start-challenge:focus-visible,
+html[data-reduce-motion='true'] .real-start-dock-btn:hover .real-start-dock-icon,
+html[data-reduce-motion='true'] .real-start-dock-btn:focus-visible .real-start-dock-icon,
+html[data-reduce-motion='true'] .real-language-option:hover {
   transform: none;
 }
 
@@ -9847,10 +9854,16 @@ html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
   line-height: 1.25;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.18s ease;
+  transform-origin: center;
 }
 
 .real-language-option:hover {
+  transform: scale(1.04);
   border-color: rgb(255 255 255 / 0.72);
   background: rgb(12 18 28 / 0.68);
 }
