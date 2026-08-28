@@ -185,6 +185,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 分屏全部栏目改为仅 real/index.html（history.state 切换，地址栏无 #routes 等 hash）；旧 real/*.html 与 hash 深链自动迁移。",
             en: "Real split layout now uses only real/index.html—tabs switch via history.state with no #routes-style hashes; legacy real/*.html and hash links migrate automatically.",
           },
+          {
+            zh: "修复 Real 线路页「返回主界面」因仍指向 index.html 而未清除 history.state、导致一直停留在路线页的问题。",
+            en: "Fixed Real routes “Back to home” looping on the routes view because the link reloaded index.html without clearing history.state.",
+          },
         ],
       },
     ],
