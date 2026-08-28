@@ -8702,6 +8702,11 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 .real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel {
   animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  pointer-events: none;
+}
+
+.real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel .route-split-back {
+  pointer-events: auto;
 }
 
 .real-shell-home-stack[data-routes-phase='routes'] .real-shell-routes-panel {
@@ -8710,6 +8715,15 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer {
   animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  pointer-events: none;
+}
+
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-menu-btn,
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-dock-btn,
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-challenge,
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-profile-back,
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-language-back {
+  pointer-events: auto;
 }
 
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-routes-panel {

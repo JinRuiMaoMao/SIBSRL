@@ -4,6 +4,7 @@ import { RealStartBackground } from './RealStartBackground'
 import { RealStartPage } from './RealStartPage'
 import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { isAppReduceMotionEnabled } from '../storage/appPreferences'
+import { useRealShellHomeMusic } from '../hooks/useRealShellHomeMusic'
 import { REAL_SHELL_TRANSITION_MS } from '../utils/realShellTransition'
 
 type RoutesViewPhase = 'start' | 'opening-routes' | 'routes' | 'closing-routes'
@@ -28,6 +29,8 @@ export function RealShellHomeView({ shellTab, routesContent }: RealShellHomeView
   const routesLayerMounted =
     routesPhase === 'routes' || routesPhase === 'opening-routes' || routesPhase === 'closing-routes'
 
+  useRealShellHomeMusic(routesPhase)
+
   useEffect(() => {
     const prev = prevShellTabRef.current
     prevShellTabRef.current = shellTab
@@ -51,18 +54,19 @@ export function RealShellHomeView({ shellTab, routesContent }: RealShellHomeView
     setRoutesPhase(shellTab === 'routes' ? 'routes' : 'start')
   }, [shellTab])
 
-  const handleRoutesPanelAnimationEnd = useCallback(
-    (event: AnimationEvent<HTMLDivElement>) => {
-      if (event.target !== event.currentTarget) return
-      const name = event.animationName
-      if (routesPhase === 'opening-routes' && name.includes('real-shell-slide-down-from-top')) {
-        setRoutesPhase('routes')
-      } else if (routesPhase === 'closing-routes' && name.includes('real-shell-slide-up-out')) {
-        setRoutesPhase('start')
+  const handleRoutesPanelAnimationEnd = useCallback((event: AnimationEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return
+    const name = event.animationName
+    setRoutesPhase((phase) => {
+      if (phase === 'opening-routes' && name.includes('real-shell-slide-down-from-top')) {
+        return 'routes'
       }
-    },
-    [routesPhase],
-  )
+      if (phase === 'closing-routes' && name.includes('real-shell-slide-up-out')) {
+        return 'start'
+      }
+      return phase
+    })
+  }, [])
 
   useEffect(() => {
     if (routesPhase !== 'opening-routes' && routesPhase !== 'closing-routes') return

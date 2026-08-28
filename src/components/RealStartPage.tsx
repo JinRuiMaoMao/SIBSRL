@@ -109,7 +109,9 @@ function RealStartDailyChallengeCard({
 export function RealStartPage({ sharedBackground = false }: { sharedBackground?: boolean }) {
   const bootReady = useStartPageBoot()
   const { locale, t } = useLocale()
-  const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
+  const { muted, toggleMuted, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu', {
+    loadTrack: !sharedBackground,
+  })
   const [shopOpen, setShopOpen] = useState(false)
   const [languagePhase, setLanguagePhase] = useState<OverlayViewPhase>('closed')
   const [profilePhase, setProfilePhase] = useState<OverlayViewPhase>('closed')
@@ -123,7 +125,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
 
   const openRoutes = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
-    switchTrack('music-map-menu')
     navigateRealShellTab('routes')
   }
 

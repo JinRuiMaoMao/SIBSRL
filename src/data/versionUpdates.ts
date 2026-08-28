@@ -205,6 +205,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 执照显示名称：无昵称时改为邮箱 @ 前本地名（头像仍用首字母），并加高黑板避免统计纸底部被裁切。",
             en: "Real license display name uses the email local part when nickname is blank (avatar still uses initial); taller board avoids clipping stats.",
           },
+          {
+            zh: "修复 Real 开始页 ↔ 选线动画中途返回导致 BGM 错乱；进入选线仅在动画结束后切 map BGM，返回过渡立即恢复主菜单 BGM。",
+            en: "Fix Real start ↔ routes BGM desync when navigating mid-transition; map BGM after animation completes, main menu BGM on return.",
+          },
         ],
       },
     ],

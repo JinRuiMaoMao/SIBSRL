@@ -60,7 +60,6 @@ import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { isRealLayoutMode } from '../utils/appLayoutMode'
 import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
-import { RealRouteLookupMusic } from './RealRouteLookupMusic'
 import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
 import { RealRouteSplitHeader } from './RealRouteSplitHeader'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -1573,7 +1572,6 @@ export function RouteLookupPage({
     <div className={`route-lookup-page${splitLayoutActive ? ' route-lookup-page--split' : ''}`}>
       {splitLayoutActive ? (
         <>
-          <RealRouteLookupMusic />
           <div className="route-split-shell">
           <aside className="route-split-sidebar" aria-label={t('routeList')}>
             <div

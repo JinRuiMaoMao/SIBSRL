@@ -13,14 +13,19 @@ import {
   type RealLayoutMusicTrackId,
 } from '../utils/realLayoutMusicStorage'
 
-export function useRealLayoutBackgroundMusic(trackId: RealLayoutMusicTrackId) {
+export function useRealLayoutBackgroundMusic(
+  trackId: RealLayoutMusicTrackId,
+  options?: { loadTrack?: boolean },
+) {
   const [muted, setMuted] = useState(readRealMusicMuted)
+  const loadTrack = options?.loadTrack !== false
 
   useEffect(() => {
+    if (!loadTrack) return
     bootstrapRealLayoutMusicEarly(trackId)
     loadRealLayoutMusicTrack(trackId)
     void attemptRealLayoutAutoplay()
-  }, [trackId])
+  }, [trackId, loadTrack])
 
   const setMutedState = useCallback((nextMuted: boolean) => {
     setMuted(nextMuted)
