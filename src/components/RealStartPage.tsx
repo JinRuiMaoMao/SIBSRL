@@ -221,7 +221,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
 
   return (
     <div
-      className={`real-start-stack${!sharedBackground && bootReady ? ' real-start-stack--ready' : ''}`}
+      className={`real-start-stack${sharedBackground ? ' real-start-stack--shared-background' : ''}${!sharedBackground && bootReady ? ' real-start-stack--ready' : ''}`}
       data-language-phase={languagePhase}
     >
       {sharedBackground ? null : <RealStartBackground />}

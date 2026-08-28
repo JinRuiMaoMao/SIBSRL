@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "Real 开始页与语言页按钮悬浮时轻微放大。",
-            en: "Real start and language buttons scale up slightly on hover.",
+            zh: "修复 Real 开始页共用地图背景被内容层纯色底挡住而不显示的问题。",
+            en: "Fixed Real start map background hidden behind an opaque content layer.",
           },
           {
             zh: "Real 开始页与路线选择切换：开始页向下滑出、选线页从上方滑入；返回主界面时相反（2s，背景固定）。",

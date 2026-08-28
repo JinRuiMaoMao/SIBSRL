@@ -8724,6 +8724,17 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
   animation: none;
 }
 
+.real-shell-home-start-layer .real-start-stack,
+.real-start-stack--shared-background {
+  background: transparent;
+}
+
+.real-shell-home-start-layer .real-start-stack .real-start-page,
+.real-shell-home-start-layer .real-start-stack .real-language-page {
+  position: absolute;
+  inset: 0;
+}
+
 .real-start-stack {
   position: relative;
   min-height: 100dvh;
