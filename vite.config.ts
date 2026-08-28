@@ -233,7 +233,7 @@ function devEntryRedirectPlugin(): Plugin {
             if (pageName === 'language.html') {
               const query = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
               res.statusCode = 302
-              res.setHeader('Location', `/real/index.html#language${query}`)
+              res.setHeader('Location', `/real/index.html${query}`)
               res.end()
               return
             }

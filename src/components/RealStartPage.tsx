@@ -9,20 +9,21 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { Locale } from '../i18n/types'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { getAccountPageHref } from '../utils/appPage'
-import { getRealLanguagePageHref } from '../utils/appTabNavigation'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealShopDialog } from './RealShopDialog'
+import { RealLanguagePage } from './RealLanguagePage'
 
 interface RealStartMenuItem {
   id: string
-  href: string
   labelKey: 'realStartPlay' | 'realStartServers' | 'realStartProfile' | 'language'
   icon: string
   tone: 'green' | 'blue' | 'purple'
+  href?: string
   external?: boolean
-  onClick?: (event: MouseEvent<HTMLAnchorElement>, href: string) => void
+  onClick?: () => void
+  linkOnClick?: (event: MouseEvent<HTMLAnchorElement>, href: string) => void
 }
 
 interface RealStartDockItem {
@@ -98,6 +99,7 @@ export function RealStartPage() {
   const { locale, t } = useLocale()
   const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
   const [shopOpen, setShopOpen] = useState(false)
+  const [languageOpen, setLanguageOpen] = useState(false)
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
@@ -122,11 +124,17 @@ export function RealStartPage() {
       labelKey: 'realStartPlay',
       icon: '▶',
       tone: 'green',
-      onClick: handlePlayClick,
+      linkOnClick: handlePlayClick,
     },
     { id: 'servers', href: robloxHref, labelKey: 'realStartServers', icon: '⛁', tone: 'green', external: true },
     { id: 'profile', href: getAccountPageHref(), labelKey: 'realStartProfile', icon: '👤', tone: 'blue' },
-    { id: 'language', href: getRealLanguagePageHref(), labelKey: 'language', icon: '文', tone: 'purple' },
+    {
+      id: 'language',
+      labelKey: 'language',
+      icon: '文',
+      tone: 'purple',
+      onClick: () => setLanguageOpen(true),
+    },
   ]
 
   const dockItems: RealStartDockItem[] = [
@@ -137,15 +145,28 @@ export function RealStartPage() {
   ]
 
   useEffect(() => {
+    if (languageOpen) return
     syncFavicon()
     syncHtmlLang(locale)
     document.title = t('realStartPageDocumentTitle')
-  }, [locale, t])
+  }, [languageOpen, locale, t])
 
   useEffect(() => {
-    if (!bootReady || muted) return
+    const legacyLanguageHash = window.location.hash.replace(/^#/, '').trim().toLowerCase()
+    if (legacyLanguageHash !== 'language') return
+    const cleanUrl = `${window.location.pathname}${window.location.search}`
+    window.history.replaceState(null, '', cleanUrl)
+    setLanguageOpen(true)
+  }, [])
+
+  useEffect(() => {
+    if (!bootReady || muted || languageOpen) return
     retryPlay()
-  }, [bootReady, muted, retryPlay])
+  }, [bootReady, languageOpen, muted, retryPlay])
+
+  if (languageOpen) {
+    return <RealLanguagePage onClose={() => setLanguageOpen(false)} />
+  }
 
   return (
     <div
@@ -170,21 +191,34 @@ export function RealStartPage() {
             <ul className="real-start-menu-list">
               {mainMenu.map((item) => (
                 <li key={item.id}>
-                  <a
-                    className={`real-start-menu-btn real-start-menu-btn--${item.tone}`}
-                    href={item.href}
-                    onClick={
-                      item.onClick
-                        ? (event) => item.onClick!(event, item.href)
-                        : undefined
-                    }
-                    {...(item.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                  >
-                    <span className="real-start-menu-icon" aria-hidden="true">
-                      {item.icon}
-                    </span>
-                    <span className="real-start-menu-label">{t(item.labelKey)}</span>
-                  </a>
+                  {item.onClick && !item.href ? (
+                    <button
+                      type="button"
+                      className={`real-start-menu-btn real-start-menu-btn--${item.tone}`}
+                      onClick={item.onClick}
+                    >
+                      <span className="real-start-menu-icon" aria-hidden="true">
+                        {item.icon}
+                      </span>
+                      <span className="real-start-menu-label">{t(item.labelKey)}</span>
+                    </button>
+                  ) : (
+                    <a
+                      className={`real-start-menu-btn real-start-menu-btn--${item.tone}`}
+                      href={item.href}
+                      onClick={
+                        item.linkOnClick && item.href
+                          ? (event) => item.linkOnClick!(event, item.href!)
+                          : undefined
+                      }
+                      {...(item.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                    >
+                      <span className="real-start-menu-icon" aria-hidden="true">
+                        {item.icon}
+                      </span>
+                      <span className="real-start-menu-label">{t(item.labelKey)}</span>
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

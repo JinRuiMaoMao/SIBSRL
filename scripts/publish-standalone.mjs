@@ -94,6 +94,27 @@ function publishHtmlToLayoutDirs(html, filename, siteRoot, distRoot, options = {
   }
 }
 
+/** @param {string} filename @param {string} siteRoot @param {string} distRoot */
+function writeRealStartRedirect(filename, siteRoot, distRoot) {
+  const target = './index.html'
+  const redirectHtml = `<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <script>location.replace('${target}'+location.search);</script>
+  <meta http-equiv="refresh" content="0;url=${target}" />
+  <title>Redirecting…</title>
+</head>
+<body><p><a href="${target}">Continue</a></p></body>
+</html>`
+  for (const dir of ['real']) {
+    mkdirSync(resolve(siteRoot, dir), { recursive: true })
+    mkdirSync(resolve(distRoot, dir), { recursive: true })
+    writeFileSync(resolve(siteRoot, dir, filename), redirectHtml)
+    writeFileSync(resolve(distRoot, dir, filename), redirectHtml)
+  }
+}
+
 /** @param {string} tab @param {string} filename @param {string} siteRoot @param {string} distRoot */
 function writeRealTabHashRedirect(tab, filename, siteRoot, distRoot) {
   const target = `./index.html#${tab}`
@@ -250,7 +271,7 @@ export async function publishStandalone(options = {}) {
   mkdirSync(resolve(root, 'dist', 'real'), { recursive: true })
   writeFileSync(resolve(root, 'real', 'index.html'), realStartHtml)
   writeFileSync(resolve(root, 'dist', 'real', 'index.html'), realStartHtml)
-  writeRealTabHashRedirect('language', 'language.html', root, resolve(root, 'dist'))
+  writeRealStartRedirect('language.html', root, resolve(root, 'dist'))
 
   let secretHtml = injectSecretPageMeta(baseHtml)
   secretHtml = adjustAppPageTitle(secretHtml, '???')

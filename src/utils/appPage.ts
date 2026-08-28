@@ -1,5 +1,5 @@
 import { getLayoutScopedHref, isLayoutScopedPage, isRealLayoutMode } from './appLayoutMode'
-import { isRealAppShellPage, readRealShellLanguageHash, readRealTabFromHash } from './appTabNavigation'
+import { isRealAppShellPage, readRealTabFromHash } from './appTabNavigation'
 
 export function getSecretPageHref(): string {
   if (isLayoutScopedPage()) return '../secret.html'
@@ -8,7 +8,7 @@ export function getSecretPageHref(): string {
 
 export function isStartPage(): boolean {
   if (isRealAppShellPage()) {
-    return readRealTabFromHash() === null && !readRealShellLanguageHash()
+    return readRealTabFromHash() === null
   }
 
   const meta = document.querySelector('meta[name="app-page"]')?.getAttribute('content')?.trim()
@@ -37,10 +37,6 @@ export function getMapDrawPageHref(): string {
 
 export function getSettingsPageHref(): string {
   return getLayoutScopedHref('settings.html')
-}
-
-export function isRealLanguagePage(): boolean {
-  return readRealShellLanguageHash()
 }
 
 export function isSecretPage(): boolean {

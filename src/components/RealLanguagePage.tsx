@@ -2,13 +2,12 @@ import { useEffect } from 'react'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
-import { resolveSiteAssetUrl, getRealStartPageHref } from '../utils/appLayoutMode'
+import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
-export function RealLanguagePage() {
+export function RealLanguagePage({ onClose }: { onClose: () => void }) {
   const { locale, setLocale, t } = useLocale()
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
-  const backHref = getRealStartPageHref()
   const discordHref = getStartPageExternalLinkUrl('discord', locale)
 
   const selectLocale = (value: Locale) => {
@@ -30,12 +29,12 @@ export function RealLanguagePage() {
 
       <div className="real-language-shell">
         <header className="real-language-header">
-          <a className="real-language-back" href={backHref}>
+          <button type="button" className="real-language-back" onClick={onClose}>
             <span className="real-language-back-chevron" aria-hidden="true">
               ‹
             </span>
             <span>{t('realLanguagePageTitle')}</span>
-          </a>
+          </button>
         </header>
 
         <main className="real-language-main">

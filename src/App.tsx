@@ -21,7 +21,6 @@ import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { StartPage } from './components/StartPage'
 import { RealStartPage } from './components/RealStartPage'
-import { RealLanguagePage } from './components/RealLanguagePage'
 import { RealAlphaOverlay } from './components/RealAlphaOverlay'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
@@ -44,7 +43,6 @@ import { isAccountPage, isMapDrawPage, isRouteMapPage, isSecretPage, isSettingsP
 import { isRealLayoutMode } from './utils/appLayoutMode'
 import { hasSecretAccess, redirectToRoutesIndex } from './utils/secretAccess'
 import { useAppTabFromLocation } from './hooks/useAppTabFromLocation'
-import { useRealShellLanguageOpen } from './hooks/useRealShellLanguageOpen'
 import { readTabFromLocation, isRoutesPage, isRealAppShellPage } from './utils/appTabNavigation'
 import { shouldShowDailyChallengePrompt } from './utils/routeNavigation'
 import { shouldShowUpdatesPrompt } from './utils/updatesPrompt'
@@ -87,7 +85,6 @@ function readInitialOverlayState(): { dailyChallenge: boolean; updates: boolean 
 function App() {
   const { t, locale } = useLocale()
   const tabFromLocation = useAppTabFromLocation()
-  const realLanguageOpen = useRealShellLanguageOpen()
   const realLayout = isRealLayoutMode()
   const activeTab = tabFromLocation ?? 'routes'
   const {
@@ -120,7 +117,7 @@ function App() {
     if (isRealAppShellPage() && !isStartPage()) {
       dismissStartBootSplash()
     }
-  }, [tabFromLocation, realLanguageOpen])
+  }, [tabFromLocation])
 
   const prepareGuidedTour = useCallback(() => {
     setHeaderCollapsed(false)
@@ -146,7 +143,7 @@ function App() {
   }, [openTour])
 
   useEffect(() => {
-    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage() || realLanguageOpen) return
+    if (isAccountPage() || isMapDrawPage() || isRouteMapPage() || isSecretPage() || isSettingsPage()) return
     if ((readTabFromLocation() ?? 'routes') === 'trivia') return
 
     const pendingReplay = consumePendingGuidedTourReplay()
@@ -220,7 +217,6 @@ function App() {
     !isRouteMapPage() &&
     !isSecretPage() &&
     !isSettingsPage() &&
-    !realLanguageOpen &&
     !isStartPage() ? (
       <GuidedTour
         open={guidedTourOpen}
@@ -238,18 +234,6 @@ function App() {
         <LiquidGlassDefs />
         {realAlphaOverlay}
         {realLayout ? <RealStartPage /> : <StartPage />}
-      </>
-    )
-  }
-
-  if (realLanguageOpen) {
-    return (
-      <>
-        <LiquidGlassDefs />
-        {realAlphaOverlay}
-        <ErrorBoundary>
-          <RealLanguagePage />
-        </ErrorBoundary>
       </>
     )
   }

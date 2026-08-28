@@ -178,8 +178,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "Real 开始页「语言」改为独立全屏语言选择页（双列网格、地图背景、底部翻译说明），参照游戏内界面设计；走 real/index.html#language，旧 real/language.html 自动跳转。",
-            en: "Real start page Language opens a full-screen picker (two-column grid, map background, translation disclaimer) at real/index.html#language; legacy real/language.html redirects.",
+            zh: "Real 开始页「语言」为 index 内全屏层（双列网格、地图背景），URL 保持 real/index.html 无锚点；旧 real/language.html 与 #language 仍兼容。",
+            en: "Real start Language is an in-index full-screen layer (two-column grid, map background)—URL stays real/index.html with no hash; legacy real/language.html and #language still open it.",
           },
         ],
       },
