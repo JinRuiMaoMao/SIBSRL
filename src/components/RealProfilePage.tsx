@@ -141,11 +141,7 @@ export function RealProfilePage({
                         <a className="real-profile-account-link" href={accountHref}>
                           {t('realProfileSignInLink')}
                         </a>
-                      ) : (
-                        <a className="real-profile-account-link" href={accountHref}>
-                          {t('realProfileManageAccountLink')}
-                        </a>
-                      )}
+                      ) : null}
                     </article>
 
                     <article className="real-profile-stats-note" aria-label={t('realProfileTabStats')}>

@@ -197,6 +197,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 个人档案统计与等级默认显示 0；黑板改为居中浮窗（非全屏），执照右上、统计纸右下布局。",
             en: "Real profile stats and level default to 0; chalkboard is a centered panel (not full-screen) with license top-right and stats note bottom-right.",
           },
+          {
+            zh: "修复 Real 个人档案统计页执照遮挡统计纸、标签被裁切的问题（上下分区布局）。",
+            en: "Fix Real profile stats tab where the license covered the stats note and clipped labels (stacked layout).",
+          },
         ],
       },
     ],

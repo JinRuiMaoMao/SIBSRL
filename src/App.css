@@ -10016,7 +10016,7 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   display: flex;
   flex: 0 0 auto;
   width: min(100%, 54rem);
-  height: min(68vh, 30rem);
+  height: min(72vh, 32rem);
   max-height: calc(100dvh - 7.5rem);
   padding: clamp(0.75rem, 1.8vw, 1rem);
   border-radius: 12px;
@@ -10093,22 +10093,28 @@ html:not([data-reduce-motion='true']) .real-profile-tab:hover {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .real-profile-stats-stage {
-  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: stretch;
+  justify-items: end;
+  gap: 0.35rem;
   width: 100%;
   height: 100%;
   min-height: 100%;
+  padding: 0.2rem 0.45rem 0.55rem 0.15rem;
+  box-sizing: border-box;
 }
 
 .real-profile-license {
-  position: absolute;
-  top: 6%;
-  right: 4%;
+  position: relative;
+  top: auto;
+  right: auto;
   z-index: 2;
-  width: min(46%, 15.5rem);
+  width: min(100%, 14rem);
   margin: 0;
   padding: clamp(0.7rem, 1.6vw, 0.95rem) clamp(0.8rem, 1.8vw, 1rem);
   border: 2px solid #c4a574;
@@ -10116,7 +10122,8 @@ html:not([data-reduce-motion='true']) .real-profile-tab:hover {
   background: linear-gradient(180deg, #fff9e8 0%, #f5eecf 100%);
   color: #1f2937;
   box-shadow: 0 8px 18px rgb(0 0 0 / 0.28);
-  transform: rotate(3deg);
+  transform: rotate(2.5deg);
+  align-self: start;
 }
 
 .real-profile-license-header {
@@ -10399,12 +10406,13 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
 }
 
 .real-profile-stats-note {
-  position: absolute;
-  right: 6%;
-  bottom: 5%;
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
   z-index: 1;
-  width: min(52%, 17.5rem);
-  margin: 0;
+  width: min(100%, 18rem);
+  margin: -0.35rem 0.15rem 0 0;
   padding: clamp(0.8rem, 1.8vw, 1rem) clamp(0.85rem, 2vw, 1.1rem);
   border: 1px solid rgb(31 41 55 / 0.12);
   border-radius: 4px;
@@ -10418,7 +10426,8 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
     #fffef8;
   color: #111827;
   box-shadow: 0 10px 22px rgb(0 0 0 / 0.24);
-  transform: rotate(-2deg);
+  transform: rotate(-1.5deg);
+  align-self: end;
 }
 
 .real-profile-stats-tape {
@@ -10459,21 +10468,26 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
 .real-profile-stats-list div {
   display: flex;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
   align-items: baseline;
 }
 
 .real-profile-stats-list dt {
   margin: 0;
-  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: clamp(0.68rem, 1.45vw, 0.78rem);
   font-weight: 600;
+  line-height: 1.25;
 }
 
 .real-profile-stats-list dd {
   margin: 0;
-  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
+  flex: 0 0 auto;
+  font-size: clamp(0.74rem, 1.55vw, 0.84rem);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .real-profile-stats-list--negative dt,
@@ -10530,27 +10544,23 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
 @media (max-width: 720px) {
   .real-profile-chalkboard {
     width: min(100%, 36rem);
-    height: min(74vh, 34rem);
+    height: min(76vh, 34rem);
   }
 
   .real-profile-stats-stage {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    padding: 0.35rem;
-    overflow: auto;
+    justify-items: center;
+    padding-inline: 0.35rem;
   }
 
   .real-profile-license,
   .real-profile-stats-note {
-    position: relative;
-    top: auto;
-    right: auto;
-    bottom: auto;
-    width: 100%;
-    max-width: 18rem;
+    width: min(100%, 18rem);
     margin-inline: auto;
     transform: none;
+  }
+
+  .real-profile-stats-note {
+    margin-top: 0.5rem;
   }
 }
 
