@@ -15,14 +15,16 @@ import { LocaleProvider } from './i18n/LocaleContext.tsx'
 import { ThemeProvider } from './theme/ThemeContext.tsx'
 import { applyAppPreferences, readAppPreferences } from './storage/appPreferences.ts'
 import { applyAppLayoutModeAttributes } from './utils/appLayoutMode.ts'
-import { isRealAppShellPage, readRealTabFromHash } from './utils/appTabNavigation.ts'
+import { bootstrapRealShellNavigation } from './utils/realShellNavigation.ts'
+import { isRealAppShellPage, readRealShellTab } from './utils/appTabNavigation.ts'
 import { dismissStartBootSplash } from './utils/startPageBoot.ts'
 import { bootstrapRealLayoutMusicEarly } from './utils/realLayoutMusicPlayer.ts'
 import { installDevToolsBlock } from './utils/blockDevToolsShortcuts.ts'
 
 applyAppPreferences(readAppPreferences())
 applyAppLayoutModeAttributes()
-if (isRealAppShellPage() && readRealTabFromHash()) {
+bootstrapRealShellNavigation()
+if (isRealAppShellPage() && readRealShellTab()) {
   dismissStartBootSplash()
 }
 bootstrapRealLayoutMusicEarly()

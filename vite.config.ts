@@ -224,9 +224,12 @@ function devEntryRedirectPlugin(): Plugin {
           if (layoutMode === 'real' && pageName !== 'index.html') {
             const tab = REAL_LAYOUT_DEV_TAB_BY_PAGE[pageName]
             if (tab) {
-              const query = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+              const rawQuery = req.url?.includes('?') ? req.url.slice(req.url.indexOf('?') + 1) : ''
+              const params = new URLSearchParams(rawQuery)
+              params.set('__realTab', tab)
+              const nextQuery = params.toString()
               res.statusCode = 302
-              res.setHeader('Location', `/real/index.html#${tab}${query}`)
+              res.setHeader('Location', `/real/index.html${nextQuery ? `?${nextQuery}` : ''}`)
               res.end()
               return
             }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { AppTab } from '../types/appTab'
 import { isRealAppShellPage, readTabFromLocation } from '../utils/appTabNavigation'
+import { REAL_SHELL_NAV_EVENT } from '../utils/realShellNavigation'
 
 export function useAppTabFromLocation(): AppTab | null {
   const [tab, setTab] = useState<AppTab | null>(() => readTabFromLocation())
@@ -10,11 +11,11 @@ export function useAppTabFromLocation(): AppTab | null {
   }, [])
 
   useEffect(() => {
-    window.addEventListener('hashchange', sync)
     window.addEventListener('popstate', sync)
+    window.addEventListener(REAL_SHELL_NAV_EVENT, sync)
     return () => {
-      window.removeEventListener('hashchange', sync)
       window.removeEventListener('popstate', sync)
+      window.removeEventListener(REAL_SHELL_NAV_EVENT, sync)
     }
   }, [sync])
 

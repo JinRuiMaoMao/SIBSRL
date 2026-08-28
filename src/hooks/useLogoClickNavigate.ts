@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, type MutableRefObject } from 'react'
 import { getStartPageHref, isStartPage } from '../utils/appPage'
+import { isRealAppShellPage } from '../utils/appTabNavigation'
+import { navigateRealShellStart } from '../utils/realShellNavigation'
 
 const CLICK_TARGET = 10
 const CLICK_RESET_MS = 2000
@@ -48,6 +50,10 @@ export function useLogoClickNavigate(
         if (countRef.current !== 1) return
         countRef.current = 0
         if (isStartPage()) return
+        if (isRealAppShellPage()) {
+          navigateRealShellStart()
+          return
+        }
         window.location.href = singleClickHref
       }, SINGLE_CLICK_NAV_MS)
     }

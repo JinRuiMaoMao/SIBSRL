@@ -5,6 +5,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import type { AppTab } from '../types/appTab'
 import { APP_TABS, getTabPageHref } from '../utils/appTabNavigation'
+import { handleRealShellTabLink } from '../utils/realShellNavigation'
 import { hasUnreadUpdates } from '../utils/updatesPrompt'
 import { UPDATES_VIEWING_CHANGED_EVENT } from '../storage/updatesViewing'
 import { AppTabIcon } from './AppTabIcons'
@@ -63,6 +64,7 @@ export function AppTabBar({ activeTab }: AppTabBarProps) {
       <a
         key={tab}
         href={getTabPageHref(tab)}
+        onClick={(event) => handleRealShellTabLink(event, tab)}
         role="tab"
         aria-selected={isActive}
         data-app-header-tab={tab}

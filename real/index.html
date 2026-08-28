@@ -10,7 +10,8 @@
     var path = String(window.location.pathname || '').replace(/\\/g, '/');
     var isReal = /\/real(?:\/|$)/i.test(path);
     if (isReal) {
-      window.location.replace('./index.html' + q + '#routes');
+      try { sessionStorage.setItem('sibs-real-pending-tab', 'routes'); } catch (e) {}
+      window.location.replace('./index.html' + q);
     } else {
       window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
     }
@@ -151,10 +152,10 @@
         window.addEventListener('resize', apply);
       })();
     </script>
-    <meta name="app-build" content="2026-08-28T09:03:13.273Z" />
-    <link rel="icon" href="../sibs-logo.png?v=2026-08-28T09%3A03%3A13.273Z" type="image/png" sizes="53x53" />
-    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-28T09%3A03%3A13.273Z" sizes="180x180" />
-    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-28T09%3A03%3A13.273Z" />
+    <meta name="app-build" content="2026-08-28T09:31:53.852Z" />
+    <link rel="icon" href="../sibs-logo.png?v=2026-08-28T09%3A31%3A53.852Z" type="image/png" sizes="53x53" />
+    <link rel="apple-touch-icon" href="../sibs-logo.png?v=2026-08-28T09%3A31%3A53.852Z" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="../sibs-logo.png?v=2026-08-28T09%3A31%3A53.852Z" />
     <!-- 开发入口：npm run dev。线路查询 dev.html / routes.html；发布入口 index.html 为开始页，线路查询 routes.html -->
 
 
@@ -168,7 +169,7 @@
     <meta property="og:title" content="阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图" />
     <meta property="og:description" content="阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map." />
     <meta property="og:url" content="https://jinruimaomao.github.io/SIBSRL/real/index.html" />
-    <meta property="og:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-28T09%3A03%3A13.273Z" />
+    <meta property="og:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-28T09%3A31%3A53.852Z" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图" />
@@ -176,7 +177,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="阳光群岛 Roblox 巴士模拟器分屏线路查询 | SIBS 左侧线路右侧全屏群岛地图" />
     <meta name="twitter:description" content="阳光群岛 (SIBS) Roblox 巴士模拟器分屏线路查询：左侧线路、右侧群岛全屏地图。Sunshine Islands split layout route lookup with full-height map." />
-    <meta name="twitter:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-28T09%3A03%3A13.273Z" />
+    <meta name="twitter:image" content="https://jinruimaomao.github.io/SIBSRL/og-share-v2.png?v=c38221904392.2026-08-28T09%3A31%3A53.852Z" />
     <!-- /site-social-meta -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -319,6 +320,29 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   letter-spacing: 0.04em;
 }
 </style>
+      <script id="real-shell-bootstrap">
+(function () {
+  var path = String(window.location.pathname || '').replace(/\\/g, '/');
+  if (!/\/real(?:\/|$)/i.test(path)) return;
+  var tabs = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'];
+  var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
+  if (hash && tabs.indexOf(hash) >= 0) {
+    try { sessionStorage.setItem('sibs-real-pending-tab', hash); } catch (e) {}
+  }
+  if (window.location.hash) {
+    history.replaceState(history.state, '', window.location.pathname + window.location.search);
+  }
+  var params = new URLSearchParams(window.location.search || '');
+  var qTab = params.get('tab') || params.get('__realTab');
+  if (qTab && tabs.indexOf(qTab) >= 0) {
+    try { sessionStorage.setItem('sibs-real-pending-tab', qTab); } catch (e) {}
+    params.delete('tab');
+    params.delete('__realTab');
+    var nextSearch = params.toString();
+    history.replaceState(history.state, '', window.location.pathname + (nextSearch ? '?' + nextSearch : ''));
+  }
+})();
+</script>
       <script id="real-layout-music-early-bootstrap">
 (function () {
   var layoutMeta = document.querySelector('meta[name="app-layout-mode"]');
@@ -327,8 +351,10 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   var tabMeta = document.querySelector('meta[name="app-tab"]');
   var page = pageMeta && pageMeta.content ? pageMeta.content.trim() : '';
   var tab = tabMeta && tabMeta.content ? tabMeta.content.trim() : '';
-  var hashTab = (window.location.hash || '').replace(/^#/, '').trim();
-  if (!tab && hashTab) tab = hashTab;
+  try {
+    var pending = sessionStorage.getItem('sibs-real-pending-tab');
+    if (!tab && pending) tab = pending;
+  } catch (e) {}
   var track = page === 'start' && !tab
     ? '../audio/broadcasts/music/music-main-menu.ogg'
     : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu-intro.ogg' : '');
@@ -577,8 +603,13 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
   function isRealAppTabDeepLink() {
     var path = String(window.location.pathname || '').replace(/\\/g, '/');
     if (!/\/real(?:\/|$)/i.test(path)) return false;
+    var tabs = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'];
+    try {
+      var pending = sessionStorage.getItem('sibs-real-pending-tab');
+      if (pending && tabs.indexOf(pending) >= 0) return true;
+    } catch (e) {}
     var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
-    return ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'].indexOf(hash) >= 0;
+    return tabs.indexOf(hash) >= 0;
   }
   function dismissSplash() {
     document.documentElement.classList.remove('start-boot-active');
@@ -648,6 +679,6 @@ html[data-reduce-motion='true'] .start-boot-splash__logo {
 })();
 </script>
 
-      <script type="module" crossorigin src="/SIBSRL/assets/dev-CvQrcgZt.js"></script>
+      <script type="module" crossorigin src="/SIBSRL/assets/dev-B0G1CTxb.js"></script>
   </body>
 </html>

@@ -16,6 +16,7 @@ import {
   injectServiceWorkerBootstrap,
   injectStartPageMeta,
   injectRealLayoutMusicEarlyBootstrap,
+  injectRealShellBootstrap,
   injectThemeBootstrap,
   injectPortraitBlockBootstrap,
   injectPortraitOrientationFallback,
@@ -116,13 +117,16 @@ function writeRealStartRedirect(filename, siteRoot, distRoot) {
 }
 
 /** @param {string} tab @param {string} filename @param {string} siteRoot @param {string} distRoot */
-function writeRealTabHashRedirect(tab, filename, siteRoot, distRoot) {
-  const target = `./index.html#${tab}`
+function writeRealTabPendingRedirect(tab, filename, siteRoot, distRoot) {
+  const target = './index.html'
   const redirectHtml = `<!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
   <meta charset="UTF-8" />
-  <script>location.replace('${target}'+location.search);</script>
+  <script>
+try { sessionStorage.setItem('sibs-real-pending-tab', '${tab}'); } catch (e) {}
+location.replace('${target}'+location.search);
+</script>
   <meta http-equiv="refresh" content="0;url=${target}" />
   <title>Redirecting…</title>
 </head>
@@ -134,6 +138,11 @@ function writeRealTabHashRedirect(tab, filename, siteRoot, distRoot) {
     writeFileSync(resolve(siteRoot, dir, filename), redirectHtml)
     writeFileSync(resolve(distRoot, dir, filename), redirectHtml)
   }
+}
+
+/** @param {string} tab @param {string} filename @param {string} siteRoot @param {string} distRoot */
+function writeRealTabHashRedirect(tab, filename, siteRoot, distRoot) {
+  writeRealTabPendingRedirect(tab, filename, siteRoot, distRoot)
 }
 
 /** @param {string} filename @param {string} normalTargetPath e.g. normal/ann.html */
@@ -255,6 +264,7 @@ export async function publishStandalone(options = {}) {
 
   let realStartHtml = injectStartBootSplash(injectStartPageMeta(baseHtml))
   realStartHtml = prepareLayoutScopedHtml(realStartHtml, 'real', true)
+  realStartHtml = injectRealShellBootstrap(realStartHtml)
   realStartHtml = injectRealLayoutMusicEarlyBootstrap(realStartHtml)
   realStartHtml = adjustAppPageTitle(realStartHtml, '阳光群岛巴士模拟器', { standalone: true })
   realStartHtml = injectSocialMeta(realStartHtml, {

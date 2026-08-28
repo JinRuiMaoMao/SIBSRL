@@ -179,7 +179,11 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         additions: [
           {
             zh: "Real 开始页「语言」为 index 内全屏层（双列网格、地图背景），URL 保持 real/index.html 无锚点；旧 real/language.html 与 #language 仍兼容。",
-            en: "Real start Language is an in-index full-screen layer (two-column grid, map background)—URL stays real/index.html with no hash; legacy real/language.html and #language still open it.",
+            en: "Real start Language is an in-index full-screen layer; URL stays real/index.html with no hash; legacy real/language.html and #language still open it.",
+          },
+          {
+            zh: "Real 分屏全部栏目改为仅 real/index.html（history.state 切换，地址栏无 #routes 等 hash）；旧 real/*.html 与 hash 深链自动迁移。",
+            en: "Real split layout now uses only real/index.html—tabs switch via history.state with no #routes-style hashes; legacy real/*.html and hash links migrate automatically.",
           },
         ],
       },

@@ -1,5 +1,6 @@
 import type { AppTab } from '../types/appTab'
 import { getLayoutScopedHref, isLayoutScopedPage, isNormalLayoutScopedPage, isRealLayoutMode, isRealLayoutScopedPage, readAppLayoutMode } from './appLayoutMode'
+import { getRealShellIndexHref, readRealShellTab } from './realShellNavigation'
 
 export const APP_TABS: AppTab[] = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates']
 
@@ -32,7 +33,7 @@ export function isAppTab(value: string): value is AppTab {
   return (APP_TABS as string[]).includes(value)
 }
 
-/** Real 分屏壳页：real/ 或 real/index.html，栏目由 hash 切换。 */
+/** Real 分屏壳页：real/ 或 real/index.html，栏目由 history.state 切换。 */
 export function isRealAppShellPage(): boolean {
   if (!isRealLayoutMode()) return false
   const path = window.location.pathname.replace(/\\/g, '/')
@@ -41,29 +42,21 @@ export function isRealAppShellPage(): boolean {
   return file === 'index.html' || file === 'real'
 }
 
+/** @deprecated Use readRealShellTab */
 export function readRealTabFromHash(): AppTab | null {
-  const hash = window.location.hash.replace(/^#/, '').trim().toLowerCase()
-  if (hash && isAppTab(hash)) return hash
-  return null
+  return readRealShellTab()
 }
 
-function getRealShellHref(tab: AppTab): string {
-  if (isRealAppShellPage()) return `#${tab}`
-  if (isRealLayoutScopedPage()) return `./index.html#${tab}`
-  if (isNormalLayoutScopedPage()) return `../real/index.html#${tab}`
-  return `./real/index.html#${tab}`
-}
-
-/** normal 各栏目独立 HTML；real 分屏统一 real/index.html#栏目。 */
+/** normal 各栏目独立 HTML；real 分屏统一 real/index.html（无 hash）。 */
 export function getTabPageHref(tab: AppTab): string {
-  if (isRealLayoutMode()) return getRealShellHref(tab)
+  if (isRealLayoutMode()) return getRealShellIndexHref()
   return getLayoutScopedHref(TAB_PAGE_FILE[tab])
 }
 
-/** 从 hash（real 壳页）、meta、路径或 legacy ?tab= 读取当前栏目 */
+/** 从 history.state（real 壳页）、meta、路径或 legacy ?tab= 读取当前栏目 */
 export function readTabFromLocation(): AppTab | null {
   if (isRealAppShellPage()) {
-    return readRealTabFromHash()
+    return readRealShellTab()
   }
 
   const meta = document.querySelector('meta[name="app-tab"]')?.getAttribute('content')?.trim()
@@ -89,3 +82,5 @@ export function getStartPageHrefForLayout(mode = readAppLayoutMode()): string {
   if (mode === 'real') return './real/index.html'
   return './index.html'
 }
+
+export { getRealShellIndexHref, readRealShellTab } from './realShellNavigation'

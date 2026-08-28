@@ -530,10 +530,35 @@ const START_ROUTE_REDIRECT_SCRIPT = `<script id="start-route-redirect">
     var path = String(window.location.pathname || '').replace(/\\\\/g, '/');
     var isReal = /\\/real(?:\\/|$)/i.test(path);
     if (isReal) {
-      window.location.replace('./index.html' + q + '#routes');
+      try { sessionStorage.setItem('sibs-real-pending-tab', 'routes'); } catch (e) {}
+      window.location.replace('./index.html' + q);
     } else {
       window.location.replace('./normal/routes.html' + q + (window.location.hash || ''));
     }
+  }
+})();
+</script>`
+
+const REAL_SHELL_BOOTSTRAP_SCRIPT = `<script id="real-shell-bootstrap">
+(function () {
+  var path = String(window.location.pathname || '').replace(/\\\\/g, '/');
+  if (!/\\/real(?:\\/|$)/i.test(path)) return;
+  var tabs = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'];
+  var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
+  if (hash && tabs.indexOf(hash) >= 0) {
+    try { sessionStorage.setItem('sibs-real-pending-tab', hash); } catch (e) {}
+  }
+  if (window.location.hash) {
+    history.replaceState(history.state, '', window.location.pathname + window.location.search);
+  }
+  var params = new URLSearchParams(window.location.search || '');
+  var qTab = params.get('tab') || params.get('__realTab');
+  if (qTab && tabs.indexOf(qTab) >= 0) {
+    try { sessionStorage.setItem('sibs-real-pending-tab', qTab); } catch (e) {}
+    params.delete('tab');
+    params.delete('__realTab');
+    var nextSearch = params.toString();
+    history.replaceState(history.state, '', window.location.pathname + (nextSearch ? '?' + nextSearch : ''));
   }
 })();
 </script>`
@@ -546,8 +571,10 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
   var tabMeta = document.querySelector('meta[name="app-tab"]');
   var page = pageMeta && pageMeta.content ? pageMeta.content.trim() : '';
   var tab = tabMeta && tabMeta.content ? tabMeta.content.trim() : '';
-  var hashTab = (window.location.hash || '').replace(/^#/, '').trim();
-  if (!tab && hashTab) tab = hashTab;
+  try {
+    var pending = sessionStorage.getItem('sibs-real-pending-tab');
+    if (!tab && pending) tab = pending;
+  } catch (e) {}
   var track = page === 'start' && !tab
     ? '../audio/broadcasts/music/music-main-menu.ogg'
     : (tab === 'routes' ? '../audio/broadcasts/music/music-map-menu-intro.ogg' : '');
@@ -664,6 +691,12 @@ const REAL_LAYOUT_MUSIC_EARLY_BOOTSTRAP = `<script id="real-layout-music-early-b
   audio.addEventListener('canplaythrough', tryPlay, { once: true });
 })();
 </script>`
+
+/** @param {string} html */
+export function injectRealShellBootstrap(html) {
+  if (html.includes('id="real-shell-bootstrap"')) return html
+  return html.replace('</head>', `    ${REAL_SHELL_BOOTSTRAP_SCRIPT}\n  </head>`)
+}
 
 /** @param {string} html */
 export function injectRealLayoutMusicEarlyBootstrap(html) {

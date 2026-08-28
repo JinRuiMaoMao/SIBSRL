@@ -10,6 +10,7 @@ import type { Locale } from '../i18n/types'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { getAccountPageHref } from '../utils/appPage'
 import { getTabPageHref } from '../utils/appTabNavigation'
+import { navigateRealShellTab } from '../utils/realShellNavigation'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealShopDialog } from './RealShopDialog'
@@ -65,10 +66,10 @@ function buildChallengeDetail(challenge: DailyChallengeInfo, locale: Locale): st
 
 function RealStartDailyChallengeCard({
   challenge,
-  href,
+  onOpenRoutes,
 }: {
   challenge: DailyChallengeInfo
-  href: string
+  onOpenRoutes: (event: MouseEvent<HTMLAnchorElement>) => void
 }) {
   const { locale, t } = useLocale()
   const detail = challenge.isAvailable
@@ -77,7 +78,12 @@ function RealStartDailyChallengeCard({
   const routeNumber = challenge.routeNumber ?? '?'
 
   return (
-    <a className="real-start-challenge" href={href} aria-label={t('realStartDailyChallengeLabel', { detail })}>
+    <a
+      className="real-start-challenge"
+      href={getTabPageHref('routes')}
+      onClick={onOpenRoutes}
+      aria-label={t('realStartDailyChallengeLabel', { detail })}
+    >
       <div className="real-start-challenge-grid" aria-hidden="true">
         {Array.from({ length: 4 }, (_, index) => (
           <span key={index} className="real-start-challenge-thumb">
@@ -103,28 +109,23 @@ export function RealStartPage() {
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
-  const routesHref = getTabPageHref('routes')
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
   const wikiHref = getStartPageExternalLinkUrl('wiki', locale)
 
-  const handlePlayClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+  const openRoutes = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     switchTrack('music-map-menu')
-    if (href.startsWith('#')) {
-      window.location.hash = href.slice(1)
-      return
-    }
-    window.location.assign(href)
+    navigateRealShellTab('routes')
   }
 
   const mainMenu: RealStartMenuItem[] = [
     {
       id: 'play',
-      href: routesHref,
+      href: getTabPageHref('routes'),
       labelKey: 'realStartPlay',
       icon: '▶',
       tone: 'green',
-      linkOnClick: handlePlayClick,
+      linkOnClick: openRoutes,
     },
     { id: 'servers', href: robloxHref, labelKey: 'realStartServers', icon: '⛁', tone: 'green', external: true },
     { id: 'profile', href: getAccountPageHref(), labelKey: 'realStartProfile', icon: '👤', tone: 'blue' },
@@ -140,7 +141,12 @@ export function RealStartPage() {
   const dockItems: RealStartDockItem[] = [
     { id: 'music', labelKey: 'tabMusic', icon: muted ? '🔇' : '♪', onClick: toggleMuted },
     { id: 'faq', href: wikiHref, labelKey: 'realStartFaq', icon: '?', external: true },
-    { id: 'about', href: getTabPageHref('updates'), labelKey: 'realStartAbout', icon: 'i' },
+    {
+      id: 'about',
+      labelKey: 'realStartAbout',
+      icon: 'i',
+      onClick: () => navigateRealShellTab('updates'),
+    },
     { id: 'shop', labelKey: 'realStartShop', icon: '🛒', onClick: () => setShopOpen(true) },
   ]
 
@@ -226,7 +232,7 @@ export function RealStartPage() {
           </nav>
 
           <aside className="real-start-featured" aria-label={t('dailyChallengeToday')}>
-            <RealStartDailyChallengeCard challenge={challenge} href={routesHref} />
+            <RealStartDailyChallengeCard challenge={challenge} onOpenRoutes={openRoutes} />
           </aside>
         </div>
 

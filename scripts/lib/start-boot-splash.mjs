@@ -90,8 +90,13 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
   function isRealAppTabDeepLink() {
     var path = String(window.location.pathname || '').replace(/\\\\/g, '/');
     if (!/\\/real(?:\\/|$)/i.test(path)) return false;
+    var tabs = ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'];
+    try {
+      var pending = sessionStorage.getItem('sibs-real-pending-tab');
+      if (pending && tabs.indexOf(pending) >= 0) return true;
+    } catch (e) {}
     var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
-    return ['routes', 'broadcast', 'music', 'complaints', 'trivia', 'updates'].indexOf(hash) >= 0;
+    return tabs.indexOf(hash) >= 0;
   }
   function dismissSplash() {
     document.documentElement.classList.remove('start-boot-active');

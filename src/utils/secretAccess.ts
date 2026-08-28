@@ -1,4 +1,5 @@
-import { getTabPageHref } from './appTabNavigation'
+import { getTabPageHref, isRealAppShellPage } from './appTabNavigation'
+import { navigateRealShellTab } from './realShellNavigation'
 
 /** sessionStorage key — keep in sync with inline guard in pages/secret.html */
 export const SECRET_ACCESS_STORAGE_KEY = 'sibs-secret-unlock'
@@ -24,5 +25,9 @@ export function routesIndexHref(): string {
 }
 
 export function redirectToRoutesIndex(): void {
+  if (isRealAppShellPage()) {
+    navigateRealShellTab('routes', { replace: true })
+    return
+  }
   window.location.replace(routesIndexHref())
 }

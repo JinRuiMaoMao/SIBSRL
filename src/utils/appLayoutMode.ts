@@ -119,9 +119,7 @@ export function getRealStartPageHref(): string {
 
 export function getLayoutRoutesHref(mode: AppLayoutMode): string {
   if (mode === 'real') {
-    if (isRealLayoutScopedPage()) return './index.html#routes'
-    if (isNormalLayoutScopedPage()) return '../real/index.html#routes'
-    return './real/index.html#routes'
+    return getRealStartPageHref()
   }
   const routesFile = import.meta.env.DEV ? 'dev.html' : 'routes.html'
   if (isLayoutScopedPage()) return `../${mode}/${routesFile}`
