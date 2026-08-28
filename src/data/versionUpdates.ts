@@ -181,6 +181,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 开始页与语言页切换时地图背景固定不动，仅内容层滑入滑出（2s）。",
             en: "Real start ↔ language keeps the map background fixed; only content panels slide (2s).",
           },
+          {
+            zh: "Real 个人档案：主菜单内嵌打开，黑板风格界面（统计、执照卡片），与语言页相同的 2s 滑入动效。",
+            en: "Real profile opens in-shell from the start menu with chalkboard UI (stats, license card) and the same 2s slide transition as language.",
+          },
         ],
       },
     ],
