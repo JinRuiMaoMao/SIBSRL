@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "修复 Real 开始页共用地图背景被内容层纯色底挡住而不显示的问题。",
-            en: "Fixed Real start map background hidden behind an opaque content layer.",
+            zh: "Real 开始页主菜单按钮悬浮放大改为约 1.14 倍，更接近游戏内效果。",
+            en: "Real start menu buttons now scale to ~1.14× on hover, closer to in-game UI.",
           },
           {
             zh: "Real 开始页与路线选择切换：开始页向下滑出、选线页从上方滑入；返回主界面时相反（2s，背景固定）。",
