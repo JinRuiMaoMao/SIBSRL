@@ -213,6 +213,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 壳层滑入动效改为 ease-in（越接近结束越快），更接近游戏本体手感。",
             en: "Real shell slide transitions use ease-in (accelerating toward the end) to match in-game feel.",
           },
+          {
+            zh: "Real 壳层过渡时长改为 1s；缓动改为基本匀速、末尾略加速，更接近游戏本体。",
+            en: "Real shell transitions are 1s with near-linear motion and a slight snap at the end, matching in-game timing.",
+          },
         ],
       },
     ],

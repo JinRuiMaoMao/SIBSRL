@@ -8649,8 +8649,8 @@ html[data-reduce-motion='true'] .site-header-shell {
   min-height: 100dvh;
   overflow: hidden;
   background: #05070d;
-  --real-shell-transition-duration: 2s;
-  --real-shell-transition-easing: cubic-bezier(0.5, 0, 1, 0.85);
+  --real-shell-transition-duration: 1s;
+  --real-shell-transition-easing: cubic-bezier(0.38, 0.38, 0.92, 1);
 }
 
 .real-shell-home-stack .real-start-bg {
@@ -8756,8 +8756,8 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
   min-height: 100dvh;
   overflow: hidden;
   background: #05070d;
-  --real-shell-transition-duration: 2s;
-  --real-shell-transition-easing: cubic-bezier(0.5, 0, 1, 0.85);
+  --real-shell-transition-duration: 1s;
+  --real-shell-transition-easing: cubic-bezier(0.38, 0.38, 0.92, 1);
 }
 
 .real-start-stack .real-start-bg {
