@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "Real 开始页与语言页切换：进入时开始页向上滑出、语言页自底部滑入；返回时相反（2s）。",
-            en: "Real start ↔ language: start slides up while language slides in from the bottom; reverse on back (2s).",
+            zh: "Real 开始页与语言页切换改为 @keyframes 动画，桌面端不再受系统「减少动态效果」影响（仍尊重站内设置）。",
+            en: "Real start ↔ language now uses @keyframes so desktop OS reduce-motion no longer skips it (in-app setting still applies).",
           },
         ],
       },

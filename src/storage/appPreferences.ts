@@ -101,3 +101,9 @@ export function shouldReduceMotion(): boolean {
     return false
   }
 }
+
+/** In-app setting only — Real shell transitions ignore OS prefers-reduced-motion. */
+export function isAppReduceMotionEnabled(): boolean {
+  if (typeof document === 'undefined') return false
+  return document.documentElement.getAttribute('data-reduce-motion') === 'true'
+}

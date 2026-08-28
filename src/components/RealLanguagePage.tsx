@@ -1,4 +1,4 @@
-import { useEffect, type TransitionEvent } from 'react'
+import { useEffect, type AnimationEvent } from 'react'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
@@ -7,10 +7,10 @@ import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
 export function RealLanguagePage({
   onClose,
-  onTransitionEnd,
+  onAnimationEnd,
 }: {
   onClose: () => void
-  onTransitionEnd?: (event: TransitionEvent<HTMLDivElement>) => void
+  onAnimationEnd?: (event: AnimationEvent<HTMLDivElement>) => void
 }) {
   const { locale, setLocale, t } = useLocale()
   const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
@@ -29,7 +29,7 @@ export function RealLanguagePage({
   return (
     <div
       className="real-language-page real-start-page--ready sibs-scrollbar"
-      onTransitionEnd={onTransitionEnd}
+      onAnimationEnd={onAnimationEnd}
     >
       <div className="real-start-bg" aria-hidden="true">
         <img className="real-start-bg-map" src={mapBackgroundUrl} alt="" decoding="async" />

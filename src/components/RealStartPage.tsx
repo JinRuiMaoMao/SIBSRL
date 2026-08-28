@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState, type MouseEvent, type TransitionEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type AnimationEvent, type MouseEvent } from 'react'
 import { getTodaysDailyChallenge, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { getSiteLogoUrl } from '../data/siteBrand'
@@ -20,10 +20,7 @@ const REAL_LANGUAGE_TRANSITION_MS = 2000
 
 type LanguageViewPhase = 'closed' | 'opening' | 'open' | 'closing'
 
-function prefersReducedMotion(): boolean {
-  if (typeof document === 'undefined') return false
-  return document.documentElement.getAttribute('data-reduce-motion') === 'true'
-}
+import { isAppReduceMotionEnabled } from '../storage/appPreferences'
 
 interface RealStartMenuItem {
   id: string
@@ -115,7 +112,6 @@ export function RealStartPage() {
   const { muted, toggleMuted, switchTrack, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu')
   const [shopOpen, setShopOpen] = useState(false)
   const [languagePhase, setLanguagePhase] = useState<LanguageViewPhase>('closed')
-  const [languageAnimating, setLanguageAnimating] = useState(false)
   const languageMounted = languagePhase !== 'closed'
   const languageActive = languagePhase !== 'closed'
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
@@ -131,71 +127,46 @@ export function RealStartPage() {
   }
 
   const openLanguage = useCallback(() => {
-    if (prefersReducedMotion()) {
+    if (isAppReduceMotionEnabled()) {
       setLanguagePhase('open')
-      setLanguageAnimating(false)
       return
     }
-    setLanguageAnimating(false)
     setLanguagePhase('opening')
   }, [])
 
   const closeLanguage = useCallback(() => {
     if (languagePhase === 'closed' || languagePhase === 'closing') return
-    if (prefersReducedMotion()) {
+    if (isAppReduceMotionEnabled()) {
       setLanguagePhase('closed')
-      setLanguageAnimating(false)
       return
     }
-    setLanguageAnimating(false)
     setLanguagePhase('closing')
   }, [languagePhase])
 
-  const handleLanguageTransitionEnd = useCallback(
-    (event: TransitionEvent<HTMLDivElement>) => {
-      if (event.propertyName !== 'transform') return
+  const handleLanguageAnimationEnd = useCallback(
+    (event: AnimationEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return
-      if (languagePhase === 'opening' && languageAnimating) {
+      const name = event.animationName
+      if (languagePhase === 'opening' && name.includes('real-shell-slide-up-from-bottom')) {
         setLanguagePhase('open')
-        setLanguageAnimating(false)
-      } else if (languagePhase === 'closing' && languageAnimating) {
+      } else if (languagePhase === 'closing' && name.includes('real-shell-slide-down-out')) {
         setLanguagePhase('closed')
-        setLanguageAnimating(false)
       }
     },
-    [languageAnimating, languagePhase],
+    [languagePhase],
   )
-
-  useLayoutEffect(() => {
-    if (languagePhase !== 'opening' && languagePhase !== 'closing') return
-    if (prefersReducedMotion()) return
-
-    setLanguageAnimating(false)
-    let frame2 = 0
-    const frame1 = requestAnimationFrame(() => {
-      frame2 = requestAnimationFrame(() => {
-        setLanguageAnimating(true)
-      })
-    })
-    return () => {
-      cancelAnimationFrame(frame1)
-      cancelAnimationFrame(frame2)
-    }
-  }, [languagePhase])
 
   useEffect(() => {
     if (languagePhase !== 'opening' && languagePhase !== 'closing') return
-    if (!languageAnimating) return
     const timer = window.setTimeout(() => {
       setLanguagePhase((phase) => {
         if (phase === 'opening') return 'open'
         if (phase === 'closing') return 'closed'
         return phase
       })
-      setLanguageAnimating(false)
-    }, REAL_LANGUAGE_TRANSITION_MS + 40)
+    }, REAL_LANGUAGE_TRANSITION_MS + 80)
     return () => window.clearTimeout(timer)
-  }, [languageAnimating, languagePhase])
+  }, [languagePhase])
 
   const mainMenu: RealStartMenuItem[] = [
     {
@@ -253,7 +224,6 @@ export function RealStartPage() {
     <div
       className="real-start-stack"
       data-language-phase={languagePhase}
-      data-language-animating={languageAnimating ? 'true' : undefined}
     >
       <div
         className={`real-start-page sibs-scrollbar${bootReady ? ' real-start-page--ready' : ' real-start-page--booting'}`}
@@ -355,7 +325,7 @@ export function RealStartPage() {
       {languageMounted ? (
         <RealLanguagePage
           onClose={closeLanguage}
-          onTransitionEnd={handleLanguageTransitionEnd}
+          onAnimationEnd={handleLanguageAnimationEnd}
         />
       ) : null}
     </div>
