@@ -8648,6 +8648,81 @@ html[data-reduce-motion='true'] .site-header-shell {
   position: relative;
   min-height: 100dvh;
   overflow: hidden;
+  background: #05070d;
+}
+
+.real-start-stack .real-start-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.real-start-stack--ready .real-start-bg-map {
+  animation: real-start-bg-drift 100s ease-in-out infinite alternate;
+}
+
+.real-start-stack .real-start-page,
+.real-start-stack .real-language-page {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  min-height: 100dvh;
+  background: transparent;
+  pointer-events: none;
+}
+
+.real-start-stack .real-language-page {
+  z-index: 2;
+}
+
+.real-start-stack .real-start-panel,
+.real-start-stack .real-language-panel {
+  position: absolute;
+  inset: 0;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: #f3f4f6;
+  transform: translate3d(0, 0, 0);
+  pointer-events: auto;
+}
+
+.real-start-stack[data-language-phase='closed'] .real-start-panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-start-stack[data-language-phase='opening'] .real-start-panel {
+  animation: real-shell-slide-up-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  pointer-events: none;
+}
+
+.real-start-stack[data-language-phase='opening'] .real-language-panel {
+  animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.real-start-stack[data-language-phase='open'] .real-start-panel {
+  transform: translate3d(0, -100%, 0);
+  pointer-events: none;
+}
+
+.real-start-stack[data-language-phase='open'] .real-language-panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.real-start-stack[data-language-phase='closing'] .real-start-panel {
+  animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  pointer-events: none;
+}
+
+.real-start-stack[data-language-phase='closing'] .real-language-panel {
+  animation: real-shell-slide-down-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-start-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-language-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing'] .real-start-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing'] .real-language-panel {
+  animation: none;
 }
 
 @keyframes real-shell-slide-up-out {
@@ -8688,57 +8763,6 @@ html[data-reduce-motion='true'] .site-header-shell {
   to {
     transform: translate3d(0, 100%, 0);
   }
-}
-
-.real-start-stack .real-start-page,
-.real-start-stack .real-language-page {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  min-height: 100dvh;
-  transform: translate3d(0, 0, 0);
-}
-
-.real-start-stack .real-language-page {
-  z-index: 2;
-}
-
-.real-start-stack[data-language-phase='closed'] .real-start-page {
-  transform: translate3d(0, 0, 0);
-}
-
-.real-start-stack[data-language-phase='opening'] .real-start-page {
-  animation: real-shell-slide-up-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-  pointer-events: none;
-}
-
-.real-start-stack[data-language-phase='opening'] .real-language-page {
-  animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-
-.real-start-stack[data-language-phase='open'] .real-start-page {
-  transform: translate3d(0, -100%, 0);
-  pointer-events: none;
-}
-
-.real-start-stack[data-language-phase='open'] .real-language-page {
-  transform: translate3d(0, 0, 0);
-}
-
-.real-start-stack[data-language-phase='closing'] .real-start-page {
-  animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-  pointer-events: none;
-}
-
-.real-start-stack[data-language-phase='closing'] .real-language-page {
-  animation: real-shell-slide-down-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-start-page,
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-language-page,
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing'] .real-start-page,
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing'] .real-language-page {
-  animation: none;
 }
 
 .real-start-page {
@@ -9660,11 +9684,7 @@ html[data-reduce-motion='true'] .real-start-challenge:focus-visible {
   min-height: 100dvh;
   overflow: hidden;
   color: #f3f4f6;
-  background: #05070d;
-}
-
-.real-start-stack .real-language-page {
-  position: fixed;
+  background: transparent;
 }
 
 .real-language-shell {

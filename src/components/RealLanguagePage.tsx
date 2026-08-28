@@ -2,7 +2,6 @@ import { useEffect, type AnimationEvent } from 'react'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import { LOCALE_OPTIONS, type Locale } from '../i18n/types'
-import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 
 export function RealLanguagePage({
@@ -13,7 +12,6 @@ export function RealLanguagePage({
   onAnimationEnd?: (event: AnimationEvent<HTMLDivElement>) => void
 }) {
   const { locale, setLocale, t } = useLocale()
-  const mapBackgroundUrl = resolveSiteAssetUrl('maps/SIMapGerenal.png')
   const discordHref = getStartPageExternalLinkUrl('discord', locale)
 
   const selectLocale = (value: Locale) => {
@@ -27,16 +25,9 @@ export function RealLanguagePage({
   }, [locale, t])
 
   return (
-    <div
-      className="real-language-page real-start-page--ready sibs-scrollbar"
-      onAnimationEnd={onAnimationEnd}
-    >
-      <div className="real-start-bg" aria-hidden="true">
-        <img className="real-start-bg-map" src={mapBackgroundUrl} alt="" decoding="async" />
-        <div className="real-start-bg-overlay" />
-      </div>
-
-      <div className="real-language-shell">
+    <div className="real-language-page sibs-scrollbar">
+      <div className="real-language-panel" onAnimationEnd={onAnimationEnd}>
+        <div className="real-language-shell">
         <header className="real-language-header">
           <button type="button" className="real-language-back" onClick={onClose}>
             <span className="real-language-back-chevron" aria-hidden="true">
@@ -72,6 +63,7 @@ export function RealLanguagePage({
             {t('realLanguageDisclaimerTail')}
           </p>
         </footer>
+        </div>
       </div>
     </div>
   )

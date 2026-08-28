@@ -166,8 +166,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
-            zh: "Real 开始页与语言页切换改为 @keyframes 动画，桌面端不再受系统「减少动态效果」影响（仍尊重站内设置）。",
-            en: "Real start ↔ language now uses @keyframes so desktop OS reduce-motion no longer skips it (in-app setting still applies).",
+            zh: "Real 开始页与语言页切换时地图背景固定不动，仅内容层滑入滑出。",
+            en: "Real start ↔ language keeps the map background fixed; only content panels slide.",
           },
         ],
       },

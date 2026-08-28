@@ -222,17 +222,18 @@ export function RealStartPage() {
 
   return (
     <div
-      className="real-start-stack"
+      className={`real-start-stack${bootReady ? ' real-start-stack--ready' : ''}`}
       data-language-phase={languagePhase}
     >
-      <div
-        className={`real-start-page sibs-scrollbar${bootReady ? ' real-start-page--ready' : ' real-start-page--booting'}`}
-      >
       <div className="real-start-bg" aria-hidden="true">
         <img className="real-start-bg-map" src={mapBackgroundUrl} alt="" decoding="async" />
         <div className="real-start-bg-overlay" />
       </div>
 
+      <div className="real-start-page sibs-scrollbar">
+        <div
+          className={`real-start-panel${bootReady ? ' real-start-page--ready' : ' real-start-page--booting'}`}
+        >
       <div className="real-start-shell">
         <header className="real-start-brand">
           <img className="real-start-logo" src={getSiteLogoUrl()} alt="" width={88} height={88} decoding="async" />
@@ -319,6 +320,7 @@ export function RealStartPage() {
             ))}
           </ul>
         </nav>
+      </div>
       </div>
       <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />
       </div>
