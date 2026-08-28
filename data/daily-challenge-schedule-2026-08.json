@@ -99,7 +99,20 @@
     { "date": "2026-08-25", "event": "Foggy Day", "routeCode": "U47S", "race": false },
     { "date": "2026-08-26", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
     { "date": "2026-08-27", "event": "Marathon Road Closure", "routeCode": "248", "race": false },
-    { "date": "2026-08-28", "event": null, "routeCode": null, "race": false },
+    {
+      "date": "2026-08-28",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "北岛花园商场", "en": "NIE Shopping Center" } },
+        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } },
+        { "name": { "zh": "南环坊", "en": "Langford Place" } },
+        { "name": { "zh": "南环文化区公园", "en": "Southern Cultural District Park" } },
+        { "name": { "zh": "叶角湾", "en": "Leafy Bay" } },
+        { "name": { "zh": "阿周电视", "en": "Roblox TV" } }
+      ]
+    },
     { "date": "2026-08-29", "event": "Marathon Shuttle", "routeCode": null, "race": true },
     { "date": "2026-08-30", "event": "Rush Hour", "routeCode": null, "race": true },
     { "date": "2026-08-31", "event": null, "routeCode": null, "race": false }

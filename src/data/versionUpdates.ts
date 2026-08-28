@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-08-27'
+export const CURRENT_CHANGELOG_DATE = '2026-08-28'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-08-28-summary",
+    date: "2026-08-28",
+    title: {
+      zh: "2026-08-28 更新",
+      en: "2026-08-28 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 8/28 每日挑战：私人租用（PH1，北岛花园商场 → 阳光大学北 → 南环坊 → 南环文化区公园 → 叶角湾 → 阿周电视）。",
+            en: "Synced 8/28 daily challenge: Private Hire (PH1, NIE Shopping Center → North Sunshine University → Langford Place → Southern Cultural District Park → Leafy Bay → Roblox TV).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-08-27-summary",
     date: "2026-08-27",
