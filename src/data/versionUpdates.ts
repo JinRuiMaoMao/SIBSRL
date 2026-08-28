@@ -189,6 +189,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 Real 线路页「返回主界面」因仍指向 index.html 而未清除 history.state、导致一直停留在路线页的问题。",
             en: "Fixed Real routes “Back to home” looping on the routes view because the link reloaded index.html without clearing history.state.",
           },
+          {
+            zh: "修复 Real 返回主界面时未清除 ?route= / ?dir= 等参数，导致再次进入线路选择仍跳转到原线路详情的问题。",
+            en: "Fixed Real “Back to home” leaving ?route= / ?dir= in the URL so re-entering routes reopened the same route detail.",
+          },
         ],
       },
     ],

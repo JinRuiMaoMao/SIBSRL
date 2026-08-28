@@ -1,4 +1,5 @@
 import type { AppTab } from '../types/appTab'
+import { stripRouteLookupParams } from './routeNavigation'
 
 export const REAL_SHELL_PENDING_TAB_KEY = 'sibs-real-pending-tab'
 export const REAL_SHELL_NAV_EVENT = 'sibs-real-shell-nav'
@@ -27,12 +28,16 @@ function readHistoryState(): RealShellHistoryState | null {
   return (window.history.state as RealShellHistoryState | null) ?? null
 }
 
-function getRealShellCleanUrl(): string {
+function getRealShellCleanUrl(options?: { stripRouteLookup?: boolean }): string {
   const url = new URL(window.location.href)
   url.hash = ''
   url.searchParams.delete('tab')
   url.searchParams.delete('__realTab')
-  return `${url.pathname}${url.search}`
+  if (options?.stripRouteLookup) {
+    stripRouteLookupParams(url)
+  }
+  const qs = url.searchParams.toString()
+  return qs ? `${url.pathname}?${qs}` : url.pathname
 }
 
 function readPendingTab(): AppTab | null {
@@ -92,7 +97,6 @@ export function isRealShellStartView(): boolean {
 export function bootstrapRealShellNavigation(): void {
   if (!isRealAppShellPage()) return
 
-  const cleanUrl = getRealShellCleanUrl()
   const legacyTab =
     readPendingTab() ?? readLegacyHashTab() ?? readLegacyQueryTab() ?? readRealShellTab()
   clearPendingTab()
@@ -103,9 +107,11 @@ export function bootstrapRealShellNavigation(): void {
     window.location.search.includes('__realTab=')
 
   const nextState: RealShellHistoryState = legacyTab ? { sibsRealTab: legacyTab } : {}
+  const url = getRealShellCleanUrl({ stripRouteLookup: !legacyTab })
+  const currentTab = readRealShellTab()
 
-  if (needsUrlClean || legacyTab !== readRealShellTab()) {
-    window.history.replaceState(nextState, '', cleanUrl)
+  if (needsUrlClean || legacyTab !== currentTab || url !== `${window.location.pathname}${window.location.search}`) {
+    window.history.replaceState(nextState, '', url)
   }
 }
 
@@ -121,7 +127,9 @@ export function navigateRealShellTab(tab: AppTab | null, options?: { replace?: b
     return
   }
 
-  const url = getRealShellCleanUrl()
+  const wasStart = readRealShellTab() === null
+  const stripRouteLookup = tab === null || (tab === 'routes' && wasStart)
+  const url = getRealShellCleanUrl({ stripRouteLookup })
   const state: RealShellHistoryState = tab ? { sibsRealTab: tab } : {}
 
   if (options?.replace) {

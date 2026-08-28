@@ -9,6 +9,22 @@ const TO_STOP_QUERY_KEY = 'to'
 const DEPART_QUERY_KEY = 'depart'
 const SEARCH_QUERY_KEY = 'q'
 
+export const ROUTE_LOOKUP_QUERY_KEYS = [
+  ROUTE_QUERY_KEY,
+  DIRECTION_QUERY_KEY,
+  FROM_STOP_QUERY_KEY,
+  TO_STOP_QUERY_KEY,
+  DEPART_QUERY_KEY,
+  SEARCH_QUERY_KEY,
+] as const
+
+/** 去掉线路查询相关的 URL 参数（?route=、?dir=、?from= 等） */
+export function stripRouteLookupParams(url: URL): void {
+  for (const key of ROUTE_LOOKUP_QUERY_KEYS) {
+    url.searchParams.delete(key)
+  }
+}
+
 /** Windows / URL 安全文件名：非字母数字与连字符一律百分号编码 */
 export function routeIdToPageFilename(routeId: string): string {
   return [...routeId]
