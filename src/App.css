@@ -8649,6 +8649,8 @@ html[data-reduce-motion='true'] .site-header-shell {
   min-height: 100dvh;
   overflow: hidden;
   background: #05070d;
+  --real-shell-transition-duration: 2s;
+  --real-shell-transition-easing: cubic-bezier(0.5, 0, 1, 0.85);
 }
 
 .real-shell-home-stack .real-start-bg {
@@ -8696,12 +8698,12 @@ html[data-reduce-motion='true'] .site-header-shell {
 }
 
 .real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-home-start-layer {
-  animation: real-shell-slide-down-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-down-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
 .real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel {
-  animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-down-from-top var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
@@ -8714,7 +8716,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 }
 
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer {
-  animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-up-from-bottom var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
@@ -8727,7 +8729,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 }
 
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-routes-panel {
-  animation: real-shell-slide-up-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-up-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
@@ -8754,6 +8756,8 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
   min-height: 100dvh;
   overflow: hidden;
   background: #05070d;
+  --real-shell-transition-duration: 2s;
+  --real-shell-transition-easing: cubic-bezier(0.5, 0, 1, 0.85);
 }
 
 .real-start-stack .real-start-bg {
@@ -8800,12 +8804,12 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-start-stack[data-language-phase='opening'] .real-start-panel {
-  animation: real-shell-slide-up-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-up-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
 .real-start-stack[data-language-phase='opening'] .real-language-panel {
-  animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-up-from-bottom var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
 .real-start-stack[data-language-phase='open'] .real-start-panel {
@@ -8818,12 +8822,12 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-start-stack[data-language-phase='closing'] .real-start-panel {
-  animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-down-from-top var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
 .real-start-stack[data-language-phase='closing'] .real-language-panel {
-  animation: real-shell-slide-down-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-down-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
 html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-start-panel,
@@ -8838,12 +8842,12 @@ html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing']
 }
 
 .real-start-stack[data-profile-phase='opening'] .real-start-panel {
-  animation: real-shell-slide-up-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-up-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
 .real-start-stack[data-profile-phase='opening'] .real-profile-panel {
-  animation: real-shell-slide-up-from-bottom 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-up-from-bottom var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
 .real-start-stack[data-profile-phase='open'] .real-start-panel {
@@ -8856,12 +8860,12 @@ html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing']
 }
 
 .real-start-stack[data-profile-phase='closing'] .real-start-panel {
-  animation: real-shell-slide-down-from-top 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-down-from-top var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
 .real-start-stack[data-profile-phase='closing'] .real-profile-panel {
-  animation: real-shell-slide-down-out 2s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: real-shell-slide-down-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
 html[data-reduce-motion='true'] .real-start-stack[data-profile-phase='opening'] .real-start-panel,

@@ -209,6 +209,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复 Real 开始页 ↔ 选线动画中途返回导致 BGM 错乱；进入选线仅在动画结束后切 map BGM，返回过渡立即恢复主菜单 BGM。",
             en: "Fix Real start ↔ routes BGM desync when navigating mid-transition; map BGM after animation completes, main menu BGM on return.",
           },
+          {
+            zh: "Real 壳层滑入动效改为 ease-in（越接近结束越快），更接近游戏本体手感。",
+            en: "Real shell slide transitions use ease-in (accelerating toward the end) to match in-game feel.",
+          },
         ],
       },
     ],
