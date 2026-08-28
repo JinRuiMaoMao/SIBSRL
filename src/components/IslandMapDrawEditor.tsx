@@ -1017,6 +1017,7 @@ export function IslandMapDrawEditor({
           {},
           merged.stops.length > 0 ? sibsDraft.pathNodes : [],
           sibsDraft.editorGraph,
+          drawColor,
         )
         if (!payload) {
           showExportHint(t('islandMapDrawExportNeedRoute'))

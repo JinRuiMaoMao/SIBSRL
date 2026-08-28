@@ -2,6 +2,7 @@ import type { WorldMapPoint } from '../data/worldMapRoutes'
 import { resolveWorldMapRouteId } from '../data/worldMapRoutes'
 import type { WorldMapDrawPathNode, WorldMapDrawStop, WorldMapVirtualNode } from '../types/worldMapDraw'
 import type { RouteEditorGraphExport } from '../routeEditor/types'
+import { DEFAULT_ROUTE_PATH_COLOR, normalizeMapDrawColor } from './mapDrawColor'
 import { buildLegStartsFromPathAnchors } from './worldMapDrawPathEdit'
 
 export interface WorldMapRouteExportEditorMeta {
@@ -57,6 +58,8 @@ export interface WorldMapRouteExportPayload {
     legStarts?: number[]
     pathLegHidden?: boolean[]
     userBendIndices?: number[]
+    /** Normalized hex stroke color for exported path (default #ff0000). */
+    pathColor?: string
     /** Preserves map-draw editor node links (from/to by editor node id). */
     editorGraph?: RouteEditorGraphExport
   }>
@@ -154,6 +157,7 @@ export function buildWorldMapRouteExportPayload(
   editorMeta: WorldMapRouteExportEditorMeta = {},
   pathNodes: readonly WorldMapDrawPathNode[] = [],
   editorGraph?: RouteEditorGraphExport,
+  pathColor?: string,
 ): WorldMapRouteExportPayload | null {
   const canonicalId = resolveWorldMapExportRouteId(routeId, [], fallbackRouteId)
   const exportPoints =
@@ -192,6 +196,7 @@ export function buildWorldMapRouteExportPayload(
   if (exportPathNodes.length > 0) direction.pathNodes = exportPathNodes
 
   if (exportPoints.length > 0) {
+    direction.pathColor = normalizeMapDrawColor(pathColor ?? '') ?? DEFAULT_ROUTE_PATH_COLOR
     const exportLegStarts = buildLegStartsFromPathAnchors(exportPoints, exportStops, exportPathNodes)
     if (exportLegStarts.length > 0) direction.legStarts = exportLegStarts
   }

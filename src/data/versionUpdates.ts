@@ -173,6 +173,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       },
       {
         title: {
+          zh: "地图绘制",
+          en: "Map draw",
+        },
+        additions: [
+          {
+            zh: "地图绘制与路线走向页导出的 JSON / PNG 走线颜色默认改为 #FF0000。",
+            en: "Default path color for map draw and route-map JSON/PNG export is now #FF0000.",
+          },
+        ],
+      },
+      {
+        title: {
           zh: "Real 分屏",
           en: "Real split layout",
         },

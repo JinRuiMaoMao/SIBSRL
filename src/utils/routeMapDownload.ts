@@ -1,6 +1,7 @@
 import { routeEditorLineToExportSegmentLines } from '../routeEditor/routeEditorBridge'
 import type { RouteEditorGraphExport, RouteEditorLine } from '../routeEditor/types'
 import type { Locale } from '../i18n/types'
+import { DEFAULT_ROUTE_PATH_COLOR } from './mapDrawColor'
 import { isRouteMapImportStorage } from './routeMapImportBundle'
 import type { RouteMapViewerDisplay } from './routeMapViewerDisplay'
 import { userBendIndicesToFlags } from './routeMapViewerDisplay'
@@ -55,6 +56,14 @@ function buildEditorGraphExport(
       to: segment.toNodeId,
     })),
   }
+}
+
+function resolveRouteMapPathColor(display: RouteMapViewerDisplay): string {
+  return (
+    display.strokeColor ??
+    display.referenceEditor?.lineStyle.color ??
+    DEFAULT_ROUTE_PATH_COLOR
+  )
 }
 
 function resolveExportPathPoints(
@@ -244,7 +253,7 @@ export async function downloadRouteMapPng(options: {
           ? []
           : userBendIndicesToFlags(display.userBendIndices, display.points.length),
       segmentLines,
-      strokeColor: display.strokeColor ?? '#ffffff',
+      strokeColor: resolveRouteMapPathColor(display),
       strokeWidth: display.referenceEditor?.lineStyle.width,
       showStopLabels: true,
       stopLabelScale: 1,

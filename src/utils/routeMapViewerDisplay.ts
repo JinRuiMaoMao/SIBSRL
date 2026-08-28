@@ -8,6 +8,7 @@ import {
   DEFAULT_ROUTE_EDITOR_LINE_STYLE,
   ROUTE_MAP_VIEWER_EDITOR_CONFIG,
 } from '../routeEditor/types'
+import { DEFAULT_ROUTE_PATH_COLOR } from './mapDrawColor'
 import { sibsImportToRouteEditorLine } from '../routeEditor/routeEditorBridge'
 import type { WorldMapDrawPathNode, WorldMapDrawStop } from '../types/worldMapDraw'
 import type { WorldMapDrawImportResult } from './worldMapRouteImport'
@@ -58,6 +59,7 @@ export function buildRouteMapViewerDisplay(
       legStarts: parsed.legStarts.length > 0 ? parsed.legStarts : [0],
       pathLegHidden: parsed.pathLegHidden,
       userBendIndices: parsed.userBendIndices,
+      strokeColor: DEFAULT_ROUTE_PATH_COLOR,
       referenceEditor: {
         nodes: editorImport.line.nodes,
         segments: editorImport.line.segments,
@@ -77,6 +79,7 @@ export function buildRouteMapViewerDisplay(
     legStarts: parsed.legStarts.length > 0 ? parsed.legStarts : [0],
     pathLegHidden: parsed.pathLegHidden,
     userBendIndices: parsed.userBendIndices,
+    strokeColor: DEFAULT_ROUTE_PATH_COLOR,
     referenceEditor: null,
   }
   return { ...display, fitPoints: collectFitPoints(display) }
@@ -95,6 +98,7 @@ export function buildSimpleRouteMapViewerDisplay(
     legStarts: [0],
     pathLegHidden: [],
     userBendIndices: [],
+    strokeColor: DEFAULT_ROUTE_PATH_COLOR,
     referenceEditor: null,
   }
   return { ...display, fitPoints: collectFitPoints(display) }

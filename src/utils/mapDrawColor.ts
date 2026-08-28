@@ -1,6 +1,9 @@
-export const DEFAULT_MAP_DRAW_COLOR = '#5ec8ff'
+export const DEFAULT_ROUTE_PATH_COLOR = '#ff0000'
+
+export const DEFAULT_MAP_DRAW_COLOR = DEFAULT_ROUTE_PATH_COLOR
 
 export const MAP_DRAW_COLOR_PRESETS = [
+  '#ff0000',
   '#5ec8ff',
   '#f5b942',
   '#ff5c5c',

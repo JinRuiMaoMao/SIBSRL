@@ -83,7 +83,7 @@ export function IslandMapDrawColorPicker({ color, onColorChange }: IslandMapDraw
               commitTextValue()
             }
           }}
-          placeholder="#5ec8ff / rgb(94, 200, 255)"
+          placeholder="#ff0000 / rgb(255, 0, 0)"
           spellCheck={false}
         />
       </label>

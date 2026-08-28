@@ -109,7 +109,7 @@ export const DEFAULT_ROUTE_EDITOR_CONFIG: RouteEditorConfig = {
 }
 
 export const DEFAULT_ROUTE_EDITOR_LINE_STYLE: RouteEditorLineStyle = {
-  color: '#e63757',
+  color: '#ff0000',
   width: 3,
   style: 'solid',
 }
