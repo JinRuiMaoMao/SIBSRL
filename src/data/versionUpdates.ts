@@ -217,6 +217,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "Real 壳层过渡时长改为 1s；缓动改为基本匀速、末尾略加速，更接近游戏本体。",
             en: "Real shell transitions are 1s with near-linear motion and a slight snap at the end, matching in-game timing.",
           },
+          {
+            zh: "Real 开始玩：点击瞬间切换选线 BGM；动画中途返回仍立即恢复主菜单 BGM。",
+            en: "Real Play: map BGM on click; mid-animation back still restores main-menu BGM immediately.",
+          },
         ],
       },
     ],
