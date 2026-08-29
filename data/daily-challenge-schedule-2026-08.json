@@ -113,7 +113,7 @@
         { "name": { "zh": "阿周电视", "en": "Roblox TV" } }
       ]
     },
-    { "date": "2026-08-29", "event": "Marathon Shuttle", "routeCode": null, "race": true },
+    { "date": "2026-08-29", "event": "Marathon Shuttle", "routeCode": "R370", "race": true },
     { "date": "2026-08-30", "event": "Rush Hour", "routeCode": null, "race": true },
     { "date": "2026-08-31", "event": null, "routeCode": null, "race": false }
   ]
