@@ -166,6 +166,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
         },
         additions: [
           {
+            zh: "修复 Real 壳页进入选线/关于等页面后约 1 秒内容消失：线路 URL 更新不再清掉 history.state 中的壳页栏目。",
+            en: "Fixed Real shell pages vanishing ~1s after open: route URL updates no longer wipe the shell tab from history.state.",
+          },
+          {
             zh: "Real 开始页主菜单按钮悬浮放大改为约 1.14 倍，更接近游戏内效果。",
             en: "Real start menu buttons now scale to ~1.14× on hover, closer to in-game UI.",
           },

@@ -1,4 +1,5 @@
 import { getRoutesPageFile, isRoutesPage } from './appTabNavigation'
+import { preserveAppHistoryState } from './appHistoryState'
 import { hasSeenDailyChallengePrompt } from '../storage/dailyChallengePrompt'
 
 const ROUTE_PAGE_DIR = 'routes'
@@ -109,7 +110,7 @@ export function clearRouteFromLocation(): void {
   url.searchParams.delete(ROUTE_QUERY_KEY)
   url.searchParams.delete(DIRECTION_QUERY_KEY)
   const qs = url.searchParams.toString()
-  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.replaceState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 /** 更新 URL 中的线路与方向，不新增历史记录 */
@@ -122,7 +123,7 @@ export function replaceRouteInLocation(routeId: string, directionIndex?: number)
     url.searchParams.delete(DIRECTION_QUERY_KEY)
   }
   const qs = url.searchParams.toString()
-  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.replaceState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 /** 站内打开线路详情时更新 URL，不刷新页面 */
@@ -135,7 +136,7 @@ export function setRouteInLocation(routeId: string, directionIndex?: number): vo
     url.searchParams.delete(DIRECTION_QUERY_KEY)
   }
   const qs = url.searchParams.toString()
-  window.history.pushState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.pushState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 /** 分享链接：含线路与方向 */
@@ -179,7 +180,7 @@ export function replaceSearchInLocation(query: string): void {
   if (trimmed) url.searchParams.set(SEARCH_QUERY_KEY, trimmed)
   else url.searchParams.delete(SEARCH_QUERY_KEY)
   const qs = url.searchParams.toString()
-  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.replaceState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 export function clearSearchFromLocation(): void {
@@ -187,7 +188,7 @@ export function clearSearchFromLocation(): void {
   if (!url.searchParams.has(SEARCH_QUERY_KEY)) return
   url.searchParams.delete(SEARCH_QUERY_KEY)
   const qs = url.searchParams.toString()
-  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.replaceState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 export function buildStopPairSearchQuery(from: string, to: string): string {
@@ -217,7 +218,7 @@ export function replaceStopPairInLocation(from: string, to: string, depart?: str
   if (depart?.trim()) url.searchParams.set(DEPART_QUERY_KEY, depart.trim())
   else url.searchParams.delete(DEPART_QUERY_KEY)
   const qs = url.searchParams.toString()
-  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.replaceState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 export function clearStopPairFromLocation(): void {
@@ -233,7 +234,7 @@ export function clearStopPairFromLocation(): void {
   url.searchParams.delete(TO_STOP_QUERY_KEY)
   url.searchParams.delete(DEPART_QUERY_KEY)
   const qs = url.searchParams.toString()
-  window.history.replaceState(null, '', qs ? `${url.pathname}?${qs}` : url.pathname)
+  window.history.replaceState(preserveAppHistoryState(), '', qs ? `${url.pathname}?${qs}` : url.pathname)
 }
 
 /** 构建时写入 routes/*.html 的跳转目标 */

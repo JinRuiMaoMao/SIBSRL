@@ -32,6 +32,8 @@ const SCROLL_REVEAL_EXCLUDED_ANCESTORS = [
   '.daily-challenge-calendar-root',
   '.app-dialog-root',
   '.guided-tour-root',
+  '.real-shell-home-stack',
+  '.real-shell-routes-panel',
 ].join(', ')
 
 const SCROLL_REVEAL_SELECTOR = SCROLL_REVEAL_SELECTORS

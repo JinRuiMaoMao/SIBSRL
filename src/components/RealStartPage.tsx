@@ -9,6 +9,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { Locale } from '../i18n/types'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { navigateRealShellTab } from '../utils/realShellNavigation'
+import { preserveAppHistoryState } from '../utils/appHistoryState'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealShopDialog } from './RealShopDialog'
@@ -257,7 +258,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     const legacyLanguageHash = window.location.hash.replace(/^#/, '').trim().toLowerCase()
     if (legacyLanguageHash !== 'language') return
     const cleanUrl = `${window.location.pathname}${window.location.search}`
-    window.history.replaceState(null, '', cleanUrl)
+    window.history.replaceState(preserveAppHistoryState(), '', cleanUrl)
     openLanguage()
   }, [openLanguage])
 
