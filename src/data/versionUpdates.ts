@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-08-29'
+export const CURRENT_CHANGELOG_DATE = '2026-09-01'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,36 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-09-01-summary",
+    date: "2026-09-01",
+    title: {
+      zh: "2026-09-01 更新",
+      en: "2026-09-01 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 8/30 每日挑战：[竞速] 繁忙时间（171W）。",
+            en: "Synced 8/30 daily challenge: [Race] Rush Hour (171W).",
+          },
+          {
+            zh: "同步 8/31 每日挑战：[竞速] 演唱会散场（140E）。",
+            en: "Synced 8/31 daily challenge: [Race] Concert Crowd Dispersal (140E).",
+          },
+          {
+            zh: "同步 9/1 每日挑战：私人租用（PH1，时间廊 → 枫树里 → 阳光体育馆 → 南环文化区公园 → 仙贝广场）。",
+            en: "Synced 9/1 daily challenge: Private Hire (PH1, Timelapse Mall → Maple Lane → Sunshine Stadium → Southern Cultural District Park → Senpai Shopping Center).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-08-29-summary",
     date: "2026-08-29",
