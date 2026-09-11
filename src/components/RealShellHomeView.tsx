@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type AnimationEvent, type Rea
 import { ErrorBoundary } from './ErrorBoundary'
 import { RealStartBackground } from './RealStartBackground'
 import { RealStartPage } from './RealStartPage'
+import { RealSunshardsIndicator } from './RealSunshardsIndicator'
 import { useStartPageBoot } from '../hooks/useStartPageBoot'
 import { isAppReduceMotionEnabled } from '../storage/appPreferences'
 import { useRealShellHomeMusic } from '../hooks/useRealShellHomeMusic'
@@ -86,6 +87,7 @@ export function RealShellHomeView({ shellTab, routesContent }: RealShellHomeView
       data-routes-phase={routesPhase}
     >
       <RealStartBackground />
+      <RealSunshardsIndicator className="real-sunshards-indicator--shell-hud" />
       {startLayerMounted ? (
         <div className="real-shell-home-start-layer">
           <RealStartPage sharedBackground />

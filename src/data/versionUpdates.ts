@@ -173,6 +173,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "每日挑战日历新增线路搜索：输入线路编号可查找该路线出现过的历史日期，并跳转至对应月份。",
             en: "Daily challenge calendar route search: enter a route number to find historical dates and jump to that month.",
           },
+          {
+            zh: "Real 布局页顶栏显示阳光碎片数量（演示占位，待游戏数据同步）。",
+            en: "Real layout pages show Sunshard balance at the top (demo placeholder until game sync).",
+          },
         ],
       },
     ],

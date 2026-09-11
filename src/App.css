@@ -9101,6 +9101,46 @@ html[data-reduce-motion='true'] .real-start-bg-map {
     linear-gradient(180deg, rgb(5 7 13 / 0.35) 0%, rgb(5 7 13 / 0.88) 72%, rgb(5 7 13 / 0.96) 100%);
 }
 
+.real-sunshards-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  padding: 0.28rem 0.65rem 0.28rem 0.5rem;
+  border: 1px solid rgb(245 185 66 / 0.55);
+  border-radius: 999px;
+  background: rgb(8 10 18 / 0.82);
+  box-shadow: 0 0 16px rgb(245 185 66 / 0.12);
+  color: #f5b942;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.real-sunshards-indicator-icon {
+  font-size: 1rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgb(245 185 66 / 0.45));
+}
+
+.real-sunshards-indicator-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.real-sunshards-indicator--shell-hud {
+  position: fixed;
+  top: clamp(0.65rem, 2vh, 1rem);
+  right: clamp(0.75rem, 2.5vw, 1.35rem);
+  z-index: 40;
+}
+
+.real-sunshards-indicator--header {
+  pointer-events: none;
+}
+
 .real-start-shell {
   position: relative;
   z-index: 1;
