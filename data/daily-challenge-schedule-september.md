@@ -22,17 +22,17 @@ PH 站序每日随机；已知站序写入 JSON 的 `privateHireStops`，详情�
 
 ```
 ~September Daily Challenge~
-9/1:
-9/2:
-9/3:
-9/4:
-9/5:
-9/6:
-9/7:
-9/8:
-9/9:
-9/10:
-9/11:
+9/1: Private Hire (PH1)
+9/2: Marathon Shuttle (R370)
+9/3: Marathon Road Closure (N271EM)
+9/4: Marathon Shuttle (R370)
+9/5: (Race) Safety First (46W)
+9/6: (Race) Rush Hour (42AS@1830)
+9/7: (Race) Safety First (142E@0800)
+9/8: Marathon Road Closure (471W)
+9/9: (Race) Urban Odyssey (77XA)
+9/10: Marathon Shuttle (R148)
+9/11: Marathon Road Closure at Night (N246)
 9/12:
 9/13:
 9/14:
