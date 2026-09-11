@@ -102,14 +102,6 @@ export function RealTopHud({ className }: { className?: string }) {
         </div>
 
         <div className="real-top-hud-right">
-          <button
-            type="button"
-            className="real-top-hud-dex"
-            onClick={() => navigateRealShellTab('routes')}
-          >
-            {t('realTopHudDex')}
-          </button>
-
           <div className="real-top-hud-sunshards" aria-label={t('realSunshardsBalanceAria', { count: balance })}>
             <span className="real-top-hud-sunshards-icon-wrap">
               <SunshardIcon className="real-top-hud-sunshards-icon" size={16} />

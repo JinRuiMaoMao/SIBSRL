@@ -9222,29 +9222,6 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   flex-shrink: 0;
 }
 
-.real-top-hud-dex {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 2rem;
-  padding: 0 0.65rem;
-  border: 1px solid rgb(255 255 255 / 0.14);
-  border-radius: 0.35rem;
-  background: rgb(18 20 26 / 0.9);
-  color: rgb(255 255 255 / 0.92);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.real-top-hud-dex:hover,
-.real-top-hud-dex:focus-visible {
-  background: rgb(28 32 40 / 0.95);
-  outline: none;
-}
-
 .real-top-hud-sunshards {
   display: inline-flex;
   align-items: stretch;
@@ -9386,10 +9363,6 @@ html[data-reduce-motion='true'] .real-start-bg-map {
 }
 
 @media (max-width: 900px) {
-  .real-top-hud-dex {
-    display: none;
-  }
-
   .real-top-hud-action span {
     display: none;
   }
