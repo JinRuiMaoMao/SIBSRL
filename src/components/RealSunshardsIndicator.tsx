@@ -1,5 +1,6 @@
 import { useLocale } from '../i18n/LocaleContext'
 import { useRealSunshardsBalance } from '../hooks/useRealSunshardsBalance'
+import { SunshardIcon } from './SunshardIcon'
 
 export function RealSunshardsIndicator({ className }: { className?: string }) {
   const { t } = useLocale()
@@ -10,9 +11,7 @@ export function RealSunshardsIndicator({ className }: { className?: string }) {
       className={`real-sunshards-indicator${className ? ` ${className}` : ''}`}
       aria-label={t('realSunshardsBalanceAria', { count: balance })}
     >
-      <span className="real-sunshards-indicator-icon" aria-hidden="true">
-        ☀
-      </span>
+      <SunshardIcon className="real-sunshards-indicator-icon" size={20} />
       <span className="real-sunshards-indicator-count">{balance.toLocaleString()}</span>
     </div>
   )

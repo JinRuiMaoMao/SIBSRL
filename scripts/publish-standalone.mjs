@@ -432,6 +432,12 @@ export async function publishStandalone(options = {}) {
     cpSync(publicLogo, resolve(root, 'dist', 'apple-touch-icon.png'))
   }
 
+  const publicSunshardIcon = resolve(root, 'public', 'sunshard-icon.png')
+  if (existsSync(publicSunshardIcon)) {
+    cpSync(publicSunshardIcon, resolve(root, 'sunshard-icon.png'))
+    cpSync(publicSunshardIcon, resolve(root, 'dist', 'sunshard-icon.png'))
+  }
+
   const publicOgShare = resolve(root, 'public', 'og-share.png')
   if (existsSync(publicOgShare)) {
     cpSync(publicOgShare, resolve(root, 'og-share.png'))

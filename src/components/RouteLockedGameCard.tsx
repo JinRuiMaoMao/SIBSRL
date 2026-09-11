@@ -12,6 +12,7 @@ import {
 } from '../data/routeShiftUnlocks'
 import { routeUsesSunshardUnlock } from '../data/routeUnlocks'
 import { isStaffShuttleSunshardUnlockRoute, isSunshardDirectionLockedSlot } from '../data/routeSunshardUnlocks'
+import { SunshardIcon } from './SunshardIcon'
 import { useLocale } from '../i18n/LocaleContext'
 import type { BusRoute, RouteTypeFilter } from '../types/route'
 import { getRoutePageHref } from '../utils/routeNavigation'
@@ -63,21 +64,6 @@ function CalendarGlyph() {
       <path
         fill="currentColor"
         d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a1 1 0 0 1 1-1m12 6H5v12h14z"
-      />
-    </svg>
-  )
-}
-
-function SunShardGlyph() {
-  return (
-    <svg className="route-locked-game-card-sun-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden>
-      <circle cx="12" cy="12" r="4" fill="currentColor" />
-      <path
-        fill="currentColor"
-        d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
       />
     </svg>
   )
@@ -177,7 +163,7 @@ export function RouteLockedGameCard({
                 {t('routeLockedGameUnlockSunshards', { n: route.sunshardsRequired })}
               </span>
               <span className="route-locked-game-card-unlock-sun-wrap">
-                <SunShardGlyph />
+                <SunshardIcon className="route-locked-game-card-sun-icon" size={14} />
               </span>
             </div>
           ) : null}
