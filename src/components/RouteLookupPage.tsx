@@ -58,6 +58,7 @@ import { SearchSyntaxHelp } from './SearchSyntaxHelp'
 import { SearchToolbar } from './SearchToolbar'
 import { WIDE_LAYOUT_MEDIA } from '../constants/layout'
 import { isRealLayoutMode } from '../utils/appLayoutMode'
+import { REAL_HUD_EVENT, readRealHudAction } from '../utils/realHudEvents'
 import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
 import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
@@ -236,6 +237,16 @@ export function RouteLookupPage({
     useState<DailyChallengeInfo | null>(null)
   const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
   const [playableRoutesDialogOpen, setPlayableRoutesDialogOpen] = useState(false)
+
+  useEffect(() => {
+    const openDailyCalendar = () => setDailyChallengeCalendarOpen(true)
+    const onHudAction = (event: Event) => {
+      const action = readRealHudAction(event)
+      if (action?.type === 'open-daily-tasks') openDailyCalendar()
+    }
+    window.addEventListener(REAL_HUD_EVENT, onHudAction)
+    return () => window.removeEventListener(REAL_HUD_EVENT, onHudAction)
+  }, [])
   const [groupOpen, setGroupOpen] = useState(readStoredRouteGroupOpen)
   const [unlockCategoryFocus, setUnlockCategoryFocus] = useState<RouteUnlockCategoryKind | null>(
     null,

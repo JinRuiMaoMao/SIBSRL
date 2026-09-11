@@ -174,8 +174,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Daily challenge calendar route search: enter a route number to find historical dates and jump to that month.",
           },
           {
-            zh: "Real 布局页顶栏显示阳光碎片数量（演示占位，待游戏数据同步）；图标与游戏一致，配色 rgb(255, 170, 127)。",
-            en: "Real layout pages show Sunshard balance at the top (demo placeholder until game sync); icon matches in-game art at rgb(255, 170, 127).",
+            zh: "Real 布局新增游戏风格顶栏：左侧等级与经验条，右侧阳光碎片、商店、每日任务、成就与邀请好友（演示数据，待游戏同步）。",
+            en: "Real layout game-style top bar: level/XP on the left; Sunshards, shop, daily tasks, achievements, and invite on the right (demo data until game sync).",
           },
         ],
       },

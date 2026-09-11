@@ -8750,6 +8750,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 /* Real layout — game-style start page */
 .real-shell-home-stack {
+  --real-top-hud-height: 2.85rem;
   position: relative;
   min-height: 100dvh;
   overflow: hidden;
@@ -9140,15 +9141,233 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   font-variant-numeric: tabular-nums;
 }
 
-.real-sunshards-indicator--shell-hud {
+.real-top-hud {
   position: fixed;
-  top: clamp(0.65rem, 2vh, 1rem);
-  right: clamp(0.75rem, 2.5vw, 1.35rem);
-  z-index: 40;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: var(--real-top-hud-height, 2.85rem);
+  padding: 0.35rem clamp(0.45rem, 2vw, 1rem);
+  box-sizing: border-box;
+  pointer-events: none;
 }
 
-.real-sunshards-indicator--header {
-  pointer-events: none;
+.real-top-hud > * {
+  pointer-events: auto;
+}
+
+.real-top-hud-left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.real-top-hud-level {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 1px solid rgb(255 255 255 / 0.85);
+  border-radius: 0.22rem;
+  background: rgb(0 0 0 / 0.5);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.real-top-hud-xp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.14rem;
+  min-width: clamp(5.5rem, 16vw, 9rem);
+}
+
+.real-top-hud-xp-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgb(255 255 255 / 0.94);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.real-top-hud-xp-track {
+  height: 0.44rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.16);
+  overflow: hidden;
+}
+
+.real-top-hud-xp-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+  min-width: 0;
+}
+
+.real-top-hud-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.32rem;
+  flex-shrink: 0;
+}
+
+.real-top-hud-dex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding: 0 0.65rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0.35rem;
+  background: rgb(18 20 26 / 0.9);
+  color: rgb(255 255 255 / 0.92);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.real-top-hud-dex:hover,
+.real-top-hud-dex:focus-visible {
+  background: rgb(28 32 40 / 0.95);
+  outline: none;
+}
+
+.real-top-hud-sunshards {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: 2rem;
+  border-radius: 0.35rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgb(255 196 150), rgb(255 145 85));
+  border: 1px solid rgb(255 200 160 / 0.65);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgb(255 170 127 / 0.2);
+}
+
+.real-top-hud-sunshards-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  background: rgb(255 255 255 / 0.96);
+  padding: 0.18rem;
+  flex-shrink: 0;
+}
+
+.real-top-hud-sunshards-icon {
+  filter: none;
+}
+
+.real-top-hud-sunshards-count {
+  display: flex;
+  align-items: center;
+  padding: 0 0.45rem;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 2rem;
+}
+
+.real-top-hud-sunshards-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  border: 0;
+  border-left: 1px solid rgb(255 255 255 / 0.22);
+  background: rgb(0 0 0 / 0.16);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.real-top-hud-sunshards-add:hover,
+.real-top-hud-sunshards-add:focus-visible {
+  background: rgb(0 0 0 / 0.28);
+  outline: none;
+}
+
+.real-top-hud-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  height: 2rem;
+  padding: 0 0.55rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 0.35rem;
+  background: rgb(20 22 28 / 0.9);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.real-top-hud-action:hover,
+.real-top-hud-action:focus-visible {
+  background: rgb(32 36 44 / 0.95);
+  outline: none;
+}
+
+.real-top-hud-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 999px;
+  background: rgb(20 22 28 / 0.9);
+  color: #fff;
+  cursor: pointer;
+}
+
+.real-top-hud-icon-btn:hover,
+.real-top-hud-icon-btn:focus-visible {
+  background: rgb(32 36 44 / 0.95);
+  outline: none;
+}
+
+.real-top-hud-invite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.35rem;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgb(37 99 235 / 0.35);
+}
+
+.real-top-hud-invite:hover,
+.real-top-hud-invite:focus-visible {
+  background: #1d4ed8;
+  outline: none;
+}
+
+.app--real-hud {
+  --real-top-hud-height: 2.85rem;
+  padding-top: var(--real-top-hud-height);
 }
 
 .real-start-shell {
@@ -9157,8 +9376,45 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding: clamp(1rem, 2.5vw, 2rem) clamp(1rem, 3vw, 2.5rem) clamp(1.25rem, 2vw, 1.75rem);
+  padding: calc(var(--real-top-hud-height, 2.85rem) + clamp(0.35rem, 1vh, 0.75rem))
+    clamp(1rem, 3vw, 2.5rem) clamp(1.25rem, 2vw, 1.75rem);
   box-sizing: border-box;
+}
+
+.route-lookup-page--split .route-split-sidebar-toolbar {
+  padding-top: calc(0.55rem + var(--real-top-hud-height, 2.85rem));
+}
+
+@media (max-width: 900px) {
+  .real-top-hud-dex {
+    display: none;
+  }
+
+  .real-top-hud-action span {
+    display: none;
+  }
+
+  .real-top-hud-action {
+    width: 2rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .real-top-hud-xp {
+    min-width: 4.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .real-top-hud-xp-label {
+    font-size: 0.56rem;
+  }
+
+  .real-top-hud-sunshards-count {
+    min-width: 1.5rem;
+    padding: 0 0.35rem;
+    font-size: 0.76rem;
+  }
 }
 
 .real-start-brand {

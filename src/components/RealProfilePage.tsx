@@ -6,10 +6,11 @@ import type { MessageKey } from '../i18n/messages'
 import { getAccountPageHref } from '../utils/appPage'
 import { resolveAccountLicenseName } from '../utils/accountAvatar'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
+import type { RealProfileHudTab } from '../utils/realHudEvents'
 import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
 import { RealProfileTitleTab } from './RealProfileTitleTab'
 
-type RealProfileTabId = 'stats' | 'title' | 'icon' | 'leaderboard' | 'achievements'
+type RealProfileTabId = RealProfileHudTab
 
 const PROFILE_TABS: Array<{
   id: RealProfileTabId
@@ -48,16 +49,22 @@ function formatProfileDate(locale: string): string {
 }
 
 export function RealProfilePage({
+  initialTab = 'stats',
   onClose,
   onAnimationEnd,
 }: {
+  initialTab?: RealProfileTabId
   onClose: () => void
   onAnimationEnd?: (event: AnimationEvent<HTMLDivElement>) => void
 }) {
   const { locale, t } = useLocale()
   const { isLoggedIn, email } = useAuth()
   const { profile } = useUserProfile()
-  const [activeTab, setActiveTab] = useState<RealProfileTabId>('stats')
+  const [activeTab, setActiveTab] = useState<RealProfileTabId>(initialTab)
+
+  useEffect(() => {
+    setActiveTab(initialTab)
+  }, [initialTab])
   const accountHref = getAccountPageHref()
   const profileEmail = profile?.email ?? email
   const licenseName = isLoggedIn

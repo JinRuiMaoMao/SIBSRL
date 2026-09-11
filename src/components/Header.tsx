@@ -3,10 +3,8 @@ import { useHeaderControlsReserve } from '../hooks/useHeaderControlsReserve'
 import { useSecretLogoClick } from '../hooks/useSecretLogoClick'
 import { useLocale } from '../i18n/LocaleContext'
 import type { AppTab } from '../types/appTab'
-import { isRealLayoutMode } from '../utils/appLayoutMode'
 import { HeaderCollapseToggle } from './HeaderCollapseToggle'
 import { HeaderToolbar } from './HeaderToolbar'
-import { RealSunshardsIndicator } from './RealSunshardsIndicator'
 import { SiteLogo } from './SiteLogo'
 import { LogoSecretFloatingHint } from './LogoSecretFloatingHint'
 
@@ -18,7 +16,6 @@ interface HeaderProps {
 
 export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) {
   const { t } = useLocale()
-  const realLayout = isRealLayoutMode()
   const onLogoClick = useSecretLogoClick(activeTab)
   const shellRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<HTMLDivElement>(null)
@@ -28,7 +25,6 @@ export function Header({ activeTab, collapsed, onToggleCollapse }: HeaderProps) 
   return (
     <div ref={shellRef} className={`site-header-shell ${collapsed ? 'is-collapsed' : ''}`}>
       <div ref={controlsRef} className="header-shell-controls">
-        {realLayout ? <RealSunshardsIndicator className="real-sunshards-indicator--header" /> : null}
         <div className="header-settings-wrap">
           <HeaderToolbar />
         </div>

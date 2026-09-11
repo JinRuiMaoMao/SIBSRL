@@ -21,6 +21,7 @@ import { SecretRoutesPage } from './components/SecretRoutesPage'
 import { SettingsPage } from './components/SettingsPage'
 import { StartPage } from './components/StartPage'
 import { RealShellHomeView } from './components/RealShellHomeView'
+import { RealTopHud } from './components/RealTopHud'
 import { RealAlphaOverlay } from './components/RealAlphaOverlay'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
@@ -416,8 +417,9 @@ function App() {
       {realAlphaOverlay}
       {favoritesSyncDialog}
       {guidedTourLayer}
+      {realLayout ? <RealTopHud className="real-top-hud--page" /> : null}
       <IslandMapOverlayProvider>
-      <div className={`app sibs-scrollbar${realRoutesShell ? ' app--real-routes' : ''}`}>
+      <div className={`app sibs-scrollbar${realRoutesShell ? ' app--real-routes' : ''}${realLayout ? ' app--real-hud' : ''}`}>
       {!realRoutesShell ? (
         <Header
           activeTab={activeTab}

@@ -12,7 +12,12 @@ import { navigateRealShellTab } from '../utils/realShellNavigation'
 import { preserveAppHistoryState } from '../utils/appHistoryState'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
-import { RealShopDialog } from './RealShopDialog'
+import {
+  dispatchRealHudAction,
+  REAL_HUD_EVENT,
+  readRealHudAction,
+  type RealProfileHudTab,
+} from '../utils/realHudEvents'
 import { RealLanguagePage } from './RealLanguagePage'
 import { RealProfilePage } from './RealProfilePage'
 import { RealStartBackground } from './RealStartBackground'
@@ -138,7 +143,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     setLanguagePhase('opening')
   }, [])
 
-  const openProfile = useCallback(() => {
+  const openProfile = useCallback((tab: RealProfileHudTab = 'stats') => {
+    setProfileInitialTab(tab)
     setLanguagePhase('closed')
     if (isAppReduceMotionEnabled()) {
       setProfilePhase('open')
@@ -146,6 +152,17 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     }
     setProfilePhase('opening')
   }, [])
+
+  useEffect(() => {
+    const onHudAction = (event: Event) => {
+      const action = readRealHudAction(event)
+      if (action?.type === 'open-profile') {
+        openProfile(action.tab ?? 'stats')
+      }
+    }
+    window.addEventListener(REAL_HUD_EVENT, onHudAction)
+    return () => window.removeEventListener(REAL_HUD_EVENT, onHudAction)
+  }, [openProfile])
 
   const closeLanguage = useCallback(() => {
     if (languagePhase === 'closed' || languagePhase === 'closing') return
@@ -225,7 +242,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       linkOnClick: openRoutes,
     },
     { id: 'servers', href: robloxHref, labelKey: 'realStartServers', icon: '⛁', tone: 'green', external: true },
-    { id: 'profile', labelKey: 'realStartProfile', icon: '👤', tone: 'blue', onClick: openProfile },
+    { id: 'profile', labelKey: 'realStartProfile', icon: '👤', tone: 'blue', onClick: () => openProfile('stats') },
     {
       id: 'language',
       labelKey: 'language',
@@ -244,7 +261,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       icon: 'i',
       onClick: () => navigateRealShellTab('updates'),
     },
-    { id: 'shop', labelKey: 'realStartShop', icon: '🛒', onClick: () => setShopOpen(true) },
+    { id: 'shop', labelKey: 'realStartShop', icon: '🛒', onClick: () => dispatchRealHudAction({ type: 'open-shop' }) },
   ]
 
   useEffect(() => {
@@ -367,7 +384,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
         </nav>
       </div>
       </div>
-      <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />
       </div>
       {languageMounted ? (
         <RealLanguagePage
@@ -376,7 +392,11 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
         />
       ) : null}
       {profileMounted ? (
-        <RealProfilePage onClose={closeProfile} onAnimationEnd={handleProfileAnimationEnd} />
+        <RealProfilePage
+          initialTab={profileInitialTab}
+          onClose={closeProfile}
+          onAnimationEnd={handleProfileAnimationEnd}
+        />
       ) : null}
     </div>
   )
