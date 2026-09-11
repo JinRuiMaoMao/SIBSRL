@@ -169,6 +169,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "同步 9/2–9/11 每日挑战：马拉松接驳 R370/R148、马拉松道路封闭 N271EM/471W、夜间封闭 N246，以及安全第一、繁忙时间、城市奥德赛等。",
             en: "Synced 9/2–9/11 daily challenges: Marathon Shuttle R370/R148, Marathon Road Closure N271EM/471W, night closure N246, plus Safety First, Rush Hour, and Urban Odyssey.",
           },
+          {
+            zh: "每日挑战日历新增线路搜索：输入线路编号可查找该路线出现过的历史日期，并跳转至对应月份。",
+            en: "Daily challenge calendar route search: enter a route number to find historical dates and jump to that month.",
+          },
         ],
       },
     ],

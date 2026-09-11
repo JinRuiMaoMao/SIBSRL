@@ -29,6 +29,30 @@ const DAILY_CHALLENGE_ROUTE_ALIASES: Record<string, string> = {
   N246: 'N146A',
 }
 
+/** 日历／搜索：线路代号是否匹配用户输入（含别名，如 N246 ↔ N146A）。 */
+export function dailyChallengeRouteCodeMatchesQuery(
+  routeCode: string | null | undefined,
+  query: string,
+): boolean {
+  const code = routeCode?.trim()
+  if (!code || !query.trim()) return false
+  if (challengeRouteNumberMatchesQuery(code, query)) return true
+
+  const q = query.trim().toUpperCase()
+  const upper = code.toUpperCase()
+  for (const [aliasKey, aliasValue] of Object.entries(DAILY_CHALLENGE_ROUTE_ALIASES)) {
+    const keyUpper = aliasKey.toUpperCase()
+    const valueUpper = aliasValue.toUpperCase()
+    if (
+      (q === keyUpper || q === valueUpper) &&
+      (upper === keyUpper || upper === valueUpper)
+    ) {
+      return true
+    }
+  }
+  return false
+}
+
 export interface DailyChallengeIntro {
   body: BilingualText
   objective: BilingualText
