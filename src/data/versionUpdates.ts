@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-09-11'
+export const CURRENT_CHANGELOG_DATE = '2026-09-16'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-09-16-summary",
+    date: "2026-09-16",
+    title: {
+      zh: "2026-09-16 更新",
+      en: "2026-09-16 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "同步 9/12–9/16 每日挑战：马拉松道路封闭 248A/471W、繁忙时间 142W、稀有出现 140E、马拉松接驳 R148。",
+            en: "Synced 9/12–9/16 daily challenges: Marathon Road Closure 248A/471W, Rush Hour 142W, Rare Appearance 140E, Marathon Shuttle R148.",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-09-11-summary",
     date: "2026-09-11",
