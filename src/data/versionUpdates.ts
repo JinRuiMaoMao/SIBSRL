@@ -152,28 +152,6 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
   {
-    id: "2026-09-16-summary",
-    date: "2026-09-16",
-    title: {
-      zh: "2026-09-16 更新",
-      en: "2026-09-16 updates",
-    },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 9/12–9/16 每日挑战：马拉松道路封闭 248A/471W、繁忙时间 142W、稀有出现 140E、马拉松接驳 R148。",
-            en: "Synced 9/12–9/16 daily challenges: Marathon Road Closure 248A/471W, Rush Hour 142W, Rare Appearance 140E, Marathon Shuttle R148.",
-          },
-        ],
-      },
-    ],
-  },
-  {
     id: "2026-09-11-summary",
     date: "2026-09-11",
     title: {
@@ -187,10 +165,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "Daily challenge",
         },
         additions: [
-          {
-            zh: "同步 9/2–9/11 每日挑战：马拉松接驳 R370/R148、马拉松道路封闭 N271EM/471W、夜间封闭 N246，以及安全第一、繁忙时间、城市奥德赛等。",
-            en: "Synced 9/2–9/11 daily challenges: Marathon Shuttle R370/R148, Marathon Road Closure N271EM/471W, night closure N246, plus Safety First, Rush Hour, and Urban Odyssey.",
-          },
           {
             zh: "每日挑战日历新增线路搜索：输入线路编号可查找该路线出现过的历史日期，并跳转至对应月份。",
             en: "Daily challenge calendar route search: enter a route number to find historical dates and jump to that month.",
@@ -210,27 +184,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-09-01 更新",
       en: "2026-09-01 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 8/30 每日挑战：[竞速] 繁忙时间（171W）。",
-            en: "Synced 8/30 daily challenge: [Race] Rush Hour (171W).",
-          },
-          {
-            zh: "同步 8/31 每日挑战：[竞速] 演唱会散场（140E）。",
-            en: "Synced 8/31 daily challenge: [Race] Concert Crowd Dispersal (140E).",
-          },
-          {
-            zh: "同步 9/1 每日挑战：私人租用（PH1，时间廊 → 枫树里 → 阳光体育馆 → 南环文化区公园 → 仙贝广场）。",
-            en: "Synced 9/1 daily challenge: Private Hire (PH1, Timelapse Mall → Maple Lane → Sunshine Stadium → Southern Cultural District Park → Senpai Shopping Center).",
-          },
-        ],
-      },
+    groups: [
     ],
   },
   {
@@ -318,19 +272,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-08-28 更新",
       en: "2026-08-28 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 8/28 每日挑战：私人租用（PH1，北岛花园商场 → 阳光大学北 → 南环坊 → 南环文化区公园 → 叶角湾 → 阿周电视）。",
-            en: "Synced 8/28 daily challenge: Private Hire (PH1, NIE Shopping Center → North Sunshine University → Langford Place → Southern Cultural District Park → Leafy Bay → Roblox TV).",
-          },
-        ],
-      },
+    groups: [
       {
         title: {
           zh: "地图绘制",
@@ -471,14 +413,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "Daily challenge",
         },
         additions: [
-          {
-            zh: "同步 8/1 每日挑战：[竞速] 浓雾天气（246XA）。",
-            en: "Synced 8/1 daily challenge: [Race] Foggy Day (246XA).",
-          },
-          {
-            zh: "新增 2026 年 8–12 月每日挑战占位日程（JSON + Markdown），方便后续手动编辑。",
-            en: "Added placeholder daily challenge schedules for Aug–Dec 2026 (JSON + Markdown) for manual editing.",
-          },
+
         ],
         fixes: [
           {
@@ -594,19 +529,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-07-13 更新",
       en: "2026-07-13 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 7/13 每日挑战：马拉松封路（242，白鸽邨 ↺ 阳光码头，经西区海底隧道下层）。",
-            en: "Synced 7/13 daily challenge: Marathon Road Closure (242, Dove Estate ↺ Sunshine Pier via Central Western Bridge Lower Part).",
-          },
-        ],
-      },
+    groups: [
     ],
   },
   {
@@ -616,19 +539,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-07-12 更新",
       en: "2026-07-12 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 7/12 每日挑战：[竞速] 繁忙时间（473W）。",
-            en: "Synced 7/12 daily challenge: [Race] Rush Hour (473W).",
-          },
-        ],
-      },
+    groups: [
     ],
   },
   {
@@ -638,19 +549,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-07-11 更新",
       en: "2026-07-11 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "录入 7/11 私人租用（PH1）站序：北滩 → 仙贝广场 → 亚历山教堂 → 东门总站。",
-            en: "Recorded 7/11 Private Hire (PH1) stops: Northern Beach → Senpai Shopping Center → Alexander Church → East Door Bus Terminus.",
-          },
-        ],
-      },
+    groups: [
     ],
   },
   {
@@ -660,33 +559,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-07-10 更新",
       en: "2026-07-10 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 7/10 每日挑战：电子支付故障（76#）。",
-            en: "Synced 7/10 daily challenge: E-Payment Outage (76#).",
-          },
-        ],
-        fixes: [
-          {
-            zh: "更正 7/8 每日挑战：由占位「每日挑战」改为音乐会人群疏散（Concert Crowd Dispersal · 140E）。",
-            en: "Corrected 7/8 daily challenge from placeholder Daily Challenge to Concert Crowd Dispersal (140E).",
-          },
-          {
-            zh: "更正 2025-08-05：由占位「每日挑战」改为马拉松封路（北行）（N246）；游戏内任务显示 N246、完成为 N146A，本站以 N246 → N146A 解析线路详情。",
-            en: "Corrected 2025-08-05 from placeholder Daily Challenge to Marathon Road Closure (N) (N246); in-game task shows N246 while runs use N146A—site resolves N246 to N146A for route detail.",
-          },
-          {
-            zh: "更正 2025-12-25：由占位「每日挑战（370）」改为马拉松接驳（R370）。",
-            en: "Corrected 2025-12-25 from placeholder Daily Challenge (370) to Marathon Shuttle (R370).",
-          },
-        ],
-      },
+    groups: [
     ],
   },
   {
@@ -725,18 +598,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "Daily challenge",
         },
         additions: [
-          {
-            zh: "同步 7/8 每日挑战：音乐会人群疏散（Concert Crowd Dispersal · 140E）。",
-            en: "Synced 7/8 daily challenge: Concert Crowd Dispersal (140E).",
-          },
-          {
-            zh: "批量录入私人租用（PH）当日站序 privateHireStops（双语站名；详情页与普通线路一样显示站序表、分区与报站音）：2024 年 6–12 月共 35 天、2025 全年 55 天、2026 年 1–6 月及 7 月已发生 PH 日已全部补齐（含 7/11）。",
-            en: "Batch-recorded private hire (PH) daily privateHireStops (bilingual names; detail pages show stop tables, zones, and PA like regular routes): all 35 Jun–Dec 2024 days, all 55 days in 2025, and every elapsed PH day in Jan–Jun 2026 plus July 2026 through 7/11.",
-          },
-          {
-            zh: "新增 2024 年 6–8 月、7 月及 2024–2025 多个月份 PH 站序 Markdown 对照表；社区推测条目（如 2024-07-25、2024-12-13）已在文档注明。",
-            en: "Added PH stop-order Markdown tables for Jun–Aug and Jul 2024 plus multiple 2024–2025 months; community-guessed entries (e.g. 2024-07-25, 2024-12-13) are noted in the docs.",
-          },
+
           {
             zh: "站名缩写与别名已统一（际巴车厂天台、货柜码头岛、叶角湾坟场、阿周电视等）；地图绘制英文目录新增 CSB Depot Rooftop 别名。",
             en: "Normalized PH stop shorthand and aliases (CSB Depot Rooftop, Container's Island B/T, Upper Leafy Bay, Roblox TV, etc.); map-draw English catalog now aliases CSB Depot Rooftop.",
@@ -792,23 +654,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-07-05 更新",
       en: "2026-07-05 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 7/5 每日挑战：繁忙时间 140W（竞速）。",
-            en: "Synced 7/5 daily challenge: Rush Hour 140W (race).",
-          },
-          {
-            zh: "同步 7/7 每日挑战：罕见外观 × 私人租用 PH1。",
-            en: "Synced 7/7 daily challenge: Rare Appearance x Private Hire (PH1).",
-          },
-        ],
-      },
+    groups: [
       {
         title: {
           zh: "群岛地图",
@@ -888,19 +734,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       zh: "2026-07-04 更新",
       en: "2026-07-04 updates",
     },
-    groups: [
-      {
-        title: {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions: [
-          {
-            zh: "同步 7/4 每日挑战：马拉松封路 240A（竞速）。",
-            en: "Synced 7/4 daily challenge: Marathon Road Closure 240A (race).",
-          },
-        ],
-      },
+    groups: [
       {
         title: {
           zh: "群岛地图",
@@ -1131,10 +965,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "Daily challenge",
         },
         additions: [
-          {
-            zh: "同步 6/29 每日挑战：大桥封路 Y370A。",
-            en: "Synced 6/29 daily challenge: Bridge Closure Y370A.",
-          },
         ],
         fixes: [
           {
@@ -1328,19 +1158,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Each stop-to-stop or stop-to-node hop is now a single straight segment—no dense road-traced points.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "同步 6/28 每日挑战：繁忙时间 472W（竞速）。",
-            en: "Synced 6/28 daily challenge: Rush Hour 472W (race).",
-          },
-        ],
-      },
+      },
     ],
   },
   {
@@ -1392,19 +1210,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Fixed black mini-map after repeated refreshes and flicker when switching Layers—layers preload and the previous image stays visible until the next is ready.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "同步 6/27 每日挑战：马拉松接驳 R370（竞速）。",
-            en: "Synced 6/27 daily challenge: Marathon Shuttle R370 (race).",
-          },
-        ],
-      },
+      },
     ],
   },
   {
@@ -1646,33 +1452,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Favorite route cards in the same row now share equal height—the drag wrapper stretches with the grid and bottom tags/operators align to the card foot.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "同步 6/26 每日挑战：大雾天气 Foggy Day 74A（非竞速）。",
-            en: "Synced 6/26 daily challenge: Foggy Day on 74A (non-race).",
-          },
-                    {
-            zh: "按 Discord「~June Daily Challenge~」全文重刷 2026 年 6 月社区日程（含 6/29 待公布空白）。",
-            en: "Refreshed the full June 2026 community schedule from Discord “~June Daily Challenge~” (6/29 left blank pending announcement).",
-          },
-                    {
-            zh: "同步 6/25 每日挑战：罕见外观 U47S（非竞速）。",
-            en: "Synced 6/25 daily challenge: Rare Appearance on U47S (non-race).",
-          },
-        ],
-        fixes:         [
-                    {
-            zh: "修正 6/13：夜间马拉松封路 N171EM（竞速）；6/18：大桥封路 Y370A；6/23：夜间马拉松封路 N171WM（原误为 N271S）。",
-            en: "Corrected 6/13 to Marathon Road Closure (N) N171EM (race), 6/18 Bridge Closure Y370A, and 6/23 Marathon Road Closure (N) N171WM (was wrongly N271S).",
-          },
-        ],
-      },
+      },
     ],
   },
   {
@@ -2010,19 +1790,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Document titles and tab labels for the account page, secret page, and other standalone tabs now include all 12 extended locales.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily Challenge",
-        },
-        additions:         [
-                    {
-            zh: "更新 6/23 每日挑战：夜间马拉松封路 N271S（彩虹中心 → 长岛码头），并补充 03:30、HK Special / CSB / FT 巴士要求说明。",
-            en: "Updated the 6/23 Daily Challenge: Marathon Road Closure at Night on N271S (Rainbow Estate Complex → Long Island Ferry Pier), with 03:30 and HK Special / CSB / FT bus requirements noted.",
-          },
-        ],
-      },
+      },
       {
         title:         {
           zh: "路线资料",
@@ -2071,66 +1839,20 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "Daily Challenge calendar",
         },
         additions:         [
-                    {
-            zh: "加入 NamuWiki 公开资料整理的 2024 年 6–8 月历史 Daily Challenge 月历；用户可在日历中切换年份和月份查看旧日期。",
-            en: "Added historical June–August 2024 Daily Challenge calendars transcribed from public NamuWiki data; users can switch year/month in the calendar to view older dates.",
-          },
-                    {
-            zh: "继续补入公开页面确认的部分历史日期：2024-09-07 R370（9 million visits 纪念竞速）与 2024-12-31 S1 观光线路上线 Daily Challenge。",
-            en: "Added more publicly confirmed partial history: 2024-09-07 R370 (9 million visits race) and 2024-12-31 S1 sightseeing launch Daily Challenge.",
-          },
-                    {
-            zh: "加入用户提供的 2026 年 5 月 Daily Challenge 完整日历，并清理 Discord emoji / 简写线路码后接入日历选择器。",
-            en: "Added the user-provided full May 2026 Daily Challenge calendar, with Discord emoji and shorthand route codes cleaned up for the calendar picker.",
-          },
-                    {
-            zh: "加入用户提供的 2026 年 4 月 Daily Challenge 完整日历；已移除 Discord emoji，并将 Marathon Shuttle (148) 标准化为 R148。",
-            en: "Added the user-provided full April 2026 Daily Challenge calendar; Discord emoji were removed and Marathon Shuttle (148) was normalized to R148.",
-          },
-                    {
-            zh: "加入用户提供的 2026 年 3 月 Daily Challenge 完整日历；已标准化 PH、25why S、Marathon (471W) 与 Marathon Shuttle (370) 等写法。",
-            en: "Added the user-provided full March 2026 Daily Challenge calendar; PH, 25why S, Marathon (471W), and Marathon Shuttle (370) shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2026 年 2 月 Daily Challenge 完整日历；已标准化 Rare Apperarance、Lazy Passenger、why370 与 Marathon (148) 等写法。",
-            en: "Added the user-provided full February 2026 Daily Challenge calendar; Rare Apperarance, Lazy Passenger, why370, and Marathon (148) shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2026 年 1 月 Daily Challenge 完整日历；已标准化 PH、Marathon / Marathon Closure、N271(N171WM) 等写法。",
-            en: "Added the user-provided full January 2026 Daily Challenge calendar; PH, Marathon / Marathon Closure, and N271(N171WM) shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2025 年 12 月 Daily Challenge 完整日历；已标准化节日备注、Free Ride、E-payment outage、Rare apperance 与 Marathon 等写法。",
-            en: "Added the user-provided full December 2025 Daily Challenge calendar; holiday notes, Free Ride, E-payment outage, Rare apperance, and Marathon shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2025 年 11 月 Daily Challenge 完整日历；已标准化 Friendly、Grumble、Private Hire 与 Marathon / why370 等写法。",
-            en: "Added the user-provided full November 2025 Daily Challenge calendar; Friendly, Grumble, Private Hire, and Marathon / why370 shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2025 年 10 月 Daily Challenge 完整日历；已标准化 Rare PH、Free、No Lights、Marathon 240 / 370AEM 等写法。",
-            en: "Added the user-provided full October 2025 Daily Challenge calendar; Rare PH, Free, No Lights, and Marathon 240 / 370AEM shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2025 年 9 月 Daily Challenge 完整日历；已标准化 Slow/Lazy Pax、No Lights、Cash only、Safety、Rare PH 与 Marathon R370/R148 等写法。",
-            en: "Added the user-provided full September 2025 Daily Challenge calendar; Slow/Lazy Pax, No Lights, Cash only, Safety, Rare PH, and Marathon R370/R148 shorthand were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2025 年 8 月 Daily Challenge 完整日历；已标准化 PayHearts、Rushour、Streetlightless、Lazi、yoU47 与多日 Race 范围。",
-            en: "Added the user-provided full August 2025 Daily Challenge calendar; PayHearts, Rushour, Streetlightless, Lazi, yoU47, and multi-day race ranges were normalized.",
-          },
-                    {
-            zh: "加入用户提供的 2025 年 7 月 Daily Challenge 完整日历；已标准化 PayHearts、R370 吐槽写法、whY370、Rushour / Rushout 与 471 to Norton 等写法。",
-            en: "Added the user-provided full July 2025 Daily Challenge calendar; PayHearts, R370 joke text, whY370, Rushour / Rushout, and 471 to Norton shorthand were normalized.",
-          },
-                    {
-            zh: "加入并补齐用户提供的 2025 年 6 月 Daily Challenge 日历；已标准化 last seen 备注、Rare PH、R148、473 Loop、N171/N146/N271 方向等写法。",
-            en: "Added and completed the user-provided June 2025 Daily Challenge calendar; last-seen notes, Rare PH, R148, 473 Loop, and N171/N146/N271 direction notes were normalized.",
-          },
-                    {
-            zh: "导入用户提供的 Discord PDF 历史日程，校正并补齐 2024 年 6 月至 2025 年 5 月 Daily Challenge 月历。",
-            en: "Imported the user-provided Discord PDF history, correcting and filling Daily Challenge calendars from June 2024 through May 2025.",
-          },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     {
             zh: "每日挑战日历空白状态现在区分历史与未来：过去缺失显示「资料缺失」，今天及未来继续显示「等待游戏内更新」。",
             en: "Daily Challenge calendar empty states now distinguish history from future dates: past gaps show “Data missing”, while today/future gaps still wait for in-game updates.",
@@ -2230,23 +1952,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Advanced search syntax panel animates open/close; fixed scroll fighting, failed re-expand after collapse, and wheel immediately re-hiding at the top.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "同步 6/22 每日挑战：马拉松封路 248A（Marathon Road Closure）。",
-            en: "Synced 6/22 daily challenge: Marathon Road Closure on 248A.",
-          },
-                    {
-            zh: "新增 2026 年 7 月社区日程与日历年／月切换；F469 限时倒计时改为与每日挑战相同的时:分:秒格式。",
-            en: "Added July 2026 community schedule with calendar year/month navigation; F469 availability countdown matches daily-challenge HH:MM:SS format.",
-          },
-        ],
-      },
+      },
       {
         title:         {
           zh: "其他",
@@ -2296,19 +2002,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "F469 is available for seven game days from 6/21 through 6/27—date range beside the route number, unavailable from 6/28 08:00 HKT; a promo card also appears below today’s daily challenge.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "同步 6/21 每日挑战：142E 竞速（Rush Hour race）。",
-            en: "Synced 6/21 daily challenge: 142E Rush Hour race.",
-          },
-        ],
-      },
+      },
       {
         title:         {
           zh: "两站查询",
@@ -2555,18 +2249,8 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           en: "Daily challenge",
         },
         additions:         [
-                    {
-            zh: "同步 6/22 每日挑战：马拉松封路 248A（Marathon Road Closure）。",
-            en: "Synced 6/22 daily challenge: Marathon Road Closure on 248A.",
-          },
-                    {
-            zh: "按 Discord 社区原文更新 6 月日程：6/22、23、26、29 留空；移除此前 PH1 占位。",
-            en: "Updated June schedule from Discord: 6/22, 23, 26, 29 left blank; removed PH1 placeholders.",
-          },
-                    {
-            zh: "同步 6/20 每日挑战：街灯停电（比赛）41AS。",
-            en: "Synced 6/20 daily challenge: Street light outage (race) on 41AS.",
-          },
+
+
                     {
             zh: "当日挑战线路（如 41AS）自动出现在「每日挑战路线」分组，卡片显示完整编号并预选南行/北行等方向，点开详情可看站序。",
             en: "Today’s challenge route (e.g. 41AS) now appears under Daily challenge routes with the full code, preset direction, and stop list in detail.",
@@ -2588,10 +2272,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Daily challenge calendar days with data are clickable—opens that day’s challenge detail or matching route.",
           },
                     {
-            zh: "新增 2026 年 7 月社区日程（~July Daily Challenge~）：竞速日标注 [Race]；7/21 为 Grumble Day（抱怨日）；多数日期活动名与线路待公布。",
-            en: "Added July 2026 community schedule (~July Daily Challenge~)—race days marked [Race]; 7/21 is Grumble Day; most event names and routes are still TBD.",
-          },
-                    {
             zh: "日历支持仅标注竞速、尚无活动名的日期（显示 [Race]，不可点开详情）。",
             en: "Calendar now shows race-only days ([Race] tag) before an event name is published—they are not clickable.",
           },
@@ -2605,10 +2285,6 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
         fixes:         [
-                    {
-            zh: "修正 6/20 每日挑战线路为 41AS（街灯停电·比赛）；Discord 原文未写括号内代号，以游戏内为准。",
-            en: "Corrected 6/20 daily challenge route to 41AS (Street light outage, race); Discord omitted the code—matches in-game.",
-          },
                     {
             zh: "修复同日多次追加更新日志后弹窗不再出现的问题：已读标记改为跟踪最新条目内容指纹，而非仅条目 id。",
             en: "Fixed the updates prompt not reappearing after same-day changelog additions—seen state now tracks a content fingerprint, not just entry id.",
@@ -2780,19 +2456,7 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "The first six tracks now show in-game titles—San Francisco Nights, Radium, Shiawase, Daily Rush, Meltdown, Night Run—with their Roblox asset IDs.",
           },
         ],
-      },
-      {
-        title:         {
-          zh: "每日挑战",
-          en: "Daily challenge",
-        },
-        additions:         [
-                    {
-            zh: "同步社区 6 月日程：17 日马拉松封路 240A、18 日桥梁封闭 Y370、19 日马拉松接驳 R370 等。",
-            en: "Synced June community schedule: 17 Jun Marathon Road Closure 240A, 18 Jun Bridge Closure Y370, 19 Jun Marathon Shuttle R370, etc.",
-          },
-        ],
-      },
+      },
       {
         title:         {
           zh: "搜索",

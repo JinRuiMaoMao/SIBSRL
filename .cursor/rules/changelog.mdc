@@ -16,6 +16,11 @@ When shipping user-visible changes, append bilingual items to **`src/data/versio
 - Keep ids stable; bump `CURRENT_CHANGELOG_DATE` only when the user asks to roll to a new day.
 - The updates prompt uses **`getLatestUpdatePromptKey()`** (id + content fingerprint). Appending items to the active day re-triggers the prompt until dismissed again; same content after dismiss does not re-show until the next edit or reset.
 
+## Daily challenge data — do not log
+
+- **Never** add changelog items for syncing/updating daily challenge schedule data (e.g. “同步 9/12 每日挑战”, PH stop lists, imported monthly calendars, schedule corrections).
+- Still OK: UI/feature work on the daily-challenge calendar, card, or route-detail behavior (search, navigation, bug fixes).
+
 ## After edits
 
 Run `npm run build:only` (see build-after-changes rule).
