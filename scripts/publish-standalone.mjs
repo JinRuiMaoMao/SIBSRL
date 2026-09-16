@@ -438,6 +438,12 @@ export async function publishStandalone(options = {}) {
     cpSync(publicSunshardIcon, resolve(root, 'dist', 'sunshard-icon.png'))
   }
 
+  const publicRobuxIcon = resolve(root, 'public', 'robux-icon.svg')
+  if (existsSync(publicRobuxIcon)) {
+    cpSync(publicRobuxIcon, resolve(root, 'robux-icon.svg'))
+    cpSync(publicRobuxIcon, resolve(root, 'dist', 'robux-icon.svg'))
+  }
+
   const publicOgShare = resolve(root, 'public', 'og-share.png')
   if (existsSync(publicOgShare)) {
     cpSync(publicOgShare, resolve(root, 'og-share.png'))

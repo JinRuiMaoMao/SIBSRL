@@ -9796,9 +9796,14 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   white-space: nowrap;
 }
 
+.robux-icon {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
 .real-shop-robux-icon {
-  color: #e5e7eb;
-  font-size: 0.95em;
+  margin-inline-end: 0.02rem;
 }
 
 .real-shop-pass-grid {

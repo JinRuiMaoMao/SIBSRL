@@ -13,6 +13,7 @@ import {
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
+import { RobuxIcon } from './RobuxIcon'
 import { lockPageScroll } from '../utils/pageScrollLock'
 
 interface RealShopDialogProps {
@@ -56,9 +57,7 @@ const BOOST_DESC_KEYS: Record<string, MessageKey> = {
 function RobuxPrice({ amount }: { amount: number }) {
   return (
     <span className="real-shop-robux-price">
-      <span className="real-shop-robux-icon" aria-hidden="true">
-        ⬡
-      </span>
+      <RobuxIcon className="real-shop-robux-icon" size={15} />
       <span>{amount.toLocaleString()}</span>
     </span>
   )
