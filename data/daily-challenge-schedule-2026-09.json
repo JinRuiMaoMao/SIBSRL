@@ -32,7 +32,7 @@
     { "date": "2026-09-14", "event": "Rare Appearance", "routeCode": "140E", "race": true },
     { "date": "2026-09-15", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
     { "date": "2026-09-16", "event": "Marathon Road Closure", "routeCode": "471W", "race": false },
-    { "date": "2026-09-17", "event": null, "routeCode": null, "race": false },
+    { "date": "2026-09-17", "event": "Marathon Road Closure", "routeCode": "473A", "race": false },
     { "date": "2026-09-18", "event": null, "routeCode": null, "race": false },
     { "date": "2026-09-19", "event": null, "routeCode": null, "race": false },
     { "date": "2026-09-20", "event": null, "routeCode": null, "race": false },

@@ -38,7 +38,7 @@ PH 站序每日随机；已知站序写入 JSON 的 `privateHireStops`，详情�
 9/14: (Race) Rare Appearance (140E)
 9/15: Marathon Shuttle (R148)
 9/16: Marathon Road Closure (471W)
-9/17:
+9/17: Marathon Road Closure (473A)
 9/18:
 9/19:
 9/20:
