@@ -171,5 +171,7 @@ export function shouldPromoteSeasonalRouteBelowDailyChallenge(
   now = new Date(),
 ): boolean {
   const window = getSeasonalRouteActiveWindow(route, now)
-  return window?.promoteBelowDailyChallenge === true
+  if (!window) return false
+  if (window.promoteBelowDailyChallenge === false) return false
+  return true
 }

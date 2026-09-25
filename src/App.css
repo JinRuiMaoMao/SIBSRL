@@ -5528,6 +5528,10 @@ html.route-detail-open .route-split-shell {
 }
 
 .route-display-group-list > .daily-challenge-card,
+.route-split-list-item--seasonal-promoted .route-card-link--seasonal-promoted {
+  display: block;
+}
+
 .route-display-group-list > .route-card-link--seasonal-promoted,
 .route-display-group-list > .route-grid-span {
   grid-column: 1 / -1;

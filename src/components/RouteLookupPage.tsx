@@ -61,11 +61,17 @@ import { isRealLayoutMode } from '../utils/appLayoutMode'
 import { REAL_HUD_EVENT, readRealHudAction } from '../utils/realHudEvents'
 import { IslandMapEmbeddedPane } from './IslandMapEmbeddedPane'
 import { RouteLookupSplitList } from './RouteLookupSplitList'
+import { SeasonalPromotedRouteCards } from './SeasonalPromotedRouteCards'
+import {
+  collectSeasonalPromotionsBelowDailyChallenge,
+  isRouteSeasonalPromotedBelowDailyChallenge,
+} from '../utils/seasonalRoutePromotions'
 import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
 import { RealRouteSplitHeader } from './RealRouteSplitHeader'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
+import { useSeasonalPromotionClock } from '../hooks/useSeasonalPromotionClock'
 import { useRouteSearch } from '../hooks/useRouteSearch'
 import { useStickyLayoutOffsets } from '../hooks/useStickyLayoutOffsets'
 import { getPrimaryText } from '../i18n/displayText'
@@ -312,6 +318,11 @@ export function RouteLookupPage({
     operators,
     types,
   } = useRouteSearch(dailyChallenge)
+  const promotionNow = useSeasonalPromotionClock(true)
+  const seasonalPromotions = useMemo(
+    () => collectSeasonalPromotionsBelowDailyChallenge(filteredRoutes, promotionNow),
+    [filteredRoutes, promotionNow],
+  )
   const selectedRealListKey = useMemo(() => {
     if (!splitLayoutActive || !selectedRoute) return null
     return realRouteListKey(selectedRoute.id, getDirectionIndex(selectedRoute))
@@ -1149,10 +1160,14 @@ export function RouteLookupPage({
             ),
             getSunshardUnlockLockedDisplaySlots(displayRoutes),
           ),
+        ).filter(
+          (slot) =>
+            !slot.entry ||
+            !isRouteSeasonalPromotedBelowDailyChallenge(slot.entry.route, promotionNow),
         ),
         filters,
       ),
-    [displayRoutes, filters, groupedTotalSlots],
+    [displayRoutes, filters, groupedTotalSlots, promotionNow],
   )
 
   const listSectionSlots = useMemo(() => {
@@ -1180,9 +1195,13 @@ export function RouteLookupPage({
         ),
         getSunshardUnlockLockedDisplaySlots(displayRoutes),
       ),
+    ).filter(
+      (slot) =>
+        !slot.entry ||
+        !isRouteSeasonalPromotedBelowDailyChallenge(slot.entry.route, promotionNow),
     )
     return { normal, specialSeasonal }
-  }, [groupedTotalSlots, displayRoutes, lockedGameRouteIds])
+  }, [groupedTotalSlots, displayRoutes, lockedGameRouteIds, promotionNow])
 
   const realNormalEntries = useMemo(
     () =>
@@ -1611,6 +1630,7 @@ export function RouteLookupPage({
               onViewAllPlayable={handleViewAllPlayable}
               lockedSectionRef={lockedSectionRef}
               selectedListKey={selectedRealListKey}
+              selectedRouteId={selectedRoute?.id ?? null}
               onSelect={handleCarouselSelect}
               onOpenDetail={handleOpenDetailInSplit}
               dailyChallenge={
@@ -1624,6 +1644,7 @@ export function RouteLookupPage({
                     }
                   : null
               }
+              seasonalPromotions={seasonalPromotions}
             />
           </aside>
           <div
@@ -1725,6 +1746,12 @@ export function RouteLookupPage({
                 challenge={dailyChallenge}
               />
             ) : null}
+
+            <SeasonalPromotedRouteCards
+              promotions={seasonalPromotions}
+              selectedRouteId={selectedRoute?.id ?? null}
+              onNavigate={handleRouteNavigate}
+            />
 
             {showFavoritesSection ? (
               <RouteListGameSection

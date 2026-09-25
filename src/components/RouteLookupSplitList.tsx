@@ -12,7 +12,9 @@ import {
   lockedCardDisplayNumber,
   resolveShiftUnlockListedRouteId,
 } from '../data/routeShiftUnlocks'
+import type { SeasonalPromotionEntry } from '../utils/seasonalRoutePromotions'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
+import { SeasonalPromotedRouteCards } from './SeasonalPromotedRouteCards'
 import { RouteCard } from './RouteCard'
 import { RouteLockedGameCard } from './RouteLockedGameCard'
 import { RouteLockedUnlockCategorySections } from './RouteLockedUnlockCategorySections'
@@ -33,6 +35,7 @@ interface RouteLookupSplitListProps {
   onViewAllPlayable: () => void
   lockedSectionRef?: RefObject<HTMLElement | null>
   selectedListKey: string | null
+  selectedRouteId: string | null
   onSelect: (routeId: string, directionIndex: number) => void
   onOpenDetail: (routeId: string, directionIndex: number) => void
   dailyChallenge?: {
@@ -42,6 +45,7 @@ interface RouteLookupSplitListProps {
     onSelect: () => void
     onOpenCalendar: () => void
   } | null
+  seasonalPromotions?: readonly SeasonalPromotionEntry[]
 }
 
 export function RouteLookupSplitList({
@@ -56,9 +60,11 @@ export function RouteLookupSplitList({
   onViewAllPlayable,
   lockedSectionRef,
   selectedListKey,
+  selectedRouteId,
   onSelect,
   onOpenDetail,
   dailyChallenge = null,
+  seasonalPromotions = [],
 }: RouteLookupSplitListProps) {
   const { t } = useLocale()
   const listRef = useRef<HTMLDivElement>(null)
@@ -93,9 +99,10 @@ export function RouteLookupSplitList({
   ])
 
   const showDailyChallenge = dailyChallenge?.visible ?? false
+  const showSeasonalPromotions = seasonalPromotions.length > 0
   const hasPlayableEntries = normalEntries.length > 0
   const hasLockedEntries = lockedEntries.length > 0
-  const hasEntries = hasPlayableEntries || hasLockedEntries
+  const hasEntries = hasPlayableEntries || hasLockedEntries || showDailyChallenge || showSeasonalPromotions
 
   const renderEntry = (entry: RealRouteListEntry, index: number, tourAnchor: boolean) => {
     const { route, directionIndex, listKey } = entry
@@ -193,7 +200,7 @@ export function RouteLookupSplitList({
 
   return (
     <div ref={listRef} className="route-split-list sibs-scrollbar" role="list">
-      {!hasEntries && !showDailyChallenge ? (
+      {!hasEntries ? (
         <p className="route-split-empty">{t('routeSplitEmpty')}</p>
       ) : null}
 
@@ -216,6 +223,16 @@ export function RouteLookupSplitList({
           />
         </div>
       ) : null}
+
+      <SeasonalPromotedRouteCards
+        promotions={seasonalPromotions}
+        selectedRouteId={selectedRouteId}
+        onNavigate={(routeId) => {
+          const promoted = seasonalPromotions.find((item) => item.route.id === routeId)
+          onSelect(routeId, promoted?.directionIndex ?? 0)
+        }}
+        layout="split"
+      />
 
       {normalEntries.map((entry, index) => renderEntry(entry, index, index === 0))}
 
