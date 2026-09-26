@@ -9182,13 +9182,10 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   height: 2.15rem;
   border-radius: 50%;
   border: 2px solid #000;
-  background: rgb(0 0 0 / 0.42);
+  background: #393b3d;
   color: #fff;
   text-decoration: none;
   box-sizing: border-box;
-  box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.08),
-    inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 
 .real-top-hud-roblox-icon {
@@ -9198,7 +9195,7 @@ html[data-reduce-motion='true'] .real-start-bg-map {
 
 .real-top-hud-roblox-btn:hover,
 .real-top-hud-roblox-btn:focus-visible {
-  background: rgb(0 0 0 / 0.62);
+  background: #45484b;
   outline: none;
 }
 

@@ -12,9 +12,10 @@ import { SunshardIcon } from './SunshardIcon'
 
 function RobloxGlyph() {
   return (
-    <svg className="real-top-hud-roblox-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+    <svg className="real-top-hud-roblox-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden>
       <path
         fill="currentColor"
+        fillRule="evenodd"
         d="M12.066.053 2.206 1.473l1.417 9.859 9.859-1.417L12.066.053zm-1.119 3.665 5.658.813-.813 5.658-5.658-.813.813-5.658z"
       />
     </svg>
