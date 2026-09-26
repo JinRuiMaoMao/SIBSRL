@@ -9173,32 +9173,6 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   flex-shrink: 1;
 }
 
-.real-top-hud-roblox-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 2.15rem;
-  height: 2.15rem;
-  border-radius: 50%;
-  border: 2px solid #000;
-  background: #393b3d;
-  color: #fff;
-  text-decoration: none;
-  box-sizing: border-box;
-}
-
-.real-top-hud-roblox-icon {
-  display: block;
-  flex-shrink: 0;
-}
-
-.real-top-hud-roblox-btn:hover,
-.real-top-hud-roblox-btn:focus-visible {
-  background: #45484b;
-  outline: none;
-}
-
 .real-profile-overlay-host {
   position: fixed;
   inset: 0;

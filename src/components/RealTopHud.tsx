@@ -3,24 +3,11 @@ import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useRealDriverProgress } from '../hooks/useRealDriverProgress'
 import { useRealSunshardsBalance } from '../hooks/useRealSunshardsBalance'
 import { useLocale } from '../i18n/LocaleContext'
-import { getLayoutRoutesHref } from '../utils/appLayoutMode'
 import { dispatchRealHudAction, readRealHudAction, REAL_HUD_EVENT } from '../utils/realHudEvents'
 import { navigateRealShellTab } from '../utils/realShellNavigation'
 import { RealProfileOverlay } from './RealProfileOverlay'
 import { RealShopDialog } from './RealShopDialog'
 import { SunshardIcon } from './SunshardIcon'
-
-function RobloxGlyph() {
-  return (
-    <svg className="real-top-hud-roblox-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden>
-      <path
-        fill="currentColor"
-        fillRule="evenodd"
-        d="M12.066.053 2.206 1.473l1.417 9.859 9.859-1.417L12.066.053zm-1.119 3.665 5.658.813-.813 5.658-5.658-.813.813-5.658z"
-      />
-    </svg>
-  )
-}
 
 function CartGlyph() {
   return (
@@ -73,7 +60,6 @@ export function RealTopHud({ className }: { className?: string }) {
   const { level, xpCurrent, xpMax } = useRealDriverProgress()
   const [shopOpen, setShopOpen] = useState(false)
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
-  const normalRoutesHref = getLayoutRoutesHref('normal')
   const xpDenominator = xpMax > 0 ? xpMax : Math.max(xpCurrent, 1)
   const xpRatio = xpMax > 0 ? Math.min(1, xpCurrent / xpMax) : 0
 
@@ -96,14 +82,6 @@ export function RealTopHud({ className }: { className?: string }) {
         aria-label={t('realTopHudAria')}
       >
         <div className="real-top-hud-left">
-          <a
-            className="real-top-hud-roblox-btn"
-            href={normalRoutesHref}
-            aria-label={t('realTopHudBackNormalAria')}
-            title={t('realTopHudBackNormal')}
-          >
-            <RobloxGlyph />
-          </a>
           <div className="real-top-hud-level" aria-label={t('realTopHudLevelAria', { n: level })}>
             {level.toLocaleString()}
           </div>
