@@ -9178,19 +9178,27 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 0.45rem;
-  border: 1px solid rgb(255 255 255 / 0.14);
-  background: rgb(17 24 39 / 0.88);
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 50%;
+  border: 2px solid #000;
+  background: rgb(0 0 0 / 0.42);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.08) inset;
+  box-sizing: border-box;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+.real-top-hud-roblox-icon {
+  display: block;
+  flex-shrink: 0;
 }
 
 .real-top-hud-roblox-btn:hover,
 .real-top-hud-roblox-btn:focus-visible {
-  background: rgb(32 36 44 / 0.95);
+  background: rgb(0 0 0 / 0.62);
   outline: none;
 }
 
