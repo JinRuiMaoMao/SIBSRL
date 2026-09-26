@@ -53,7 +53,7 @@
         { "name": { "zh": "彩虹中心", "en": "Rainbow Estate Complex" } }
       ]
     },
-    { "date": "2026-09-26", "event": null, "routeCode": null, "race": false },
+    { "date": "2026-09-26", "event": "Marathon Road Closure", "routeCode": "471E", "race": true },
     { "date": "2026-09-27", "event": null, "routeCode": null, "race": false },
     { "date": "2026-09-28", "event": null, "routeCode": null, "race": false },
     { "date": "2026-09-29", "event": null, "routeCode": null, "race": false },
