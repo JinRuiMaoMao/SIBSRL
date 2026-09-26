@@ -12,14 +12,8 @@ import { navigateRealShellTab } from '../utils/realShellNavigation'
 import { preserveAppHistoryState } from '../utils/appHistoryState'
 import { formatBuildLabel, readPublishedBuild } from '../utils/buildLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
-import {
-  dispatchRealHudAction,
-  REAL_HUD_EVENT,
-  readRealHudAction,
-  type RealProfileHudTab,
-} from '../utils/realHudEvents'
+import { dispatchRealHudAction } from '../utils/realHudEvents'
 import { RealLanguagePage } from './RealLanguagePage'
-import { RealProfilePage } from './RealProfilePage'
 import { RealStartBackground } from './RealStartBackground'
 import { isAppReduceMotionEnabled } from '../storage/appPreferences'
 import { REAL_SHELL_TRANSITION_MS } from '../utils/realShellTransition'
@@ -120,10 +114,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   })
   const [shopOpen, setShopOpen] = useState(false)
   const [languagePhase, setLanguagePhase] = useState<OverlayViewPhase>('closed')
-  const [profilePhase, setProfilePhase] = useState<OverlayViewPhase>('closed')
   const languageMounted = languagePhase !== 'closed'
-  const profileMounted = profilePhase !== 'closed'
-  const overlayActive = languagePhase !== 'closed' || profilePhase !== 'closed'
+  const overlayActive = languagePhase !== 'closed'
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
   const buildLabel = formatBuildLabel(readPublishedBuild() ?? __APP_BUILD__, locale)
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
@@ -135,34 +127,12 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   }
 
   const openLanguage = useCallback(() => {
-    setProfilePhase('closed')
     if (isAppReduceMotionEnabled()) {
       setLanguagePhase('open')
       return
     }
     setLanguagePhase('opening')
   }, [])
-
-  const openProfile = useCallback((tab: RealProfileHudTab = 'stats') => {
-    setProfileInitialTab(tab)
-    setLanguagePhase('closed')
-    if (isAppReduceMotionEnabled()) {
-      setProfilePhase('open')
-      return
-    }
-    setProfilePhase('opening')
-  }, [])
-
-  useEffect(() => {
-    const onHudAction = (event: Event) => {
-      const action = readRealHudAction(event)
-      if (action?.type === 'open-profile') {
-        openProfile(action.tab ?? 'stats')
-      }
-    }
-    window.addEventListener(REAL_HUD_EVENT, onHudAction)
-    return () => window.removeEventListener(REAL_HUD_EVENT, onHudAction)
-  }, [openProfile])
 
   const closeLanguage = useCallback(() => {
     if (languagePhase === 'closed' || languagePhase === 'closing') return
@@ -172,28 +142,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     }
     setLanguagePhase('closing')
   }, [languagePhase])
-
-  const closeProfile = useCallback(() => {
-    if (profilePhase === 'closed' || profilePhase === 'closing') return
-    if (isAppReduceMotionEnabled()) {
-      setProfilePhase('closed')
-      return
-    }
-    setProfilePhase('closing')
-  }, [profilePhase])
-
-  const handleProfileAnimationEnd = useCallback(
-    (event: AnimationEvent<HTMLDivElement>) => {
-      if (event.target !== event.currentTarget) return
-      const name = event.animationName
-      if (profilePhase === 'opening' && name.includes('real-shell-slide-up-from-bottom')) {
-        setProfilePhase('open')
-      } else if (profilePhase === 'closing' && name.includes('real-shell-slide-down-out')) {
-        setProfilePhase('closed')
-      }
-    },
-    [profilePhase],
-  )
 
   const handleLanguageAnimationEnd = useCallback(
     (event: AnimationEvent<HTMLDivElement>) => {
@@ -220,18 +168,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     return () => window.clearTimeout(timer)
   }, [languagePhase])
 
-  useEffect(() => {
-    if (profilePhase !== 'opening' && profilePhase !== 'closing') return
-    const timer = window.setTimeout(() => {
-      setProfilePhase((phase) => {
-        if (phase === 'opening') return 'open'
-        if (phase === 'closing') return 'closed'
-        return phase
-      })
-    }, REAL_LANGUAGE_TRANSITION_MS + 80)
-    return () => window.clearTimeout(timer)
-  }, [profilePhase])
-
   const mainMenu: RealStartMenuItem[] = [
     {
       id: 'play',
@@ -242,7 +178,13 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       linkOnClick: openRoutes,
     },
     { id: 'servers', href: robloxHref, labelKey: 'realStartServers', icon: '⛁', tone: 'green', external: true },
-    { id: 'profile', labelKey: 'realStartProfile', icon: '👤', tone: 'blue', onClick: () => openProfile('stats') },
+    {
+      id: 'profile',
+      labelKey: 'realStartProfile',
+      icon: '👤',
+      tone: 'blue',
+      onClick: () => dispatchRealHudAction({ type: 'open-profile', tab: 'stats' }),
+    },
     {
       id: 'language',
       labelKey: 'language',
@@ -288,7 +230,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     <div
       className={`real-start-stack${sharedBackground ? ' real-start-stack--shared-background' : ''}${!sharedBackground && bootReady ? ' real-start-stack--ready' : ''}`}
       data-language-phase={languagePhase}
-      data-profile-phase={profilePhase}
     >
       {sharedBackground ? null : <RealStartBackground />}
 
@@ -389,13 +330,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
         <RealLanguagePage
           onClose={closeLanguage}
           onAnimationEnd={handleLanguageAnimationEnd}
-        />
-      ) : null}
-      {profileMounted ? (
-        <RealProfilePage
-          initialTab={profileInitialTab}
-          onClose={closeProfile}
-          onAnimationEnd={handleProfileAnimationEnd}
         />
       ) : null}
     </div>

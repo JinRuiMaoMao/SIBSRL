@@ -3,10 +3,23 @@ import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useRealDriverProgress } from '../hooks/useRealDriverProgress'
 import { useRealSunshardsBalance } from '../hooks/useRealSunshardsBalance'
 import { useLocale } from '../i18n/LocaleContext'
+import { getLayoutRoutesHref } from '../utils/appLayoutMode'
 import { dispatchRealHudAction, readRealHudAction, REAL_HUD_EVENT } from '../utils/realHudEvents'
 import { navigateRealShellTab } from '../utils/realShellNavigation'
+import { RealProfileOverlay } from './RealProfileOverlay'
 import { RealShopDialog } from './RealShopDialog'
 import { SunshardIcon } from './SunshardIcon'
+
+function RobloxGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+      <path
+        fill="currentColor"
+        d="M5.4 3.2 3.2 18.8l17.6 2.2 2.2-15.6zm3.1 3.5 9.8 1.2-.9 6.5-9.8-1.2z"
+      />
+    </svg>
+  )
+}
 
 function CartGlyph() {
   return (
@@ -59,6 +72,7 @@ export function RealTopHud({ className }: { className?: string }) {
   const { level, xpCurrent, xpMax } = useRealDriverProgress()
   const [shopOpen, setShopOpen] = useState(false)
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
+  const normalRoutesHref = getLayoutRoutesHref('normal')
   const xpDenominator = xpMax > 0 ? xpMax : Math.max(xpCurrent, 1)
   const xpRatio = xpMax > 0 ? Math.min(1, xpCurrent / xpMax) : 0
 
@@ -81,6 +95,14 @@ export function RealTopHud({ className }: { className?: string }) {
         aria-label={t('realTopHudAria')}
       >
         <div className="real-top-hud-left">
+          <a
+            className="real-top-hud-roblox-btn"
+            href={normalRoutesHref}
+            aria-label={t('realTopHudBackNormalAria')}
+            title={t('realTopHudBackNormal')}
+          >
+            <RobloxGlyph />
+          </a>
           <div className="real-top-hud-level" aria-label={t('realTopHudLevelAria', { n: level })}>
             {level.toLocaleString()}
           </div>
@@ -155,6 +177,7 @@ export function RealTopHud({ className }: { className?: string }) {
       </header>
 
       <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />
+      <RealProfileOverlay />
     </>
   )
 }
