@@ -344,57 +344,70 @@ export function DailyChallengeCalendarDialog({
               }}
             />
           </label>
-          {routeSearchActive ? (
-            <div className="daily-challenge-calendar-route-search-results sibs-scrollbar">
-              {routeSearchHits.length === 0 ? (
-                <p className="daily-challenge-calendar-route-search-empty">
-                  {t('dailyChallengeCalendarRouteSearchEmpty')}
-                </p>
-              ) : (
-                <ul className="daily-challenge-calendar-route-search-list">
-                  {routeSearchHits.map(({ date, day }) => {
-                    const eventLabel = day.event
-                      ? getPrimaryText(
-                          buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true }).event,
-                          locale,
-                        )
-                      : null
-                    return (
-                      <li key={date}>
-                        <button
-                          type="button"
-                          className="daily-challenge-calendar-route-search-item"
-                          onClick={() => jumpToSearchHit(date)}
-                        >
-                          <span className="daily-challenge-calendar-route-search-date">
-                            {formatSearchResultDate(date, locale)}
-                          </span>
-                          <span className="daily-challenge-calendar-route-search-meta">
-                            {formatDailyChallengeCalendarRouteCode(day.routeCode, day.event) ??
-                              day.routeCode}
-                            {eventLabel ? ` · ${eventLabel}` : null}
-                            {resolveScheduleDayRace(day) ? (
-                              <>
-                                {' '}
-                                <RaceTagLabel locale={locale} />
-                              </>
-                            ) : null}
-                          </span>
-                        </button>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-            </div>
-          ) : (
+          {!routeSearchActive ? (
             <p className="daily-challenge-calendar-route-search-hint">
               {t('dailyChallengeCalendarRouteSearchHint')}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <div className="daily-challenge-calendar-nav">
+        <div className="daily-challenge-calendar-main">
+          {routeSearchActive ? (
+            <div
+              className="daily-challenge-calendar-route-search-overlay"
+              role="presentation"
+            >
+              <div
+                className="daily-challenge-calendar-route-search-results sibs-scrollbar"
+                role="listbox"
+                aria-label={t('dailyChallengeCalendarRouteSearchLabel')}
+              >
+                {routeSearchHits.length === 0 ? (
+                  <p className="daily-challenge-calendar-route-search-empty">
+                    {t('dailyChallengeCalendarRouteSearchEmpty')}
+                  </p>
+                ) : (
+                  <ul className="daily-challenge-calendar-route-search-list">
+                    {routeSearchHits.map(({ date, day }) => {
+                      const eventLabel = day.event
+                        ? getPrimaryText(
+                            buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true }).event,
+                            locale,
+                          )
+                        : null
+                      return (
+                        <li key={date}>
+                          <button
+                            type="button"
+                            className="daily-challenge-calendar-route-search-item"
+                            role="option"
+                            onClick={() => jumpToSearchHit(date)}
+                          >
+                            <span className="daily-challenge-calendar-route-search-date">
+                              {formatSearchResultDate(date, locale)}
+                            </span>
+                            <span className="daily-challenge-calendar-route-search-meta">
+                              {formatDailyChallengeCalendarRouteCode(day.routeCode, day.event) ??
+                                day.routeCode}
+                              {eventLabel ? ` · ${eventLabel}` : null}
+                              {resolveScheduleDayRace(day) ? (
+                                <>
+                                  {' '}
+                                  <RaceTagLabel locale={locale} />
+                                </>
+                              ) : null}
+                            </span>
+                          </button>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="daily-challenge-calendar-nav">
           <button
             type="button"
             className="daily-challenge-calendar-nav-btn"
@@ -514,6 +527,7 @@ export function DailyChallengeCalendarDialog({
             )}
           </div>
         </section>
+        </div>
       </div>
     </div>
   )
