@@ -14,6 +14,7 @@ const DEFAULT_GROUP_OPEN: Record<RouteListGroupKey, boolean> = {
   normal: true,
   unlockable: true,
   specialSeasonal: true,
+  daily: true,
 }
 
 const DEFAULT_SAVED_FILTERS: Pick<RouteFilters, 'zone' | 'operator' | 'type'> = {
@@ -96,6 +97,7 @@ export function readStoredRouteGroupOpen(): Record<RouteListGroupKey, boolean> {
             : stored.special !== undefined || stored.seasonal !== undefined
               ? Boolean(stored.special ?? stored.seasonal)
               : true,
+        daily: stored.daily !== undefined ? Boolean(stored.daily) : true,
       }
     }
 
@@ -110,6 +112,7 @@ export function readStoredRouteGroupOpen(): Record<RouteListGroupKey, boolean> {
           : stored.special !== undefined || stored.seasonal !== undefined
             ? Boolean(stored.special ?? stored.seasonal)
             : true,
+      daily: stored.daily !== undefined ? Boolean(stored.daily) : true,
     }
   } catch {
     return { ...DEFAULT_GROUP_OPEN }

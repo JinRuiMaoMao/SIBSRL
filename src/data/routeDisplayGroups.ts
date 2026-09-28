@@ -20,10 +20,14 @@ export const ROUTE_DISPLAY_GROUP_ORDER: RouteDisplayGroupKey[] = [
   'seasonal',
 ]
 
-/** 主站列表 UI：常规在上，特殊+节日在下；不含每日挑战分组。 */
-export type RouteListUiSectionKey = 'normal' | 'specialSeasonal'
+/** 主站列表 UI：常规 → 锁定区 → 每日挑战池。 */
+export type RouteListUiSectionKey = 'normal' | 'specialSeasonal' | 'daily'
 
-export const ROUTE_LIST_UI_SECTION_ORDER: RouteListUiSectionKey[] = ['normal', 'specialSeasonal']
+export const ROUTE_LIST_UI_SECTION_ORDER: RouteListUiSectionKey[] = [
+  'normal',
+  'specialSeasonal',
+  'daily',
+]
 
 export const ROUTE_LIST_UI_SECTION_GROUPS: Record<
   RouteListUiSectionKey,
@@ -31,6 +35,7 @@ export const ROUTE_LIST_UI_SECTION_GROUPS: Record<
 > = {
   normal: ['normal'],
   specialSeasonal: ['seasonal', 'special'],
+  daily: ['daily'],
 }
 
 const groupRouteIds = routeDisplayGroupsJson as Record<RouteDisplayGroupKey, string[]>

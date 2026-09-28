@@ -12,7 +12,6 @@ import type { DailyChallengeScheduleDay } from '../data/dailyChallengeSchedule'
 import {
   countVisibleMergedSlots,
   filterLockedSectionDisplaySlots,
-  filterRoutesForMainRouteList,
   getGroupDisplaySlots,
   mergeGroupDisplaySlots,
   mergeLevelOnlySpecialIntoNormalSlots,
@@ -1177,7 +1176,11 @@ export function RouteLookupPage({
       ),
       filteredRoutes,
     )
-    return { normal, specialSeasonal: lockedSectionDisplaySlots }
+    return {
+      normal,
+      specialSeasonal: lockedSectionDisplaySlots,
+      daily: groupedSlots.daily,
+    }
   }, [groupedSlots, filteredRoutes, lockedGameRouteIds, lockedSectionDisplaySlots])
 
   const listSectionTotalSlots = useMemo(() => {
@@ -1200,7 +1203,7 @@ export function RouteLookupPage({
         !slot.entry ||
         !isRouteSeasonalPromotedBelowDailyChallenge(slot.entry.route, promotionNow),
     )
-    return { normal, specialSeasonal }
+    return { normal, specialSeasonal, daily: groupedTotalSlots.daily }
   }, [groupedTotalSlots, displayRoutes, lockedGameRouteIds, promotionNow])
 
   const realNormalEntries = useMemo(
@@ -1219,9 +1222,20 @@ export function RouteLookupPage({
     [listSectionSlots.specialSeasonal, splitLayoutActive],
   )
 
+  const realDailyEntries = useMemo(
+    () =>
+      splitLayoutActive
+        ? buildRealRouteListEntriesFromDisplaySlots(listSectionSlots.daily)
+        : [],
+    [listSectionSlots.daily, splitLayoutActive],
+  )
+
   const realFilteredEntries = useMemo(
-    () => (splitLayoutActive ? [...realNormalEntries, ...realLockedEntries] : []),
-    [realLockedEntries, realNormalEntries, splitLayoutActive],
+    () =>
+      splitLayoutActive
+        ? [...realNormalEntries, ...realLockedEntries, ...realDailyEntries]
+        : [],
+    [realDailyEntries, realLockedEntries, realNormalEntries, splitLayoutActive],
   )
 
   const realTotalEntries = useMemo(() => {
@@ -1229,6 +1243,7 @@ export function RouteLookupPage({
     return [
       ...buildRealRouteListEntriesFromDisplaySlots(listSectionTotalSlots.normal),
       ...buildRealRouteListEntriesFromDisplaySlots(listSectionTotalSlots.specialSeasonal),
+      ...buildRealRouteListEntriesFromDisplaySlots(listSectionTotalSlots.daily),
     ]
   }, [listSectionTotalSlots, splitLayoutActive])
 
@@ -1326,6 +1341,7 @@ export function RouteLookupPage({
       normal: true,
       unlockable: true,
       specialSeasonal: true,
+      daily: true,
       favorites: true,
       recent: true,
     }))
@@ -1621,12 +1637,15 @@ export function RouteLookupPage({
               onUnlockCategorySelect={handleUnlockCategorySelect}
               unlockableOpen={groupOpen.unlockable}
               lockedOpen={groupOpen.specialSeasonal}
+              dailyOpen={groupOpen.daily}
+              dailyEntries={realDailyEntries}
               onUnlockableOpenChange={(open) =>
                 setGroupOpen((prev) => ({ ...prev, unlockable: open }))
               }
               onLockedOpenChange={(open) =>
                 setGroupOpen((prev) => ({ ...prev, specialSeasonal: open }))
               }
+              onDailyOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, daily: open }))}
               onViewAllPlayable={handleViewAllPlayable}
               lockedSectionRef={lockedSectionRef}
               selectedListKey={selectedRealListKey}
@@ -1829,6 +1848,17 @@ export function RouteLookupPage({
                 />
               </RouteListGameSection>
             </div>
+
+            {countVisibleSectionSlots('daily') > 0 ? (
+              <RouteListGameSection
+                titleKey="routeGroupDaily"
+                dataTour="route-group-daily"
+                open={groupOpen.daily}
+                onOpenChange={(open) => setGroupOpen((prev) => ({ ...prev, daily: open }))}
+              >
+                <div className="route-grid">{renderListSectionCards('daily')}</div>
+              </RouteListGameSection>
+            ) : null}
 
             <RouteListViewAllFooter onClick={handleViewAllPlayable} />
 

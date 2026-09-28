@@ -30,8 +30,11 @@ interface RouteLookupSplitListProps {
   onUnlockCategorySelect: (kind: RouteUnlockCategoryKind) => void
   unlockableOpen: boolean
   lockedOpen: boolean
+  dailyOpen: boolean
+  dailyEntries: readonly RealRouteListEntry[]
   onUnlockableOpenChange: (open: boolean) => void
   onLockedOpenChange: (open: boolean) => void
+  onDailyOpenChange: (open: boolean) => void
   onViewAllPlayable: () => void
   lockedSectionRef?: RefObject<HTMLElement | null>
   selectedListKey: string | null
@@ -55,8 +58,11 @@ export function RouteLookupSplitList({
   onUnlockCategorySelect,
   unlockableOpen,
   lockedOpen,
+  dailyOpen,
+  dailyEntries,
   onUnlockableOpenChange,
   onLockedOpenChange,
+  onDailyOpenChange,
   onViewAllPlayable,
   lockedSectionRef,
   selectedListKey,
@@ -102,7 +108,13 @@ export function RouteLookupSplitList({
   const showSeasonalPromotions = seasonalPromotions.length > 0
   const hasPlayableEntries = normalEntries.length > 0
   const hasLockedEntries = lockedEntries.length > 0
-  const hasEntries = hasPlayableEntries || hasLockedEntries || showDailyChallenge || showSeasonalPromotions
+  const hasDailyPoolEntries = dailyEntries.length > 0
+  const hasEntries =
+    hasPlayableEntries ||
+    hasLockedEntries ||
+    hasDailyPoolEntries ||
+    showDailyChallenge ||
+    showSeasonalPromotions
 
   const renderEntry = (entry: RealRouteListEntry, index: number, tourAnchor: boolean) => {
     const { route, directionIndex, listKey } = entry
@@ -193,6 +205,17 @@ export function RouteLookupSplitList({
           />
         </RouteListGameSection>
       </div>
+
+      {hasDailyPoolEntries ? (
+        <RouteListGameSection
+          titleKey="routeGroupDaily"
+          dataTour="route-group-daily"
+          open={dailyOpen}
+          onOpenChange={onDailyOpenChange}
+        >
+          {dailyEntries.map((entry, index) => renderEntry(entry, index, false))}
+        </RouteListGameSection>
+      ) : null}
 
       <RouteListViewAllFooter onClick={onViewAllPlayable} />
     </>
