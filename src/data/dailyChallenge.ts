@@ -24,9 +24,29 @@ import {
 } from '../utils/routeSearchQuery'
 import { parseStructuredSearchQuery } from '../utils/structuredSearchQuery'
 
-/** 游戏内任务代号 → 本站线路 id（如马拉松 N246 任务实际走 N146A）。 */
+/** 游戏内任务代号 → 本站每日挑战列表 id（如马拉松 N246 任务实际走 N146A）。 */
 const DAILY_CHALLENGE_ROUTE_ALIASES: Record<string, string> = {
   N246: 'N146A',
+  N271: 'N171WM',
+}
+
+/** Discord／游戏 shorthand → route-display-groups「daily」分组内的 canonical 代号 */
+function canonicalDailyChallengeRouteCode(
+  routeCode: string | null | undefined,
+  event: string | null | undefined,
+): string | null | undefined {
+  const code = routeCode?.trim()
+  if (!code) return routeCode
+
+  if (/^N271$/i.test(code)) {
+    if (event === 'Marathon Road Closure at Night') return 'N171EM'
+    return 'N171WM'
+  }
+
+  const alias = DAILY_CHALLENGE_ROUTE_ALIASES[code] ?? DAILY_CHALLENGE_ROUTE_ALIASES[code.toUpperCase()]
+  if (alias) return alias
+
+  return code
 }
 
 /** 日历／搜索：线路代号是否匹配用户输入（含别名，如 N246 ↔ N146A）。 */
@@ -341,7 +361,7 @@ export function buildDailyChallengeFromScheduleDay(
   }
 
   const event = toEventLabel(entry.event, entry.race)
-  const routeNumber = entry.routeCode ?? undefined
+  const routeNumber = routeCode ?? undefined
   const privateHireStops = normalizePrivateHireStops(entry.privateHireStops)
   let directionKey: 'N' | 'S' | 'E' | 'W' | undefined
   let loopView: boolean | undefined
@@ -381,7 +401,7 @@ export function buildDailyChallengeFromScheduleDay(
     }
   }
 
-  let intro = buildIntro(event, entry.routeCode, entry.race)
+  let intro = buildIntro(event, routeCode, entry.race)
   if (isEpayment472West) {
     intro = {
       body: {
