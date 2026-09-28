@@ -4083,6 +4083,162 @@ html[data-route-lookup-layout='split'] .site-footer {
   font-size: 0.78rem;
 }
 
+.upcoming-game-events-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.upcoming-game-events-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: var(--popup-backdrop);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.upcoming-game-events-panel {
+  --lg-tint: var(--popup-bg);
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  max-height: min(82vh, 720px);
+  overflow: auto;
+  padding: 0.85rem 0.95rem 1rem;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  box-shadow: 0 16px 48px var(--shadow-overlay);
+  isolation: isolate;
+}
+
+.upcoming-game-events-panel > :not(.sibs-liquid-glass-surface) {
+  position: relative;
+  z-index: 1;
+}
+
+.upcoming-game-events-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.upcoming-game-events-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.upcoming-game-events-close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.upcoming-game-events-close:hover,
+.upcoming-game-events-close:focus-visible {
+  color: var(--text);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.upcoming-game-events-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.upcoming-game-events-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.upcoming-game-events-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.upcoming-game-events-card-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.upcoming-game-events-card-thumb-bus {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.2rem;
+  font-size: 1.35rem;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 35%));
+}
+
+.upcoming-game-events-card-thumb--daytime {
+  background:
+    linear-gradient(180deg, rgb(126 176 210 / 55%) 0%, rgb(72 98 74 / 35%) 100%),
+    linear-gradient(135deg, #6a8f7b 0%, #c8b48a 45%, #87b7d8 100%);
+}
+
+.upcoming-game-events-card-thumb--night {
+  background:
+    linear-gradient(180deg, rgb(20 28 48 / 20%) 0%, rgb(8 10 18 / 75%) 100%),
+    linear-gradient(135deg, #1a2238 0%, #4a3050 40%, #182030 100%);
+}
+
+.upcoming-game-events-card-thumb--depot {
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 15%) 0%, rgb(0 0 0 / 55%) 100%),
+    linear-gradient(135deg, #2a3540 0%, #3d6b72 55%, #1e2830 100%);
+}
+
+.upcoming-game-events-card-body {
+  padding: 0.45rem 0.5rem 0.55rem;
+}
+
+.upcoming-game-events-card-title {
+  margin: 0 0 0.2rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.upcoming-game-events-card-when {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.upcoming-game-events-card-when-icon {
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
 .route-locked-unlock-category-sections {
   display: flex;
   flex-direction: column;

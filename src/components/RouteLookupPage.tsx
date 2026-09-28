@@ -66,6 +66,7 @@ import {
   isRouteSeasonalPromotedBelowDailyChallenge,
 } from '../utils/seasonalRoutePromotions'
 import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
+import { UpcomingGameEventsDialog } from './UpcomingGameEventsDialog'
 import { RealRouteSplitHeader } from './RealRouteSplitHeader'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
@@ -242,6 +243,7 @@ export function RouteLookupPage({
     useState<DailyChallengeInfo | null>(null)
   const [dailyChallengeCalendarOpen, setDailyChallengeCalendarOpen] = useState(false)
   const [playableRoutesDialogOpen, setPlayableRoutesDialogOpen] = useState(false)
+  const [upcomingEventsDialogOpen, setUpcomingEventsDialogOpen] = useState(false)
 
   useEffect(() => {
     const openDailyCalendar = () => setDailyChallengeCalendarOpen(true)
@@ -1350,6 +1352,10 @@ export function RouteLookupPage({
   }, [splitLayoutActive, updateFilter])
 
   const handleUnlockCategorySelect = useCallback((kind: RouteUnlockCategoryKind) => {
+    if (kind === 'seasonal') {
+      setUpcomingEventsDialogOpen(true)
+      return
+    }
     setUnlockCategoryFocus((prev) => (prev === kind ? null : kind))
     setGroupOpen((prev) => ({ ...prev, unlockable: true, specialSeasonal: true }))
     requestAnimationFrame(() => {
@@ -1896,6 +1902,11 @@ export function RouteLookupPage({
         onClose={() => setDailyChallengeCalendarOpen(false)}
         onSelectDay={handleSelectScheduleDay}
         todayDate={dailyChallenge.date}
+      />
+
+      <UpcomingGameEventsDialog
+        open={upcomingEventsDialogOpen}
+        onClose={() => setUpcomingEventsDialogOpen(false)}
       />
 
       {splitLayoutActive ? (

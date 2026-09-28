@@ -1,0 +1,49 @@
+{
+  "_comment": "In-game festival seasons (HKT game-day start). Relative countdown is computed at runtime.",
+  "events": [
+    {
+      "id": "chung-yeung",
+      "title": { "zh": "重阳节", "en": "Double Ninth Festival" },
+      "start": "2026-10-11",
+      "end": "2026-10-31",
+      "thumbnail": "daytime"
+    },
+    {
+      "id": "christmas-eve",
+      "title": { "zh": "圣诞前夕", "en": "Christmas Eve" },
+      "start": "2026-12-24",
+      "thumbnail": "night"
+    },
+    {
+      "id": "new-year-eve",
+      "title": { "zh": "除夕夜", "en": "New Year's Eve" },
+      "start": "2027-02-16",
+      "thumbnail": "night"
+    },
+    {
+      "id": "lunar-new-year",
+      "title": { "zh": "农历新年", "en": "Lunar New Year" },
+      "start": "2027-02-17",
+      "thumbnail": "night"
+    },
+    {
+      "id": "qingming",
+      "title": { "zh": "清明节", "en": "Qingming Festival" },
+      "start": "2027-04-05",
+      "thumbnail": "daytime"
+    },
+    {
+      "id": "ft-anniversary",
+      "title": { "zh": "FT 周年纪念", "en": "FT Anniversary" },
+      "start": "2027-06-21",
+      "end": "2027-06-27",
+      "thumbnail": "depot"
+    },
+    {
+      "id": "mid-autumn",
+      "title": { "zh": "中秋节", "en": "Mid-Autumn Festival" },
+      "start": "2027-09-19",
+      "thumbnail": "daytime"
+    }
+  ]
+}
