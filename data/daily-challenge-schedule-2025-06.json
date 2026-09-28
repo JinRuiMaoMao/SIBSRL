@@ -74,9 +74,9 @@
     { "date": "2025-06-23", "event": "Lazy Passengers", "routeCode": "N146W", "race": false },
     { "date": "2025-06-24", "event": "Concert Overrun", "routeCode": "N171E", "race": false },
     { "date": "2025-06-25", "event": "Street Light Outage", "routeCode": "41AS", "race": false },
-    { "date": "2025-06-26", "event": "Grumble Day", "routeCode": null, "race": true },
+    { "date": "2025-06-26", "event": "Grumble Day", "routeCode": "148E", "race": true },
     { "date": "2025-06-27", "event": "Foggy Day", "routeCode": "N146E", "race": false },
-    { "date": "2025-06-28", "event": "Free Ride Day", "routeCode": null, "race": true },
+    { "date": "2025-06-28", "event": "Free Ride Day", "routeCode": "475W", "race": true },
     { "date": "2025-06-29", "event": "Urban Odyssey", "routeCode": "77X", "race": true },
     { "date": "2025-06-30", "event": "Foggy Day", "routeCode": "140W", "race": false }
   ]
