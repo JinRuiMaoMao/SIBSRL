@@ -6,7 +6,41 @@
       "title": { "zh": "重阳节", "en": "Double Ninth Festival" },
       "start": "2026-10-11",
       "end": "2026-10-31",
-      "thumbnail": "chung-qingming"
+      "thumbnail": "chung-qingming",
+      "detail": {
+        "aboutHighlight": { "zh": "Tomb Sweeping Day", "en": "Tomb Sweeping Day" },
+        "about": {
+          "zh": " is when families clean and decorate their ancestors' graves to show respect and remember them.\nAs a result, a shuttle service between the district center and the cemetery will be provided.",
+          "en": " is when families clean and decorate their ancestors' graves to show respect and remember them.\nAs a result, a shuttle service between the district center and the cemetery will be provided."
+        },
+        "routes": [
+          {
+            "code": "73S",
+            "endpoints": { "zh": "仙貝廣場 - 葉角灣", "en": "Senpai Shopping Centre - Leafy Bay" }
+          },
+          {
+            "code": "76S",
+            "endpoints": {
+              "zh": "安靈台靈灰安置所 - 仙貝廣場",
+              "en": "Ambling Peak Columbarium - Senpai Shopping Centre"
+            }
+          },
+          {
+            "code": "376S",
+            "endpoints": {
+              "zh": "安靈台靈灰安置所 - 長島碼頭",
+              "en": "Ambling Peak Columbarium - Long Island Ferry Pier"
+            }
+          },
+          {
+            "code": "476S",
+            "endpoints": {
+              "zh": "安靈台靈灰安置所 - 安靈台靈灰安置所",
+              "en": "Ambling Peak Columbarium - Ambling Peak Columbarium"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "christmas-eve",

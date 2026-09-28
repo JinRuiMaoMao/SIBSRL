@@ -4174,11 +4174,205 @@ html[data-route-lookup-layout='split'] .site-footer {
 .upcoming-game-events-card {
   display: flex;
   flex-direction: column;
+  width: 100%;
   min-height: 100%;
+  padding: 0;
   border-radius: 10px;
   overflow: hidden;
   background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.upcoming-game-events-card:hover,
+.upcoming-game-events-card:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  outline: none;
+}
+
+.upcoming-game-events-panel--detail {
+  width: min(420px, 100%);
+  padding: 0;
+  overflow: hidden;
+}
+
+.upcoming-game-events-panel--detail > :not(.sibs-liquid-glass-surface) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.upcoming-game-events-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.upcoming-game-events-detail-hero {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0a1018;
+}
+
+.upcoming-game-events-detail-hero-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.upcoming-game-events-detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.upcoming-game-events-detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.15rem 0.1rem;
+}
+
+.upcoming-game-events-detail-back:hover,
+.upcoming-game-events-detail-back:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+.upcoming-game-events-detail-back-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.upcoming-game-events-detail-close {
+  margin: 0;
+}
+
+.upcoming-game-events-detail-body {
+  padding: 0.65rem 0.85rem 1rem;
+  overflow: auto;
+}
+
+.upcoming-game-events-detail-title {
+  margin: 0 0 0.85rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.upcoming-game-events-detail-section {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.55rem;
+  margin-bottom: 0.85rem;
+}
+
+.upcoming-game-events-detail-section-head {
+  display: contents;
+}
+
+.upcoming-game-events-detail-section-icon {
+  grid-column: 1;
+  justify-self: center;
+  width: 1.15rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.upcoming-game-events-detail-section-label {
+  grid-column: 2;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.upcoming-game-events-detail-section-content,
+.upcoming-game-events-detail-routes,
+.upcoming-game-events-detail-about {
+  grid-column: 2;
+}
+
+.upcoming-game-events-detail-section-content p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.upcoming-game-events-detail-routes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.upcoming-game-events-detail-route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.upcoming-game-events-detail-route-code {
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: #ffff7f;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.upcoming-game-events-detail-route-code:hover,
+button.upcoming-game-events-detail-route-code:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.upcoming-game-events-detail-route-endpoints {
+  color: var(--text);
+}
+
+.upcoming-game-events-detail-section--about {
+  grid-template-columns: auto 1fr;
+}
+
+.upcoming-game-events-detail-about {
+  padding-left: 0.55rem;
+  border-left: 2px solid color-mix(in srgb, var(--text) 35%, transparent);
+}
+
+.upcoming-game-events-detail-about p {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  white-space: pre-line;
+}
+
+.upcoming-game-events-detail-about-highlight {
+  color: #ffff7f;
+  font-weight: 700;
 }
 
 .upcoming-game-events-card-thumb {

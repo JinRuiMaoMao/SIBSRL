@@ -1,5 +1,6 @@
 import eventsJson from '../../data/upcoming-game-events.json'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
+import type { Locale } from '../i18n/types'
 import { todayHktDateString } from './dailyChallenge'
 import type { BilingualText } from '../types/route'
 
@@ -15,12 +16,24 @@ export function getUpcomingGameEventThumbnailUrl(thumbnail: UpcomingGameEventThu
   return resolveSiteAssetUrl(THUMBNAIL_FILES[thumbnail])
 }
 
+export interface UpcomingGameEventRoute {
+  code: string
+  endpoints: BilingualText
+}
+
+export interface UpcomingGameEventDetail {
+  aboutHighlight?: BilingualText
+  about?: BilingualText
+  routes?: UpcomingGameEventRoute[]
+}
+
 export interface UpcomingGameEvent {
   id: string
   title: BilingualText
   start: string
   end?: string
   thumbnail: UpcomingGameEventThumbnail
+  detail?: UpcomingGameEventDetail
 }
 
 export type UpcomingEventRelativeKey =
@@ -35,6 +48,35 @@ export interface UpcomingGameEventView extends UpcomingGameEvent {
 }
 
 const events = (eventsJson as { events: UpcomingGameEvent[] }).events
+
+const EN_MONTH_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+] as const
+
+/** 节庆详情日期（游戏日 08:00 HKT 起算）。 */
+export function formatUpcomingGameEventDetailDate(date: string, locale: Locale): string {
+  const [year, month, day] = date.split('-').map(Number)
+  if (!year || !month || !day) return date
+  if (locale === 'en') {
+    return `${EN_MONTH_SHORT[month - 1] ?? month} ${day}, ${year} 08:00 HKT`
+  }
+  return `${year}年${month}月${day}日 08:00（HKT）`
+}
+
+export function getUpcomingGameEventById(id: string): UpcomingGameEvent | undefined {
+  return events.find((event) => event.id === id)
+}
 
 function diffGameDays(from: string, to: string): number {
   const fromMs = Date.parse(`${from}T08:00:00+08:00`)

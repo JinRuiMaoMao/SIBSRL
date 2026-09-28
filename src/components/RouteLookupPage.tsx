@@ -67,6 +67,7 @@ import {
 } from '../utils/seasonalRoutePromotions'
 import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
 import { UpcomingGameEventsDialog } from './UpcomingGameEventsDialog'
+import { findDisplayRouteByQuery } from '../utils/routeMerge'
 import { RealRouteSplitHeader } from './RealRouteSplitHeader'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
@@ -1907,6 +1908,14 @@ export function RouteLookupPage({
       <UpcomingGameEventsDialog
         open={upcomingEventsDialogOpen}
         onClose={() => setUpcomingEventsDialogOpen(false)}
+        onSelectRoute={(routeCode) => {
+          const route =
+            findDisplayRouteByQuery(displayRoutes, routeCode) ??
+            findRouteForDailyChallenge(routeCode)
+          if (!route) return
+          setUpcomingEventsDialogOpen(false)
+          handleCarouselSelect(route.id, 0)
+        }}
       />
 
       {splitLayoutActive ? (
