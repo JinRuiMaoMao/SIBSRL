@@ -17,6 +17,7 @@ import {
   listSelectableMonthsForYear,
   parseScheduleMonthKey,
   resolveInitialCalendarMonth,
+  resolveScheduleDayRace,
   toScheduleMonthKey,
   type DailyChallengeScheduleDay,
 } from '../data/dailyChallengeSchedule'
@@ -84,18 +85,19 @@ function CalendarDayCell({
   emptyLabel: string
   onSelectDay?: (day: DailyChallengeScheduleDay) => void
 }) {
+  const dayRace = day ? resolveScheduleDayRace(day) : false
   const challenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
   const plainEventChallenge =
-    day?.event && day.race ? buildDailyChallengeFromScheduleDay({ ...day, race: false }) : null
+    day?.event && dayRace ? buildDailyChallengeFromScheduleDay({ ...day, race: false }) : null
   const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
   const plainEventLabel = plainEventChallenge
     ? getPrimaryText(plainEventChallenge.event, locale)
     : null
   const routeCode = day?.routeCode?.trim() || null
   const hasEvent = Boolean(day?.event)
-  const isRaceOnly = Boolean(day?.race && !day?.event)
+  const isRaceOnly = Boolean(dayRace && !day?.event)
   const hasData = hasEvent || isRaceOnly
-  const isRace = Boolean(day?.race)
+  const isRace = dayRace
   const className =
     `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${isHighlighted ? 'is-highlighted' : ''} ${isSearchMatch ? 'is-search-match' : ''} ${hasData ? 'has-data' : 'is-empty'} ${hasEvent && onSelectDay ? 'is-clickable' : ''}`.trim()
 
@@ -363,7 +365,7 @@ export function DailyChallengeCalendarDialog({
                           <span className="daily-challenge-calendar-route-search-meta">
                             {day.routeCode}
                             {eventLabel ? ` · ${eventLabel}` : null}
-                            {day.race ? (
+                            {resolveScheduleDayRace(day) ? (
                               <>
                                 {' '}
                                 <RaceTagLabel locale={locale} />

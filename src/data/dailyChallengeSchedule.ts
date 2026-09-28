@@ -94,8 +94,30 @@ for (const schedule of DAILY_CHALLENGE_SCHEDULES) {
   }
 }
 
+/** HKT 日历日期是否为周六或周日（UTC 日历日与 HKT 游戏日 date 字段一致）。 */
+export function isWeekendScheduleDate(date: string): boolean {
+  const [year, month, day] = date.split('-').map(Number)
+  if (!year || !month || !day) return false
+  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay()
+  return weekday === 0 || weekday === 6
+}
+
+/** 有挑战活动时，周六日一律视为竞速日（与 Discord 列表 [Race] 规则一致）。 */
+export function resolveScheduleDayRace(day: DailyChallengeScheduleDay): boolean {
+  if (!day.event) return day.race
+  return day.race || isWeekendScheduleDate(day.date)
+}
+
+export function normalizeScheduleDay(day: DailyChallengeScheduleDay): DailyChallengeScheduleDay {
+  const race = resolveScheduleDayRace(day)
+  if (race === day.race) return day
+  return { ...day, race }
+}
+
 export function findScheduledDailyChallenge(date: string): DailyChallengeScheduleDay | null {
-  return dayByDate.get(date) ?? null
+  const day = dayByDate.get(date)
+  if (!day) return null
+  return normalizeScheduleDay(day)
 }
 
 export interface DailyChallengeCalendarCell {
@@ -119,7 +141,8 @@ export function buildMonthCalendarCells(schedule: DailyChallengeSchedule): Daily
 
   for (let day = 1; day <= daysInMonth; day++) {
     const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    cells.push({ date, day: dayByDate.get(date) ?? null })
+    const raw = dayByDate.get(date)
+    cells.push({ date, day: raw ? normalizeScheduleDay(raw) : null })
   }
 
   while (cells.length % 7 !== 0) {

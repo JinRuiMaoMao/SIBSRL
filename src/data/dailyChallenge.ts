@@ -1,6 +1,7 @@
 import { routes } from './routes'
 import {
   findScheduledDailyChallenge,
+  resolveScheduleDayRace,
   type DailyChallengeScheduleDay,
 } from './dailyChallengeSchedule'
 import { getPrimaryText } from '../i18n/displayText'
@@ -360,7 +361,9 @@ export function buildDailyChallengeFromScheduleDay(
     }
   }
 
-  const event = toEventLabel(entry.event, entry.race)
+  const routeCode = canonicalDailyChallengeRouteCode(entry.routeCode, entry.event) ?? entry.routeCode
+  const race = resolveScheduleDayRace(entry)
+  const event = toEventLabel(entry.event, race)
   const routeNumber = routeCode ?? undefined
   const privateHireStops = normalizePrivateHireStops(entry.privateHireStops)
   let directionKey: 'N' | 'S' | 'E' | 'W' | undefined
@@ -431,7 +434,7 @@ export function buildDailyChallengeFromScheduleDay(
     isAvailable: true,
     isPlaceholder: false,
     fromSchedule: true,
-    race: entry.race,
+    race,
   }
 }
 
