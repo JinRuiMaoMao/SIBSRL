@@ -67,8 +67,25 @@
     {
       "id": "new-year-eve",
       "title": { "zh": "除夕夜", "en": "New Year's Eve" },
-      "start": "2027-02-16",
-      "thumbnail": "lunar-new-year"
+      "start": "2027-01-01",
+      "end": "2027-01-03",
+      "resetTime": "05:00",
+      "thumbnail": "lunar-new-year",
+      "detail": {
+        "about": {
+          "zh": "During major festivals, metro will run overnight after celebrating the festival.\nAs a result, a shuttle service between the metro station to major residential areas will be provided.",
+          "en": "During major festivals, metro will run overnight after celebrating the festival.\nAs a result, a shuttle service between the metro station to major residential areas will be provided."
+        },
+        "routes": [
+          {
+            "code": "N76",
+            "endpoints": {
+              "zh": "仙貝廣場 - 仙貝廣場",
+              "en": "Senpai Shopping Centre - Senpai Shopping Centre"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lunar-new-year",

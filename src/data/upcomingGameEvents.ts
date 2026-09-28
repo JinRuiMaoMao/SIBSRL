@@ -32,6 +32,8 @@ export interface UpcomingGameEvent {
   title: BilingualText
   start: string
   end?: string
+  /** HKT reset time shown in detail (default 08:00). */
+  resetTime?: string
   thumbnail: UpcomingGameEventThumbnail
   detail?: UpcomingGameEventDetail
 }
@@ -64,14 +66,18 @@ const EN_MONTH_SHORT = [
   'Dec',
 ] as const
 
-/** 节庆详情日期（游戏日 08:00 HKT 起算）。 */
-export function formatUpcomingGameEventDetailDate(date: string, locale: Locale): string {
+/** 节庆详情日期（默认游戏日 08:00 HKT 起算）。 */
+export function formatUpcomingGameEventDetailDate(
+  date: string,
+  locale: Locale,
+  resetTime = '08:00',
+): string {
   const [year, month, day] = date.split('-').map(Number)
   if (!year || !month || !day) return date
   if (locale === 'en') {
-    return `${EN_MONTH_SHORT[month - 1] ?? month} ${day}, ${year} 08:00 HKT`
+    return `${EN_MONTH_SHORT[month - 1] ?? month} ${day}, ${year} ${resetTime} HKT`
   }
-  return `${year}年${month}月${day}日 08:00（HKT）`
+  return `${year}年${month}月${day}日 ${resetTime}（HKT）`
 }
 
 export function getUpcomingGameEventById(id: string): UpcomingGameEvent | undefined {

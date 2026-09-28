@@ -54,6 +54,7 @@ function UpcomingGameEventDetailView({
   const { locale, t } = useLocale()
   const detail = event.detail
   const routes = detail?.routes ?? []
+  const resetTime = event.resetTime ?? '08:00'
   const aboutHighlight = detail?.aboutHighlight ? getPrimaryText(detail.aboutHighlight, locale) : null
   const aboutBody = detail?.about ? getPrimaryText(detail.about, locale) : null
 
@@ -103,9 +104,17 @@ function UpcomingGameEventDetailView({
             </h3>
           </div>
           <div className="upcoming-game-events-detail-section-content">
-            <p>{t('upcomingGameEventDateFrom', { date: formatUpcomingGameEventDetailDate(event.start, locale) })}</p>
+            <p>
+              {t('upcomingGameEventDateFrom', {
+                date: formatUpcomingGameEventDetailDate(event.start, locale, resetTime),
+              })}
+            </p>
             {event.end ? (
-              <p>{t('upcomingGameEventDateTo', { date: formatUpcomingGameEventDetailDate(event.end, locale) })}</p>
+              <p>
+                {t('upcomingGameEventDateTo', {
+                  date: formatUpcomingGameEventDetailDate(event.end, locale, resetTime),
+                })}
+              </p>
             ) : null}
           </div>
         </section>
