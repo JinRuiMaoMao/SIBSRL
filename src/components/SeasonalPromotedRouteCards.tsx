@@ -27,6 +27,7 @@ export function SeasonalPromotedRouteCards({
             }
             directionIndex={promotion.directionIndex}
             window={promotion.window}
+            eventTitle={promotion.eventTitle}
             selected={selectedRouteId === promotion.route.id}
             onNavigate={onNavigate}
           />

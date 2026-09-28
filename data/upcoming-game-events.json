@@ -1,11 +1,11 @@
 {
-  "_comment": "In-game festival seasons (HKT game-day start). Relative countdown is computed at runtime.",
+  "_comment": "Annual festival seasons (MM-DD, HKT game-day). Route unlock + daily-challenge promo windows are derived from detail.routes at runtime.",
   "events": [
     {
       "id": "chung-yeung",
       "title": { "zh": "重阳节", "en": "Double Ninth Festival" },
-      "start": "2026-10-11",
-      "end": "2026-10-31",
+      "start": "10-11",
+      "end": "10-31",
       "thumbnail": "chung-qingming",
       "detail": {
         "aboutHighlight": { "zh": "Tomb Sweeping Day", "en": "Tomb Sweeping Day" },
@@ -45,8 +45,8 @@
     {
       "id": "christmas-eve",
       "title": { "zh": "圣诞前夕", "en": "Christmas Eve" },
-      "start": "2026-12-24",
-      "end": "2026-12-27",
+      "start": "12-24",
+      "end": "12-27",
       "thumbnail": "lunar-new-year",
       "detail": {
         "about": {
@@ -67,8 +67,8 @@
     {
       "id": "new-year-eve",
       "title": { "zh": "除夕夜", "en": "New Year's Eve" },
-      "start": "2027-01-01",
-      "end": "2027-01-03",
+      "start": "01-01",
+      "end": "01-03",
       "timeHkt": "00:00",
       "thumbnail": "lunar-new-year",
       "detail": {
@@ -90,8 +90,8 @@
     {
       "id": "lunar-new-year",
       "title": { "zh": "农历新年", "en": "Lunar New Year" },
-      "start": "2027-02-06",
-      "end": "2027-02-11",
+      "start": "02-06",
+      "end": "02-11",
       "thumbnail": "lunar-new-year",
       "detail": {
         "about": {
@@ -112,8 +112,8 @@
     {
       "id": "qingming",
       "title": { "zh": "清明节", "en": "Qingming Festival" },
-      "start": "2027-03-28",
-      "end": "2027-04-17",
+      "start": "03-28",
+      "end": "04-17",
       "endTimeHkt": "07:00",
       "thumbnail": "chung-qingming",
       "detail": {
@@ -154,8 +154,9 @@
     {
       "id": "ft-anniversary",
       "title": { "zh": "FT 周年纪念", "en": "FT Anniversary" },
-      "start": "2027-06-21",
-      "end": "2027-06-28",
+      "start": "06-21",
+      "end": "06-28",
+      "playableEnd": "06-27",
       "timeHkt": "07:00",
       "endTimeHkt": "07:00",
       "thumbnail": "ft-anniversary",
@@ -178,8 +179,8 @@
     {
       "id": "mid-autumn",
       "title": { "zh": "中秋节", "en": "Mid-Autumn Festival" },
-      "start": "2027-09-15",
-      "end": "2027-09-18",
+      "start": "09-15",
+      "end": "09-18",
       "timeHkt": "07:00",
       "endTimeHkt": "07:00",
       "thumbnail": "lunar-new-year",

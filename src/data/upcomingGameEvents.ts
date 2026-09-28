@@ -1,5 +1,12 @@
 import eventsJson from '../../data/upcoming-game-events.json'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
+import {
+  getNextOccurrenceStart,
+  isMonthDayInWindow,
+  monthDayFromDate,
+  resolveOccurrenceDates,
+  resolveOccurrenceDatesFromStart,
+} from '../utils/recurringGameCalendar'
 import type { Locale } from '../i18n/types'
 import { todayHktDateString } from './dailyChallenge'
 import type { BilingualText } from '../types/route'
@@ -30,8 +37,12 @@ export interface UpcomingGameEventDetail {
 export interface UpcomingGameEvent {
   id: string
   title: BilingualText
+  /** Annual start (MM-DD). */
   start: string
+  /** Annual display end (MM-DD). */
   end?: string
+  /** Last playable game day (MM-DD); defaults to end. */
+  playableEnd?: string
   /** HKT instant for detail start row (default 08:00 game-day reset). */
   timeHkt?: string
   /** HKT instant for detail end row (defaults to timeHkt). */
@@ -49,6 +60,9 @@ export type UpcomingEventRelativeKey =
 export interface UpcomingGameEventView extends UpcomingGameEvent {
   relativeKey: UpcomingEventRelativeKey
   relativeCount?: number
+  /** Resolved YYYY-MM-DD bounds for the current or next occurrence. */
+  occurrenceStart: string
+  occurrenceEnd?: string
 }
 
 const events = (eventsJson as { events: UpcomingGameEvent[] }).events
@@ -67,6 +81,14 @@ const EN_MONTH_SHORT = [
   'Nov',
   'Dec',
 ] as const
+
+function playableEndMonthDay(event: UpcomingGameEvent): string {
+  return event.playableEnd ?? event.end ?? event.start
+}
+
+function displayEndMonthDay(event: UpcomingGameEvent): string {
+  return event.end ?? event.start
+}
 
 function hktGameInstant(date: string, timeHkt: string): Date {
   const [hoursRaw, minutesRaw] = timeHkt.split(':')
@@ -117,41 +139,79 @@ function diffGameDays(from: string, to: string): number {
   return Math.ceil((toMs - fromMs) / 86_400_000)
 }
 
-function isEventActive(today: string, event: UpcomingGameEvent): boolean {
-  if (today < event.start) return false
-  if (!event.end) return today === event.start
-  return today <= event.end
+function resolveEventOccurrence(
+  event: UpcomingGameEvent,
+  today: string,
+): { occurrenceStart: string; occurrenceEnd?: string; active: boolean } {
+  const playableEnd = playableEndMonthDay(event)
+  const displayEnd = displayEndMonthDay(event)
+  const todayMd = monthDayFromDate(today)
+  const active = isMonthDayInWindow(todayMd, event.start, playableEnd)
+
+  if (active) {
+    const playable = resolveOccurrenceDates(today, event.start, playableEnd)!
+    const display = resolveOccurrenceDates(today, event.start, displayEnd)!
+    return {
+      occurrenceStart: playable.start,
+      occurrenceEnd: display.end,
+      active: true,
+    }
+  }
+
+  const nextStart = getNextOccurrenceStart(today, event.start, playableEnd)
+  const display = resolveOccurrenceDatesFromStart(nextStart, event.start, displayEnd)
+  return {
+    occurrenceStart: nextStart,
+    occurrenceEnd: display.end,
+    active: false,
+  }
 }
 
-/** 尚未结束、按开始日排序的节庆（含进行中）。 */
+/** 按下一届开始日排序的节庆（含进行中；每年循环）。 */
 export function listUpcomingGameEvents(now = new Date()): UpcomingGameEventView[] {
   const today = todayHktDateString(now)
 
   return events
-    .map((event): UpcomingGameEventView | null => {
-      if (event.end && today > event.end) return null
+    .map((event): UpcomingGameEventView => {
+      const { occurrenceStart, occurrenceEnd, active } = resolveEventOccurrence(event, today)
 
-      if (isEventActive(today, event)) {
-        return { ...event, relativeKey: 'upcomingEventActive' }
+      if (active) {
+        return {
+          ...event,
+          occurrenceStart,
+          occurrenceEnd,
+          relativeKey: 'upcomingEventActive',
+        }
       }
 
-      const daysUntil = diffGameDays(today, event.start)
-      if (daysUntil < 0) return null
+      const daysUntil = diffGameDays(today, occurrenceStart)
 
       if (daysUntil === 0) {
-        return { ...event, relativeKey: 'upcomingEventToday' }
+        return {
+          ...event,
+          occurrenceStart,
+          occurrenceEnd,
+          relativeKey: 'upcomingEventToday',
+        }
       }
 
       if (daysUntil < 30) {
-        return { ...event, relativeKey: 'upcomingEventInDays', relativeCount: daysUntil }
+        return {
+          ...event,
+          occurrenceStart,
+          occurrenceEnd,
+          relativeKey: 'upcomingEventInDays',
+          relativeCount: daysUntil,
+        }
       }
 
       return {
         ...event,
+        occurrenceStart,
+        occurrenceEnd,
         relativeKey: 'upcomingEventInMonths',
         relativeCount: Math.max(1, Math.round(daysUntil / 30)),
       }
     })
-    .filter((event): event is UpcomingGameEventView => event != null)
-    .sort((a, b) => a.start.localeCompare(b.start))
+    .sort((a, b) => a.occurrenceStart.localeCompare(b.occurrenceStart))
 }

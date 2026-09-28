@@ -7,6 +7,7 @@ import {
   shouldPromoteSeasonalRouteBelowDailyChallenge,
   type SeasonalAvailabilityWindow,
 } from '../data/seasonalRouteAvailability'
+import type { BilingualText } from '../types/route'
 import type { BusRoute } from '../types/route'
 import { directionIndexForLockedSlot } from './lockedUnlockCategories'
 import { compareRouteNumber } from './routeSort'
@@ -49,6 +50,7 @@ export function collectSeasonalPromotionsBelowDailyChallenge(
       listedId,
       directionIndex: directionIndexForLockedSlot(route, directionKey),
       window,
+      eventTitle: window.eventTitle,
     })
   }
 

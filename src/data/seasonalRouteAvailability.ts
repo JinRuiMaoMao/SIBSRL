@@ -1,34 +1,152 @@
-import seasonalAvailabilityJson from '../../data/seasonal-route-availability.json'
+import eventsJson from '../../data/upcoming-game-events.json'
+import {
+  getNextOccurrenceStart,
+  isMonthDayInWindow,
+  monthDayFromDate,
+  resolveOccurrenceDates,
+  resolveOccurrenceDatesFromStart,
+} from '../utils/recurringGameCalendar'
 import { getListedRouteIdsForRoute } from './routeDisplayGroups'
 import { todayHktDateString } from './dailyChallenge'
 import type { Locale } from '../i18n/types'
+import type { BilingualText } from '../types/route'
 import type { BusRoute } from '../types/route'
 
 export interface SeasonalAvailabilityWindow {
   start: string
   end?: string
   promoteBelowDailyChallenge?: boolean
+  eventId?: string
+  eventTitle?: BilingualText
 }
 
-type SeasonalAvailabilityMap = Record<string, SeasonalAvailabilityWindow[]>
-
-const availabilityMap = seasonalAvailabilityJson as unknown as SeasonalAvailabilityMap & {
-  _comment?: string
+interface FestivalRouteBinding {
+  startMonthDay: string
+  endMonthDay: string
+  displayEndMonthDay: string
+  eventId: string
+  eventTitle: BilingualText
 }
 
-function lookupWindows(routeKey: string): SeasonalAvailabilityWindow[] | undefined {
-  const direct = availabilityMap[routeKey] ?? availabilityMap[routeKey.toUpperCase()]
+interface StoredFestivalEvent {
+  id: string
+  title: BilingualText
+  start: string
+  end?: string
+  playableEnd?: string
+  detail?: {
+    routes?: Array<{ code: string }>
+  }
+}
+
+const festivalEvents = (eventsJson as { events: StoredFestivalEvent[] }).events
+
+function playableEndMonthDay(event: StoredFestivalEvent): string {
+  return event.playableEnd ?? event.end ?? event.start
+}
+
+function displayEndMonthDay(event: StoredFestivalEvent): string {
+  return event.end ?? event.start
+}
+
+function buildRouteBindings(): Map<string, FestivalRouteBinding[]> {
+  const map = new Map<string, FestivalRouteBinding[]>()
+
+  for (const event of festivalEvents) {
+    const routes = event.detail?.routes
+    if (!routes?.length) continue
+
+    const binding: FestivalRouteBinding = {
+      startMonthDay: event.start,
+      endMonthDay: playableEndMonthDay(event),
+      displayEndMonthDay: displayEndMonthDay(event),
+      eventId: event.id,
+      eventTitle: event.title,
+    }
+
+    for (const route of routes) {
+      const list = map.get(route.code) ?? []
+      list.push(binding)
+      map.set(route.code, list)
+    }
+  }
+
+  return map
+}
+
+const routeBindings = buildRouteBindings()
+
+function lookupBindings(routeKey: string): FestivalRouteBinding[] | undefined {
+  const direct = routeBindings.get(routeKey) ?? routeBindings.get(routeKey.toUpperCase())
   return direct?.length ? direct : undefined
-}
-
-function isDateInWindow(date: string, window: SeasonalAvailabilityWindow): boolean {
-  if (date < window.start) return false
-  if (window.end && date > window.end) return false
-  return true
 }
 
 function routeAvailabilityKeys(route: BusRoute): string[] {
   return [route.id, route.number, ...getListedRouteIdsForRoute(route)]
+}
+
+function bindingToActiveWindow(
+  today: string,
+  binding: FestivalRouteBinding,
+): SeasonalAvailabilityWindow | null {
+  const todayMd = monthDayFromDate(today)
+  if (!isMonthDayInWindow(todayMd, binding.startMonthDay, binding.endMonthDay)) {
+    return null
+  }
+
+  const resolved = resolveOccurrenceDates(today, binding.startMonthDay, binding.endMonthDay)
+  if (!resolved) return null
+
+  return {
+    start: resolved.start,
+    end: resolved.end,
+    eventId: binding.eventId,
+    eventTitle: binding.eventTitle,
+    promoteBelowDailyChallenge: binding.eventId === 'ft-anniversary' ? true : undefined,
+  }
+}
+
+function bindingToNextWindow(
+  today: string,
+  binding: FestivalRouteBinding,
+): SeasonalAvailabilityWindow {
+  const nextStart = getNextOccurrenceStart(today, binding.startMonthDay, binding.endMonthDay)
+  const resolved = resolveOccurrenceDatesFromStart(
+    nextStart,
+    binding.startMonthDay,
+    binding.displayEndMonthDay,
+  )
+
+  return {
+    start: resolved.start,
+    end: resolved.end,
+    eventId: binding.eventId,
+    eventTitle: binding.eventTitle,
+    promoteBelowDailyChallenge: binding.eventId === 'ft-anniversary' ? true : undefined,
+  }
+}
+
+function findBestBindingWindow(
+  route: BusRoute,
+  today: string,
+  mode: 'active' | 'next',
+): SeasonalAvailabilityWindow | null {
+  const keys = new Set<string>(routeAvailabilityKeys(route))
+  let best: SeasonalAvailabilityWindow | null = null
+
+  for (const key of keys) {
+    const bindings = lookupBindings(key)
+    if (!bindings) continue
+
+    for (const binding of bindings) {
+      const window =
+        mode === 'active' ? bindingToActiveWindow(today, binding) : bindingToNextWindow(today, binding)
+      if (!window) continue
+      if (!best || window.start < best.start) best = window
+    }
+  }
+
+  return best
 }
 
 /** 季节限定线路是否已到开放期（HKT 游戏日） */
@@ -36,22 +154,13 @@ export function isSeasonalRouteUnlocked(route: BusRoute, now = new Date()): bool
   return getSeasonalRouteActiveWindow(route, now) != null
 }
 
-/** 当前 HKT 游戏日命中的开放窗口；无 end 表示开放中且尚未公布结束日。 */
+/** 当前 HKT 游戏日命中的开放窗口。 */
 export function getSeasonalRouteActiveWindow(
   route: BusRoute,
   now = new Date(),
 ): SeasonalAvailabilityWindow | null {
-  const date = todayHktDateString(now)
-  const keys = new Set<string>(routeAvailabilityKeys(route))
-
-  for (const key of keys) {
-    const windows = lookupWindows(key)
-    if (!windows) continue
-    const active = windows.find((window) => isDateInWindow(date, window))
-    if (active) return active
-  }
-
-  return null
+  const today = todayHktDateString(now)
+  return findBestBindingWindow(route, today, 'active')
 }
 
 function addGameDays(date: string, days: number): string {
@@ -154,16 +263,10 @@ export function getSeasonalRouteDisplayWindow(
   route: BusRoute,
   now = new Date(),
 ): SeasonalAvailabilityWindow | null {
-  const active = getSeasonalRouteActiveWindow(route, now)
-  if (active) return active
-
-  const keys = new Set<string>(routeAvailabilityKeys(route))
-  for (const key of keys) {
-    const windows = lookupWindows(key)
-    if (windows?.[0]) return windows[0]
-  }
-
-  return null
+  const today = todayHktDateString(now)
+  return (
+    findBestBindingWindow(route, today, 'active') ?? findBestBindingWindow(route, today, 'next')
+  )
 }
 
 export function shouldPromoteSeasonalRouteBelowDailyChallenge(

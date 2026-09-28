@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { getPrimaryText } from '../i18n/displayText'
 import type { SeasonalAvailabilityWindow } from '../data/seasonalRouteAvailability'
-import type { BusRoute } from '../types/route'
+import type { BilingualText, BusRoute } from '../types/route'
 import {
   getDirectionDataIndex,
   getDirectionLengthKm,
@@ -21,6 +21,7 @@ interface SeasonalPromotedRouteCardProps {
   displayNumber?: string
   directionIndex: number
   window: SeasonalAvailabilityWindow
+  eventTitle?: BilingualText
   selected: boolean
   href?: string
   onNavigate?: (routeId: string) => void
@@ -31,6 +32,7 @@ export function SeasonalPromotedRouteCard({
   displayNumber,
   directionIndex,
   window,
+  eventTitle: eventTitleOverride,
   selected,
   href,
   onNavigate,
@@ -48,7 +50,8 @@ export function SeasonalPromotedRouteCard({
   const destinationStop = stopGroup?.list.length
     ? resolveStopDisplay(stopGroup.list[stopGroup.list.length - 1]!)
     : null
-  const eventTitle = route.eventTitle ? getPrimaryText(route.eventTitle, locale) : null
+  const eventTitleSource = eventTitleOverride ?? route.eventTitle
+  const eventTitle = eventTitleSource ? getPrimaryText(eventTitleSource, locale) : null
   const cardHref = href ?? getRoutePageHref(route.id)
 
   const handleCardClick = (event: MouseEvent<HTMLAnchorElement>) => {

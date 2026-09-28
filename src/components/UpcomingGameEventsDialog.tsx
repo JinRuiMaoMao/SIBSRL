@@ -107,13 +107,13 @@ function UpcomingGameEventDetailView({
           <div className="upcoming-game-events-detail-section-content">
             <p>
               {t('upcomingGameEventDateFrom', {
-                date: formatUpcomingGameEventDetailDate(event.start, locale, timeHkt),
+                date: formatUpcomingGameEventDetailDate(event.occurrenceStart, locale, timeHkt),
               })}
             </p>
-            {event.end ? (
+            {event.occurrenceEnd ? (
               <p>
                 {t('upcomingGameEventDateTo', {
-                  date: formatUpcomingGameEventDetailDate(event.end, locale, endTimeHkt),
+                  date: formatUpcomingGameEventDetailDate(event.occurrenceEnd, locale, endTimeHkt),
                 })}
               </p>
             ) : null}
