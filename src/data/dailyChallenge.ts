@@ -147,7 +147,10 @@ export function resolveDailyChallengeRouteLookup(routeCode: string): {
   if (!trimmed || isPrivateHireChallengeRoute(trimmed)) {
     return { lookupNumber: trimmed }
   }
-  const aliased = DAILY_CHALLENGE_ROUTE_ALIASES[trimmed] ?? trimmed
+  const aliased =
+    DAILY_CHALLENGE_ROUTE_ALIASES[trimmed] ??
+    DAILY_CHALLENGE_ROUTE_ALIASES[trimmed.toUpperCase()] ??
+    trimmed
   if (/^246XA$/i.test(aliased)) {
     return { lookupNumber: '246X', loopView: true }
   }
@@ -159,12 +162,18 @@ export function resolveDailyChallengeRouteLookup(routeCode: string): {
 
 export function findRouteForDailyChallenge(routeNumberOrCode: string): BusRoute | null {
   const trimmed = routeNumberOrCode.trim()
-  const aliased = DAILY_CHALLENGE_ROUTE_ALIASES[trimmed] ?? trimmed
-  if (!aliased || isPrivateHireChallengeRoute(aliased)) return null
+  if (!trimmed || isPrivateHireChallengeRoute(trimmed)) return null
+
+  const { lookupNumber } = resolveDailyChallengeRouteLookup(trimmed)
+  if (!lookupNumber) return null
+
   const display = mergeRoutesByBaseNumber(routes)
   const keys = new Set(
-    [aliased, toMergeBaseRouteNumber(aliased)].map((key) => key.trim().toLowerCase()),
+    [trimmed, lookupNumber, toMergeBaseRouteNumber(trimmed), toMergeBaseRouteNumber(lookupNumber)]
+      .map((key) => key.trim().toLowerCase())
+      .filter(Boolean),
   )
+
   return (
     display.find(
       (r) => keys.has(r.number.toLowerCase()) || keys.has(r.id.toLowerCase()),
@@ -384,8 +393,8 @@ export function buildDailyChallengeFromScheduleDay(
     loopView = resolved.loopView
     const linked = findRouteForDailyChallenge(routeNumber)
     if (linked) {
-      if (loopView) {
-        endpoints = buildLoopEndpointsFromRoute(linked) ?? buildEndpointsFromRoute(linked)
+      if (loopView || linked.pattern === 'circular') {
+        endpoints = buildLoopEndpointsFromRoute(linked) ?? buildEndpointsFromRoute(linked, directionKey)
       } else {
         endpoints = buildEndpointsFromRoute(linked, directionKey)
       }
