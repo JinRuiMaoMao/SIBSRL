@@ -4315,6 +4315,12 @@ html[data-route-lookup-layout='split'] .site-footer {
   color: var(--text-muted);
 }
 
+.upcoming-game-events-detail-date-hint {
+  margin-top: 0.35rem !important;
+  font-size: 0.68rem !important;
+  opacity: 0.75;
+}
+
 .upcoming-game-events-detail-routes {
   list-style: none;
   margin: 0;

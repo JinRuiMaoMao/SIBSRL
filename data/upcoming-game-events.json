@@ -69,7 +69,7 @@
       "title": { "zh": "除夕夜", "en": "New Year's Eve" },
       "start": "2027-01-01",
       "end": "2027-01-03",
-      "resetTime": "05:00",
+      "timeHkt": "00:00",
       "thumbnail": "lunar-new-year",
       "detail": {
         "about": {

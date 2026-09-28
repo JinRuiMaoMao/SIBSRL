@@ -32,8 +32,8 @@ export interface UpcomingGameEvent {
   title: BilingualText
   start: string
   end?: string
-  /** HKT reset time shown in detail (default 08:00). */
-  resetTime?: string
+  /** HKT instant for detail date rows (default 08:00 game-day reset). */
+  timeHkt?: string
   thumbnail: UpcomingGameEventThumbnail
   detail?: UpcomingGameEventDetail
 }
@@ -66,18 +66,43 @@ const EN_MONTH_SHORT = [
   'Dec',
 ] as const
 
-/** 节庆详情日期（默认游戏日 08:00 HKT 起算）。 */
+function hktGameInstant(date: string, timeHkt: string): Date {
+  const [hoursRaw, minutesRaw] = timeHkt.split(':')
+  const hours = Number(hoursRaw)
+  const minutes = Number(minutesRaw)
+  const hh = Number.isFinite(hours) ? String(hours).padStart(2, '0') : '08'
+  const mm = Number.isFinite(minutes) ? String(minutes).padStart(2, '0') : '00'
+  return new Date(`${date}T${hh}:${mm}:00+08:00`)
+}
+
+/** 节庆详情日期：数据为 HKT，展示时转为访客电脑本地时区（与游戏内一致）。 */
 export function formatUpcomingGameEventDetailDate(
   date: string,
   locale: Locale,
-  resetTime = '08:00',
+  timeHkt = '08:00',
 ): string {
-  const [year, month, day] = date.split('-').map(Number)
-  if (!year || !month || !day) return date
+  const instant = hktGameInstant(date, timeHkt)
+  if (Number.isNaN(instant.getTime())) return date
+
+  const time = new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'zh-Hans', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(instant)
+
   if (locale === 'en') {
-    return `${EN_MONTH_SHORT[month - 1] ?? month} ${day}, ${year} ${resetTime} HKT`
+    const month = EN_MONTH_SHORT[instant.getMonth()] ?? String(instant.getMonth() + 1)
+    return `${month} ${instant.getDate()}, ${instant.getFullYear()} ${time}`
   }
-  return `${year}年${month}月${day}日 ${resetTime}（HKT）`
+
+  const parts = new Intl.DateTimeFormat('zh-Hans', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(instant)
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? ''
+  return `${get('year')}年${get('month')}月${get('day')}日 ${time}`
 }
 
 export function getUpcomingGameEventById(id: string): UpcomingGameEvent | undefined {
