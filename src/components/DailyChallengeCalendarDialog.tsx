@@ -86,10 +86,12 @@ function CalendarDayCell({
   onSelectDay?: (day: DailyChallengeScheduleDay) => void
 }) {
   const dayRace = day ? resolveScheduleDayRace(day) : false
-  const challenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
   const plainEventChallenge =
-    day?.event && dayRace ? buildDailyChallengeFromScheduleDay({ ...day, race: false }) : null
-  const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
+    day?.event && dayRace
+      ? buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true })
+      : null
+  const eventChallenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
+  const eventLabel = eventChallenge ? getPrimaryText(eventChallenge.event, locale) : null
   const plainEventLabel = plainEventChallenge
     ? getPrimaryText(plainEventChallenge.event, locale)
     : null
@@ -350,8 +352,12 @@ export function DailyChallengeCalendarDialog({
               ) : (
                 <ul className="daily-challenge-calendar-route-search-list">
                   {routeSearchHits.map(({ date, day }) => {
-                    const challenge = day.event ? buildDailyChallengeFromScheduleDay(day) : null
-                    const eventLabel = challenge ? getPrimaryText(challenge.event, locale) : null
+                    const eventLabel = day.event
+                      ? getPrimaryText(
+                          buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true }).event,
+                          locale,
+                        )
+                      : null
                     return (
                       <li key={date}>
                         <button

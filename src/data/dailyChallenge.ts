@@ -348,8 +348,14 @@ function buildLoopEndpointsFromRoute(route: BusRoute): BilingualText | undefined
   return undefined
 }
 
+export type BuildDailyChallengeFromScheduleOptions = {
+  /** 日历等 UI：事件名不嵌 [Race] 前缀（由独立 RaceTag 展示） */
+  omitEventRacePrefix?: boolean
+}
+
 export function buildDailyChallengeFromScheduleDay(
   entry: DailyChallengeScheduleDay,
+  options?: BuildDailyChallengeFromScheduleOptions,
 ): DailyChallengeInfo {
   if (!entry.event) {
     return {
@@ -363,7 +369,7 @@ export function buildDailyChallengeFromScheduleDay(
 
   const routeCode = canonicalDailyChallengeRouteCode(entry.routeCode, entry.event) ?? entry.routeCode
   const race = resolveScheduleDayRace(entry)
-  const event = toEventLabel(entry.event, race)
+  const event = toEventLabel(entry.event, options?.omitEventRacePrefix ? false : race)
   const routeNumber = routeCode ?? undefined
   const privateHireStops = normalizePrivateHireStops(entry.privateHireStops)
   let directionKey: 'N' | 'S' | 'E' | 'W' | undefined
