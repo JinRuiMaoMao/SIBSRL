@@ -112,8 +112,44 @@
     {
       "id": "qingming",
       "title": { "zh": "清明节", "en": "Qingming Festival" },
-      "start": "2027-04-05",
-      "thumbnail": "chung-qingming"
+      "start": "2027-03-28",
+      "end": "2027-04-17",
+      "endTimeHkt": "07:00",
+      "thumbnail": "chung-qingming",
+      "detail": {
+        "aboutHighlight": { "zh": "Tomb Sweeping Day", "en": "Tomb Sweeping Day" },
+        "about": {
+          "zh": " is when families clean and decorate their ancestors' graves to show respect and remember them.\nAs a result, a shuttle service between the district center and the cemetery will be provided.",
+          "en": " is when families clean and decorate their ancestors' graves to show respect and remember them.\nAs a result, a shuttle service between the district center and the cemetery will be provided."
+        },
+        "routes": [
+          {
+            "code": "73S",
+            "endpoints": { "zh": "仙貝廣場 - 葉角灣", "en": "Senpai Shopping Centre - Leafy Bay" }
+          },
+          {
+            "code": "76S",
+            "endpoints": {
+              "zh": "安靈台靈灰安置所 - 仙貝廣場",
+              "en": "Ambling Peak Columbarium - Senpai Shopping Centre"
+            }
+          },
+          {
+            "code": "376S",
+            "endpoints": {
+              "zh": "安靈台靈灰安置所 - 長島碼頭",
+              "en": "Ambling Peak Columbarium - Long Island Ferry Pier"
+            }
+          },
+          {
+            "code": "476S",
+            "endpoints": {
+              "zh": "安靈台靈灰安置所 - 安靈台靈灰安置所",
+              "en": "Ambling Peak Columbarium - Ambling Peak Columbarium"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "ft-anniversary",

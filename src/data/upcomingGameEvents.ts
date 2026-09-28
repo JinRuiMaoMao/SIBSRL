@@ -32,8 +32,10 @@ export interface UpcomingGameEvent {
   title: BilingualText
   start: string
   end?: string
-  /** HKT instant for detail date rows (default 08:00 game-day reset). */
+  /** HKT instant for detail start row (default 08:00 game-day reset). */
   timeHkt?: string
+  /** HKT instant for detail end row (defaults to timeHkt). */
+  endTimeHkt?: string
   thumbnail: UpcomingGameEventThumbnail
   detail?: UpcomingGameEventDetail
 }

@@ -55,6 +55,7 @@ function UpcomingGameEventDetailView({
   const detail = event.detail
   const routes = detail?.routes ?? []
   const timeHkt = event.timeHkt ?? '08:00'
+  const endTimeHkt = event.endTimeHkt ?? timeHkt
   const aboutHighlight = detail?.aboutHighlight ? getPrimaryText(detail.aboutHighlight, locale) : null
   const aboutBody = detail?.about ? getPrimaryText(detail.about, locale) : null
 
@@ -112,7 +113,7 @@ function UpcomingGameEventDetailView({
             {event.end ? (
               <p>
                 {t('upcomingGameEventDateTo', {
-                  date: formatUpcomingGameEventDetailDate(event.end, locale, timeHkt),
+                  date: formatUpcomingGameEventDetailDate(event.end, locale, endTimeHkt),
                 })}
               </p>
             ) : null}
