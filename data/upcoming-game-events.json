@@ -155,8 +155,25 @@
       "id": "ft-anniversary",
       "title": { "zh": "FT 周年纪念", "en": "FT Anniversary" },
       "start": "2027-06-21",
-      "end": "2027-06-27",
-      "thumbnail": "ft-anniversary"
+      "end": "2027-06-28",
+      "timeHkt": "07:00",
+      "endTimeHkt": "07:00",
+      "thumbnail": "ft-anniversary",
+      "detail": {
+        "about": {
+          "zh": "To celebrate the FT Anniversary, a special event is taking place on the bus depot rooftop. A shuttle service will transport visitors between the entrance and the rooftop, providing a memorable ride through the bus wash and past the parked vehicles in the depot.",
+          "en": "To celebrate the FT Anniversary, a special event is taking place on the bus depot rooftop. A shuttle service will transport visitors between the entrance and the rooftop, providing a memorable ride through the bus wash and past the parked vehicles in the depot."
+        },
+        "routes": [
+          {
+            "code": "F469",
+            "endpoints": {
+              "zh": "陽光體育館 - 陽光體育館",
+              "en": "Sunshine Stadium - Sunshine Stadium"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "mid-autumn",

@@ -22,5 +22,8 @@
     { "start": "2027-01-01", "end": "2027-01-03" },
     { "start": "2027-02-06", "end": "2027-02-11" }
   ],
-  "F469": [{ "start": "2026-06-21", "end": "2026-06-27", "promoteBelowDailyChallenge": true }]
+  "F469": [
+    { "start": "2026-06-21", "end": "2026-06-27", "promoteBelowDailyChallenge": true },
+    { "start": "2027-06-21", "end": "2027-06-27", "promoteBelowDailyChallenge": true }
+  ]
 }
