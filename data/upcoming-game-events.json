@@ -46,7 +46,23 @@
       "id": "christmas-eve",
       "title": { "zh": "圣诞前夕", "en": "Christmas Eve" },
       "start": "2026-12-24",
-      "thumbnail": "lunar-new-year"
+      "end": "2026-12-27",
+      "thumbnail": "lunar-new-year",
+      "detail": {
+        "about": {
+          "zh": "During major festivals, metro will run overnight after celebrating the festival.\nAs a result, a shuttle service between the metro station to major residential areas will be provided.",
+          "en": "During major festivals, metro will run overnight after celebrating the festival.\nAs a result, a shuttle service between the metro station to major residential areas will be provided."
+        },
+        "routes": [
+          {
+            "code": "N76",
+            "endpoints": {
+              "zh": "仙貝廣場 - 仙貝廣場",
+              "en": "Senpai Shopping Centre - Senpai Shopping Centre"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "new-year-eve",
