@@ -1,8 +1,19 @@
 import eventsJson from '../../data/upcoming-game-events.json'
+import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import { todayHktDateString } from './dailyChallenge'
 import type { BilingualText } from '../types/route'
 
-export type UpcomingGameEventThumbnail = 'daytime' | 'night' | 'depot'
+export type UpcomingGameEventThumbnail = 'chung-qingming' | 'lunar-new-year' | 'ft-anniversary'
+
+const THUMBNAIL_FILES: Record<UpcomingGameEventThumbnail, string> = {
+  'chung-qingming': 'game-events/重阳清明节.png',
+  'lunar-new-year': 'game-events/新年中秋节.png',
+  'ft-anniversary': 'game-events/FT纪念.png',
+}
+
+export function getUpcomingGameEventThumbnailUrl(thumbnail: UpcomingGameEventThumbnail): string {
+  return resolveSiteAssetUrl(THUMBNAIL_FILES[thumbnail])
+}
 
 export interface UpcomingGameEvent {
   id: string

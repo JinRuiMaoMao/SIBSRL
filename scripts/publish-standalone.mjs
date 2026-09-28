@@ -458,6 +458,13 @@ export async function publishStandalone(options = {}) {
     console.log('[publish] 已复制运营商 Logo 到 company-logos/')
   }
 
+  const publicGameEvents = resolve(root, 'public', 'game-events')
+  if (existsSync(publicGameEvents)) {
+    cpSync(publicGameEvents, resolve(root, 'game-events'), { recursive: true })
+    cpSync(publicGameEvents, resolve(root, 'dist', 'game-events'), { recursive: true })
+    console.log('[publish] 已复制节庆缩略图到 game-events/')
+  }
+
   const distAssets = resolve(root, 'dist', 'assets')
   const rootAssets = resolve(root, 'assets')
   if (existsSync(distAssets)) {

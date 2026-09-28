@@ -3,6 +3,7 @@ import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import {
+  getUpcomingGameEventThumbnailUrl,
   listUpcomingGameEvents,
   type UpcomingGameEventView,
 } from '../data/upcomingGameEvents'
@@ -15,11 +16,14 @@ interface UpcomingGameEventsDialogProps {
 
 function EventThumbnail({ thumbnail }: { thumbnail: UpcomingGameEventView['thumbnail'] }) {
   return (
-    <div
-      className={`upcoming-game-events-card-thumb upcoming-game-events-card-thumb--${thumbnail}`}
-      aria-hidden
-    >
-      <span className="upcoming-game-events-card-thumb-bus">🚌</span>
+    <div className="upcoming-game-events-card-thumb" aria-hidden>
+      <img
+        className="upcoming-game-events-card-thumb-img"
+        src={getUpcomingGameEventThumbnailUrl(thumbnail)}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   )
 }
