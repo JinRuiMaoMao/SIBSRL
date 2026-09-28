@@ -50,30 +50,6 @@ function canonicalDailyChallengeRouteCode(
   return code
 }
 
-/** 日历／搜索：线路代号是否匹配用户输入（含别名，如 N246 ↔ N146A）。 */
-export function dailyChallengeRouteCodeMatchesQuery(
-  routeCode: string | null | undefined,
-  query: string,
-): boolean {
-  const code = routeCode?.trim()
-  if (!code || !query.trim()) return false
-  if (challengeRouteNumberMatchesQuery(code, query)) return true
-
-  const q = query.trim().toUpperCase()
-  const upper = code.toUpperCase()
-  for (const [aliasKey, aliasValue] of Object.entries(DAILY_CHALLENGE_ROUTE_ALIASES)) {
-    const keyUpper = aliasKey.toUpperCase()
-    const valueUpper = aliasValue.toUpperCase()
-    if (
-      (q === keyUpper || q === valueUpper) &&
-      (upper === keyUpper || upper === valueUpper)
-    ) {
-      return true
-    }
-  }
-  return false
-}
-
 export interface DailyChallengeIntro {
   body: BilingualText
   objective: BilingualText
@@ -179,6 +155,81 @@ export function findRouteForDailyChallenge(routeNumberOrCode: string): BusRoute 
       (r) => keys.has(r.number.toLowerCase()) || keys.has(r.id.toLowerCase()),
     ) ?? null
   )
+}
+
+function addRouteCodeSearchVariant(variants: Set<string>, value: string | null | undefined): void {
+  const trimmed = value?.trim()
+  if (trimmed) variants.add(trimmed.toUpperCase())
+}
+
+/** 日历搜索：同一线路的游戏内代号与本站编号（如 370AEM ↔ 270A）。 */
+function collectRouteCodeSearchVariants(
+  routeCode: string,
+  event?: string | null,
+): Set<string> {
+  const variants = new Set<string>()
+  const canonical = canonicalDailyChallengeRouteCode(routeCode, event ?? null) ?? routeCode
+  addRouteCodeSearchVariant(variants, routeCode)
+  addRouteCodeSearchVariant(variants, canonical)
+  addRouteCodeSearchVariant(variants, resolveDailyChallengeRouteLookup(canonical).lookupNumber)
+
+  const base = toMergeBaseRouteNumber(canonical)
+  addRouteCodeSearchVariant(variants, base)
+  if (DISPLAY_ONLY_RENAMES[base]) addRouteCodeSearchVariant(variants, DISPLAY_ONLY_RENAMES[base])
+  if (DISPLAY_ONLY_RENAMES[canonical]) {
+    addRouteCodeSearchVariant(variants, DISPLAY_ONLY_RENAMES[canonical])
+  }
+
+  const upper = canonical.toUpperCase()
+  for (const [alias, display] of Object.entries(DISPLAY_ONLY_RENAMES)) {
+    if (upper === alias.toUpperCase() || upper === display.toUpperCase()) {
+      addRouteCodeSearchVariant(variants, alias)
+      addRouteCodeSearchVariant(variants, display)
+    }
+  }
+  for (const [aliasKey, aliasValue] of Object.entries(DAILY_CHALLENGE_ROUTE_ALIASES)) {
+    if (upper === aliasKey.toUpperCase() || upper === aliasValue.toUpperCase()) {
+      addRouteCodeSearchVariant(variants, aliasKey)
+      addRouteCodeSearchVariant(variants, aliasValue)
+    }
+  }
+
+  return variants
+}
+
+/** 日历格子里展示的本站线路编号（如 370AEM → 270A）。 */
+export function formatDailyChallengeCalendarRouteCode(
+  routeCode: string | null | undefined,
+  event?: string | null,
+): string | null {
+  const canonical = canonicalDailyChallengeRouteCode(routeCode, event ?? null)?.trim()
+  if (!canonical) return null
+  return resolveDailyChallengeRouteLookup(canonical).lookupNumber
+}
+
+/** 日历／搜索：线路代号是否匹配用户输入（含别名，如 N246 ↔ N146A、370AEM ↔ 270A）。 */
+export function dailyChallengeRouteCodeMatchesQuery(
+  routeCode: string | null | undefined,
+  query: string,
+  event?: string | null,
+): boolean {
+  const code = routeCode?.trim()
+  if (!code || !query.trim()) return false
+  if (challengeRouteNumberMatchesQuery(code, query)) return true
+
+  const codeVariants = collectRouteCodeSearchVariants(code, event)
+  const queryVariants = collectRouteCodeSearchVariants(query.trim(), null)
+
+  for (const q of queryVariants) {
+    if (codeVariants.has(q)) return true
+  }
+
+  const qLower = query.trim().toLowerCase()
+  for (const variant of codeVariants) {
+    if (variant.toLowerCase().includes(qLower)) return true
+  }
+
+  return false
 }
 
 const EVENT_ZH: Record<string, string> = {

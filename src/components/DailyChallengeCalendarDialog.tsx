@@ -3,6 +3,7 @@ import { lockPageScroll } from '../utils/pageScrollLock'
 import {
   buildDailyChallengeFromScheduleDay,
   dailyChallengeRouteCodeMatchesQuery,
+  formatDailyChallengeCalendarRouteCode,
 } from '../data/dailyChallenge'
 import { searchDailyChallengeDaysByRoute } from '../utils/dailyChallengeCalendarSearch'
 import {
@@ -95,7 +96,7 @@ function CalendarDayCell({
   const plainEventLabel = plainEventChallenge
     ? getPrimaryText(plainEventChallenge.event, locale)
     : null
-  const routeCode = day?.routeCode?.trim() || null
+  const routeCode = formatDailyChallengeCalendarRouteCode(day?.routeCode, day?.event)
   const hasEvent = Boolean(day?.event)
   const isRaceOnly = Boolean(dayRace && !day?.event)
   const hasData = hasEvent || isRaceOnly
@@ -369,7 +370,8 @@ export function DailyChallengeCalendarDialog({
                             {formatSearchResultDate(date, locale)}
                           </span>
                           <span className="daily-challenge-calendar-route-search-meta">
-                            {day.routeCode}
+                            {formatDailyChallengeCalendarRouteCode(day.routeCode, day.event) ??
+                              day.routeCode}
                             {eventLabel ? ` · ${eventLabel}` : null}
                             {resolveScheduleDayRace(day) ? (
                               <>
@@ -488,7 +490,11 @@ export function DailyChallengeCalendarDialog({
                   isSearchMatch={
                     routeSearchActive &&
                     Boolean(cell.day?.routeCode) &&
-                    dailyChallengeRouteCodeMatchesQuery(cell.day?.routeCode, routeSearchQuery)
+                    dailyChallengeRouteCodeMatchesQuery(
+                      cell.day?.routeCode,
+                      routeSearchQuery,
+                      cell.day?.event,
+                    )
                   }
                   locale={locale}
                   emptyLabel={

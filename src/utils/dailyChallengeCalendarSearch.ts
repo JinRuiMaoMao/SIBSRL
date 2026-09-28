@@ -27,7 +27,7 @@ export function searchDailyChallengeDaysByRoute(
   const hits: DailyChallengeRouteSearchHit[] = []
   for (const day of collectScheduleDays(schedules)) {
     if (!day.routeCode?.trim()) continue
-    if (!dailyChallengeRouteCodeMatchesQuery(day.routeCode, trimmed)) continue
+    if (!dailyChallengeRouteCodeMatchesQuery(day.routeCode, trimmed, day.event)) continue
     hits.push({ date: day.date, day })
   }
 

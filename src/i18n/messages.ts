@@ -643,8 +643,9 @@ const messagesZhHans = {
   dailyChallengeCalendarNoData: '暂无数据，等待游戏内更新',
   dailyChallengeCalendarLiveNote: '已合并 Discord 机器人同步的历史日程（覆盖同日本地数据）',
   dailyChallengeCalendarRouteSearchLabel: '按线路搜索',
-  dailyChallengeCalendarRouteSearchPlaceholder: '输入线路编号，如 77XA、N246',
-  dailyChallengeCalendarRouteSearchHint: '输入线路编号可查找该路线出现过的历史日期',
+  dailyChallengeCalendarRouteSearchPlaceholder: '输入线路编号，如 270A、370AEM、N246',
+  dailyChallengeCalendarRouteSearchHint:
+    '输入本站编号或游戏内代号均可搜索（如 270A 与 370AEM 为同一线路）',
   dailyChallengeCalendarRouteSearchEmpty: '未找到包含该线路的每日挑战记录',
   headerCollapse: '收起顶部栏',
   headerExpand: '展开顶部栏',
@@ -1661,8 +1662,9 @@ const messagesEn: Record<MessageKey, string> = {
   dailyChallengeCalendarNoData: 'No data yet — waiting for in-game update',
   dailyChallengeCalendarLiveNote: 'Merged with history synced from the Discord bot (overrides local data for the same date)',
   dailyChallengeCalendarRouteSearchLabel: 'Search by route',
-  dailyChallengeCalendarRouteSearchPlaceholder: 'Route number, e.g. 77XA or N246',
-  dailyChallengeCalendarRouteSearchHint: 'Enter a route number to find dates it appeared in daily challenge history',
+  dailyChallengeCalendarRouteSearchPlaceholder: 'Route number, e.g. 270A, 370AEM, or N246',
+  dailyChallengeCalendarRouteSearchHint:
+    'Site IDs and in-game codes both work (e.g. 270A and 370AEM are the same route)',
   dailyChallengeCalendarRouteSearchEmpty: 'No daily challenge records found for this route',
   headerCollapse: 'Collapse header',
   headerExpand: 'Expand header',
