@@ -68,7 +68,7 @@ import {
 import { RealPlayableRoutesDialog } from './RealPlayableRoutesDialog'
 import { UpcomingGameEventsDialog } from './UpcomingGameEventsDialog'
 import { findDisplayRouteByQuery } from '../utils/routeMerge'
-import { RealRouteSplitHeader } from './RealRouteSplitHeader'
+import { RealRouteSelectionTop } from './RealRouteSelectionTop'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useRouteLookupStickyFade } from '../hooks/useRouteLookupStickyFade'
 import { isSearchSyntaxAtScrollTop, SEARCH_SYNTAX_EXPAND_ARM_PX, SEARCH_SYNTAX_EXPAND_TOP_PX, useSearchSyntaxScrollHide } from '../hooks/useSearchSyntaxScrollHide'
@@ -1625,13 +1625,13 @@ export function RouteLookupPage({
     <div className={`route-lookup-page${splitLayoutActive ? ' route-lookup-page--split' : ''}`}>
       {splitLayoutActive ? (
         <>
+          <RealRouteSelectionTop />
           <div className="route-split-shell">
           <aside className="route-split-sidebar" aria-label={t('routeList')}>
             <div
               ref={stickyToolbarRef}
               className={`route-split-sidebar-toolbar${stickyToolbarFade ? ' route-lookup-sticky--fade' : ''}`}
             >
-              <RealRouteSplitHeader />
               {searchToolbar}
             </div>
             <p className="route-split-route-count" aria-live="polite">

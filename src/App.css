@@ -3790,6 +3790,230 @@ html[data-route-lookup-layout='split'] .site-footer {
 .app--real-routes .route-lookup-page--split {
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.real-shell-routes-panel .app--real-routes .route-lookup-page--split {
+  box-sizing: border-box;
+  width: calc(100% - 40px);
+  max-width: calc(100% - 40px);
+  height: calc(100% - 25px);
+  max-height: calc(100% - 25px);
+  margin: 0 auto;
+  transform: translateY(-4px);
+}
+
+/* RouteSelection.Top — 40px bar with exit + title */
+.route-selection-top {
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 10px 0 0;
+  box-sizing: border-box;
+}
+
+.route-selection-exit-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  margin-left: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.route-selection-exit-btn:hover,
+.route-selection-exit-btn:focus-visible {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.route-selection-top-title {
+  margin: 0 0 0 10px;
+  padding: 0;
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app--real-routes .route-split-shell {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.app--real-routes .route-split-sidebar {
+  border-right: none;
+  background: transparent;
+}
+
+.app--real-routes .route-split-sidebar-toolbar {
+  height: 27px;
+  min-height: 27px;
+  margin-top: 5px;
+  padding: 0;
+  border-bottom: none;
+  background: transparent;
+}
+
+.app--real-routes .route-split-route-count {
+  display: none;
+}
+
+.app--real-routes .route-split-sidebar-toolbar .search-toolbar {
+  height: 27px;
+}
+
+.app--real-routes .search-toolbar--real {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  height: 27px;
+}
+
+.app--real-routes .search-toolbar--real .search-bar-wrap {
+  flex: 0 0 auto;
+  width: 200px;
+  max-width: 200px;
+}
+
+.app--real-routes .search-toolbar--real .search-bar {
+  height: 25px;
+  min-height: 25px;
+  padding: 0 0.45rem 0 0.35rem;
+  border-radius: 8px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.app--real-routes .search-toolbar--real .search-bar input {
+  height: 23px;
+  min-height: 23px;
+  padding: 0 0.25rem;
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.82rem;
+}
+
+.app--real-routes .search-toolbar--real .search-icon {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.app--real-routes .search-toolbar-actions {
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+.app--real-routes .random-route-btn--icon {
+  width: 25px;
+  min-width: 25px;
+  height: 25px;
+  min-height: 25px;
+  padding: 0;
+  border-radius: 6px;
+  border-color: rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.05);
+  color: #fff;
+}
+
+.app--real-routes .random-route-btn--icon:hover:not(:disabled) {
+  border-color: rgb(255 255 255 / 0.28);
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+}
+
+.app--real-routes .search-toolbar-actions .filter-menu-trigger {
+  width: 25px;
+  min-width: 25px;
+  height: 25px;
+  min-height: 25px;
+  padding: 0;
+  border-radius: 6px;
+}
+
+.app--real-routes .route-split-list {
+  padding: 0.35rem 0 0.5rem;
+  scrollbar-color: rgb(255 170 0) transparent;
+}
+
+.app--real-routes .route-split-list::-webkit-scrollbar-thumb {
+  background: rgb(255 170 0);
+}
+
+.app--real-routes .route-map-pane {
+  background: transparent;
+  border: 1px solid rgb(163 197 232 / 0.35);
+  border-radius: 0;
+}
+
+.app--real-routes .route-split-map-detail {
+  left: 25px;
+  right: 25px;
+  bottom: 20px;
+}
+
+.app--real-routes .route-real-panel {
+  max-height: min(52vh, 30rem);
+  border: 1px solid rgb(27 42 53 / 0.18);
+  border-radius: 8px;
+  background: #fff;
+  color: #1b2a35;
+  box-shadow:
+    0 12px 32px rgb(0 0 0 / 0.35),
+    0 0 0 1px rgb(255 255 255 / 0.04);
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+}
+
+.app--real-routes .route-real-panel-chrome {
+  border-bottom: 1px solid rgb(27 42 53 / 0.08);
+}
+
+.app--real-routes .route-real-panel-tab {
+  color: #1b2a35;
+  border-bottom-color: rgb(54 179 104);
+}
+
+.app--real-routes .route-real-panel-collapse,
+.app--real-routes .route-real-panel-close {
+  color: rgb(27 42 53 / 0.55);
+}
+
+.app--real-routes .route-real-panel-collapse:hover,
+.app--real-routes .route-real-panel-close:hover {
+  color: #1b2a35;
+  background: rgb(54 179 104 / 0.12);
+}
+
+.app--real-routes .route-real-panel-stats {
+  color: rgb(27 42 53 / 0.72);
+}
+
+.app--real-routes .route-real-panel-actions {
+  border-top: 2px solid rgb(54 179 104);
+  background: linear-gradient(180deg, rgb(54 179 104 / 0.08) 0%, rgb(54 179 104 / 0.16) 100%);
+}
+
+.app--real-routes .route-real-back-btn {
+  top: 10px;
+  left: 10px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
 }
 
 .route-split-sidebar-toolbar .search-toolbar {
@@ -9160,8 +9384,14 @@ html[data-reduce-motion='true'] .site-header-shell {
   transform: translate3d(0, 0, 0);
 }
 
+.real-shell-routes-panel {
+  padding-top: var(--real-top-hud-height, 3.35rem);
+  box-sizing: border-box;
+}
+
 .real-shell-routes-panel .app--real-routes {
-  min-height: 100dvh;
+  min-height: 0;
+  height: 100%;
 }
 
 .real-shell-home-stack[data-routes-phase='start'] .real-shell-home-start-layer {
@@ -9178,7 +9408,7 @@ html[data-reduce-motion='true'] .site-header-shell {
   pointer-events: none;
 }
 
-.real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel .route-split-back {
+.real-shell-home-stack[data-routes-phase='opening-routes'] .real-shell-routes-panel .route-selection-exit-btn {
   pointer-events: auto;
 }
 
