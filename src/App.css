@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;800;900&display=swap');
+
 @import './styles/liquidGlassTabBar.css';
 @import './styles/islandMapWidget.css';
 @import './styles/scrollReveal.css';
@@ -9113,7 +9115,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 /* Real layout — game-style start page */
 .real-shell-home-stack {
-  --real-top-hud-height: 2.85rem;
+  --real-top-hud-height: 3.35rem;
   position: relative;
   min-height: 100dvh;
   overflow: hidden;
@@ -9192,7 +9194,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-menu-btn,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-dock-btn,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-about-dock .real-start-dock-btn,
-.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-challenge,
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-changelog,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-profile-back,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-language-back {
   pointer-events: auto;
@@ -9515,7 +9517,7 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   align-items: center;
   justify-content: space-between;
   gap: 0.65rem;
-  min-height: var(--real-top-hud-height, 2.85rem);
+  min-height: var(--real-top-hud-height, 3.35rem);
   padding: 0.35rem clamp(0.45rem, 2vw, 1rem);
   box-sizing: border-box;
   pointer-events: none;
@@ -9631,6 +9633,53 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   justify-content: flex-end;
   gap: 0.32rem;
   flex-shrink: 0;
+}
+
+.real-top-hud-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.12rem;
+  margin-right: 0.25rem;
+  max-width: min(14rem, 34vw);
+}
+
+.real-top-hud-friend-boost {
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: rgb(255 255 255 / 0.82);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.real-top-hud-player-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.45rem;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 0.28rem;
+  background: rgb(0 0 0 / 0.42);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.real-top-hud-player-name {
+  max-width: 6.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.real-top-hud-player-level {
+  color: rgb(255 255 255 / 0.78);
+  font-weight: 600;
 }
 
 .real-top-hud-sunshards {
@@ -9754,7 +9803,7 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 }
 
 .app--real-hud {
-  --real-top-hud-height: 2.85rem;
+  --real-top-hud-height: 3.35rem;
   padding-top: var(--real-top-hud-height);
 }
 
@@ -9775,10 +9824,11 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   flex-direction: column;
   width: 100%;
   height: calc(var(--real-start-menu-height, 70%) * 1);
-  max-height: calc(100dvh - var(--real-top-hud-height, 2.85rem));
+  max-height: calc(100dvh - var(--real-top-hud-height, 3.35rem));
   transform: translate(-50%, -50%);
   box-sizing: border-box;
   pointer-events: none;
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
 }
 
 .real-start-menu-root > * {
@@ -9795,7 +9845,7 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 }
 
 .route-lookup-page--split .route-split-sidebar-toolbar {
-  padding-top: calc(0.55rem + var(--real-top-hud-height, 2.85rem));
+  padding-top: calc(0.55rem + var(--real-top-hud-height, 3.35rem));
 }
 
 @media (max-width: 900px) {
@@ -9903,12 +9953,11 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 
 .real-start-menu-btn {
   display: flex;
-  align-items: center;
-  gap: 0.65rem;
+  align-items: stretch;
   width: var(--real-start-button-width, 88%);
   height: 100%;
   min-height: 0;
-  padding: 0.45rem 0.75rem 0.45rem 0.65rem;
+  padding: 0;
   border: 0;
   border-radius: 8px;
   background: rgb(255 255 255 / 0.96);
@@ -9920,6 +9969,7 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   text-align: left;
   cursor: pointer;
   box-shadow: 0 10px 28px rgb(0 0 0 / 0.28);
+  overflow: hidden;
   transition:
     transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.22s ease;
@@ -9934,11 +9984,20 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 
 .real-start-menu-icon {
   display: inline-flex;
+  flex: 0 0 25%;
   align-items: center;
   justify-content: center;
-  width: 2rem;
+  min-width: 0;
   font-size: 1.35rem;
   line-height: 1;
+}
+
+.real-start-menu-label {
+  display: flex;
+  flex: 1 1 75%;
+  align-items: center;
+  min-width: 0;
+  padding-right: 0.65rem;
 }
 
 .real-start-menu-btn--green .real-start-menu-icon {
@@ -9961,6 +10020,7 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   color: #1d4ed8;
 }
 
+.real-start-menu-btn--purple .real-start-menu-icon,
 .real-start-menu-btn--purple .real-start-menu-label {
   color: #6d28d9;
 }
@@ -9984,59 +10044,108 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   max-height: 90%;
 }
 
-.real-start-challenge {
-  display: block;
-  padding: 0.85rem;
-  border: 1px solid rgb(255 255 255 / 0.82);
+.real-start-changelog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 12rem;
+  max-height: 100%;
+  border: 1px solid rgb(255 255 255 / 0.72);
   border-radius: 0.35rem;
-  background: rgb(15 23 42 / 0.72);
-  color: inherit;
-  text-decoration: none;
+  overflow: hidden;
+  background: rgb(15 23 42 / 0.55);
   box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
   backdrop-filter: blur(8px);
-  transition: transform 0.18s ease, border-color 0.18s ease;
-  transform-origin: center;
 }
 
-.real-start-challenge:hover,
-.real-start-challenge:focus-visible {
-  transform: scale(1.03);
-  border-color: #f5b942;
-}
-
-.real-start-challenge-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-bottom: 0.75rem;
-}
-
-.real-start-challenge-thumb {
+.real-start-changelog-title {
+  flex: 0 0 12.2%;
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 4 / 3;
-  border-radius: 0.2rem;
-  background: rgb(30 41 59 / 0.85);
-  color: rgb(248 250 252 / 0.92);
-  font-size: clamp(1rem, 2.4vw, 1.35rem);
+  margin: 0;
+  padding: 0 0.5rem;
+  background: rgb(15 23 42 / 0.82);
+  color: rgb(248 250 252 / 0.95);
+  font-size: clamp(0.78rem, 1.6vh, 0.92rem);
   font-weight: 800;
+  text-align: center;
 }
 
-.real-start-challenge-copy {
-  margin: 0 0 0.55rem;
-  font-size: clamp(0.92rem, 1.8vw, 1.05rem);
-  line-height: 1.45;
+.real-start-changelog-thumb {
+  flex: 0 0 61%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  min-height: 0;
+  padding: 0.65rem 0.75rem;
+  border: 0;
+  background: linear-gradient(180deg, #193242 0%, #122636 100%);
+  color: rgb(248 250 252 / 0.95);
+  text-align: center;
+  cursor: pointer;
+  transition: filter 0.18s ease, transform 0.18s ease;
+  transform-origin: center;
+}
+
+.real-start-changelog-thumb:hover,
+.real-start-changelog-thumb:focus-visible {
+  filter: brightness(1.08);
+  transform: scale(1.02);
+  outline: none;
+}
+
+.real-start-changelog-thumb-ver {
+  font-size: clamp(1.15rem, 2.4vh, 1.55rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #f5b942;
+  text-shadow: 0 0 12px rgb(245 185 66 / 0.35);
+}
+
+.real-start-changelog-thumb-date {
+  font-size: clamp(0.72rem, 1.4vh, 0.82rem);
+  font-weight: 600;
+  color: rgb(226 232 240 / 0.88);
+}
+
+.real-start-changelog-thumb-caption {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  max-width: 100%;
+  font-size: clamp(0.78rem, 1.5vh, 0.88rem);
   font-weight: 700;
+  line-height: 1.35;
+  color: rgb(248 250 252 / 0.92);
 }
 
-.real-start-challenge-date {
+.real-start-changelog-enter {
+  flex: 0 0 12.2%;
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  margin: 0;
-  font-size: 0.82rem;
-  color: rgb(226 232 240 / 0.82);
+  justify-content: center;
+  width: 100%;
+  padding: 0 0.5rem;
+  background: #162b39;
+  color: rgb(226 232 240 / 0.92);
+  font-size: clamp(0.68rem, 1.3vh, 0.78rem);
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.real-start-changelog-enter:hover,
+.real-start-changelog-enter:focus-visible {
+  background: #1c3547;
+  color: #fff;
+  outline: none;
 }
 
 .real-start-dock {
@@ -10172,8 +10281,8 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 
 html[data-reduce-motion='true'] .real-start-menu-btn:hover,
 html[data-reduce-motion='true'] .real-start-menu-btn:focus-visible,
-html[data-reduce-motion='true'] .real-start-challenge:hover,
-html[data-reduce-motion='true'] .real-start-challenge:focus-visible,
+html[data-reduce-motion='true'] .real-start-changelog-thumb:hover,
+html[data-reduce-motion='true'] .real-start-changelog-thumb:focus-visible,
 html[data-reduce-motion='true'] .real-start-dock-btn:hover .real-start-dock-icon,
 html[data-reduce-motion='true'] .real-start-dock-btn:focus-visible .real-start-dock-icon,
 html[data-reduce-motion='true'] .real-language-option:hover {

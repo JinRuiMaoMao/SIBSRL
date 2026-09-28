@@ -37,8 +37,14 @@ export const REAL_START_MENU_LAYOUT = {
   /** PlayBtn Title TextColor3 ≈ rgb(85, 170, 0) */
   playTextRgb: 'rgb(85 170 0)',
   serverTextRgb: 'rgb(85 170 0)',
-  profileTextRgb: 'rgb(37 99 235)',
+  profileTextRgb: 'rgb(109 40 217)',
   languageTextRgb: 'rgb(109 40 217)',
+  /** ChangeLog.R panel (visible by default in game StartMenu). */
+  changeLogTitleHeightScale: 0.122,
+  changeLogThumbHeightScale: 0.61,
+  changeLogEnterHeightScale: 0.122,
+  changeLogThumbBg: '#193242',
+  changeLogEnterBg: '#162b39',
 } as const
 
 export function computeRealStartMenuUiScale(menuHeightPx: number): number {

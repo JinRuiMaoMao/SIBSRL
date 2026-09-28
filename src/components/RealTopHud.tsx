@@ -54,6 +54,8 @@ function InviteGlyph() {
   )
 }
 
+const DEMO_PLAYER_NAME = 'Guest'
+
 export function RealTopHud({ className }: { className?: string }) {
   const { locale, t } = useLocale()
   const balance = useRealSunshardsBalance()
@@ -62,6 +64,10 @@ export function RealTopHud({ className }: { className?: string }) {
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
   const xpDenominator = xpMax > 0 ? xpMax : Math.max(xpCurrent, 1)
   const xpRatio = xpMax > 0 ? Math.min(1, xpCurrent / xpMax) : 0
+  const friendCount = 0
+  const friendBoostPercent = 0
+  const friendBonusPerFriend = 10
+  const displayLevel = level > 0 ? level.toLocaleString() : '—'
 
   useEffect(() => {
     const onHudAction = (event: Event) => {
@@ -103,6 +109,20 @@ export function RealTopHud({ className }: { className?: string }) {
         </div>
 
         <div className="real-top-hud-right">
+          <div className="real-top-hud-meta">
+            <p className="real-top-hud-friend-boost">
+              {t('realTopHudFriendBoost', {
+                percent: friendBoostPercent,
+                bonus: friendBonusPerFriend,
+                count: friendCount,
+              })}
+            </p>
+            <div className="real-top-hud-player-card">
+              <span className="real-top-hud-player-name">{DEMO_PLAYER_NAME}</span>
+              <span className="real-top-hud-player-level">{t('realTopHudPlayerLevel', { level: displayLevel })}</span>
+            </div>
+          </div>
+
           <div className="real-top-hud-sunshards" aria-label={t('realSunshardsBalanceAria', { count: balance })}>
             <span className="real-top-hud-sunshards-icon-wrap">
               <SunshardIcon className="real-top-hud-sunshards-icon" size={16} />
