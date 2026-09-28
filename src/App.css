@@ -9191,6 +9191,7 @@ html[data-reduce-motion='true'] .site-header-shell {
 
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-menu-btn,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-dock-btn,
+.real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-about-dock .real-start-dock-btn,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-start-challenge,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-profile-back,
 .real-shell-home-stack[data-routes-phase='closing-routes'] .real-shell-home-start-layer .real-language-back {
@@ -9757,15 +9758,36 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   padding-top: var(--real-top-hud-height);
 }
 
-.real-start-shell {
+.real-start-frontpage {
   position: relative;
   z-index: 1;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   min-height: 100dvh;
-  padding: calc(var(--real-top-hud-height, 2.85rem) + clamp(0.35rem, 1vh, 0.75rem))
-    clamp(1rem, 3vw, 2.5rem) clamp(1.25rem, 2vw, 1.75rem);
+  padding:
+    calc(var(--real-top-hud-height, 2.85rem) + clamp(0.35rem, 1vh, 0.75rem))
+    clamp(0.75rem, 2vw, 1.5rem)
+    clamp(5.5rem, 12vh, 7rem);
   box-sizing: border-box;
+}
+
+.real-start-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 900px);
+  aspect-ratio: 16 / 9;
+  max-height: min(650px, calc(100dvh - var(--real-top-hud-height, 2.85rem) - 6rem));
+  padding: clamp(0.65rem, 1.6vw, 1rem) clamp(0.75rem, 2vw, 1.25rem) clamp(0.75rem, 1.8vw, 1rem);
+  box-sizing: border-box;
+  border: 1px solid rgb(255 255 255 / 0.82);
+  border-radius: 0.35rem;
+  background: rgb(5 7 13 / 0.72);
+  box-shadow: 0 20px 56px rgb(0 0 0 / 0.42);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
 }
 
 .route-lookup-page--split .route-split-sidebar-toolbar {
@@ -9802,10 +9824,12 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 
 .real-start-brand {
   display: flex;
+  flex: 0 0 32%;
   flex-direction: column;
   align-items: center;
-  gap: 0.65rem;
-  margin-top: clamp(0.25rem, 2vh, 1.25rem);
+  justify-content: center;
+  gap: clamp(0.35rem, 1.2vh, 0.65rem);
+  min-height: 0;
   text-align: center;
 }
 
@@ -9831,33 +9855,49 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 
 .real-start-body {
   flex: 1;
-  display: grid;
-  grid-template-columns: minmax(15rem, 22rem) minmax(16rem, 24rem);
+  display: flex;
+  align-items: stretch;
   justify-content: center;
-  align-content: center;
-  gap: clamp(1.25rem, 4vw, 3rem);
-  width: min(100%, 56rem);
-  margin: clamp(1rem, 3vh, 2rem) auto 0;
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+  min-height: 0;
+  margin-top: clamp(0.15rem, 0.8vh, 0.45rem);
+}
+
+.real-start-menu {
+  display: flex;
+  flex: 0 0 32%;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 32%;
 }
 
 .real-start-menu-list {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.625rem;
   margin: 0;
   padding: 0;
   list-style: none;
+  min-height: 0;
+}
+
+.real-start-menu-list > li {
+  flex: 1 1 20%;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
 }
 
 .real-start-menu-btn {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  width: 100%;
-  min-height: 3.35rem;
-  padding: 0.65rem 1rem 0.65rem 0.85rem;
+  gap: 0.65rem;
+  width: 88%;
+  min-height: 0;
+  padding: 0.45rem 0.75rem 0.45rem 0.65rem;
   border: 0;
-  border-radius: 0.55rem;
+  border-radius: 0.5rem;
   background: rgb(255 255 255 / 0.96);
   color: #111827;
   text-decoration: none;
@@ -9913,15 +9953,19 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 }
 
 .real-start-version {
-  margin: 0.85rem 0 0;
-  padding-left: 0.35rem;
-  font-size: 0.82rem;
+  flex-shrink: 0;
+  margin: 0.35rem 0 0;
+  padding-left: 0.2rem;
+  font-size: clamp(0.68rem, 1.4vw, 0.82rem);
   color: rgb(226 232 240 / 0.72);
   font-variant-numeric: tabular-nums;
 }
 
 .real-start-featured {
+  flex: 0 0 35%;
+  max-width: 35%;
   align-self: center;
+  min-width: 0;
 }
 
 .real-start-challenge {
@@ -9980,12 +10024,30 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 }
 
 .real-start-dock {
-  position: absolute;
-  right: clamp(0.75rem, 2vw, 1.5rem);
-  bottom: clamp(0.75rem, 2vh, 1.25rem);
+  position: fixed;
+  right: clamp(0.75rem, 2vw, 4.5rem);
+  bottom: clamp(0.75rem, 2vh, 4.5rem);
+  z-index: 2;
+}
+
+.real-start-about-dock {
+  position: fixed;
+  left: clamp(0.75rem, 2vw, 4.5rem);
+  bottom: clamp(0.75rem, 2vh, 4.5rem);
+  z-index: 2;
 }
 
 .real-start-dock-list {
+  display: grid;
+  grid-template-columns: repeat(2, 3.75rem);
+  grid-auto-rows: 2.75rem;
+  gap: 0.95rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.real-start-about-dock-list {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
@@ -9998,16 +10060,16 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
-  width: 4.1rem;
+  gap: 0.15rem;
+  width: 3.75rem;
   padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
   text-decoration: none;
   font: inherit;
-  font-size: 0.72rem;
-  line-height: 1.2;
+  font-size: 0.62rem;
+  line-height: 1.15;
   cursor: pointer;
 }
 
@@ -10020,15 +10082,21 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.65rem;
-  height: 2.65rem;
+  width: 2.8125rem;
+  height: 2.8125rem;
   border: 1px solid rgb(255 255 255 / 0.72);
   border-radius: 999px;
   background: rgb(15 23 42 / 0.55);
-  font-size: 1.1rem;
+  font-size: 1rem;
   backdrop-filter: blur(6px);
   transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
   transform-origin: center;
+}
+
+.real-start-dock-btn--active .real-start-dock-icon {
+  border-color: #55aaff;
+  background: rgb(20 36 58 / 0.82);
+  box-shadow: 0 0 12px rgb(85 170 255 / 0.35);
 }
 
 .real-start-dock-btn:hover .real-start-dock-icon,
@@ -10044,25 +10112,58 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 }
 
 @media (max-width: 860px) {
+  .real-start-frontpage {
+    padding-bottom: clamp(6.5rem, 14vh, 8rem);
+  }
+
+  .real-start-shell {
+    width: min(100%, 36rem);
+    max-height: min(650px, calc(100dvh - var(--real-top-hud-height, 2.85rem) - 7rem));
+  }
+
   .real-start-body {
-    grid-template-columns: minmax(0, 1fr);
-    width: min(100%, 24rem);
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .real-start-menu,
+  .real-start-featured {
+    flex-basis: auto;
+    max-width: min(100%, 20rem);
+    width: 100%;
   }
 
   .real-start-featured {
     order: -1;
   }
 
-  .real-start-dock {
-    position: static;
-    margin-top: 1.25rem;
+  .real-start-menu-list > li {
+    flex-basis: auto;
+  }
+
+  .real-start-menu-btn {
+    width: 100%;
+    min-height: 2.85rem;
+  }
+
+  .real-start-dock,
+  .real-start-about-dock {
+    position: fixed;
   }
 
   .real-start-dock-list {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.85rem 1rem;
+    grid-template-columns: repeat(2, 3.35rem);
+    grid-auto-rows: 2.5rem;
+    gap: 0.75rem;
+  }
+
+  .real-start-dock-btn {
+    width: 3.35rem;
+  }
+
+  .real-start-dock-icon {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 
