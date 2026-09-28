@@ -1,4 +1,15 @@
-import { useCallback, useEffect, useMemo, useState, type AnimationEvent, type MouseEvent } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type AnimationEvent,
+  type CSSProperties,
+  type MouseEvent,
+} from 'react'
+import { REAL_START_MENU_LAYOUT } from '../data/realStartMenuLayout'
+import { useRealStartMenuScale } from '../hooks/useRealStartMenuScale'
 import { getTodaysDailyChallenge, type DailyChallengeInfo } from '../data/dailyChallenge'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { getSiteLogoUrl } from '../data/siteBrand'
@@ -122,6 +133,26 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   })
   const [languagePhase, setLanguagePhase] = useState<OverlayViewPhase>('closed')
   const [aboutSubmenuOpen, setAboutSubmenuOpen] = useState(false)
+  const menuRootRef = useRef<HTMLDivElement>(null)
+  const { uiScale } = useRealStartMenuScale(menuRootRef)
+  const layoutVars = useMemo(
+    () =>
+      ({
+        '--real-start-ui-scale': String(uiScale),
+        '--real-start-menu-height': `${REAL_START_MENU_LAYOUT.menuHeightScale * 100}%`,
+        '--real-start-top-height': `${REAL_START_MENU_LAYOUT.topHeightScale * 100}%`,
+        '--real-start-main-height': `${REAL_START_MENU_LAYOUT.mainHeightScale * 100}%`,
+        '--real-start-left-width': `${REAL_START_MENU_LAYOUT.leftColumnWidthScale * 100}%`,
+        '--real-start-right-width': `${REAL_START_MENU_LAYOUT.rightColumnWidthScale * 100}%`,
+        '--real-start-button-width': `${REAL_START_MENU_LAYOUT.buttonWidthScale * 100}%`,
+        '--real-start-button-height': `${REAL_START_MENU_LAYOUT.buttonHeightScale * 100}%`,
+        '--real-start-version-height': `${REAL_START_MENU_LAYOUT.versionHeightScale * 100}%`,
+        '--real-start-rb-inset': `${REAL_START_MENU_LAYOUT.menuRbInsetPx}px`,
+        '--real-start-about-offset-x': `${REAL_START_MENU_LAYOUT.aboutButtonsOffsetPx.x}px`,
+        '--real-start-about-offset-y': `${REAL_START_MENU_LAYOUT.aboutButtonsOffsetPx.y}px`,
+      }) as CSSProperties,
+    [uiScale],
+  )
   const languageMounted = languagePhase !== 'closed'
   const overlayActive = languagePhase !== 'closed'
   const challenge = useMemo(() => getTodaysDailyChallenge(), [])
@@ -267,8 +298,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
         <div
           className={`real-start-panel${bootReady ? ' real-start-page--ready' : ' real-start-page--booting'}`}
         >
-      <div className="real-start-frontpage">
-        <div className="real-start-shell">
+      <div className="real-start-stage" style={layoutVars}>
+        <div ref={menuRootRef} className="real-start-menu-root">
           <header className="real-start-brand">
             <img className="real-start-logo" src={getSiteLogoUrl()} alt="" width={88} height={88} decoding="async" />
             <h1 className="real-start-title">
@@ -313,15 +344,17 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
                   </li>
                 ))}
               </ul>
-              <p className="real-start-version">{t('realStartVersionLabel', { version: buildLabel })}</p>
             </nav>
 
             <aside className="real-start-featured" aria-label={t('dailyChallengeToday')}>
               <RealStartDailyChallengeCard challenge={challenge} onOpenRoutes={openRoutes} />
             </aside>
           </div>
+
+          <p className="real-start-version">{t('realStartVersionLabel', { version: buildLabel })}</p>
         </div>
 
+        <div className="real-start-menu-rb">
         <nav className="real-start-dock" aria-label={t('startPageCommunityLinks')}>
           <ul className="real-start-dock-list">
             {mainDockItems.map((item) => (
@@ -388,6 +421,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
             </ul>
           </nav>
         ) : null}
+        </div>
       </div>
       </div>
       </div>
