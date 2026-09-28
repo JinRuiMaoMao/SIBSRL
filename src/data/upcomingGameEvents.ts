@@ -1,12 +1,9 @@
 import eventsJson from '../../data/upcoming-game-events.json'
 import { resolveSiteAssetUrl } from '../utils/appLayoutMode'
 import {
-  getNextOccurrenceStart,
-  isMonthDayInWindow,
-  monthDayFromDate,
-  resolveOccurrenceDates,
-  resolveOccurrenceDatesFromStart,
-} from '../utils/recurringGameCalendar'
+  type GameFestivalId,
+  resolveGameFestivalOccurrence,
+} from '../utils/gameFestivalCalendar'
 import type { Locale } from '../i18n/types'
 import { todayHktDateString } from './dailyChallenge'
 import type { BilingualText } from '../types/route'
@@ -36,13 +33,8 @@ export interface UpcomingGameEventDetail {
 
 export interface UpcomingGameEvent {
   id: string
+  gameFestivalId: GameFestivalId
   title: BilingualText
-  /** Annual start (MM-DD). */
-  start: string
-  /** Annual display end (MM-DD). */
-  end?: string
-  /** Last playable game day (MM-DD); defaults to end. */
-  playableEnd?: string
   /** HKT instant for detail start row (default 08:00 game-day reset). */
   timeHkt?: string
   /** HKT instant for detail end row (defaults to timeHkt). */
@@ -81,14 +73,6 @@ const EN_MONTH_SHORT = [
   'Nov',
   'Dec',
 ] as const
-
-function playableEndMonthDay(event: UpcomingGameEvent): string {
-  return event.playableEnd ?? event.end ?? event.start
-}
-
-function displayEndMonthDay(event: UpcomingGameEvent): string {
-  return event.end ?? event.start
-}
 
 function hktGameInstant(date: string, timeHkt: string): Date {
   const [hoursRaw, minutesRaw] = timeHkt.split(':')
@@ -143,27 +127,11 @@ function resolveEventOccurrence(
   event: UpcomingGameEvent,
   today: string,
 ): { occurrenceStart: string; occurrenceEnd?: string; active: boolean } {
-  const playableEnd = playableEndMonthDay(event)
-  const displayEnd = displayEndMonthDay(event)
-  const todayMd = monthDayFromDate(today)
-  const active = isMonthDayInWindow(todayMd, event.start, playableEnd)
-
-  if (active) {
-    const playable = resolveOccurrenceDates(today, event.start, playableEnd)!
-    const display = resolveOccurrenceDates(today, event.start, displayEnd)!
-    return {
-      occurrenceStart: playable.start,
-      occurrenceEnd: display.end,
-      active: true,
-    }
-  }
-
-  const nextStart = getNextOccurrenceStart(today, event.start, playableEnd)
-  const display = resolveOccurrenceDatesFromStart(nextStart, event.start, displayEnd)
+  const resolved = resolveGameFestivalOccurrence(event.gameFestivalId, today)
   return {
-    occurrenceStart: nextStart,
-    occurrenceEnd: display.end,
-    active: false,
+    occurrenceStart: resolved.start,
+    occurrenceEnd: resolved.end,
+    active: resolved.active,
   }
 }
 

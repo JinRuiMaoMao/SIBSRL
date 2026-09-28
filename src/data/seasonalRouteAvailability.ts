@@ -1,11 +1,8 @@
 import eventsJson from '../../data/upcoming-game-events.json'
 import {
-  getNextOccurrenceStart,
-  isMonthDayInWindow,
-  monthDayFromDate,
-  resolveOccurrenceDates,
-  resolveOccurrenceDatesFromStart,
-} from '../utils/recurringGameCalendar'
+  type GameFestivalId,
+  resolveGameFestivalOccurrence,
+} from '../utils/gameFestivalCalendar'
 import { getListedRouteIdsForRoute } from './routeDisplayGroups'
 import { todayHktDateString } from './dailyChallenge'
 import type { Locale } from '../i18n/types'
@@ -21,33 +18,21 @@ export interface SeasonalAvailabilityWindow {
 }
 
 interface FestivalRouteBinding {
-  startMonthDay: string
-  endMonthDay: string
-  displayEndMonthDay: string
+  gameFestivalId: GameFestivalId
   eventId: string
   eventTitle: BilingualText
 }
 
 interface StoredFestivalEvent {
   id: string
+  gameFestivalId: GameFestivalId
   title: BilingualText
-  start: string
-  end?: string
-  playableEnd?: string
   detail?: {
     routes?: Array<{ code: string }>
   }
 }
 
 const festivalEvents = (eventsJson as { events: StoredFestivalEvent[] }).events
-
-function playableEndMonthDay(event: StoredFestivalEvent): string {
-  return event.playableEnd ?? event.end ?? event.start
-}
-
-function displayEndMonthDay(event: StoredFestivalEvent): string {
-  return event.end ?? event.start
-}
 
 function buildRouteBindings(): Map<string, FestivalRouteBinding[]> {
   const map = new Map<string, FestivalRouteBinding[]>()
@@ -57,9 +42,7 @@ function buildRouteBindings(): Map<string, FestivalRouteBinding[]> {
     if (!routes?.length) continue
 
     const binding: FestivalRouteBinding = {
-      startMonthDay: event.start,
-      endMonthDay: playableEndMonthDay(event),
-      displayEndMonthDay: displayEndMonthDay(event),
+      gameFestivalId: event.gameFestivalId,
       eventId: event.id,
       eventTitle: event.title,
     }
@@ -89,13 +72,8 @@ function bindingToActiveWindow(
   today: string,
   binding: FestivalRouteBinding,
 ): SeasonalAvailabilityWindow | null {
-  const todayMd = monthDayFromDate(today)
-  if (!isMonthDayInWindow(todayMd, binding.startMonthDay, binding.endMonthDay)) {
-    return null
-  }
-
-  const resolved = resolveOccurrenceDates(today, binding.startMonthDay, binding.endMonthDay)
-  if (!resolved) return null
+  const resolved = resolveGameFestivalOccurrence(binding.gameFestivalId, today)
+  if (!resolved.active) return null
 
   return {
     start: resolved.start,
@@ -110,12 +88,7 @@ function bindingToNextWindow(
   today: string,
   binding: FestivalRouteBinding,
 ): SeasonalAvailabilityWindow {
-  const nextStart = getNextOccurrenceStart(today, binding.startMonthDay, binding.endMonthDay)
-  const resolved = resolveOccurrenceDatesFromStart(
-    nextStart,
-    binding.startMonthDay,
-    binding.displayEndMonthDay,
-  )
+  const resolved = resolveGameFestivalOccurrence(binding.gameFestivalId, today)
 
   return {
     start: resolved.start,
