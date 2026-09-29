@@ -41,3 +41,7 @@ export function realProfileImageUrl(key: keyof typeof REAL_PROFILE_IMAGE_FILES):
   if (!rel) return null
   return localAssetUrl(rel)
 }
+
+export function realProfileUiImageUrl(key: keyof typeof REAL_PROFILE_IMAGE_FILES): string | null {
+  return realProfileImageUrl(key)
+}

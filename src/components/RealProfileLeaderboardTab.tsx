@@ -7,15 +7,15 @@ export function RealProfileLeaderboardTab() {
 
   return (
     <div className="real-profile-leaderboard-tab">
-      <p className="real-profile-tab-lead">{t('realProfileLeaderboardLead')}</p>
       <div className="real-profile-leaderboard-panels">
         {REAL_PROFILE_LEADERBOARD_PANELS.map((panel) => (
           <section key={panel.id} className="real-profile-leaderboard-panel">
             <header className="real-profile-leaderboard-head">
-              <h3 className="real-profile-leaderboard-title">{t(panel.titleKey)}</h3>
+              <h3 className="real-profile-leaderboard-title">{t('realProfileLeaderboardPanelTitle')}</h3>
+              <p className="real-profile-leaderboard-subtitle">{t(panel.titleKey)}</p>
               <time className="real-profile-leaderboard-updated">{panel.updatedLabel}</time>
             </header>
-            <ol className="real-profile-leaderboard-list sibs-scrollbar">
+            <ol className="real-profile-leaderboard-list sibs-scrollbar real-profile-leaderboard-scroll">
               {panel.rows.map((row) => (
                 <li key={`${panel.id}-${row.rank}`} className="real-profile-leaderboard-row">
                   <span className="real-profile-leaderboard-rank">{row.rank}</span>

@@ -26,6 +26,17 @@ const SHOP_ASSETS = {
 
 const PROFILE_ASSETS = {
   chalkboard: 9140355801,
+  tabStats: 6034925606,
+  tabTitle: 6035173865,
+  tabIcon: 6035202069,
+  tabLeaderboard: 6026568216,
+  tabAchievements: 12974243184,
+  exitChevron: 6031091008,
+  statsPaper: 5205209020,
+  licenseSun: 5375093642,
+  statsZoom: 6031154871,
+  newBadge: 534274092,
+  titleUnlockIcon: 6026660063,
 }
 
 async function fetchJson(url) {

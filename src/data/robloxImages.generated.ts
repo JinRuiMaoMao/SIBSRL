@@ -37,4 +37,15 @@ export const REAL_SHOP_IMAGE_FILES = {
 
 export const REAL_PROFILE_IMAGE_FILES = {
   chalkboard: 'real-profile/9140355801.png',
+  tabStats: 'real-profile/6034925606.png',
+  tabTitle: 'real-profile/6035173865.png',
+  tabIcon: 'real-profile/6035202069.png',
+  tabLeaderboard: 'real-profile/6026568216.png',
+  tabAchievements: 'real-profile/12974243184.png',
+  exitChevron: 'real-profile/6031091008.png',
+  statsPaper: 'real-profile/5205209020.png',
+  licenseSun: 'real-profile/5375093642.png',
+  statsZoom: 'real-profile/6031154871.png',
+  newBadge: 'real-profile/534274092.png',
+  titleUnlockIcon: 'real-profile/6026660063.png',
 } as const

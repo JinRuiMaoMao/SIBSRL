@@ -1,4 +1,8 @@
-import { REAL_PROFILE_ACHIEVEMENTS } from '../data/realProfileAchievements'
+import { useState } from 'react'
+import {
+  REAL_PROFILE_ACHIEVEMENT_PAGE_COUNT,
+  REAL_PROFILE_ACHIEVEMENTS,
+} from '../data/realProfileAchievements'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 
@@ -14,12 +18,13 @@ function achievementStateLabel(
 
 export function RealProfileAchievementsTab() {
   const { locale, t } = useLocale()
+  const [page, setPage] = useState(1)
+  const entries = REAL_PROFILE_ACHIEVEMENTS.filter((entry) => entry.page === page)
 
   return (
-    <div className="real-profile-achievements-tab sibs-scrollbar">
-      <p className="real-profile-tab-lead">{t('realProfileAchievementsLead')}</p>
-      <ul className="real-profile-achievements-list">
-        {REAL_PROFILE_ACHIEVEMENTS.map((entry) => {
+    <div className="real-profile-achievements-tab">
+      <ul className="real-profile-achievements-list sibs-scrollbar">
+        {entries.map((entry) => {
           const progressRatio =
             entry.target && entry.target > 0 && entry.progress != null
               ? Math.min(1, entry.progress / entry.target)
@@ -55,6 +60,25 @@ export function RealProfileAchievementsTab() {
           )
         })}
       </ul>
+
+      <div className="real-profile-achievement-pages" role="tablist" aria-label={t('realProfileAchievementsPages')}>
+        {Array.from({ length: REAL_PROFILE_ACHIEVEMENT_PAGE_COUNT }, (_, index) => {
+          const pageNumber = index + 1
+          const active = pageNumber === page
+          return (
+            <button
+              key={pageNumber}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              className={`real-profile-achievement-page-dot${active ? ' real-profile-achievement-page-dot--active' : ''}`}
+              onClick={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
