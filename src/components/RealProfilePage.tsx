@@ -13,6 +13,7 @@ import { RealProfileIconsTab } from './RealProfileIconsTab'
 import { RealProfileLeaderboardTab } from './RealProfileLeaderboardTab'
 import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
 import { RealProfileTitleTab } from './RealProfileTitleTab'
+import { realProfileImageUrl } from '../utils/robloxImageUrl'
 
 type RealProfileTabId = RealProfileHudTab
 
@@ -104,7 +105,16 @@ export function RealProfilePage({
           </header>
 
           <div className="real-profile-chalkboard-wrap">
-            <div className="real-profile-chalkboard">
+            <div
+              className="real-profile-chalkboard"
+              style={
+                chalkboardBg
+                  ? {
+                      backgroundImage: `linear-gradient(145deg, rgb(255 255 255 / 0.04), transparent 38%), url(${chalkboardBg})`,
+                    }
+                  : undefined
+              }
+            >
               <nav className="real-profile-tabs" aria-label={t('realProfilePageTitle')}>
                 <ul className="real-profile-tabs-list">
                   {PROFILE_TABS.map((tab) => (

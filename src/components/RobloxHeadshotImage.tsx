@@ -1,9 +1,5 @@
-import { useEffect, useState } from 'react'
-import {
-  getCachedRobloxHeadshot,
-  robloxLegacyHeadshotUrl,
-  subscribeRobloxHeadshotBatch,
-} from '../utils/robloxThumbnail'
+import { useState } from 'react'
+import { robloxHeadshotAssetUrl } from '../utils/robloxImageUrl'
 
 export function RobloxHeadshotImage({
   userId,
@@ -16,17 +12,9 @@ export function RobloxHeadshotImage({
   className?: string
   size?: number
 }) {
-  const [, setTick] = useState(0)
-  const cached = getCachedRobloxHeadshot(userId)
   const [failed, setFailed] = useState(false)
   const initial = displayName.slice(0, 1).toUpperCase() || '?'
-
-  useEffect(() => {
-    setFailed(false)
-    return subscribeRobloxHeadshotBatch([userId], () => setTick((n) => n + 1))
-  }, [userId])
-
-  const src = failed ? null : (cached ?? robloxLegacyHeadshotUrl(userId, Math.max(size, 150)))
+  const src = failed ? null : robloxHeadshotAssetUrl(userId)
 
   if (!src || failed) {
     return (

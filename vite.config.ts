@@ -20,6 +20,8 @@ import { buildRouteMapsManifest } from './scripts/build-route-maps-manifest.mjs'
 import { buildStopNameAudioManifest } from './scripts/build-stop-name-audio-manifest.mjs'
 // @ts-expect-error build helper is plain .mjs without types
 import { buildNpcManifest } from './scripts/build-npc-manifest.mjs'
+// @ts-expect-error build helper is plain .mjs without types
+import { syncRobloxImages } from './scripts/sync-roblox-images.mjs'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
 const routePagesCacheFile = resolve(root, '.cache/route-pages-data.json')
@@ -38,6 +40,26 @@ async function writeRoutePagesManifest(outFile: string) {
   mkdirSync(dirname(outFile), { recursive: true })
   writeFileSync(outFile, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
   return manifest
+}
+
+function robloxImagesPlugin(): Plugin {
+  return {
+    name: 'roblox-images',
+    apply: 'build',
+    async buildStart() {
+      await syncRobloxImages()
+    },
+  }
+}
+
+function robloxImagesDevPlugin(): Plugin {
+  return {
+    name: 'roblox-images-dev',
+    apply: 'serve',
+    async configureServer() {
+      await syncRobloxImages()
+    },
+  }
 }
 
 function npcManifestPlugin(): Plugin {
@@ -340,6 +362,8 @@ export default defineConfig(() => {
       routeMapsManifestDevPlugin(),
       stopNameAudioManifestPlugin(),
       stopNameAudioManifestDevPlugin(),
+      robloxImagesPlugin(),
+      robloxImagesDevPlugin(),
       npcManifestPlugin(),
       npcManifestDevPlugin(),
       routePagesDataPlugin(),

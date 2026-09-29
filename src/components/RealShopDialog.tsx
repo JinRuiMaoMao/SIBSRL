@@ -12,7 +12,7 @@ import {
 } from '../data/realShopCatalog'
 import { REAL_SHOP_PASS_ART, REAL_SHOP_UI_ASSETS } from '../data/realShopAssets'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
-import { robloxAssetThumbnailUrl } from '../utils/robloxThumbnail'
+import { realShopImageUrlByAssetId } from '../utils/robloxImageUrl'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import { RobuxIcon } from './RobuxIcon'
@@ -74,14 +74,15 @@ function RobloxAssetImage({
   className?: string
   alt?: string
 }) {
+  const src = realShopImageUrlByAssetId(assetId)
+  if (!src) return null
   return (
     <img
       className={className}
-      src={robloxAssetThumbnailUrl(assetId, 420, 420)}
+      src={src}
       alt={alt}
       loading="lazy"
       decoding="async"
-      referrerPolicy="no-referrer"
     />
   )
 }
