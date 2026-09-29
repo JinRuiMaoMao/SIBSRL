@@ -30,6 +30,7 @@ const PROFILE_TABS: Array<{
 ]
 
 const DEFAULT_STATS = {
+  distanceKm: 0,
   routesCompleted: 0,
   busStopLines: 0,
   passengers: 0,

@@ -3,12 +3,12 @@ import { useAuth } from '../contexts/AuthContext'
 import { useUserProfile } from '../contexts/UserProfileContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getAccountPageHref } from '../utils/appPage'
-import { resolveAccountLicenseName } from '../utils/accountAvatar'
 import { realProfileUiImageUrl } from '../utils/robloxImageUrl'
 import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
 import { RealProfileUiImage } from './RealProfileUiImage'
 
 export interface RealProfileStats {
+  distanceKm: number
   routesCompleted: number
   busStopLines: number
   passengers: number
@@ -39,6 +39,20 @@ export function RealProfileStatsTab({
   const accountHref = getAccountPageHref()
   const profileEmail = profile?.email ?? email
   const paperBg = realProfileUiImageUrl('statsPaper')
+
+  const positiveStats = [
+    { label: t('realProfileStatDistance'), value: `${formatStatCount(stats.distanceKm)} km` },
+    { label: t('realProfileStatRoutes'), value: formatStatCount(stats.routesCompleted) },
+    { label: t('realProfileStatStopLines'), value: formatStatCount(stats.busStopLines) },
+    { label: t('realProfileStatPassengers'), value: formatStatCount(stats.passengers) },
+  ]
+
+  const negativeStats = [
+    { label: t('realProfileStatDangerous'), value: formatStatCount(stats.dangerousDriving) },
+    { label: t('realProfileStatDestinationError'), value: formatStatCount(stats.destinationError) },
+    { label: t('realProfileStatEarlyDeparture'), value: formatStatCount(stats.earlyDeparture) },
+    { label: t('realProfileStatComplaints'), value: formatStatCount(stats.otherComplaints) },
+  ]
 
   return (
     <div className="real-profile-stats-stage">
@@ -82,14 +96,10 @@ export function RealProfileStatsTab({
       <article
         className="real-profile-stats-note"
         aria-label={t('realProfileTabStats')}
-        style={
-          paperBg
-            ? {
-                backgroundImage: `url(${paperBg})`,
-              }
-            : undefined
-        }
+        style={paperBg ? { backgroundImage: `url(${paperBg})` } : undefined}
       >
+        <span className="real-profile-stats-tape real-profile-stats-tape--tl" aria-hidden="true" />
+        <span className="real-profile-stats-tape real-profile-stats-tape--br" aria-hidden="true" />
         <button
           type="button"
           className="real-profile-stats-zoom-btn"
@@ -99,38 +109,22 @@ export function RealProfileStatsTab({
           <RealProfileUiImage asset="statsZoom" className="real-profile-stats-zoom-img" alt="" />
         </button>
         <div className="real-profile-stats-inner">
-          <dl className="real-profile-stats-list">
-            <div>
-              <dt>{t('realProfileStatRoutes')}</dt>
-              <dd>{formatStatCount(stats.routesCompleted)}</dd>
-            </div>
-            <div>
-              <dt>{t('realProfileStatStopLines')}</dt>
-              <dd>{formatStatCount(stats.busStopLines)}</dd>
-            </div>
-            <div>
-              <dt>{t('realProfileStatPassengers')}</dt>
-              <dd>{formatStatCount(stats.passengers)}</dd>
-            </div>
-          </dl>
-          <dl className="real-profile-stats-list real-profile-stats-list--negative">
-            <div>
-              <dt>{t('realProfileStatDangerous')}</dt>
-              <dd>{formatStatCount(stats.dangerousDriving)}</dd>
-            </div>
-            <div>
-              <dt>{t('realProfileStatDestinationError')}</dt>
-              <dd>{formatStatCount(stats.destinationError)}</dd>
-            </div>
-            <div>
-              <dt>{t('realProfileStatEarlyDeparture')}</dt>
-              <dd>{formatStatCount(stats.earlyDeparture)}</dd>
-            </div>
-            <div>
-              <dt>{t('realProfileStatComplaints')}</dt>
-              <dd>{formatStatCount(stats.otherComplaints)}</dd>
-            </div>
-          </dl>
+          <ul className="real-profile-stats-lines">
+            {positiveStats.map((entry) => (
+              <li key={entry.label}>
+                <span>{entry.label}</span>
+                <strong>{entry.value}</strong>
+              </li>
+            ))}
+          </ul>
+          <ul className="real-profile-stats-lines real-profile-stats-lines--negative">
+            {negativeStats.map((entry) => (
+              <li key={entry.label}>
+                <span>{entry.label}</span>
+                <strong>{entry.value}</strong>
+              </li>
+            ))}
+          </ul>
         </div>
       </article>
 
@@ -144,38 +138,22 @@ export function RealProfileStatsTab({
                 ×
               </button>
             </header>
-            <dl className="real-profile-stats-list">
-              <div>
-                <dt>{t('realProfileStatRoutes')}</dt>
-                <dd>{formatStatCount(stats.routesCompleted)}</dd>
-              </div>
-              <div>
-                <dt>{t('realProfileStatStopLines')}</dt>
-                <dd>{formatStatCount(stats.busStopLines)}</dd>
-              </div>
-              <div>
-                <dt>{t('realProfileStatPassengers')}</dt>
-                <dd>{formatStatCount(stats.passengers)}</dd>
-              </div>
-            </dl>
-            <dl className="real-profile-stats-list real-profile-stats-list--negative">
-              <div>
-                <dt>{t('realProfileStatDangerous')}</dt>
-                <dd>{formatStatCount(stats.dangerousDriving)}</dd>
-              </div>
-              <div>
-                <dt>{t('realProfileStatDestinationError')}</dt>
-                <dd>{formatStatCount(stats.destinationError)}</dd>
-              </div>
-              <div>
-                <dt>{t('realProfileStatEarlyDeparture')}</dt>
-                <dd>{formatStatCount(stats.earlyDeparture)}</dd>
-              </div>
-              <div>
-                <dt>{t('realProfileStatComplaints')}</dt>
-                <dd>{formatStatCount(stats.otherComplaints)}</dd>
-              </div>
-            </dl>
+            <ul className="real-profile-stats-lines">
+              {positiveStats.map((entry) => (
+                <li key={entry.label}>
+                  <span>{entry.label}</span>
+                  <strong>{entry.value}</strong>
+                </li>
+              ))}
+            </ul>
+            <ul className="real-profile-stats-lines real-profile-stats-lines--negative">
+              {negativeStats.map((entry) => (
+                <li key={entry.label}>
+                  <span>{entry.label}</span>
+                  <strong>{entry.value}</strong>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       ) : null}

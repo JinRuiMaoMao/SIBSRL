@@ -11,41 +11,51 @@ export function RealProfileLeaderboardTab() {
         {REAL_PROFILE_LEADERBOARD_PANELS.map((panel) => (
           <section key={panel.id} className="real-profile-leaderboard-panel">
             <header className="real-profile-leaderboard-head">
-              <h3 className="real-profile-leaderboard-title">{t('realProfileLeaderboardPanelTitle')}</h3>
-              <p className="real-profile-leaderboard-subtitle">{t(panel.titleKey)}</p>
-              <time className="real-profile-leaderboard-updated">{panel.updatedLabel}</time>
+              <h3 className="real-profile-leaderboard-title">{t(panel.titleKey)}</h3>
             </header>
-            <ol className="real-profile-leaderboard-list sibs-scrollbar real-profile-leaderboard-scroll">
+            <ol className="real-profile-leaderboard-list sibs-scrollbar real-profile-board-scroll">
               {panel.rows.map((row) => (
                 <li key={`${panel.id}-${row.rank}`} className="real-profile-leaderboard-row">
-                  <span className="real-profile-leaderboard-rank">{row.rank}</span>
                   {row.userId ? (
                     <RobloxHeadshotImage
                       userId={row.userId}
                       displayName={row.name}
                       className="real-profile-leaderboard-avatar"
-                      size={28}
+                      size={34}
                     />
                   ) : (
                     <span className="real-profile-leaderboard-avatar real-profile-leaderboard-avatar--empty" />
                   )}
-                  <span className="real-profile-leaderboard-name">{row.name}</span>
-                  <span className="real-profile-leaderboard-value">{row.value}</span>
+                  <div className="real-profile-leaderboard-copy">
+                    <span className="real-profile-leaderboard-name">
+                      {row.rank}. {row.name}
+                    </span>
+                    <span className="real-profile-leaderboard-value">{row.score.toLocaleString()}</span>
+                  </div>
                 </li>
               ))}
             </ol>
             <footer className="real-profile-leaderboard-you">
-              <span>{t('realProfileLeaderboardYou')}</span>
-              <strong>
-                {panel.playerRank ? `#${panel.playerRank}` : '—'} · {panel.playerValue}
-              </strong>
-              {panel.rewardHint ? (
-                <span className="real-profile-leaderboard-reward">{t(panel.rewardHint)}</span>
-              ) : null}
+              <RobloxHeadshotImage
+                userId={23651717}
+                displayName="You"
+                className="real-profile-leaderboard-avatar"
+                size={34}
+              />
+              <div className="real-profile-leaderboard-copy">
+                <span className="real-profile-leaderboard-name">{panel.playerLabel}</span>
+                <span className="real-profile-leaderboard-value">{panel.playerScoreLabel}</span>
+              </div>
             </footer>
+            {panel.endingLabel ? (
+              <p className="real-profile-leaderboard-ending">
+                {t('realProfileLeaderboardEnding', { time: panel.endingLabel })}
+              </p>
+            ) : null}
           </section>
         ))}
       </div>
+      <p className="real-profile-leaderboard-footnote">{t('realProfileLeaderboardUpdating')}</p>
     </div>
   )
 }
