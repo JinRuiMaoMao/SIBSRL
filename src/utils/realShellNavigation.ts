@@ -1,4 +1,5 @@
 import type { AppTab } from '../types/appTab'
+import { markRealStartHasOpenedRoutes } from '../storage/realStartProgress'
 import { stripRouteLookupParams } from './routeNavigation'
 
 export const REAL_SHELL_PENDING_TAB_KEY = 'sibs-real-pending-tab'
@@ -128,6 +129,7 @@ export function navigateRealShellTab(tab: AppTab | null, options?: { replace?: b
   }
 
   const wasStart = readRealShellTab() === null
+  if (tab === 'routes') markRealStartHasOpenedRoutes()
   const stripRouteLookup = tab === null || (tab === 'routes' && wasStart)
   const url = getRealShellCleanUrl({ stripRouteLookup })
   const state: RealShellHistoryState = tab ? { sibsRealTab: tab } : {}

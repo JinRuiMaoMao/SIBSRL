@@ -25,7 +25,7 @@ import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { dispatchRealHudAction } from '../utils/realHudEvents'
 import { RealLanguagePage } from './RealLanguagePage'
 import { RealStartBackground } from './RealStartBackground'
-import { RealStartLatestUpdatePanel } from './RealStartLatestUpdatePanel'
+import { RealStartRightPanel } from './RealStartRightPanel'
 import {
   RealStartDockAboutIcon,
   RealStartDockChangeLogIcon,
@@ -318,8 +318,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
                   </ul>
                 </nav>
 
-                <aside className="real-start-featured" aria-label={t('realStartLatestUpdate')}>
-                  <RealStartLatestUpdatePanel />
+                <aside className="real-start-featured" aria-label={t('realStartFeaturedPanel')}>
+                  <RealStartRightPanel />
                 </aside>
               </div>
 

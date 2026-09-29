@@ -10274,7 +10274,7 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   max-height: 90%;
 }
 
-.real-start-changelog {
+.real-start-r-panel {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -10287,6 +10287,135 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   background: rgb(15 23 42 / 0.55);
   box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
   backdrop-filter: blur(8px);
+}
+
+.real-start-coming-event,
+.real-start-daily-challenge {
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.72);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: filter 0.18s ease, transform 0.18s ease;
+  transform-origin: center;
+}
+
+.real-start-coming-event:hover,
+.real-start-coming-event:focus-visible,
+.real-start-daily-challenge:hover,
+.real-start-daily-challenge:focus-visible {
+  filter: brightness(1.06);
+  transform: scale(1.02);
+  outline: none;
+}
+
+.real-start-coming-event-date {
+  flex: 0 0 10.5%;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 0;
+  padding: 0 0.55rem;
+  box-sizing: border-box;
+}
+
+.real-start-coming-event-date-icon {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.real-start-coming-event-date-text {
+  min-width: 0;
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+  font-size: clamp(0.62rem, 1.2vh, 0.76rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: rgb(220 220 220 / 0.92);
+}
+
+.real-start-coming-event-thumb {
+  flex: 0 0 70%;
+  position: relative;
+  min-height: 0;
+  margin: 0;
+  padding: 0.35rem 0.45rem;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+}
+
+.real-start-coming-event-thumb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.28rem;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.real-start-daily-challenge-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #193242 0%, #122636 100%);
+  border-radius: 0.28rem;
+}
+
+.real-start-daily-challenge-route {
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+  font-size: clamp(1.35rem, 2.8vh, 1.85rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #f5b942;
+  text-shadow: 0 0 12px rgb(245 185 66 / 0.35);
+}
+
+.real-start-coming-event-badge {
+  position: absolute;
+  top: 0.65rem;
+  left: 0.75rem;
+  z-index: 2;
+  max-width: calc(100% - 1.2rem);
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.8);
+  color: #111;
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+  font-size: clamp(0.62rem, 1.15vh, 0.72rem);
+  font-weight: 700;
+  line-height: 1.2;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+}
+
+.real-start-coming-event-badge--urgent {
+  background: rgb(255 255 0 / 0.95);
+}
+
+.real-start-coming-event-badge--live {
+  background: rgb(0 85 255 / 0.82);
+  color: #fff;
+}
+
+.real-start-coming-event-title {
+  flex: 0 0 10%;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 0.55rem;
+  box-sizing: border-box;
+  font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
+  font-size: clamp(0.72rem, 1.45vh, 0.88rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: rgb(248 250 252 / 0.96);
+}
+
+.real-start-changelog {
+  display: flex;
+  flex-direction: column;
 }
 
 .real-start-changelog-title {

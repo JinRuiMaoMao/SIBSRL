@@ -39,12 +39,20 @@ export const REAL_START_MENU_LAYOUT = {
   serverTextRgb: 'rgb(85 170 0)',
   profileTextRgb: 'rgb(109 40 217)',
   languageTextRgb: 'rgb(109 40 217)',
-  /** ChangeLog.R panel (visible by default in game StartMenu). */
+  /** ChangeLog.R panel (new players — HasFinishedAnyRoute false). */
   changeLogTitleHeightScale: 0.122,
   changeLogThumbHeightScale: 0.61,
   changeLogEnterHeightScale: 0.122,
   changeLogThumbBg: '#193242',
   changeLogEnterBg: '#162b39',
+  /** ComingEvent / DailyChallenge shared R panel proportions. */
+  eventPanelPaddingScale: 0.05,
+  eventPanelCornerScale: 0.03,
+  eventDateHeightScale: 0.105,
+  eventThumbHeightScale: 0.7,
+  eventTitleHeightScale: 0.1,
+  /** DaysLater badge turns yellow when ≤10 days (864000s in game). */
+  eventCountdownUrgentDays: 10,
 } as const
 
 export function computeRealStartMenuUiScale(menuHeightPx: number): number {

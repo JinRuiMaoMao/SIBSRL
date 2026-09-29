@@ -136,6 +136,26 @@ function resolveEventOccurrence(
 }
 
 /** 按下一届开始日排序的节庆（含进行中；每年循环）。 */
+function formatComingEventShortDate(date: string, locale: Locale): string {
+  const instant = hktGameInstant(date, '08:00')
+  if (Number.isNaN(instant.getTime())) return date
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'zh-Hans', {
+    month: 'short',
+    day: 'numeric',
+  }).format(instant)
+}
+
+/** ComingEvent.Date — e.g. "May 5 - Nov 7, 2025" */
+export function formatComingEventDateRange(event: UpcomingGameEventView, locale: Locale): string {
+  const startLabel = formatComingEventShortDate(event.occurrenceStart, locale)
+  const year = event.occurrenceStart.slice(0, 4)
+  if (!event.occurrenceEnd || event.occurrenceEnd === event.occurrenceStart) {
+    return `${startLabel}, ${year}`
+  }
+  const endLabel = formatComingEventShortDate(event.occurrenceEnd, locale)
+  return `${startLabel} - ${endLabel}, ${year}`
+}
+
 export function listUpcomingGameEvents(now = new Date()): UpcomingGameEventView[] {
   const today = todayHktDateString(now)
 

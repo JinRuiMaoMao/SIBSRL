@@ -42,7 +42,7 @@ export function RealStartLatestUpdatePanel() {
   }
 
   return (
-    <div className="real-start-changelog">
+    <div className="real-start-r-panel real-start-changelog">
       <p className="real-start-changelog-title">{t('realStartLatestUpdate')}</p>
       <button type="button" className="real-start-changelog-thumb" onClick={openUpdates}>
         <span className="real-start-changelog-thumb-ver">{versionLabel}</span>
