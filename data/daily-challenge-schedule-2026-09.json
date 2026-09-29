@@ -56,7 +56,7 @@
     { "date": "2026-09-26", "event": "Marathon Road Closure", "routeCode": "471E", "race": true },
     { "date": "2026-09-27", "event": "Rush Hour", "routeCode": "42S", "race": true },
     { "date": "2026-09-28", "event": "Marathon Road Closure (N)", "routeCode": "N171WM", "race": false },
-    { "date": "2026-09-29", "event": "Foggy Day", "routeCode": null, "race": false },
+    { "date": "2026-09-29", "event": "Foggy Day", "routeCode": "42AS", "race": false },
     { "date": "2026-09-30", "event": null, "routeCode": null, "race": false }
   ]
 }
