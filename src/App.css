@@ -9448,7 +9448,8 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-shell-home-start-layer .real-start-stack .real-start-page,
-.real-shell-home-start-layer .real-start-stack .real-language-page {
+.real-shell-home-start-layer .real-start-stack .real-language-page,
+.real-shell-home-start-layer .real-start-stack .real-start-overlay-page {
   position: absolute;
   inset: 0;
 }
@@ -9475,6 +9476,7 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 
 .real-start-stack .real-start-page,
 .real-start-stack .real-language-page,
+.real-start-stack .real-start-overlay-page,
 .real-start-stack .real-profile-page {
   position: fixed;
   inset: 0;
@@ -9485,12 +9487,14 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-start-stack .real-language-page,
+.real-start-stack .real-start-overlay-page,
 .real-start-stack .real-profile-page {
   z-index: 2;
 }
 
 .real-start-stack .real-start-panel,
 .real-start-stack .real-language-panel,
+.real-start-stack .real-start-overlay-panel,
 .real-start-stack .real-profile-panel {
   position: absolute;
   inset: 0;
@@ -9501,41 +9505,46 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
   pointer-events: auto;
 }
 
-.real-start-stack[data-language-phase='closed'] .real-start-panel {
+.real-start-stack[data-start-overlay-phase='closed'] .real-start-panel {
   transform: translate3d(0, 0, 0);
 }
 
-.real-start-stack[data-language-phase='opening'] .real-start-panel {
+.real-start-stack[data-start-overlay-phase='opening'] .real-start-panel {
   animation: real-shell-slide-up-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
-.real-start-stack[data-language-phase='opening'] .real-language-panel {
+.real-start-stack[data-start-overlay-phase='opening'] .real-language-panel,
+.real-start-stack[data-start-overlay-phase='opening'] .real-start-overlay-panel {
   animation: real-shell-slide-up-from-bottom var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
-.real-start-stack[data-language-phase='open'] .real-start-panel {
+.real-start-stack[data-start-overlay-phase='open'] .real-start-panel {
   transform: translate3d(0, -100%, 0);
   pointer-events: none;
 }
 
-.real-start-stack[data-language-phase='open'] .real-language-panel {
+.real-start-stack[data-start-overlay-phase='open'] .real-language-panel,
+.real-start-stack[data-start-overlay-phase='open'] .real-start-overlay-panel {
   transform: translate3d(0, 0, 0);
 }
 
-.real-start-stack[data-language-phase='closing'] .real-start-panel {
+.real-start-stack[data-start-overlay-phase='closing'] .real-start-panel {
   animation: real-shell-slide-down-from-top var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
   pointer-events: none;
 }
 
-.real-start-stack[data-language-phase='closing'] .real-language-panel {
+.real-start-stack[data-start-overlay-phase='closing'] .real-language-panel,
+.real-start-stack[data-start-overlay-phase='closing'] .real-start-overlay-panel {
   animation: real-shell-slide-down-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-start-panel,
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='opening'] .real-language-panel,
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing'] .real-start-panel,
-html[data-reduce-motion='true'] .real-start-stack[data-language-phase='closing'] .real-language-panel {
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-start-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-language-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-start-overlay-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-start-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-language-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-start-overlay-panel {
   animation: none;
 }
 
@@ -10491,12 +10500,15 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   justify-content: center;
   width: 100%;
   padding: 0 0.5rem;
+  border: 0;
   background: #162b39;
   color: rgb(226 232 240 / 0.92);
+  font: inherit;
   font-size: clamp(0.68rem, 1.3vh, 0.78rem);
   font-weight: 700;
   text-decoration: none;
   text-align: center;
+  cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
 }
 
@@ -11346,6 +11358,272 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   .real-language-grid {
     width: 100%;
   }
+}
+
+/* Real layout — start menu overlays (FAQ / credits / changelog) */
+.real-start-overlay-page {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: #f3f4f6;
+  background: transparent;
+}
+
+.real-start-overlay-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 3vw, 2rem) clamp(1.25rem, 2.5vw, 2rem);
+  box-sizing: border-box;
+}
+
+.real-start-overlay-header {
+  flex-shrink: 0;
+  margin-bottom: clamp(1rem, 2.5vh, 1.5rem);
+}
+
+.real-start-overlay-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f3f4f6;
+  font: inherit;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.real-start-overlay-back:hover {
+  opacity: 0.82;
+}
+
+.real-start-overlay-back-chevron {
+  font-size: 1.45em;
+  line-height: 1;
+  font-weight: 400;
+  opacity: 0.92;
+}
+
+.real-start-overlay-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.real-start-overlay-footer {
+  flex-shrink: 0;
+  margin-top: clamp(0.85rem, 2vh, 1.25rem);
+  text-align: center;
+}
+
+.real-start-faq-list,
+.real-start-credits-scroll,
+.real-start-changelog-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.15rem 0.35rem 0.5rem 0;
+}
+
+.real-start-faq-section + .real-start-faq-section {
+  margin-top: clamp(1rem, 2.5vh, 1.5rem);
+}
+
+.real-start-faq-section-title,
+.real-start-credits-section-title {
+  margin: 0 0 0.65rem;
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: rgb(248 250 252 / 0.92);
+}
+
+.real-start-faq-item {
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 10px;
+  background: rgb(8 12 20 / 0.48);
+  overflow: hidden;
+}
+
+.real-start-faq-item + .real-start-faq-item {
+  margin-top: 0.45rem;
+}
+
+.real-start-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  border: 0;
+  background: transparent;
+  color: #f8fafc;
+  font: inherit;
+  font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.real-start-faq-chevron {
+  flex-shrink: 0;
+  opacity: 0.75;
+  font-size: 1.1rem;
+}
+
+.real-start-faq-answer {
+  padding: 0 0.85rem 0.85rem;
+  font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+  line-height: 1.55;
+  color: rgb(226 232 240 / 0.88);
+}
+
+.real-start-faq-footnote {
+  margin: 0 auto;
+  max-width: 36rem;
+  font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+  line-height: 1.55;
+  color: rgb(243 244 246 / 0.72);
+}
+
+.real-start-faq-footnote a {
+  color: rgb(243 244 246 / 0.92);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.real-start-credits-thanks {
+  margin: 0 0 1.25rem;
+  font-size: clamp(0.82rem, 1.8vw, 0.95rem);
+  line-height: 1.55;
+  color: rgb(226 232 240 / 0.9);
+  text-align: center;
+}
+
+.real-start-credits-section + .real-start-credits-section {
+  margin-top: clamp(1.1rem, 2.5vh, 1.6rem);
+}
+
+.real-start-credits-grid {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.real-start-credits-grid--featured {
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+}
+
+.real-start-credits-grid--compact {
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+}
+
+.real-start-credits-grid--tag {
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+}
+
+.real-start-credits-card {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 3rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: rgb(8 12 20 / 0.52);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.18s ease;
+}
+
+a.real-start-credits-card:hover {
+  transform: translateY(-1px);
+  border-color: rgb(255 255 255 / 0.42);
+  background: rgb(12 18 28 / 0.68);
+}
+
+.real-start-credits-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.real-start-credits-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.real-start-credits-name {
+  font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.real-start-credits-role {
+  font-size: clamp(0.68rem, 1.4vw, 0.76rem);
+  line-height: 1.3;
+  color: rgb(226 232 240 / 0.78);
+}
+
+.real-start-changelog-head {
+  margin-bottom: 1rem;
+}
+
+.real-start-changelog-intro {
+  margin: 0 0 0.35rem;
+  font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+  line-height: 1.55;
+  color: rgb(226 232 240 / 0.88);
+}
+
+.real-start-changelog-build {
+  display: block;
+  font-size: clamp(0.72rem, 1.5vw, 0.8rem);
+  color: rgb(148 163 184 / 0.92);
+}
+
+.real-start-changelog-list {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.real-start-changelog-list > li + li {
+  margin-top: 0.85rem;
+}
+
+.real-start-changelog-entry {
+  border-radius: 12px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(8 12 20 / 0.42);
+}
+
+.real-start-changelog-empty {
+  margin: 0;
+  color: rgb(226 232 240 / 0.78);
 }
 
 /* Real profile (in-shell chalkboard) */

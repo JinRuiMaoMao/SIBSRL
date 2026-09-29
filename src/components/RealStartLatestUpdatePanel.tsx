@@ -3,8 +3,6 @@ import { versionUpdates } from '../data/versionUpdates'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Locale } from '../i18n/types'
-import { getTabPageHref } from '../utils/appTabNavigation'
-import { navigateRealShellTab } from '../utils/realShellNavigation'
 
 function formatUpdateDate(date: string, locale: Locale): string {
   const [year, month, day] = date.split('-').map(Number)
@@ -23,7 +21,7 @@ function formatUpdateVersion(date: string): string {
   return `V${year.slice(2)}.${month}.${day}`
 }
 
-export function RealStartLatestUpdatePanel() {
+export function RealStartLatestUpdatePanel({ onOpenChangeLog }: { onOpenChangeLog?: () => void }) {
   const { locale, t } = useLocale()
   const latest = versionUpdates[0]
   const versionLabel = useMemo(
@@ -38,7 +36,7 @@ export function RealStartLatestUpdatePanel() {
 
   const openUpdates = (event: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     event.preventDefault()
-    navigateRealShellTab('updates')
+    onOpenChangeLog?.()
   }
 
   return (
@@ -49,9 +47,9 @@ export function RealStartLatestUpdatePanel() {
         <span className="real-start-changelog-thumb-date">{dateLabel}</span>
         <span className="real-start-changelog-thumb-caption">{titleLabel}</span>
       </button>
-      <a className="real-start-changelog-enter" href={getTabPageHref('updates')} onClick={openUpdates}>
+      <button type="button" className="real-start-changelog-enter" onClick={openUpdates}>
         {t('realStartViewChangeLog')}
-      </a>
+      </button>
     </div>
   )
 }

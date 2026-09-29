@@ -25,6 +25,9 @@ import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { dispatchRealHudAction } from '../utils/realHudEvents'
 import { RealLanguagePage } from './RealLanguagePage'
 import { RealStartBackground } from './RealStartBackground'
+import { RealStartChangeLogPage } from './RealStartChangeLogPage'
+import { RealStartCreditsPage } from './RealStartCreditsPage'
+import { RealStartFaqPage } from './RealStartFaqPage'
 import { RealStartRightPanel } from './RealStartRightPanel'
 import {
   RealStartDockAboutIcon,
@@ -41,9 +44,10 @@ import {
 import { isAppReduceMotionEnabled } from '../storage/appPreferences'
 import { REAL_SHELL_TRANSITION_MS } from '../utils/realShellTransition'
 
-const REAL_LANGUAGE_TRANSITION_MS = REAL_SHELL_TRANSITION_MS
+const REAL_START_OVERLAY_TRANSITION_MS = REAL_SHELL_TRANSITION_MS
 
 type OverlayViewPhase = 'closed' | 'opening' | 'open' | 'closing'
+type StartOverlayId = 'language' | 'faq' | 'changelog' | 'credits'
 
 interface RealStartMenuItem {
   id: string
@@ -80,7 +84,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   const { muted, toggleMuted, retryPlay } = useRealLayoutBackgroundMusic('music-main-menu', {
     loadTrack: !sharedBackground,
   })
-  const [languagePhase, setLanguagePhase] = useState<OverlayViewPhase>('closed')
+  const [overlayId, setOverlayId] = useState<StartOverlayId | null>(null)
+  const [overlayPhase, setOverlayPhase] = useState<OverlayViewPhase>('closed')
   const [aboutSubmenuOpen, setAboutSubmenuOpen] = useState(false)
   const menuRootRef = useRef<HTMLDivElement>(null)
   const { uiScale } = useRealStartMenuScale(menuRootRef)
@@ -102,58 +107,64 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       }) as CSSProperties,
     [uiScale],
   )
-  const languageMounted = languagePhase !== 'closed'
-  const overlayActive = languagePhase !== 'closed'
+  const overlayMounted = overlayPhase !== 'closed'
+  const overlayActive = overlayMounted
   const versionLabel = formatRealStartMenuVersion(readPublishedBuild() ?? __APP_BUILD__)
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
-  const wikiHref = getStartPageExternalLinkUrl('wiki', locale)
 
   const openRoutes = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     navigateRealShellTab('routes')
   }
 
-  const openLanguage = useCallback(() => {
+  const openOverlay = useCallback((id: StartOverlayId) => {
+    setAboutSubmenuOpen(false)
     if (isAppReduceMotionEnabled()) {
-      setLanguagePhase('open')
+      setOverlayId(id)
+      setOverlayPhase('open')
       return
     }
-    setLanguagePhase('opening')
+    setOverlayId(id)
+    setOverlayPhase('opening')
   }, [])
 
-  const closeLanguage = useCallback(() => {
-    if (languagePhase === 'closed' || languagePhase === 'closing') return
+  const closeOverlay = useCallback(() => {
+    if (overlayPhase === 'closed' || overlayPhase === 'closing') return
     if (isAppReduceMotionEnabled()) {
-      setLanguagePhase('closed')
+      setOverlayPhase('closed')
+      setOverlayId(null)
       return
     }
-    setLanguagePhase('closing')
-  }, [languagePhase])
+    setOverlayPhase('closing')
+  }, [overlayPhase])
 
-  const handleLanguageAnimationEnd = useCallback(
+  const handleOverlayAnimationEnd = useCallback(
     (event: AnimationEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return
       const name = event.animationName
-      if (languagePhase === 'opening' && name.includes('real-shell-slide-up-from-bottom')) {
-        setLanguagePhase('open')
-      } else if (languagePhase === 'closing' && name.includes('real-shell-slide-down-out')) {
-        setLanguagePhase('closed')
+      if (overlayPhase === 'opening' && name.includes('real-shell-slide-up-from-bottom')) {
+        setOverlayPhase('open')
+      } else if (overlayPhase === 'closing' && name.includes('real-shell-slide-down-out')) {
+        setOverlayPhase('closed')
+        setOverlayId(null)
       }
     },
-    [languagePhase],
+    [overlayPhase],
   )
 
   useEffect(() => {
-    if (languagePhase !== 'opening' && languagePhase !== 'closing') return
+    if (overlayPhase !== 'opening' && overlayPhase !== 'closing') return
+    const closing = overlayPhase === 'closing'
     const timer = window.setTimeout(() => {
-      setLanguagePhase((phase) => {
+      setOverlayPhase((phase) => {
         if (phase === 'opening') return 'open'
         if (phase === 'closing') return 'closed'
         return phase
       })
-    }, REAL_LANGUAGE_TRANSITION_MS + 80)
+      if (closing) setOverlayId(null)
+    }, REAL_START_OVERLAY_TRANSITION_MS + 80)
     return () => window.clearTimeout(timer)
-  }, [languagePhase])
+  }, [overlayPhase])
 
   const mainMenu: RealStartMenuItem[] = [
     {
@@ -184,7 +195,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       labelKey: 'language',
       icon: <RealStartLanguageIcon />,
       tone: 'purple',
-      onClick: openLanguage,
+      onClick: () => openOverlay('language'),
     },
   ]
 
@@ -201,10 +212,9 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     },
     {
       id: 'faq',
-      href: wikiHref,
       labelKey: 'realStartFaq',
       icon: <RealStartDockFaqIcon />,
-      external: true,
+      onClick: () => openOverlay('faq'),
     },
     {
       id: 'about',
@@ -228,14 +238,13 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       id: 'changelog',
       labelKey: 'realStartChangeLog',
       icon: <RealStartDockChangeLogIcon />,
-      onClick: () => navigateRealShellTab('updates'),
+      onClick: () => openOverlay('changelog'),
     },
     {
       id: 'credit',
-      href: wikiHref,
       labelKey: 'realStartCredit',
       icon: <RealStartDockCreditIcon />,
-      external: true,
+      onClick: () => openOverlay('credits'),
     },
   ]
 
@@ -251,8 +260,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     if (legacyLanguageHash !== 'language') return
     const cleanUrl = `${window.location.pathname}${window.location.search}`
     window.history.replaceState(preserveAppHistoryState(), '', cleanUrl)
-    openLanguage()
-  }, [openLanguage])
+    openOverlay('language')
+  }, [openOverlay])
 
   useEffect(() => {
     if (!bootReady || muted || overlayActive) return
@@ -262,7 +271,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   return (
     <div
       className={`real-start-stack${sharedBackground ? ' real-start-stack--shared-background' : ''}${!sharedBackground && bootReady ? ' real-start-stack--ready' : ''}`}
-      data-language-phase={languagePhase}
+      data-start-overlay-phase={overlayPhase}
     >
       {sharedBackground ? null : <RealStartBackground />}
 
@@ -319,7 +328,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
                 </nav>
 
                 <aside className="real-start-featured" aria-label={t('realStartFeaturedPanel')}>
-                  <RealStartRightPanel />
+                  <RealStartRightPanel onOpenChangeLog={() => openOverlay('changelog')} />
                 </aside>
               </div>
 
@@ -401,8 +410,17 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
           </div>
         </div>
       </div>
-      {languageMounted ? (
-        <RealLanguagePage onClose={closeLanguage} onAnimationEnd={handleLanguageAnimationEnd} />
+      {overlayMounted && overlayId === 'language' ? (
+        <RealLanguagePage onClose={closeOverlay} onAnimationEnd={handleOverlayAnimationEnd} />
+      ) : null}
+      {overlayMounted && overlayId === 'faq' ? (
+        <RealStartFaqPage onClose={closeOverlay} onAnimationEnd={handleOverlayAnimationEnd} />
+      ) : null}
+      {overlayMounted && overlayId === 'changelog' ? (
+        <RealStartChangeLogPage onClose={closeOverlay} onAnimationEnd={handleOverlayAnimationEnd} />
+      ) : null}
+      {overlayMounted && overlayId === 'credits' ? (
+        <RealStartCreditsPage onClose={closeOverlay} onAnimationEnd={handleOverlayAnimationEnd} />
       ) : null}
     </div>
   )

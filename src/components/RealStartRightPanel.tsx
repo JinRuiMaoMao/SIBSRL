@@ -6,7 +6,7 @@ import { RealStartDailyChallengePanel } from './RealStartDailyChallengePanel'
 import { RealStartLatestUpdatePanel } from './RealStartLatestUpdatePanel'
 import { UpcomingGameEventsDialog } from './UpcomingGameEventsDialog'
 
-export function RealStartRightPanel() {
+export function RealStartRightPanel({ onOpenChangeLog }: { onOpenChangeLog?: () => void }) {
   const dailyChallenge = useDailyChallenge()
   const panel = useMemo(
     () => resolveRealStartRightPanel(),
@@ -24,7 +24,7 @@ export function RealStartRightPanel() {
       ) : panel.kind === 'daily-challenge' ? (
         <RealStartDailyChallengePanel challenge={dailyChallenge} />
       ) : (
-        <RealStartLatestUpdatePanel />
+        <RealStartLatestUpdatePanel onOpenChangeLog={onOpenChangeLog} />
       )}
 
       <UpcomingGameEventsDialog
