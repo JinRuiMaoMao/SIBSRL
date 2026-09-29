@@ -465,6 +465,16 @@ export async function publishStandalone(options = {}) {
     console.log('[publish] 已复制节庆缩略图到 game-events/')
   }
 
+  for (const dir of ['roblox-headshots', 'real-shop', 'real-profile']) {
+    const distDir = resolve(root, 'dist', dir)
+    const publicDir = resolve(root, 'public', dir)
+    const rootDir = resolve(root, dir)
+    const source = existsSync(distDir) ? distDir : publicDir
+    if (!existsSync(source)) continue
+    cpSync(source, rootDir, { recursive: true })
+    console.log(`[publish] 已复制 Roblox 图片到 ${dir}/`)
+  }
+
   const distAssets = resolve(root, 'dist', 'assets')
   const rootAssets = resolve(root, 'assets')
   if (existsSync(distAssets)) {

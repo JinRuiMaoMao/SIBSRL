@@ -3,10 +3,10 @@ import {
   REAL_SHOP_IMAGE_FILES,
   ROBLOX_HEADSHOT_FILES,
 } from '../data/robloxImages.generated'
-import { getSiteAssetRoot } from './appLayoutMode'
+import { resolveSiteAssetUrl } from './appLayoutMode'
 
 function localAssetUrl(rel: string): string {
-  return `${getSiteAssetRoot()}${rel}`
+  return resolveSiteAssetUrl(rel)
 }
 
 export function robloxHeadshotAssetUrl(userId: number): string | null {
@@ -39,5 +39,5 @@ export function realShopImageUrlByAssetId(assetId: number): string | null {
 export function realProfileImageUrl(key: keyof typeof REAL_PROFILE_IMAGE_FILES): string | null {
   const rel = REAL_PROFILE_IMAGE_FILES[key]
   if (!rel) return null
-  return `${getSiteAssetRoot()}${rel}`
+  return localAssetUrl(rel)
 }

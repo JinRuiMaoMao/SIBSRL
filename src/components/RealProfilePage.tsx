@@ -91,6 +91,8 @@ export function RealProfilePage({
     document.title = t('realProfilePageDocumentTitle')
   }, [locale, t])
 
+  const chalkboardBg = realProfileImageUrl('chalkboard')
+
   return (
     <div className="real-profile-page sibs-scrollbar">
       <div className="real-profile-panel" onAnimationEnd={onAnimationEnd}>

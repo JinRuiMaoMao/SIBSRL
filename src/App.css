@@ -11790,6 +11790,7 @@ html:not([data-reduce-motion='true']) .real-profile-tab:hover {
 .real-profile-board-content {
   position: relative;
   flex: 1 1 auto;
+  align-self: stretch;
   min-width: 0;
   min-height: 0;
   overflow: visible;
