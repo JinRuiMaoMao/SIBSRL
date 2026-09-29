@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
 import { useRealDriverProgress } from '../hooks/useRealDriverProgress'
 import { useRealSunshardsBalance } from '../hooks/useRealSunshardsBalance'
 import { useLocale } from '../i18n/LocaleContext'
 import { dispatchRealHudAction, readRealHudAction, REAL_HUD_EVENT } from '../utils/realHudEvents'
+import { isRealShellRoutesActive } from '../utils/realShellRoutesPhase'
 import { navigateRealShellTab } from '../utils/realShellNavigation'
 import { RealProfileOverlay } from './RealProfileOverlay'
 import { RealShopDialog } from './RealShopDialog'
@@ -72,7 +74,7 @@ export function RealTopHud({ className }: { className?: string }) {
   useEffect(() => {
     const onHudAction = (event: Event) => {
       const action = readRealHudAction(event)
-      if (action?.type === 'open-shop') setShopOpen(true)
+      if (action?.type === 'open-shop' && isRealShellRoutesActive()) setShopOpen(true)
     }
     window.addEventListener(REAL_HUD_EVENT, onHudAction)
     return () => window.removeEventListener(REAL_HUD_EVENT, onHudAction)
@@ -175,7 +177,12 @@ export function RealTopHud({ className }: { className?: string }) {
         </div>
       </header>
 
-      <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />
+      {shopOpen
+        ? createPortal(
+            <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />,
+            document.body,
+          )
+        : null}
       <RealProfileOverlay />
     </>
   )

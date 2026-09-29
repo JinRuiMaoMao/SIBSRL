@@ -1,8 +1,9 @@
 import { useEffect, type AnimationEvent } from 'react'
-import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { REAL_START_CREDIT_SECTIONS } from '../data/realStartCredits'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
+import { robloxHeadshotUrl, robloxProfileUrl } from '../utils/robloxAvatar'
+import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealStartOverlayShell } from './RealStartOverlayShell'
 
 export function RealStartCreditsPage({
@@ -30,11 +31,18 @@ export function RealStartCreditsPage({
             <ul className={`real-start-credits-grid real-start-credits-grid--${section.layout}`}>
               {section.members.map((member, index) => {
                 const role = member.role ? getPrimaryText(member.role, locale) : null
+                const profileHref = robloxProfileUrl(member.userId)
                 const body = (
                   <>
-                    <span className="real-start-credits-avatar" aria-hidden="true">
-                      {member.displayName.slice(0, 1).toUpperCase()}
-                    </span>
+                    <img
+                      className="real-start-credits-avatar"
+                      src={robloxHeadshotUrl(member.userId, 150)}
+                      alt=""
+                      width={48}
+                      height={48}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     <span className="real-start-credits-copy">
                       <span className="real-start-credits-name">{member.displayName}</span>
                       {role ? <span className="real-start-credits-role">{role}</span> : null}
@@ -42,19 +50,10 @@ export function RealStartCreditsPage({
                   </>
                 )
                 return (
-                  <li key={`${section.title.en}-${member.displayName}-${index}`}>
-                    {member.profileUrl ? (
-                      <a
-                        className="real-start-credits-card"
-                        href={member.profileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {body}
-                      </a>
-                    ) : (
-                      <div className="real-start-credits-card">{body}</div>
-                    )}
+                  <li key={`${section.title.en}-${member.userId}-${member.role?.en ?? 'member'}-${index}`}>
+                    <a className="real-start-credits-card" href={profileHref} target="_blank" rel="noreferrer">
+                      {body}
+                    </a>
                   </li>
                 )
               })}

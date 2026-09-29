@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState, type AnimationEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { isAppReduceMotionEnabled } from '../storage/appPreferences'
 import {
   REAL_HUD_EVENT,
   readRealHudAction,
   type RealProfileHudTab,
 } from '../utils/realHudEvents'
+import { isRealShellRoutesActive } from '../utils/realShellRoutesPhase'
 import { REAL_SHELL_TRANSITION_MS } from '../utils/realShellTransition'
 import { RealProfilePage } from './RealProfilePage'
 
@@ -27,7 +29,7 @@ export function RealProfileOverlay() {
   useEffect(() => {
     const onHudAction = (event: Event) => {
       const action = readRealHudAction(event)
-      if (action?.type === 'open-profile') {
+      if (action?.type === 'open-profile' && isRealShellRoutesActive()) {
         openProfile(action.tab ?? 'stats')
       }
     }
@@ -71,13 +73,14 @@ export function RealProfileOverlay() {
 
   if (!profileMounted) return null
 
-  return (
+  return createPortal(
     <div className="real-profile-overlay-host" data-profile-phase={profilePhase}>
       <RealProfilePage
         initialTab={profileInitialTab}
         onClose={closeProfile}
         onAnimationEnd={handleProfileAnimationEnd}
       />
-    </div>
+    </div>,
+    document.body,
   )
 }

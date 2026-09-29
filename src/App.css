@@ -9449,7 +9449,8 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 
 .real-shell-home-start-layer .real-start-stack .real-start-page,
 .real-shell-home-start-layer .real-start-stack .real-language-page,
-.real-shell-home-start-layer .real-start-stack .real-start-overlay-page {
+.real-shell-home-start-layer .real-start-stack .real-start-overlay-page,
+.real-shell-home-start-layer .real-start-stack .real-profile-page {
   position: absolute;
   inset: 0;
 }
@@ -9515,7 +9516,8 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-start-stack[data-start-overlay-phase='opening'] .real-language-panel,
-.real-start-stack[data-start-overlay-phase='opening'] .real-start-overlay-panel {
+.real-start-stack[data-start-overlay-phase='opening'] .real-start-overlay-panel,
+.real-start-stack[data-start-overlay-phase='opening'] .real-profile-panel {
   animation: real-shell-slide-up-from-bottom var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
@@ -9525,7 +9527,8 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-start-stack[data-start-overlay-phase='open'] .real-language-panel,
-.real-start-stack[data-start-overlay-phase='open'] .real-start-overlay-panel {
+.real-start-stack[data-start-overlay-phase='open'] .real-start-overlay-panel,
+.real-start-stack[data-start-overlay-phase='open'] .real-profile-panel {
   transform: translate3d(0, 0, 0);
 }
 
@@ -9535,16 +9538,19 @@ html[data-reduce-motion='true'] .real-shell-home-stack[data-routes-phase='closin
 }
 
 .real-start-stack[data-start-overlay-phase='closing'] .real-language-panel,
-.real-start-stack[data-start-overlay-phase='closing'] .real-start-overlay-panel {
+.real-start-stack[data-start-overlay-phase='closing'] .real-start-overlay-panel,
+.real-start-stack[data-start-overlay-phase='closing'] .real-profile-panel {
   animation: real-shell-slide-down-out var(--real-shell-transition-duration) var(--real-shell-transition-easing) forwards;
 }
 
 html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-start-panel,
 html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-language-panel,
 html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-start-overlay-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='opening'] .real-profile-panel,
 html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-start-panel,
 html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-language-panel,
-html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-start-overlay-panel {
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-start-overlay-panel,
+html[data-reduce-motion='true'] .real-start-stack[data-start-overlay-phase='closing'] .real-profile-panel {
   animation: none;
 }
 
@@ -9777,8 +9783,9 @@ html[data-reduce-motion='true'] .real-start-bg-map {
 .real-profile-overlay-host {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 12000;
   pointer-events: none;
+  background: rgb(5 7 13 / 0.72);
 }
 
 .real-profile-overlay-host .real-profile-page {
@@ -11369,12 +11376,20 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   background: transparent;
 }
 
+.real-start-overlay-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .real-start-overlay-shell {
   position: relative;
   z-index: 1;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  min-height: 100dvh;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
   padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 3vw, 2rem) clamp(1.25rem, 2.5vw, 2rem);
   box-sizing: border-box;
 }
@@ -11538,12 +11553,12 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  min-height: 3rem;
+  min-height: 3.4rem;
   padding: 0.55rem 0.65rem;
   border-radius: 10px;
   border: 1px solid rgb(255 255 255 / 0.22);
   background: rgb(8 12 20 / 0.52);
-  color: inherit;
+  color: #f8fafc;
   text-decoration: none;
   transition:
     border-color 0.15s ease,
@@ -11555,19 +11570,18 @@ a.real-start-credits-card:hover {
   transform: translateY(-1px);
   border-color: rgb(255 255 255 / 0.42);
   background: rgb(12 18 28 / 0.68);
+  color: #fff;
 }
 
 .real-start-credits-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.12);
-  font-size: 0.95rem;
-  font-weight: 700;
+  border: 2px solid rgb(255 255 255 / 0.28);
+  background: rgb(255 255 255 / 0.08);
+  object-fit: cover;
 }
 
 .real-start-credits-copy {
@@ -11577,15 +11591,18 @@ a.real-start-credits-card:hover {
 }
 
 .real-start-credits-name {
+  display: block;
   font-size: clamp(0.78rem, 1.6vw, 0.88rem);
   font-weight: 700;
   line-height: 1.25;
+  color: #f8fafc;
 }
 
 .real-start-credits-role {
+  display: block;
   font-size: clamp(0.68rem, 1.4vw, 0.76rem);
   line-height: 1.3;
-  color: rgb(226 232 240 / 0.78);
+  color: rgb(226 232 240 / 0.82);
 }
 
 .real-start-changelog-head {

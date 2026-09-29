@@ -9,6 +9,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { REAL_START_MENU_LAYOUT } from '../data/realStartMenuLayout'
 import { useRealStartMenuScale } from '../hooks/useRealStartMenuScale'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
@@ -22,8 +23,15 @@ import { preserveAppHistoryState } from '../utils/appHistoryState'
 import { readPublishedBuild } from '../utils/buildLabel'
 import { formatRealStartMenuVersion } from '../utils/realStartVersionLabel'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
-import { dispatchRealHudAction } from '../utils/realHudEvents'
+import {
+  dispatchRealHudAction,
+  readRealHudAction,
+  REAL_HUD_EVENT,
+  type RealProfileHudTab,
+} from '../utils/realHudEvents'
 import { RealLanguagePage } from './RealLanguagePage'
+import { RealProfilePage } from './RealProfilePage'
+import { RealShopDialog } from './RealShopDialog'
 import { RealStartBackground } from './RealStartBackground'
 import { RealStartChangeLogPage } from './RealStartChangeLogPage'
 import { RealStartCreditsPage } from './RealStartCreditsPage'
@@ -86,6 +94,8 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   })
   const [overlayId, setOverlayId] = useState<StartOverlayId | null>(null)
   const [overlayPhase, setOverlayPhase] = useState<OverlayViewPhase>('closed')
+  const [profileInitialTab, setProfileInitialTab] = useState<RealProfileHudTab>('stats')
+  const [shopOpen, setShopOpen] = useState(false)
   const [aboutSubmenuOpen, setAboutSubmenuOpen] = useState(false)
   const menuRootRef = useRef<HTMLDivElement>(null)
   const { uiScale } = useRealStartMenuScale(menuRootRef)
@@ -108,7 +118,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     [uiScale],
   )
   const overlayMounted = overlayPhase !== 'closed'
-  const overlayActive = overlayMounted
+  const overlayActive = overlayMounted || shopOpen
   const versionLabel = formatRealStartMenuVersion(readPublishedBuild() ?? __APP_BUILD__)
   const robloxHref = getStartPageExternalLinkUrl('roblox', locale)
 
@@ -247,6 +257,21 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       onClick: () => openOverlay('credits'),
     },
   ]
+
+  useEffect(() => {
+    const onHudAction = (event: Event) => {
+      const action = readRealHudAction(event)
+      if (action?.type === 'open-profile') {
+        setProfileInitialTab(action.tab ?? 'stats')
+        openOverlay('profile')
+      }
+      if (action?.type === 'open-shop') {
+        setShopOpen(true)
+      }
+    }
+    window.addEventListener(REAL_HUD_EVENT, onHudAction)
+    return () => window.removeEventListener(REAL_HUD_EVENT, onHudAction)
+  }, [openOverlay])
 
   useEffect(() => {
     if (overlayActive) return
@@ -422,6 +447,19 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       {overlayMounted && overlayId === 'credits' ? (
         <RealStartCreditsPage onClose={closeOverlay} onAnimationEnd={handleOverlayAnimationEnd} />
       ) : null}
+      {overlayMounted && overlayId === 'profile' ? (
+        <RealProfilePage
+          initialTab={profileInitialTab}
+          onClose={closeOverlay}
+          onAnimationEnd={handleOverlayAnimationEnd}
+        />
+      ) : null}
+      {shopOpen
+        ? createPortal(
+            <RealShopDialog open={shopOpen} onClose={() => setShopOpen(false)} />,
+            document.body,
+          )
+        : null}
     </div>
   )
 }
