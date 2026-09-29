@@ -4,10 +4,13 @@ import { useAppDialog } from '../contexts/AppDialogContext'
 import { useUserProfile } from '../contexts/UserProfileContext'
 import { useLocale } from '../i18n/LocaleContext'
 import { getAccountPageHref } from '../utils/appPage'
+import { REAL_PROFILE_GAME_TITLES } from '../data/realProfileTitles'
+import { getPrimaryText } from '../i18n/displayText'
 import { resolveAccountLicenseName } from '../utils/accountAvatar'
 
 export function RealProfileTitleTab() {
-  const { t } = useLocale()
+  const { locale, t } = useLocale()
+  const [equippedTitleId, setEquippedTitleId] = useState('driver')
   const { alert } = useAppDialog()
   const { isLoggedIn, token, email, mapAuthError } = useAuth()
   const { profile, saveProfile } = useUserProfile()
@@ -38,19 +41,16 @@ export function RealProfileTitleTab() {
     }
   }
 
-  if (!isLoggedIn) {
-    return (
-      <div className="real-profile-title-tab">
-        <p className="real-profile-title-tab-lead">{t('authProfileLeadSignedOut')}</p>
-        <a className="real-profile-icon-link" href={accountHref}>
-          {t('realProfileSignInLink')}
-        </a>
-      </div>
-    )
-  }
-
   return (
     <div className="real-profile-title-tab">
+      {!isLoggedIn ? (
+        <>
+          <p className="real-profile-title-tab-lead">{t('authProfileLeadSignedOut')}</p>
+          <a className="real-profile-icon-link" href={accountHref}>
+            {t('realProfileSignInLink')}
+          </a>
+        </>
+      ) : (
       <article className="real-profile-title-note">
         <h3 className="real-profile-title-note-heading">{t('authProfileCustomizeTitle')}</h3>
         <p className="real-profile-title-note-hint">{t('authDisplayNameHint')}</p>
@@ -78,6 +78,30 @@ export function RealProfileTitleTab() {
           {t('authProfileSave')}
         </button>
       </article>
+      )}
+
+      <section className="real-profile-title-catalog" aria-label={t('realProfileTitlesCatalog')}>
+        <h3 className="real-profile-title-catalog-heading">{t('realProfileTitlesCatalog')}</h3>
+        <ul className="real-profile-title-catalog-list sibs-scrollbar">
+          {REAL_PROFILE_GAME_TITLES.map((title) => {
+            const active = equippedTitleId === title.id
+            return (
+              <li key={title.id}>
+                <button
+                  type="button"
+                  className={`real-profile-title-catalog-item${active ? ' real-profile-title-catalog-item--active' : ''}${title.vip ? ' real-profile-title-catalog-item--vip' : ''}`}
+                  aria-pressed={active}
+                  onClick={() => setEquippedTitleId(title.id)}
+                >
+                  <span>{getPrimaryText(title.label, locale)}</span>
+                  {title.vip ? <span className="real-profile-title-catalog-badge">VIP</span> : null}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="real-profile-title-catalog-note">{t('realProfileTitlesDemoNote')}</p>
+      </section>
     </div>
   )
 }

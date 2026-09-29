@@ -10691,11 +10691,12 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(100%, 56rem);
-  max-height: min(92dvh, 40rem);
+  width: min(calc(100vw - 2rem), 800px);
+  aspect-ratio: 2 / 1;
+  max-height: min(50dvh, 500px);
   border: 3px solid #2f4f9c;
   border-radius: 0.55rem;
-  background: linear-gradient(180deg, #0b1030 0%, #12082a 100%);
+  background: #1f004d;
   box-shadow: 0 24px 64px rgb(0 0 0 / 0.55);
   color: #f8fafc;
 }
@@ -10704,7 +10705,10 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.65rem 0.65rem 0.45rem;
+  flex: 0 0 8%;
+  min-height: 2.35rem;
+  padding: 0.35rem 0.55rem 0.25rem;
+  box-sizing: border-box;
 }
 
 .real-shop-tabs {
@@ -10716,15 +10720,25 @@ html[data-reduce-motion='true'] .real-language-option:hover {
 }
 
 .real-shop-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   border: 2px solid #4a88f5;
   border-radius: 0.45rem;
   background: rgb(15 23 42 / 0.92);
   color: #f8fafc;
   font: inherit;
-  font-size: 0.82rem;
+  font-size: clamp(0.62rem, 1.4vw, 0.78rem);
   font-weight: 700;
-  padding: 0.38rem 0.7rem;
+  padding: 0.28rem 0.55rem;
   cursor: pointer;
+}
+
+.real-shop-tab-gift-icon,
+.real-shop-gift-icon {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
 }
 
 .real-shop-tab--active {
@@ -10741,21 +10755,28 @@ html[data-reduce-motion='true'] .real-language-option:hover {
 
 .real-shop-close {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
   background: transparent;
-  color: #f8fafc;
-  font-size: 1.45rem;
-  line-height: 1;
-  width: 2rem;
-  height: 2rem;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
   cursor: pointer;
 }
 
+.real-shop-close-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  object-fit: contain;
+}
+
 .real-shop-body {
-  flex: 1;
+  flex: 1 1 75%;
   min-height: 0;
   overflow: auto;
-  padding: 0.55rem 0.75rem 0.35rem;
+  padding: 0.35rem 0.65rem 0.25rem;
 }
 
 .real-shop-footnote {
@@ -10777,15 +10798,15 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   background: linear-gradient(180deg, #d946ef 0%, #a21caf 100%);
   color: #fff;
   font: inherit;
-  font-size: 0.72rem;
+  font-size: clamp(0.58rem, 1.1vw, 0.68rem);
   font-weight: 700;
-  padding: 0.2rem 0.45rem;
+  padding: 0.15rem 0.35rem;
   cursor: pointer;
 }
 
 .real-shop-owned {
-  margin: 0.35rem 0;
-  font-size: 0.78rem;
+  margin: 0.15rem 0;
+  font-size: clamp(0.58rem, 1.1vw, 0.68rem);
   color: rgb(248 250 252 / 0.88);
 }
 
@@ -10810,17 +10831,19 @@ html[data-reduce-motion='true'] .real-language-option:hover {
 .real-shop-pass-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
+  gap: 2% 5%;
 }
 
 .real-shop-pass-card {
   display: grid;
-  grid-template-columns: minmax(5.5rem, 38%) minmax(0, 1fr);
-  gap: 0.45rem;
-  min-height: 8.5rem;
-  padding: 0.55rem;
+  grid-template-columns: 35% minmax(0, 1fr);
+  gap: 0.35rem;
+  min-height: 0;
+  aspect-ratio: 365 / 140;
+  padding: 0.35rem;
   border-radius: 0.45rem;
   border: 2px solid rgb(255 255 255 / 0.12);
+  overflow: hidden;
 }
 
 .real-shop-pass-card--vip {
@@ -10845,6 +10868,7 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
+  min-height: 0;
 }
 
 .real-shop-pass-card-right {
@@ -10852,80 +10876,36 @@ html[data-reduce-motion='true'] .real-language-option:hover {
 }
 
 .real-shop-pass-card-title {
-  margin: 0 0 0.35rem;
-  font-size: 0.95rem;
+  margin: 0 0 0.2rem;
+  font-size: clamp(0.68rem, 1.5vw, 0.82rem);
   font-weight: 800;
+  line-height: 1.15;
 }
 
 .real-shop-pass-perks {
   margin: 0;
-  padding-left: 1rem;
-  font-size: 0.72rem;
-  line-height: 1.45;
+  padding-left: 0.85rem;
+  font-size: clamp(0.58rem, 1.2vw, 0.68rem);
+  line-height: 1.35;
 }
 
 .real-shop-pass-visual {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.05;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 0.35rem;
 }
 
-.real-shop-pass-visual-vip {
-  font-size: 1.35rem;
-  font-weight: 900;
-  color: #fbbf24;
-  font-family: Georgia, 'Times New Roman', serif;
-}
-
-.real-shop-pass-visual-vip-sub {
-  font-size: 0.62rem;
-  color: #fde68a;
-}
-
-.real-shop-pass-visual-dev-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.35rem;
-  height: 1.35rem;
-  border-radius: 0.2rem;
-  background: #dc2626;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.real-shop-pass-visual-dev-label {
-  margin-top: 0.25rem;
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.real-shop-pass-visual-exp-badge {
-  display: inline-block;
-  padding: 0.1rem 0.35rem;
-  border-radius: 0.25rem;
-  background: #dc2626;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.real-shop-pass-visual-ultimate-label {
-  margin-top: 0.2rem;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.real-shop-pass-visual-master-card {
-  display: inline-block;
-  padding: 0.35rem 0.45rem;
-  border: 1px solid rgb(255 255 255 / 0.35);
-  border-radius: 0.25rem;
-  background: #111827;
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+.real-shop-pass-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
 }
 
 .real-shop-boost-list {
@@ -11150,7 +11130,10 @@ html[data-reduce-motion='true'] .real-language-option:hover {
 
 @media (max-width: 720px) {
   .real-shop-panel {
-    max-height: 94dvh;
+    width: min(calc(100vw - 1rem), 800px);
+    aspect-ratio: auto;
+    max-height: min(94dvh, 500px);
+    height: auto;
   }
 
   .real-shop-pass-grid,
@@ -11538,15 +11521,19 @@ html[data-reduce-motion='true'] .real-language-option:hover {
 }
 
 .real-start-credits-grid--featured {
-  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
 }
 
 .real-start-credits-grid--compact {
-  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
 }
 
 .real-start-credits-grid--tag {
-  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+}
+
+.real-start-credits-grid > li {
+  min-width: 0;
 }
 
 .real-start-credits-card {
@@ -11554,7 +11541,9 @@ html[data-reduce-motion='true'] .real-language-option:hover {
   align-items: center;
   gap: 0.55rem;
   min-height: 3.4rem;
+  max-width: 100%;
   padding: 0.55rem 0.65rem;
+  overflow: hidden;
   border-radius: 10px;
   border: 1px solid rgb(255 255 255 / 0.22);
   background: rgb(8 12 20 / 0.52);
@@ -11592,6 +11581,9 @@ a.real-start-credits-card:hover {
 
 .real-start-credits-name {
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: clamp(0.78rem, 1.6vw, 0.88rem);
   font-weight: 700;
   line-height: 1.25;
@@ -11600,9 +11592,25 @@ a.real-start-credits-card:hover {
 
 .real-start-credits-role {
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: clamp(0.68rem, 1.4vw, 0.76rem);
   line-height: 1.3;
   color: rgb(226 232 240 / 0.82);
+}
+
+.roblox-headshot-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 2px solid rgb(255 255 255 / 0.28);
+  background: rgb(255 255 255 / 0.12);
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .real-start-changelog-head {
@@ -12195,16 +12203,303 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
   color: #6b7280;
 }
 
-.real-profile-tab-placeholder {
+.real-profile-tab-lead {
+  margin: 0 0 0.65rem;
+  font-size: clamp(0.68rem, 1.4vw, 0.78rem);
+  line-height: 1.45;
+  color: rgb(243 244 246 / 0.82);
+}
+
+.real-profile-leaderboard-tab,
+.real-profile-achievements-tab,
+.real-profile-icons-tab,
+.real-profile-title-tab {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
+.real-profile-leaderboard-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  min-height: 0;
+}
+
+.real-profile-leaderboard-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.45rem;
+  border-radius: 8px;
+  background: rgb(0 0 0 / 0.18);
+}
+
+.real-profile-leaderboard-head {
+  margin-bottom: 0.35rem;
+}
+
+.real-profile-leaderboard-title {
+  margin: 0;
+  font-size: clamp(0.72rem, 1.5vw, 0.82rem);
+  font-weight: 800;
+  color: #fef08a;
+}
+
+.real-profile-leaderboard-updated {
+  display: block;
+  font-size: 0.62rem;
+  color: rgb(243 244 246 / 0.65);
+}
+
+.real-profile-leaderboard-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 11rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.real-profile-leaderboard-row {
+  display: grid;
+  grid-template-columns: 1.4rem 1.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  font-size: clamp(0.62rem, 1.3vw, 0.72rem);
+}
+
+.real-profile-leaderboard-rank {
+  font-weight: 800;
+  color: #fde68a;
+}
+
+.real-profile-leaderboard-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.real-profile-leaderboard-avatar--empty {
+  display: block;
+  background: rgb(255 255 255 / 0.12);
+}
+
+.real-profile-leaderboard-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.real-profile-leaderboard-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.real-profile-leaderboard-you {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0.35rem 0 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  font-size: clamp(0.62rem, 1.25vw, 0.72rem);
+}
+
+.real-profile-leaderboard-reward {
+  color: rgb(253 224 71 / 0.88);
+}
+
+.real-profile-achievements-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.real-profile-achievement {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(0 0 0 / 0.16);
+}
+
+.real-profile-achievement + .real-profile-achievement {
+  margin-top: 0.45rem;
+}
+
+.real-profile-achievement-title {
+  margin: 0 0 0.15rem;
+  font-size: clamp(0.72rem, 1.45vw, 0.82rem);
+  font-weight: 800;
+}
+
+.real-profile-achievement-desc {
+  margin: 0;
+  font-size: clamp(0.62rem, 1.25vw, 0.72rem);
+  line-height: 1.4;
+  color: rgb(243 244 246 / 0.82);
+}
+
+.real-profile-achievement-progress {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+}
+
+.real-profile-achievement-progress-track {
+  flex: 1 1 auto;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+  overflow: hidden;
+}
+
+.real-profile-achievement-progress-fill {
   height: 100%;
-  min-height: 100%;
-  padding: 1rem;
-  color: rgb(243 244 246 / 0.88);
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  border-radius: inherit;
+  background: linear-gradient(90deg, #fde047, #f59e0b);
+}
+
+.real-profile-achievement-progress-label {
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.real-profile-achievement-awards {
+  margin: 0.25rem 0 0;
+  font-size: 0.62rem;
+  color: #fde68a;
+}
+
+.real-profile-achievement-state {
+  align-self: start;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+  font-size: 0.58rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.real-profile-achievement--completed .real-profile-achievement-state {
+  background: rgb(34 197 94 / 0.28);
+}
+
+.real-profile-title-catalog {
+  margin-top: 0.75rem;
+}
+
+.real-profile-title-catalog-heading,
+.real-profile-icons-inventory-title {
+  margin: 0 0 0.45rem;
+  font-size: clamp(0.72rem, 1.45vw, 0.82rem);
+  font-weight: 800;
+  color: #fef08a;
+}
+
+.real-profile-title-catalog-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.real-profile-title-catalog-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.22);
+  color: #f8fafc;
+  font: inherit;
+  font-size: clamp(0.62rem, 1.25vw, 0.72rem);
+  padding: 0.28rem 0.55rem;
+  cursor: pointer;
+}
+
+.real-profile-title-catalog-item--active {
+  border-color: #fde047;
+  box-shadow: 0 0 0 1px rgb(253 224 71 / 0.35);
+}
+
+.real-profile-title-catalog-badge {
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #fde047;
+}
+
+.real-profile-title-catalog-note,
+.real-profile-icons-note {
+  margin: 0.45rem 0 0;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: rgb(243 244 246 / 0.72);
+}
+
+.real-profile-icons-tab {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 0.65rem;
+}
+
+.real-profile-icons-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+.real-profile-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.real-profile-icon-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.35rem 0.25rem;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 8px;
+  background: rgb(0 0 0 / 0.18);
+  color: #f8fafc;
+  font: inherit;
+  font-size: 0.62rem;
+  cursor: pointer;
+}
+
+.real-profile-icon-slot--active {
+  border-color: #fde047;
+}
+
+.real-profile-icon-slot--locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.real-profile-icon-slot-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
 .real-profile-chalk-props {
@@ -12257,6 +12552,11 @@ html:not([data-reduce-motion='true']) .real-profile-title-save:hover:not(:disabl
 
   .real-profile-stats-note {
     margin-top: 0.5rem;
+  }
+
+  .real-profile-leaderboard-panels,
+  .real-profile-icons-tab {
+    grid-template-columns: 1fr;
   }
 }
 

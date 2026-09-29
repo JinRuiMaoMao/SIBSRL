@@ -10,7 +10,9 @@ import {
   type RealShopPassId,
   type RealShopTabId,
 } from '../data/realShopCatalog'
+import { REAL_SHOP_PASS_ART, REAL_SHOP_UI_ASSETS } from '../data/realShopAssets'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
+import { robloxAssetThumbnailUrl } from '../utils/robloxThumbnail'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import { RobuxIcon } from './RobuxIcon'
@@ -63,44 +65,41 @@ function RobuxPrice({ amount }: { amount: number }) {
   )
 }
 
+function RobloxAssetImage({
+  assetId,
+  className,
+  alt = '',
+}: {
+  assetId: number
+  className?: string
+  alt?: string
+}) {
+  return (
+    <img
+      className={className}
+      src={robloxAssetThumbnailUrl(assetId, 420, 420)}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+    />
+  )
+}
+
 function GiftButton({ onClick }: { onClick: () => void }) {
   const { t } = useLocale()
   return (
     <button type="button" className="real-shop-gift-btn" onClick={onClick}>
-      <span aria-hidden="true">🎁</span>
+      <RobloxAssetImage assetId={REAL_SHOP_UI_ASSETS.gift} className="real-shop-gift-icon" alt="" />
       {t('realShopGift')}
     </button>
   )
 }
 
 function PassVisual({ passId }: { passId: RealShopPassId }) {
-  if (passId === 'vip') {
-    return (
-      <div className="real-shop-pass-visual real-shop-pass-visual--vip">
-        <span className="real-shop-pass-visual-vip">VIP</span>
-        <span className="real-shop-pass-visual-vip-sub">Membership</span>
-      </div>
-    )
-  }
-  if (passId === 'developer') {
-    return (
-      <div className="real-shop-pass-visual real-shop-pass-visual--dev">
-        <span className="real-shop-pass-visual-dev-badge">A</span>
-        <span className="real-shop-pass-visual-dev-label">DEVELOPER ACCESS</span>
-      </div>
-    )
-  }
-  if (passId === 'ultimate') {
-    return (
-      <div className="real-shop-pass-visual real-shop-pass-visual--ultimate">
-        <span className="real-shop-pass-visual-exp-badge">2X EXP</span>
-        <span className="real-shop-pass-visual-ultimate-label">Ultimate Boost</span>
-      </div>
-    )
-  }
   return (
-    <div className="real-shop-pass-visual real-shop-pass-visual--master">
-      <span className="real-shop-pass-visual-master-card">MASTER MEMBER</span>
+    <div className={`real-shop-pass-visual real-shop-pass-visual--${passId}`}>
+      <RobloxAssetImage assetId={REAL_SHOP_PASS_ART[passId]} className="real-shop-pass-art" alt="" />
     </div>
   )
 }
@@ -157,12 +156,12 @@ export function RealShopDialog({ open, onClose }: RealShopDialogProps) {
               </button>
             ))}
             <button type="button" className="real-shop-tab real-shop-tab--gift" onClick={openRoblox}>
-              <span aria-hidden="true">🎁</span>
+              <RobloxAssetImage assetId={REAL_SHOP_UI_ASSETS.gift} className="real-shop-tab-gift-icon" alt="" />
               {t('realShopGift')}
             </button>
           </div>
           <button type="button" className="real-shop-close" onClick={onClose} aria-label={t('realShopClose')}>
-            ×
+            <RobloxAssetImage assetId={REAL_SHOP_UI_ASSETS.close} className="real-shop-close-icon" alt="" />
           </button>
         </div>
 

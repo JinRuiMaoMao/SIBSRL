@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState, type AnimationEvent } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useUserProfile } from '../contexts/UserProfileContext'
+import { useRealDriverProgress } from '../hooks/useRealDriverProgress'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import { getAccountPageHref } from '../utils/appPage'
 import { resolveAccountLicenseName } from '../utils/accountAvatar'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import type { RealProfileHudTab } from '../utils/realHudEvents'
+import { RealProfileAchievementsTab } from './RealProfileAchievementsTab'
+import { RealProfileIconsTab } from './RealProfileIconsTab'
+import { RealProfileLeaderboardTab } from './RealProfileLeaderboardTab'
 import { RealProfileLicensePhoto } from './RealProfileLicensePhoto'
 import { RealProfileTitleTab } from './RealProfileTitleTab'
 
@@ -33,7 +37,6 @@ const DEFAULT_STATS = {
   destinationError: 0,
   earlyDeparture: 0,
   otherComplaints: 0,
-  driverLevel: 0,
 } as const
 
 function formatStatCount(value: number): string {
@@ -60,17 +63,26 @@ export function RealProfilePage({
   const { locale, t } = useLocale()
   const { isLoggedIn, email } = useAuth()
   const { profile } = useUserProfile()
+  const { level } = useRealDriverProgress()
   const [activeTab, setActiveTab] = useState<RealProfileTabId>(initialTab)
 
   useEffect(() => {
     setActiveTab(initialTab)
   }, [initialTab])
+
   const accountHref = getAccountPageHref()
   const profileEmail = profile?.email ?? email
   const licenseName = isLoggedIn
     ? resolveAccountLicenseName(profile?.displayName, profileEmail)
     : t('realProfileGuestName')
   const issueDate = useMemo(() => formatProfileDate(locale), [locale])
+  const stats = useMemo(
+    () => ({
+      ...DEFAULT_STATS,
+      driverLevel: level,
+    }),
+    [level],
+  )
 
   useEffect(() => {
     syncFavicon()
@@ -142,7 +154,7 @@ export function RealProfilePage({
                           </div>
                           <div>
                             <dt>{t('realProfileLicenseLevel')}</dt>
-                            <dd>{DEFAULT_STATS.driverLevel}</dd>
+                            <dd>{stats.driverLevel}</dd>
                           </div>
                         </dl>
                       </div>
@@ -163,60 +175,50 @@ export function RealProfilePage({
                       <dl className="real-profile-stats-list">
                         <div>
                           <dt>{t('realProfileStatDistance')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.distanceKm)} km</dd>
+                          <dd>{formatStatCount(stats.distanceKm)} km</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatRoutes')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.routesCompleted)}</dd>
+                          <dd>{formatStatCount(stats.routesCompleted)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatStopLines')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.busStopLines)}</dd>
+                          <dd>{formatStatCount(stats.busStopLines)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatPassengers')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.passengers)}</dd>
+                          <dd>{formatStatCount(stats.passengers)}</dd>
                         </div>
                       </dl>
                       <dl className="real-profile-stats-list real-profile-stats-list--negative">
                         <div>
                           <dt>{t('realProfileStatDangerous')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.dangerousDriving)}</dd>
+                          <dd>{formatStatCount(stats.dangerousDriving)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatDestinationError')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.destinationError)}</dd>
+                          <dd>{formatStatCount(stats.destinationError)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatEarlyDeparture')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.earlyDeparture)}</dd>
+                          <dd>{formatStatCount(stats.earlyDeparture)}</dd>
                         </div>
                         <div>
                           <dt>{t('realProfileStatComplaints')}</dt>
-                          <dd>{formatStatCount(DEFAULT_STATS.otherComplaints)}</dd>
+                          <dd>{formatStatCount(stats.otherComplaints)}</dd>
                         </div>
                       </dl>
+                      <p className="real-profile-stats-demo">{t('realProfileStatsDemoNote')}</p>
                     </article>
                   </div>
                 ) : activeTab === 'title' ? (
                   <RealProfileTitleTab />
                 ) : activeTab === 'icon' ? (
-                  <div className="real-profile-icon-tab">
-                    <RealProfileLicensePhoto
-                      displayName={profile?.displayName}
-                      email={profileEmail}
-                      avatarDataUrl={profile?.avatarDataUrl}
-                      size="icon"
-                    />
-                    <p className="real-profile-icon-hint">{t('realProfileIconHint')}</p>
-                    <a className="real-profile-icon-link" href={accountHref}>
-                      {isLoggedIn ? t('realProfileIconManageLink') : t('realProfileSignInLink')}
-                    </a>
-                  </div>
+                  <RealProfileIconsTab />
+                ) : activeTab === 'leaderboard' ? (
+                  <RealProfileLeaderboardTab />
                 ) : (
-                  <div className="real-profile-tab-placeholder">
-                    <p>{t('realProfileTabComingSoon')}</p>
-                  </div>
+                  <RealProfileAchievementsTab />
                 )}
               </div>
 

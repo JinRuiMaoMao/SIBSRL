@@ -2,7 +2,8 @@ import { useEffect, type AnimationEvent } from 'react'
 import { REAL_START_CREDIT_SECTIONS } from '../data/realStartCredits'
 import { getPrimaryText } from '../i18n/displayText'
 import { useLocale } from '../i18n/LocaleContext'
-import { robloxHeadshotUrl, robloxProfileUrl } from '../utils/robloxAvatar'
+import { RobloxHeadshotImage } from './RobloxHeadshotImage'
+import { robloxProfileUrl } from '../utils/robloxAvatar'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import { RealStartOverlayShell } from './RealStartOverlayShell'
 
@@ -34,14 +35,11 @@ export function RealStartCreditsPage({
                 const profileHref = robloxProfileUrl(member.userId)
                 const body = (
                   <>
-                    <img
+                    <RobloxHeadshotImage
+                      userId={member.userId}
+                      displayName={member.displayName}
                       className="real-start-credits-avatar"
-                      src={robloxHeadshotUrl(member.userId, 150)}
-                      alt=""
-                      width={48}
-                      height={48}
-                      loading="lazy"
-                      decoding="async"
+                      size={48}
                     />
                     <span className="real-start-credits-copy">
                       <span className="real-start-credits-name">{member.displayName}</span>
