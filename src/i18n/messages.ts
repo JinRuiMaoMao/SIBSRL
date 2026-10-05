@@ -726,6 +726,12 @@ const messagesZhHans = {
   dailyChallengeCalendarMissingData: '资料缺失',
   dailyChallengeCalendarNoData: '暂无数据，等待游戏内更新',
   dailyChallengeCalendarLiveNote: '已合并 Discord 机器人同步的历史日程（覆盖同日本地数据）',
+  dailyChallengeCalendarSearchLabel: '搜索线路或挑战类型',
+  dailyChallengeCalendarSearchPlaceholder: '线路（如 270A）或类型（如 Foggy Day、浓雾）',
+  dailyChallengeCalendarSearchHint:
+    '匹配项在日历上保持原色，其余日期以灰色遮罩显示；可切换月份查看其他月份的匹配',
+  dailyChallengeCalendarSearchEmpty: '未找到匹配的每日挑战',
+  dailyChallengeCalendarSearchCount: '共找到 {count} 个匹配日期',
   dailyChallengeCalendarRouteSearchLabel: '按线路搜索',
   dailyChallengeCalendarRouteSearchPlaceholder: '输入线路编号，如 270A、370AEM、N246',
   dailyChallengeCalendarRouteSearchHint:
@@ -1829,6 +1835,12 @@ const messagesEn: Record<MessageKey, string> = {
   dailyChallengeCalendarMissingData: 'Data missing',
   dailyChallengeCalendarNoData: 'No data yet — waiting for in-game update',
   dailyChallengeCalendarLiveNote: 'Merged with history synced from the Discord bot (overrides local data for the same date)',
+  dailyChallengeCalendarSearchLabel: 'Search route or challenge type',
+  dailyChallengeCalendarSearchPlaceholder: 'Route (e.g. 270A) or type (e.g. Foggy Day)',
+  dailyChallengeCalendarSearchHint:
+    'Matches stay in full color on the calendar; other days are grayed out. Switch months to see matches elsewhere.',
+  dailyChallengeCalendarSearchEmpty: 'No matching daily challenges found',
+  dailyChallengeCalendarSearchCount: '{count} matching date(s) found',
   dailyChallengeCalendarRouteSearchLabel: 'Search by route',
   dailyChallengeCalendarRouteSearchPlaceholder: 'Route number, e.g. 270A, 370AEM, or N246',
   dailyChallengeCalendarRouteSearchHint:

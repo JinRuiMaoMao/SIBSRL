@@ -2,10 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { lockPageScroll } from '../utils/pageScrollLock'
 import {
   buildDailyChallengeFromScheduleDay,
-  dailyChallengeRouteCodeMatchesQuery,
   formatDailyChallengeCalendarRouteCode,
 } from '../data/dailyChallenge'
-import { searchDailyChallengeDaysByRoute } from '../utils/dailyChallengeCalendarSearch'
+import { searchDailyChallengeDays } from '../utils/dailyChallengeCalendarSearch'
 import {
   buildMonthCalendarCells,
   CALENDAR_EARLIEST_MONTH,
@@ -54,25 +53,11 @@ function RaceTagLabel({ locale }: { locale: ReturnType<typeof useLocale>['locale
   )
 }
 
-function formatSearchResultDate(date: string, locale: ReturnType<typeof useLocale>['locale']): string {
-  const [year, month, day] = date.split('-').map(Number)
-  if (!year || !month || !day) return date
-  const stamp = Date.UTC(year, month - 1, day)
-  return new Intl.DateTimeFormat(isChineseLocale(locale) ? 'zh-Hans' : locale, {
-    timeZone: 'UTC',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    weekday: 'short',
-  }).format(stamp)
-}
-
 function CalendarDayCell({
   date,
   day,
   isToday,
-  isHighlighted,
-  isSearchMatch,
+  isSearchDimmed,
   locale,
   emptyLabel,
   onSelectDay,
@@ -80,8 +65,7 @@ function CalendarDayCell({
   date: string
   day: DailyChallengeScheduleDay | null
   isToday: boolean
-  isHighlighted: boolean
-  isSearchMatch: boolean
+  isSearchDimmed: boolean
   locale: ReturnType<typeof useLocale>['locale']
   emptyLabel: string
   onSelectDay?: (day: DailyChallengeScheduleDay) => void
@@ -102,7 +86,7 @@ function CalendarDayCell({
   const hasData = hasEvent || isRaceOnly
   const isRace = dayRace
   const className =
-    `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${isHighlighted ? 'is-highlighted' : ''} ${isSearchMatch ? 'is-search-match' : ''} ${hasData ? 'has-data' : 'is-empty'} ${hasEvent && onSelectDay ? 'is-clickable' : ''}`.trim()
+    `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${isSearchDimmed ? 'is-search-dimmed' : ''} ${hasData ? 'has-data' : 'is-empty'} ${hasEvent && onSelectDay ? 'is-clickable' : ''}`.trim()
 
   const inner = (
     <>
@@ -171,9 +155,8 @@ export function DailyChallengeCalendarDialog({
   const [selectedMonthKey, setSelectedMonthKey] = useState(() =>
     resolveInitialCalendarMonth(todayDate, schedules),
   )
-  const [routeSearchQuery, setRouteSearchQuery] = useState('')
-  const [highlightedDate, setHighlightedDate] = useState<string | null>(null)
-  const routeSearchInputRef = useRef<HTMLInputElement>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const selectedParsed = parseScheduleMonthKey(selectedMonthKey)
   const selectedYear = selectedParsed?.year ?? years[0] ?? Number(todayDate.slice(0, 4))
@@ -200,11 +183,15 @@ export function DailyChallengeCalendarDialog({
   )
   const isAtEarliestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_EARLIEST_MONTH) <= 0
   const isAtLatestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_LATEST_MONTH) >= 0
-  const routeSearchHits = useMemo(
-    () => searchDailyChallengeDaysByRoute(schedules, routeSearchQuery),
-    [routeSearchQuery, schedules],
+  const searchHits = useMemo(
+    () => searchDailyChallengeDays(schedules, searchQuery),
+    [searchQuery, schedules],
   )
-  const routeSearchActive = routeSearchQuery.trim().length > 0
+  const searchActive = searchQuery.trim().length > 0
+  const searchMatchDates = useMemo(
+    () => new Set(searchHits.map((hit) => hit.date)),
+    [searchHits],
+  )
 
   useEffect(() => {
     if (!open) return
@@ -212,20 +199,13 @@ export function DailyChallengeCalendarDialog({
     queueMicrotask(() => {
       if (!cancelled) {
         setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
-        setRouteSearchQuery('')
-        setHighlightedDate(null)
+        setSearchQuery('')
       }
     })
     return () => {
       cancelled = true
     }
   }, [open, schedules, todayDate])
-
-  useEffect(() => {
-    if (!highlightedDate) return
-    const node = document.getElementById(`daily-challenge-calendar-day-${highlightedDate}`)
-    node?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-  }, [highlightedDate, selectedMonthKey])
 
   useEffect(() => {
     if (selectableMonths.length === 0) return
@@ -252,11 +232,6 @@ export function DailyChallengeCalendarDialog({
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [open, onClose])
-
-  const jumpToSearchHit = (date: string) => {
-    setSelectedMonthKey(clampScheduleMonthKey(date.slice(0, 7)))
-    setHighlightedDate(date)
-  }
 
   const shiftMonth = (delta: number) => {
     setSelectedMonthKey((current) => {
@@ -325,88 +300,39 @@ export function DailyChallengeCalendarDialog({
         </p>
 
         <div className="daily-challenge-calendar-route-search">
-          <label className="daily-challenge-calendar-route-search-field" htmlFor="daily-challenge-calendar-route-search">
+          <label className="daily-challenge-calendar-route-search-field" htmlFor="daily-challenge-calendar-search">
             <span className="daily-challenge-calendar-route-search-label">
-              {t('dailyChallengeCalendarRouteSearchLabel')}
+              {t('dailyChallengeCalendarSearchLabel')}
             </span>
             <input
-              ref={routeSearchInputRef}
-              id="daily-challenge-calendar-route-search"
+              ref={searchInputRef}
+              id="daily-challenge-calendar-search"
               className="daily-challenge-calendar-route-search-input"
               type="search"
-              value={routeSearchQuery}
-              placeholder={t('dailyChallengeCalendarRouteSearchPlaceholder')}
+              value={searchQuery}
+              placeholder={t('dailyChallengeCalendarSearchPlaceholder')}
               autoComplete="off"
               spellCheck={false}
-              onChange={(event) => {
-                setRouteSearchQuery(event.target.value)
-                setHighlightedDate(null)
-              }}
+              onChange={(event) => setSearchQuery(event.target.value)}
             />
           </label>
-          {!routeSearchActive ? (
-            <p className="daily-challenge-calendar-route-search-hint">
-              {t('dailyChallengeCalendarRouteSearchHint')}
+          {searchActive ? (
+            <p
+              className={`daily-challenge-calendar-route-search-hint ${searchHits.length === 0 ? 'is-empty' : 'is-active'}`.trim()}
+              role="status"
+            >
+              {searchHits.length === 0
+                ? t('dailyChallengeCalendarSearchEmpty')
+                : t('dailyChallengeCalendarSearchCount', { count: searchHits.length })}
             </p>
-          ) : null}
+          ) : (
+            <p className="daily-challenge-calendar-route-search-hint">
+              {t('dailyChallengeCalendarSearchHint')}
+            </p>
+          )}
         </div>
 
         <div className="daily-challenge-calendar-main">
-          {routeSearchActive ? (
-            <div
-              className="daily-challenge-calendar-route-search-overlay"
-              role="presentation"
-            >
-              <div
-                className="daily-challenge-calendar-route-search-results sibs-scrollbar"
-                role="listbox"
-                aria-label={t('dailyChallengeCalendarRouteSearchLabel')}
-              >
-                {routeSearchHits.length === 0 ? (
-                  <p className="daily-challenge-calendar-route-search-empty">
-                    {t('dailyChallengeCalendarRouteSearchEmpty')}
-                  </p>
-                ) : (
-                  <ul className="daily-challenge-calendar-route-search-list">
-                    {routeSearchHits.map(({ date, day }) => {
-                      const eventLabel = day.event
-                        ? getPrimaryText(
-                            buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true }).event,
-                            locale,
-                          )
-                        : null
-                      return (
-                        <li key={date}>
-                          <button
-                            type="button"
-                            className="daily-challenge-calendar-route-search-item"
-                            role="option"
-                            onClick={() => jumpToSearchHit(date)}
-                          >
-                            <span className="daily-challenge-calendar-route-search-date">
-                              {formatSearchResultDate(date, locale)}
-                            </span>
-                            <span className="daily-challenge-calendar-route-search-meta">
-                              {formatDailyChallengeCalendarRouteCode(day.routeCode, day.event) ??
-                                day.routeCode}
-                              {eventLabel ? ` · ${eventLabel}` : null}
-                              {resolveScheduleDayRace(day) ? (
-                                <>
-                                  {' '}
-                                  <RaceTagLabel locale={locale} />
-                                </>
-                              ) : null}
-                            </span>
-                          </button>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                )}
-              </div>
-            </div>
-          ) : null}
-
           <div className="daily-challenge-calendar-nav">
           <button
             type="button"
@@ -499,16 +425,7 @@ export function DailyChallengeCalendarDialog({
                   date={cell.date}
                   day={cell.day}
                   isToday={cell.date === todayDate}
-                  isHighlighted={cell.date === highlightedDate}
-                  isSearchMatch={
-                    routeSearchActive &&
-                    Boolean(cell.day?.routeCode) &&
-                    dailyChallengeRouteCodeMatchesQuery(
-                      cell.day?.routeCode,
-                      routeSearchQuery,
-                      cell.day?.event,
-                    )
-                  }
+                  isSearchDimmed={searchActive && !searchMatchDates.has(cell.date)}
                   locale={locale}
                   emptyLabel={
                     cell.date < todayDate
