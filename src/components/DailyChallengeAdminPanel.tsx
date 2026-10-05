@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   clearDailyChallengeDays,
   fetchDailyChallengeAdminHistory,
@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
 import { todayHktDateString } from '../data/dailyChallenge'
+import { DAILY_CHALLENGE_SCHEDULES } from '../data/dailyChallengeSchedule'
 import { useLocale } from '../i18n/LocaleContext'
 import {
   addCalendarDays,
@@ -35,28 +36,62 @@ function emptyRow(date: string): AdminRow {
   return { date, event: '', routeCode: '', race: false }
 }
 
+function getStaticDaysForMonth(monthKey: string): DailyChallengeDayPayload[] {
+  const schedule = DAILY_CHALLENGE_SCHEDULES.find((entry) => entry.month === monthKey)
+  if (!schedule) return []
+  return schedule.days
+    .filter((day) => day.event)
+    .map((day) => ({
+      date: day.date,
+      event: day.event!,
+      routeCode: day.routeCode,
+      race: day.race,
+    }))
+}
+
+function mergeMonthRows(
+  monthKey: string,
+  apiDays: DailyChallengeDayPayload[],
+  staticDays: DailyChallengeDayPayload[],
+): AdminRow[] {
+  const byDate = new Map<string, AdminRow>()
+  for (const day of staticDays) {
+    byDate.set(day.date, toAdminRow(day))
+  }
+  for (const day of apiDays) {
+    byDate.set(day.date, toAdminRow(day))
+  }
+  return buildMonthRowSkeleton(monthKey, [...byDate.values()])
+}
+
 export function DailyChallengeAdminPanel() {
   const { t } = useLocale()
   const { alert, confirm } = useAppDialog()
   const { token, mapAuthError } = useAuth()
-  const monthKey = todayHktDateString().slice(0, 7)
+  const skipMonthReloadRef = useRef(false)
 
   const [pasteText, setPasteText] = useState('')
-  const [viewMonthKey, setViewMonthKey] = useState(monthKey)
+  const [viewMonthKey, setViewMonthKey] = useState(() => todayHktDateString().slice(0, 7))
   const [rows, setRows] = useState<AdminRow[]>(() => buildMonthRowSkeleton(monthKey))
   const [mergeSummary, setMergeSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
-  const [storedCount, setStoredCount] = useState(0)
+  const [monthStoredCount, setMonthStoredCount] = useState(0)
+  const [totalStoredCount, setTotalStoredCount] = useState(0)
 
   const loadRows = useCallback(async () => {
     setLoading(true)
     try {
       const stored = await fetchDailyChallengeAdminHistory()
+      setTotalStoredCount(stored.length)
       const monthDays = stored.filter((day) => day.date.startsWith(viewMonthKey))
-      setRows(buildMonthRowSkeleton(viewMonthKey, monthDays.map(toAdminRow)))
+      setMonthStoredCount(monthDays.length)
+      const staticDays = getStaticDaysForMonth(viewMonthKey)
+      setRows(mergeMonthRows(viewMonthKey, monthDays, staticDays))
     } catch (error) {
-      setRows(buildMonthRowSkeleton(viewMonthKey))
+      setRows(mergeMonthRows(viewMonthKey, [], getStaticDaysForMonth(viewMonthKey)))
+      setMonthStoredCount(0)
+      setTotalStoredCount(0)
       await alert({ message: t(mapAuthError(error)) })
     } finally {
       setLoading(false)
@@ -64,6 +99,10 @@ export function DailyChallengeAdminPanel() {
   }, [alert, mapAuthError, t, viewMonthKey])
 
   useEffect(() => {
+    if (skipMonthReloadRef.current) {
+      skipMonthReloadRef.current = false
+      return
+    }
     void loadRows()
   }, [loadRows])
 
@@ -80,16 +119,17 @@ export function DailyChallengeAdminPanel() {
     }
 
     const parsed = parseDailyChallengeMonthPaste(trimmed, {
-      year: Number(monthKey.slice(0, 4)),
+      year: Number(viewMonthKey.slice(0, 4)),
     })
     if (parsed.days.length === 0) {
       await alert({ message: t('dcAdminParseNone') })
       return
     }
 
+    skipMonthReloadRef.current = true
     setViewMonthKey(parsed.monthKey)
-    const merged = buildMonthRowSkeleton(parsed.monthKey, parsed.days)
-    setRows(merged)
+    setRows(buildMonthRowSkeleton(parsed.monthKey, parsed.days))
+    setMonthStoredCount(0)
     setMergeSummary(
       t('dcAdminMergeSummary', {
         added: String(parsed.days.length),
@@ -102,6 +142,31 @@ export function DailyChallengeAdminPanel() {
   const handleAddRow = () => {
     const lastDate = rows.at(-1)?.date ?? todayHktDateString()
     setRows((current) => [...current, emptyRow(addCalendarDays(lastDate, 1))])
+  }
+
+  const handleClearMonth = async () => {
+    if (!token) return
+    const ok = await confirm({
+      message: t('dcAdminClearMonthConfirm', { month: viewMonthKey }),
+    })
+    if (!ok) return
+
+    setBusy(true)
+    try {
+      const result = await clearDailyChallengeDays(token, { clearMonth: viewMonthKey })
+      await alert({
+        message: t('dcAdminClearSuccess', {
+          deleted: String(result.deleted),
+          remaining: String(result.remaining),
+        }),
+      })
+      setMergeSummary(null)
+      await loadRows()
+    } catch (error) {
+      await alert({ message: t(mapAuthError(error)) })
+    } finally {
+      setBusy(false)
+    }
   }
 
   const handleClearAll = async () => {
@@ -167,6 +232,23 @@ export function DailyChallengeAdminPanel() {
     <section className="account-profile-card dc-admin-panel">
       <h3 className="account-section-title">{t('dcAdminTitle')}</h3>
       <p className="settings-hint">{t('dcAdminLead')}</p>
+
+      <label className="settings-field dc-admin-month-field">
+        <span className="settings-field-label">{t('dcAdminMonthLabel')}</span>
+        <input
+          className="settings-input dc-admin-month-input"
+          type="month"
+          value={viewMonthKey}
+          disabled={busy || loading}
+          onChange={(event) => {
+            const next = event.target.value
+            if (!next) return
+            setViewMonthKey(next)
+            setMergeSummary(null)
+          }}
+        />
+        <span className="settings-hint">{t('dcAdminMonthHint')}</span>
+      </label>
 
       <label className="settings-field">
         <span className="settings-field-label">{t('dcAdminPasteLabel')}</span>
@@ -259,15 +341,26 @@ export function DailyChallengeAdminPanel() {
         <button
           type="button"
           className="settings-action-btn danger"
-          disabled={busy || loading || storedCount === 0}
+          disabled={busy || loading || monthStoredCount === 0}
+          onClick={() => void handleClearMonth()}
+        >
+          {t('dcAdminClearMonthAction')}
+        </button>
+        <button
+          type="button"
+          className="settings-action-btn danger"
+          disabled={busy || loading || totalStoredCount === 0}
           onClick={() => void handleClearAll()}
         >
           {t('dcAdminClearAllAction')}
         </button>
       </div>
-      {storedCount > 0 ? (
-        <p className="settings-hint">{t('dcAdminStoredCount', { count: String(storedCount) })}</p>
-      ) : null}
+      <p className="settings-hint">
+        {t('dcAdminMonthStoredCount', { count: String(monthStoredCount), month: viewMonthKey })}
+        {totalStoredCount > 0
+          ? ` · ${t('dcAdminStoredCount', { count: String(totalStoredCount) })}`
+          : ''}
+      </p>
     </section>
   )
 }

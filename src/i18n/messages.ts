@@ -585,7 +585,13 @@ const messagesZhHans = {
   routeMapDownloadJsonFailed: 'JSON 下载失败。',
   routeMapDownloadPngFailed: 'PNG 下载失败。',
   dcAdminTitle: '每日挑战管理',
-  dcAdminLead: '粘贴社区月表或直接在表格中填写；保存后全站立即更新（无需重新部署）。空 Event 的行不会提交。',
+  dcAdminLead:
+    '选择月份后编辑表格，或粘贴社区月表解析；保存后全站立即更新。无 API 数据时会预填仓库静态月表供参考。空 Event 的行不会提交。',
+  dcAdminMonthLabel: '编辑月份',
+  dcAdminMonthHint: '切换月份自动加载；API 已保存的数据优先于静态月表。',
+  dcAdminMonthStoredCount: '{month} 视图：API 已保存 {count} 天',
+  dcAdminClearMonthAction: '清除本月 API 覆盖',
+  dcAdminClearMonthConfirm: '将删除 {month} 在 API 中的全部覆盖，表格会回退到静态月表。确定继续？',
   dcAdminPasteLabel: '粘贴月表',
   dcAdminPastePlaceholder:
     '~ October Daily Challenge ~\n10/1: Rush Hour (46E)\n\nJanuary Daily Challenge :\n1: Marathon (242)\n3: (Race) PH (PH1)',
@@ -1680,7 +1686,13 @@ const messagesEn: Record<MessageKey, string> = {
   routeMapDownloadJsonFailed: 'JSON download failed.',
   routeMapDownloadPngFailed: 'PNG download failed.',
   dcAdminTitle: 'Daily challenge admin',
-  dcAdminLead: 'Paste a community month list or edit the table; saves update the site immediately without redeploy. Rows with empty Event are not submitted.',
+  dcAdminLead:
+    'Pick a month to edit the table, or paste a community month list. Saves update the site live. Static schedule pre-fills when API has no data. Rows with empty Event are not submitted.',
+  dcAdminMonthLabel: 'Edit month',
+  dcAdminMonthHint: 'Changing month reloads data; saved API rows override the static schedule.',
+  dcAdminMonthStoredCount: '{month}: {count} day(s) saved in API',
+  dcAdminClearMonthAction: 'Clear this month API overrides',
+  dcAdminClearMonthConfirm: 'Delete all API overrides for {month}; the table falls back to the static schedule. Continue?',
   dcAdminPasteLabel: 'Paste month list',
   dcAdminPastePlaceholder:
     '~ October Daily Challenge ~\n10/1: Rush Hour (46E)\n\nJanuary Daily Challenge :\n1: Marathon (242)\n3: (Race) PH (PH1)',

@@ -2324,6 +2324,15 @@ a.settings-trigger {
   font-size: 1rem;
 }
 
+.dc-admin-month-field {
+  margin-bottom: 0.75rem;
+}
+
+.dc-admin-month-input {
+  max-width: 12rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .dc-admin-paste {
   min-height: 9rem;
   resize: vertical;
