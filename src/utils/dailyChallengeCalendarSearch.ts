@@ -120,6 +120,41 @@ export function collectMonthSearchMatchDates(
   return matches
 }
 
+function monthKeyToOrdinal(monthKey: string): number | null {
+  const year = Number(monthKey.slice(0, 4))
+  const month = Number(monthKey.slice(5, 7))
+  if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) return null
+  return year * 12 + month
+}
+
+/** 当前月无匹配时，找时间上最近的含匹配月份。 */
+export function findNearestMonthKeyWithSearchHits(
+  currentMonthKey: string,
+  byMonthKey: Map<string, number>,
+): { monthKey: string; count: number } | null {
+  if ((byMonthKey.get(currentMonthKey) ?? 0) > 0) return null
+
+  const currentOrdinal = monthKeyToOrdinal(currentMonthKey)
+  if (currentOrdinal == null) return null
+
+  let nearest: { monthKey: string; count: number; distance: number } | null = null
+  for (const [monthKey, count] of byMonthKey) {
+    if (count <= 0) continue
+    const ordinal = monthKeyToOrdinal(monthKey)
+    if (ordinal == null) continue
+    const distance = Math.abs(ordinal - currentOrdinal)
+    if (
+      !nearest ||
+      distance < nearest.distance ||
+      (distance === nearest.distance && monthKey.localeCompare(nearest.monthKey) > 0)
+    ) {
+      nearest = { monthKey, count, distance }
+    }
+  }
+
+  return nearest ? { monthKey: nearest.monthKey, count: nearest.count } : null
+}
+
 /** 按线路或挑战类型搜索历史每日挑战（新→旧）。 */
 export function searchDailyChallengeDays(
   schedules: DailyChallengeSchedule[],

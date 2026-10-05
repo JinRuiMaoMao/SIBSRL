@@ -5894,6 +5894,91 @@ html.route-detail-open .route-split-shell {
   color: var(--race);
 }
 
+.daily-challenge-calendar-route-search-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+}
+
+.daily-challenge-calendar-search-jump-btn {
+  flex: 0 0 auto;
+  padding: 0.28rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-elevated));
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.daily-challenge-calendar-search-jump-btn:hover,
+.daily-challenge-calendar-search-jump-btn:focus-visible {
+  background: color-mix(in srgb, var(--accent) 20%, var(--bg-elevated));
+  outline: none;
+}
+
+.daily-challenge-calendar-search-hits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.daily-challenge-calendar-search-hits-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.daily-challenge-calendar-search-hits-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  max-height: 5.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.daily-challenge-calendar-search-hit-btn {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.76rem;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+}
+
+.daily-challenge-calendar-search-hit-btn:hover,
+.daily-challenge-calendar-search-hit-btn:focus-visible {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.daily-challenge-calendar-search-hit-btn.is-focused {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--bg-elevated));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.daily-challenge-calendar-search-hits-more {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 .daily-challenge-calendar-nav {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -6185,6 +6270,14 @@ html.route-detail-open .route-split-shell {
 .daily-challenge-calendar-day.is-today {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.daily-challenge-calendar-day.is-search-focused {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent) 22%, transparent);
+  z-index: 1;
 }
 
 .daily-challenge-calendar-day-dim {

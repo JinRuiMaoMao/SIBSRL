@@ -8,6 +8,9 @@ import {
   collectMonthSearchMatchDates,
   collectScheduleDays,
   countDailyChallengeSearchByPeriod,
+  findNearestMonthKeyWithSearchHits,
+  searchDailyChallengeDays,
+  type DailyChallengeSearchHit,
 } from '../utils/dailyChallengeCalendarSearch'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { DailyChallengeCalendarNavPicker } from './DailyChallengeCalendarNavPicker'
@@ -50,6 +53,31 @@ function dayNumberFromDate(date: string): number {
   return Number(date.slice(-2))
 }
 
+function formatCalendarSearchHitDate(
+  date: string,
+  locale: ReturnType<typeof useLocale>['locale'],
+): string {
+  return new Intl.DateTimeFormat(isChineseLocale(locale) ? 'zh-Hans' : 'en-US', {
+    timeZone: 'Asia/Hong_Kong',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(`${date}T12:00:00+08:00`))
+}
+
+function formatCalendarSearchHitSummary(
+  hit: DailyChallengeSearchHit,
+  locale: ReturnType<typeof useLocale>['locale'],
+): string {
+  const routeCode = formatDailyChallengeCalendarRouteCode(hit.day.routeCode, hit.day.event)
+  const eventChallenge = hit.day.event ? buildDailyChallengeFromScheduleDay(hit.day) : null
+  const eventLabel = eventChallenge ? getPrimaryText(eventChallenge.event, locale) : null
+  const parts = [formatCalendarSearchHitDate(hit.date, locale)]
+  if (routeCode) parts.push(routeCode)
+  if (eventLabel) parts.push(eventLabel)
+  return parts.join(' · ')
+}
+
 function RaceTagLabel({ locale }: { locale: ReturnType<typeof useLocale>['locale'] }) {
   const label = isChineseLocale(locale) ? '竞速' : 'Race'
   return (
@@ -64,6 +92,7 @@ const CalendarDayCell = memo(function CalendarDayCell({
   day,
   isToday,
   isSearchDimmed,
+  isSearchFocused,
   locale,
   emptyLabel,
   onSelectDay,
@@ -72,6 +101,7 @@ const CalendarDayCell = memo(function CalendarDayCell({
   day: DailyChallengeScheduleDay | null
   isToday: boolean
   isSearchDimmed: boolean
+  isSearchFocused: boolean
   locale: ReturnType<typeof useLocale>['locale']
   emptyLabel: string
   onSelectDay?: (day: DailyChallengeScheduleDay) => void
@@ -98,7 +128,7 @@ const CalendarDayCell = memo(function CalendarDayCell({
   const hasData = hasEvent || isRaceOnly
   const isRace = dayRace
   const className =
-    `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${isSearchDimmed ? 'is-search-dimmed' : ''} ${hasData ? 'has-data' : 'is-empty'} ${hasEvent && onSelectDay ? 'is-clickable' : ''}`.trim()
+    `daily-challenge-calendar-day ${isToday ? 'is-today' : ''} ${isSearchDimmed ? 'is-search-dimmed' : ''} ${isSearchFocused ? 'is-search-focused' : ''} ${hasData ? 'has-data' : 'is-empty'} ${hasEvent && onSelectDay ? 'is-clickable' : ''}`.trim()
 
   const inner = (
     <>
@@ -172,6 +202,7 @@ export function DailyChallengeCalendarDialog({
   )
   const [searchQuery, setSearchQuery] = useState('')
   const [openNavPicker, setOpenNavPicker] = useState<'year' | 'month' | null>(null)
+  const [focusedSearchDate, setFocusedSearchDate] = useState<string | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const wasOpenRef = useRef(false)
 
@@ -240,6 +271,40 @@ export function DailyChallengeCalendarDialog({
       })),
     [monthOptions, searchActive, searchPeriodCounts.byMonthKey, selectedYear],
   )
+  const allSearchHits = useMemo(
+    () => (searchActive ? searchDailyChallengeDays(schedules, debouncedSearchQuery) : []),
+    [debouncedSearchQuery, schedules, searchActive],
+  )
+  const currentMonthSearchHits = useMemo(
+    () => allSearchHits.filter((hit) => hit.date.startsWith(selectedMonthKey)),
+    [allSearchHits, selectedMonthKey],
+  )
+  const displayedSearchHits = useMemo(() => {
+    if (currentMonthSearchHits.length > 0) {
+      return [...currentMonthSearchHits].sort((a, b) => a.date.localeCompare(b.date))
+    }
+    return allSearchHits.slice(0, 12)
+  }, [allSearchHits, currentMonthSearchHits])
+  const hiddenSearchHitCount = Math.max(0, allSearchHits.length - displayedSearchHits.length)
+  const nearestSearchMonth = useMemo(
+    () =>
+      searchActive
+        ? findNearestMonthKeyWithSearchHits(selectedMonthKey, searchPeriodCounts.byMonthKey)
+        : null,
+    [searchActive, searchPeriodCounts.byMonthKey, selectedMonthKey],
+  )
+
+  const jumpToSearchHit = (date: string) => {
+    setOpenNavPicker(null)
+    setSelectedMonthKey(date.slice(0, 7))
+    setFocusedSearchDate(date)
+  }
+
+  const jumpToSearchMonth = (monthKey: string) => {
+    setOpenNavPicker(null)
+    setSelectedMonthKey(clampScheduleMonthKey(monthKey))
+    setFocusedSearchDate(null)
+  }
 
   useEffect(() => {
     if (!open) {
@@ -251,7 +316,12 @@ export function DailyChallengeCalendarDialog({
     setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
     setSearchQuery('')
     setOpenNavPicker(null)
+    setFocusedSearchDate(null)
   }, [open, schedules, todayDate])
+
+  useEffect(() => {
+    setFocusedSearchDate(null)
+  }, [debouncedSearchQuery])
 
   useEffect(() => {
     if (selectableMonths.length === 0) return
@@ -284,8 +354,20 @@ export function DailyChallengeCalendarDialog({
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [open, onClose, openNavPicker])
 
+  useEffect(() => {
+    if (!open || !focusedSearchDate) return
+    if (!focusedSearchDate.startsWith(selectedMonthKey)) return
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .getElementById(`daily-challenge-calendar-day-${focusedSearchDate}`)
+        ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [focusedSearchDate, open, selectedMonthKey, calendarCells])
+
   const shiftMonth = (delta: number) => {
     setOpenNavPicker(null)
+    setFocusedSearchDate(null)
     setSelectedMonthKey((current) => {
       const parsed = parseScheduleMonthKey(current)
       if (!parsed) return current
@@ -369,26 +451,67 @@ export function DailyChallengeCalendarDialog({
             />
           </label>
           {searchQuery.trim() ? (
-            <p
-              className={`daily-challenge-calendar-route-search-hint ${!searchPending && searchHitCount === 0 ? 'is-empty' : 'is-active'}`.trim()}
-              role="status"
-            >
-              {searchPending
-                ? t('dailyChallengeCalendarSearchPending')
-                : searchHitCount === 0
-                  ? t('dailyChallengeCalendarSearchEmpty')
-                  : t('dailyChallengeCalendarSearchCountDetail', {
-                      count: searchHitCount,
-                      monthCount: currentMonthSearchCount,
-                      year: selectedYear,
-                      yearCount: currentYearSearchCount,
-                    })}
-            </p>
+            <div className="daily-challenge-calendar-route-search-status">
+              <p
+                className={`daily-challenge-calendar-route-search-hint ${!searchPending && searchHitCount === 0 ? 'is-empty' : 'is-active'}`.trim()}
+                role="status"
+              >
+                {searchPending
+                  ? t('dailyChallengeCalendarSearchPending')
+                  : searchHitCount === 0
+                    ? t('dailyChallengeCalendarSearchEmpty')
+                    : t('dailyChallengeCalendarSearchCountDetail', {
+                        count: searchHitCount,
+                        monthCount: currentMonthSearchCount,
+                        year: selectedYear,
+                        yearCount: currentYearSearchCount,
+                      })}
+              </p>
+              {!searchPending && nearestSearchMonth ? (
+                <button
+                  type="button"
+                  className="daily-challenge-calendar-search-jump-btn"
+                  onClick={() => jumpToSearchMonth(nearestSearchMonth.monthKey)}
+                >
+                  {t('dailyChallengeCalendarSearchJumpMonth', {
+                    month: formatScheduleMonthOption(nearestSearchMonth.monthKey, locale),
+                    count: nearestSearchMonth.count,
+                  })}
+                </button>
+              ) : null}
+            </div>
           ) : (
             <p className="daily-challenge-calendar-route-search-hint">
               {t('dailyChallengeCalendarSearchHint')}
             </p>
           )}
+          {!searchPending && searchActive && displayedSearchHits.length > 0 ? (
+            <div className="daily-challenge-calendar-search-hits">
+              <p className="daily-challenge-calendar-search-hits-title">
+                {currentMonthSearchHits.length > 0
+                  ? t('dailyChallengeCalendarSearchHitsTitle')
+                  : t('dailyChallengeCalendarSearchHitsTitleOther')}
+              </p>
+              <ul className="daily-challenge-calendar-search-hits-list sibs-scrollbar">
+                {displayedSearchHits.map((hit) => (
+                  <li key={hit.date}>
+                    <button
+                      type="button"
+                      className={`daily-challenge-calendar-search-hit-btn ${focusedSearchDate === hit.date ? 'is-focused' : ''}`.trim()}
+                      onClick={() => jumpToSearchHit(hit.date)}
+                    >
+                      {formatCalendarSearchHitSummary(hit, locale)}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {hiddenSearchHitCount > 0 ? (
+                <p className="daily-challenge-calendar-search-hits-more">
+                  {t('dailyChallengeCalendarSearchHitsMore', { count: hiddenSearchHitCount })}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <div className="daily-challenge-calendar-main">
@@ -412,6 +535,7 @@ export function DailyChallengeCalendarDialog({
               open={openNavPicker === 'year'}
               onOpenChange={(open) => setOpenNavPicker(open ? 'year' : null)}
               onChange={(year) => {
+                setFocusedSearchDate(null)
                 const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
                 const latest = parseScheduleMonthKey(CALENDAR_LATEST_MONTH)
                 const month =
@@ -432,6 +556,7 @@ export function DailyChallengeCalendarDialog({
               open={openNavPicker === 'month'}
               onOpenChange={(open) => setOpenNavPicker(open ? 'month' : null)}
               onChange={(month) => {
+                setFocusedSearchDate(null)
                 setSelectedMonthKey(toScheduleMonthKey(selectedYear, month))
               }}
             />
@@ -473,6 +598,7 @@ export function DailyChallengeCalendarDialog({
                   day={cell.day}
                   isToday={cell.date === todayDate}
                   isSearchDimmed={searchActive && !searchMatchDates.has(cell.date)}
+                  isSearchFocused={focusedSearchDate === cell.date}
                   locale={locale}
                   emptyLabel={
                     cell.date < todayDate

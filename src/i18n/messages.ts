@@ -735,6 +735,10 @@ const messagesZhHans = {
   dailyChallengeCalendarSearchCountDetail:
     '共 {count} 个匹配；当前月 {monthCount} 个，{year} 年 {yearCount} 个（年月旁数字为各时段匹配数）',
   dailyChallengeCalendarSearchPending: '搜索中…',
+  dailyChallengeCalendarSearchJumpMonth: '当前月无匹配，跳转到 {month}（{count} 个）',
+  dailyChallengeCalendarSearchHitsTitle: '本月匹配',
+  dailyChallengeCalendarSearchHitsTitleOther: '匹配日期（点击跳转）',
+  dailyChallengeCalendarSearchHitsMore: '另有 {count} 个匹配，请切换月份查看',
   dailyChallengeCalendarRouteSearchLabel: '按线路搜索',
   dailyChallengeCalendarRouteSearchPlaceholder: '输入线路编号，如 270A、370AEM、N246',
   dailyChallengeCalendarRouteSearchHint:
@@ -1847,6 +1851,10 @@ const messagesEn: Record<MessageKey, string> = {
   dailyChallengeCalendarSearchCountDetail:
     '{count} match(es) total; {monthCount} this month, {yearCount} in {year} (numbers beside year/month are per-period counts)',
   dailyChallengeCalendarSearchPending: 'Searching…',
+  dailyChallengeCalendarSearchJumpMonth: 'No matches this month — jump to {month} ({count})',
+  dailyChallengeCalendarSearchHitsTitle: 'Matches this month',
+  dailyChallengeCalendarSearchHitsTitleOther: 'Matching dates (click to jump)',
+  dailyChallengeCalendarSearchHitsMore: '{count} more match(es) in other months — switch month to view',
   dailyChallengeCalendarRouteSearchLabel: 'Search by route',
   dailyChallengeCalendarRouteSearchPlaceholder: 'Route number, e.g. 270A, 370AEM, or N246',
   dailyChallengeCalendarRouteSearchHint:
