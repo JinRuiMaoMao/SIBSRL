@@ -418,7 +418,9 @@ export function DailyChallengeCalendarDialog({
               </span>
             ))}
           </div>
-          <div className="daily-challenge-calendar-grid">
+          <div
+            className={`daily-challenge-calendar-grid ${searchActive ? 'is-search-active' : ''}`.trim()}
+          >
             {calendarCells.map((cell, index) =>
               cell.date ? (
                 <CalendarDayCell

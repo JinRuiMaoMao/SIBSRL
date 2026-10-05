@@ -6043,10 +6043,15 @@ html.route-detail-open .route-split-shell {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--text-muted) 32%, var(--bg));
-  opacity: 0.82;
+  background: color-mix(in srgb, var(--text-muted) 52%, var(--bg-card));
+  opacity: 0.88;
   pointer-events: none;
   z-index: 2;
+}
+
+html[data-theme='light'] .daily-challenge-calendar-day-dim {
+  background: color-mix(in srgb, var(--text-muted) 38%, #fff);
+  opacity: 0.72;
 }
 
 .daily-challenge-calendar-day.is-empty {
