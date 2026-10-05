@@ -1,5 +1,8 @@
 export type AppLayoutMode = 'normal' | 'real'
 
+/** 分屏入口暂时关闭；恢复 SearchToolbar「分屏」按钮时改为 true。 */
+export const ROUTE_LOOKUP_SPLIT_LAYOUT_ENABLED = false
+
 const LAYOUT_SEGMENT_RE = /\/(normal|real)(?:\/|$)/i
 const LAYOUT_SUBDIR_RE = /\/(normal|real|routes)\//i
 

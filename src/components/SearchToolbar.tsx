@@ -1,6 +1,10 @@
 import type { RefObject } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import { isRealLayoutMode, getAlternateLayoutRoutesHref } from '../utils/appLayoutMode'
+import {
+  getAlternateLayoutRoutesHref,
+  isRealLayoutMode,
+  ROUTE_LOOKUP_SPLIT_LAYOUT_ENABLED,
+} from '../utils/appLayoutMode'
 import type { RouteTypeFilter } from '../types/route'
 import { FilterMenu } from './FilterMenu'
 import { RouteFilters } from './RouteFilters'
@@ -89,7 +93,7 @@ export function SearchToolbar({
         hideRouteCount={hideRouteCount}
       />
       <div className="search-toolbar-actions">
-        {!realLayout ? (
+        {!realLayout && ROUTE_LOOKUP_SPLIT_LAYOUT_ENABLED ? (
           <a
             className="route-layout-toggle-btn"
             href={getAlternateLayoutRoutesHref()}
