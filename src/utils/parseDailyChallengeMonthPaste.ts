@@ -47,15 +47,28 @@ function extractMonthFromTitle(line: string): number | null {
   return MONTH_NAMES[match[1].toLowerCase()] ?? null
 }
 
+const ROUTE_CODE_RE = /^(?:PH\d+|[A-Z]{0,2}\d{1,3}[A-Z0-9#*%_-]*)$/i
+
+function looksLikeRouteCode(value: string): boolean {
+  const code = value.trim().toUpperCase()
+  if (!code) return false
+  if (code.length === 1) return false
+  return ROUTE_CODE_RE.test(code)
+}
+
 function extractRouteFromTail(value: string): { event: string; routeCode: string | null } {
   const trimmed = value.trim()
-  const match = trimmed.match(/\(([A-Z0-9#*%_\-]+)\)\s*$/i)
-  if (!match?.[1] || match.index == null) {
-    return { event: trimmed, routeCode: null }
+  const parenMatches = [...trimmed.matchAll(/\(([A-Z0-9#*%_\-]+)\)/gi)]
+  for (let index = parenMatches.length - 1; index >= 0; index -= 1) {
+    const match = parenMatches[index]
+    const code = match[1]?.toUpperCase()
+    if (!code || !looksLikeRouteCode(code) || match.index == null) continue
+    return {
+      event: trimmed.slice(0, match.index).trim(),
+      routeCode: code,
+    }
   }
-  const routeCode = match[1].toUpperCase()
-  const event = trimmed.slice(0, match.index).trim()
-  return { event, routeCode }
+  return { event: trimmed, routeCode: null }
 }
 
 function parseRaceAndEvent(value: string): { event: string; race: boolean } {
@@ -75,6 +88,7 @@ export function parseDailyChallengeMonthPaste(
   const defaultYear = Number(todayHktDateString().slice(0, 4))
   let year = options.year ?? defaultYear
   let month = Number(todayHktDateString().slice(5, 7))
+  let titleMonth: number | null = null
   let skippedEmpty = 0
   const days: ParsedDailyChallengeDay[] = []
 
@@ -82,24 +96,33 @@ export function parseDailyChallengeMonthPaste(
     const line = stripDiscordEmoji(lineRaw)
     if (!line) continue
 
-    const titleMonth = extractMonthFromTitle(line)
-    if (titleMonth != null) {
-      month = titleMonth
+    const parsedTitleMonth = extractMonthFromTitle(line)
+    if (parsedTitleMonth != null) {
+      titleMonth = parsedTitleMonth
+      month = parsedTitleMonth
       continue
     }
 
     const dayMatch = line.match(/^(\d{1,2})\/(\d{1,2})\s*:\s*(.*)$/i)
     if (!dayMatch) continue
 
-    const dayNum = Number(dayMatch[1])
-    const monthNum = Number(dayMatch[2])
+    // Community lists use US-style M/D (e.g. 10/1 = October 1).
+    const lineMonth = Number(dayMatch[1])
+    const lineDay = Number(dayMatch[2])
     const content = stripDiscordEmoji(dayMatch[3] ?? '')
 
-    if (monthNum >= 1 && monthNum <= 12) {
-      month = monthNum
+    const resolvedMonth =
+      lineMonth >= 1 && lineMonth <= 12 ? lineMonth : titleMonth ?? month
+    if (lineMonth >= 1 && lineMonth <= 12) {
+      month = lineMonth
     }
 
     if (!content) {
+      skippedEmpty += 1
+      continue
+    }
+
+    if (lineDay < 1 || lineDay > 31) {
       skippedEmpty += 1
       continue
     }
@@ -112,7 +135,7 @@ export function parseDailyChallengeMonthPaste(
     }
 
     days.push({
-      date: `${year}-${pad2(month)}-${pad2(dayNum)}`,
+      date: `${year}-${pad2(resolvedMonth)}-${pad2(lineDay)}`,
       event,
       routeCode,
       race,
@@ -182,12 +205,19 @@ export function buildMonthRowSkeleton(
     const date = `${year}-${pad2(month)}-${pad2(day)}`
     const found = byDate.get(date)
     rows.push(
-      found ?? {
-        date,
-        event: '',
-        routeCode: '',
-        race: false,
-      },
+      found
+        ? {
+            date: found.date,
+            event: found.event,
+            routeCode: found.routeCode ?? '',
+            race: found.race,
+          }
+        : {
+            date,
+            event: '',
+            routeCode: '',
+            race: false,
+          },
     )
   }
 

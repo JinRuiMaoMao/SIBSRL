@@ -286,12 +286,13 @@ export async function fetchDailyChallengeAdminHistory(signal?: AbortSignal) {
 export async function saveDailyChallengeDays(
   token: string,
   days: DailyChallengeDayPayload[],
-  signal?: AbortSignal,
+  options: { replaceMonth?: string; signal?: AbortSignal } = {},
 ) {
+  const { replaceMonth, signal } = options
   return request<{ ok: true; updatedAt: number; saved: number }>('/api/daily-challenge/days', {
     method: 'PUT',
     token,
-    body: JSON.stringify({ days }),
+    body: JSON.stringify({ days, ...(replaceMonth ? { replaceMonth } : {}) }),
     signal,
   })
 }

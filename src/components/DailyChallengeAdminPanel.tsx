@@ -11,7 +11,6 @@ import { useLocale } from '../i18n/LocaleContext'
 import {
   addCalendarDays,
   buildMonthRowSkeleton,
-  mergeParsedDaysIntoRows,
   parseDailyChallengeMonthPaste,
 } from '../utils/parseDailyChallengeMonthPaste'
 
@@ -42,6 +41,7 @@ export function DailyChallengeAdminPanel() {
   const monthKey = todayHktDateString().slice(0, 7)
 
   const [pasteText, setPasteText] = useState('')
+  const [viewMonthKey, setViewMonthKey] = useState(monthKey)
   const [rows, setRows] = useState<AdminRow[]>(() => buildMonthRowSkeleton(monthKey))
   const [mergeSummary, setMergeSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -51,15 +51,15 @@ export function DailyChallengeAdminPanel() {
     setLoading(true)
     try {
       const stored = await fetchDailyChallengeAdminHistory()
-      const monthDays = stored.filter((day) => day.date.startsWith(monthKey))
-      setRows(buildMonthRowSkeleton(monthKey, monthDays.map(toAdminRow)))
+      const monthDays = stored.filter((day) => day.date.startsWith(viewMonthKey))
+      setRows(buildMonthRowSkeleton(viewMonthKey, monthDays.map(toAdminRow)))
     } catch (error) {
-      setRows(buildMonthRowSkeleton(monthKey))
+      setRows(buildMonthRowSkeleton(viewMonthKey))
       await alert({ message: t(mapAuthError(error)) })
     } finally {
       setLoading(false)
     }
-  }, [alert, monthKey, t])
+  }, [alert, mapAuthError, t, viewMonthKey])
 
   useEffect(() => {
     void loadRows()
@@ -85,18 +85,13 @@ export function DailyChallengeAdminPanel() {
       return
     }
 
-    const targetMonth = parsed.monthKey
-    let baseRows = rows
-    if (targetMonth !== monthKey) {
-      baseRows = buildMonthRowSkeleton(targetMonth)
-    }
-
-    const { rows: merged, added, updated } = mergeParsedDaysIntoRows(baseRows, parsed.days)
+    setViewMonthKey(parsed.monthKey)
+    const merged = buildMonthRowSkeleton(parsed.monthKey, parsed.days)
     setRows(merged)
     setMergeSummary(
       t('dcAdminMergeSummary', {
-        added: String(added),
-        updated: String(updated),
+        added: String(parsed.days.length),
+        updated: '0',
         skipped: String(parsed.skippedEmpty),
       }),
     )
@@ -125,7 +120,8 @@ export function DailyChallengeAdminPanel() {
 
     setBusy(true)
     try {
-      const result = await saveDailyChallengeDays(token, days)
+      const replaceMonth = viewMonthKey
+      const result = await saveDailyChallengeDays(token, days, { replaceMonth })
       await alert({ message: t('dcAdminSaveSuccess', { count: String(result.saved) }) })
       setMergeSummary(null)
       await loadRows()

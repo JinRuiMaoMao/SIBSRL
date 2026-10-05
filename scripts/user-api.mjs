@@ -45,6 +45,7 @@ import {
   listDailyChallengeDays,
   getDailyChallengeDay,
   upsertDailyChallengeDays,
+  deleteDailyChallengeDaysInMonth,
 } from './lib/user-db.mjs'
 import { getDailyChallengeGameDate } from './lib/daily-challenge-message.mjs'
 import {
@@ -703,6 +704,11 @@ async function handlePutDailyChallengeDays(req, res) {
 
   if (normalized.length === 0) {
     return error(req, res, 400, 'invalid_days', 'No days with a non-empty event')
+  }
+
+  const replaceMonth = String(body.replaceMonth ?? '').trim()
+  if (replaceMonth && /^\d{4}-\d{2}$/.test(replaceMonth)) {
+    deleteDailyChallengeDaysInMonth(db, replaceMonth)
   }
 
   const updatedAt = Date.now()

@@ -395,6 +395,11 @@ export function getDailyChallengeDay(db, date) {
     .get(date)
 }
 
+/** @param {import('better-sqlite3').Database} db @param {string} monthKey YYYY-MM */
+export function deleteDailyChallengeDaysInMonth(db, monthKey) {
+  db.prepare('DELETE FROM daily_challenge_days WHERE date LIKE ?').run(`${monthKey}-%`)
+}
+
 /** @param {import('better-sqlite3').Database} db @param {{ date: string, event: string, routeCode?: string | null, race?: boolean, updatedAt: number }[]} days @param {string | null} updatedBy */
 export function upsertDailyChallengeDays(db, days, updatedBy) {
   const stmt = db.prepare(`
