@@ -83,6 +83,7 @@ export const EXACT_MERGE: Record<string, MergeTarget> = {
   '476PW': { base: '476P', directionKey: 'W' },
   '476W4': { base: '476*' },
   '476XE': { base: '476X', directionKey: 'E' },
+  'N476E': { base: 'N476', directionKey: 'E' },
   'C401AW': { base: 'C401A', directionKey: 'W' },
   'C401AE': { base: 'C401A', directionKey: 'E' },
 }

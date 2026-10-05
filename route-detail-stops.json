@@ -40,6 +40,18 @@
     },
     {
       "name": {
+        "zh": "中叶隧道行政大楼",
+        "en": "colspan = 6"
+      }
+    },
+    {
+      "name": {
+        "zh": "中叶隧道行政大楼",
+        "en": "中葉隧道行政大樓"
+      }
+    },
+    {
+      "name": {
         "zh": "中西转车站",
         "en": "Central - Western Interchange"
       }
@@ -222,12 +234,6 @@
       "name": {
         "zh": "东锦葵邨 - 阳葵屋",
         "en": "Eastmallow Estate - Sunny House"
-      }
-    },
-    {
-      "name": {
-        "zh": "东锦葵邨 - 阳葵屋",
-        "en": "Section fare begins here"
       }
     },
     {
@@ -1144,12 +1150,6 @@
     },
     {
       "name": {
-        "zh": "海西回旋处",
-        "en": "Section fare begins here"
-      }
-    },
-    {
-      "name": {
         "zh": "海西角",
         "en": "Haisey Point"
       }
@@ -1422,6 +1422,12 @@
       "name": {
         "zh": "M∞",
         "en": "Museum Infinite"
+      }
+    },
+    {
+      "name": {
+        "zh": "Modern Drive",
+        "en": "Modern Drive"
       }
     },
     {

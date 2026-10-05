@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-09-16'
+export const CURRENT_CHANGELOG_DATE = '2026-10-06'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,82 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-10-06-summary",
+    date: "2026-10-06",
+    title: {
+      zh: "2026-10-06 更新",
+      en: "2026-10-06 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "日历搜索扩展为线路 + 挑战类型；匹配项保持原色，其余日期灰色遮罩，并加入搜索防抖。",
+            en: "Calendar search covers routes and challenge types; matches stay in full color, other days are dimmed, with debounced input.",
+          },
+          {
+            zh: "年月选择改为自定义下拉，搜索时显示各年/月匹配数量；当前月无结果时可一键跳转到最近有匹配的月份。",
+            en: "Year/month pickers are custom dropdowns with per-period hit counts; jump to the nearest month with matches when the current month has none.",
+          },
+          {
+            zh: "搜索下方列出匹配日期，点击可跳转月份并在日历上高亮对应格子。",
+            en: "Matching dates appear below search; click to jump to that month and highlight the day on the calendar.",
+          },
+          {
+            zh: "未登录访客也可查看今日每日挑战卡片（管理员编辑仍仅限登录管理员）。",
+            en: "Today's daily challenge card is visible to all visitors; admin editing still requires a signed-in admin.",
+          },
+          {
+            zh: "修正 2026-07-20、2026-08-24 马拉松活动名称为 Marathon Road Closure (N) / Marathon Road Closure。",
+            en: "Corrected marathon event names on 2026-07-20 and 2026-08-24 to Marathon Road Closure (N) / Marathon Road Closure.",
+          },
+        ],
+        fixes: [
+          {
+            zh: "修复今日挑战卡片因 available 未定义导致页面崩溃。",
+            en: "Fixed page crash from undefined available on the daily challenge card.",
+          },
+          {
+            zh: "修复日历搜索灰色遮罩不可见、搜索时月份被重置等问题。",
+            en: "Fixed invisible calendar search dim overlay and month resetting while searching.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "线路资料",
+          en: "Route data",
+        },
+        additions: [
+          {
+            zh: "N476E 不再使用占位条目，合并至 N476 完整站序（游戏内通宵东行别名）。",
+            en: "N476E no longer uses a placeholder entry; it merges into N476 with full stop data (in-game eastbound night alias).",
+          },
+          {
+            zh: "自 Wiki 重刷 N171、N146、R148、76S、475 等线路站序与服务资料。",
+            en: "Re-synced stop lists and service details for N171, N146, R148, 76S, 475, and related routes from the Wiki.",
+          },
+        ],
+      },
+      {
+        title: {
+          zh: "线路查询",
+          en: "Route lookup",
+        },
+        additions: [
+          {
+            zh: "暂时关闭 normal 线路页搜索栏旁的「分屏」按钮（Real 分屏页仍可通过 URL 访问）。",
+            en: "Temporarily hid the Split layout button on normal routes (Real split layout remains reachable by URL).",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-09-16-summary",
     date: "2026-09-16",

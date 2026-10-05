@@ -18,9 +18,7 @@ function createPlaceholderRoute(number: string): BusRoute {
   }
 }
 
-/** Wiki ???? Wiki ?????????????? */
-const GAME_ROUTE_PLACEHOLDER_NUMBERS = [
-  'N476E',
-] as const
+/** 游戏内清单有、Wiki 尚无独立页面的线路占位 */
+const GAME_ROUTE_PLACEHOLDER_NUMBERS = [] as const
 
 export const routesStubs: BusRoute[] = GAME_ROUTE_PLACEHOLDER_NUMBERS.map(createPlaceholderRoute)

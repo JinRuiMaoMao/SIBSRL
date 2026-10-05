@@ -1,8 +1,8 @@
 {
   "results": [
     {
-      "id": "73S",
-      "number": "73S",
+      "id": "76S",
+      "number": "76S",
       "operators": [
         "CSB"
       ],
@@ -16,37 +16,33 @@
         "en": "Senpai Shopping Center"
       },
       "destination": {
-        "zh": "Leafy Bay / 仙貝廣場",
-        "en": "Leafy Bay / 仙貝廣場"
-      },
-      "via": {
-        "zh": "Leafy Bay Cemetery",
-        "en": "Leafy Bay Cemetery"
+        "zh": "Ambling Peak / 仙貝廣場",
+        "en": "Ambling Peak / 仙貝廣場"
       },
       "interval": {
         "zh": "Depends on ridership",
         "en": "Depends on ridership"
       },
       "journeyTime": {
-        "zh": "To Leafy Bay: 2 mins / To Senpai: 6 mins",
-        "en": "To Leafy Bay: 2 mins / To Senpai: 6 mins"
+        "zh": "To Ambling Peak: 3-5 min  /  To Senpai: 6-8 min",
+        "en": "To Ambling Peak: 3-5 min  /  To Senpai: 6-8 min"
       },
-      "fare": "$8.7",
+      "fare": "$8.1",
       "levelRequired": 40,
       "length": {
-        "zh": "3.3 km",
-        "en": "3.3 km"
+        "zh": "2.2 km",
+        "en": "2.2 km"
       },
       "stops": [
         {
           "directionKey": "S",
           "direction": {
-            "zh": "南行（仙貝廣場 → 葉角灣）",
-            "en": "Southbound (Senpai Shopping Center → Leafy Bay)"
+            "zh": "南行（仙貝廣場 → 安靈台）",
+            "en": "Southbound (Senpai Shopping Center → Ambling Peak)"
           },
           "serviceTime": {
-            "zh": "08:00 – 17:00, major events only",
-            "en": "08:00 – 17:00, major events only"
+            "zh": "08:00 – 19:30, major events only",
+            "en": "08:00 – 19:30, major events only"
           },
           "list": [
             {
@@ -57,14 +53,8 @@
             },
             {
               "name": {
-                "zh": "葉角灣墳場",
-                "en": "Leafy Bay Cemetery"
-              }
-            },
-            {
-              "name": {
-                "zh": "葉角灣",
-                "en": "Leafy Bay"
+                "zh": "安靈台",
+                "en": "Ambling Peak"
               }
             }
           ]
@@ -72,36 +62,30 @@
         {
           "directionKey": "N",
           "direction": {
-            "zh": "北行（葉角灣 → 仙貝廣場）",
-            "en": "Northbound (Leafy Bay → Senpai Shopping Center)"
+            "zh": "北行（安靈台 → 仙貝廣場）",
+            "en": "Northbound (Ambling Peak → Senpai Shopping Center)"
           },
           "serviceTime": {
-            "zh": "08:00 – 18:30, major events only",
-            "en": "08:00 – 18:30, major events only"
+            "zh": "08:00 – 19:30, major events only",
+            "en": "08:00 – 19:30, major events only"
           },
           "list": [
             {
               "name": {
-                "zh": "葉角灣",
-                "en": "Leafy Bay"
+                "zh": "安靈台",
+                "en": "Ambling Peak"
               }
             },
             {
               "name": {
-                "zh": "葉角灣墳場",
-                "en": "Leafy Bay Cemetery"
+                "zh": "勿莫商場",
+                "en": "Mo Shopping Center"
               }
             },
             {
               "name": {
-                "zh": "鎌塔花園",
-                "en": "Kamaya Garden"
-              }
-            },
-            {
-              "name": {
-                "zh": "國際塔",
-                "en": "International Tower"
+                "zh": "仙貝",
+                "en": "Senpai"
               }
             },
             {
@@ -113,7 +97,1762 @@
           ]
         }
       ],
-      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_73S"
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_76S"
+    },
+    {
+      "id": "N171",
+      "number": "N171",
+      "operators": [
+        "FT",
+        "CSB"
+      ],
+      "category": "night",
+      "pattern": "bidirectional",
+      "zones": [
+        1,
+        4,
+        7,
+        8
+      ],
+      "origin": {
+        "zh": "[[Rainbow Estate Complex",
+        "en": "[[Rainbow Estate Complex"
+      },
+      "destination": {
+        "zh": "[[Rainbow Estate Complex",
+        "en": "[[Rainbow Estate Complex"
+      },
+      "via": {
+        "zh": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern, Zone 7 Interchange, YiYan, Leafy Bay Estate, Alexander, North Leafy, East Door, Haisey",
+        "en": "Long Island East, Dove Island, Norton, North Island Estate, Sunshine University, Central, Southern, Zone 7 Interchange, YiYan, Leafy Bay Estate, Alexander, North Leafy, East Door, Haisey"
+      },
+      "interval": {
+        "zh": "10 - 30 min",
+        "en": "10 - 30 min"
+      },
+      "journeyTime": {
+        "zh": "To Rainbow: 76 mins / To Long Island: 73 min",
+        "en": "To Rainbow: 76 mins / To Long Island: 73 min"
+      },
+      "fare": "$24.2",
+      "levelRequired": 95,
+      "length": {
+        "zh": "往彩虹中心 40.4 km / 往长岛码头 40.5 km",
+        "en": "To Rainbow Estate Complex 40.4 km / To Long Island Ferry Pier 40.5 km"
+      },
+      "stops": [
+        {
+          "directionKey": "S",
+          "direction": {
+            "zh": "南行（長島碼頭總站 → 彩虹中心總站）",
+            "en": "Southbound (Long Island Ferry Pier Bus Terminus → Rainbow Estate Complex Bus Terminus)"
+          },
+          "serviceTime": {
+            "zh": "00:00 – 05:50 / 00:15 – 05:20",
+            "en": "00:00 – 05:50 / 00:15 – 05:20"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "長島碼頭總站",
+                "en": "Long Island Ferry Pier Bus Terminus"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "文化廣場",
+                "en": "Culture Square"
+              }
+            },
+            {
+              "name": {
+                "zh": "國際碼頭",
+                "en": "Regional Pier"
+              }
+            },
+            {
+              "name": {
+                "zh": "百彩新城",
+                "en": "N Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "長島海濱長廊",
+                "en": "Long Island Waterfront Promenade"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光殯儀館",
+                "en": "Sunshine Funeral"
+              }
+            },
+            {
+              "name": {
+                "zh": "藝術大廈",
+                "en": "Art Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "長島東醫院",
+                "en": "East Long Island Hospital"
+              }
+            },
+            {
+              "name": {
+                "zh": "彩色匯",
+                "en": "Rainbow Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "時間里",
+                "en": "Timelapse Lane"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "賴得里",
+                "en": "Wright Lane"
+              }
+            },
+            {
+              "name": {
+                "zh": "三哥大廈",
+                "en": "Third Technology Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "購物廊",
+                "en": "Shopping Corridor"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿消防局",
+                "en": "Dove Fire Station"
+              }
+            },
+            {
+              "name": {
+                "zh": "伊迪城",
+                "en": "Eddie City"
+              }
+            },
+            {
+              "name": {
+                "zh": "西區海底隧道轉車站 (S2)",
+                "en": "西區海底隧道轉車站 (S2)"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北頓游泳池",
+                "en": "Norton Swimming Pool"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北島花園",
+                "en": "North Island Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北島花園商場",
+                "en": "NIE Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "望環台",
+                "en": "Panorama Heights"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學",
+                "en": "Sunshine University"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "中環橋",
+                "en": "Central Bridge"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "楓樹里",
+                "en": "Maple Lane"
+              }
+            },
+            {
+              "name": {
+                "zh": "玻璃樓",
+                "en": "Glass Office"
+              }
+            },
+            {
+              "name": {
+                "zh": "The One",
+                "en": "The One"
+              }
+            },
+            {
+              "name": {
+                "zh": "強生街市",
+                "en": "Johnson Market"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "南環花園二期",
+                "en": "Southern Two"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光碼頭",
+                "en": "Sunshine Pier"
+              }
+            },
+            {
+              "name": {
+                "zh": "南環運動場",
+                "en": "Southern Sports Field"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環醫院",
+                "en": "Central Hospital"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環南總站",
+                "en": "中環南總站"
+              }
+            },
+            {
+              "name": {
+                "zh": "南環文化區公園",
+                "en": "Southern Cultural District Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "中葉隧道行政大樓",
+                "en": "colspan = 6"
+              }
+            },
+            {
+              "name": {
+                "zh": "第七區轉車站 (E2)",
+                "en": "Axis Road"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東廠",
+                "en": "East Factory"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉欣公園",
+                "en": "YiYan Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "鑽石交易塔",
+                "en": "Diamond Trading Tower"
+              }
+            },
+            {
+              "name": {
+                "zh": "際巴車廠",
+                "en": "CSB Depot"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣邨第四座",
+                "en": "YiYan Estate Block 4"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣邨第一座",
+                "en": "YiYan Estate Block 1"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角花園",
+                "en": "Leafy Bay Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉角灣邨商場",
+                "en": "Leafy Bay Estate Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角灣邨",
+                "en": "Leafy Bay Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角大學",
+                "en": "Leafy University"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉欣警察局",
+                "en": "Leafy Police Station"
+              }
+            },
+            {
+              "name": {
+                "zh": "亞歷山花園",
+                "en": "Alexander Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "仙貝多層停車場",
+                "en": "Senpai Multi-Storey Car Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "亞歷山教堂",
+                "en": "Alexander Church"
+              }
+            },
+            {
+              "name": {
+                "zh": "仙貝山",
+                "en": "Senpai Hill"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣俓",
+                "en": "Leafy Walking Trail"
+              }
+            },
+            {
+              "name": {
+                "zh": "羅力素花園二期",
+                "en": "Laws Garden 2"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "羅力素花園一期",
+                "en": "Laws Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "北葉花園",
+                "en": "North Leafy Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "勿莫商場",
+                "en": "Mo Shopping Center"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東門公園",
+                "en": "East Door Park"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東門下邨",
+                "en": "Lower East Door Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門花園",
+                "en": "East Door Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門總站",
+                "en": "East Door Bus Terminus"
+              }
+            },
+            {
+              "name": {
+                "zh": "海西角",
+                "en": "Haisey Point"
+              },
+              "zone": 8
+            },
+            {
+              "name": {
+                "zh": "海西邨總站",
+                "en": "Haisey Estate Bus Terminus"
+              }
+            },
+            {
+              "name": {
+                "zh": "彩虹中心總站",
+                "en": "Rainbow Estate Complex Bus Terminus"
+              },
+              "zone": 7
+            }
+          ]
+        },
+        {
+          "directionKey": "S",
+          "direction": {
+            "zh": "南行（彩虹中心總站 → 長島碼頭總站）",
+            "en": "Southbound (Rainbow Estate Complex Bus Terminus → Long Island Ferry Pier Bus Terminus)"
+          },
+          "serviceTime": {
+            "zh": "00:00 – 05:50 / 00:15 – 05:20",
+            "en": "00:00 – 05:50 / 00:15 – 05:20"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "彩虹中心總站",
+                "en": "Rainbow Estate Complex Bus Terminus"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "海西邨總站",
+                "en": "Haisey Estate Bus Terminus"
+              },
+              "zone": 8
+            },
+            {
+              "name": {
+                "zh": "海西角",
+                "en": "Haisey Point"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門總站",
+                "en": "East Door Bus Terminus"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東門花園",
+                "en": "East Door Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門下邨",
+                "en": "Lower East Door Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門公園",
+                "en": "East Door Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "勿莫商場",
+                "en": "Mo Shopping Center"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "北葉花園",
+                "en": "North Leafy Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "羅力素花園一期",
+                "en": "Laws Garden"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "羅力素花園二期",
+                "en": "Laws Garden 2"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣俓",
+                "en": "Leafy Walking Trail"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "仙貝山",
+                "en": "Senpai Hill"
+              }
+            },
+            {
+              "name": {
+                "zh": "亞歷山教堂",
+                "en": "Alexander Church"
+              }
+            },
+            {
+              "name": {
+                "zh": "仙貝多層停車場",
+                "en": "Senpai Multi-Storey Car Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "亞歷山花園",
+                "en": "Alexander Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣警察局",
+                "en": "Leafy Police Station"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉角大學",
+                "en": "Leafy University"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角灣邨商場",
+                "en": "Leafy Bay Estate Shopping Center"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉角灣邨",
+                "en": "Leafy Bay Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉角花園",
+                "en": "Leafy Bay Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣邨第一座",
+                "en": "YiYan Estate Block 1"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "葉欣邨第四座",
+                "en": "YiYan Estate Block 4"
+              }
+            },
+            {
+              "name": {
+                "zh": "際巴車廠",
+                "en": "CSB Depot"
+              }
+            },
+            {
+              "name": {
+                "zh": "葉欣海旁道",
+                "en": "Praya YiYan Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "南洋大廈",
+                "en": "Southern Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "彩虹廣場",
+                "en": "Rainbow Plaza"
+              }
+            },
+            {
+              "name": {
+                "zh": "東廠",
+                "en": "East Factory"
+              }
+            },
+            {
+              "name": {
+                "zh": "Modern Drive",
+                "en": "Modern Drive"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "南環文化區公園",
+                "en": "Southern Cultural District Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "中葉隧道行政大樓",
+                "en": "中葉隧道行政大樓"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環南總站",
+                "en": "中環南總站"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光碼頭",
+                "en": "Sunshine Pier"
+              }
+            },
+            {
+              "name": {
+                "zh": "南環運動場",
+                "en": "Southern Sports Field"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環醫院",
+                "en": "Central Hospital"
+              }
+            },
+            {
+              "name": {
+                "zh": "南環坊",
+                "en": "Langford Place"
+              }
+            },
+            {
+              "name": {
+                "zh": "強生街市",
+                "en": "Johnson Market"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "新紀元中心",
+                "en": "Ping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "玻璃樓",
+                "en": "Glass Office"
+              }
+            },
+            {
+              "name": {
+                "zh": "楓樹里",
+                "en": "Maple Lane"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環橋",
+                "en": "Central Bridge"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學",
+                "en": "Sunshine University"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "望環台",
+                "en": "Panorama Heights"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北島花園商場",
+                "en": "NIE Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "巨石路",
+                "en": "Rocky Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "北島花園",
+                "en": "North Island Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓路",
+                "en": "Norton Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "西區海底隧道轉車站 (N2)",
+                "en": "colspan = 6"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "伊迪城",
+                "en": "Eddie City"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "艾迪城",
+                "en": "Addi City"
+              }
+            },
+            {
+              "name": {
+                "zh": "購物廊",
+                "en": "Shopping Corridor"
+              }
+            },
+            {
+              "name": {
+                "zh": "三哥大廈",
+                "en": "Third Technology Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "賴得商場",
+                "en": "Wright Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "虹尾角站",
+                "en": "Iris Point Station"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "宜和劇場",
+                "en": "Jardine Theater"
+              }
+            },
+            {
+              "name": {
+                "zh": "藝術大廈",
+                "en": "Art Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光體育館",
+                "en": "Sunshine Stadium"
+              }
+            },
+            {
+              "name": {
+                "zh": "長島海濱長廊",
+                "en": "Long Island Waterfront Promenade"
+              }
+            },
+            {
+              "name": {
+                "zh": "百彩新城",
+                "en": "N Park"
+              }
+            },
+            {
+              "name": {
+                "zh": "國際碼頭",
+                "en": "Regional Pier"
+              }
+            },
+            {
+              "name": {
+                "zh": "文化廣場",
+                "en": "Culture Square"
+              }
+            },
+            {
+              "name": {
+                "zh": "長島碼頭總站",
+                "en": "Long Island Ferry Pier Bus Terminus"
+              }
+            }
+          ]
+        }
+      ],
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N171"
+    },
+    {
+      "id": "N146",
+      "number": "N146",
+      "operators": [
+        "FTCC",
+        "REBC",
+        "FT"
+      ],
+      "category": "night",
+      "pattern": "bidirectional",
+      "zones": [
+        1,
+        4
+      ],
+      "origin": {
+        "zh": "[[Container's Island Bus Terminus",
+        "en": "[[Container's Island Bus Terminus"
+      },
+      "destination": {
+        "zh": "[[Container's Island Bus Terminus",
+        "en": "[[Container's Island Bus Terminus"
+      },
+      "via": {
+        "zh": "Hospital Island, Addi City, Dove Hill, Wright, Northern, Central",
+        "en": "Hospital Island, Addi City, Dove Hill, Wright, Northern, Central"
+      },
+      "interval": {
+        "zh": "20 - 30 minutes",
+        "en": "20 - 30 minutes"
+      },
+      "journeyTime": {
+        "zh": "To Eastmallow: 29 minutes / To Container's Island: 28 minutes",
+        "en": "To Eastmallow: 29 minutes / To Container's Island: 28 minutes"
+      },
+      "fare": "$15.1",
+      "levelRequired": 74,
+      "length": {
+        "zh": "16.4 km",
+        "en": "16.4 km"
+      },
+      "stops": [
+        {
+          "directionKey": "N",
+          "direction": {
+            "zh": "北行（貨櫃碼頭島 → 東錦葵海傍路）",
+            "en": "Northbound (Container's Island → Eastmallow Praya Road)"
+          },
+          "serviceTime": {
+            "zh": "00:00 – 05:50",
+            "en": "00:00 – 05:50"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "貨櫃碼頭島",
+                "en": "Container's Island"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "貨櫃碼頭",
+                "en": "Containers Terminal"
+              }
+            },
+            {
+              "name": {
+                "zh": "海苔灣",
+                "en": "Seaweed Bay"
+              }
+            },
+            {
+              "name": {
+                "zh": "貨櫃碼頭員工宿舍",
+                "en": "Containers Island Employee House"
+              }
+            },
+            {
+              "name": {
+                "zh": "三塔",
+                "en": "Triple Tower"
+              }
+            },
+            {
+              "name": {
+                "zh": "西區醫院",
+                "en": "Western Hospital"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "艾迪城",
+                "en": "Addi City"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "白鴿消防局",
+                "en": "Dove Fire Station"
+              }
+            },
+            {
+              "name": {
+                "zh": "購物廊",
+                "en": "Shopping Corridor"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿山",
+                "en": "Dove Hill"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿邨",
+                "en": "Dove Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "三哥大廈",
+                "en": "Third Technology Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "賴得商場",
+                "en": "Wright Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "時間廊",
+                "en": "Timelapse Mall"
+              }
+            },
+            {
+              "name": {
+                "zh": "西區海底隧道轉車站",
+                "en": "西區海底隧道轉車站"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北環轉車站 (南行)",
+                "en": "Northern Interchange (Southbound)"
+              }
+            },
+            {
+              "name": {
+                "zh": "紅地磚",
+                "en": "Red Wall Road"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "雀鳥橋",
+                "en": "Bird Bridge"
+              }
+            },
+            {
+              "name": {
+                "zh": "新紀元中心",
+                "en": "Ping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "楓樹里",
+                "en": "Maple Lane"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環橋",
+                "en": "Central Bridge"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵海傍路",
+                "en": "Eastmallow Praya Road"
+              }
+            }
+          ]
+        },
+        {
+          "directionKey": "S",
+          "direction": {
+            "zh": "南行（東錦葵海傍路 → 貨櫃碼頭島）",
+            "en": "Southbound (Eastmallow Praya Road → Container's Island)"
+          },
+          "serviceTime": {
+            "zh": "00:00 – 05:50",
+            "en": "00:00 – 05:50"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "東錦葵海傍路",
+                "en": "Eastmallow Praya Road"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵邨 - 陽葵屋",
+                "en": "Eastmallow Estate - Sunny House"
+              }
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環橋",
+                "en": "Central Bridge"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "楓樹里",
+                "en": "Maple Lane"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "玻璃樓",
+                "en": "Glass Office"
+              }
+            },
+            {
+              "name": {
+                "zh": "亞特路",
+                "en": "Arctan Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "雀鳥橋",
+                "en": "Bird Bridge"
+              }
+            },
+            {
+              "name": {
+                "zh": "北環中心",
+                "en": "Northern Plaza"
+              }
+            },
+            {
+              "name": {
+                "zh": "北環轉車站 (北行)",
+                "en": "Northern Interchange (Northbound)"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "西區海底隧道轉車站",
+                "en": "西區海底隧道轉車站"
+              }
+            },
+            {
+              "name": {
+                "zh": "時間廊",
+                "en": "Timelapse Mall"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "銀行大廈",
+                "en": "Bank Tower"
+              }
+            },
+            {
+              "name": {
+                "zh": "三哥大廈",
+                "en": "Third Technology Building"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿山",
+                "en": "Dove Hill"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿邨",
+                "en": "Dove Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "購物廊",
+                "en": "Shopping Corridor"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿消防局",
+                "en": "Dove Fire Station"
+              }
+            },
+            {
+              "name": {
+                "zh": "伊迪城",
+                "en": "Eddie City"
+              }
+            },
+            {
+              "name": {
+                "zh": "西區醫院",
+                "en": "Western Hospital"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "三塔",
+                "en": "Triple Tower"
+              },
+              "zone": 1
+            },
+            {
+              "name": {
+                "zh": "貨櫃碼頭員工宿舍",
+                "en": "Containers Island Employee House"
+              }
+            },
+            {
+              "name": {
+                "zh": "海苔灣",
+                "en": "Seaweed Bay"
+              }
+            },
+            {
+              "name": {
+                "zh": "貨櫃碼頭",
+                "en": "Containers Terminal"
+              }
+            },
+            {
+              "name": {
+                "zh": "貨櫃碼頭島",
+                "en": "Container's Island"
+              }
+            }
+          ]
+        }
+      ],
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_N146"
+    },
+    {
+      "id": "R148",
+      "number": "R148",
+      "operators": [
+        "REBC",
+        "FTCC",
+        "FT"
+      ],
+      "category": "special",
+      "pattern": "oneway",
+      "zones": [
+        1,
+        4
+      ],
+      "origin": {
+        "zh": "Eastmallow Praya Road",
+        "en": "Eastmallow Praya Road"
+      },
+      "destination": {
+        "zh": "Dove Park / 東錦葵海傍路",
+        "en": "Dove Park / 東錦葵海傍路"
+      },
+      "via": {
+        "zh": "Sunshine University, North Island, Northern Interchange, Central, Southern",
+        "en": "Sunshine University, North Island, Northern Interchange, Central, Southern"
+      },
+      "interval": {
+        "zh": "Depend on actual situation",
+        "en": "Depend on actual situation"
+      },
+      "journeyTime": {
+        "zh": "21 mins",
+        "en": "21 mins"
+      },
+      "fare": "$18.1",
+      "length": {
+        "zh": "17.6 km",
+        "en": "17.6 km"
+      },
+      "stops": [
+        {
+          "direction": {
+            "zh": "方向1（東錦葵海傍路 → 白鴿公園）",
+            "en": "Direction 1 (Eastmallow Praya Road → Dove Park)"
+          },
+          "serviceTime": {
+            "zh": "Marathon Special Service",
+            "en": "Marathon Special Service"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "東錦葵海傍路",
+                "en": "Eastmallow Praya Road"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵邨 - 陽葵屋",
+                "en": "Eastmallow Estate - Sunny House"
+              }
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學",
+                "en": "Sunshine University"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "望環台",
+                "en": "Panorama Heights"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北島花園商場",
+                "en": "NIE Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "北島花園",
+                "en": "North Island Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓市中心總站",
+                "en": "Norton Town Centre Bus Terminus"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓邨",
+                "en": "Norton Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓花園",
+                "en": "Norton Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓路",
+                "en": "Norton Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "北環轉車站 (南行)",
+                "en": "Northern Interchange (Southbound)"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "雀鳥橋",
+                "en": "Bird Bridge"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "亞特路",
+                "en": "Arctan Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "中環消防局",
+                "en": "Central Fire Station"
+              }
+            },
+            {
+              "name": {
+                "zh": "強生街市",
+                "en": "Johnson Market"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "南環花園二期",
+                "en": "Southern Two"
+              }
+            },
+            {
+              "name": {
+                "zh": "白鴿公園",
+                "en": "Dove Park"
+              },
+              "zone": 1
+            }
+          ]
+        }
+      ],
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_R148"
+    },
+    {
+      "id": "475",
+      "number": "475",
+      "operators": [
+        "HZ",
+        "CSB"
+      ],
+      "category": "inter",
+      "pattern": "bidirectional",
+      "zones": [
+        4,
+        7,
+        8
+      ],
+      "origin": {
+        "zh": "Senpai Shopping Centre",
+        "en": "Senpai Shopping Centre"
+      },
+      "destination": {
+        "zh": "Norton Town Center / 仙貝廣場",
+        "en": "Norton Town Center / 仙貝廣場"
+      },
+      "via": {
+        "zh": "East Door, Rainbow Estate, Zone 7 Interchange, Eastmallow, Sunshine University and North Island Estate",
+        "en": "East Door, Rainbow Estate, Zone 7 Interchange, Eastmallow, Sunshine University and North Island Estate"
+      },
+      "interval": {
+        "zh": "3 - 20 minutes",
+        "en": "3 - 20 minutes"
+      },
+      "journeyTime": {
+        "zh": "38 minutes",
+        "en": "38 minutes"
+      },
+      "fare": "$12.1",
+      "levelRequired": 15,
+      "length": {
+        "zh": "22 km",
+        "en": "22 km"
+      },
+      "stops": [
+        {
+          "directionKey": "S",
+          "direction": {
+            "zh": "南行（仙貝廣場 → 北頓市中心）",
+            "en": "Southbound (Senpai Shopping Center → Norton Town Center)"
+          },
+          "serviceTime": {
+            "zh": "Weekdays: 0530 – 0720, 0830 – 0000 / Weekends: 0540 – 2300",
+            "en": "Weekdays: 0530 – 0720, 0830 – 0000 / Weekends: 0540 – 2300"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "仙貝廣場",
+                "en": "Senpai Shopping Center"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "仙貝",
+                "en": "Senpai"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門路",
+                "en": "East Door Road"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東門總站",
+                "en": "East Door Bus Terminus"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門花園",
+                "en": "East Door Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門下邨",
+                "en": "Lower East Door Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門邨",
+                "en": "East Door Estate"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "紅豆商場",
+                "en": "Redbean Center"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "彩虹邨",
+                "en": "Rainbow Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "彩虹中心",
+                "en": "Rainbow Estate Complex"
+              }
+            },
+            {
+              "name": {
+                "zh": "海西迴旋處",
+                "en": "Haisey Roundabout"
+              },
+              "zone": 8
+            },
+            {
+              "name": {
+                "zh": "第七區轉車站 (西行)",
+                "en": "Axis Road"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東錦葵邨 - 陽葵屋",
+                "en": "Eastmallow Estate - Sunny House"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學",
+                "en": "Sunshine University"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "望環台",
+                "en": "Panorama Heights"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北島花園商場",
+                "en": "NIE Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "巨石路",
+                "en": "Rocky Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "北島花園",
+                "en": "North Island Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓路",
+                "en": "Norton Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓碼頭",
+                "en": "Norton Ferry Pier"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓花園",
+                "en": "Norton Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓邨",
+                "en": "Norton Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓市中心",
+                "en": "Norton Town Center"
+              }
+            }
+          ]
+        },
+        {
+          "directionKey": "N",
+          "direction": {
+            "zh": "北行（北頓市中心 → 仙貝廣場）",
+            "en": "Northbound (Norton Town Center → Senpai Shopping Center)"
+          },
+          "serviceTime": {
+            "zh": "0608 – 0038",
+            "en": "0608 – 0038"
+          },
+          "list": [
+            {
+              "name": {
+                "zh": "北頓市中心",
+                "en": "Norton Town Center"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "北頓邨",
+                "en": "Norton Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓花園",
+                "en": "Norton Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "綠寶石中心",
+                "en": "Emerald Plaza"
+              }
+            },
+            {
+              "name": {
+                "zh": "北頓路",
+                "en": "Norton Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "北島花園",
+                "en": "North Island Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "北島花園商場",
+                "en": "NIE Shopping Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "望環台",
+                "en": "Panorama Heights"
+              }
+            },
+            {
+              "name": {
+                "zh": "陽光大學",
+                "en": "Sunshine University"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵大街",
+                "en": "Eastmallow Main Street"
+              },
+              "zone": 4
+            },
+            {
+              "name": {
+                "zh": "東錦葵海傍路",
+                "en": "Eastmallow Praya Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "第七區轉車站 (東行)",
+                "en": "Axis Road"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "海西迴旋處",
+                "en": "Haisey Roundabout"
+              },
+              "zone": 8
+            },
+            {
+              "name": {
+                "zh": "彩虹中心",
+                "en": "Rainbow Estate Complex"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "彩虹邨",
+                "en": "Rainbow Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "紅豆商場",
+                "en": "Redbean Center"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門邨",
+                "en": "East Door Estate"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "東門下邨",
+                "en": "Lower East Door Estate"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門花園",
+                "en": "East Door Garden"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門總站",
+                "en": "East Door Bus Terminus"
+              }
+            },
+            {
+              "name": {
+                "zh": "東門路",
+                "en": "East Door Road"
+              }
+            },
+            {
+              "name": {
+                "zh": "仙貝",
+                "en": "Senpai"
+              },
+              "zone": 7
+            },
+            {
+              "name": {
+                "zh": "仙貝廣場",
+                "en": "Senpai Shopping Center"
+              }
+            }
+          ]
+        }
+      ],
+      "wikiUrl": "https://sunshine-islands-roblox.fandom.com/wiki/Bus_route_475"
     }
   ],
   "errors": []

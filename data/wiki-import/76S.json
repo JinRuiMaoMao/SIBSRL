@@ -33,13 +33,14 @@
   },
   "stops": [
     {
+      "directionKey": "S",
       "direction": {
-        "zh": "方向1（仙貝廣場 → 安靈台）",
-        "en": "Direction 1 (Senpai Shopping Center → Ambling Peak)"
+        "zh": "南行（仙貝廣場 → 安靈台）",
+        "en": "Southbound (Senpai Shopping Center → Ambling Peak)"
       },
       "serviceTime": {
-        "zh": "08:00 – 19:30, major events only}}",
-        "en": "08:00 – 19:30, major events only}}"
+        "zh": "08:00 – 19:30, major events only",
+        "en": "08:00 – 19:30, major events only"
       },
       "list": [
         {
@@ -52,6 +53,43 @@
           "name": {
             "zh": "安靈台",
             "en": "Ambling Peak"
+          }
+        }
+      ]
+    },
+    {
+      "directionKey": "N",
+      "direction": {
+        "zh": "北行（安靈台 → 仙貝廣場）",
+        "en": "Northbound (Ambling Peak → Senpai Shopping Center)"
+      },
+      "serviceTime": {
+        "zh": "08:00 – 19:30, major events only",
+        "en": "08:00 – 19:30, major events only"
+      },
+      "list": [
+        {
+          "name": {
+            "zh": "安靈台",
+            "en": "Ambling Peak"
+          }
+        },
+        {
+          "name": {
+            "zh": "勿莫商場",
+            "en": "Mo Shopping Center"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝",
+            "en": "Senpai"
+          }
+        },
+        {
+          "name": {
+            "zh": "仙貝廣場",
+            "en": "Senpai Shopping Center"
           }
         }
       ]
