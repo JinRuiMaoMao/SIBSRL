@@ -8,6 +8,7 @@ import {
   mergeRoutesByBaseNumber,
   toMergeBaseRouteNumber,
 } from '../utils/routeMerge'
+import { shouldMergeDirectionalListEntries } from '../utils/routeCardDisplay'
 import { compareRouteNumber } from '../utils/routeSort'
 import { routes } from './routes'
 
@@ -101,8 +102,9 @@ export function resolveGroupedRouteEntry(listedId: string): GroupedRouteEntry | 
   }
 }
 
-/** 列表槽位去重键：分方向编号（73SS、370W）按 listedId，其余按 route.id */
+/** 列表槽位去重键：46E/46W 等方向对合并为一张卡片，其余分方向编号仍按 listedId。 */
 export function groupedRouteDisplaySlotKey(entry: GroupedRouteEntry): string {
+  if (shouldMergeDirectionalListEntries(entry)) return entry.route.id.toLowerCase()
   if (entry.directionKey) return entry.listedId.toLowerCase()
   return entry.route.id.toLowerCase()
 }

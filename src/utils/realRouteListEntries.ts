@@ -18,6 +18,7 @@ import {
   routeHasPerDirectionSunshardUnlock,
 } from '../data/routeSunshardUnlocks'
 import { getMergeDirectionKey } from './routeMerge'
+import { shouldMergeDirectionalListEntries } from './routeCardDisplay'
 import { getDirectionShortLabel, getSortedDirectionCount } from './routeDirections'
 import { sortLockedRealRouteListEntries as sortLockedEntriesByDisplayOrder } from './lockedRouteDisplayOrder'
 import {
@@ -38,12 +39,24 @@ export function realRouteListKey(routeId: string, directionIndex: number): strin
   return `${routeId}:${directionIndex}`
 }
 
-/** 仅当分组内存在多个不同走向的列表编号（如 370E + 370W）时才按方向拆卡。 */
+/** 仅当分组内存在多个不可合并的走向列表编号时才按方向拆卡。 */
 function shouldExpandRouteDirections(route: BusRoute): boolean {
   if (getSortedDirectionCount(route) <= 1) return false
 
+  const listedIds = getListedRouteIdsForRoute(route)
+  if (listedIds.length >= 2) {
+    const allMergeable = listedIds.every((listedId) => {
+      const directionKey = getMergeDirectionKey(listedId)
+      return (
+        directionKey != null &&
+        shouldMergeDirectionalListEntries({ listedId, route, directionKey })
+      )
+    })
+    if (allMergeable) return false
+  }
+
   const directionKeys = new Set(
-    getListedRouteIdsForRoute(route)
+    listedIds
       .map((listedId) => getMergeDirectionKey(listedId))
       .filter((key): key is NonNullable<typeof key> => key != null),
   )
@@ -107,8 +120,14 @@ export function buildRealRouteListEntriesFromDisplaySlots(
     const listedIdLower = slot.listedId.toLowerCase()
     const isWholeRouteSlot =
       listedIdLower === route.number.toLowerCase() || listedIdLower === route.id.toLowerCase()
-    const listKey =
-      slot.entry.directionKey && listedIdLower !== route.number.toLowerCase()
+    const mergeDirections = shouldMergeDirectionalListEntries({
+      listedId: slot.listedId,
+      route,
+      directionKey: slot.entry.directionKey,
+    })
+    const listKey = mergeDirections
+      ? realRouteListKey(route.id, directionIndex)
+      : slot.entry.directionKey && listedIdLower !== route.number.toLowerCase()
         ? `${route.id}:${slot.listedId}`
         : slot.listedId.includes('|') || isWholeRouteSlot
           ? `${route.id}:${slot.listedId}`

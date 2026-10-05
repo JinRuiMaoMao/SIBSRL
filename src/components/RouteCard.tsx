@@ -13,9 +13,11 @@ import { getRoutePageHref } from '../utils/routeNavigation'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import { RouteFavoriteButton } from './RouteFavoriteButton'
 import { RouteEndpoints } from './RouteEndpoints'
+import { RouteDirectionControls } from './RouteDirectionControls'
 import { RouteTypeTags } from './RouteTypeTags'
 
 import { getLoopViewLengthKm, routeHasLoopDirectionLayout } from '../utils/routeLoopView'
+import { routeHasDirectionVariants } from '../utils/routeDirections'
 
 interface RouteCardProps {
   route: BusRoute
@@ -38,6 +40,8 @@ interface RouteCardProps {
   onNavigate?: (routeId: string) => void
   /** real 分栏：双击打开地图详情面板 */
   onOpenDetail?: () => void
+  onDirectionChange?: (index: number) => void
+  onLoopViewChange?: (loopView: boolean) => void
 }
 
 export function RouteCard({
@@ -54,6 +58,8 @@ export function RouteCard({
   tourAnchor,
   onNavigate,
   onOpenDetail,
+  onDirectionChange,
+  onLoopViewChange,
 }: RouteCardProps) {
   const { locale, t } = useLocale()
   const cardNumber = displayNumber ?? route.number
@@ -70,6 +76,9 @@ export function RouteCard({
       : (getDirectionServiceTime(route, directionIndex, locale) ??
         getOptionalText(route.serviceTime, locale))
   const dataIncomplete = !isRouteStopDataComplete(route)
+  const showDirectionControls =
+    Boolean(onDirectionChange) &&
+    (routeHasDirectionVariants(route) || routeHasLoopDirectionLayout(route))
 
   const cardHref = href ?? getRoutePageHref(route.id)
 
@@ -121,6 +130,19 @@ export function RouteCard({
               </span>
             ) : null}
           </div>
+          {showDirectionControls ? (
+            <div className="route-card-top-actions">
+              <RouteDirectionControls
+                route={route}
+                directionIndex={directionIndex}
+                onDirectionChange={onDirectionChange!}
+                loopView={loopView}
+                onLoopViewChange={onLoopViewChange ?? (() => {})}
+                compact
+                className="route-card-direction-controls"
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="route-card-endpoints-row">

@@ -13,6 +13,7 @@ import {
   countVisibleMergedSlots,
   filterLockedSectionDisplaySlots,
   getGroupDisplaySlots,
+  groupedRouteDisplaySlotKeyFromSlot,
   mergeGroupDisplaySlots,
   mergeLevelOnlySpecialIntoNormalSlots,
   ROUTE_DISPLAY_GROUP_ORDER,
@@ -119,6 +120,7 @@ import {
 } from '../utils/routeNavigation'
 import { scheduleRoutePagePrefetch } from '../utils/routePagePrefetch'
 import { routeMatchesFilters, filterLockedDisplaySlotsBySearchQuery } from '../utils/routeFilterMatch'
+import { routeCardDisplayNumber } from '../utils/routeCardDisplay'
 import { isRouteStopDataComplete } from '../utils/routeCompleteness'
 import {
   findStopsMatchingQuery,
@@ -1442,86 +1444,119 @@ export function RouteLookupPage({
       )
     })
 
+  const renderRouteCardProps = (
+    route: BusRoute,
+    listedId: string,
+    directionKey: 'N' | 'S' | 'E' | 'W' | undefined,
+  ) => {
+    const directionIndex = getCardDirectionIndex(route, directionKey)
+    const cardNumber = routeCardDisplayNumber(route, listedId, directionKey)
+    return {
+      directionIndex,
+      displayNumber: cardNumber !== route.number ? cardNumber : undefined,
+      loopView: getLoopView(route),
+      onDirectionChange: (index: number) => setDirectionIndex(route.id, index),
+      onLoopViewChange: (loopView: boolean) => setLoopView(route.id, loopView),
+    }
+  }
+
   const renderListSectionCards = (
     section: RouteListUiSectionKey,
     slotsOverride?: typeof listSectionSlots.normal,
   ) =>
     (slotsOverride ?? listSectionSlots[section]).map((slot, index) => {
       const { route, listedId, directionKey } = slot.entry!
-      const directionIndex = getCardDirectionIndex(route, directionKey)
+      const cardProps = renderRouteCardProps(route, listedId, directionKey)
       const seasonalLabels = getSeasonalLabelsForRoute(route)
 
       return (
         <RouteCard
-          key={`${section}-${listedId}`}
+          key={`${section}-${groupedRouteDisplaySlotKeyFromSlot(slot) ?? listedId}`}
           route={route}
-          displayNumber={listedId !== route.number ? listedId : undefined}
+          displayNumber={cardProps.displayNumber}
           selected={selectedRoute?.id === route.id}
-          directionIndex={directionIndex}
-          loopView={getLoopView(route)}
+          directionIndex={cardProps.directionIndex}
+          loopView={cardProps.loopView}
           availabilityRangeLabel={seasonalLabels?.range}
           availabilityUnavailableLabel={seasonalLabels?.unavailableFrom ?? undefined}
           tourAnchor={section === 'normal' && index === 0 ? 'route-card' : undefined}
           onNavigate={handleRouteNavigate}
+          onDirectionChange={cardProps.onDirectionChange}
+          onLoopViewChange={cardProps.onLoopViewChange}
         />
       )
     })
 
   const renderFavoriteRouteCards = () =>
-    favoriteRoutes.map((route) => (
-      <div
-        key={`favorite-${route.id}`}
-        className={`favorite-draggable ${draggingFavoriteId === route.id ? 'is-dragging' : ''}`}
-        draggable
-        onDragStart={(event) => {
-          setDraggingFavoriteId(route.id)
-          event.dataTransfer.effectAllowed = 'move'
-          event.dataTransfer.setData('text/plain', route.id)
-        }}
-        onDragEnd={() => setDraggingFavoriteId(null)}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault()
-          const dragRouteId = event.dataTransfer.getData('text/plain')
-          reorderFavorites(dragRouteId, route.id)
-          setDraggingFavoriteId(null)
-        }}
-      >
-        <RouteCard
-          route={route}
-          selected={selectedRoute?.id === route.id}
-          directionIndex={getDirectionIndex(route)}
-          loopView={getLoopView(route)}
-          muted={!routeMatchesFilters(route, filters)}
-          onNavigate={handleRouteNavigate}
-        />
-      </div>
-    ))
+    favoriteRoutes.map((route) => {
+      const cardProps = renderRouteCardProps(route, route.number, undefined)
+      return (
+        <div
+          key={`favorite-${route.id}`}
+          className={`favorite-draggable ${draggingFavoriteId === route.id ? 'is-dragging' : ''}`}
+          draggable
+          onDragStart={(event) => {
+            setDraggingFavoriteId(route.id)
+            event.dataTransfer.effectAllowed = 'move'
+            event.dataTransfer.setData('text/plain', route.id)
+          }}
+          onDragEnd={() => setDraggingFavoriteId(null)}
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={(event) => {
+            event.preventDefault()
+            const dragRouteId = event.dataTransfer.getData('text/plain')
+            reorderFavorites(dragRouteId, route.id)
+            setDraggingFavoriteId(null)
+          }}
+        >
+          <RouteCard
+            route={route}
+            selected={selectedRoute?.id === route.id}
+            directionIndex={cardProps.directionIndex}
+            loopView={cardProps.loopView}
+            muted={!routeMatchesFilters(route, filters)}
+            onNavigate={handleRouteNavigate}
+            onDirectionChange={cardProps.onDirectionChange}
+            onLoopViewChange={cardProps.onLoopViewChange}
+          />
+        </div>
+      )
+    })
 
   const renderRecentRouteCards = () =>
-    recentRoutes.map((route) => (
-      <RouteCard
-        key={`recent-${route.id}`}
-        route={route}
-        selected={selectedRoute?.id === route.id}
-        directionIndex={getDirectionIndex(route)}
-        loopView={getLoopView(route)}
-        muted={!routeMatchesFilters(route, filters)}
-        onNavigate={handleRouteNavigate}
-      />
-    ))
+    recentRoutes.map((route) => {
+      const cardProps = renderRouteCardProps(route, route.number, undefined)
+      return (
+        <RouteCard
+          key={`recent-${route.id}`}
+          route={route}
+          selected={selectedRoute?.id === route.id}
+          directionIndex={cardProps.directionIndex}
+          loopView={cardProps.loopView}
+          muted={!routeMatchesFilters(route, filters)}
+          onNavigate={handleRouteNavigate}
+          onDirectionChange={cardProps.onDirectionChange}
+          onLoopViewChange={cardProps.onLoopViewChange}
+        />
+      )
+    })
 
   const renderStopRouteCards = () =>
-    stopLookupRoutes.map((route) => (
-      <RouteCard
-        key={`via-stop-${route.id}`}
-        route={route}
-        selected={selectedRoute?.id === route.id}
-        directionIndex={getDirectionIndex(route)}
-        loopView={getLoopView(route)}
-        onNavigate={handleRouteNavigate}
-      />
-    ))
+    stopLookupRoutes.map((route) => {
+      const cardProps = renderRouteCardProps(route, route.number, undefined)
+      return (
+        <RouteCard
+          key={`via-stop-${route.id}`}
+          route={route}
+          selected={selectedRoute?.id === route.id}
+          directionIndex={cardProps.directionIndex}
+          loopView={cardProps.loopView}
+          onNavigate={handleRouteNavigate}
+          onDirectionChange={cardProps.onDirectionChange}
+          onLoopViewChange={cardProps.onLoopViewChange}
+        />
+      )
+    })
 
   const betweenStopResultCount = betweenStopLookup
     ? betweenStopLookup.routes.length + betweenStopLookup.transferPlans.length
@@ -1659,6 +1694,9 @@ export function RouteLookupPage({
               selectedRouteId={selectedRoute?.id ?? null}
               onSelect={handleCarouselSelect}
               onOpenDetail={handleOpenDetailInSplit}
+              onDirectionChange={setDirectionIndex}
+              onLoopViewChange={setLoopView}
+              getLoopView={getLoopView}
               dailyChallenge={
                 dailyChallengeVisible
                   ? {

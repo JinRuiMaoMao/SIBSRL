@@ -1,6 +1,7 @@
 import routeShiftUnlocksJson from '../../data/route-shift-unlocks.json'
 import routeTimetablesJson from '../../data/route-timetables.json'
 import type { BusRoute } from '../types/route'
+import { shouldMergeDirectionalListEntries } from '../utils/routeCardDisplay'
 import type { RouteTimetablesFile, TimetableScheduleEntry } from '../types/routeTimetableData'
 import {
   getListedRouteIdsForRoute,
@@ -298,6 +299,17 @@ export function lockedCardDisplayNumber(
   slotDirectionKey?: DirectionKey,
 ): string | undefined {
   const resolvedDirectionKey = directionKeyForLockedDisplay(listedId, slotDirectionKey)
+  if (
+    listedId &&
+    resolvedDirectionKey &&
+    shouldMergeDirectionalListEntries({
+      listedId,
+      route,
+      directionKey: resolvedDirectionKey,
+    })
+  ) {
+    return undefined
+  }
   if (resolvedDirectionKey) return `${route.number} (${resolvedDirectionKey})`
   if (listedId && listedId !== route.number && listedId !== route.id) return listedId
   return undefined

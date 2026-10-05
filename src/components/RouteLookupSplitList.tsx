@@ -13,6 +13,7 @@ import {
   resolveShiftUnlockListedRouteId,
 } from '../data/routeShiftUnlocks'
 import type { SeasonalPromotionEntry } from '../utils/seasonalRoutePromotions'
+import type { BusRoute } from '../types/route'
 import { DailyChallengeBanner } from './DailyChallengeBanner'
 import { SeasonalPromotedRouteCards } from './SeasonalPromotedRouteCards'
 import { RouteCard } from './RouteCard'
@@ -41,6 +42,9 @@ interface RouteLookupSplitListProps {
   selectedRouteId: string | null
   onSelect: (routeId: string, directionIndex: number) => void
   onOpenDetail: (routeId: string, directionIndex: number) => void
+  onDirectionChange: (routeId: string, directionIndex: number) => void
+  onLoopViewChange: (routeId: string, loopView: boolean) => void
+  getLoopView: (route: BusRoute) => boolean
   dailyChallenge?: {
     visible: boolean
     selected: boolean
@@ -69,6 +73,9 @@ export function RouteLookupSplitList({
   selectedRouteId,
   onSelect,
   onOpenDetail,
+  onDirectionChange,
+  onLoopViewChange,
+  getLoopView,
   dailyChallenge = null,
   seasonalPromotions = [],
 }: RouteLookupSplitListProps) {
@@ -134,11 +141,16 @@ export function RouteLookupSplitList({
           route={route}
           selected={selectedListKey === listKey}
           directionIndex={directionIndex}
-          loopView={false}
+          loopView={getLoopView(route)}
           appearance="classic"
           tourAnchor={tourAnchor ? 'route-card' : undefined}
           onNavigate={() => onSelect(route.id, directionIndex)}
           onOpenDetail={() => onOpenDetail(route.id, directionIndex)}
+          onDirectionChange={(index) => {
+            onDirectionChange(route.id, index)
+            if (selectedListKey === listKey) onSelect(route.id, index)
+          }}
+          onLoopViewChange={(loopView) => onLoopViewChange(route.id, loopView)}
         />
       </div>
     )

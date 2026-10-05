@@ -12,7 +12,7 @@ import {
 } from '../storage/routePreferences'
 import type { BusRoute, RouteFilters, RouteTypeFilter } from '../types/route'
 import { routeMatchesFilters } from '../utils/routeFilterMatch'
-import { clampDirectionIndex } from '../utils/routeDirections'
+import { clampDirectionIndex, getSortedDirectionDataIndices } from '../utils/routeDirections'
 import { compareRouteNumber } from '../utils/routeSort'
 import { buildRandomEligibleRoutes } from '../utils/randomRoutePool'
 import {
@@ -89,11 +89,20 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
     [displayRoutes],
   )
 
-  /** 列表卡片方向：用户切换后尊重选择；否则固定使用排序后最左侧方向（北 / 西）。 */
+  /** 列表卡片方向：用户切换后尊重选择；否则按 listed 方向键或最左侧（北 / 西）。 */
   const getCardDirectionIndex = useCallback(
-    (route: BusRoute, _listedDirectionKey?: 'N' | 'S' | 'E' | 'W' | null) => {
+    (route: BusRoute, listedDirectionKey?: 'N' | 'S' | 'E' | 'W' | null) => {
       if (directionByRouteId[route.id] !== undefined) {
         return clampDirectionIndex(route, directionByRouteId[route.id]!)
+      }
+      if (listedDirectionKey) {
+        const sortedIndices = getSortedDirectionDataIndices(route)
+        for (let sortedIndex = 0; sortedIndex < sortedIndices.length; sortedIndex++) {
+          const dataIndex = sortedIndices[sortedIndex]!
+          if (route.stops?.[dataIndex]?.directionKey === listedDirectionKey) {
+            return sortedIndex
+          }
+        }
       }
       return clampDirectionIndex(route, 0)
     },
