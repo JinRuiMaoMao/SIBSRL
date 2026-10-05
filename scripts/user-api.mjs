@@ -42,7 +42,11 @@ import {
   upsertRouteMapImport,
   upsertUserData,
   upsertVerificationCode,
+  listDailyChallengeDays,
+  getDailyChallengeDay,
+  upsertDailyChallengeDays,
 } from './lib/user-db.mjs'
+import { getDailyChallengeGameDate } from './lib/daily-challenge-message.mjs'
 import {
   buildGitHubAuthorizeUrl,
   buildGoogleAuthorizeUrl,
@@ -605,6 +609,117 @@ function handleGetRouteMapImport(req, res, routeIdRaw) {
   })
 }
 
+const DAILY_CHALLENGE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+const DAILY_CHALLENGE_PUT_MAX_DAYS = 62
+
+function mapDailyChallengeDayRow(row) {
+  if (!row) return null
+  return {
+    date: row.date,
+    event: row.event,
+    routeCode: row.route_code ?? null,
+    race: Boolean(row.race),
+  }
+}
+
+function getDailyChallengeStoreUpdatedAt(rows) {
+  if (!rows.length) return null
+  return Math.max(...rows.map((row) => row.updated_at ?? 0))
+}
+
+function handleGetDailyChallengeLatest(req, res) {
+  const gameDate = getDailyChallengeGameDate()
+  const row = getDailyChallengeDay(db, gameDate)
+  json(req, res, 200, {
+    ok: true,
+    updatedAt: row?.updated_at ?? null,
+    latest: mapDailyChallengeDayRow(row),
+  })
+}
+
+function handleGetDailyChallengeHistory(req, res) {
+  const gameDate = getDailyChallengeGameDate()
+  const rows = listDailyChallengeDays(db)
+  const latestRow = rows.find((row) => row.date === gameDate) ?? null
+  const history = rows
+    .filter((row) => row.date !== gameDate)
+    .map((row) => mapDailyChallengeDayRow(row))
+  json(req, res, 200, {
+    ok: true,
+    updatedAt: getDailyChallengeStoreUpdatedAt(rows),
+    latest: mapDailyChallengeDayRow(latestRow),
+    history,
+  })
+}
+
+async function handlePutDailyChallengeDays(req, res) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  const user = findUserById(db, session.userId)
+  if (!user) return error(req, res, 404, 'user_not_found', 'User not found')
+  if (!isUserAdmin(user)) {
+    return error(req, res, 403, 'forbidden', 'Admin permission required')
+  }
+
+  let body
+  try {
+    body = await readJson(req)
+  } catch {
+    return error(req, res, 400, 'invalid_json', 'Invalid JSON body')
+  }
+
+  const rawDays = Array.isArray(body.days) ? body.days : []
+  if (rawDays.length === 0) {
+    return error(req, res, 400, 'invalid_days', 'At least one day is required')
+  }
+  if (rawDays.length > DAILY_CHALLENGE_PUT_MAX_DAYS) {
+    return error(req, res, 400, 'too_many_days', `At most ${DAILY_CHALLENGE_PUT_MAX_DAYS} days per request`)
+  }
+
+  const normalized = []
+  const seenDates = new Set()
+  for (const raw of rawDays) {
+    const date = String(raw.date ?? '').trim()
+    const event = String(raw.event ?? '').trim()
+    const routeCodeRaw = raw.routeCode == null ? '' : String(raw.routeCode).trim()
+    const routeCode = routeCodeRaw ? routeCodeRaw.toUpperCase() : null
+    const race = raw.race === true || raw.race === 1 || raw.race === '1' || raw.race === 'true'
+
+    if (!DAILY_CHALLENGE_DATE_RE.test(date)) {
+      return error(req, res, 400, 'invalid_date', `Invalid date: ${date || '(empty)'}`)
+    }
+    if (!event) continue
+    if (event.length > 120) {
+      return error(req, res, 400, 'invalid_event', `Event too long for ${date}`)
+    }
+    if (routeCode && routeCode.length > 32) {
+      return error(req, res, 400, 'invalid_route', `Route code too long for ${date}`)
+    }
+    if (seenDates.has(date)) continue
+    seenDates.add(date)
+    normalized.push({ date, event, routeCode, race })
+  }
+
+  if (normalized.length === 0) {
+    return error(req, res, 400, 'invalid_days', 'No days with a non-empty event')
+  }
+
+  const updatedAt = Date.now()
+  upsertDailyChallengeDays(
+    db,
+    normalized.map((day) => ({ ...day, updatedAt })),
+    session.userId,
+  )
+
+  json(req, res, 200, {
+    ok: true,
+    updatedAt,
+    saved: normalized.length,
+    days: normalized,
+  })
+}
+
 async function handlePutRouteMapImport(req, res, routeIdRaw) {
   const session = requireAuth(req, res)
   if (!session) return
@@ -866,6 +981,15 @@ const server = createServer(async (req, res) => {
     }
     if (method === 'GET' && path === '/api/user/map-draw-approve') {
       return handleMapDrawApprove(req, res, url)
+    }
+    if (method === 'GET' && path === '/api/daily-challenge/latest') {
+      return handleGetDailyChallengeLatest(req, res)
+    }
+    if (method === 'GET' && path === '/api/daily-challenge/history') {
+      return handleGetDailyChallengeHistory(req, res)
+    }
+    if (method === 'PUT' && path === '/api/daily-challenge/days') {
+      return await handlePutDailyChallengeDays(req, res)
     }
     const routeMapMatch = /^\/api\/route-maps\/([^/]+)$/.exec(path)
     if (routeMapMatch) {

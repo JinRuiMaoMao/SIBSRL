@@ -7,6 +7,8 @@ import { useLocale } from '../i18n/LocaleContext'
 import { readAvatarFileAsDataUrl } from '../utils/avatarImage'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { AccountAvatar } from './AccountAvatar'
+import { DailyChallengeAdminPanel } from './DailyChallengeAdminPanel'
+import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
 
 export function AccountProfileView() {
   const { t } = useLocale()
@@ -22,6 +24,7 @@ export function AccountProfileView() {
   const [deletePassword, setDeletePassword] = useState('')
   const [busy, setBusy] = useState(false)
   const oauthOnly = Boolean(profile?.oauthOnly)
+  const isAdmin = useIsMapAdmin()
 
   useEffect(() => {
     setDisplayNameDraft(profile?.displayName ?? '')
@@ -167,6 +170,8 @@ export function AccountProfileView() {
           </button>
         </div>
       </section>
+
+      {isAdmin ? <DailyChallengeAdminPanel /> : null}
 
       <section className="account-profile-card">
         <h3 className="account-section-title">{t('authChangePasswordTitle')}</h3>

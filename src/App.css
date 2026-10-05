@@ -2240,6 +2240,10 @@ a.settings-trigger {
   padding: 0.25rem 0 1.5rem;
 }
 
+.account-page:has(.dc-admin-panel) {
+  max-width: 52rem;
+}
+
 .account-page-header {
   margin-bottom: 1rem;
 }
@@ -2318,6 +2322,71 @@ a.settings-trigger {
 .account-section-title {
   margin: 0 0 0.75rem;
   font-size: 1rem;
+}
+
+.dc-admin-paste {
+  min-height: 9rem;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.dc-admin-merge-summary {
+  margin-top: 0.35rem;
+}
+
+.dc-admin-table-wrap {
+  overflow-x: auto;
+  margin: 0.75rem 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.dc-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.dc-admin-table th,
+.dc-admin-table td {
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.dc-admin-table th {
+  text-align: left;
+  background: var(--bg-surface);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dc-admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dc-admin-date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.dc-admin-race {
+  width: 3rem;
+  text-align: center;
+}
+
+.dc-admin-cell {
+  width: 100%;
+  min-width: 6rem;
+}
+
+.dc-admin-loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 1rem !important;
 }
 
 .account-danger-zone {

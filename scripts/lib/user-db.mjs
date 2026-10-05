@@ -75,6 +75,16 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
       updated_by TEXT,
       FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
     );
+
+    CREATE TABLE IF NOT EXISTS daily_challenge_days (
+      date TEXT PRIMARY KEY,
+      event TEXT NOT NULL,
+      route_code TEXT,
+      race INTEGER NOT NULL DEFAULT 0,
+      updated_at INTEGER NOT NULL,
+      updated_by TEXT,
+      FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+    );
   `)
 
   const userDataColumns = db.prepare('PRAGMA table_info(user_data)').all()
@@ -360,6 +370,56 @@ export function upsertRouteMapImport(db, { routeId, payloadJson, updatedAt, upda
       updated_at = excluded.updated_at,
       updated_by = excluded.updated_by
   `).run(routeId.trim(), payloadJson, updatedAt, updatedBy)
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function listDailyChallengeDays(db, { limit = 400 } = {}) {
+  return db
+    .prepare(`
+      SELECT date, event, route_code, race, updated_at, updated_by
+      FROM daily_challenge_days
+      ORDER BY date DESC
+      LIMIT ?
+    `)
+    .all(Math.max(1, Math.min(limit, 400)))
+}
+
+/** @param {import('better-sqlite3').Database} db @param {string} date */
+export function getDailyChallengeDay(db, date) {
+  return db
+    .prepare(`
+      SELECT date, event, route_code, race, updated_at, updated_by
+      FROM daily_challenge_days
+      WHERE date = ?
+    `)
+    .get(date)
+}
+
+/** @param {import('better-sqlite3').Database} db @param {{ date: string, event: string, routeCode?: string | null, race?: boolean, updatedAt: number }[]} days @param {string | null} updatedBy */
+export function upsertDailyChallengeDays(db, days, updatedBy) {
+  const stmt = db.prepare(`
+    INSERT INTO daily_challenge_days (date, event, route_code, race, updated_at, updated_by)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(date) DO UPDATE SET
+      event = excluded.event,
+      route_code = excluded.route_code,
+      race = excluded.race,
+      updated_at = excluded.updated_at,
+      updated_by = excluded.updated_by
+  `)
+  const tx = db.transaction((items) => {
+    for (const day of items) {
+      stmt.run(
+        day.date,
+        day.event,
+        day.routeCode ?? null,
+        day.race ? 1 : 0,
+        day.updatedAt,
+        updatedBy,
+      )
+    }
+  })
+  tx(days)
 }
 
 export { MAP_DRAW_REQUEST_COOLDOWN_MS, MAP_DRAW_REQUEST_TTL_MS }

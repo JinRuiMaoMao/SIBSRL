@@ -230,3 +230,68 @@ export async function saveRouteMapImport(
     },
   )
 }
+
+export interface DailyChallengeDayPayload {
+  date: string
+  event: string
+  routeCode: string | null
+  race: boolean
+}
+
+export async function fetchDailyChallengeAdminHistory(signal?: AbortSignal) {
+  const base = getUserApiBaseUrl()
+  if (base === null) {
+    throw new UserApiError('user_api_unconfigured', 'User API is not configured')
+  }
+
+  let res: Response
+  try {
+    res = await fetch(`${base}/api/daily-challenge/history`, {
+      signal,
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    })
+  } catch {
+    throw new UserApiError('network_error', 'Could not reach account service')
+  }
+
+  const payload = (await parseJson(res)) as {
+    latest?: DailyChallengeDayPayload | null
+    history?: DailyChallengeDayPayload[]
+  } | null
+
+  if (!res.ok) {
+    throw new UserApiError(
+      (payload as { error?: string } | null)?.error ?? 'request_failed',
+      (payload as { message?: string } | null)?.message ?? `Request failed (${res.status})`,
+    )
+  }
+
+  const records = [payload?.latest, ...(payload?.history ?? [])]
+  const days: DailyChallengeDayPayload[] = []
+  const seen = new Set<string>()
+  for (const record of records) {
+    if (!record?.date || !record.event || seen.has(record.date)) continue
+    seen.add(record.date)
+    days.push({
+      date: record.date,
+      event: record.event,
+      routeCode: record.routeCode ?? null,
+      race: Boolean(record.race),
+    })
+  }
+  return days.sort((a, b) => a.date.localeCompare(b.date))
+}
+
+export async function saveDailyChallengeDays(
+  token: string,
+  days: DailyChallengeDayPayload[],
+  signal?: AbortSignal,
+) {
+  return request<{ ok: true; updatedAt: number; saved: number }>('/api/daily-challenge/days', {
+    method: 'PUT',
+    token,
+    body: JSON.stringify({ days }),
+    signal,
+  })
+}

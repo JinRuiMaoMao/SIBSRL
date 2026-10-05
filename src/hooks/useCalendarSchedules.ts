@@ -4,7 +4,11 @@ import {
   mergeScheduleWithLiveDays,
   type DailyChallengeSchedule,
 } from '../data/dailyChallengeSchedule'
-import { fetchDailyChallengeHistory } from '../data/liveDailyChallenge'
+import {
+  fetchDailyChallengeHistory,
+  getDailyChallengeApiUrl,
+  getDailyChallengePollIntervalMs,
+} from '../data/liveDailyChallenge'
 
 export function useCalendarSchedules(): {
   schedules: DailyChallengeSchedule[]
@@ -13,11 +17,34 @@ export function useCalendarSchedules(): {
   const [liveDays, setLiveDays] = useState<Awaited<ReturnType<typeof fetchDailyChallengeHistory>>>([])
 
   useEffect(() => {
-    const controller = new AbortController()
-    void fetchDailyChallengeHistory(controller.signal).then((days) => {
-      if (!controller.signal.aborted) setLiveDays(days)
-    })
-    return () => controller.abort()
+    let cancelled = false
+    let pollTimer: number | undefined
+    let activeController: AbortController | null = null
+
+    const refresh = async () => {
+      activeController?.abort()
+      const controller = new AbortController()
+      activeController = controller
+      try {
+        const days = await fetchDailyChallengeHistory(controller.signal)
+        if (!cancelled) setLiveDays(days)
+      } catch {
+        if (controller.signal.aborted) return
+      } finally {
+        if (activeController === controller) activeController = null
+      }
+    }
+
+    void refresh()
+    if (getDailyChallengeApiUrl()) {
+      pollTimer = window.setInterval(() => void refresh(), getDailyChallengePollIntervalMs())
+    }
+
+    return () => {
+      cancelled = true
+      activeController?.abort()
+      if (pollTimer != null) window.clearInterval(pollTimer)
+    }
   }, [])
 
   const schedules = useMemo(

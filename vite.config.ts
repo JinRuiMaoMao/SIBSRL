@@ -382,6 +382,9 @@ export default defineConfig(() => {
       proxy: {
         '/api/auth': { target: 'http://localhost:8788', changeOrigin: true },
         '/api/user': { target: 'http://localhost:8788', changeOrigin: true },
+        '/api/daily-challenge': { target: 'http://localhost:8788', changeOrigin: true },
+        '/api/route-maps': { target: 'http://localhost:8788', changeOrigin: true },
+        '/api/feedback': { target: 'http://localhost:8788', changeOrigin: true },
       },
     },
     preview: {

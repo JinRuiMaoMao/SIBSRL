@@ -1,3 +1,4 @@
+import { getUserApiBaseUrl } from '../api/userApiConfig'
 import {
   buildDailyChallengeFromScheduleDay,
   todayHktDateString,
@@ -36,12 +37,16 @@ function readMetaContent(name: string): string | null {
 }
 
 export function getDailyChallengeApiUrl(): string | null {
-  return (
+  const dedicated =
     window.DAILY_CHALLENGE_API_URL?.trim() ||
     readMetaContent('daily-challenge-api') ||
     import.meta.env.VITE_DAILY_CHALLENGE_API_URL?.trim() ||
     null
-  )
+  if (dedicated) return dedicated
+
+  const userApi = getUserApiBaseUrl()
+  if (userApi) return `${userApi}/api/daily-challenge/latest`
+  return null
 }
 
 export function getDailyChallengePollIntervalMs(): number {
