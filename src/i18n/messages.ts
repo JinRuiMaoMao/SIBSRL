@@ -587,7 +587,8 @@ const messagesZhHans = {
   dcAdminTitle: '每日挑战管理',
   dcAdminLead: '粘贴社区月表或直接在表格中填写；保存后全站立即更新（无需重新部署）。空 Event 的行不会提交。',
   dcAdminPasteLabel: '粘贴月表',
-  dcAdminPastePlaceholder: '~ October Daily Challenge ~\n10/1: Rush Hour (46E)\n10/3: [Race] Marathon Road Closure (370AEM)',
+  dcAdminPastePlaceholder:
+    '~ October Daily Challenge ~\n10/1: Rush Hour (46E)\n\nJanuary Daily Challenge :\n1: Marathon (242)\n3: (Race) PH (PH1)',
   dcAdminParseAction: '解析并合并到表格',
   dcAdminMergeSummary: '合并完成：新增 {added}、更新 {updated}、跳过空行 {skipped}',
   dcAdminColDate: '日期',
@@ -1681,7 +1682,8 @@ const messagesEn: Record<MessageKey, string> = {
   dcAdminTitle: 'Daily challenge admin',
   dcAdminLead: 'Paste a community month list or edit the table; saves update the site immediately without redeploy. Rows with empty Event are not submitted.',
   dcAdminPasteLabel: 'Paste month list',
-  dcAdminPastePlaceholder: '~ October Daily Challenge ~\n10/1: Rush Hour (46E)\n10/3: [Race] Marathon Road Closure (370AEM)',
+  dcAdminPastePlaceholder:
+    '~ October Daily Challenge ~\n10/1: Rush Hour (46E)\n\nJanuary Daily Challenge :\n1: Marathon (242)\n3: (Race) PH (PH1)',
   dcAdminParseAction: 'Parse & merge into table',
   dcAdminMergeSummary: 'Merged: {added} added, {updated} updated, {skipped} empty lines skipped',
   dcAdminColDate: 'Date',

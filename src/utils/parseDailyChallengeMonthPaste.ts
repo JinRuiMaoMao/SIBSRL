@@ -30,9 +30,20 @@ const MONTH_NAMES: Record<string, number> = {
   december: 12,
 }
 
+const ROUTE_CODE_RE = /^(?:PH\d+|[A-Z]{0,3}\d{1,4}[A-Z0-9#*%_-]*)$/i
+
 function stripDiscordEmoji(value: string): string {
   return value
     .replace(/<a?:\w+:\d+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function stripDiscordNotes(value: string): string {
+  return value
+    .replace(/\(\s*drify\b[^)]*\)/gi, '')
+    .replace(/\(\s*but\b[^)]*\)/gi, '')
+    .replace(/\s+\+\s+drify\b.*$/i, '')
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -42,12 +53,18 @@ function pad2(value: number): string {
 }
 
 function extractMonthFromTitle(line: string): number | null {
-  const match = line.match(/~\s*(\w+)\s+daily\s+challenge\s*~/i)
-  if (!match?.[1]) return null
-  return MONTH_NAMES[match[1].toLowerCase()] ?? null
-}
+  const tildeMatch = line.match(/~\s*(\w+)\s+daily\s+challenge\s*~/i)
+  if (tildeMatch?.[1]) {
+    return MONTH_NAMES[tildeMatch[1].toLowerCase()] ?? null
+  }
 
-const ROUTE_CODE_RE = /^(?:PH\d+|[A-Z]{0,2}\d{1,3}[A-Z0-9#*%_-]*)$/i
+  const plainMatch = line.match(/^(\w+)\s+daily\s+challenge\s*:?\s*$/i)
+  if (plainMatch?.[1]) {
+    return MONTH_NAMES[plainMatch[1].toLowerCase()] ?? null
+  }
+
+  return null
+}
 
 function looksLikeRouteCode(value: string): boolean {
   const code = value.trim().toUpperCase()
@@ -56,29 +73,138 @@ function looksLikeRouteCode(value: string): boolean {
   return ROUTE_CODE_RE.test(code)
 }
 
+function normalizeEventAndRoute(
+  event: string,
+  routeCode: string | null,
+): { event: string; routeCode: string | null } {
+  let e = event.trim().replace(/\s+/g, ' ')
+  let route = routeCode?.toUpperCase() ?? null
+
+  if (/^Rare Appearance\s+PH\b/i.test(e) || /^Rare Appearance\s+x\s+Private Hire/i.test(e)) {
+    return {
+      event: 'Rare Appearance x Private Hire',
+      routeCode: route ?? 'PH1',
+    }
+  }
+
+  if (/^PH\b/i.test(e) || /^Private Hire\b/i.test(e)) {
+    const phRoute = e.match(/\((PH\d+)\)/i)?.[1] ?? (route?.startsWith('PH') ? route : null)
+    return {
+      event: 'Private Hire',
+      routeCode: phRoute?.toUpperCase() ?? route,
+    }
+  }
+
+  if (/^Marathon\s+R(\d+)/i.test(e)) {
+    const shuttleRoute = e.match(/^Marathon\s+R(\d+)/i)?.[1]
+    return {
+      event: 'Marathon Shuttle',
+      routeCode: shuttleRoute ? `R${shuttleRoute}` : route,
+    }
+  }
+
+  if (/^Marathon\s*\(\s*R(\d+)/i.test(e) || (route?.startsWith('R') && /^Marathon\b/i.test(e))) {
+    return {
+      event: 'Marathon Shuttle',
+      routeCode: route,
+    }
+  }
+
+  if (/^Marathon\s+Closure/i.test(e)) {
+    const n271 = e.match(/N271\s*\(\s*(N171WM)\s*\)/i)
+    if (n271?.[1]) {
+      return { event: 'Marathon Road Closure', routeCode: n271[1].toUpperCase() }
+    }
+    const bare = e.match(/^Marathon\s+Closure\s+(\S+)/i)?.[1]
+    const bareRoute = bare?.replace(/[(:].*$/, '').toUpperCase()
+    if (bareRoute && looksLikeRouteCode(bareRoute)) {
+      return { event: 'Marathon Road Closure', routeCode: bareRoute }
+    }
+    return { event: 'Marathon Road Closure', routeCode: route }
+  }
+
+  if (/^Marathon\b/i.test(e)) {
+    return {
+      event: 'Marathon Road Closure',
+      routeCode: route,
+    }
+  }
+
+  return { event: e, routeCode: route }
+}
+
 function extractRouteFromTail(value: string): { event: string; routeCode: string | null } {
-  const trimmed = value.trim()
+  const trimmed = stripDiscordNotes(value.trim())
+
+  const n271Match = trimmed.match(/^Marathon\s+Closure\s+N271\s*\(\s*(N171WM)\s*\)/i)
+  if (n271Match?.[1]) {
+    return { event: 'Marathon Road Closure', routeCode: n271Match[1].toUpperCase() }
+  }
+
+  const marathonClosureMatch = trimmed.match(/^Marathon\s+Closure\s+(\S+)/i)
+  if (marathonClosureMatch?.[1]) {
+    const code = marathonClosureMatch[1].replace(/[(:].*$/, '').toUpperCase()
+    if (looksLikeRouteCode(code)) {
+      return { event: 'Marathon Road Closure', routeCode: code }
+    }
+  }
+
+  const marathonShuttleMatch = trimmed.match(/^Marathon\s+R(\d+)/i)
+  if (marathonShuttleMatch?.[1]) {
+    return { event: 'Marathon Shuttle', routeCode: `R${marathonShuttleMatch[1]}` }
+  }
+
   const parenMatches = [...trimmed.matchAll(/\(([A-Z0-9#*%_\-]+)\)/gi)]
   for (let index = parenMatches.length - 1; index >= 0; index -= 1) {
     const match = parenMatches[index]
     const code = match[1]?.toUpperCase()
     if (!code || !looksLikeRouteCode(code) || match.index == null) continue
-    return {
-      event: trimmed.slice(0, match.index).trim(),
-      routeCode: code,
-    }
+    return normalizeEventAndRoute(trimmed.slice(0, match.index).trim(), code)
   }
-  return { event: trimmed, routeCode: null }
+
+  return normalizeEventAndRoute(trimmed, null)
 }
 
 function parseRaceAndEvent(value: string): { event: string; race: boolean } {
-  let rest = value.trim()
+  let rest = stripDiscordNotes(value.trim())
   let race = false
+
+  if (/^\(\s*race\s*\)\s*/i.test(rest)) {
+    race = true
+    rest = rest.replace(/^\(\s*race\s*\)\s*/i, '').trim()
+  }
   if (/^\[?\s*race\s*\]?\s*/i.test(rest)) {
     race = true
     rest = rest.replace(/^\[?\s*race\s*\]?\s*/i, '').trim()
   }
+
   return { event: rest, race }
+}
+
+function parseDayLine(line: string): {
+  month: number | null
+  day: number
+  content: string
+} | null {
+  const slashMatch = line.match(/^(\d{1,2})\/(\d{1,2})\s*:\s*(.*)$/i)
+  if (slashMatch) {
+    return {
+      month: Number(slashMatch[1]),
+      day: Number(slashMatch[2]),
+      content: slashMatch[3] ?? '',
+    }
+  }
+
+  const dayOnlyMatch = line.match(/^(\d{1,2})\s*:\s*(.*)$/i)
+  if (dayOnlyMatch) {
+    return {
+      month: null,
+      day: Number(dayOnlyMatch[1]),
+      content: dayOnlyMatch[2] ?? '',
+    }
+  }
+
+  return null
 }
 
 export function parseDailyChallengeMonthPaste(
@@ -103,18 +229,17 @@ export function parseDailyChallengeMonthPaste(
       continue
     }
 
-    const dayMatch = line.match(/^(\d{1,2})\/(\d{1,2})\s*:\s*(.*)$/i)
-    if (!dayMatch) continue
+    const dayLine = parseDayLine(line)
+    if (!dayLine) continue
 
-    // Community lists use US-style M/D (e.g. 10/1 = October 1).
-    const lineMonth = Number(dayMatch[1])
-    const lineDay = Number(dayMatch[2])
-    const content = stripDiscordEmoji(dayMatch[3] ?? '')
-
+    const content = stripDiscordNotes(stripDiscordEmoji(dayLine.content))
     const resolvedMonth =
-      lineMonth >= 1 && lineMonth <= 12 ? lineMonth : titleMonth ?? month
-    if (lineMonth >= 1 && lineMonth <= 12) {
-      month = lineMonth
+      dayLine.month != null && dayLine.month >= 1 && dayLine.month <= 12
+        ? dayLine.month
+        : titleMonth ?? month
+
+    if (dayLine.month != null && dayLine.month >= 1 && dayLine.month <= 12) {
+      month = dayLine.month
     }
 
     if (!content) {
@@ -122,7 +247,7 @@ export function parseDailyChallengeMonthPaste(
       continue
     }
 
-    if (lineDay < 1 || lineDay > 31) {
+    if (dayLine.day < 1 || dayLine.day > 31) {
       skippedEmpty += 1
       continue
     }
@@ -135,7 +260,7 @@ export function parseDailyChallengeMonthPaste(
     }
 
     days.push({
-      date: `${year}-${pad2(resolvedMonth)}-${pad2(lineDay)}`,
+      date: `${year}-${pad2(resolvedMonth)}-${pad2(dayLine.day)}`,
       event,
       routeCode,
       race,
@@ -144,8 +269,8 @@ export function parseDailyChallengeMonthPaste(
 
   return {
     year,
-    month,
-    monthKey: `${year}-${pad2(month)}`,
+    month: titleMonth ?? month,
+    monthKey: `${year}-${pad2(titleMonth ?? month)}`,
     days,
     skippedEmpty,
   }
