@@ -604,6 +604,11 @@ const messagesZhHans = {
   dcAdminParseNone: '未能解析出任何有效日期行。',
   dcAdminSaveEmpty: '请至少填写一行的 Event。',
   dcAdminSaveSuccess: '已保存 {count} 天每日挑战。',
+  dcAdminStoredCount: 'API 中现有 {count} 条覆盖记录（会盖过静态月表）。',
+  dcAdminClearAllAction: '清除全部 API 覆盖',
+  dcAdminClearAllConfirm:
+    '将删除 API 里所有每日挑战覆盖数据，日历与今日卡会回退到仓库静态月表。用于修复误保存的错误日期。确定继续？',
+  dcAdminClearSuccess: '已删除 {deleted} 条，剩余 {remaining} 条。',
   viaPrefix: '经停：',
   viaStopsSection: '经停车站',
   operator: '运营商',
@@ -1693,6 +1698,11 @@ const messagesEn: Record<MessageKey, string> = {
   dcAdminParseNone: 'No valid day lines were parsed.',
   dcAdminSaveEmpty: 'Fill Event on at least one row.',
   dcAdminSaveSuccess: 'Saved {count} daily challenge day(s).',
+  dcAdminStoredCount: '{count} live override(s) in the API (override static month schedules).',
+  dcAdminClearAllAction: 'Clear all API overrides',
+  dcAdminClearAllConfirm:
+    'Delete all daily-challenge API overrides. Calendar and today card fall back to static schedules. Use this to fix bad saves. Continue?',
+  dcAdminClearSuccess: 'Deleted {deleted}; {remaining} remaining.',
   viaPrefix: 'Via: ',
   viaStopsSection: 'Via stops',
   operator: 'Operator',

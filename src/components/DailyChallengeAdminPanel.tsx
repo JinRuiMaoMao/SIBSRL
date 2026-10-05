@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  clearDailyChallengeDays,
   fetchDailyChallengeAdminHistory,
   saveDailyChallengeDays,
   type DailyChallengeDayPayload,
@@ -36,7 +37,7 @@ function emptyRow(date: string): AdminRow {
 
 export function DailyChallengeAdminPanel() {
   const { t } = useLocale()
-  const { alert } = useAppDialog()
+  const { alert, confirm } = useAppDialog()
   const { token, mapAuthError } = useAuth()
   const monthKey = todayHktDateString().slice(0, 7)
 
@@ -46,6 +47,7 @@ export function DailyChallengeAdminPanel() {
   const [mergeSummary, setMergeSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
+  const [storedCount, setStoredCount] = useState(0)
 
   const loadRows = useCallback(async () => {
     setLoading(true)
@@ -100,6 +102,29 @@ export function DailyChallengeAdminPanel() {
   const handleAddRow = () => {
     const lastDate = rows.at(-1)?.date ?? todayHktDateString()
     setRows((current) => [...current, emptyRow(addCalendarDays(lastDate, 1))])
+  }
+
+  const handleClearAll = async () => {
+    if (!token) return
+    const ok = await confirm({ message: t('dcAdminClearAllConfirm') })
+    if (!ok) return
+
+    setBusy(true)
+    try {
+      const result = await clearDailyChallengeDays(token, { clearAll: true })
+      await alert({
+        message: t('dcAdminClearSuccess', {
+          deleted: String(result.deleted),
+          remaining: String(result.remaining),
+        }),
+      })
+      setMergeSummary(null)
+      await loadRows()
+    } catch (error) {
+      await alert({ message: t(mapAuthError(error)) })
+    } finally {
+      setBusy(false)
+    }
   }
 
   const handleSave = async () => {
@@ -231,7 +256,18 @@ export function DailyChallengeAdminPanel() {
         >
           {busy ? t('dcAdminSaving') : t('dcAdminSaveAction', { count: String(savableCount) })}
         </button>
+        <button
+          type="button"
+          className="settings-action-btn danger"
+          disabled={busy || loading || storedCount === 0}
+          onClick={() => void handleClearAll()}
+        >
+          {t('dcAdminClearAllAction')}
+        </button>
       </div>
+      {storedCount > 0 ? (
+        <p className="settings-hint">{t('dcAdminStoredCount', { count: String(storedCount) })}</p>
+      ) : null}
     </section>
   )
 }

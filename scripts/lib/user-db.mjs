@@ -397,7 +397,30 @@ export function getDailyChallengeDay(db, date) {
 
 /** @param {import('better-sqlite3').Database} db @param {string} monthKey YYYY-MM */
 export function deleteDailyChallengeDaysInMonth(db, monthKey) {
-  db.prepare('DELETE FROM daily_challenge_days WHERE date LIKE ?').run(`${monthKey}-%`)
+  return db.prepare('DELETE FROM daily_challenge_days WHERE date LIKE ?').run(`${monthKey}-%`).changes
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function deleteAllDailyChallengeDays(db) {
+  return db.prepare('DELETE FROM daily_challenge_days').run().changes
+}
+
+/** @param {import('better-sqlite3').Database} db @param {string[]} dates */
+export function deleteDailyChallengeDaysByDates(db, dates) {
+  const stmt = db.prepare('DELETE FROM daily_challenge_days WHERE date = ?')
+  let deleted = 0
+  const tx = db.transaction((items) => {
+    for (const date of items) {
+      deleted += stmt.run(date).changes
+    }
+  })
+  tx(dates)
+  return deleted
+}
+
+/** @param {import('better-sqlite3').Database} db */
+export function countDailyChallengeDays(db) {
+  return db.prepare('SELECT COUNT(*) AS count FROM daily_challenge_days').get()?.count ?? 0
 }
 
 /** @param {import('better-sqlite3').Database} db @param {{ date: string, event: string, routeCode?: string | null, race?: boolean, updatedAt: number }[]} days @param {string | null} updatedBy */

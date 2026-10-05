@@ -296,3 +296,19 @@ export async function saveDailyChallengeDays(
     signal,
   })
 }
+
+export async function clearDailyChallengeDays(
+  token: string,
+  options: { clearAll?: boolean; clearMonth?: string; signal?: AbortSignal } = {},
+) {
+  const { clearAll, clearMonth, signal } = options
+  return request<{ ok: true; deleted: number; remaining: number }>('/api/daily-challenge/days', {
+    method: 'DELETE',
+    token,
+    body: JSON.stringify({
+      ...(clearAll ? { clearAll: true } : {}),
+      ...(clearMonth ? { clearMonth } : {}),
+    }),
+    signal,
+  })
+}

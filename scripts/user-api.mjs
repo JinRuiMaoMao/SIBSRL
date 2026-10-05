@@ -46,6 +46,9 @@ import {
   getDailyChallengeDay,
   upsertDailyChallengeDays,
   deleteDailyChallengeDaysInMonth,
+  deleteAllDailyChallengeDays,
+  deleteDailyChallengeDaysByDates,
+  countDailyChallengeDays,
 } from './lib/user-db.mjs'
 import { getDailyChallengeGameDate } from './lib/daily-challenge-message.mjs'
 import {
@@ -726,6 +729,57 @@ async function handlePutDailyChallengeDays(req, res) {
   })
 }
 
+async function handleDeleteDailyChallengeDays(req, res) {
+  const session = requireAuth(req, res)
+  if (!session) return
+
+  const user = findUserById(db, session.userId)
+  if (!user) return error(req, res, 404, 'user_not_found', 'User not found')
+  if (!isUserAdmin(user)) {
+    return error(req, res, 403, 'forbidden', 'Admin permission required')
+  }
+
+  let body
+  try {
+    body = await readJson(req)
+  } catch {
+    return error(req, res, 400, 'invalid_json', 'Invalid JSON body')
+  }
+
+  const clearMonth = String(body.clearMonth ?? '').trim()
+  const dates = Array.isArray(body.dates)
+    ? body.dates
+        .map((value) => String(value ?? '').trim())
+        .filter((value) => DAILY_CHALLENGE_DATE_RE.test(value))
+    : []
+  const hasAction =
+    body.clearAll === true ||
+    (clearMonth && /^\d{4}-\d{2}$/.test(clearMonth)) ||
+    dates.length > 0
+
+  if (!hasAction) {
+    return error(req, res, 400, 'invalid_request', 'Provide clearAll, clearMonth, or dates')
+  }
+
+  let deleted = 0
+  if (body.clearAll === true) {
+    deleted = deleteAllDailyChallengeDays(db)
+  } else {
+    if (clearMonth && /^\d{4}-\d{2}$/.test(clearMonth)) {
+      deleted = deleteDailyChallengeDaysInMonth(db, clearMonth)
+    }
+    if (dates.length > 0) {
+      deleted += deleteDailyChallengeDaysByDates(db, dates)
+    }
+  }
+
+  json(req, res, 200, {
+    ok: true,
+    deleted,
+    remaining: countDailyChallengeDays(db),
+  })
+}
+
 async function handlePutRouteMapImport(req, res, routeIdRaw) {
   const session = requireAuth(req, res)
   if (!session) return
@@ -996,6 +1050,9 @@ const server = createServer(async (req, res) => {
     }
     if (method === 'PUT' && path === '/api/daily-challenge/days') {
       return await handlePutDailyChallengeDays(req, res)
+    }
+    if (method === 'DELETE' && path === '/api/daily-challenge/days') {
+      return await handleDeleteDailyChallengeDays(req, res)
     }
     const routeMapMatch = /^\/api\/route-maps\/([^/]+)$/.exec(path)
     if (routeMapMatch) {
