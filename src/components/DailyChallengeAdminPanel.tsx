@@ -72,7 +72,9 @@ export function DailyChallengeAdminPanel() {
 
   const [pasteText, setPasteText] = useState('')
   const [viewMonthKey, setViewMonthKey] = useState(() => todayHktDateString().slice(0, 7))
-  const [rows, setRows] = useState<AdminRow[]>(() => buildMonthRowSkeleton(monthKey))
+  const [rows, setRows] = useState<AdminRow[]>(() =>
+    buildMonthRowSkeleton(todayHktDateString().slice(0, 7)),
+  )
   const [mergeSummary, setMergeSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
