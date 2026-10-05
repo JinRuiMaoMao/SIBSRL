@@ -23,6 +23,10 @@ interface AdminRow {
   race: boolean
 }
 
+function defaultMonthKey(): string {
+  return todayHktDateString().slice(0, 7)
+}
+
 function toAdminRow(day: DailyChallengeDayPayload): AdminRow {
   return {
     date: day.date,
@@ -71,10 +75,8 @@ export function DailyChallengeAdminPanel() {
   const skipMonthReloadRef = useRef(false)
 
   const [pasteText, setPasteText] = useState('')
-  const [viewMonthKey, setViewMonthKey] = useState(() => todayHktDateString().slice(0, 7))
-  const [rows, setRows] = useState<AdminRow[]>(() =>
-    buildMonthRowSkeleton(todayHktDateString().slice(0, 7)),
-  )
+  const [viewMonthKey, setViewMonthKey] = useState(defaultMonthKey)
+  const [rows, setRows] = useState<AdminRow[]>(() => buildMonthRowSkeleton(defaultMonthKey()))
   const [mergeSummary, setMergeSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)

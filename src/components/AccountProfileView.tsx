@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useId, useRef, useState } from 'react'
 import { changeAccountPassword, deleteAccount } from '../api/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
@@ -7,8 +7,12 @@ import { useLocale } from '../i18n/LocaleContext'
 import { readAvatarFileAsDataUrl } from '../utils/avatarImage'
 import { getTabPageHref } from '../utils/appTabNavigation'
 import { AccountAvatar } from './AccountAvatar'
-import { DailyChallengeAdminPanel } from './DailyChallengeAdminPanel'
 import { useIsMapAdmin } from '../hooks/useIsMapAdmin'
+
+const DailyChallengeAdminPanel = lazy(async () => {
+  const module = await import('./DailyChallengeAdminPanel')
+  return { default: module.DailyChallengeAdminPanel }
+})
 
 export function AccountProfileView() {
   const { t } = useLocale()
@@ -171,7 +175,11 @@ export function AccountProfileView() {
         </div>
       </section>
 
-      {isAdmin ? <DailyChallengeAdminPanel /> : null}
+      {isAdmin ? (
+        <Suspense fallback={<p className="settings-hint">{t('dcAdminLoading')}</p>}>
+          <DailyChallengeAdminPanel />
+        </Suspense>
+      ) : null}
 
       <section className="account-profile-card">
         <h3 className="account-section-title">{t('authChangePasswordTitle')}</h3>
