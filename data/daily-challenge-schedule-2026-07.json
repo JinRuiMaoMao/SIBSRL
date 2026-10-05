@@ -47,7 +47,7 @@
     { "date": "2026-07-17", "event": "Marathon Shuttle", "routeCode": "R148", "race": false },
     { "date": "2026-07-18", "event": "Marathon Shuttle", "routeCode": "R370", "race": true },
     { "date": "2026-07-19", "event": "Rush Hour", "routeCode": "475E", "race": true },
-    { "date": "2026-07-20", "event": "Marathon Closure", "routeCode": "N171WM", "race": false },
+    { "date": "2026-07-20", "event": "Marathon Road Closure (N)", "routeCode": "N171WM", "race": false },
     { "date": "2026-07-21", "event": "Grumble Day", "routeCode": "148W", "race": true },
     { "date": "2026-07-22", "event": "Street Light Outage", "routeCode": "21A", "race": false },
     { "date": "2026-07-23", "event": "Foggy Day", "routeCode": "476E", "race": false },
