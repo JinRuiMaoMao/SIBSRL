@@ -40,9 +40,12 @@ export function DailyChallengeCard({
 }: DailyChallengeCardProps) {
   const { locale, t } = useLocale()
   const splitVariant = variant === 'split'
+  const available = isDailyChallengeAvailable(challenge)
   const showCountdown = showResetCountdown && !splitVariant
   const showNotes = showPlaceholderNote && !splitVariant
-  const eventLabel = getPrimaryText(challenge.event, locale)
+  const eventLabel = available
+    ? getPrimaryText(challenge.event, locale)
+    : t('dailyChallengeCalendarNoData')
   const linkedRoute =
     challenge.routeNumber && !isPrivateHireChallengeRoute(challenge.routeNumber)
       ? findRouteForDailyChallenge(challenge.routeNumber)
@@ -71,7 +74,7 @@ export function DailyChallengeCard({
       data-tour="daily-challenge"
       role="button"
       tabIndex={0}
-      className={`route-card daily-challenge-card${splitVariant ? ' route-card--classic' : ''} ${selected ? 'selected' : ''} ${className}`.trim()}
+      className={`route-card daily-challenge-card${splitVariant ? ' route-card--classic' : ''} ${selected ? 'selected' : ''} ${available ? '' : 'daily-challenge-card--pending'} ${className}`.trim()}
       onClick={onSelect}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
