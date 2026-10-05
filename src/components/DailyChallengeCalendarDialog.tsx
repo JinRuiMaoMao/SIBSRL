@@ -1,10 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { lockPageScroll } from '../utils/pageScrollLock'
 import {
   buildDailyChallengeFromScheduleDay,
   formatDailyChallengeCalendarRouteCode,
 } from '../data/dailyChallenge'
-import { searchDailyChallengeDays } from '../utils/dailyChallengeCalendarSearch'
+import {
+  collectMonthSearchMatchDates,
+  collectScheduleDays,
+  countDailyChallengeSearchMatches,
+} from '../utils/dailyChallengeCalendarSearch'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import {
   buildMonthCalendarCells,
   CALENDAR_EARLIEST_MONTH,
@@ -53,7 +58,7 @@ function RaceTagLabel({ locale }: { locale: ReturnType<typeof useLocale>['locale
   )
 }
 
-function CalendarDayCell({
+const CalendarDayCell = memo(function CalendarDayCell({
   date,
   day,
   isToday,
@@ -71,11 +76,17 @@ function CalendarDayCell({
   onSelectDay?: (day: DailyChallengeScheduleDay) => void
 }) {
   const dayRace = day ? resolveScheduleDayRace(day) : false
-  const plainEventChallenge =
-    day?.event && dayRace
-      ? buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true })
-      : null
-  const eventChallenge = day?.event ? buildDailyChallengeFromScheduleDay(day) : null
+  const eventChallenge = useMemo(
+    () => (day?.event ? buildDailyChallengeFromScheduleDay(day) : null),
+    [day],
+  )
+  const plainEventChallenge = useMemo(
+    () =>
+      day?.event && dayRace
+        ? buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true })
+        : null,
+    [day, dayRace],
+  )
   const eventLabel = eventChallenge ? getPrimaryText(eventChallenge.event, locale) : null
   const plainEventLabel = plainEventChallenge
     ? getPrimaryText(plainEventChallenge.event, locale)
@@ -143,7 +154,7 @@ function CalendarDayCell({
       {inner}
     </div>
   )
-}
+})
 
 export function DailyChallengeCalendarDialog({
   open,
@@ -187,14 +198,22 @@ export function DailyChallengeCalendarDialog({
   )
   const isAtEarliestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_EARLIEST_MONTH) <= 0
   const isAtLatestMonth = compareScheduleMonthKeys(selectedMonthKey, CALENDAR_LATEST_MONTH) >= 0
-  const searchHits = useMemo(
-    () => searchDailyChallengeDays(schedules, searchQuery),
-    [searchQuery, schedules],
-  )
-  const searchActive = searchQuery.trim().length > 0
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 120)
+  const searchActive = debouncedSearchQuery.trim().length > 0
+  const searchPending =
+    searchQuery.trim().length > 0 && debouncedSearchQuery.trim() !== searchQuery.trim()
+  const allScheduleDays = useMemo(() => collectScheduleDays(schedules), [schedules])
   const searchMatchDates = useMemo(
-    () => new Set(searchHits.map((hit) => hit.date)),
-    [searchHits],
+    () =>
+      collectMonthSearchMatchDates(
+        calendarCells.map((cell) => cell.day),
+        debouncedSearchQuery,
+      ),
+    [calendarCells, debouncedSearchQuery],
+  )
+  const searchHitCount = useMemo(
+    () => countDailyChallengeSearchMatches(allScheduleDays, debouncedSearchQuery),
+    [allScheduleDays, debouncedSearchQuery],
   )
 
   useEffect(() => {
@@ -317,14 +336,16 @@ export function DailyChallengeCalendarDialog({
               onChange={(event) => setSearchQuery(event.target.value)}
             />
           </label>
-          {searchActive ? (
+          {searchQuery.trim() ? (
             <p
-              className={`daily-challenge-calendar-route-search-hint ${searchHits.length === 0 ? 'is-empty' : 'is-active'}`.trim()}
+              className={`daily-challenge-calendar-route-search-hint ${!searchPending && searchHitCount === 0 ? 'is-empty' : 'is-active'}`.trim()}
               role="status"
             >
-              {searchHits.length === 0
-                ? t('dailyChallengeCalendarSearchEmpty')
-                : t('dailyChallengeCalendarSearchCount', { count: searchHits.length })}
+              {searchPending
+                ? t('dailyChallengeCalendarSearchPending')
+                : searchHitCount === 0
+                  ? t('dailyChallengeCalendarSearchEmpty')
+                  : t('dailyChallengeCalendarSearchCount', { count: searchHitCount })}
             </p>
           ) : (
             <p className="daily-challenge-calendar-route-search-hint">

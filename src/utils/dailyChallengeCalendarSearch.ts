@@ -1,6 +1,6 @@
 import {
-  buildDailyChallengeFromScheduleDay,
   dailyChallengeRouteCodeMatchesQuery,
+  getScheduleDayEventSearchHaystack,
 } from '../data/dailyChallenge'
 import type { DailyChallengeSchedule, DailyChallengeScheduleDay } from '../data/dailyChallengeSchedule'
 
@@ -34,18 +34,8 @@ export function dailyChallengeEventMatchesQuery(
   const q = normalizeSearchQuery(query)
   if (!q || !day.event?.trim()) return false
 
-  const rawEvent = day.event.trim()
-  if (rawEvent.toLowerCase().includes(q)) return true
-
-  const challenge = buildDailyChallengeFromScheduleDay(day, { omitEventRacePrefix: true })
-  const labels = [challenge.event.zh, challenge.event.en]
-  const fullLabels = [
-    buildDailyChallengeFromScheduleDay(day).event.zh,
-    buildDailyChallengeFromScheduleDay(day).event.en,
-  ]
-
-  for (const label of [...labels, ...fullLabels]) {
-    if (label.toLowerCase().includes(q)) return true
+  for (const label of getScheduleDayEventSearchHaystack(day)) {
+    if (label.includes(q)) return true
   }
 
   return false
@@ -67,6 +57,38 @@ export function dailyChallengeDayMatchesSearchQuery(
   }
 
   return dailyChallengeEventMatchesQuery(day, trimmed)
+}
+
+/** 统计匹配数量（不分配 hit 数组）。 */
+export function countDailyChallengeSearchMatches(
+  days: DailyChallengeScheduleDay[],
+  query: string,
+): number {
+  const trimmed = query.trim()
+  if (!trimmed) return 0
+
+  let count = 0
+  for (const day of days) {
+    if (dailyChallengeDayMatchesSearchQuery(day, trimmed)) count++
+  }
+  return count
+}
+
+/** 当前月日历格子的匹配日期集合（仅 ~31 格，供遮罩用）。 */
+export function collectMonthSearchMatchDates(
+  days: Array<DailyChallengeScheduleDay | null | undefined>,
+  query: string,
+): Set<string> {
+  const trimmed = query.trim()
+  const matches = new Set<string>()
+  if (!trimmed) return matches
+
+  for (const day of days) {
+    if (day && dailyChallengeDayMatchesSearchQuery(day, trimmed)) {
+      matches.add(day.date)
+    }
+  }
+  return matches
 }
 
 /** 按线路或挑战类型搜索历史每日挑战（新→旧）。 */

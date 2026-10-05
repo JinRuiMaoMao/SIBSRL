@@ -273,6 +273,19 @@ function toEventLabel(eventEn: string, race: boolean): BilingualText {
   return { zh, en: eventEn }
 }
 
+/** 日历搜索用：事件中英标签（小写），避免构建完整 DailyChallengeInfo。 */
+export function getScheduleDayEventSearchHaystack(day: DailyChallengeScheduleDay): string[] {
+  if (!day.event?.trim()) return []
+
+  const eventEn = day.event.trim()
+  const zh = EVENT_ZH[eventEn] ?? eventEn
+  const labels = [eventEn, zh]
+  if (resolveScheduleDayRace(day)) {
+    labels.push(`[Race] ${eventEn}`, `[竞速] ${zh}`)
+  }
+  return labels.map((label) => label.toLowerCase())
+}
+
 function findDirectionIndexOnRoute(
   route: BusRoute,
   directionKey?: string,
