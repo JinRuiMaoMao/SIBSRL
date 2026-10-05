@@ -5646,6 +5646,15 @@ html.route-detail-open .route-split-shell {
   border: 1px solid var(--border);
 }
 
+.route-card.daily-challenge-card.daily-challenge-card--pending {
+  border-style: dashed;
+  opacity: 0.92;
+}
+
+.route-card.daily-challenge-card.daily-challenge-card--pending .route-endpoints {
+  color: var(--text-muted);
+}
+
 .route-card.daily-challenge-card:hover {
   border-color: var(--border-strong);
 }

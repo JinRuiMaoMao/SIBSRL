@@ -2,6 +2,7 @@ import {
   getTodaysDailyChallenge,
   isDailyChallengeAvailable,
   todayHktDateString,
+  type DailyChallengeInfo,
 } from '../data/dailyChallenge'
 import { REAL_START_MENU_LAYOUT } from '../data/realStartMenuLayout'
 import {
@@ -48,9 +49,12 @@ function daySeededIndex(date: string, modulo: number): number {
  * StartMenu.Main.R panel selection — mirrors PlayMenu randFeature with nearby-festival priority.
  * New players always see ChangeLog; returning players rotate ComingEvent / DailyChallenge.
  */
-export function resolveRealStartRightPanel(now = new Date()): RealStartRightPanelState {
+export function resolveRealStartRightPanel(
+  challenge: DailyChallengeInfo = getTodaysDailyChallenge(),
+  now = new Date(),
+): RealStartRightPanelState {
   const featured = pickFeaturedStartMenuEvent(now)
-  const dailyAvailable = isDailyChallengeAvailable(getTodaysDailyChallenge(now))
+  const dailyAvailable = isDailyChallengeAvailable(challenge)
   const today = todayHktDateString(now)
 
   if (!readRealStartHasOpenedRoutes()) {

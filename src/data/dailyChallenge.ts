@@ -625,6 +625,43 @@ function matchesDailyChallengeQuery(challenge: DailyChallengeInfo, query: string
   return haystack.includes(q.toLowerCase())
 }
 
+function routeListFiltersAreNeutral(filters: RouteFilters): boolean {
+  if (filters.query.trim()) return false
+  if (filters.zone !== 'all' || filters.operator !== 'all' || filters.type !== 'all') return false
+
+  const structured = parseStructuredSearchQuery(filters.query)
+  if (
+    structured.zone != null ||
+    structured.operator ||
+    structured.type ||
+    structured.category ||
+    structured.level != null
+  ) {
+    return false
+  }
+  if (
+    structured.excludeCategories.length > 0 ||
+    structured.excludeTypes.length > 0 ||
+    structured.excludeZones.length > 0 ||
+    structured.excludeOperators.length > 0
+  ) {
+    return false
+  }
+
+  return true
+}
+
+/** 线路列表是否应显示每日挑战卡片（含暂无数据的占位）。 */
+export function dailyChallengeSlotVisible(
+  challenge: DailyChallengeInfo,
+  filters: RouteFilters,
+): boolean {
+  if (isDailyChallengeAvailable(challenge)) {
+    return dailyChallengeMatchesFilters(challenge, filters)
+  }
+  return routeListFiltersAreNeutral(filters)
+}
+
 /** 与线路列表共用同一套筛选/搜索规则 */
 export function dailyChallengeMatchesFilters(
   challenge: DailyChallengeInfo,

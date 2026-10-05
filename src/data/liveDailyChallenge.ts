@@ -90,6 +90,13 @@ function normalizeApiRecord(payload: unknown): DailyChallengeScheduleDay | null 
   }
 }
 
+function buildLiveChallengeFromDay(day: DailyChallengeScheduleDay): DailyChallengeInfo {
+  return {
+    ...buildDailyChallengeFromScheduleDay(day),
+    fromSchedule: false,
+  }
+}
+
 export async function fetchLiveDailyChallenge(
   signal?: AbortSignal,
 ): Promise<DailyChallengeInfo | null> {
@@ -106,10 +113,22 @@ export async function fetchLiveDailyChallenge(
   const record = normalizeApiRecord(await response.json())
   if (!record || record.date !== todayHktDateString()) return null
 
-  return {
-    ...buildDailyChallengeFromScheduleDay(record),
-    fromSchedule: false,
-  }
+  return buildLiveChallengeFromDay(record)
+}
+
+/** 公开 API：优先 /latest，回退 /history 中当日记录（无需登录）。 */
+export async function fetchTodaysLiveDailyChallenge(
+  signal?: AbortSignal,
+): Promise<DailyChallengeInfo | null> {
+  const fromLatest = await fetchLiveDailyChallenge(signal)
+  if (fromLatest) return fromLatest
+
+  const today = todayHktDateString()
+  const history = await fetchDailyChallengeHistory(signal)
+  const todayEntry = history.find((day) => day.date === today && day.event?.trim())
+  if (!todayEntry) return null
+
+  return buildLiveChallengeFromDay(todayEntry)
 }
 
 export function getDailyChallengeHistoryApiUrl(): string | null {

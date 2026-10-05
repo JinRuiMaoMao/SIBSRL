@@ -9,8 +9,8 @@ import { UpcomingGameEventsDialog } from './UpcomingGameEventsDialog'
 export function RealStartRightPanel({ onOpenChangeLog }: { onOpenChangeLog?: () => void }) {
   const dailyChallenge = useDailyChallenge()
   const panel = useMemo(
-    () => resolveRealStartRightPanel(),
-    [dailyChallenge.date, dailyChallenge.isAvailable],
+    () => resolveRealStartRightPanel(dailyChallenge),
+    [dailyChallenge],
   )
   const [eventsDialogOpen, setEventsDialogOpen] = useState(false)
 

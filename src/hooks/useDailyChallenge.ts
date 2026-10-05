@@ -5,7 +5,7 @@ import {
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
 import {
-  fetchLiveDailyChallenge,
+  fetchTodaysLiveDailyChallenge,
   getDailyChallengeApiUrl,
   getDailyChallengePollIntervalMs,
 } from '../data/liveDailyChallenge'
@@ -28,7 +28,7 @@ export function useDailyChallenge(): DailyChallengeInfo {
       const fallback = getTodaysDailyChallenge()
 
       try {
-        const live = await fetchLiveDailyChallenge(controller.signal)
+        const live = await fetchTodaysLiveDailyChallenge(controller.signal)
         if (!cancelled) setChallenge(live ?? fallback)
       } catch {
         if (controller.signal.aborted) return

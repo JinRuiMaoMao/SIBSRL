@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  dailyChallengeMatchesFilters,
+  dailyChallengeSlotVisible,
   getTodaysDailyChallenge,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
@@ -48,7 +48,7 @@ export function useRouteSearch(dailyChallenge: DailyChallengeInfo = getTodaysDai
   }, [filters.zone, filters.operator, filters.type])
 
   const dailyChallengeVisible = useMemo(
-    () => dailyChallengeMatchesFilters(dailyChallenge, filters),
+    () => dailyChallengeSlotVisible(dailyChallenge, filters),
     [dailyChallenge, filters],
   )
 

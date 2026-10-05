@@ -3,6 +3,7 @@ import {
   findDailyChallengeDirectionIndex,
   findRouteForDailyChallenge,
   getDailyChallengeOperatorsLabel,
+  isDailyChallengeAvailable,
   isPrivateHireChallengeRoute,
   type DailyChallengeInfo,
 } from '../data/dailyChallenge'
@@ -52,7 +53,7 @@ export function DailyChallengeCard({
       : challenge.endpoints
         ? getPrimaryText(challenge.endpoints, locale)
         : null
-  const routeNumber = challenge.routeNumber ?? '—'
+  const routeNumber = available ? (challenge.routeNumber ?? '—') : '—'
   const directionIndex =
     linkedRoute != null
       ? (findDailyChallengeDirectionIndex(linkedRoute, challenge.directionKey) ?? 0)
@@ -100,9 +101,9 @@ export function DailyChallengeCard({
         ) : null}
       </div>
 
-      <p className="route-endpoints">{endpointsLabel ?? eventLabel}</p>
+      <p className="route-endpoints">{available ? (endpointsLabel ?? eventLabel) : eventLabel}</p>
 
-      {endpointsLabel ? <p className="route-meta">{eventLabel}</p> : null}
+      {available && endpointsLabel ? <p className="route-meta">{eventLabel}</p> : null}
 
       {challenge.intro && !splitVariant ? (
         <DailyChallengeIntro intro={challenge.intro} compact className="route-meta" />
