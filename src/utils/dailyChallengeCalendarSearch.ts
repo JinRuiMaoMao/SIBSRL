@@ -59,19 +59,48 @@ export function dailyChallengeDayMatchesSearchQuery(
   return dailyChallengeEventMatchesQuery(day, trimmed)
 }
 
+export interface DailyChallengeSearchPeriodCounts {
+  total: number
+  byYear: Map<number, number>
+  byMonthKey: Map<string, number>
+}
+
+const EMPTY_PERIOD_COUNTS: DailyChallengeSearchPeriodCounts = {
+  total: 0,
+  byYear: new Map(),
+  byMonthKey: new Map(),
+}
+
+/** 统计匹配数量，并按年 / 月分组（供日期选择器展示）。 */
+export function countDailyChallengeSearchByPeriod(
+  days: DailyChallengeScheduleDay[],
+  query: string,
+): DailyChallengeSearchPeriodCounts {
+  const trimmed = query.trim()
+  if (!trimmed) return EMPTY_PERIOD_COUNTS
+
+  const byYear = new Map<number, number>()
+  const byMonthKey = new Map<string, number>()
+  let total = 0
+
+  for (const day of days) {
+    if (!dailyChallengeDayMatchesSearchQuery(day, trimmed)) continue
+    total++
+    const year = Number(day.date.slice(0, 4))
+    const monthKey = day.date.slice(0, 7)
+    byYear.set(year, (byYear.get(year) ?? 0) + 1)
+    byMonthKey.set(monthKey, (byMonthKey.get(monthKey) ?? 0) + 1)
+  }
+
+  return { total, byYear, byMonthKey }
+}
+
 /** 统计匹配数量（不分配 hit 数组）。 */
 export function countDailyChallengeSearchMatches(
   days: DailyChallengeScheduleDay[],
   query: string,
 ): number {
-  const trimmed = query.trim()
-  if (!trimmed) return 0
-
-  let count = 0
-  for (const day of days) {
-    if (dailyChallengeDayMatchesSearchQuery(day, trimmed)) count++
-  }
-  return count
+  return countDailyChallengeSearchByPeriod(days, query).total
 }
 
 /** 当前月日历格子的匹配日期集合（仅 ~31 格，供遮罩用）。 */

@@ -732,6 +732,8 @@ const messagesZhHans = {
     '匹配项在日历上保持原色，其余日期以灰色遮罩显示；可切换月份查看其他月份的匹配',
   dailyChallengeCalendarSearchEmpty: '未找到匹配的每日挑战',
   dailyChallengeCalendarSearchCount: '共找到 {count} 个匹配日期',
+  dailyChallengeCalendarSearchCountDetail:
+    '共 {count} 个匹配；当前月 {monthCount} 个，{year} 年 {yearCount} 个（年月旁数字为各时段匹配数）',
   dailyChallengeCalendarSearchPending: '搜索中…',
   dailyChallengeCalendarRouteSearchLabel: '按线路搜索',
   dailyChallengeCalendarRouteSearchPlaceholder: '输入线路编号，如 270A、370AEM、N246',
@@ -1842,6 +1844,8 @@ const messagesEn: Record<MessageKey, string> = {
     'Matches stay in full color on the calendar; other days are grayed out. Switch months to see matches elsewhere.',
   dailyChallengeCalendarSearchEmpty: 'No matching daily challenges found',
   dailyChallengeCalendarSearchCount: '{count} matching date(s) found',
+  dailyChallengeCalendarSearchCountDetail:
+    '{count} match(es) total; {monthCount} this month, {yearCount} in {year} (numbers beside year/month are per-period counts)',
   dailyChallengeCalendarSearchPending: 'Searching…',
   dailyChallengeCalendarRouteSearchLabel: 'Search by route',
   dailyChallengeCalendarRouteSearchPlaceholder: 'Route number, e.g. 270A, 370AEM, or N246',

@@ -5942,6 +5942,145 @@ html.route-detail-open .route-split-shell {
   outline-offset: 1px;
 }
 
+.daily-challenge-calendar-nav-picker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.daily-challenge-calendar-nav-picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 5.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--lg-tint, var(--bg-float, var(--bg-elevated)));
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent-glow) 25%, transparent) inset;
+}
+
+.daily-challenge-calendar-nav-picker.is-open .daily-challenge-calendar-nav-picker-trigger,
+.daily-challenge-calendar-nav-picker-trigger:hover,
+.daily-challenge-calendar-nav-picker-trigger:focus-visible {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.daily-challenge-calendar-nav-picker-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.daily-challenge-calendar-nav-picker-chevron {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  transition: transform 0.15s ease;
+}
+
+.daily-challenge-calendar-nav-picker.is-open .daily-challenge-calendar-nav-picker-chevron {
+  transform: rotate(180deg);
+}
+
+.daily-challenge-calendar-nav-picker-badge,
+.daily-challenge-calendar-nav-picker-option-badge {
+  flex: 0 0 auto;
+  min-width: 1.25rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.daily-challenge-calendar-nav-picker-badge.has-hits,
+.daily-challenge-calendar-nav-picker-option-badge.has-hits {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
+}
+
+.daily-challenge-calendar-nav-picker-badge.is-zero,
+.daily-challenge-calendar-nav-picker-option-badge.is-zero {
+  background: color-mix(in srgb, var(--text-muted) 16%, transparent);
+  color: var(--text-muted);
+}
+
+.daily-challenge-calendar-nav-picker-panel {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 5;
+  min-width: 100%;
+  max-height: 14rem;
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--lg-panel, var(--bg-float, var(--bg-elevated)));
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    0 10px 28px color-mix(in srgb, var(--shadow, #000) 18%, transparent),
+    0 1px 0 color-mix(in srgb, var(--accent-glow) 20%, transparent) inset;
+  overflow-y: auto;
+}
+
+.daily-challenge-calendar-nav-picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.86rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.daily-challenge-calendar-nav-picker-option:hover,
+.daily-challenge-calendar-nav-picker-option:focus-visible {
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.daily-challenge-calendar-nav-picker-option.is-selected {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  font-weight: 600;
+}
+
+.daily-challenge-calendar-nav-picker-option.has-search-hits .daily-challenge-calendar-nav-picker-option-label {
+  color: var(--text);
+}
+
+.daily-challenge-calendar-nav-picker-option.has-search-zero .daily-challenge-calendar-nav-picker-option-label {
+  color: var(--text-muted);
+}
+
+.daily-challenge-calendar-nav-picker-option-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .daily-challenge-calendar-nav-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -8516,7 +8655,8 @@ html[data-list-density='compact'] .daily-challenge-calendar-nav {
   margin-bottom: 0.65rem;
 }
 
-html[data-list-density='compact'] .daily-challenge-calendar-nav-select {
+html[data-list-density='compact'] .daily-challenge-calendar-nav-select,
+html[data-list-density='compact'] .daily-challenge-calendar-nav-picker-trigger {
   min-width: 4.75rem;
   padding: 0.28rem 0.45rem;
   font-size: 0.82rem;

@@ -7,9 +7,10 @@ import {
 import {
   collectMonthSearchMatchDates,
   collectScheduleDays,
-  countDailyChallengeSearchMatches,
+  countDailyChallengeSearchByPeriod,
 } from '../utils/dailyChallengeCalendarSearch'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { DailyChallengeCalendarNavPicker } from './DailyChallengeCalendarNavPicker'
 import {
   buildMonthCalendarCells,
   CALENDAR_EARLIEST_MONTH,
@@ -170,6 +171,7 @@ export function DailyChallengeCalendarDialog({
     resolveInitialCalendarMonth(todayDate, schedules),
   )
   const [searchQuery, setSearchQuery] = useState('')
+  const [openNavPicker, setOpenNavPicker] = useState<'year' | 'month' | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const wasOpenRef = useRef(false)
 
@@ -211,9 +213,32 @@ export function DailyChallengeCalendarDialog({
       ),
     [calendarCells, debouncedSearchQuery],
   )
-  const searchHitCount = useMemo(
-    () => countDailyChallengeSearchMatches(allScheduleDays, debouncedSearchQuery),
+  const searchPeriodCounts = useMemo(
+    () => countDailyChallengeSearchByPeriod(allScheduleDays, debouncedSearchQuery),
     [allScheduleDays, debouncedSearchQuery],
+  )
+  const searchHitCount = searchPeriodCounts.total
+  const currentMonthSearchCount = searchPeriodCounts.byMonthKey.get(selectedMonthKey) ?? 0
+  const currentYearSearchCount = searchPeriodCounts.byYear.get(selectedYear) ?? 0
+  const yearPickerOptions = useMemo(
+    () =>
+      years.map((year) => ({
+        value: year,
+        label: isChineseLocale(locale) ? `${year}年` : String(year),
+        badge: searchActive ? (searchPeriodCounts.byYear.get(year) ?? 0) : undefined,
+      })),
+    [locale, searchActive, searchPeriodCounts.byYear, years],
+  )
+  const monthPickerOptions = useMemo(
+    () =>
+      monthOptions.map((option) => ({
+        value: option.value,
+        label: option.label,
+        badge: searchActive
+          ? (searchPeriodCounts.byMonthKey.get(toScheduleMonthKey(selectedYear, option.value)) ?? 0)
+          : undefined,
+      })),
+    [monthOptions, searchActive, searchPeriodCounts.byMonthKey, selectedYear],
   )
 
   useEffect(() => {
@@ -225,6 +250,7 @@ export function DailyChallengeCalendarDialog({
     wasOpenRef.current = true
     setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
     setSearchQuery('')
+    setOpenNavPicker(null)
   }, [open, schedules, todayDate])
 
   useEffect(() => {
@@ -247,13 +273,19 @@ export function DailyChallengeCalendarDialog({
   useEffect(() => {
     if (!open) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key !== 'Escape') return
+      if (openNavPicker) {
+        setOpenNavPicker(null)
+        return
+      }
+      onClose()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [open, onClose])
+  }, [open, onClose, openNavPicker])
 
   const shiftMonth = (delta: number) => {
+    setOpenNavPicker(null)
     setSelectedMonthKey((current) => {
       const parsed = parseScheduleMonthKey(current)
       if (!parsed) return current
@@ -345,7 +377,12 @@ export function DailyChallengeCalendarDialog({
                 ? t('dailyChallengeCalendarSearchPending')
                 : searchHitCount === 0
                   ? t('dailyChallengeCalendarSearchEmpty')
-                  : t('dailyChallengeCalendarSearchCount', { count: searchHitCount })}
+                  : t('dailyChallengeCalendarSearchCountDetail', {
+                      count: searchHitCount,
+                      monthCount: currentMonthSearchCount,
+                      year: selectedYear,
+                      yearCount: currentYearSearchCount,
+                    })}
             </p>
           ) : (
             <p className="daily-challenge-calendar-route-search-hint">
@@ -367,51 +404,37 @@ export function DailyChallengeCalendarDialog({
           </button>
 
           <div className="daily-challenge-calendar-nav-selects">
-            <label className="daily-challenge-calendar-nav-field">
-              <span className="daily-challenge-calendar-nav-label">{t('dailyChallengeCalendarYearLabel')}</span>
-              <select
-                className="daily-challenge-calendar-nav-select"
-                value={selectedYear}
-                aria-label={t('dailyChallengeCalendarYearLabel')}
-                onChange={(event) => {
-                  const year = Number(event.target.value)
-                  const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
-                  const latest = parseScheduleMonthKey(CALENDAR_LATEST_MONTH)
-                  const month =
-                    earliest && year === earliest.year
-                      ? Math.max(selectedMonth, earliest.month)
-                      : latest && year === latest.year
-                        ? Math.min(selectedMonth, latest.month)
+            <DailyChallengeCalendarNavPicker
+              label={t('dailyChallengeCalendarYearLabel')}
+              value={selectedYear}
+              options={yearPickerOptions}
+              ariaLabel={t('dailyChallengeCalendarYearLabel')}
+              open={openNavPicker === 'year'}
+              onOpenChange={(open) => setOpenNavPicker(open ? 'year' : null)}
+              onChange={(year) => {
+                const earliest = parseScheduleMonthKey(CALENDAR_EARLIEST_MONTH)
+                const latest = parseScheduleMonthKey(CALENDAR_LATEST_MONTH)
+                const month =
+                  earliest && year === earliest.year
+                    ? Math.max(selectedMonth, earliest.month)
+                    : latest && year === latest.year
+                      ? Math.min(selectedMonth, latest.month)
                       : selectedMonth
-                  setSelectedMonthKey(clampScheduleMonthKey(toScheduleMonthKey(year, month)))
-                }}
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {isChineseLocale(locale) ? `${year}年` : year}
-                  </option>
-                ))}
-              </select>
-            </label>
+                setSelectedMonthKey(clampScheduleMonthKey(toScheduleMonthKey(year, month)))
+              }}
+            />
 
-            <label className="daily-challenge-calendar-nav-field">
-              <span className="daily-challenge-calendar-nav-label">{t('dailyChallengeCalendarMonthLabel')}</span>
-              <select
-                className="daily-challenge-calendar-nav-select"
-                value={selectedMonth}
-                aria-label={t('dailyChallengeCalendarMonthLabel')}
-                onChange={(event) => {
-                  const month = Number(event.target.value)
-                  setSelectedMonthKey(toScheduleMonthKey(selectedYear, month))
-                }}
-              >
-                {monthOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <DailyChallengeCalendarNavPicker
+              label={t('dailyChallengeCalendarMonthLabel')}
+              value={selectedMonth}
+              options={monthPickerOptions}
+              ariaLabel={t('dailyChallengeCalendarMonthLabel')}
+              open={openNavPicker === 'month'}
+              onOpenChange={(open) => setOpenNavPicker(open ? 'month' : null)}
+              onChange={(month) => {
+                setSelectedMonthKey(toScheduleMonthKey(selectedYear, month))
+              }}
+            />
           </div>
 
           <button
