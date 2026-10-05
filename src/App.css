@@ -6015,6 +6015,8 @@ html.route-detail-open .route-split-shell {
 }
 
 .daily-challenge-calendar-day {
+  position: relative;
+  overflow: hidden;
   min-height: 5.5rem;
   padding: 0.35rem 0.35rem 0.4rem;
   border: 1px solid var(--border);
@@ -6037,18 +6039,14 @@ html.route-detail-open .route-split-shell {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
-.daily-challenge-calendar-day.is-search-dimmed {
-  position: relative;
-}
-
-.daily-challenge-calendar-day.is-search-dimmed::after {
-  content: '';
+.daily-challenge-calendar-day-dim {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--bg) 62%, var(--text-muted));
-  opacity: 0.72;
+  background: color-mix(in srgb, var(--text-muted) 32%, var(--bg));
+  opacity: 0.82;
   pointer-events: none;
+  z-index: 2;
 }
 
 .daily-challenge-calendar-day.is-empty {

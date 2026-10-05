@@ -118,6 +118,9 @@ function CalendarDayCell({
       ) : (
         <span className="daily-challenge-calendar-day-empty">{emptyLabel}</span>
       )}
+      {isSearchDimmed ? (
+        <span className="daily-challenge-calendar-day-dim" aria-hidden />
+      ) : null}
     </>
   )
 
@@ -157,6 +160,7 @@ export function DailyChallengeCalendarDialog({
   )
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const wasOpenRef = useRef(false)
 
   const selectedParsed = parseScheduleMonthKey(selectedMonthKey)
   const selectedYear = selectedParsed?.year ?? years[0] ?? Number(todayDate.slice(0, 4))
@@ -194,17 +198,14 @@ export function DailyChallengeCalendarDialog({
   )
 
   useEffect(() => {
-    if (!open) return
-    let cancelled = false
-    queueMicrotask(() => {
-      if (!cancelled) {
-        setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
-        setSearchQuery('')
-      }
-    })
-    return () => {
-      cancelled = true
+    if (!open) {
+      wasOpenRef.current = false
+      return
     }
+    if (wasOpenRef.current) return
+    wasOpenRef.current = true
+    setSelectedMonthKey(resolveInitialCalendarMonth(todayDate, schedules))
+    setSearchQuery('')
   }, [open, schedules, todayDate])
 
   useEffect(() => {
