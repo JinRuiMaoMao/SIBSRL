@@ -35,10 +35,10 @@
   },
   "stops": [
     {
-      "directionKey": "N",
+      "directionKey": "S",
       "direction": {
-        "zh": "北行（長島碼頭 → 安靈台）",
-        "en": "Northbound (Long Island Ferry Pier → Ambling Peak Columbarium)"
+        "zh": "南行（長島碼頭 → 安靈台）",
+        "en": "Southbound (Long Island Ferry Pier → Ambling Peak Columbarium)"
       },
       "serviceTime": {
         "zh": "08:00 – 15:20",
@@ -72,12 +72,8 @@
         },
         {
           "name": {
-            "zh": "阳光殡仪馆",
+            "zh": "陽光殯儀館",
             "en": "Sunshine Funeral"
-          },
-          "nameSub": {
-            "zh": "阳光体育馆",
-            "en": "Sunshine Stadium"
           }
         },
         {
@@ -88,22 +84,14 @@
         },
         {
           "name": {
-            "zh": "长岛东医院",
+            "zh": "長島東醫院",
             "en": "East Long Island Hospital"
-          },
-          "nameSub": {
-            "zh": "宜和剧场",
-            "en": "Jardine Theater"
           }
         },
         {
           "name": {
-            "zh": "彩色汇",
+            "zh": "彩色匯",
             "en": "Rainbow Center"
-          },
-          "nameSub": {
-            "zh": "虹尾角站, 智家坊",
-            "en": "Iris Point Station, I Home"
           }
         },
         {
@@ -115,22 +103,14 @@
         },
         {
           "name": {
-            "zh": "赖得里",
+            "zh": "賴得里",
             "en": "Wright Lane"
-          },
-          "nameSub": {
-            "zh": "赖得站",
-            "en": "Wright Station"
           }
         },
         {
           "name": {
-            "zh": "三哥大厦",
+            "zh": "三哥大廈",
             "en": "Third Technology Building"
-          },
-          "nameSub": {
-            "zh": "炫光集",
-            "en": "Neon Center"
           }
         },
         {
@@ -188,10 +168,10 @@
       ]
     },
     {
-      "directionKey": "S",
+      "directionKey": "N",
       "direction": {
-        "zh": "南行（安靈台 → 長島碼頭）",
-        "en": "Southbound (Ambling Peak Columbarium → Long Island Ferry Pier)"
+        "zh": "北行（安靈台 → 長島碼頭）",
+        "en": "Northbound (Ambling Peak Columbarium → Long Island Ferry Pier)"
       },
       "serviceTime": {
         "zh": "09:00 – 18:30",
@@ -220,14 +200,10 @@
         },
         {
           "name": {
-            "zh": "叶欣海旁道",
+            "zh": "葉欣海旁路",
             "en": "Praya YiYan Road"
           },
-          "zone": 7,
-          "nameSub": {
-            "zh": "钻石交易塔",
-            "en": "Diamond Trading Tower"
-          }
+          "zone": 7
         },
         {
           "name": {
@@ -270,12 +246,8 @@
         },
         {
           "name": {
-            "zh": "三哥大厦",
+            "zh": "三哥大廈",
             "en": "Third Technology Building"
-          },
-          "nameSub": {
-            "zh": "炫光集",
-            "en": "Neon Center"
           }
         },
         {
@@ -302,11 +274,7 @@
             "zh": "虹尾角站",
             "en": "Iris Point Station"
           },
-          "zone": 1,
-          "nameSub": {
-            "zh": "智家坊, 彩色汇",
-            "en": "I Home, Rainbow Center"
-          }
+          "zone": 1
         },
         {
           "name": {
@@ -316,18 +284,14 @@
         },
         {
           "name": {
-            "zh": "宜和剧场",
+            "zh": "宜和劇場",
             "en": "Jardine Theater"
-          },
-          "nameSub": {
-            "zh": "长岛东医院",
-            "en": "East Long Island Hospital"
           }
         },
         {
           "name": {
             "zh": "藝術大廈",
-            "en": "LMK Long Island East is located here. Players can get food here."
+            "en": "Art Building"
           }
         },
         {

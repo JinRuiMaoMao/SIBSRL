@@ -21,8 +21,8 @@
     "en": "North Sunshine University / 旭濤薈"
   },
   "via": {
-    "zh": "阳光大学南校园、阳光大学本部",
-    "en": "Sunshine University Southern Campus, Sunshine University Main Campus"
+    "zh": "Sunshine University Southern Campus, [[Sunshine University",
+    "en": "Sunshine University Southern Campus, [[Sunshine University"
   },
   "interval": {
     "zh": "15 - 60 min",
@@ -39,14 +39,14 @@
     }
   },
   "length": {
-    "zh": "往阳光大学北 7.9 km / 往旭涛荟 5.5 km",
-    "en": "To North Sunshine University 7.9 km / To Hotel Symbol 5.5 km"
+    "zh": "13.05 km",
+    "en": "13.05 km"
   },
   "stops": [
     {
       "directionKey": "N",
       "direction": {
-        "zh": "北行（旭涛荟 → 阳光大学北）",
+        "zh": "北行（旭濤薈 → 陽光大學北）",
         "en": "Northbound (Hotel Symbol → North Sunshine University)"
       },
       "serviceTime": {
@@ -54,19 +54,57 @@
         "en": "08:15 – 19:30"
       },
       "list": [
-        { "name": { "zh": "旭涛荟", "en": "Hotel Symbol" }, "zone": 4 },
-        { "name": { "zh": "阳光大学南校园", "en": "Sunshine University Southern Campus" }, "zone": 4 },
-        { "name": { "zh": "阳光大学本部", "en": "Sunshine University Main Campus" }, "zone": 4 },
-        { "name": { "zh": "阳光大学中", "en": "Central- Sunshine University" } },
-        { "name": { "zh": "阳光大学本部", "en": "Sunshine University Main Campus" }, "zone": 4 },
-        { "name": { "zh": "甄博士楼", "en": "X.Y.Zhen College" } },
-        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" } }
+        {
+          "name": {
+            "zh": "旭濤薈",
+            "en": "Hotel Symbol"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光大學南環校園",
+            "en": "Sunshine University Southern Campus"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學本部",
+            "en": "Sunshine University Main Campus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光大學中",
+            "en": "Central- Sunshine University"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學本部",
+            "en": "Sunshine University Main Campus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "甄博士樓",
+            "en": "X.Y.Zhen College"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學北",
+            "en": "North Sunshine University"
+          }
+        }
       ]
     },
     {
       "directionKey": "S",
       "direction": {
-        "zh": "南行（阳光大学北 → 旭涛荟）",
+        "zh": "南行（陽光大學北 → 旭濤薈）",
         "en": "Southbound (North Sunshine University → Hotel Symbol)"
       },
       "serviceTime": {
@@ -74,12 +112,45 @@
         "en": "08:45 – 20:50"
       },
       "list": [
-        { "name": { "zh": "阳光大学北", "en": "North Sunshine University" }, "zone": 4 },
-        { "name": { "zh": "甄博士楼", "en": "X.Y.Zhen College" } },
-        { "name": { "zh": "阳光大学中", "en": "Central- Sunshine University" } },
-        { "name": { "zh": "阳光大学本部", "en": "Sunshine University Main Campus" }, "zone": 4 },
-        { "name": { "zh": "阳光大学南校园", "en": "Sunshine University Southern Campus" }, "zone": 4 },
-        { "name": { "zh": "旭涛荟", "en": "Hotel Symbol" } }
+        {
+          "name": {
+            "zh": "陽光大學北",
+            "en": "North Sunshine University"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "甄博士樓",
+            "en": "X.Y.Zhen College"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學中",
+            "en": "Central- Sunshine University"
+          }
+        },
+        {
+          "name": {
+            "zh": "陽光大學本部",
+            "en": "Sunshine University Main Campus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "陽光大學南環校園",
+            "en": "Sunshine University Southern Campus"
+          },
+          "zone": 4
+        },
+        {
+          "name": {
+            "zh": "旭濤薈",
+            "en": "Hotel Symbol"
+          }
+        }
       ]
     }
   ],

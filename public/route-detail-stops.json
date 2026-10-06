@@ -1378,6 +1378,12 @@
     },
     {
       "name": {
+        "zh": "篮球场",
+        "en": "Basketball Court"
+      }
+    },
+    {
+      "name": {
         "zh": "薄荷大厦",
         "en": "Mint Tower"
       }
@@ -1410,12 +1416,6 @@
       "name": {
         "zh": "警察总部",
         "en": "Police Headquarters"
-      }
-    },
-    {
-      "name": {
-        "zh": "Basketball Court",
-        "en": "Basketball Court"
       }
     },
     {

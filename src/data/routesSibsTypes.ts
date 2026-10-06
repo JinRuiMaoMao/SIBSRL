@@ -611,14 +611,16 @@ export const routesSibsTypes: BusRoute[] = [
     pattern: 'oneway',
     zones: [1, 7],
     origin:     { zh: '长岛码头', en: 'Long Island Ferry Pier' },
-    destination:     { zh: 'Senpai Shopping Centre / 長島碼頭', en: 'Senpai Shopping Centre / 長島碼頭' },
+    destination:     { zh: '仙贝广场', en: 'Senpai Shopping Center' },
     via:     { zh: 'Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower', en: 'Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower' },
+    interval:     { zh: '阳光马拉松期间开行', en: 'Services provided during Sunshine Marathon only' },
+    journeyTime:     { zh: '约 32–34 分钟', en: 'approx. 32–34 mins' },
     fare: '$18.2',
     length:     { zh: '17.8 km', en: '17.8 km' },
     stops: [
       {
         direction:         { zh: '方向1（長島碼頭 → 仙貝廣場）', en: 'Direction 1 (Long Island Ferry Pier → Senpai Shopping Centre)' },
-        serviceTime:         { zh: 'Services provided during Sunshine Marathon Only', en: 'Services provided during Sunshine Marathon Only' },
+        serviceTime:         { zh: '阳光马拉松期间开行', en: 'Services provided during Sunshine Marathon only' },
         list: [
           { name:             { zh: '長島碼頭', en: 'Long Island Ferry Pier' }, zone: 1 },
           { name:             { zh: '文化廣場', en: 'Culture Square' } },
@@ -867,6 +869,7 @@ export const routesSibsTypes: BusRoute[] = [
     origin:     { zh: '长岛码头', en: 'Long Island Ferry Pier' },
     destination:     { zh: 'Ambling Peak / 長島碼頭', en: 'Ambling Peak / 長島碼頭' },
     via:     { zh: 'Long Island East, Dove Island, Hospital Island, Central - Western Interchange, YiYan (←), Leafy Bay Cemetery', en: 'Long Island East, Dove Island, Hospital Island, Central - Western Interchange, YiYan (←), Leafy Bay Cemetery' },
+    interval:     { zh: '清明节／重阳节视客量', en: 'Depends on ridership on Tomb Sweeping / Double Ninth Festival days' },
     journeyTime:     { zh: 'To Ambling Peak: 32 mins / To Long Island: 35 mins', en: 'To Ambling Peak: 32 mins / To Long Island: 35 mins' },
     fare: '$24.1',
     levelRequired: 70,
@@ -1978,8 +1981,8 @@ export const routesSibsTypes: BusRoute[] = [
     category: 'inner',
     pattern: 'circular',
     zones: [6, 7, 8],
-    origin:     { zh: 'East Factory', en: 'East Factory' },
-    destination:     { zh: 'East Door Bus Terminus / 東廠', en: 'East Door Bus Terminus / 東廠' },
+    origin:     { zh: '东厂', en: 'East Factory' },
+    destination:     { zh: '海怡车厂', en: 'Horizon Depot' },
     via:     { zh: 'Leafy Hospital, Leafy Bay, Praya YiYan Road, Haisey (→Zone 8)', en: 'Leafy Hospital, Leafy Bay, Praya YiYan Road, Haisey (→Zone 8)' },
     interval:     { zh: '30 - 90 mins', en: '30 - 90 mins' },
     journeyTime:     { zh: '20 mins', en: '20 mins' },
@@ -2473,7 +2476,7 @@ export const routesSibsTypes: BusRoute[] = [
     pattern: 'circular',
     zones: [7],
     origin:     { zh: '仙贝广场', en: 'Senpai Shopping Center' },
-    destination:     { zh: '[[Alexander Church', en: '[[Alexander Church' },
+    destination:     { zh: '亚历山', en: 'Alexander' },
     via:     { zh: 'Senpai Multi-Storey Parking Garage', en: 'Senpai Multi-Storey Parking Garage' },
     interval:     { zh: 'N/A', en: 'N/A' },
     journeyTime:     { zh: '10 mins', en: '10 mins' },
@@ -2482,6 +2485,7 @@ export const routesSibsTypes: BusRoute[] = [
     stops: [
       {
         direction:         { zh: '方向1（仙貝廣場 → 仙貝廣場）', en: 'Direction 1 (Senpai Shopping Centre → Senpai Shopping Center)' },
+        serviceTime:         { zh: '高峰视客量加开', en: 'Extra departures at peak demand' },
         list: [
           { name:             { zh: '仙貝廣場', en: 'Senpai Shopping Centre' }, zone: 7 },
           { name:             { zh: '仙貝圖書館', en: 'Senpai Library' } },
@@ -2510,6 +2514,8 @@ export const routesSibsTypes: BusRoute[] = [
     destination:     { zh: '仙贝广场 / 际巴车厂', en: 'Senpai Shopping Center / CSB Depot' },
     via:     { zh: 'Leafy Bay, Haisey, Rainbow, East Door, Haisey', en: 'Leafy Bay, Haisey, Rainbow, East Door, Haisey' },
     interval:     { zh: '30 - 60 mins', en: '30 - 60 mins' },
+    journeyTime:     { zh: '约 20–25 分钟', en: 'approx. 20–25 mins' },
+    fare:     { zh: '免费（限城际巴员工）', en: 'Free (CSB crew only)' },
     length:     { zh: '往仙贝广场 11.8 km / 往际巴车厂 11.6 km', en: 'To Senpai Shopping Center 11.8 km / To CSB Depot 11.6 km' },
     stops: [
       {
@@ -2538,6 +2544,7 @@ export const routesSibsTypes: BusRoute[] = [
       {
         directionKey: 'S',
         direction:         { zh: '南行（仙貝廣場 → 際巴車廠）', en: 'Southbound (Senpai Shopping Center → CSB Depot)' },
+        serviceTime:         { zh: '04:00 – 06:00 / 00:30 – 02:00', en: '04:00 – 06:00 / 00:30 – 02:00' },
         list: [
           { name:             { zh: '仙貝廣場', en: 'Senpai Shopping Center' }, zone: 7 },
           { name:             { zh: '仙貝圖書館', en: 'Senpai Library' } },
@@ -2575,6 +2582,7 @@ export const routesSibsTypes: BusRoute[] = [
     via:     { zh: 'Southern, Eastmallow, Sunshine University, North Island Estate', en: 'Southern, Eastmallow, Sunshine University, North Island Estate' },
     interval:     { zh: 'Fixed departure', en: 'Fixed departure' },
     journeyTime:     { zh: 'To Norton: 13 - 14 mins / To CSB Depot: 13 mins', en: 'To Norton: 13 - 14 mins / To CSB Depot: 13 mins' },
+    fare:     { zh: '免费（限城际巴员工）', en: 'Free (CSB crew only)' },
     length:     { zh: '13.6 km', en: '13.6 km' },
     stops: [
       {
@@ -2598,7 +2606,7 @@ export const routesSibsTypes: BusRoute[] = [
       {
         directionKey: 'S',
         direction:         { zh: '南行（北頓市中心 → 際巴車廠）', en: 'Southbound (Norton Town Center → CSB Depot)' },
-        serviceTime:         { zh: '03:45, 04:15}}', en: '03:45, 04:15}}' },
+        serviceTime:         { zh: '03:45, 04:15', en: '03:45, 04:15' },
         list: [
           { name:             { zh: '北頓市中心', en: 'Norton Town Center' }, zone: 4 },
           { name:             { zh: '北頓邨', en: 'Norton Estate' } },
@@ -2629,6 +2637,7 @@ export const routesSibsTypes: BusRoute[] = [
     via:     { zh: 'Senpai Shopping Center', en: 'Senpai Shopping Center' },
     interval:     { zh: 'Fixed departure', en: 'Fixed departure' },
     journeyTime:     { zh: 'To Norton: 20 - 22 mins / To CSB Depot: 19 - 21 mins', en: 'To Norton: 20 - 22 mins / To CSB Depot: 19 - 21 mins' },
+    fare:     { zh: '免费（限城际巴员工）', en: 'Free (CSB crew only)' },
     length:     { zh: '16.9 km', en: '16.9 km' },
     stops: [
       {
@@ -2657,7 +2666,7 @@ export const routesSibsTypes: BusRoute[] = [
       {
         directionKey: 'S',
         direction:         { zh: '南行（北頓市中心 → 際巴車廠）', en: 'Southbound (Norton Town Center → CSB Depot)' },
-        serviceTime:         { zh: '03:45, 04:15}}', en: '03:45, 04:15}}' },
+        serviceTime:         { zh: '03:45, 04:15', en: '03:45, 04:15' },
         list: [
           { name:             { zh: '北頓市中心', en: 'Norton Town Center' } },
           { name:             { zh: '北頓邨', en: 'Norton Hill Road' } },
@@ -2691,12 +2700,13 @@ export const routesSibsTypes: BusRoute[] = [
     via:     { zh: 'Dove Estate, Eastmallow, Alexander, Normal Gap, Leafy Bay Estate', en: 'Dove Estate, Eastmallow, Alexander, Normal Gap, Leafy Bay Estate' },
     interval:     { zh: 'Fixed departure', en: 'Fixed departure' },
     journeyTime:     { zh: 'To YiYan: 25 mins / To Shallow Valley Depot: 24 - 26 mins', en: 'To YiYan: 25 mins / To Shallow Valley Depot: 24 - 26 mins' },
+    fare:     { zh: '免费（限永巴员工）', en: 'Free (FT crew only)' },
     length:     { zh: '26.6 km', en: '26.6 km' },
     stops: [
       {
         directionKey: 'N',
         direction:         { zh: '北行（葉欣海旁路 → 永巴四露谷車廠）', en: 'Northbound (Praya YiYan Road → FT Shallow Valley Depot)' },
-        serviceTime:         { zh: '04:00, 04:45, 05:30}}', en: '04:00, 04:45, 05:30}}' },
+        serviceTime:         { zh: '04:00, 04:45, 05:30', en: '04:00, 04:45, 05:30' },
         list: [
           { name:             { zh: '叶欣海旁道', en: 'Praya YiYan Road' }, nameSub:             { zh: '钻石交易塔', en: 'Diamond Trading Tower' }, zone: 7 },
           { name:             { zh: '叶欣邨第一座', en: 'YiYan Estate Block 1' }, nameSub:             { zh: '叶欣邨第二座', en: 'YiYan Estate Block 2' } },
@@ -2762,12 +2772,13 @@ export const routesSibsTypes: BusRoute[] = [
     via:     { zh: 'Central, Zone 7 Interchange, Senpai, East Door, Rainbow', en: 'Central, Zone 7 Interchange, Senpai, East Door, Rainbow' },
     interval:     { zh: 'Fixed departure', en: 'Fixed departure' },
     journeyTime:     { zh: 'Towards Haisey: 21 mins / Towards Shallow Valley Depot: 23 mins', en: 'Towards Haisey: 21 mins / Towards Shallow Valley Depot: 23 mins' },
+    fare:     { zh: '免费（限永巴员工）', en: 'Free (FT crew only)' },
     length:     { zh: '19.5 km', en: '19.5 km' },
     stops: [
       {
         directionKey: 'N',
         direction:         { zh: '北行（海西邨 → 永巴四露谷車廠）', en: 'Northbound (Haisey Estate → FT Shallow Valley Depot)' },
-        serviceTime:         { zh: '04:00, 04:45, 05:30}}FT Crew Bus Route F702 is operated by FT, travelling between FT Shallow Valley Depot and Haisey Estate, via Central, Zone 7 Interchange, Senpai, East Door and Rainbow. This route serves employees of Forever Transit who live in Central and Northern Part of Zone 7 that start/end their shifts outside of regular bus route hours, allowing them to commute to/from work.', en: '04:00, 04:45, 05:30}}FT Crew Bus Route F702 is operated by FT, travelling between FT Shallow Valley Depot and Haisey Estate, via Central, Zone 7 Interchange, Senpai, East Door and Rainbow. This route serves employees of Forever Transit who live in Central and Northern Part of Zone 7 that start/end their shifts outside of regular bus route hours, allowing them to commute to/from work.' },
+        serviceTime:         { zh: '04:00, 04:45, 05:30', en: '04:00, 04:45, 05:30' },
         list: [
           { name:             { zh: '海西邨', en: 'Haisey Estate' }, zone: 8 },
           { name:             { zh: '彩虹中心', en: 'Rainbow Estate Complex' }, zone: 7 },
@@ -3594,6 +3605,7 @@ export const routesSibsTypes: BusRoute[] = [
     via:     { zh: '阳光大学南校园、阳光大学本部', en: 'Sunshine University Southern Campus, Sunshine University Main Campus' },
     interval:     { zh: '15 - 60 min', en: '15 - 60 min' },
     journeyTime:     { zh: '6-10 min', en: '6-10 min' },
+    fare:     { zh: 'N/A（需阳光大学学生证）', en: 'N/A (Sunshine University ID required)' },
     levelRequired: 25,
     length:     { zh: '往阳光大学北 7.9 km / 往旭涛荟 5.5 km', en: 'To North Sunshine University 7.9 km / To Hotel Symbol 5.5 km' },
     stops: [
@@ -3639,6 +3651,7 @@ export const routesSibsTypes: BusRoute[] = [
     via:     { zh: '阳光大学宿舍、阳光大学运动场', en: 'Sunshine University Residences, Sunshine University Sports Field' },
     interval:     { zh: '15 - 60 min', en: '15 - 60 min' },
     journeyTime:     { zh: '6-10 min', en: '6-10 min' },
+    fare:     { zh: 'N/A（需阳光大学学生证）', en: 'N/A (Sunshine University ID required)' },
     sunshardsRequired: 300,
     length:     { zh: '往阳光大学北 7.9 km / 往旭涛荟 5.5 km', en: 'To North Sunshine University 7.9 km / To Hotel Symbol 5.5 km' },
     stops: [

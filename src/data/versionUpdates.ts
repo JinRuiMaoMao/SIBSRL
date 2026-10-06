@@ -211,6 +211,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "自 Wiki 重刷 N171、N146、R148、76S、475 等线路站序与服务资料。",
             en: "Re-synced stop lists and service details for N171, N146, R148, 76S, 475, and related routes from the Wiki.",
           },
+          {
+            zh: "补全主列表卡片可见线路缺失资料：25Y 北/南行班次时间、76# 行车时间（经安灵台）、77XA 高峰加开时段、370AEM/473A/N146A 马拉松 interval，以及 240A/242A 绕行走线 interval、行车时间与里程。",
+            en: "Filled missing data on main-list route cards: 25Y N/S service times, 76# journey time via Ambling Peak, 77XA peak extra hours, marathon intervals for 370AEM/473A/N146A, and 240A/242A detour interval, journey time, and length.",
+          },
+          {
+            zh: "21A 站名 Basketball Court 补中文「篮球场」。",
+            en: "21A stop Basketball Court now shows Chinese name 篮球场.",
+          },
+          {
+            zh: "补全锁定区/搜索可见线路：270A interval 与行车时间、673 起终点、77X 终点与班次；员工接驳 C01/C401/C401A/F701/F702 免费票价与 Wiki 脏班次；U47/U47* 学生证票价说明；376S 清明/重阳 interval。",
+            en: "Filled locked/searchable routes: 270A interval and journey time, 673 endpoints, 77X destination and schedule; staff shuttles C01/C401/C401A/F701/F702 free fares and cleaned Wiki service times; U47/U47* university ID fare note; 376S Tomb Sweeping/Double Ninth interval.",
+          },
         ],
       },
       {

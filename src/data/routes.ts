@@ -90,7 +90,7 @@ const routesData: BusRoute[] = [
           { name: { zh: '路博斯总部大楼', en: 'Roblox HQ' }, zone: 1 },
           { name: { zh: '白鸽消防局', en: 'Dove Fire Station' }, zone: 1 },
           { name: { zh: '伊迪城', en: 'Eddie City' }, zone: 1 },
-          { name: { zh: '', en: 'Basketball Court' }, zone: 1 },
+          { name: { zh: '篮球场', en: 'Basketball Court' }, zone: 1 },
           { name: { zh: '阿周电视', en: 'Roblox TV' }, turningPoint: true, zone: 1 },
           { name: { zh: '西区医院', en: 'Western Hospital' }, zone: 1 },
           { name: { zh: '艾迪城', en: 'Addi City' }, zone: 1 },
@@ -232,6 +232,7 @@ const routesData: BusRoute[] = [
           zh: '北行（货柜码头岛 → 长岛码头）',
           en: "Northbound (Container's Island B/T → Long Island Ferry Pier)",
         },
+        serviceTime: { zh: '06:00 – 01:00', en: '06:00 – 01:00' },
         list: [
           { name: { zh: '货柜码头岛', en: "Container's Island" }, zone: 1 },
           { name: { zh: '货柜码头', en: 'Containers Terminal' }, zone: 1 },
@@ -266,6 +267,7 @@ const routesData: BusRoute[] = [
           zh: '南行（长岛码头 → 货柜码头岛）',
           en: "Southbound (Long Island Ferry Pier → Container's Island B/T)",
         },
+        serviceTime: { zh: '05:30 – 00:30', en: '05:30 – 00:30' },
         list: [
           { name: { zh: '长岛码头', en: 'Long Island Ferry Pier' }, zone: 1 },
           { name: { zh: '文化广场', en: 'Culture Square' }, zone: 1 },
@@ -725,6 +727,10 @@ const routesData: BusRoute[] = [
       zh: '长岛东、白鸽岛、西区海底隧道、北环、中区',
       en: 'Long Island East, Dove Island, Western Harbour Tunnel Interchange, Northern Interchange, Central',
     },
+    interval: {
+      zh: '阳光马拉松期间开行',
+      en: 'Services provided during Sunshine Marathon only',
+    },
     journeyTime: { zh: '约 42 分钟', en: 'approx. 42 mins' },
     fare: '$11.4',
     length: { zh: '25.6 km（环线）', en: '25.6 km (loop)' },
@@ -735,7 +741,7 @@ const routesData: BusRoute[] = [
           en: 'Circular (Long Island Ferry Pier ↺ via Sunshine Pier)',
         },
         serviceTime: {
-          zh: '马拉松期间开行',
+          zh: '阳光马拉松期间开行',
           en: 'Services provided during Sunshine Marathon only',
         },
         list: [
@@ -796,7 +802,13 @@ const routesData: BusRoute[] = [
       zh: '白鸽岛、西区海底隧道、北环、中区',
       en: 'Dove Island, Western Harbour Tunnel Interchange, Northern Interchange, Central',
     },
+    interval: {
+      zh: '阳光马拉松期间开行',
+      en: 'Services provided during Sunshine Marathon only',
+    },
+    journeyTime: { zh: '约 35–40 分钟', en: 'approx. 35–40 mins' },
     fare: '$11.4',
+    length: { zh: '约 23 km（环线）', en: 'approx. 23 km (loop)' },
     stops: [
       {
         direction: {
@@ -804,7 +816,7 @@ const routesData: BusRoute[] = [
           en: 'Circular (Dove Estate ↺ Sunshine Pier)',
         },
         serviceTime: {
-          zh: '马拉松期间开行',
+          zh: '阳光马拉松期间开行',
           en: 'Services provided during Sunshine Marathon only',
         },
         list: [
@@ -946,6 +958,10 @@ const routesData: BusRoute[] = [
       zh: '东锦葵、中区、北环、货柜码头岛、医院岛、白鸽岛',
       en: "Eastmallow, Central, Northern, Container's Island, Hospital Island and Dove Island",
     },
+    interval: {
+      zh: '阳光马拉松期间开行',
+      en: 'Services provided during Sunshine Marathon only',
+    },
     journeyTime: { zh: '约 42 分钟', en: 'approx. 42 mins' },
     fare: '$15.1',
     length: { zh: '27.7 km（环线）', en: '27.7 km (loop)' },
@@ -1026,6 +1042,10 @@ const routesData: BusRoute[] = [
     via: {
       zh: '叶欣路、新地路、叶角道、仙贝绕道、欣荣街、新叶街、叶欣海旁道、轴心路、中叶隧道、中环南路、南环路、阳光路、中环路、亚凡路、班尼街、月亮绕道、中间道、纵横路、枫树里',
       en: 'YiYan Road, Sindy Road, Leafy Bay Road, Senpai Bypass, Yan Wing Street, New Leaf Street, Praya YiYan Road, Axis Road, Central Route Tunnel, Central South Road, Southern Ring Road, Sunshine Road, Central Ring Road, Arthur Road, Penny Street, Moon Bypass, Middle Road, Cross Road, Maple Lane',
+    },
+    interval: {
+      zh: '阳光马拉松期间开行',
+      en: 'Services provided during Sunshine Marathon only',
     },
     journeyTime: { zh: '约 92 分钟', en: 'approx. 92 mins' },
     fare: '$11.4',
@@ -2142,6 +2162,7 @@ const routesData: BusRoute[] = [
       en: 'Ambling Peak, Leafy Bay Estate, YiYan',
     },
     interval: { zh: '约 60 分钟', en: 'approx. 60 mins' },
+    journeyTime: { zh: '约 20 分钟（经安灵台）', en: 'approx. 20 mins (via Ambling Peak)' },
     fare: '$6.3',
     levelRequired: 87,
     length: { zh: '9.5 km', en: '9.5 km' },
@@ -2384,6 +2405,10 @@ const routesData: BusRoute[] = [
         direction: {
           zh: '环线（仙贝广场 ↺ 亚历山）',
           en: 'Circular (Senpai Shopping Center ↺ Alexander)',
+        },
+        serviceTime: {
+          zh: '高峰视客量加开（每日挑战）',
+          en: 'Extra departures at peak demand (daily challenge)',
         },
         list: [
           { name: { zh: '仙贝广场', en: 'Senpai Shopping Center' }, zone: 7 },
@@ -2634,6 +2659,11 @@ const routesData: BusRoute[] = [
       zh: '长岛东、白鸽岛、第七区转车站、镰塔花园、国际塔',
       en: 'Long Island East, Dove Island, Zone 7 Interchange, Kamaya Garden, International Tower',
     },
+    interval: {
+      zh: '阳光马拉松期间开行',
+      en: 'Services provided during Sunshine Marathon only',
+    },
+    journeyTime: { zh: '约 32–34 分钟', en: 'approx. 32–34 mins' },
     fare: '$18.2',
     length: { zh: '17.8 km', en: '17.8 km' },
     stops: [
