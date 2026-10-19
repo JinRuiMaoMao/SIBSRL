@@ -34,6 +34,17 @@ export const REAL_START_MENU_LAYOUT = {
   /** StartMenuRB.UIScale = ceil(StartMenu.AbsoluteSize.Y * 0.10875) / 40 */
   uiScaleFactor: 0.10875,
   uiScaleCellPx: 40,
+  /**
+   * Live Roblox StartMenu paints ~0.55–0.58× smaller than Studio AbsoluteSize at the same
+   * viewport (calibrated from side-by-side screenshots: web btn ~8.5% vh vs live ~4.7% vh).
+   */
+  liveShellScale: 0.58,
+  /** Top.ImageLabel: Position.X 0.15, Size.Y 1, UIAspectRatioConstraint 1 */
+  brandLogoLeftScale: 0.15,
+  /** Top.Title: Position.X 0.2767, Size.X 0.5, TextScaled, TextColor3 */
+  brandTitleLeftScale: 0.276666671,
+  brandTitleWidthScale: 0.5,
+  brandTitleRgb: 'rgb(255 170 0)',
   /** PlayBtn / ServerListBtn Title TextColor3 */
   playTextRgb: 'rgb(85 170 0)',
   serverTextRgb: 'rgb(85 170 0)',

@@ -100,6 +100,7 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
     () =>
       ({
         '--real-start-ui-scale': String(uiScale),
+        '--real-start-shell-scale': String(REAL_START_MENU_LAYOUT.liveShellScale),
         '--real-start-menu-height': `${REAL_START_MENU_LAYOUT.menuHeightScale * 100}%`,
         '--real-start-top-height': `${REAL_START_MENU_LAYOUT.topHeightScale * 100}%`,
         '--real-start-main-top': `${REAL_START_MENU_LAYOUT.mainTopScale * 100}%`,
@@ -119,6 +120,10 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
         '--real-start-about-width': `${REAL_START_MENU_LAYOUT.aboutButtonsWidthPx}px`,
         '--real-start-about-offset-x': `${REAL_START_MENU_LAYOUT.aboutButtonsOffsetPx.x}px`,
         '--real-start-about-offset-y': `${REAL_START_MENU_LAYOUT.aboutButtonsOffsetPx.y}px`,
+        '--real-start-brand-logo-left': `${REAL_START_MENU_LAYOUT.brandLogoLeftScale * 100}%`,
+        '--real-start-brand-title-left': `${REAL_START_MENU_LAYOUT.brandTitleLeftScale * 100}%`,
+        '--real-start-brand-title-width': `${REAL_START_MENU_LAYOUT.brandTitleWidthScale * 100}%`,
+        '--real-start-brand-title-rgb': REAL_START_MENU_LAYOUT.brandTitleRgb,
         '--real-start-play-rgb': REAL_START_MENU_LAYOUT.playTextRgb,
         '--real-start-profile-rgb': REAL_START_MENU_LAYOUT.profileTextRgb,
         '--real-start-changelog-title-h': `${REAL_START_MENU_LAYOUT.changeLogTitleHeightScale * 100}%`,

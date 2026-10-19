@@ -9976,8 +9976,8 @@ html[data-reduce-motion='true'] .real-start-bg-map {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 18%, rgb(245 185 66 / 0.12), transparent 42%),
-    linear-gradient(180deg, rgb(5 7 13 / 0.35) 0%, rgb(5 7 13 / 0.88) 72%, rgb(5 7 13 / 0.96) 100%);
+    radial-gradient(circle at 50% 18%, rgb(245 185 66 / 0.08), transparent 42%),
+    linear-gradient(180deg, rgb(5 7 13 / 0.22) 0%, rgb(5 7 13 / 0.55) 72%, rgb(5 7 13 / 0.72) 100%);
 }
 
 .sunshard-icon {
@@ -10340,7 +10340,8 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   width: 100%;
   height: calc(var(--real-start-menu-height, 70%) * 1);
   max-height: calc(100dvh - var(--real-top-hud-height, 3.35rem));
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--real-start-shell-scale, 1));
+  transform-origin: center center;
   box-sizing: border-box;
   pointer-events: none;
   font-family: 'Titillium Web', 'Segoe UI', system-ui, sans-serif;
@@ -10355,7 +10356,7 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
   right: var(--real-start-rb-inset, 15px);
   bottom: var(--real-start-rb-inset, 15px);
   z-index: 2;
-  transform: scale(var(--real-start-ui-scale, 1));
+  transform: scale(calc(var(--real-start-ui-scale, 1) * var(--real-start-shell-scale, 1)));
   transform-origin: bottom right;
 }
 
@@ -10392,40 +10393,48 @@ html[data-reduce-motion='true'] .real-profile-overlay-host[data-profile-phase='c
 }
 
 .real-start-brand {
-  display: flex;
+  position: relative;
   flex: 0 0 var(--real-start-top-height, 32%);
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
   min-height: 0;
-  padding-inline: 15px;
-  text-align: center;
+  width: 100%;
+  container-type: size;
+  container-name: real-start-brand;
 }
 
 .real-start-logo {
+  position: absolute;
+  top: 0;
+  left: var(--real-start-brand-logo-left, 15%);
   width: auto;
   height: 100%;
   max-height: 100%;
   aspect-ratio: 1;
   object-fit: contain;
-  filter: drop-shadow(0 0 18px rgb(245 185 66 / 0.45));
-  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgb(255 170 0 / 0.28));
 }
 
 .real-start-title {
+  position: absolute;
+  top: 0;
+  left: var(--real-start-brand-title-left, 27.67%);
   display: flex;
   flex-direction: column;
-  gap: 0.05em;
+  justify-content: center;
+  gap: 0.02em;
   margin: 0;
-  width: min(50%, 28rem);
-  font-size: clamp(1.35rem, 3.8vh, 2.75rem);
+  width: var(--real-start-brand-title-width, 50%);
+  height: 100%;
+  /* TextScaled into Top: ~2 lines ≈ 76% of brand height */
+  font-size: 38cqh;
   line-height: 1.05;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  color: #f5b942;
-  text-shadow: 0 0 24px rgb(245 185 66 / 0.35);
-  text-align: left;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--real-start-brand-title-rgb, rgb(255 170 0));
+  text-align: center;
+}
+
+.real-start-title span {
+  display: block;
 }
 
 .real-start-body {

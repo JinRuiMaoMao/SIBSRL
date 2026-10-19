@@ -187,6 +187,10 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             zh: "修复启动闪屏 finish 自调用导致遮罩卡在 100%、挡住 Real 开始页（看起来像界面比例异常）。",
             en: "Fixed start-boot splash finish self-recursion that left the overlay stuck at 100% over the Real start page (looked like broken UI scale).",
           },
+          {
+            zh: "Real 开始页按实机观感整体缩小（shellScale 0.58），标题区对齐 Top 定位与橙色，并减轻背景压暗。",
+            en: "Scaled the Real start shell to live Roblox proportions (shellScale 0.58), aligned the brand title to Top placement/orange, and lightened the map overlay.",
+          },
         ],
       },
     ],

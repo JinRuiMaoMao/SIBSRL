@@ -10,7 +10,8 @@ export function useRealStartMenuScale(menuRootRef: RefObject<HTMLElement | null>
     if (!node) return
 
     const update = () => {
-      const height = node.getBoundingClientRect().height
+      // offsetHeight ignores CSS transform (liveShellScale); matches Roblox AbsoluteSize.Y.
+      const height = node.offsetHeight
       setUiScale(computeRealStartMenuUiScale(height))
     }
 
