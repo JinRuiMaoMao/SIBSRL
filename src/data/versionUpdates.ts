@@ -20,7 +20,7 @@ export function getLatestUpdatePromptKey(): string | undefined {
 }
 
 /** 当前活跃更新日志日期；新改动追加到该日期的条目中。 */
-export const CURRENT_CHANGELOG_DATE = '2026-10-06'
+export const CURRENT_CHANGELOG_DATE = '2026-10-20'
 
 function standardUpdateTitle(date: string): BilingualText {
   return { zh: `${date} 更新`, en: `${date} updates` }
@@ -151,6 +151,28 @@ function entryHasContent(entry: VersionUpdateEntry): boolean {
 
 const versionUpdatesRaw: VersionUpdateEntry[] = [
   // 新改动追加到此条目（date = CURRENT_CHANGELOG_DATE）；无内容时不展示。
+  {
+    id: "2026-10-20-summary",
+    date: "2026-10-20",
+    title: {
+      zh: "2026-10-20 更新",
+      en: "2026-10-20 updates",
+    },
+    groups: [
+      {
+        title: {
+          zh: "线路查询",
+          en: "Route lookup",
+        },
+        additions: [
+          {
+            zh: "恢复 normal 线路页搜索栏旁的「分屏」入口，可再次进入 Real 分屏页。",
+            en: "Restored the Split layout button on the normal routes page so Real split layout is reachable again.",
+          },
+        ],
+      },
+    ],
+  },
   {
     id: "2026-10-06-summary",
     date: "2026-10-06",
