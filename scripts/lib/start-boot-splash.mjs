@@ -99,11 +99,9 @@ export const START_BOOT_SPLASH_SCRIPT = `<script id="start-boot-splash-script">
     return tabs.indexOf(hash) >= 0;
   }
   function dismissSplash() {
+    // Must not call __SIBS_START_BOOT__.finish here — finish IS dismissSplash
+    // (recursive call never reaches is-done and leaves the splash stuck at 100%).
     document.documentElement.classList.remove('start-boot-active');
-    if (window.__SIBS_START_BOOT__ && window.__SIBS_START_BOOT__.finish) {
-      window.__SIBS_START_BOOT__.finish();
-      return;
-    }
     splash.classList.add('is-done');
     splash.setAttribute('aria-busy', 'false');
     window.setTimeout(function () {

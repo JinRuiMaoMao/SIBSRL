@@ -17,9 +17,10 @@ declare global {
 /** Remove splash + unblock #root (safe to call repeatedly). */
 export function dismissStartBootSplash(): void {
   document.documentElement.classList.remove('start-boot-active')
-  window.__SIBS_START_BOOT__?.finish()
   const splash = document.getElementById('start-boot-splash')
-  if (!splash) return
+  // Do not call __SIBS_START_BOOT__.finish — older inline splash scripts set
+  // finish === dismissSplash (infinite recursion, splash stuck at 100%).
+  if (!splash?.isConnected) return
   splash.classList.add('is-done')
   splash.setAttribute('aria-busy', 'false')
   window.setTimeout(() => {

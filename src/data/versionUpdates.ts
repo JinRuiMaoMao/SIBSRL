@@ -182,6 +182,12 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
             en: "Re-aligned the full Real shell to NEW.rbxlx—re-extracted StartMenu, RouteSelection, Profile, and TopHud layout constants into CSS variables; StartMenu Profile shares RealProfileOverlay with the HUD; TopHud player name follows the account display name.",
           },
         ],
+        fixes: [
+          {
+            zh: "修复启动闪屏 finish 自调用导致遮罩卡在 100%、挡住 Real 开始页（看起来像界面比例异常）。",
+            en: "Fixed start-boot splash finish self-recursion that left the overlay stuck at 100% over the Real start page (looked like broken UI scale).",
+          },
+        ],
       },
     ],
   },
