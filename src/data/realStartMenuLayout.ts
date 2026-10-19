@@ -1,4 +1,4 @@
-/** Layout constants extracted from StartScreen.StartMenu / StartMenuRB in the rbxlx place file. */
+/** Layout constants extracted from StartScreen.StartMenu / StartMenuRB in the NEW.rbxlx place file. */
 export const REAL_START_MENU_LAYOUT = {
   /** StartMenu: Size {1, 0}, {0, 0.7} — full width, 70% parent height, centered. */
   menuHeightScale: 0.7,
@@ -34,9 +34,10 @@ export const REAL_START_MENU_LAYOUT = {
   /** StartMenuRB.UIScale = ceil(StartMenu.AbsoluteSize.Y * 0.10875) / 40 */
   uiScaleFactor: 0.10875,
   uiScaleCellPx: 40,
-  /** PlayBtn Title TextColor3 ≈ rgb(85, 170, 0) */
+  /** PlayBtn / ServerListBtn Title TextColor3 */
   playTextRgb: 'rgb(85 170 0)',
   serverTextRgb: 'rgb(85 170 0)',
+  /** ProfileBtn / LangBtn Title TextColor3 */
   profileTextRgb: 'rgb(109 40 217)',
   languageTextRgb: 'rgb(109 40 217)',
   /** ChangeLog.R panel (new players — HasFinishedAnyRoute false). */

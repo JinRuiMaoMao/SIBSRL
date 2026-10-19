@@ -27,10 +27,8 @@ import {
   dispatchRealHudAction,
   readRealHudAction,
   REAL_HUD_EVENT,
-  type RealProfileHudTab,
 } from '../utils/realHudEvents'
 import { RealLanguagePage } from './RealLanguagePage'
-import { RealProfilePage } from './RealProfilePage'
 import { RealShopDialog } from './RealShopDialog'
 import { RealStartBackground } from './RealStartBackground'
 import { RealStartChangeLogPage } from './RealStartChangeLogPage'
@@ -94,7 +92,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   })
   const [overlayId, setOverlayId] = useState<StartOverlayId | null>(null)
   const [overlayPhase, setOverlayPhase] = useState<OverlayViewPhase>('closed')
-  const [profileInitialTab, setProfileInitialTab] = useState<RealProfileHudTab>('stats')
   const [shopOpen, setShopOpen] = useState(false)
   const [aboutSubmenuOpen, setAboutSubmenuOpen] = useState(false)
   const menuRootRef = useRef<HTMLDivElement>(null)
@@ -105,15 +102,33 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
         '--real-start-ui-scale': String(uiScale),
         '--real-start-menu-height': `${REAL_START_MENU_LAYOUT.menuHeightScale * 100}%`,
         '--real-start-top-height': `${REAL_START_MENU_LAYOUT.topHeightScale * 100}%`,
+        '--real-start-main-top': `${REAL_START_MENU_LAYOUT.mainTopScale * 100}%`,
         '--real-start-main-height': `${REAL_START_MENU_LAYOUT.mainHeightScale * 100}%`,
         '--real-start-left-width': `${REAL_START_MENU_LAYOUT.leftColumnWidthScale * 100}%`,
         '--real-start-right-width': `${REAL_START_MENU_LAYOUT.rightColumnWidthScale * 100}%`,
+        '--real-start-right-height': `${REAL_START_MENU_LAYOUT.rightColumnHeightScale * 100}%`,
         '--real-start-button-width': `${REAL_START_MENU_LAYOUT.buttonWidthScale * 100}%`,
         '--real-start-button-height': `${REAL_START_MENU_LAYOUT.buttonHeightScale * 100}%`,
+        '--real-start-button-radius': `${REAL_START_MENU_LAYOUT.buttonCornerPx}px`,
+        '--real-start-button-gap': `${REAL_START_MENU_LAYOUT.buttonListPaddingPx}px`,
         '--real-start-version-height': `${REAL_START_MENU_LAYOUT.versionHeightScale * 100}%`,
         '--real-start-rb-inset': `${REAL_START_MENU_LAYOUT.menuRbInsetPx}px`,
+        '--real-start-dock-width': `${REAL_START_MENU_LAYOUT.mainButtonsWidthPx}px`,
+        '--real-start-dock-btn': `${REAL_START_MENU_LAYOUT.mainButtonSizePx}px`,
+        '--real-start-dock-gap': `${REAL_START_MENU_LAYOUT.mainButtonsPaddingPx.y}px`,
+        '--real-start-about-width': `${REAL_START_MENU_LAYOUT.aboutButtonsWidthPx}px`,
         '--real-start-about-offset-x': `${REAL_START_MENU_LAYOUT.aboutButtonsOffsetPx.x}px`,
         '--real-start-about-offset-y': `${REAL_START_MENU_LAYOUT.aboutButtonsOffsetPx.y}px`,
+        '--real-start-play-rgb': REAL_START_MENU_LAYOUT.playTextRgb,
+        '--real-start-profile-rgb': REAL_START_MENU_LAYOUT.profileTextRgb,
+        '--real-start-changelog-title-h': `${REAL_START_MENU_LAYOUT.changeLogTitleHeightScale * 100}%`,
+        '--real-start-changelog-thumb-h': `${REAL_START_MENU_LAYOUT.changeLogThumbHeightScale * 100}%`,
+        '--real-start-changelog-enter-h': `${REAL_START_MENU_LAYOUT.changeLogEnterHeightScale * 100}%`,
+        '--real-start-changelog-thumb-bg': REAL_START_MENU_LAYOUT.changeLogThumbBg,
+        '--real-start-changelog-enter-bg': REAL_START_MENU_LAYOUT.changeLogEnterBg,
+        '--real-start-event-date-h': `${REAL_START_MENU_LAYOUT.eventDateHeightScale * 100}%`,
+        '--real-start-event-thumb-h': `${REAL_START_MENU_LAYOUT.eventThumbHeightScale * 100}%`,
+        '--real-start-event-title-h': `${REAL_START_MENU_LAYOUT.eventTitleHeightScale * 100}%`,
       }) as CSSProperties,
     [uiScale],
   )
@@ -261,17 +276,14 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
   useEffect(() => {
     const onHudAction = (event: Event) => {
       const action = readRealHudAction(event)
-      if (action?.type === 'open-profile') {
-        setProfileInitialTab(action.tab ?? 'stats')
-        openOverlay('profile')
-      }
+      // Profile opens via RealProfileOverlay (TopHud); StartMenu only hosts shop here.
       if (action?.type === 'open-shop') {
         setShopOpen(true)
       }
     }
     window.addEventListener(REAL_HUD_EVENT, onHudAction)
     return () => window.removeEventListener(REAL_HUD_EVENT, onHudAction)
-  }, [openOverlay])
+  }, [])
 
   useEffect(() => {
     if (overlayActive) return
@@ -446,13 +458,6 @@ export function RealStartPage({ sharedBackground = false }: { sharedBackground?:
       ) : null}
       {overlayMounted && overlayId === 'credits' ? (
         <RealStartCreditsPage onClose={closeOverlay} onAnimationEnd={handleOverlayAnimationEnd} />
-      ) : null}
-      {overlayMounted && overlayId === 'profile' ? (
-        <RealProfilePage
-          initialTab={profileInitialTab}
-          onClose={closeOverlay}
-          onAnimationEnd={handleOverlayAnimationEnd}
-        />
       ) : null}
       {shopOpen
         ? createPortal(

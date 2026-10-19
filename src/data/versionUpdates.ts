@@ -171,6 +171,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
           },
         ],
       },
+      {
+        title: {
+          zh: "Real 分屏",
+          en: "Real layout",
+        },
+        additions: [
+          {
+            zh: "按 NEW.rbxlx 全量对齐 Real 壳：StartMenu、RouteSelection、Profile、TopHud 布局常量重提取并接到 CSS 变量；开始页 Profile 与顶栏共用 RealProfileOverlay；顶栏玩家名跟随账号显示名。",
+            en: "Re-aligned the full Real shell to NEW.rbxlx—re-extracted StartMenu, RouteSelection, Profile, and TopHud layout constants into CSS variables; StartMenu Profile shares RealProfileOverlay with the HUD; TopHud player name follows the account display name.",
+          },
+        ],
+      },
     ],
   },
   {

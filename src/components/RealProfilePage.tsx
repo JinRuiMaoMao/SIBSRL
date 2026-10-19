@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState, type AnimationEvent } from 'react'
+import { useEffect, useMemo, useState, type AnimationEvent, type CSSProperties } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useUserProfile } from '../contexts/UserProfileContext'
 import { useRealDriverProgress } from '../hooks/useRealDriverProgress'
 import { useLocale } from '../i18n/LocaleContext'
 import type { MessageKey } from '../i18n/messages'
 import { REAL_PROFILE_TAB_ICON_KEYS, REAL_PROFILE_TABS_WITH_NEW_BADGE } from '../data/realProfileAssets'
+import { REAL_PROFILE_LAYOUT } from '../data/realProfileLayout'
 import { resolveAccountLicenseName } from '../utils/accountAvatar'
 import { syncFavicon, syncHtmlLang } from '../utils/documentMetadata'
 import type { RealProfileHudTab } from '../utils/realHudEvents'
@@ -87,9 +88,26 @@ export function RealProfilePage({
   }, [locale, t])
 
   const chalkboardBg = realProfileImageUrl('chalkboard')
+  const layoutVars = useMemo(
+    () =>
+      ({
+        '--real-profile-header-h': `${REAL_PROFILE_LAYOUT.headerHeightPx}px`,
+        '--real-profile-tabs-width': `${REAL_PROFILE_LAYOUT.tabsWidthPercent}%`,
+        '--real-profile-chalkboard-aspect': String(REAL_PROFILE_LAYOUT.chalkboardAspect),
+        '--real-profile-outer-inset-x': `${REAL_PROFILE_LAYOUT.outerInsetXPx}px`,
+        '--real-profile-outer-inset-y': `${REAL_PROFILE_LAYOUT.outerInsetYPx}px`,
+        '--real-profile-card-w': `${REAL_PROFILE_LAYOUT.cardWidthScale * 100}%`,
+        '--real-profile-card-h': `${REAL_PROFILE_LAYOUT.cardHeightScale * 100}%`,
+        '--real-profile-stats-w': `${REAL_PROFILE_LAYOUT.statsWidthScale * 100}%`,
+        '--real-profile-stats-h': `${REAL_PROFILE_LAYOUT.statsHeightScale * 100}%`,
+        '--real-profile-icon-panel-w': `${REAL_PROFILE_LAYOUT.iconPanelWidthScale * 100}%`,
+        '--real-profile-icon-panel-h': `${REAL_PROFILE_LAYOUT.iconPanelHeightScale * 100}%`,
+      }) as CSSProperties,
+    [],
+  )
 
   return (
-    <div className="real-profile-page sibs-scrollbar">
+    <div className="real-profile-page sibs-scrollbar" style={layoutVars}>
       <div className="real-profile-panel" onAnimationEnd={onAnimationEnd}>
         <div className="real-profile-shell">
           <header className="real-profile-header">

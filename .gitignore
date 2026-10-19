@@ -18,6 +18,9 @@ data/users.db-wal
 data/users.db-shm
 .env
 
+# Local rbxlx extract dumps (do not commit)
+scripts/out/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

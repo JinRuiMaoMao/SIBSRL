@@ -6,7 +6,6 @@ import {
   readRealHudAction,
   type RealProfileHudTab,
 } from '../utils/realHudEvents'
-import { isRealShellRoutesActive } from '../utils/realShellRoutesPhase'
 import { REAL_SHELL_TRANSITION_MS } from '../utils/realShellTransition'
 import { RealProfilePage } from './RealProfilePage'
 
@@ -29,7 +28,7 @@ export function RealProfileOverlay() {
   useEffect(() => {
     const onHudAction = (event: Event) => {
       const action = readRealHudAction(event)
-      if (action?.type === 'open-profile' && isRealShellRoutesActive()) {
+      if (action?.type === 'open-profile') {
         openProfile(action.tab ?? 'stats')
       }
     }

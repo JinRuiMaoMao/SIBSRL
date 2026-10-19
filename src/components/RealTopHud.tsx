@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { useUserProfile } from '../contexts/UserProfileContext'
 import { getStartPageExternalLinkUrl } from '../data/startPageLinks'
+import { REAL_TOP_HUD_LAYOUT } from '../data/realTopHudLayout'
 import { useRealDriverProgress } from '../hooks/useRealDriverProgress'
 import { useRealSunshardsBalance } from '../hooks/useRealSunshardsBalance'
 import { useLocale } from '../i18n/LocaleContext'
+import { resolveAccountLicenseName } from '../utils/accountAvatar'
 import { dispatchRealHudAction, readRealHudAction, REAL_HUD_EVENT } from '../utils/realHudEvents'
 import { isRealShellRoutesActive } from '../utils/realShellRoutesPhase'
 import { navigateRealShellTab } from '../utils/realShellNavigation'
@@ -13,7 +17,7 @@ import { SunshardIcon } from './SunshardIcon'
 
 function CartGlyph() {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+    <svg viewBox="0 0 24 24" width={REAL_TOP_HUD_LAYOUT.actionIconPx} height={REAL_TOP_HUD_LAYOUT.actionIconPx} aria-hidden>
       <path
         fill="currentColor"
         d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4m10 0a2 2 0 1 0 .001 3.999A2 2 0 0 0 17 18M6.2 6h14.3l-1.4 7H8.1zM5 4h1.6l1 6h12.7l1.7-8H6.5z"
@@ -24,7 +28,7 @@ function CartGlyph() {
 
 function ClipboardGlyph() {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+    <svg viewBox="0 0 24 24" width={REAL_TOP_HUD_LAYOUT.actionIconPx} height={REAL_TOP_HUD_LAYOUT.actionIconPx} aria-hidden>
       <path
         fill="currentColor"
         d="M9 3a2 2 0 0 0-2 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2a2 2 0 0 0-2-2zm0 2h6v2H9zm-2 4h10v11H7z"
@@ -36,7 +40,7 @@ function ClipboardGlyph() {
 
 function MedalGlyph() {
   return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+    <svg viewBox="0 0 24 24" width={20} height={20} aria-hidden>
       <path
         fill="currentColor"
         d="M12 2 9.5 8.5 2 9.5l5.8 4.5-2.2 6.8L12 16.8l6.4 4-2.2-6.8L22 9.5 14.5 8.5zm0 4.2 1.4 2.8 3.1.4-2.2 2.1.5 3.1-2.8-1.5-2.8 1.5.5-3.1-2.2-2.1 3.1-.4z"
@@ -47,7 +51,7 @@ function MedalGlyph() {
 
 function InviteGlyph() {
   return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+    <svg viewBox="0 0 24 24" width={20} height={20} aria-hidden>
       <path
         fill="currentColor"
         d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-3.3 0-6 1.8-6 4v1h12v-1c0-2.2-2.7-4-6-4M19 10h-2v2h-2v2h2v2h2v-2h2v-2h-2z"
@@ -56,10 +60,10 @@ function InviteGlyph() {
   )
 }
 
-const DEMO_PLAYER_NAME = 'Guest'
-
 export function RealTopHud({ className }: { className?: string }) {
   const { locale, t } = useLocale()
+  const { isLoggedIn, email } = useAuth()
+  const { profile } = useUserProfile()
   const balance = useRealSunshardsBalance()
   const { level, xpCurrent, xpMax } = useRealDriverProgress()
   const [shopOpen, setShopOpen] = useState(false)
@@ -70,6 +74,34 @@ export function RealTopHud({ className }: { className?: string }) {
   const friendBoostPercent = 0
   const friendBonusPerFriend = 10
   const displayLevel = level > 0 ? level.toLocaleString() : '—'
+  const playerName = isLoggedIn
+    ? resolveAccountLicenseName(profile?.displayName, profile?.email ?? email) || t('realProfileGuestName')
+    : t('realProfileGuestName')
+
+  const layoutVars = useMemo(
+    () =>
+      ({
+        '--real-top-hud-height': `${REAL_TOP_HUD_LAYOUT.heightPx / 16}rem`,
+        '--real-top-hud-pad-x': `${REAL_TOP_HUD_LAYOUT.horizontalPaddingPx}px`,
+        '--real-top-hud-gap': `${REAL_TOP_HUD_LAYOUT.gapPx}px`,
+        '--real-top-hud-level-size': `${REAL_TOP_HUD_LAYOUT.levelBadgeSizePx}px`,
+        '--real-top-hud-level-font': `${REAL_TOP_HUD_LAYOUT.levelBadgeFontPx}px`,
+        '--real-top-hud-xp-w': `${REAL_TOP_HUD_LAYOUT.xpTrackWidthPx}px`,
+        '--real-top-hud-xp-h': `${REAL_TOP_HUD_LAYOUT.xpTrackHeightPx}px`,
+        '--real-top-hud-xp-font': `${REAL_TOP_HUD_LAYOUT.xpLabelFontPx}px`,
+        '--real-top-hud-player-min-w': `${REAL_TOP_HUD_LAYOUT.playerCardMinWidthPx}px`,
+        '--real-top-hud-name-font': `${REAL_TOP_HUD_LAYOUT.playerNameFontPx}px`,
+        '--real-top-hud-level-label-font': `${REAL_TOP_HUD_LAYOUT.playerLevelFontPx}px`,
+        '--real-top-hud-friend-font': `${REAL_TOP_HUD_LAYOUT.friendBoostFontPx}px`,
+        '--real-top-hud-sunshards-h': `${REAL_TOP_HUD_LAYOUT.sunshardsHeightPx}px`,
+        '--real-top-hud-sunshards-icon': `${REAL_TOP_HUD_LAYOUT.sunshardsIconPx}px`,
+        '--real-top-hud-sunshards-add': `${REAL_TOP_HUD_LAYOUT.sunshardsAddSizePx}px`,
+        '--real-top-hud-action-h': `${REAL_TOP_HUD_LAYOUT.actionHeightPx}px`,
+        '--real-top-hud-icon-btn': `${REAL_TOP_HUD_LAYOUT.iconBtnSizePx}px`,
+        '--real-top-hud-invite': `${REAL_TOP_HUD_LAYOUT.inviteBtnSizePx}px`,
+      }) as CSSProperties,
+    [],
+  )
 
   useEffect(() => {
     const onHudAction = (event: Event) => {
@@ -86,6 +118,7 @@ export function RealTopHud({ className }: { className?: string }) {
     <>
       <header
         className={`real-top-hud${className ? ` ${className}` : ''}`}
+        style={layoutVars}
         role="banner"
         aria-label={t('realTopHudAria')}
       >
@@ -120,14 +153,14 @@ export function RealTopHud({ className }: { className?: string }) {
               })}
             </p>
             <div className="real-top-hud-player-card">
-              <span className="real-top-hud-player-name">{DEMO_PLAYER_NAME}</span>
+              <span className="real-top-hud-player-name">{playerName}</span>
               <span className="real-top-hud-player-level">{t('realTopHudPlayerLevel', { level: displayLevel })}</span>
             </div>
           </div>
 
           <div className="real-top-hud-sunshards" aria-label={t('realSunshardsBalanceAria', { count: balance })}>
             <span className="real-top-hud-sunshards-icon-wrap">
-              <SunshardIcon className="real-top-hud-sunshards-icon" size={16} />
+              <SunshardIcon className="real-top-hud-sunshards-icon" size={REAL_TOP_HUD_LAYOUT.sunshardsIconPx} />
             </span>
             <span className="real-top-hud-sunshards-count">{balance.toLocaleString()}</span>
             <button

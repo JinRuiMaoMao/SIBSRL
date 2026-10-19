@@ -23,6 +23,7 @@ import { StartPage } from './components/StartPage'
 import { RealShellHomeView } from './components/RealShellHomeView'
 import { RealTopHud } from './components/RealTopHud'
 import { RealAlphaOverlay } from './components/RealAlphaOverlay'
+import { getRealRouteSelectionLayoutVars } from './data/realRouteSelectionLayout'
 import { VersionUpdatesPage } from './components/VersionUpdatesPage'
 import { VersionUpdatesPrompt } from './components/VersionUpdatesPrompt'
 import { getTodaysDailyChallenge, isDailyChallengeAvailable } from './data/dailyChallenge'
@@ -242,7 +243,10 @@ function App() {
           <RealShellHomeView
             shellTab={tabFromLocation === 'routes' ? 'routes' : null}
             routesContent={
-              <div className="app sibs-scrollbar app--real-routes">
+              <div
+                className="app sibs-scrollbar app--real-routes"
+                style={getRealRouteSelectionLayoutVars()}
+              >
                 <ScrollRevealScope className="main">
                   <RouteLookupPage
                     pendingDailyChallengeDetail={pendingDailyChallengeDetail}
@@ -419,7 +423,10 @@ function App() {
       {guidedTourLayer}
       {realLayout ? <RealTopHud className="real-top-hud--page" /> : null}
       <IslandMapOverlayProvider>
-      <div className={`app sibs-scrollbar${realRoutesShell ? ' app--real-routes' : ''}${realLayout ? ' app--real-hud' : ''}`}>
+      <div
+        className={`app sibs-scrollbar${realRoutesShell ? ' app--real-routes' : ''}${realLayout ? ' app--real-hud' : ''}`}
+        style={realRoutesShell ? getRealRouteSelectionLayoutVars() : undefined}
+      >
       {!realRoutesShell ? (
         <Header
           activeTab={activeTab}
