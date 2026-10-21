@@ -24,7 +24,18 @@
     { "date": "2026-10-18", "event": null, "routeCode": null, "race": false },
     { "date": "2026-10-19", "event": null, "routeCode": null, "race": false },
     { "date": "2026-10-20", "event": null, "routeCode": null, "race": false },
-    { "date": "2026-10-21", "event": null, "routeCode": null, "race": false },
+    {
+      "date": "2026-10-21",
+      "event": "Private Hire",
+      "routeCode": "PH1",
+      "race": false,
+      "privateHireStops": [
+        { "name": { "zh": "白鸽邨", "en": "Dove Estate" } },
+        { "name": { "zh": "北滩", "en": "Northern Beach" } },
+        { "name": { "zh": "亚历山教堂", "en": "Alexander Church" } },
+        { "name": { "zh": "安灵台灵灰安置所", "en": "Ambling Peak" } }
+      ]
+    },
     { "date": "2026-10-22", "event": null, "routeCode": null, "race": false },
     { "date": "2026-10-23", "event": null, "routeCode": null, "race": false },
     { "date": "2026-10-24", "event": null, "routeCode": null, "race": false },

@@ -4,7 +4,10 @@ import {
   todayHktDateString,
   type DailyChallengeInfo,
 } from './dailyChallenge'
-import type { DailyChallengeScheduleDay } from './dailyChallengeSchedule'
+import {
+  findScheduledDailyChallenge,
+  type DailyChallengeScheduleDay,
+} from './dailyChallengeSchedule'
 
 type RawDailyChallengeRecord = Partial<DailyChallengeScheduleDay> & {
   route?: unknown
@@ -29,6 +32,31 @@ function stringOrNull(value: unknown): string | null {
 
 function boolOrFalse(value: unknown): boolean {
   return value === true || value === 'true' || value === 1 || value === '1'
+}
+
+function parsePrivateHireStops(
+  value: unknown,
+): DailyChallengeScheduleDay['privateHireStops'] {
+  if (!Array.isArray(value)) return undefined
+  const stops: NonNullable<DailyChallengeScheduleDay['privateHireStops']> = []
+  for (const item of value) {
+    if (!item || typeof item !== 'object') continue
+    const raw = item as { name?: { zh?: unknown; en?: unknown }; zh?: unknown; en?: unknown }
+    const name = raw.name && typeof raw.name === 'object' ? raw.name : raw
+    const zh = stringOrNull(name.zh)
+    const en = stringOrNull(name.en)
+    if (!zh && !en) continue
+    stops.push({ name: { zh: zh ?? en!, en: en ?? zh! } })
+  }
+  return stops.length ? stops : undefined
+}
+
+/** Prefer API stop order; fall back to the static schedule when live PH has no stops. */
+function attachSchedulePrivateHireStops(day: DailyChallengeScheduleDay): DailyChallengeScheduleDay {
+  if (day.privateHireStops?.length) return day
+  const scheduled = findScheduledDailyChallenge(day.date)
+  if (!scheduled?.privateHireStops?.length) return day
+  return { ...day, privateHireStops: scheduled.privateHireStops }
 }
 
 function readMetaContent(name: string): string | null {
@@ -82,12 +110,13 @@ function normalizeApiRecord(payload: unknown): DailyChallengeScheduleDay | null 
 
   if (!event) return null
 
-  return {
+  return attachSchedulePrivateHireStops({
     date: stringOrNull(record.date) ?? todayHktDateString(),
     event,
     routeCode,
     race: boolOrFalse(record.race),
-  }
+    privateHireStops: parsePrivateHireStops(record.privateHireStops),
+  })
 }
 
 function buildLiveChallengeFromDay(day: DailyChallengeScheduleDay): DailyChallengeInfo {

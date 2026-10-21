@@ -173,6 +173,18 @@ const versionUpdatesRaw: VersionUpdateEntry[] = [
       },
       {
         title: {
+          zh: "每日挑战",
+          en: "Daily challenge",
+        },
+        additions: [
+          {
+            zh: "补录 2026-10-21 PH1 站序：白鸽邨 → 北滩 → 亚历山教堂 → 安灵台灵灰安置所；线上接口缺站序时回落静态日程。",
+            en: "Recorded 2026-10-21 PH1 stops: Dove Estate → Northern Beach → Alexander Church → Ambling Peak; live API now falls back to the static schedule when it has no stop list.",
+          },
+        ],
+      },
+      {
+        title: {
           zh: "Real 分屏",
           en: "Real layout",
         },
