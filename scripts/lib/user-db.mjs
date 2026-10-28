@@ -97,6 +97,11 @@ export function openUserDatabase(dbPath = process.env.USER_DB_PATH ?? DEFAULT_DB
     db.exec('ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0')
   }
 
+  const dailyChallengeColumns = db.prepare('PRAGMA table_info(daily_challenge_days)').all()
+  if (!dailyChallengeColumns.some((column) => column.name === 'private_hire_stops')) {
+    db.exec('ALTER TABLE daily_challenge_days ADD COLUMN private_hire_stops TEXT')
+  }
+
   ensureDefaultAdmins(db)
 
   return db
@@ -376,7 +381,7 @@ export function upsertRouteMapImport(db, { routeId, payloadJson, updatedAt, upda
 export function listDailyChallengeDays(db, { limit = 400 } = {}) {
   return db
     .prepare(`
-      SELECT date, event, route_code, race, updated_at, updated_by
+      SELECT date, event, route_code, race, private_hire_stops, updated_at, updated_by
       FROM daily_challenge_days
       ORDER BY date DESC
       LIMIT ?
@@ -388,7 +393,7 @@ export function listDailyChallengeDays(db, { limit = 400 } = {}) {
 export function getDailyChallengeDay(db, date) {
   return db
     .prepare(`
-      SELECT date, event, route_code, race, updated_at, updated_by
+      SELECT date, event, route_code, race, private_hire_stops, updated_at, updated_by
       FROM daily_challenge_days
       WHERE date = ?
     `)
@@ -423,15 +428,16 @@ export function countDailyChallengeDays(db) {
   return db.prepare('SELECT COUNT(*) AS count FROM daily_challenge_days').get()?.count ?? 0
 }
 
-/** @param {import('better-sqlite3').Database} db @param {{ date: string, event: string, routeCode?: string | null, race?: boolean, updatedAt: number }[]} days @param {string | null} updatedBy */
+/** @param {import('better-sqlite3').Database} db @param {{ date: string, event: string, routeCode?: string | null, race?: boolean, privateHireStopsJson?: string | null, updatedAt: number }[]} days @param {string | null} updatedBy */
 export function upsertDailyChallengeDays(db, days, updatedBy) {
   const stmt = db.prepare(`
-    INSERT INTO daily_challenge_days (date, event, route_code, race, updated_at, updated_by)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO daily_challenge_days (date, event, route_code, race, private_hire_stops, updated_at, updated_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(date) DO UPDATE SET
       event = excluded.event,
       route_code = excluded.route_code,
       race = excluded.race,
+      private_hire_stops = excluded.private_hire_stops,
       updated_at = excluded.updated_at,
       updated_by = excluded.updated_by
   `)
@@ -442,6 +448,7 @@ export function upsertDailyChallengeDays(db, days, updatedBy) {
         day.event,
         day.routeCode ?? null,
         day.race ? 1 : 0,
+        day.privateHireStopsJson ?? null,
         day.updatedAt,
         updatedBy,
       )

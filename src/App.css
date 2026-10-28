@@ -2398,6 +2398,53 @@ a.settings-trigger {
   padding: 1rem !important;
 }
 
+.dc-admin-ph-row td {
+  background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+  vertical-align: top;
+}
+
+.dc-admin-ph-stops {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.dc-admin-ph-stops-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+.dc-admin-ph-stop {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.dc-admin-ph-stop-index {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.dc-admin-ph-stop-remove {
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .dc-admin-ph-stop {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+  }
+
+  .dc-admin-ph-stop-remove {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
 .account-danger-zone {
   border-color: color-mix(in srgb, var(--race) 35%, var(--border));
 }

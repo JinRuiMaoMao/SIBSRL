@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   clearDailyChallengeDays,
   fetchDailyChallengeAdminHistory,
@@ -7,7 +7,7 @@ import {
 } from '../api/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import { useAppDialog } from '../contexts/AppDialogContext'
-import { todayHktDateString } from '../data/dailyChallenge'
+import { isPrivateHireChallengeDay, todayHktDateString } from '../data/dailyChallenge'
 import { DAILY_CHALLENGE_SCHEDULES } from '../data/dailyChallengeSchedule'
 import { useLocale } from '../i18n/LocaleContext'
 import {
@@ -16,11 +16,29 @@ import {
   parseDailyChallengeMonthPaste,
 } from '../utils/parseDailyChallengeMonthPaste'
 
+interface AdminStop {
+  zh: string
+  en: string
+}
+
 interface AdminRow {
   date: string
   event: string
   routeCode: string
   race: boolean
+  privateHireStops: AdminStop[]
+}
+
+const EMPTY_PH_STOP: AdminStop = { zh: '', en: '' }
+
+function toAdminStops(
+  stops: DailyChallengeDayPayload['privateHireStops'] | undefined,
+): AdminStop[] {
+  if (!stops?.length) return []
+  return stops.map((stop) => ({
+    zh: stop.name.zh,
+    en: stop.name.en,
+  }))
 }
 
 function defaultMonthKey(): string {
@@ -33,11 +51,22 @@ function toAdminRow(day: DailyChallengeDayPayload): AdminRow {
     event: day.event,
     routeCode: day.routeCode ?? '',
     race: day.race,
+    privateHireStops: toAdminStops(day.privateHireStops),
   }
 }
 
 function emptyRow(date: string): AdminRow {
-  return { date, event: '', routeCode: '', race: false }
+  return { date, event: '', routeCode: '', race: false, privateHireStops: [] }
+}
+
+function asAdminRows(rows: Array<Partial<AdminRow> & { date: string; event: string; routeCode: string; race: boolean }>): AdminRow[] {
+  return rows.map((row) => ({
+    date: row.date,
+    event: row.event,
+    routeCode: row.routeCode ?? '',
+    race: row.race,
+    privateHireStops: Array.isArray(row.privateHireStops) ? row.privateHireStops : [],
+  }))
 }
 
 function getStaticDaysForMonth(monthKey: string): DailyChallengeDayPayload[] {
@@ -50,6 +79,7 @@ function getStaticDaysForMonth(monthKey: string): DailyChallengeDayPayload[] {
       event: day.event!,
       routeCode: day.routeCode,
       race: day.race,
+      ...(day.privateHireStops?.length ? { privateHireStops: day.privateHireStops } : {}),
     }))
 }
 
@@ -63,9 +93,27 @@ function mergeMonthRows(
     byDate.set(day.date, toAdminRow(day))
   }
   for (const day of apiDays) {
-    byDate.set(day.date, toAdminRow(day))
+    const existing = byDate.get(day.date)
+    const next = toAdminRow(day)
+    if (!next.privateHireStops.length && existing?.privateHireStops.length) {
+      next.privateHireStops = existing.privateHireStops
+    }
+    byDate.set(day.date, next)
   }
-  return buildMonthRowSkeleton(monthKey, [...byDate.values()])
+  return asAdminRows(buildMonthRowSkeleton(monthKey, [...byDate.values()]))
+}
+
+function serializePhStops(row: AdminRow): DailyChallengeDayPayload['privateHireStops'] | undefined {
+  if (!isPrivateHireChallengeDay(row.routeCode, row.event)) return undefined
+  const stops = row.privateHireStops
+    .map((stop) => {
+      const zh = stop.zh.trim()
+      const en = stop.en.trim()
+      if (!zh && !en) return null
+      return { name: { zh: zh || en, en: en || zh } }
+    })
+    .filter((stop): stop is { name: { zh: string; en: string } } => stop != null)
+  return stops.length ? stops : undefined
 }
 
 export function DailyChallengeAdminPanel() {
@@ -76,7 +124,7 @@ export function DailyChallengeAdminPanel() {
 
   const [pasteText, setPasteText] = useState('')
   const [viewMonthKey, setViewMonthKey] = useState(defaultMonthKey)
-  const [rows, setRows] = useState<AdminRow[]>(() => buildMonthRowSkeleton(defaultMonthKey()))
+  const [rows, setRows] = useState<AdminRow[]>(() => asAdminRows(buildMonthRowSkeleton(defaultMonthKey())))
   const [mergeSummary, setMergeSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
@@ -132,7 +180,19 @@ export function DailyChallengeAdminPanel() {
 
     skipMonthReloadRef.current = true
     setViewMonthKey(parsed.monthKey)
-    setRows(buildMonthRowSkeleton(parsed.monthKey, parsed.days))
+    const baseRows = parsed.monthKey === viewMonthKey ? rows : asAdminRows(buildMonthRowSkeleton(parsed.monthKey))
+    const byDate = new Map(baseRows.map((row) => [row.date, row]))
+    for (const day of parsed.days) {
+      const existing = byDate.get(day.date)
+      byDate.set(day.date, {
+        date: day.date,
+        event: day.event,
+        routeCode: day.routeCode ?? '',
+        race: day.race,
+        privateHireStops: existing?.privateHireStops ?? [],
+      })
+    }
+    setRows(asAdminRows(buildMonthRowSkeleton(parsed.monthKey, [...byDate.values()])))
     setMonthStoredCount(0)
     setMergeSummary(
       t('dcAdminMergeSummary', {
@@ -200,12 +260,16 @@ export function DailyChallengeAdminPanel() {
     if (!token) return
     const days = rows
       .filter((row) => row.event.trim())
-      .map((row) => ({
-        date: row.date,
-        event: row.event.trim(),
-        routeCode: row.routeCode.trim() ? row.routeCode.trim().toUpperCase() : null,
-        race: row.race,
-      }))
+      .map((row) => {
+        const privateHireStops = serializePhStops(row)
+        return {
+          date: row.date,
+          event: row.event.trim(),
+          routeCode: row.routeCode.trim() ? row.routeCode.trim().toUpperCase() : null,
+          race: row.race,
+          ...(privateHireStops ? { privateHireStops } : {}),
+        }
+      })
 
     if (days.length === 0) {
       await alert({ message: t('dcAdminSaveEmpty') })
@@ -229,6 +293,43 @@ export function DailyChallengeAdminPanel() {
   const updateRow = (index: number, patch: Partial<AdminRow>) => {
     setRows((current) =>
       current.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row)),
+    )
+  }
+
+  const updatePhStop = (rowIndex: number, stopIndex: number, patch: Partial<AdminStop>) => {
+    setRows((current) =>
+      current.map((row, index) => {
+        if (index !== rowIndex) return row
+        const stops = row.privateHireStops.length ? row.privateHireStops : [{ ...EMPTY_PH_STOP }]
+        return {
+          ...row,
+          privateHireStops: stops.map((stop, currentIndex) =>
+            currentIndex === stopIndex ? { ...stop, ...patch } : stop,
+          ),
+        }
+      }),
+    )
+  }
+
+  const addPhStop = (rowIndex: number) => {
+    setRows((current) =>
+      current.map((row, index) => {
+        if (index !== rowIndex) return row
+        const stops = row.privateHireStops.length ? row.privateHireStops : []
+        return { ...row, privateHireStops: [...stops, { ...EMPTY_PH_STOP }] }
+      }),
+    )
+  }
+
+  const removePhStop = (rowIndex: number, stopIndex: number) => {
+    setRows((current) =>
+      current.map((row, index) => {
+        if (index !== rowIndex) return row
+        return {
+          ...row,
+          privateHireStops: row.privateHireStops.filter((_, currentIndex) => currentIndex !== stopIndex),
+        }
+      }),
     )
   }
 
@@ -294,37 +395,94 @@ export function DailyChallengeAdminPanel() {
                 </td>
               </tr>
             ) : (
-              rows.map((row, index) => (
-                <tr key={row.date}>
-                  <td className="dc-admin-date">{row.date}</td>
-                  <td className="dc-admin-race">
-                    <input
-                      type="checkbox"
-                      checked={row.race}
-                      aria-label={t('dcAdminColRace')}
-                      onChange={(event) => updateRow(index, { race: event.target.checked })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      className="settings-input dc-admin-cell"
-                      type="text"
-                      value={row.event}
-                      placeholder={t('dcAdminEventPlaceholder')}
-                      onChange={(event) => updateRow(index, { event: event.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      className="settings-input dc-admin-cell"
-                      type="text"
-                      value={row.routeCode}
-                      placeholder={t('dcAdminRoutePlaceholder')}
-                      onChange={(event) => updateRow(index, { routeCode: event.target.value })}
-                    />
-                  </td>
-                </tr>
-              ))
+              rows.map((row, index) => {
+                const isPh = isPrivateHireChallengeDay(row.routeCode, row.event)
+                const phStops = row.privateHireStops.length ? row.privateHireStops : [{ ...EMPTY_PH_STOP }]
+                return (
+                  <Fragment key={row.date}>
+                    <tr>
+                      <td className="dc-admin-date">{row.date}</td>
+                      <td className="dc-admin-race">
+                        <input
+                          type="checkbox"
+                          checked={row.race}
+                          aria-label={t('dcAdminColRace')}
+                          onChange={(event) => updateRow(index, { race: event.target.checked })}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className="settings-input dc-admin-cell"
+                          type="text"
+                          value={row.event}
+                          placeholder={t('dcAdminEventPlaceholder')}
+                          onChange={(event) => updateRow(index, { event: event.target.value })}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className="settings-input dc-admin-cell"
+                          type="text"
+                          value={row.routeCode}
+                          placeholder={t('dcAdminRoutePlaceholder')}
+                          onChange={(event) => updateRow(index, { routeCode: event.target.value })}
+                        />
+                      </td>
+                    </tr>
+                    {isPh ? (
+                      <tr className="dc-admin-ph-row">
+                        <td colSpan={4}>
+                          <div className="dc-admin-ph-stops">
+                            <div className="dc-admin-ph-stops-head">
+                              <span>{t('dcAdminPhStopsLabel')}</span>
+                              <span className="settings-hint">{t('dcAdminPhStopsHint')}</span>
+                            </div>
+                            {phStops.map((stop, stopIndex) => (
+                              <div key={`${row.date}-${stopIndex}`} className="dc-admin-ph-stop">
+                                <span className="dc-admin-ph-stop-index">{stopIndex + 1}</span>
+                                <input
+                                  className="settings-input dc-admin-cell"
+                                  type="text"
+                                  value={stop.zh}
+                                  placeholder={t('dcAdminPhStopZh')}
+                                  onChange={(event) =>
+                                    updatePhStop(index, stopIndex, { zh: event.target.value })
+                                  }
+                                />
+                                <input
+                                  className="settings-input dc-admin-cell"
+                                  type="text"
+                                  value={stop.en}
+                                  placeholder={t('dcAdminPhStopEn')}
+                                  onChange={(event) =>
+                                    updatePhStop(index, stopIndex, { en: event.target.value })
+                                  }
+                                />
+                                <button
+                                  type="button"
+                                  className="settings-action-btn dc-admin-ph-stop-remove"
+                                  disabled={busy}
+                                  onClick={() => removePhStop(index, stopIndex)}
+                                >
+                                  {t('dcAdminPhStopRemove')}
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              className="settings-action-btn"
+                              disabled={busy || phStops.length >= 16}
+                              onClick={() => addPhStop(index)}
+                            >
+                              {t('dcAdminPhStopAdd')}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                )
+              })
             )}
           </tbody>
         </table>

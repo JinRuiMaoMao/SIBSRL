@@ -615,14 +615,64 @@ function handleGetRouteMapImport(req, res, routeIdRaw) {
 
 const DAILY_CHALLENGE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 const DAILY_CHALLENGE_PUT_MAX_DAYS = 62
+const DAILY_CHALLENGE_MAX_PH_STOPS = 16
+const DAILY_CHALLENGE_PH_NAME_MAX = 80
+
+function parseStoredPrivateHireStops(raw) {
+  if (!raw) return undefined
+  try {
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+    if (!Array.isArray(parsed)) return undefined
+    const stops = []
+    for (const item of parsed) {
+      if (!item || typeof item !== 'object') continue
+      const name = item.name && typeof item.name === 'object' ? item.name : item
+      const zh = String(name.zh ?? '').trim()
+      const en = String(name.en ?? '').trim()
+      if (!zh && !en) continue
+      stops.push({ name: { zh: zh || en, en: en || zh } })
+    }
+    return stops.length ? stops : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function normalizePrivateHireStopsPayload(raw) {
+  if (raw == null) return { stops: null }
+  if (!Array.isArray(raw)) return { error: 'invalid_stops' }
+  if (raw.length > DAILY_CHALLENGE_MAX_PH_STOPS) return { error: 'too_many_stops' }
+  const stops = []
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue
+    const name = item.name && typeof item.name === 'object' ? item.name : item
+    const zh = String(name.zh ?? '').trim()
+    const en = String(name.en ?? '').trim()
+    if (!zh && !en) continue
+    if (zh.length > DAILY_CHALLENGE_PH_NAME_MAX || en.length > DAILY_CHALLENGE_PH_NAME_MAX) {
+      return { error: 'stop_name_too_long' }
+    }
+    stops.push({ name: { zh: zh || en, en: en || zh } })
+    if (stops.length > DAILY_CHALLENGE_MAX_PH_STOPS) return { error: 'too_many_stops' }
+  }
+  return { stops: stops.length ? stops : null }
+}
+
+function isPrivateHireDay(routeCode, event) {
+  if (routeCode && /^PH/i.test(routeCode)) return true
+  const label = String(event ?? '').trim()
+  return /private\s*hire/i.test(label) || /私人租用/.test(label) || /\bPH\b/i.test(label)
+}
 
 function mapDailyChallengeDayRow(row) {
   if (!row) return null
+  const privateHireStops = parseStoredPrivateHireStops(row.private_hire_stops)
   return {
     date: row.date,
     event: row.event,
     routeCode: row.route_code ?? null,
     race: Boolean(row.race),
+    ...(privateHireStops ? { privateHireStops } : {}),
   }
 }
 
@@ -702,7 +752,25 @@ async function handlePutDailyChallengeDays(req, res) {
     }
     if (seenDates.has(date)) continue
     seenDates.add(date)
-    normalized.push({ date, event, routeCode, race })
+    const stopResult = isPrivateHireDay(routeCode, event)
+      ? normalizePrivateHireStopsPayload(raw.privateHireStops)
+      : { stops: null }
+    if (stopResult.error === 'too_many_stops') {
+      return error(req, res, 400, 'too_many_stops', `Too many PH stops for ${date}`)
+    }
+    if (stopResult.error === 'stop_name_too_long') {
+      return error(req, res, 400, 'invalid_stop', `PH stop name too long for ${date}`)
+    }
+    if (stopResult.error) {
+      return error(req, res, 400, 'invalid_stops', `Invalid PH stops for ${date}`)
+    }
+    normalized.push({
+      date,
+      event,
+      routeCode,
+      race,
+      privateHireStops: stopResult.stops,
+    })
   }
 
   if (normalized.length === 0) {
@@ -717,7 +785,11 @@ async function handlePutDailyChallengeDays(req, res) {
   const updatedAt = Date.now()
   upsertDailyChallengeDays(
     db,
-    normalized.map((day) => ({ ...day, updatedAt })),
+    normalized.map((day) => ({
+      ...day,
+      privateHireStopsJson: day.privateHireStops ? JSON.stringify(day.privateHireStops) : null,
+      updatedAt,
+    })),
     session.userId,
   )
 

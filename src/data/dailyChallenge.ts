@@ -114,6 +114,17 @@ export function isPrivateHireChallengeRoute(routeNumber?: string): boolean {
   return !!routeNumber && /^PH/i.test(routeNumber.trim())
 }
 
+/** RouteCode PH* or event name that marks a Private Hire day. */
+export function isPrivateHireChallengeDay(
+  routeCode?: string | null,
+  event?: string | null,
+): boolean {
+  if (isPrivateHireChallengeRoute(routeCode ?? undefined)) return true
+  const label = (event ?? '').trim()
+  if (!label) return false
+  return /private\s*hire/i.test(label) || /私人租用/.test(label) || /\bPH\b/i.test(label)
+}
+
 export function resolveDailyChallengeRouteLookup(routeCode: string): {
   lookupNumber: string
   directionKey?: 'N' | 'S' | 'E' | 'W'

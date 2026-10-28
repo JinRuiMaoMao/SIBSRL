@@ -293,6 +293,7 @@ export function mergeParsedDaysIntoRows<T extends ParsedDailyChallengeDay>(
       updated += 1
     } else {
       const next = {
+        ...day,
         date: day.date,
         event: day.event,
         routeCode: day.routeCode ?? '',
@@ -332,6 +333,7 @@ export function buildMonthRowSkeleton(
     rows.push(
       found
         ? {
+            ...found,
             date: found.date,
             event: found.event,
             routeCode: found.routeCode ?? '',

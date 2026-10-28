@@ -236,6 +236,7 @@ export interface DailyChallengeDayPayload {
   event: string
   routeCode: string | null
   race: boolean
+  privateHireStops?: { name: { zh: string; en: string } }[]
 }
 
 export async function fetchDailyChallengeAdminHistory(signal?: AbortSignal) {
@@ -278,6 +279,7 @@ export async function fetchDailyChallengeAdminHistory(signal?: AbortSignal) {
       event: record.event,
       routeCode: record.routeCode ?? null,
       race: Boolean(record.race),
+      ...(record.privateHireStops?.length ? { privateHireStops: record.privateHireStops } : {}),
     })
   }
   return days.sort((a, b) => a.date.localeCompare(b.date))
